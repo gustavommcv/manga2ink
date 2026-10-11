@@ -15,7 +15,7 @@ interface BookWithWarnings {
 }
 
 /**
- * What the app says for each warning mangapress 0.7 gives, and the one the next release adds (`page_truncated`). The tool's own sentences are written
+ * Known CLI warnings get wording suited to the results screen. The tool's own sentences are written
  * for a terminal (the one about small pages names `--upscale`), so a known code gets words that
  * name the option as the screen does; the protocol asks consumers to branch on the code anyway.
  */

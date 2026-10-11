@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -31,13 +31,21 @@ const runner = createNodeProcessRunner();
 
 describe('what the pinned tools print, read with the app’s own parsers', () => {
   it.each([
-    ['Kindle', 'KPW6', {}, 'epub'],
-    ['Kobo', 'KoLC', {}, 'kepub.epub'],
-    ['Kobo with plain EPUB', 'KoLC', { noKepub: true }, 'epub'],
-    ['Kobo with custom dimensions', 'KoLC', { customWidth: 800, customHeight: 1200 }, 'epub'],
+    ['Kindle EPUB', 'KPW6', {}, 'epub', 'epub'],
+    ['Kindle CBZ', 'K11', {}, 'cbz', 'cbz'],
+    ['reMarkable PDF', 'Rmk1', {}, 'pdf', 'pdf'],
+    ['Kobo', 'KoLC', {}, 'epub', 'kepub.epub'],
+    ['Kobo with plain EPUB', 'KoLC', { noKepub: true }, 'epub', 'epub'],
+    [
+      'Kobo with custom dimensions',
+      'KoLC',
+      { customWidth: 800, customHeight: 1200 },
+      'epub',
+      'epub',
+    ],
   ] as const)(
     'uses the custom filename for %s with the real converter, without changing its title',
-    async (_label, deviceProfile, settings, extension) => {
+    async (_label, deviceProfile, settings, format, extension) => {
       const output = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-custom-name-'));
       const adapter = new MangapressConversionAdapter(
         new MangapressCliAdapter(executable('mangapress'), runner),
@@ -46,7 +54,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
         inputPath: path.join(fixtures, 'cbz', 'Mangabound Direct.cbz'),
         outputDirectory: output,
         book: { title: 'Custom: Book' },
-        format: 'epub' as const,
+        format,
         settings: { ...defaultMangapressSettings, deviceProfile, noProcessing: true, ...settings },
       };
       try {
@@ -61,6 +69,46 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
     },
     60_000,
   );
+
+  it('keeps the recovered-page warning from the real converter on the completed book', async () => {
+    const scratch = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-truncated-'));
+    const input = path.join(scratch, 'Partial pages');
+    const chapter = path.join(input, 'Chapter 1');
+    const output = path.join(scratch, 'books');
+    const adapter = new MangapressConversionAdapter(
+      new MangapressCliAdapter(executable('mangapress'), runner),
+    );
+    try {
+      await mkdir(chapter, { recursive: true });
+      await mkdir(output);
+      const page = await readFile(
+        path.join(fixtures, 'manga-folder', 'Mangabound E2E', 'Chapter 1', '001.png'),
+      );
+      await writeFile(path.join(chapter, '001.png'), page);
+      // Keep the existing PNG header but cut its image data, like an interrupted transfer.
+      await writeFile(
+        path.join(chapter, '002.png'),
+        page.subarray(0, Math.floor(page.length * 0.6)),
+      );
+      const artifact = await adapter.convert(
+        {
+          inputPath: input,
+          outputDirectory: output,
+          settings: { ...defaultMangapressSettings, deviceProfile: 'K11' },
+          format: 'epub',
+        },
+        { onProgress: () => undefined },
+      );
+      expect(artifact.format).toBe('epub');
+      const warning = artifact.warnings?.find(({ code }) => code === 'page_truncated');
+      expect(warning?.message).toContain('002.png');
+      const bytes = await readFile(artifact.path);
+      expect(bytes.length).toBe(artifact.bytes);
+      expect(bytes.subarray(0, 2).toString('ascii')).toBe('PK');
+    } finally {
+      await rm(scratch, { force: true, recursive: true });
+    }
+  }, 60_000);
 
   it('reads the report of mangabind for a folder of chapters, a plan and a library', async () => {
     const mangabind = new MangabindCliAdapter(executable('mangabind'), runner);
