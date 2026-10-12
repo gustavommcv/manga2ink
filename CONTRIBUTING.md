@@ -73,7 +73,7 @@ Tests should detect a broken behavior, not merely confirm the current implementa
 
 ### Mutation testing
 
-Coverage says a line ran, not that a test would notice it being wrong. `npm run test:mutation` changes the domain and application layers one thing at a time (a condition flipped, a value dropped) and runs only the unit tests that import each file; a change no test notices is a test that does not check what it seems to. It takes an hour or more, so it is run on purpose and is not a gate. It is a package of its own, `tests/mutation/`, as `website/` is: Stryker needs Babel 8, and none of it reaches the app's lockfile. Run `npm ci` there first. Name files to run fewer (`npm run test:mutation -- src/domain/mapping.ts`); the text of messages is left out unless `MUTATE_STRINGS=1`.
+Coverage says a line ran, not that a test would notice it being wrong. `npm run test:mutation` changes the domain and application layers one thing at a time (a condition flipped, a value dropped) and runs only the unit tests that import each file; a change no test notices is a test that does not check what it seems to. It takes an hour or more, so it is run on purpose and is not a gate. It is a package of its own, `tests/mutation/`, as `website/` is: Stryker needs Babel 8, and none of it reaches the app's lockfile. Run `npm ci --prefix tests/mutation` first; [its README](tests/mutation/README.md) says what to make of what survives. Name files to run fewer (`npm run test:mutation -- src/domain/mapping.ts`); the text of messages is left out unless `MUTATE_STRINGS=1`.
 
 Fix a surviving change by writing the test that would have failed, not by touching the code. Some are equivalent (the result cannot differ) and need nothing.
 
