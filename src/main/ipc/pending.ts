@@ -47,21 +47,21 @@ async function findBook(
   context: PendingContext,
   id: string,
 ): Promise<{
+  pendingRuns: NonNullable<PendingContext['pendingRuns']>;
   run: PendingRun;
   book: PendingBook;
 }> {
   const reference = context.pendingArtifacts.get(id);
-  if (reference === undefined || context.pendingRuns === undefined)
+  const { pendingRuns } = context;
+  if (reference === undefined || pendingRuns === undefined)
     throw new PendingSaveError('book_unavailable', 'This pending book is no longer available.');
-  const run = (await context.pendingRuns.list()).find(
-    (candidate) => candidate.id === reference.runId,
-  );
+  const run = (await pendingRuns.list()).find((candidate) => candidate.id === reference.runId);
   const book = run?.books.find(
     (candidate) => candidate.entry.relativePath === reference.relativePath,
   );
   if (run === undefined || book === undefined)
     throw new PendingSaveError('book_unavailable', 'This pending book is no longer available.');
-  return { run, book };
+  return { pendingRuns, run, book };
 }
 async function saveBook(
   context: PendingContext,
@@ -69,11 +69,10 @@ async function saveBook(
   destination: string,
   overwrite: boolean,
 ): Promise<string | undefined> {
-  const { run, book } = await findBook(context, id);
+  const { pendingRuns, run, book } = await findBook(context, id);
   const refusal = wrongExtension(book.entry.format, destination);
   if (refusal !== undefined) throw refusal;
-  if (context.pendingRuns === undefined) throw new Error('Pending storage is unavailable.');
-  const outcome = await context.pendingRuns.exportAndRecord(run, book, destination, overwrite);
+  const outcome = await pendingRuns.exportAndRecord(run, book, destination, overwrite);
   context.artifactPaths.set(id, destination);
   rememberSaveFolder(context, path.dirname(destination));
   if (outcome.status === 'saved') return undefined;
