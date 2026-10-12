@@ -49,6 +49,26 @@ export async function readZipEntryBytes(
   throw new Error(`${filePath} has no entry that matched.`);
 }
 
+/** The names of every entry of a zip file (an EPUB or CBZ is one), from its central directory. */
+export async function listZipEntryNames(filePath: string): Promise<readonly string[]> {
+  const zip = await readFile(filePath);
+  let end = zip.length - 22;
+  while (end >= 0 && zip.readUInt32LE(end) !== 0x06054b50) end -= 1;
+  if (end < 0) throw new Error(`${filePath} is not a zip file.`);
+  const count = zip.readUInt16LE(end + 10);
+  let offset = zip.readUInt32LE(end + 16);
+  const names: string[] = [];
+  for (let index = 0; index < count; index += 1) {
+    if (zip.readUInt32LE(offset) !== 0x02014b50) throw new Error(`${filePath} is corrupt.`);
+    const nameLength = zip.readUInt16LE(offset + 28);
+    const extraLength = zip.readUInt16LE(offset + 30);
+    const commentLength = zip.readUInt16LE(offset + 32);
+    names.push(zip.toString('utf8', offset + 46, offset + 46 + nameLength));
+    offset += 46 + nameLength + extraLength + commentLength;
+  }
+  return names;
+}
+
 /** Save a single ready book through the real Save As handler and a mocked native picker. */
 export async function saveBookAs(name: string, filePath: string): Promise<void> {
   const saveDialog = await browser.electron.mock('dialog', 'showSaveDialog');
