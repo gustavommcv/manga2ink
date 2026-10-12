@@ -150,8 +150,13 @@ function TitleRow({
         {chip.label}
       </span>
       {saved ? (
-        // Keeps the status chips of every title in one column.
-        <span aria-hidden="true" className="size-9 shrink-0" />
+        // Keeps the status chips of every title in one column: a space for each button the other
+        // titles have.
+        [onEdit, onEditDetails, onEditOptions]
+          .filter((action) => action !== undefined)
+          .map((_action, position) => (
+            <span aria-hidden="true" className="size-9 shrink-0" key={String(position)} />
+          ))
       ) : (
         <>
           <Button

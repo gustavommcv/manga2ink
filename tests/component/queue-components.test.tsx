@@ -377,6 +377,32 @@ describe('LibraryScreen', () => {
     expect(rows[4]).toHaveTextContent('mangapress crashed.');
   });
 
+  it('leaves a title that was saved as much room as the others have buttons, so the chips line up', () => {
+    const buttonsOf = (row: HTMLElement): number => within(row).queryAllByRole('button').length;
+    const spacesOf = (row: HTMLElement): number =>
+      row.querySelectorAll('span[aria-hidden="true"].size-9:empty').length;
+
+    const { unmount } = render(
+      <LibraryScreen name="Library" onBack={vi.fn()} onEdit={vi.fn()} titles={titles} />,
+    );
+    let rows = screen.getAllByRole('listitem');
+    expect([buttonsOf(rows[0]!), spacesOf(rows[3]!)]).toEqual([1, 1]);
+    unmount();
+
+    render(
+      <LibraryScreen
+        name="Library"
+        onBack={vi.fn()}
+        onEdit={vi.fn()}
+        onEditDetails={vi.fn()}
+        onEditOptions={vi.fn()}
+        titles={titles}
+      />,
+    );
+    rows = screen.getAllByRole('listitem');
+    expect([buttonsOf(rows[0]!), spacesOf(rows[3]!)]).toEqual([3, 3]);
+  });
+
   it('opens a title in the editor and goes back to the queue', async () => {
     const user = userEvent.setup();
     const onEdit = vi.fn();
