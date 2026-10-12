@@ -54,6 +54,7 @@ The user guide is the independent Astro/Starlight package under `website/`; `doc
 | `npm run test:stories`                    | Storybook interactions and axe accessibility checks.                             |
 | `npm run build-storybook`                 | Build the isolated UI reference.                                                 |
 | `npm run test:visual`                     | Compare selected UI states with Windows CI baselines.                            |
+| `npm run test:mutation`                   | Not a gate. Changes the domain and application layers one thing at a time.       |
 | `npm run package:e2e`, `npm run test:e2e` | Exercise the packaged Electron app with real converters.                         |
 
 ## Module boundaries
@@ -69,6 +70,12 @@ Follow the [layer table](docs/architecture.md#layers). `npm run lint` enforces i
 - Use recorded real responses for online providers. Changes to mangabind or mangapress follow those repositories' fixture and test conventions.
 
 Tests should detect a broken behavior, not merely confirm the current implementation or increase a coverage number. See [the provider guide](docs/adding-a-metadata-provider.md) for adding and testing another online source.
+
+### Mutation testing
+
+Coverage says a line ran, not that a test would notice it being wrong. `npm run test:mutation` changes the domain and application layers one thing at a time (a condition flipped, a value dropped) and runs only the unit tests that import each file; a change no test notices is a test that does not check what it seems to. It takes an hour or more, so it is run on purpose and is not a gate. It is a package of its own, `tests/mutation/`, as `website/` is: Stryker needs Babel 8, and none of it reaches the app's lockfile. Run `npm ci` there first. Name files to run fewer (`npm run test:mutation -- src/domain/mapping.ts`); the text of messages is left out unless `MUTATE_STRINGS=1`.
+
+Fix a surviving change by writing the test that would have failed, not by touching the code. Some are equivalent (the result cannot differ) and need nothing.
 
 ## Storybook: what it is and how it is used here
 

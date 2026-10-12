@@ -44,6 +44,18 @@ updates:
       - dependency-name: typescript
         update-types: ['version-update:semver-major']
 
+  # The mutation-testing tool is a package of its own (see CONTRIBUTING); its two packages share one
+  # version, as Stryker's runner requires its core at exactly its own.
+  - package-ecosystem: npm
+    directory: /tests/mutation
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 2
+    groups:
+      stryker:
+        patterns:
+          - '@stryker-mutator/*'
+
   - package-ecosystem: github-actions
     directory: /
     schedule:

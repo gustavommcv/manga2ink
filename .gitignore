@@ -21,3 +21,7 @@ website/src/assets/tutorial/generated/
 
 # Copied in by the Arch package job, from the app's icon.
 packaging/arch/mangabound.png
+
+# Mutation testing: the work copy and its reports.
+.stryker-tmp/
+tests/mutation/reports/
