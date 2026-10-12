@@ -245,6 +245,103 @@ describe('the conversion options of one item', () => {
   });
 });
 
+describe('putting an option of one item back', () => {
+  const useQueue = (field: string): RegExp => new RegExp(`Use the queue’s value for ${field}`, 'u');
+
+  it('goes back to the queue’s value, not to the app’s default, and says so', async () => {
+    const user = userEvent.setup();
+    installBridge(twoFolders());
+    render(<App />);
+    await addFolder(user);
+    // The queue is not at the app's defaults: Kindle 11, as an EPUB, with webtoon strips.
+    await user.selectOptions(screen.getByLabelText('Device'), 'K11');
+    await user.click(screen.getByRole('radio', { name: 'EPUB' }));
+
+    await openOptions(user, 'First');
+    // Nothing is in color, and so no option has an arrow, though none is the app's default.
+    expect(screen.getByLabelText('Device profile')).toHaveValue('K11');
+    expect(screen.getByLabelText('Book format')).toHaveValue('epub');
+    expect(screen.queryByRole('button', { name: /Restore default for/u })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: useQueue('') })).not.toBeInTheDocument();
+
+    // The app's default is a change here, the queue's own value is not.
+    await user.selectOptions(screen.getByLabelText('Device profile'), 'KPW6');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'cbz');
+    expect(screen.queryByRole('button', { name: /Restore default for/u })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: useQueue('Device profile') }));
+    expect(screen.getByLabelText('Device profile')).toHaveValue('K11');
+    expect(
+      screen.queryByRole('button', { name: useQueue('Device profile') }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: useQueue('Book format') }));
+    expect(screen.getByLabelText('Book format')).toHaveValue('epub');
+    // The item is the queue's again, and has nothing of its own.
+    expect(screen.getByText('This item uses the options of the queue.')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    expect(
+      screen.getByRole('button', { name: 'Edit conversion options of First' }),
+    ).toHaveAttribute('title', 'Edit conversion options for this item');
+  });
+
+  it('is for each option on its own, whatever kind of control it is', async () => {
+    const user = userEvent.setup();
+    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    installBridge(twoFolders({ convert }));
+    render(<App />);
+    await addFolder(user);
+
+    await openOptions(user, 'First');
+    await user.selectOptions(screen.getByLabelText('Wide pages'), 'split');
+    await user.selectOptions(screen.getByLabelText('Borders'), 'black');
+    await user.selectOptions(screen.getByLabelText('Autocontrast'), 'off');
+    await user.selectOptions(screen.getByLabelText('Page size'), 'stretch');
+    for (const field of ['Wide pages', 'Borders', 'Autocontrast', 'Page size']) {
+      expect(screen.getByRole('button', { name: useQueue(field) })).toBeVisible();
+    }
+
+    // One put back, the others stay as the item has them.
+    await user.click(screen.getByRole('button', { name: useQueue('Borders') }));
+    expect(screen.getByLabelText('Borders')).toHaveValue('automatic');
+    expect(screen.getByLabelText('Autocontrast')).toHaveValue('off');
+    await user.click(screen.getByRole('button', { name: useQueue('Autocontrast') }));
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await user.click(await runButton(2));
+    await screen.findByRole('heading', { name: /ready/u });
+
+    const first = convert.mock.calls[0]?.[0].settings;
+    expect(first).toMatchObject({
+      splitter: 'split',
+      blackBorders: false,
+      noAutoContrast: false,
+      stretch: true,
+    });
+    expect(convert.mock.calls[1]?.[0].settings.splitter).toBe('both');
+  });
+
+  it('is shown for a field that is the app’s default when the queue’s is not', async () => {
+    const user = userEvent.setup();
+    installBridge(twoFolders());
+    render(<App />);
+    await addFolder(user);
+    await openOptions(user, 'First');
+    await user.selectOptions(screen.getByLabelText('Content'), 'webtoon');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    // The queue now has webtoon strips too, so the item has nothing of its own to put back.
+    await user.click(screen.getByRole('button', { name: 'Advanced conversion options' }));
+    await user.selectOptions(screen.getByLabelText('Content'), 'webtoon');
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+
+    await openOptions(user, 'First');
+
+    expect(screen.getByLabelText('Content')).toHaveValue('webtoon');
+    expect(screen.queryByRole('button', { name: useQueue('Content') })).not.toBeInTheDocument();
+    // Going to the app's default is the item's own choice now, and has an arrow to go back.
+    await user.selectOptions(screen.getByLabelText('Content'), 'pages');
+    expect(screen.getByRole('button', { name: useQueue('Content') })).toBeVisible();
+  });
+});
+
 describe('the conversion options of a title in a library', () => {
   it('are set per title, and sent for the titles they were set for', async () => {
     const user = userEvent.setup();

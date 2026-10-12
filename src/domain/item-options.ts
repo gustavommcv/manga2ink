@@ -80,3 +80,24 @@ export function itemOptionsFor(
   };
   return hasItemOptions(options) ? options : undefined;
 }
+
+/**
+ * The settings with one field as the queue has it again. Choosing a device also sets the two
+ * things a device starts with, upscaling and color (ADR 0011), so putting the device back puts
+ * those two back with it, as choosing it did. A field the queue leaves unset is left unset.
+ */
+export function withQueueValue(
+  settings: MangapressSettings,
+  queue: MangapressSettings,
+  field: keyof MangapressSettings,
+): MangapressSettings {
+  const next: Record<string, unknown> = { ...settings };
+  const fields: readonly (keyof MangapressSettings)[] =
+    field === 'deviceProfile' ? ['deviceProfile', 'upscale', 'forceColor'] : [field];
+  for (const name of fields) {
+    const value = queue[name];
+    if (value === undefined) delete next[name];
+    else next[name] = value;
+  }
+  return next as unknown as MangapressSettings;
+}

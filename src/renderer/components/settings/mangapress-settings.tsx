@@ -25,6 +25,7 @@ import {
   withDeviceProfile,
   withPageSize,
 } from '@/domain/output-profile';
+import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
 import { singleBookLockReason } from '@/domain/process-mode';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
@@ -83,6 +84,11 @@ interface MangapressSettingsProps {
   readonly onNotify?: (message: string) => void;
   readonly onSettings: (settings: MangapressSettings) => void;
   readonly profiles: readonly DeviceProfileSummary[];
+  /**
+   * The options of the queue, when these are the options of one item (ADR 0046): a field is then
+   * changed when it differs from them, not from the app's defaults, and its reset puts theirs back.
+   */
+  readonly queue?: { readonly settings: MangapressSettings; readonly format: BookFormat };
   readonly settings: MangapressSettings;
   readonly singleBook?: boolean;
 }
@@ -92,6 +98,7 @@ export function MangapressSettingsEditor({
   onFormat,
   onSettings,
   profiles,
+  queue,
   settings,
   singleBook,
 }: MangapressSettingsProps): React.JSX.Element {
@@ -107,23 +114,42 @@ export function MangapressSettingsEditor({
   ): void => {
     onSettings({ ...settings, [field]: value });
   };
+  // What a field is compared with, and put back to: the app's defaults, or the queue's options.
+  const resetsTo = queue === undefined ? undefined : ('queue' as const);
   const resetProps = (
     field: keyof MangapressSettings,
   ): {
     readonly changed: boolean;
     readonly onReset: () => void;
-  } => ({
-    changed: settings[field] !== defaultValueForSetting(settings, field),
-    onReset: () => {
-      onSettings(restoreSettingDefault(settings, field));
-    },
-  });
+    readonly resetsTo?: 'queue';
+  } =>
+    queue === undefined
+      ? {
+          changed: settings[field] !== defaultValueForSetting(settings, field),
+          onReset: () => {
+            onSettings(restoreSettingDefault(settings, field));
+          },
+        }
+      : {
+          changed: settings[field] !== queue.settings[field],
+          onReset: () => {
+            onSettings(withQueueValue(settings, queue.settings, field));
+          },
+          resetsTo: 'queue',
+        };
   const locks = pageLayoutLocks(settings, format);
   const imageLock = imageLocks(settings, format);
   const bookLock = coverAndNameLocks(settings, format, selectedProfile?.family);
   const pageSize = pageSizeOf(settings);
   const borders = borderModeOf(settings);
+  const formatBaseline = queue === undefined ? defaultFormat : queue.format;
+  const pageSizeBaseline =
+    queue === undefined ? defaultPageSizeFor(settings.deviceProfile) : pageSizeOf(queue.settings);
+  const bordersBaseline: BorderMode =
+    queue === undefined ? 'automatic' : borderModeOf(queue.settings);
   const autoContrast = autoContrastOf(settings);
+  const autoContrastBaseline: AutoContrastMode =
+    queue === undefined ? 'monochrome' : autoContrastOf(queue.settings);
   const jpegUse = jpegUseOf(settings, format);
   // The three numbers tune margin cropping, so they follow it: off by choice, or off for webtoons.
   const croppingReason =
@@ -188,16 +214,17 @@ export function MangapressSettingsEditor({
           </NativeSelect>
         </SelectField>
         <SelectField
-          changed={format !== defaultFormat}
+          changed={format !== formatBaseline}
           description={singleBookActive ? singleBookLockReason : undefined}
           disabled={singleBookActive}
           id="output-format"
           label="Book format"
           onReset={() => {
             if (!singleBookActive) {
-              onFormat(defaultFormat);
+              onFormat(formatBaseline);
             }
           }}
+          resetsTo={resetsTo}
         >
           <NativeSelect
             disabled={singleBookActive}
@@ -402,7 +429,7 @@ export function MangapressSettingsEditor({
         title="Size and borders"
       >
         <SelectField
-          changed={pageSize !== defaultPageSizeFor(settings.deviceProfile)}
+          changed={pageSize !== pageSizeBaseline}
           description={
             locks.pageSize ??
             (settings.webtoon && pageSize === 'enlarge'
@@ -413,8 +440,9 @@ export function MangapressSettingsEditor({
           id="page-size"
           label="Page size"
           onReset={() => {
-            onSettings(withPageSize(settings, defaultPageSizeFor(settings.deviceProfile)));
+            onSettings(withPageSize(settings, pageSizeBaseline));
           }}
+          resetsTo={resetsTo}
         >
           <NativeSelect
             aria-describedby="page-size-message"
@@ -432,7 +460,7 @@ export function MangapressSettingsEditor({
           </NativeSelect>
         </SelectField>
         <SelectField
-          changed={borders !== 'automatic'}
+          changed={borders !== bordersBaseline}
           description={
             locks.borders ?? borderDescriptions[format === 'epub' ? 'epub' : 'padded'][borders]
           }
@@ -440,8 +468,9 @@ export function MangapressSettingsEditor({
           id="borders"
           label="Borders"
           onReset={() => {
-            onSettings(withBorderMode(settings, 'automatic'));
+            onSettings(withBorderMode(settings, bordersBaseline));
           }}
+          resetsTo={resetsTo}
         >
           <NativeSelect
             aria-describedby="borders-message"
@@ -621,14 +650,15 @@ export function MangapressSettingsEditor({
           </NativeSelect>
         </SelectField>
         <SelectField
-          changed={autoContrast !== 'monochrome'}
+          changed={autoContrast !== autoContrastBaseline}
           description={locks.autoContrast ?? autoContrastDescriptions[autoContrast]}
           disabled={locks.autoContrast !== undefined}
           id="auto-contrast"
           label="Autocontrast"
           onReset={() => {
-            onSettings(withAutoContrast(settings, 'monochrome'));
+            onSettings(withAutoContrast(settings, autoContrastBaseline));
           }}
+          resetsTo={resetsTo}
         >
           <NativeSelect
             aria-describedby="auto-contrast-message"
@@ -914,6 +944,8 @@ function SettingsSection({
 interface ResettableFieldProps {
   readonly changed: boolean;
   readonly onReset: () => void;
+  /** What the reset puts back; the app's default unless it is the queue's options (one item). */
+  readonly resetsTo?: 'default' | 'queue' | undefined;
 }
 
 function SelectField({
@@ -925,6 +957,7 @@ function SelectField({
   id,
   label,
   onReset,
+  resetsTo,
 }: ResettableFieldProps & {
   readonly children: ReactNode;
   readonly description?: string;
@@ -941,6 +974,7 @@ function SelectField({
         id={id}
         label={label}
         onReset={onReset}
+        resetsTo={resetsTo}
       />
       {children}
       <FieldMessage description={description} error={error} id={`${id}-message`} />
@@ -957,6 +991,7 @@ function TextField({
   onValue,
   onReset,
   placeholder,
+  resetsTo,
   value,
 }: ResettableFieldProps & {
   readonly description?: string;
@@ -969,7 +1004,13 @@ function TextField({
 }): React.JSX.Element {
   return (
     <div className="space-y-2">
-      <SettingFieldHeader changed={changed} id={id} label={label} onReset={onReset} />
+      <SettingFieldHeader
+        changed={changed}
+        id={id}
+        label={label}
+        onReset={onReset}
+        resetsTo={resetsTo}
+      />
       <Input
         aria-describedby={
           description === undefined && error === undefined ? undefined : `${id}-message`
@@ -1000,6 +1041,7 @@ function NumberField({
   onReset,
   optional = false,
   placeholder,
+  resetsTo,
   step = 1,
   value,
 }: ResettableFieldProps & {
@@ -1028,6 +1070,7 @@ function NumberField({
         label={label}
         onReset={onReset}
         optional={optional}
+        resetsTo={resetsTo}
       />
       <Input
         aria-describedby={
@@ -1070,6 +1113,7 @@ function ToggleField({
   label,
   onChecked,
   onReset,
+  resetsTo,
 }: ResettableFieldProps & {
   readonly checked: boolean;
   readonly description: string;
@@ -1096,6 +1140,7 @@ function ToggleField({
           id={id}
           label={label}
           onReset={onReset}
+          resetsTo={resetsTo}
         />
         <p className="text-muted-foreground mt-1 text-xs leading-relaxed" id={`${id}-message`}>
           {description}

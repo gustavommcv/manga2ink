@@ -24,6 +24,8 @@ export interface ItemOptionsScreenProps {
   /** Drops everything the item set, so it follows the queue's options again. */
   readonly onUseQueueOptions: () => void;
   readonly profiles: readonly DeviceProfileSummary[];
+  /** The options of the queue: what a field is compared with here, and what its reset puts back. */
+  readonly queue: RunOptions;
   /** The options this item is converted with: the queue's, with what the item set over them. */
   readonly settings: MangapressSettings;
   readonly singleBook: boolean;
@@ -44,6 +46,7 @@ export function ItemOptionsScreen({
   onNotify,
   onUseQueueOptions,
   profiles,
+  queue,
   settings,
   singleBook,
 }: ItemOptionsScreenProps): React.JSX.Element {
@@ -69,8 +72,9 @@ export function ItemOptionsScreen({
             Options for {name}
           </h1>
           <p className="text-muted-foreground mt-3 text-sm">
-            What you change here is used for this item only. Everything else follows the conversion
-            options of the queue, including what you change there later.
+            What you change here is used for this item only, and is shown in color. Everything else
+            follows the conversion options of the queue, including what you change there later; the
+            arrow beside a changed option puts the queue’s value back.
           </p>
         </div>
         <div className="w-72 shrink-0">
@@ -102,6 +106,7 @@ export function ItemOptionsScreen({
           onChange({ settings: next, format });
         }}
         profiles={profiles}
+        queue={queue}
         settings={settings}
         singleBook={singleBook}
       />

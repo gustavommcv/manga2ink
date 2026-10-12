@@ -5,6 +5,7 @@ import {
   hasItemOptions,
   itemOptionsFor,
   type RunOptions,
+  withQueueValue,
 } from '@/domain/item-options';
 import { defaultMangapressSettings, withDeviceProfile } from '@/domain/output-profile';
 
@@ -114,5 +115,50 @@ describe('item options', () => {
       true,
     );
     expect(item).toEqual({ settings: { webtoon: true } });
+  });
+
+  describe('putting one field back to what the queue has', () => {
+    const withKobo = { ...defaultMangapressSettings, deviceProfile: 'KoC', upscale: true };
+
+    it('puts back that field and no other', () => {
+      const edited = { ...withKobo, webtoon: true, cropping: 'disabled' as const };
+
+      const next = withQueueValue(edited, withKobo, 'webtoon');
+
+      expect(next).toEqual({ ...edited, webtoon: false });
+      expect(edited.webtoon).toBe(true);
+    });
+
+    it('puts back the two things a device starts with, with the device', () => {
+      const queue = {
+        ...defaultMangapressSettings,
+        deviceProfile: 'K11',
+        upscale: true,
+        forceColor: false,
+      };
+      const edited = {
+        ...defaultMangapressSettings,
+        deviceProfile: 'KCS',
+        upscale: false,
+        forceColor: true,
+        webtoon: true,
+      };
+
+      const next = withQueueValue(edited, queue, 'deviceProfile');
+
+      expect(next).toEqual({ ...edited, deviceProfile: 'K11', upscale: true, forceColor: false });
+    });
+
+    it('leaves a field unset when the queue has it unset', () => {
+      const queue = { ...defaultMangapressSettings };
+      const edited = { ...defaultMangapressSettings, jpegQuality: 70 };
+
+      const next = withQueueValue(edited, queue, 'jpegQuality');
+
+      expect('jpegQuality' in next).toBe(false);
+      expect(withQueueValue(edited, { ...queue, jpegQuality: 90 }, 'jpegQuality').jpegQuality).toBe(
+        90,
+      );
+    });
   });
 });

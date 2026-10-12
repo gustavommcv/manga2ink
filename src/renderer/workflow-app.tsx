@@ -999,6 +999,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                 itemOptionsOpen.change(undefined);
               }}
               profiles={profiles}
+              queue={queueOptions}
               settings={
                 effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).settings
               }

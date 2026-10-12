@@ -13,6 +13,7 @@ export function SettingFieldHeader({
   label,
   onReset,
   optional = false,
+  resetsTo = 'default',
 }: {
   readonly changed: boolean;
   readonly disabled?: boolean;
@@ -20,8 +21,12 @@ export function SettingFieldHeader({
   readonly label: string;
   readonly onReset: () => void;
   readonly optional?: boolean;
+  /** What the reset puts back: the app's default, or the options of the queue (for one item). */
+  readonly resetsTo?: 'default' | 'queue';
 }): React.JSX.Element {
   const header = useRef<HTMLDivElement>(null);
+  const resetLabel =
+    resetsTo === 'queue' ? `Use the queue’s value for ${label}` : `Restore default for ${label}`;
   const labelClass = cn(
     'text-sm font-medium',
     disabled && 'text-muted-foreground',
@@ -49,7 +54,7 @@ export function SettingFieldHeader({
       )}
       {changed && (
         <Button
-          aria-label={`Restore default for ${label}`}
+          aria-label={resetLabel}
           className="text-accent hover:bg-accent/10 hover:text-accent absolute -top-0.5 right-0 size-6 p-0"
           onClick={() => {
             onReset();
@@ -58,7 +63,7 @@ export function SettingFieldHeader({
             else header.current?.focus();
           }}
           size="icon"
-          title={`Restore default for ${label}`}
+          title={resetLabel}
           variant="ghost"
         >
           <RotateCcw aria-hidden="true" />

@@ -69,6 +69,7 @@ const meta = {
         family: 'kobo',
       },
     ],
+    queue: { format: 'cbz', settings: defaultMangapressSettings },
     settings: defaultMangapressSettings,
     singleBook: false,
   },
