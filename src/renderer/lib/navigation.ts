@@ -9,7 +9,7 @@ export type EditingTarget =
 export type WorkflowNavigation =
   | { readonly screen: 'queue' | 'options' | 'running' | 'results' }
   | { readonly screen: 'library'; readonly rowId: string }
-  | { readonly screen: 'mapping' | 'details'; readonly target: EditingTarget };
+  | { readonly screen: 'mapping' | 'details' | 'item-options'; readonly target: EditingTarget };
 
 const queue: WorkflowNavigation = { screen: 'queue' };
 
@@ -27,7 +27,11 @@ export function resolveNavigation(
     const row = rows.find((candidate) => candidate.id === navigation.rowId);
     return row?.state === 'inspected' && row.titles !== undefined ? navigation : queue;
   }
-  if (navigation.screen === 'mapping' || navigation.screen === 'details') {
+  if (
+    navigation.screen === 'mapping' ||
+    navigation.screen === 'details' ||
+    navigation.screen === 'item-options'
+  ) {
     const { target } = navigation;
     const row = rows.find((candidate) => candidate.id === target.rowId);
     if (row?.state !== 'inspected') return queue;

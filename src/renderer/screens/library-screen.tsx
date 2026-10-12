@@ -1,8 +1,9 @@
-import { ChevronLeft, Folder, Layers, UserPen } from 'lucide-react';
+import { ChevronLeft, Folder, Layers, SlidersHorizontal, UserPen } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 import { hasBookDetails } from '@/domain/book-details';
 import { isPendingTitle, isWaitingTitle, type LibraryTitle } from '@/domain/input-queue';
+import { hasItemOptions } from '@/domain/item-options';
 import { skippedLinksNotice } from '@/domain/library-links';
 import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
@@ -15,6 +16,8 @@ export interface LibraryScreenProps {
   readonly onEdit: (title: string) => void;
   /** Absent when the run does not make books with mangapress, so there is nothing to edit. */
   readonly onEditDetails?: (title: string) => void;
+  /** Absent when the run does not make books with mangapress, so there are no options to set. */
+  readonly onEditOptions?: (title: string) => void;
   readonly singleBook?: boolean;
   /** Links in the library folder that were not followed: series that are not in the list. */
   readonly skippedLinks?: readonly string[];
@@ -30,6 +33,7 @@ export function LibraryScreen({
   onBack,
   onEdit,
   onEditDetails,
+  onEditOptions,
   singleBook,
   skippedLinks = [],
   titles,
@@ -71,6 +75,7 @@ export function LibraryScreen({
             key={title.title}
             onEdit={onEdit}
             {...(onEditDetails === undefined ? {} : { onEditDetails })}
+            {...(onEditOptions === undefined ? {} : { onEditOptions })}
             title={title}
           />
         ))}
@@ -98,10 +103,12 @@ function SkippedLinks({ names }: { readonly names: readonly string[] }): React.J
 function TitleRow({
   onEdit,
   onEditDetails,
+  onEditOptions,
   title,
 }: {
   readonly onEdit: (title: string) => void;
   readonly onEditDetails?: (title: string) => void;
+  readonly onEditOptions?: (title: string) => void;
   readonly title: LibraryTitle;
 }): React.JSX.Element {
   const saved = title.outcome?.status === 'done';
@@ -174,6 +181,24 @@ function TitleRow({
               variant="ghost"
             >
               <UserPen />
+            </Button>
+          )}
+          {onEditOptions !== undefined && (
+            <Button
+              aria-label={`Edit conversion options of ${title.title}`}
+              className={cn(hasItemOptions(title.options) && 'text-accent')}
+              onClick={() => {
+                onEditOptions(title.title);
+              }}
+              size="icon"
+              title={
+                hasItemOptions(title.options)
+                  ? 'Edit conversion options for this title (set)'
+                  : 'Edit conversion options for this title'
+              }
+              variant="ghost"
+            >
+              <SlidersHorizontal />
             </Button>
           )}
         </>

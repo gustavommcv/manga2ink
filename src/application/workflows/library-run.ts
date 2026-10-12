@@ -18,6 +18,7 @@ import type {
   ConversionArtifact,
   ConversionProgress,
 } from '@/domain/conversion';
+import type { RunOptions } from '@/domain/item-options';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { type BatchProcessMode, usesMangapress } from '@/domain/process-mode';
 
@@ -42,6 +43,12 @@ export class LibraryRun {
       readonly singleBook?: boolean;
       /** What was typed for each title of the library, by the title's name. */
       readonly titleDetails?: readonly { readonly title: string; readonly details: BookDetails }[];
+      /** The options and format a title is made with where they are not the library's (ADR 0046). */
+      readonly titleOptions?: readonly {
+        readonly title: string;
+        readonly settings: MangapressSettings;
+        readonly format: BookFormat;
+      }[];
     },
     {
       onArtifact,
@@ -56,6 +63,15 @@ export class LibraryRun {
     const mode = validateRunOptions(request, 'converting');
     const singleBook = Boolean(request.singleBook);
     if (singleBook) assertSingleBook(mode, request.format);
+    // A title's own options are held to what the library's are, before anything is bound.
+    for (const own of request.titleOptions ?? []) {
+      validateRunOptions({ mode, settings: own.settings, format: own.format }, 'converting');
+      if (singleBook) assertSingleBook(mode, own.format);
+    }
+    const optionsOf = (title: string): RunOptions =>
+      usesMangapress(mode)
+        ? (request.titleOptions?.find((entry) => entry.title === title) ?? request)
+        : request;
     const { session, library } = this.sessions.librarySession(request.sessionId);
     onProgress({
       stage: 'binding',
@@ -133,10 +149,10 @@ export class LibraryRun {
               {
                 inputPath: title.combinedOutputPath,
                 libraryPath: request.libraryPath,
-                settings: request.settings,
+                settings: optionsOf(title.title).settings,
                 book: detailsForBook(detailsOf(title.title)),
                 ...coverOfTheBook(await coversOf(title.title)),
-                format: request.format,
+                format: optionsOf(title.title).format,
                 nestedToc: true,
               },
               {
@@ -174,9 +190,9 @@ export class LibraryRun {
             mode,
             {
               libraryPath: request.libraryPath,
-              settings: request.settings,
+              settings: optionsOf(title.title).settings,
               details: detailsOf(title.title),
-              format: request.format,
+              format: optionsOf(title.title).format,
               nestedToc: false,
             },
             { title: title.title, onArtifact, onProgress, signal },

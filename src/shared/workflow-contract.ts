@@ -211,6 +211,17 @@ export const libraryConversionCommandSchema = z.object({
     .array(z.object({ title: titleNameSchema, details: bookDetailsSchema }))
     .max(maxTitles)
     .optional(),
+  /** The options and format a title is made with where they are not the library's (ADR 0046). */
+  titleOptions: z
+    .array(
+      z.object({
+        title: titleNameSchema,
+        settings: mangapressSettingsSchema,
+        format: z.enum(['epub', 'cbz', 'pdf']),
+      }),
+    )
+    .max(maxTitles)
+    .optional(),
 });
 
 /** Keeps the author and language of a folder, or of one title of a library, with that folder. */
@@ -428,6 +439,12 @@ export interface LibraryConversionCommand {
   readonly singleBook?: boolean;
   /** What was typed for each title of the library, by the title's name. */
   readonly titleDetails?: readonly { readonly title: string; readonly details: BookDetails }[];
+  /** The options and format a title is made with where they are not the library's (ADR 0046). */
+  readonly titleOptions?: readonly {
+    readonly title: string;
+    readonly settings: MangapressSettings;
+    readonly format: BookFormat;
+  }[];
 }
 
 export interface LibraryTitleResult {

@@ -173,6 +173,46 @@ describe('workflow IPC contract', () => {
   });
 });
 
+describe('the options a title of a library is made with', () => {
+  const library = {
+    jobId: 'job',
+    sessionId: 'session',
+    libraryId: 'library',
+    settings: defaultMangapressSettings,
+    format: 'cbz',
+  };
+  const own = { title: 'Good Manga', settings: defaultMangapressSettings, format: 'epub' };
+
+  it('travel with the library, by the name of the title, and are optional', () => {
+    expect(libraryConversionCommandSchema.parse(library)).not.toHaveProperty('titleOptions');
+    expect(
+      libraryConversionCommandSchema.parse({ ...library, titleOptions: [own] }).titleOptions,
+    ).toEqual([own]);
+  });
+
+  it('are held to the same rules as the options of the library', () => {
+    for (const bad of [
+      { ...own, format: 'mobi' },
+      { ...own, settings: { ...defaultMangapressSettings, croppingPower: 'high' } },
+      { ...own, settings: { ...defaultMangapressSettings, deviceProfile: 'OTHER' } },
+      { ...own, title: 'x'.repeat(1025) },
+    ]) {
+      expect(
+        libraryConversionCommandSchema.safeParse({ ...library, titleOptions: [bad] }).success,
+      ).toBe(false);
+    }
+    expect(
+      libraryConversionCommandSchema.safeParse({
+        ...library,
+        titleOptions: Array.from({ length: 1001 }, (_, index) => ({
+          ...own,
+          title: `Title ${String(index)}`,
+        })),
+      }).success,
+    ).toBe(false);
+  });
+});
+
 describe('the command that keeps details with a folder', () => {
   it('names a session, and a title only for a library, with the details to keep', () => {
     const details = { author: 'Fujimoto Tatsuki', language: 'pt-br' };

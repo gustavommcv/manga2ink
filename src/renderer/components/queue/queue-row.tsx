@@ -1,7 +1,17 @@
-import { FileArchive, Folder, Layers, Library, LoaderCircle, UserPen, X } from 'lucide-react';
+import {
+  FileArchive,
+  Folder,
+  Layers,
+  Library,
+  LoaderCircle,
+  SlidersHorizontal,
+  UserPen,
+  X,
+} from 'lucide-react';
 
 import { hasBookDetails } from '@/domain/book-details';
 import { describeRow, type QueueRow, type RowTone, rowMode } from '@/domain/input-queue';
+import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangapress } from '@/domain/process-mode';
 import { Button } from '@/renderer/components/ui/button';
 import { cn } from '@/renderer/lib/utils';
@@ -18,6 +28,7 @@ export function QueueRowItem({
   mode,
   onEdit,
   onEditDetails,
+  onEditOptions,
   onRemove,
   row,
 }: {
@@ -25,6 +36,8 @@ export function QueueRowItem({
   readonly onEdit: () => void;
   /** Opens the title, author and language of the item. */
   readonly onEditDetails: () => void;
+  /** Opens the conversion options of the item, which are the queue's until it sets its own. */
+  readonly onEditOptions: () => void;
   readonly onRemove: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
@@ -41,6 +54,8 @@ export function QueueRowItem({
     process !== 'skip' &&
     usesMangapress(process);
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
+  // Its conversion options matter wherever mangapress makes the book; a library has them per title.
+  const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
   return (
     // The status and the buttons are one group that drops under the name when the row is too narrow
     // for both, rather than leaving the name a few letters wide.
@@ -102,6 +117,22 @@ export function QueueRowItem({
             variant="ghost"
           >
             <UserPen />
+          </Button>
+        )}
+        {detailsEditable && (
+          <Button
+            aria-label={`Edit conversion options of ${row.displayName}`}
+            className={cn(optionsSet && 'text-accent')}
+            onClick={onEditOptions}
+            size="icon"
+            title={
+              optionsSet
+                ? 'Edit conversion options for this item (set)'
+                : 'Edit conversion options for this item'
+            }
+            variant="ghost"
+          >
+            <SlidersHorizontal />
           </Button>
         )}
         <Button

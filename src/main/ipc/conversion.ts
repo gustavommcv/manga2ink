@@ -186,6 +186,7 @@ export function registerConversionHandlers(context: ConversionContext): void {
             ...(command.mode === undefined ? {} : { mode: command.mode }),
             ...(command.singleBook === undefined ? {} : { singleBook: command.singleBook }),
             ...(command.titleDetails === undefined ? {} : { titleDetails: command.titleDetails }),
+            ...(command.titleOptions === undefined ? {} : { titleOptions: command.titleOptions }),
           },
           {
             ...options,

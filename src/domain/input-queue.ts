@@ -1,4 +1,5 @@
 import { type BookDetails, hasBookDetails, normalizeBookDetails } from './book-details';
+import { hasItemOptions, type ItemOptions } from './item-options';
 import { onlyLinksNote } from './library-links';
 import { type MappingDraft, mappingSignature } from './mapping';
 import { libraryReason, type ProcessMode, resolveMode } from './process-mode';
@@ -25,6 +26,8 @@ export interface LibraryTitle {
   readonly outcome?: TitleOutcome;
   /** What was typed for this title's title, author and language (ADR 0030). */
   readonly details?: BookDetails;
+  /** What this title is converted with differently from the queue's options (ADR 0046). */
+  readonly options?: ItemOptions;
   /** Folders of the title that could not be read as chapters, and are in no book. */
   readonly unrecognized?: readonly string[];
 }
@@ -33,7 +36,7 @@ export interface LibraryTitle {
  * A title as it is read, before any run has done anything with it. It carries the author and
  * language kept with its folder, when there are any (ADR 0032).
  */
-export type ReadTitle = Omit<LibraryTitle, 'outcome'>;
+export type ReadTitle = Omit<LibraryTitle, 'options' | 'outcome'>;
 
 interface QueueRowBase {
   /** The id the main process registered the input under. */
@@ -59,6 +62,8 @@ export type QueueRow = QueueRowBase &
         readonly titles?: readonly LibraryTitle[];
         /** What was typed for this input's title, author and language (ADR 0030). */
         readonly details?: BookDetails;
+        /** What this input is converted with differently from the queue's options (ADR 0046). */
+        readonly options?: ItemOptions;
         /** Folders of the manga that could not be read as chapters, and are in no book. */
         readonly unrecognized?: readonly string[];
         /** Links in a library folder that were not followed: manga that are in no list of titles. */
@@ -111,6 +116,18 @@ export type QueueAction =
       readonly id: string;
       readonly title: string;
       readonly details: BookDetails;
+    }
+  /** The options this input is converted with differently from the queue's; none puts it back. */
+  | {
+      readonly type: 'set-options';
+      readonly id: string;
+      readonly options: ItemOptions | undefined;
+    }
+  | {
+      readonly type: 'set-title-options';
+      readonly id: string;
+      readonly title: string;
+      readonly options: ItemOptions | undefined;
     }
   | { readonly type: 'remove'; readonly ids: readonly string[] }
   | { readonly type: 'clear' };
@@ -183,6 +200,8 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
                 return {
                   ...readTitle(planned),
                   ...(details === undefined ? {} : { details }),
+                  // What a person chose for a title is theirs too.
+                  ...(saved?.options === undefined ? {} : { options: saved.options }),
                   ...(saved?.outcome?.status === 'done' ? { outcome: saved.outcome } : {}),
                 };
               }),
@@ -226,6 +245,21 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
             }
           : row,
       );
+    case 'set-options':
+      return rows.map((row) =>
+        row.id === action.id && row.state === 'inspected' ? withOptions(row, action.options) : row,
+      );
+    case 'set-title-options':
+      return rows.map((row) =>
+        row.id === action.id && row.state === 'inspected' && row.titles !== undefined
+          ? {
+              ...row,
+              titles: row.titles.map((title) =>
+                title.title === action.title ? withOptions(title, action.options) : title,
+              ),
+            }
+          : row,
+      );
     case 'remove': {
       const removed = new Set(action.ids);
       return rows.filter((row) => !removed.has(row.id));
@@ -233,6 +267,16 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
     case 'clear':
       return emptyQueue;
   }
+}
+
+/** The row or title with these options of its own, or without any when there are none. */
+function withOptions<T extends { readonly options?: ItemOptions }>(
+  target: T,
+  options: ItemOptions | undefined,
+): T {
+  const { options: previous, ...rest } = target;
+  void previous;
+  return (hasItemOptions(options) ? { ...rest, options } : rest) as T;
 }
 
 /** Keeps what the queue needs of a title, dropping anything else the read carried. */

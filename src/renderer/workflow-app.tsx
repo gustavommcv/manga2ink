@@ -18,6 +18,13 @@ import {
   runnableRows,
   sessionIds,
 } from '@/domain/input-queue';
+import {
+  effectiveOptions,
+  hasItemOptions,
+  type ItemOptions,
+  itemOptionsFor,
+  type RunOptions,
+} from '@/domain/item-options';
 import { dominantLanguage, type MappingDraft, mappingSignature } from '@/domain/mapping';
 import {
   defaultMangapressSettings,
@@ -59,6 +66,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { type AuthorLookup } from '@/renderer/components/details/author-lookup';
 import { BookDetailsScreen } from '@/renderer/screens/book-details-screen';
 import { ConversionOptionsScreen } from '@/renderer/screens/conversion-options-screen';
+import { ItemOptionsScreen } from '@/renderer/screens/item-options-screen';
 import { LibraryScreen } from '@/renderer/screens/library-screen';
 import { QueueScreen, type RowPlan } from '@/renderer/screens/queue-screen';
 import { ResultsScreen, type RunOutcome } from '@/renderer/screens/results-screen';
@@ -155,6 +163,8 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   // present its grouping/EPUB locks as active while the queue contains only CBZ files.
   const singleBookActive =
     singleBook && !(rows.length > 0 && rows.every((row) => row.kind === 'cbz'));
+  // What every item is converted with unless it sets options of its own (ADR 0046).
+  const queueOptions: RunOptions = useMemo(() => ({ settings, format }), [settings, format]);
   const [progress, setProgress] = useState<ConversionProgress>();
   const [runPosition, setRunPosition] = useState<{
     readonly name: string;
@@ -301,9 +311,10 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
    */
   const withRunSettings = <M extends ProcessMode>(
     resolved: M,
+    own?: ItemOptions,
   ): { readonly mode: M; readonly settings: MangapressSettings; readonly format: BookFormat } =>
     usesMangapress(resolved)
-      ? { mode: resolved, settings, format }
+      ? { mode: resolved, ...effectiveOptions(queueOptions, own, singleBookActive) }
       : { mode: resolved, settings: defaultMangapressSettings, format: 'cbz' };
   /** The command for one queue row. A folder sent straight to mangapress carries no volumes. */
   const planCommandFor = (
@@ -314,7 +325,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     jobId: commandJobId,
     sessionId: row.sessionId,
     singleBook: row.kind === 'cbz' ? false : singleBook,
-    ...withRunSettings(rowProcess),
+    ...withRunSettings(rowProcess, row.options),
     ...(row.mapping === undefined || rowProcess === 'convert-only' ? {} : { mapping: row.mapping }),
     // What was typed only matters where mangapress makes the book.
     ...(usesMangapress(rowProcess) && row.details !== undefined && hasBookDetails(row.details)
@@ -351,9 +362,11 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                 title.volumes.length,
                 title.outcome?.status,
                 title.details ?? null,
+                title.options ?? null,
               ])
             : [],
           row.state === 'inspected' ? (row.details ?? null) : null,
+          row.state === 'inspected' ? (row.options ?? null) : null,
         ]),
       ]),
     [mode, format, settings, singleBook, rows],
@@ -412,6 +425,8 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     const completedTitles = new Map<string, ReadonlySet<string>>();
     // The rows a run got to; those it did not (it was cancelled first) are not reported as left out.
     const attempted = new Set<string>();
+    // How many items a run converted with options of their own, for the results to say.
+    let withOwnOptions = 0;
     for (const [index, { row, mode: rowProcess }] of items.entries()) {
       if (cancelRequested.current) break;
       attempted.add(row.id);
@@ -429,6 +444,20 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                 : [],
             )
           : [];
+        // A title's own options reach it by its name, as what was typed for it does.
+        const titleOptions = usesMangapress(libraryProcess)
+          ? pendingTitles.flatMap((title) =>
+              hasItemOptions(title.options)
+                ? [
+                    {
+                      title: title.title,
+                      ...effectiveOptions(queueOptions, title.options, singleBookActive),
+                    },
+                  ]
+                : [],
+            )
+          : [];
+        withOwnOptions += titleOptions.length;
         const ran = await bridge.convertLibrary({
           jobId: nextJobId,
           sessionId: row.sessionId,
@@ -437,6 +466,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
           ...withRunSettings(libraryProcess),
           titles: pendingTitles.map((title) => title.title),
           ...(titleDetails.length === 0 ? {} : { titleDetails }),
+          ...(titleOptions.length === 0 ? {} : { titleOptions }),
         });
         const report = reportLibraryRun(row, ran);
         settled.push(...report.outcomes);
@@ -446,6 +476,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
         if (report.queueUpdate !== undefined) dispatch(report.queueUpdate);
         continue;
       }
+      if (usesMangapress(rowProcess) && hasItemOptions(row.options)) withOwnOptions += 1;
       const result = await bridge.convert(commandFor(row, rowProcess, runId, nextJobId));
       const report = reportInputRun(row, result);
       settled.push(...report.outcomes);
@@ -461,7 +492,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
       return;
     }
     setOutcomes(report.outcomes);
-    setResultSummary(describeRun(mode, deviceName, format));
+    setResultSummary(describeRun(mode, deviceName, format, withOwnOptions));
     await refreshPendingRuns();
     setNavigation({ screen: 'results' });
   };
@@ -483,6 +514,14 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
       row?.state === 'inspected' ? (row.details ?? noBookDetails) : noBookDetails,
     );
     setNavigation({ screen: 'details', target: { kind: 'input', rowId } });
+  };
+
+  const openOptions = (rowId: string): void => {
+    setNavigation({ screen: 'item-options', target: { kind: 'input', rowId } });
+  };
+
+  const openTitleOptions = (row: InspectedRow, title: string): void => {
+    setNavigation({ screen: 'item-options', target: { kind: 'title', rowId: row.id, title } });
   };
 
   const openTitleDetails = (row: InspectedRow, title: string): void => {
@@ -727,7 +766,9 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   };
 
   const editingTarget =
-    navigation.screen === 'mapping' || navigation.screen === 'details'
+    navigation.screen === 'mapping' ||
+    navigation.screen === 'details' ||
+    navigation.screen === 'item-options'
       ? navigation.target
       : undefined;
   const editingRow =
@@ -772,6 +813,40 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
         ? volumeNumbers(editingRow.mapping)
         : ['book'];
   const covers = useBookCovers(bridge, coverTarget, coverSlots, notify);
+
+  // The item whose own conversion options are open: a folder or CBZ of the queue, or one title of
+  // a library. What it is converted with is the queue's options with what it set over them.
+  const itemOptionsOpen =
+    navigation.screen !== 'item-options' || editingRow?.state !== 'inspected'
+      ? undefined
+      : editingTarget?.kind === 'title'
+        ? editingTitleEntry === undefined
+          ? undefined
+          : {
+              name: editingTitleEntry.title,
+              backLabel: editingRow.displayName,
+              own: editingTitleEntry.options,
+              back: { screen: 'library', rowId: editingRow.id } as const,
+              change: (options: ItemOptions | undefined) => {
+                dispatch({
+                  type: 'set-title-options',
+                  id: editingRow.id,
+                  title: editingTitleEntry.title,
+                  options,
+                });
+              },
+            }
+        : editingRow.kind === 'library'
+          ? undefined
+          : {
+              name: editingRow.displayName,
+              backLabel: 'Queue',
+              own: editingRow.options,
+              back: { screen: 'queue' } as const,
+              change: (options: ItemOptions | undefined) => {
+                dispatch({ type: 'set-options', id: editingRow.id, options });
+              },
+            };
 
   // A device the tools no longer list cannot be converted for, whether it came from the file or is
   // the default. This adjusts state while rendering, the way React documents for state that follows
@@ -856,6 +931,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               }}
               onEdit={openEditor}
               onEditDetails={openDetails}
+              onEditOptions={openOptions}
               onFormat={handleFormat}
               onMode={handleMode}
               onOpenOptions={() => {
@@ -890,6 +966,30 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               onSettings={setSettings}
               profiles={profiles}
               settings={settings}
+              singleBook={singleBookActive}
+            />
+          )}
+          {itemOptionsOpen !== undefined && (
+            <ItemOptionsScreen
+              backLabel={itemOptionsOpen.backLabel}
+              format={effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).format}
+              hasOwnOptions={hasItemOptions(itemOptionsOpen.own)}
+              key={navigation.screen === 'item-options' ? JSON.stringify(navigation.target) : ''}
+              name={itemOptionsOpen.name}
+              onBack={() => {
+                setNavigation(itemOptionsOpen.back);
+              }}
+              onChange={(edited) => {
+                itemOptionsOpen.change(itemOptionsFor(queueOptions, edited, singleBookActive));
+              }}
+              onNotify={notify}
+              onUseQueueOptions={() => {
+                itemOptionsOpen.change(undefined);
+              }}
+              profiles={profiles}
+              settings={
+                effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).settings
+              }
               singleBook={singleBookActive}
             />
           )}
@@ -949,6 +1049,9 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                   ? {
                       onEditDetails: (title: string) => {
                         openTitleDetails(editingRow, title);
+                      },
+                      onEditOptions: (title: string) => {
+                        openTitleOptions(editingRow, title);
                       },
                     }
                   : {})}

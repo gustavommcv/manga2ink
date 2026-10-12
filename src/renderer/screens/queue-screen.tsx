@@ -52,6 +52,8 @@ export interface QueueScreenProps {
   readonly onDropFiles: (files: readonly File[]) => void;
   readonly onEdit: (id: string) => void;
   readonly onEditDetails: (id: string) => void;
+  /** Opens the conversion options one item has of its own. */
+  readonly onEditOptions: (id: string) => void;
   readonly onFormat: (format: BookFormat) => void;
   readonly onMode: (mode: ProcessMode) => void;
   readonly onOpenOptions: () => void;
@@ -104,6 +106,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onDropFiles,
     onEdit,
     onEditDetails,
+    onEditOptions,
     onFormat,
     onMode,
     onOpenOptions,
@@ -189,6 +192,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                   }}
                   onEditDetails={() => {
                     onEditDetails(row.id);
+                  }}
+                  onEditOptions={() => {
+                    onEditOptions(row.id);
                   }}
                   onRemove={() => {
                     onRemove(row.id);

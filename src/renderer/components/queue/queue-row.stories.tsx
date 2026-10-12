@@ -26,6 +26,7 @@ const meta = {
     mode: 'bind-and-convert',
     onEdit: () => undefined,
     onEditDetails: () => undefined,
+    onEditOptions: () => undefined,
     onRemove: () => undefined,
   },
 } satisfies Meta<typeof QueueRowItem>;
@@ -49,6 +50,27 @@ export const Grouped: Story = {
         volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2'] }],
       }),
       confirmed: false,
+    },
+  },
+};
+
+/** A folder with conversion options of its own: the options button is colored. */
+export const WithOptions: Story = {
+  args: {
+    row: {
+      id: 'a',
+      kind: 'folder',
+      displayName: 'Chainsaw Man',
+      displayPath: 'D:\\Manga\\Chainsaw Man',
+      state: 'inspected',
+      sessionId: 'session-a',
+      mapping: createMappingDraft({
+        mangaTitle: 'Chainsaw Man',
+        chapters,
+        volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2'] }],
+      }),
+      confirmed: false,
+      options: { format: 'epub', settings: { deviceProfile: 'KoC', webtoon: true } },
     },
   },
 };

@@ -169,6 +169,19 @@ export function finishRunReport<Artifact>({
   return { outcomes, completedRowIds, hasResults: outcomes.length > 0 };
 }
 
-export function describeRun(mode: ProcessMode, deviceName: string, format: BookFormat): string {
-  return mode === 'bind-only' ? 'Joined volumes · CBZ' : `${deviceName} · ${format.toUpperCase()}`;
+/**
+ * What a run was made with, for the results: the device and format of the queue, and how many items
+ * were converted with options of their own instead (ADR 0046).
+ */
+export function describeRun(
+  mode: ProcessMode,
+  deviceName: string,
+  format: BookFormat,
+  withOwnOptions = 0,
+): string {
+  if (mode === 'bind-only') return 'Joined volumes · CBZ';
+  const queue = `${deviceName} · ${format.toUpperCase()}`;
+  return withOwnOptions === 0
+    ? queue
+    : `${queue} · ${String(withOwnOptions)} with options of their own`;
 }

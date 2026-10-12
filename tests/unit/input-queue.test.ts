@@ -771,6 +771,123 @@ describe('what was typed for an item', () => {
   });
 });
 
+describe('what an item is converted with differently from the queue', () => {
+  it('is kept on the item, and put back by setting none', () => {
+    const set = queueReducer([inspectedFolder(grouped)], {
+      type: 'set-options',
+      id: 'a',
+      options: { format: 'epub', settings: { webtoon: true } },
+    });
+    expect((set[0] as InspectedRow).options).toEqual({
+      format: 'epub',
+      settings: { webtoon: true },
+    });
+
+    const cleared = queueReducer(set, { type: 'set-options', id: 'a', options: undefined });
+    expect(cleared[0]).not.toHaveProperty('options');
+    // An edit that ended up the same as the queue is the same as setting none.
+    const same = queueReducer(set, { type: 'set-options', id: 'a', options: { settings: {} } });
+    expect(same[0]).not.toHaveProperty('options');
+  });
+
+  it('only reaches the item it names, and only once that item has been read', () => {
+    const reading: QueueRow = { ...cbzInput, state: 'inspecting' };
+    const rows: readonly QueueRow[] = [inspectedFolder(grouped), reading];
+
+    const elsewhere = queueReducer(rows, {
+      type: 'set-options',
+      id: 'not-a-row',
+      options: { format: 'pdf' },
+    });
+    const unread = queueReducer(rows, { type: 'set-options', id: 'b', options: { format: 'pdf' } });
+
+    expect(elsewhere).toEqual(rows);
+    expect(unread[1]).toBe(reading);
+  });
+
+  it('is kept per title of a library, leaving the other titles alone', () => {
+    const rows = queueReducer([libraryRow(readTitle('Good', 1), readTitle('Bad', 1))], {
+      type: 'set-title-options',
+      id: 'a',
+      title: 'Good',
+      options: { settings: { deviceProfile: 'KoC' } },
+    });
+    const titles = (rows[0] as InspectedRow).titles ?? [];
+    expect(titles.map((title) => title.options)).toEqual([
+      { settings: { deviceProfile: 'KoC' } },
+      undefined,
+    ]);
+
+    const cleared = queueReducer(rows, {
+      type: 'set-title-options',
+      id: 'a',
+      title: 'Good',
+      options: undefined,
+    });
+    expect((cleared[0] as InspectedRow).titles?.[0]).not.toHaveProperty('options');
+  });
+
+  it('only reaches a title of a library that has been read', () => {
+    const others: readonly QueueRow[] = [
+      libraryRow(readTitle('Good', 1)),
+      inspectedFolder(grouped),
+      { ...folderInput, state: 'inspecting' },
+    ];
+
+    const rows = queueReducer(others, {
+      type: 'set-title-options',
+      id: 'a',
+      title: 'Nothing like it',
+      options: { format: 'pdf' },
+    });
+    const folder = queueReducer(others, {
+      type: 'set-title-options',
+      id: 'not-a-row',
+      title: 'Good',
+      options: { format: 'pdf' },
+    });
+    const notALibrary = queueReducer([inspectedFolder(grouped)], {
+      type: 'set-title-options',
+      id: 'a',
+      title: 'Good',
+      options: { format: 'pdf' },
+    });
+
+    expect((rows[0] as InspectedRow).titles?.[0]).not.toHaveProperty('options');
+    expect(rows[1]).toBe(others[1]);
+    expect(rows[2]).toBe(others[2]);
+    expect(folder).toEqual(others);
+    expect(notALibrary[0]).not.toHaveProperty('titles');
+  });
+
+  it('stays with a title when the library is read again, saved or not', () => {
+    const chosen = queueReducer([libraryRow(readTitle('Good', 1), readTitle('Bad', 1))], {
+      type: 'set-title-options',
+      id: 'a',
+      title: 'Bad',
+      options: { settings: { webtoon: true } },
+    });
+    const resulted = queueReducer(chosen, {
+      type: 'library-results',
+      id: 'a',
+      results: [{ title: 'Good', outcome: saved }],
+    });
+
+    const again = queueReducer(resulted, {
+      type: 'library-planned',
+      id: 'a',
+      titles: [readTitle('Good', 1), readTitle('Bad', 2), readTitle('New', 1)],
+    });
+
+    const titles = (again[0] as InspectedRow).titles ?? [];
+    expect(titles.map((title) => [title.title, title.options])).toEqual([
+      ['Good', undefined],
+      ['Bad', { settings: { webtoon: true } }],
+      ['New', undefined],
+    ]);
+  });
+});
+
 describe('the author and language read with a folder', () => {
   it('are on the row of the folder they were kept with, cleaned up', () => {
     const rows = queueReducer(queueReducer(emptyQueue, { type: 'add', inputs: [folderInput] }), {

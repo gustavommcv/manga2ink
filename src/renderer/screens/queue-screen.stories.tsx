@@ -122,6 +122,7 @@ const base: QueueScreenProps = {
   onDropFiles: () => undefined,
   onEdit: () => undefined,
   onEditDetails: () => undefined,
+  onEditOptions: () => undefined,
   onFormat: () => undefined,
   onMode: () => undefined,
   onOpenOptions: () => undefined,

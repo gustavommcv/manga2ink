@@ -71,7 +71,7 @@ describe('resolveNavigation', () => {
     });
   });
 
-  describe.each(['mapping', 'details'] as const)('the %s screen', (screen) => {
+  describe.each(['mapping', 'details', 'item-options'] as const)('the %s screen', (screen) => {
     it('stays for a folder that has been read', () => {
       const navigation: WorkflowNavigation = { screen, target: { kind: 'input', rowId: 'folder' } };
 

@@ -408,12 +408,16 @@ describe('the final run report and remaining queue', () => {
 describe('the run summary', () => {
   it('describes joined CBZ volumes rather than unused device and format choices', () => {
     expect(describeRun('bind-only', 'Kindle 11', 'pdf')).toBe('Joined volumes · CBZ');
+    expect(describeRun('bind-only', 'Kindle 11', 'pdf', 3)).toBe('Joined volumes · CBZ');
   });
 
   it.each(['bind-and-convert', 'convert-only'] as const)(
     'describes the chosen device and format for %s',
     (mode) => {
       expect(describeRun(mode, 'Kindle 11', 'epub')).toBe('Kindle 11 · EPUB');
+      expect(describeRun(mode, 'Kindle 11', 'epub', 2)).toBe(
+        'Kindle 11 · EPUB · 2 with options of their own',
+      );
     },
   );
 });

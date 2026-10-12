@@ -80,6 +80,17 @@ export const WithDetails: Story = {
   },
 };
 
+/** Where mangapress makes the books, a title can have conversion options of its own. */
+export const WithOptions: Story = {
+  args: {
+    onEditDetails: () => undefined,
+    onEditOptions: () => undefined,
+    titles: titles.map((title, index) =>
+      index === 1 ? { ...title, options: { settings: { webtoon: true } } } : title,
+    ),
+  },
+};
+
 /** Series kept as links are not read, and so are not in the list: the screen says which. */
 export const WithLinksNotRead: Story = {
   args: { skippedLinks: ['Vinland Saga'] },
