@@ -114,4 +114,90 @@ describe('packaged conversion options of one item', () => {
     assert.equal(await $('#queue-device').getValue(), queueDevice);
     await resetQueue();
   });
+  it('keep every item to its own options in a large queue and a large library, with the real tools', async () => {
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-item-options-many-e2e-'));
+    temporaryDirectories.push(testRoot);
+    const named = path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes');
+    const resolved = path.resolve(
+      'tests',
+      'fixtures',
+      'e2e',
+      'manga-batch',
+      'Library',
+      'Auto-Resolved Manga',
+    );
+    const libraryPath = path.join(testRoot, 'output');
+    await mkdir(libraryPath);
+    const pad = (index: number): string => String(index + 1).padStart(2, '0');
+
+    // Twelve folders of two volumes each, and a library of ten titles of one volume each.
+    const folders = Array.from({ length: 12 }, (_, index) =>
+      path.join(testRoot, `Folder ${pad(index)}`),
+    );
+    for (const folder of folders) await cp(named, folder, { recursive: true });
+    const library = path.join(testRoot, 'Big Library');
+    for (let index = 0; index < 10; index += 1) {
+      await cp(resolved, path.join(library, `Title ${pad(index)}`), { recursive: true });
+    }
+
+    const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
+    await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [...folders, library] });
+    await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [libraryPath] });
+
+    await resetQueue();
+    await setSteps({ group: true, convert: true });
+    await setFormat('CBZ');
+    await $('button=Folder').click();
+    await browser.waitUntil(async () => (await $$('span=2 volumes').length) === 12, {
+      timeout: 120_000,
+      timeoutMsg: 'The twelve folders should have been read.',
+    });
+    await $('span=10 titles').waitForDisplayed({ timeout: 120_000 });
+
+    // Folders 03 and 11 are made as EPUBs and folder 07 as a PDF.
+    for (const [name, value] of [
+      ['Folder 03', 'epub'],
+      ['Folder 07', 'pdf'],
+      ['Folder 11', 'epub'],
+    ] as const) {
+      await $(`button[aria-label="Edit conversion options of ${name}"]`).click();
+      await $(`h1=Options for ${name}`).waitForDisplayed({ timeout: 10_000 });
+      await chooseItemFormat(value);
+      await $('button=Queue').click();
+      await $('h1=Queue').waitForDisplayed();
+    }
+    // Titles 02 and 09 of the library are made as a PDF and an EPUB.
+    await $('button[aria-label="Edit titles of Big Library"]').click();
+    await $('h1=Big Library').waitForDisplayed({ timeout: 30_000 });
+    for (const [name, value] of [
+      ['Title 02', 'pdf'],
+      ['Title 09', 'epub'],
+    ] as const) {
+      await $(`button[aria-label="Edit conversion options of ${name}"]`).click();
+      await $(`h1=Options for ${name}`).waitForDisplayed({ timeout: 10_000 });
+      await chooseItemFormat(value);
+      await $('button=Big Library').click();
+      await $('h1=Big Library').waitForDisplayed({ timeout: 10_000 });
+    }
+    await $('button=Queue').click();
+    await $('h1=Queue').waitForDisplayed();
+
+    await $('button=Process 13 items').click();
+    await $('h1=34 books ready').waitForDisplayed({ timeout: 300_000 });
+    await saveAllBooks();
+
+    const names = (await readdir(libraryPath)).filter((name) => name !== '.mangabound').sort();
+    const expected = [
+      ...folders.flatMap((_, index) => {
+        const extension = index === 2 || index === 10 ? 'epub' : index === 6 ? 'pdf' : 'cbz';
+        return [1, 2].map((volume) => `Folder ${pad(index)} - Vol.0${String(volume)}.${extension}`);
+      }),
+      ...Array.from({ length: 10 }, (_, index) => {
+        const extension = index === 1 ? 'pdf' : index === 8 ? 'epub' : 'cbz';
+        return `Title ${pad(index)} - Vol.01.${extension}`;
+      }),
+    ].sort();
+    assert.deepEqual(names, expected);
+    await resetQueue();
+  });
 });

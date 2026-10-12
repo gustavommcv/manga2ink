@@ -4,6 +4,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/renderer/app';
 import { type MangaboundBridge } from '@/shared/runtime-info';
 
+import { createMappingDraft } from '@/domain/mapping';
+
 import { addFolder, bridge, folder, installBridge, runButton } from './support/workflow';
 import { converted, goodTitle, libraryBridge, looseTitle } from './support/library';
 
@@ -307,4 +309,127 @@ describe('the conversion options of a title in a library', () => {
       screen.queryByRole('button', { name: 'Edit conversion options of Good Manga' }),
     ).not.toBeInTheDocument();
   });
+});
+
+describe('the conversion options of items in a large queue', () => {
+  const pad = (index: number): string => String(index).padStart(3, '0');
+
+  it('reach only the folders they were set for among thirty, in the order of the queue', async () => {
+    const user = userEvent.setup();
+    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const names = Array.from({ length: 30 }, (_, index) => `Series ${pad(index)}`);
+    installBridge(
+      bridge({
+        getDeviceProfiles: profiles,
+        convert,
+        chooseInputs: () =>
+          Promise.resolve({
+            ok: true,
+            value: {
+              inputs: names.map((name, index) => folder(name, `id-${pad(index)}`)),
+              rejected: [],
+            },
+          }),
+      }),
+    );
+    render(<App />);
+    await addFolder(user);
+
+    await openOptions(user, 'Series 004');
+    await user.selectOptions(screen.getByLabelText('Device profile'), 'K11');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'epub');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await openOptions(user, 'Series 017');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'pdf');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await openOptions(user, 'Series 029');
+    await user.selectOptions(screen.getByLabelText('Content'), 'webtoon');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    await user.click(await runButton(30));
+    await screen.findByRole('heading', { name: /30 books ready/u });
+
+    expect(convert).toHaveBeenCalledTimes(30);
+    const sent = convert.mock.calls.map(([command]) => [
+      command.settings.deviceProfile,
+      command.settings.webtoon,
+      command.format,
+    ]);
+    sent.forEach((entry, index) => {
+      const expected =
+        index === 4
+          ? ['K11', false, 'epub']
+          : index === 17
+            ? ['KPW6', false, 'pdf']
+            : index === 29
+              ? ['KPW6', true, 'cbz']
+              : ['KPW6', false, 'cbz'];
+      expect(entry, `item ${String(index)}`).toEqual(expected);
+    });
+  }, 60_000);
+
+  it('reach only the titles they were set for among a hundred in a library', async () => {
+    const user = userEvent.setup();
+    const titles = Array.from({ length: 100 }, (_, index) => {
+      const name = `Manga ${pad(index)}`;
+      return {
+        title: name,
+        draft: createMappingDraft({
+          mangaTitle: name,
+          chapters: [
+            {
+              id: `c${pad(index)}`,
+              name: 'Chapter 1',
+              path: `C:\\input\\${name}\\1`,
+              pageCount: 2,
+              chapter: 1,
+            },
+          ],
+          volumes: [{ id: `v${pad(index)}`, number: '1', chapterIds: [`c${pad(index)}`] }],
+        }),
+        volumes: [{ name: `${name} - Vol.01.cbz`, pageCount: 2 }],
+        issues: [],
+      };
+    });
+    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+      Promise.resolve({
+        ok: true,
+        value: titles.map((entry, index) => converted(entry.title, `book-${pad(index)}`)),
+      }),
+    );
+    installBridge(libraryBridge(titles, { convertLibrary, getDeviceProfiles: profiles }));
+    render(<App />);
+    await addFolder(user);
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    const list = await screen.findByRole('list', { name: 'Titles' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(100);
+
+    for (const [name, format] of [
+      ['Manga 003', 'epub'],
+      ['Manga 042', 'pdf'],
+      ['Manga 099', 'epub'],
+    ] as const) {
+      // The library page is drawn again each time it is returned to.
+      const current = await screen.findByRole('list', { name: 'Titles' });
+      await user.click(
+        within(current).getByRole('button', { name: `Edit conversion options of ${name}` }),
+      );
+      await screen.findByRole('heading', { name: `Options for ${name}` });
+      await user.selectOptions(screen.getByLabelText('Book format'), format);
+      await user.click(screen.getByRole('button', { name: 'Manga Library' }));
+      await screen.findByRole('list', { name: 'Titles' });
+    }
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await user.click(await runButton(1));
+    await screen.findByRole('heading', { name: /100 books ready/u });
+
+    const command = convertLibrary.mock.calls[0]?.[0];
+    expect(command?.format).toBe('cbz');
+    expect(command?.titles).toHaveLength(100);
+    expect(command?.titleOptions?.map((own) => [own.title, own.format])).toEqual([
+      ['Manga 003', 'epub'],
+      ['Manga 042', 'pdf'],
+      ['Manga 099', 'epub'],
+    ]);
+  }, 60_000);
 });
