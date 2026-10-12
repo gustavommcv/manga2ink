@@ -457,7 +457,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                 : [],
             )
           : [];
-        withOwnOptions += titleOptions.length;
         const ran = await bridge.convertLibrary({
           jobId: nextJobId,
           sessionId: row.sessionId,
@@ -468,6 +467,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
           ...(titleDetails.length === 0 ? {} : { titleDetails }),
           ...(titleOptions.length === 0 ? {} : { titleOptions }),
         });
+        // Only a title that made a book counts as made with options of its own.
+        if (ran.ok) {
+          withOwnOptions += titleOptions.filter((own) =>
+            ran.value.some((made) => made.title === own.title && made.artifacts.length > 0),
+          ).length;
+        }
         const report = reportLibraryRun(row, ran);
         settled.push(...report.outcomes);
         if (report.cancelled) cancelRequested.current = true;
@@ -476,8 +481,15 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
         if (report.queueUpdate !== undefined) dispatch(report.queueUpdate);
         continue;
       }
-      if (usesMangapress(rowProcess) && hasItemOptions(row.options)) withOwnOptions += 1;
       const result = await bridge.convert(commandFor(row, rowProcess, runId, nextJobId));
+      if (
+        result.ok &&
+        result.value.length > 0 &&
+        usesMangapress(rowProcess) &&
+        hasItemOptions(row.options)
+      ) {
+        withOwnOptions += 1;
+      }
       const report = reportInputRun(row, result);
       settled.push(...report.outcomes);
       if (report.cancelled) cancelRequested.current = true;

@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
-import { cp, mkdir, mkdtemp, readdir, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
 import { $, $$, browser } from '@wdio/globals';
 
-import { resetQueue, saveAllBooks, setFormat, setSteps } from './support';
+import { resetQueue, saveAllBooks, saveBookAs, setFormat, setSteps } from './support';
 
 const temporaryDirectories: string[] = [];
 
@@ -198,6 +198,104 @@ describe('packaged conversion options of one item', () => {
       }),
     ].sort();
     assert.deepEqual(names, expected);
+    await resetQueue();
+  });
+  it('keep the options of an item that failed, and make it with them when it is run again', async () => {
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-item-options-fail-e2e-'));
+    temporaryDirectories.push(testRoot);
+    const named = path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes');
+    const alpha = path.join(testRoot, 'Alpha Series');
+    const broken = path.join(testRoot, 'Broken Series');
+    const gamma = path.join(testRoot, 'Gamma Series');
+    const libraryPath = path.join(testRoot, 'output');
+    await cp(named, alpha, { recursive: true });
+    await cp(named, gamma, { recursive: true });
+    await mkdir(libraryPath);
+    // Chapters whose pages are not images: mangabind binds them and mangapress cannot convert them.
+    const chapters = [
+      'Vol.01 Ch.0001 - First (en) [Group]',
+      'Vol.01 Ch.0002 - Second (en) [Group]',
+    ];
+    for (const chapter of chapters) {
+      await mkdir(path.join(broken, chapter), { recursive: true });
+      for (const page of ['001.png', '002.png']) {
+        await writeFile(path.join(broken, chapter, page), 'this is not an image');
+      }
+    }
+
+    const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
+    await openDialog.mockResolvedValueOnce({
+      canceled: false,
+      filePaths: [alpha, broken, gamma],
+    });
+    await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [libraryPath] });
+
+    await resetQueue();
+    await setSteps({ group: true, convert: true });
+    await setFormat('CBZ');
+    await $('button=Folder').click();
+    await $('p=Gamma Series').waitForDisplayed({ timeout: 60_000 });
+    await browser.waitUntil(
+      async () => (await $('main').getText()).includes('Checking') === false,
+      { timeout: 60_000, timeoutMsg: 'The folders should have been read.' },
+    );
+    for (const [name, value] of [
+      ['Alpha Series', 'pdf'],
+      ['Broken Series', 'epub'],
+      ['Gamma Series', 'epub'],
+    ] as const) {
+      await $(`button[aria-label="Edit conversion options of ${name}"]`).click();
+      await $(`h1=Options for ${name}`).waitForDisplayed({ timeout: 10_000 });
+      await chooseItemFormat(value);
+      await $('button=Queue').click();
+      await $('h1=Queue').waitForDisplayed();
+    }
+    await $('button=Process 3 items').click();
+    await $('h1=4 books ready').waitForDisplayed({ timeout: 180_000 });
+    const results = await $('main').getText();
+    assert.match(results, /Broken Series could not be converted/u);
+    // Only the items that made books count as made with options of their own.
+    assert.match(results, /2 with options of their own/u);
+    await saveAllBooks();
+    assert.deepEqual((await readdir(libraryPath)).sort(), [
+      '.mangabound',
+      'Alpha Series - Vol.01.pdf',
+      'Alpha Series - Vol.02.pdf',
+      'Gamma Series - Vol.01.epub',
+      'Gamma Series - Vol.02.epub',
+    ]);
+
+    // The item that failed is still in the queue, with the format it was set to.
+    await $('button=Convert more').click();
+    await $('h1=Queue').waitForDisplayed();
+    await $('p=Broken Series').waitForDisplayed({ timeout: 10_000 });
+    assert.equal(await $('p=Alpha Series').isExisting(), false);
+    assert.equal(await $('p=Gamma Series').isExisting(), false);
+    const brokenButton = $('button[aria-label="Edit conversion options of Broken Series"]');
+    assert.equal(
+      await brokenButton.getAttribute('title'),
+      'Edit conversion options for this item (set)',
+    );
+    await brokenButton.click();
+    await $('h1=Options for Broken Series').waitForDisplayed({ timeout: 10_000 });
+    assert.equal(await $('#output-format').getValue(), 'epub');
+    await $('button=Queue').click();
+    await $('h1=Queue').waitForDisplayed();
+
+    // Once its pages are readable, it is made as the EPUB it was set to, not as the queue's CBZ.
+    const good = path.join(named, 'Vol.01 Ch.0001 - First (en) [Group]', '001.png');
+    for (const chapter of chapters) {
+      for (const page of ['001.png', '002.png']) {
+        await cp(good, path.join(broken, chapter, page));
+      }
+    }
+    await $('button=Process 1 item').click();
+    await $('h1=1 book ready').waitForDisplayed({ timeout: 180_000 });
+    const retried = 'Broken Series - Vol.01.epub';
+    await saveBookAs(retried, path.join(libraryPath, retried));
+    const names = await readdir(libraryPath);
+    assert.ok(names.includes(retried));
+    assert.ok(!names.some((name) => name.startsWith('Broken Series') && name.endsWith('.cbz')));
     await resetQueue();
   });
 });

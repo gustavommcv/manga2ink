@@ -433,3 +433,148 @@ describe('the conversion options of items in a large queue', () => {
     ]);
   }, 60_000);
 });
+
+describe('the conversion options of an item that failed', () => {
+  const artifactOf = (name: string, format: 'cbz' | 'epub' | 'pdf') => ({
+    ok: true as const,
+    value: [{ id: `${name}-book`, name: `${name}.${format}`, bytes: 2048, format }],
+  });
+
+  it('stay with a folder that failed, and are the ones it is run with again', async () => {
+    const user = userEvent.setup();
+    let secondWorks = false;
+    const convert = vi.fn<MangaboundBridge['convert']>((command) => {
+      if (command.sessionId === 'session-second' && !secondWorks) {
+        return Promise.resolve({
+          ok: false as const,
+          error: { code: 'process_failed', message: 'mangapress crashed.' },
+        });
+      }
+      return Promise.resolve(artifactOf(command.sessionId, command.format));
+    });
+    installBridge(
+      bridge({
+        getDeviceProfiles: profiles,
+        convert,
+        chooseInputs: () =>
+          Promise.resolve({
+            ok: true,
+            value: {
+              inputs: [
+                folder('First', 'first'),
+                folder('Second', 'second'),
+                folder('Third', 'third'),
+              ],
+              rejected: [],
+            },
+          }),
+      }),
+    );
+    render(<App />);
+    await addFolder(user);
+    for (const [name, format] of [
+      ['First', 'epub'],
+      ['Second', 'pdf'],
+    ] as const) {
+      await openOptions(user, name);
+      await user.selectOptions(screen.getByLabelText('Book format'), format);
+      await user.click(screen.getByRole('button', { name: 'Queue' }));
+    }
+    await openOptions(user, 'Third');
+    await user.selectOptions(screen.getByLabelText('Content'), 'webtoon');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    await user.click(await runButton(3));
+    expect(await screen.findByRole('heading', { name: '2 books ready' })).toBeVisible();
+    expect(screen.getByText('Second could not be converted')).toBeVisible();
+    // Only the items that made a book count as made with options of their own.
+    expect(screen.getByText(/2 with options of their own/u)).toBeVisible();
+    // The item after the failed one was made with its own options, not the failed one's.
+    expect(
+      convert.mock.calls.map(([command]) => [command.format, command.settings.webtoon]),
+    ).toEqual([
+      ['epub', false],
+      ['pdf', false],
+      ['cbz', true],
+    ]);
+
+    await user.click(screen.getByRole('button', { name: 'Convert more' }));
+    const list = screen.getByRole('list', { name: 'Queued items' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(1);
+    expect(
+      within(list).getByRole('button', { name: 'Edit conversion options of Second' }),
+    ).toHaveAttribute('title', 'Edit conversion options for this item (set)');
+
+    secondWorks = true;
+    await user.click(await runButton(1));
+    expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
+    expect(convert).toHaveBeenCalledTimes(4);
+    expect(convert.mock.calls[3]?.[0].format).toBe('pdf');
+    expect(convert.mock.calls[3]?.[0].sessionId).toBe('session-second');
+  });
+
+  it('stay with a title of a library that failed, and only its own are sent when it runs again', async () => {
+    const user = userEvent.setup();
+    const secondTitle = { ...goodTitle, title: 'Second Manga' };
+    const convertLibrary = vi
+      .fn<MangaboundBridge['convertLibrary']>()
+      .mockResolvedValueOnce({
+        ok: true,
+        value: [
+          converted('Good Manga', 'good-1'),
+          {
+            title: 'Second Manga',
+            status: 'failed',
+            artifacts: [],
+            failure: { code: 'process_failed', message: 'mangapress crashed.' },
+          },
+        ],
+      })
+      .mockResolvedValueOnce({ ok: true, value: [converted('Second Manga', 'second-1')] });
+    installBridge(
+      libraryBridge([goodTitle, secondTitle], { convertLibrary, getDeviceProfiles: profiles }),
+    );
+    render(<App />);
+    await addFolder(user);
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    for (const [name, format] of [
+      ['Good Manga', 'epub'],
+      ['Second Manga', 'pdf'],
+    ] as const) {
+      const titles = await screen.findByRole('list', { name: 'Titles' });
+      await user.click(
+        within(titles).getByRole('button', { name: `Edit conversion options of ${name}` }),
+      );
+      await screen.findByRole('heading', { name: `Options for ${name}` });
+      await user.selectOptions(screen.getByLabelText('Book format'), format);
+      await user.click(screen.getByRole('button', { name: 'Manga Library' }));
+    }
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    await user.click(await runButton(1));
+    expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
+    expect(screen.getByText(/1 with options of their own/u)).toBeVisible();
+    expect(
+      convertLibrary.mock.calls[0]?.[0].titleOptions?.map((own) => [own.title, own.format]),
+    ).toEqual([
+      ['Good Manga', 'epub'],
+      ['Second Manga', 'pdf'],
+    ]);
+
+    await user.click(screen.getByRole('button', { name: 'Convert more' }));
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    expect(
+      await screen.findByRole('button', { name: 'Edit conversion options of Second Manga' }),
+    ).toHaveAttribute('title', 'Edit conversion options for this title (set)');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await user.click(await runButton(1));
+    expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
+
+    // The saved title is not sent again, and neither are its options.
+    const again = convertLibrary.mock.calls[1]?.[0];
+    expect(again?.titles).toEqual(['Second Manga']);
+    expect(again?.titleOptions?.map((own) => [own.title, own.format])).toEqual([
+      ['Second Manga', 'pdf'],
+    ]);
+  });
+});
