@@ -216,6 +216,43 @@ test('a library with links that were not read says so above its titles', async (
   await expect(page.locator('#storybook-root')).toHaveScreenshot('library-titles-links.png');
 });
 
+test('a title of a library with options of its own has its button colored', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-library-titles--with-options&viewMode=story');
+  await expect(
+    page.getByRole('button', { name: 'Edit conversion options of Vagabond' }),
+  ).toHaveAttribute('title', 'Edit conversion options for this title (set)');
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('library-titles-options.png');
+});
+
+test('an item that follows the queue shows the queue options page for it', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-item-options--follows-the-queue&viewMode=story');
+  await expect(page.getByRole('heading', { name: 'Options for Chainsaw Man' })).toBeFocused();
+  await expect(page.getByText('This item uses the options of the queue.')).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page).toHaveScreenshot('item-options.png');
+});
+
+test('an item with options of its own says so and offers the queue’s again', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-item-options--with-options-of-its-own&viewMode=story');
+  await expect(page.getByText('This item has options of its own.')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Use the queue’s options/u })).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page).toHaveScreenshot('item-options-own.png');
+});
+
+test('the options button of a queue row is colored when the item has its own', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-queue-row--with-options&viewMode=story');
+  await expect(
+    page.getByRole('button', { name: 'Edit conversion options of Chainsaw Man' }),
+  ).toHaveAttribute('title', 'Edit conversion options for this item (set)');
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('queue-row-options.png');
+});
+
 test('a folder of links says why it holds no manga', async ({ page }) => {
   await page.goto('/iframe.html?id=workflows-queue--folder-of-links&viewMode=story');
   await expect(page.getByText(/folders in it are links/u)).toBeVisible();
