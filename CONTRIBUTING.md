@@ -63,6 +63,7 @@ Follow the [layer table](docs/architecture.md#layers). `npm run lint` enforces i
 ## Testing expectations
 
 - Use Vitest for pure rules, workflows, adapters, and framework-independent main/preload decisions. The files listed in `vitest.config.ts` require **100% statements, branches, functions, and lines**; this is not a whole-app coverage claim.
+- Use [fast-check](https://fast-check.dev) for rules that hold for any input rather than for the cases someone thought of: file names, titles, the grouping of chapters, a settings file that was edited. A property says what is always true; when it fails, it prints a seed and a smallest counterexample, which belongs in a plain example test as well.
 - Use React Testing Library for what users see and do, not component internals.
 - Cover relevant normal, loading, empty, disabled, warning, and error states in Storybook, with interaction, accessibility, and visual checks where applicable.
 - Cover critical workflows with WebdriverIO against the packaged app and real tools. A manual check does not replace an automated regression test.
