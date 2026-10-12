@@ -503,7 +503,7 @@ describe('the books that are ready and not saved yet', () => {
     expect(result.value.savedIds).toEqual([ids[0], ids[2]]);
     expect(result.value.failures.map((failure) => failure.id)).toEqual([ids[1], ids[2]]);
     expect(result.value.failures[0]?.message).toContain('destination is full');
-    expect(context.lastSaveFolder).toBe('/books/Shelf');
+    expect(context.lastSaveFolder).toBe(path.dirname(path.join('/books/Shelf', 'One.epub')));
     const destinations = (
       context.pendingRuns as unknown as {
         exportAndRecord: { mock: { calls: unknown[][] } };
