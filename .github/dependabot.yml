@@ -22,6 +22,28 @@ updates:
       webdriverio:
         patterns:
           - '@wdio/*'
+    ignore:
+      # WebdriverIO 10 needs expect-webdriverio 8, and @wdio/electron-service (10.x is its own line,
+      # not WebdriverIO's) still depends on @wdio/globals 9: a group with the 10s fails `npm ci` with
+      # ERESOLVE (the first proposal, for 10.0.2, did). The service is left out of this list on
+      # purpose, since its own majors are the ones that will say WebdriverIO 10 is supported. Remove
+      # this when a release of it lists @wdio/globals 10.
+      - dependency-name: '@wdio/cli'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@wdio/globals'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@wdio/local-runner'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@wdio/mocha-framework'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@wdio/spec-reporter'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@wdio/types'
+        update-types: ['version-update:semver-major']
+      - dependency-name: webdriverio
+        update-types: ['version-update:semver-major']
+      - dependency-name: expect-webdriverio
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: npm
     directory: /website
