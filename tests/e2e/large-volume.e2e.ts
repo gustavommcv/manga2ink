@@ -134,8 +134,9 @@ describe('packaged conversion of a volume of hundreds of pages', function () {
       const seconds = (Date.now() - started) / 1000;
       console.log(`${format}: ${String(pages)} pages in ${seconds.toFixed(1)} s`);
 
-      // Not a benchmark: a volume that took several times what it should would be noticed.
-      assert.ok(seconds < 420, `${String(pages)} pages took ${seconds.toFixed(0)} s.`);
+      // Not a benchmark. It takes about ten seconds on a laptop; a slow runner has room, and a volume
+      // that took many times what it should would be noticed.
+      assert.ok(seconds < 150, `${String(pages)} pages took ${seconds.toFixed(0)} s.`);
 
       const seen = await reportedProgress();
       const counted = seen.filter(
