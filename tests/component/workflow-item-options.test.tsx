@@ -163,6 +163,70 @@ describe('the conversion options of one item', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('differ from one item to the next, and are never kept as the queue’s own options', async () => {
+    const user = userEvent.setup();
+    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    installBridge(
+      bridge({
+        getDeviceProfiles: profiles,
+        saveSettings,
+        convert,
+        chooseInputs: () =>
+          Promise.resolve({
+            ok: true,
+            value: {
+              inputs: [
+                folder('First', 'first'),
+                folder('Second', 'second'),
+                folder('Third', 'third'),
+              ],
+              rejected: [],
+            },
+          }),
+      }),
+    );
+    render(<App />);
+    await addFolder(user);
+
+    await openOptions(user, 'First');
+    await user.selectOptions(screen.getByLabelText('Device profile'), 'K11');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'epub');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    await openOptions(user, 'Second');
+    // Another item starts from the queue's options, not from what the first one chose.
+    expect(screen.getByLabelText('Device profile')).toHaveValue('KPW6');
+    expect(screen.getByLabelText('Book format')).toHaveValue('cbz');
+    await user.selectOptions(screen.getByLabelText('Content'), 'webtoon');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'pdf');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    // The queue still shows its own device and format.
+    expect(screen.getByLabelText('Device')).toHaveValue('KPW6');
+    expect(screen.getByRole('radio', { name: 'CBZ' })).toBeChecked();
+    for (const [command] of saveSettings.mock.calls) {
+      expect(command.preferences.settings.deviceProfile).toBe('KPW6');
+      expect(command.preferences.settings.webtoon).toBe(false);
+      expect(command.preferences.format).toBe('cbz');
+    }
+
+    await user.click(await runButton(3));
+    await screen.findByRole('heading', { name: /ready/u });
+    expect(
+      convert.mock.calls.map(([command]) => [
+        command.settings.deviceProfile,
+        command.settings.webtoon,
+        command.format,
+      ]),
+    ).toEqual([
+      ['K11', false, 'epub'],
+      ['KPW6', true, 'pdf'],
+      ['KPW6', false, 'cbz'],
+    ]);
+  });
+
   it('make a validated plan stale, so it is validated again before running', async () => {
     const user = userEvent.setup();
     installBridge(twoFolders());
