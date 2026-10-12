@@ -120,6 +120,7 @@ describe('the conversion options of one item', () => {
     expect(screen.getByText('This item has options of its own.')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Queue' }));
     expect(button()).toHaveAttribute('title', 'Edit conversion options for this item (set)');
+    expect(button()).toHaveClass('text-override');
 
     await openOptions(user, 'First');
     await user.click(screen.getByRole('button', { name: /Use the queue’s options/u }));
@@ -267,6 +268,9 @@ describe('putting an option of one item back', () => {
     // The app's default is a change here, the queue's own value is not.
     await user.selectOptions(screen.getByLabelText('Device profile'), 'KPW6');
     await user.selectOptions(screen.getByLabelText('Book format'), 'cbz');
+    // What the item sets has a color of its own, not the accent that marks the queue's changes.
+    expect(screen.getByText('Device profile')).toHaveClass('text-override');
+    expect(screen.getByText('Device profile')).not.toHaveClass('text-accent');
     expect(screen.queryByRole('button', { name: /Restore default for/u })).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: useQueue('Device profile') }));
     expect(screen.getByLabelText('Device profile')).toHaveValue('K11');

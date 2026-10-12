@@ -122,7 +122,7 @@ export function QueueRowItem({
         {detailsEditable && (
           <Button
             aria-label={`Edit conversion options of ${row.displayName}`}
-            className={cn(optionsSet && 'text-accent')}
+            className={cn(optionsSet && 'text-override')}
             onClick={onEditOptions}
             size="icon"
             title={

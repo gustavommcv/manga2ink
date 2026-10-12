@@ -191,7 +191,7 @@ function TitleRow({
           {onEditOptions !== undefined && (
             <Button
               aria-label={`Edit conversion options of ${title.title}`}
-              className={cn(hasItemOptions(title.options) && 'text-accent')}
+              className={cn(hasItemOptions(title.options) && 'text-override')}
               onClick={() => {
                 onEditOptions(title.title);
               }}

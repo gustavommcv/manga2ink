@@ -30,7 +30,7 @@ export function SettingFieldHeader({
   const labelClass = cn(
     'text-sm font-medium',
     disabled && 'text-muted-foreground',
-    changed && 'text-accent',
+    changed && (resetsTo === 'queue' ? 'text-override' : 'text-accent'),
   );
 
   return (
@@ -55,7 +55,12 @@ export function SettingFieldHeader({
       {changed && (
         <Button
           aria-label={resetLabel}
-          className="text-accent hover:bg-accent/10 hover:text-accent absolute -top-0.5 right-0 size-6 p-0"
+          className={cn(
+            'absolute -top-0.5 right-0 size-6 p-0',
+            resetsTo === 'queue'
+              ? 'text-override hover:bg-override/10 hover:text-override'
+              : 'text-accent hover:bg-accent/10 hover:text-accent',
+          )}
           onClick={() => {
             onReset();
             const control = id === undefined ? null : document.getElementById(id);

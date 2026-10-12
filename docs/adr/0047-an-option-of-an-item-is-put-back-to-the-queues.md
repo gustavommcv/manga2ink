@@ -12,6 +12,7 @@ ADR 0046 gave each item the queue's own options page, and with it the page's way
 
 - **On an item's page a field is changed when it differs from the queue's value, and its arrow puts the queue's value back.** Its name says so: "Use the queue's value for <option>", where the queue's page says "Restore default for <option>".
 - **It is the same for every kind of control**: the device (which puts back the upscaling and color that choosing it set, as choosing it did), the format, and the choices that stand for more than one setting (page size, borders, autocontrast).
+- **What an item sets has a color of its own**, a soft cyan-teal that nothing else in the app uses (the accent also means the primary action, focus and status), on its page and on the button of its row. The theme still has no green: it is cyan, and never the only sign, since the arrow and the button's title say the same.
 - **An option put back is no longer a difference**, so the item holds nothing for it (ADR 0046), and an item with nothing changed is the queue's again. "Use the queue's options" still puts back all of them at once.
 - **The queue's page is unchanged**: it compares with the app's defaults and "Reset to defaults" still puts those back.
 
