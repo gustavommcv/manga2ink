@@ -19,6 +19,13 @@ updates:
         patterns:
           - '@storybook/*'
           - storybook
+      # Both are pinned, each at the same version. A bump of one alone leaves two copies of
+      # Playwright in the tree: `npx playwright install` then fetches the browsers of one while the
+      # tests launch the other, and every Quality job fails (the first proposal for 1.64.0 did).
+      playwright:
+        patterns:
+          - '@playwright/test'
+          - playwright
       webdriverio:
         patterns:
           - '@wdio/*'
