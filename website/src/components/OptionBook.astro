@@ -8,7 +8,17 @@ interface Props {
   labels?: Record<string, string>;
 }
 
-type Fact = 'title' | 'author' | 'language' | 'direction' | 'fileName' | 'comicInfo' | 'pages';
+type Fact =
+  | 'title'
+  | 'author'
+  | 'language'
+  | 'direction'
+  | 'fileName'
+  | 'comicInfo'
+  | 'pages'
+  | 'source'
+  | 'firstPage'
+  | 'cover';
 interface Facts {
   fileName: string;
   title: string | null;
@@ -17,6 +27,9 @@ interface Facts {
   direction: 'ltr' | 'rtl' | null;
   comicInfo: 'none' | 'copy' | 'changed';
   pages?: string[];
+  source: string;
+  firstPage: string | null;
+  cover: { width: number; height: number; color: boolean } | null;
 }
 
 const { id, labels } = Astro.props;
@@ -35,6 +48,9 @@ const words = portuguese
       noFlag: 'sem flag',
       missing: 'não consta do livro',
       no: 'não',
+      notRead: 'não lido',
+      gray: 'cinza',
+      color: 'colorida',
       copy: 'sim, a da entrada, sem mudança',
       changed: 'sim, alterada',
       ltr: 'da esquerda para a direita (ltr)',
@@ -51,6 +67,9 @@ const words = portuguese
         fileName: 'Nome do arquivo',
         comicInfo: 'ComicInfo.xml no livro',
         pages: 'Páginas',
+        source: 'Primeira imagem',
+        firstPage: 'Primeira página do livro',
+        cover: 'Capa',
       },
     }
   : {
@@ -59,6 +78,9 @@ const words = portuguese
       noFlag: 'no flag',
       missing: 'not in the book',
       no: 'no',
+      notRead: 'not read',
+      gray: 'gray',
+      color: 'color',
       copy: 'yes, the input’s own, unchanged',
       changed: 'yes, changed',
       ltr: 'left to right (ltr)',
@@ -75,6 +97,9 @@ const words = portuguese
         fileName: 'File name',
         comicInfo: 'ComicInfo.xml in the book',
         pages: 'Pages',
+        source: 'First image',
+        firstPage: 'First page of the book',
+        cover: 'Cover',
       },
     };
 
@@ -84,6 +109,12 @@ const flagsText = (flags: string[]) =>
 
 function show(column: Fact, facts: Facts): { text: string; missing: boolean } {
   const value = facts[column];
+  if (column === 'cover' && facts.cover)
+    return {
+      text: `${facts.cover.width} × ${facts.cover.height}, ${facts.cover.color ? words.color : words.gray}`,
+      missing: false,
+    };
+  if (column === 'firstPage' && value === null) return { text: words.notRead, missing: true };
   if (column === 'comicInfo')
     return {
       text: facts.comicInfo === 'none' ? words.no : words[facts.comicInfo],

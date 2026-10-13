@@ -56,14 +56,34 @@ export function pdfFacts(bytes) {
   };
 }
 
-/** Whether the entries of a CBZ include a ComicInfo.xml, wherever it sits. */
-export function hasComicInfo(names) {
-  return names.some((name) => name.split('/').pop() === 'ComicInfo.xml');
+/**
+ * How many pages a PDF has and how many images it holds: one image to a page, unless a picture such
+ * as a cover is in it as well.
+ */
+export function pdfPictures(bytes) {
+  const text = Buffer.from(bytes).toString('latin1');
+  return {
+    pages: (text.match(/\/Type\s*\/Page(?![a-z])/g) ?? []).length,
+    images: (text.match(/\/Subtype\s*\/Image/g) ?? []).length,
+  };
 }
 
-/** The entries of a CBZ that are neither pages nor ComicInfo.xml: a CBZ made here has none. */
+const lastPart = (name) => name.split('/').pop();
+
+/** Whether an entry of a CBZ is its cover, which mangapress stores as `##cover.jpg` ahead of the pages. */
+export const isCover = (name) => lastPart(name) === '##cover.jpg';
+
+/** Whether an entry of a CBZ is a page. */
+export const isPage = (name) => /\.(jpe?g|png|gif)$/i.test(name) && !isCover(name);
+
+/** Whether the entries of a CBZ include a ComicInfo.xml, wherever it sits. */
+export function hasComicInfo(names) {
+  return names.some((name) => lastPart(name) === 'ComicInfo.xml');
+}
+
+/** The entries of a CBZ that are not pages, a cover or a ComicInfo.xml: a CBZ made here has none. */
 export function otherEntries(names) {
   return names.filter(
-    (name) => !/\.(jpe?g|png|gif)$/i.test(name) && name.split('/').pop() !== 'ComicInfo.xml',
+    (name) => !isPage(name) && !isCover(name) && lastPart(name) !== 'ComicInfo.xml',
   );
 }

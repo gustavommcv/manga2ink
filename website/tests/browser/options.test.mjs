@@ -12,6 +12,7 @@ const pictured = [
   'double-page-spreads',
   'size-and-borders',
   'page-images',
+  'cover',
 ];
 const tablesOnly = ['book-metadata'];
 
@@ -71,7 +72,13 @@ for (const locale of ['', 'pt-br/']) {
   }
 }
 
-for (const slug of ['cropping', 'double-page-spreads', 'size-and-borders', 'page-images']) {
+for (const slug of [
+  'cropping',
+  'double-page-spreads',
+  'size-and-borders',
+  'page-images',
+  'cover',
+]) {
   test(`every picture of an example says which flags made it, and every table says its source: ${slug}`, async ({
     page,
   }) => {
@@ -90,7 +97,7 @@ for (const slug of ['cropping', 'double-page-spreads', 'size-and-borders', 'page
 test('every table of values says which row it is, the flags given and that it was measured: reading and book metadata', async ({
   page,
 }) => {
-  for (const slug of ['reading', 'book-metadata']) {
+  for (const slug of ['reading', 'cover', 'book-metadata']) {
     await page.goto(`${root}user-guide/advanced-options/${slug}/`);
     const tables = page.locator('[data-option-book] table');
     expect(await tables.count()).toBeGreaterThan(0);
@@ -158,7 +165,7 @@ for (const locale of ['', 'pt-br/']) {
 }
 
 for (const locale of ['', 'pt-br/']) {
-  for (const slug of ['cropping', 'page-images', 'reading', 'book-metadata']) {
+  for (const slug of ['cropping', 'page-images', 'reading', 'cover', 'book-metadata']) {
     test(`a table can be scrolled with the keyboard on a very narrow screen: ${slug} ${locale || 'en'}`, async ({
       page,
     }) => {

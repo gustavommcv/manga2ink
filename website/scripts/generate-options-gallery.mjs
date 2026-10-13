@@ -25,7 +25,14 @@ import { format, resolveConfig } from 'prettier';
 import sharp from 'sharp';
 
 import { base, examples } from '../media-src/options/examples.mjs';
-import { epubFacts, hasComicInfo, otherEntries, pdfFacts } from './options-gallery/book-facts.mjs';
+import {
+  epubFacts,
+  hasComicInfo,
+  isPage,
+  otherEntries,
+  pdfFacts,
+  pdfPictures,
+} from './options-gallery/book-facts.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -181,9 +188,19 @@ async function writeInput(example, directory, comicInfo) {
       }
       made = { width, height, file: files[0] };
     } else {
+      // `ratio` cuts the middle of a spread to a width of that many heights: a wide first image of
+      // a chosen shape.
+      const ratio = example.input.ratio;
+      const cut = ratio ? Math.round(height * ratio) : width;
+      const bytes = ratio
+        ? await sharp(joined.bytes)
+            .extract({ left: Math.round((width - cut) / 2), top: 0, width: cut, height })
+            .png()
+            .toBuffer()
+        : joined.bytes;
       const file = path.join(directory, '001.png');
-      writeFileSync(file, joined.bytes);
-      made = { width, height, file };
+      writeFileSync(file, bytes);
+      made = { width: cut, height, file };
     }
   } else {
     const pages = await Promise.all(refsOf(example.input).map(page));
@@ -196,7 +213,21 @@ async function writeInput(example, directory, comicInfo) {
     made = { width, height, file: files[0] };
   }
   if (comicInfo) writeFileSync(path.join(directory, 'ComicInfo.xml'), comicInfoXml(comicInfo));
-  return made;
+  const first = await sharp(made.file).metadata();
+  return { ...made, first: { width: first.width, height: first.height } };
+}
+
+/** A cover of one's own, written as `cover.<extension>`: a page, or pages joined as for an input. */
+async function writeOwnCover(spec, directory) {
+  mkdirSync(directory, { recursive: true });
+  const { bytes, extension } =
+    spec.beside || spec.stack
+      ? { bytes: (await join(refsOf(spec), spec.beside !== undefined)).bytes, extension: 'png' }
+      : await page(spec);
+  const name = `cover.${extension}`;
+  const file = path.join(directory, name);
+  writeFileSync(file, bytes);
+  return { file, name };
 }
 
 /** Runs mangapress on a folder and gives the book it wrote: its file name and bytes. */
@@ -215,7 +246,7 @@ function makeBook(mangapress, input, flags, work, profile, format) {
 /** The pages of a CBZ, in order, with the extension of each (`.extensions`). */
 function pagesOf(bytes) {
   const made = [...readZip(bytes)]
-    .filter(([name]) => /\.(jpe?g|png|gif)$/i.test(name))
+    .filter(([name]) => isPage(name))
     .sort(([a], [b]) => (a < b ? -1 : 1));
   const pages = made.map(([, data]) => data);
   pages.extensions = made.map(([name]) => name.split('.').pop().toLowerCase());
@@ -230,14 +261,16 @@ function convert(mangapress, input, flags, work, profile) {
  * What a book says about itself, for the example kind `book`: the values mangapress wrote into it,
  * read back from the file. A value the format has no place for is null.
  */
-async function bookFacts(format, book, sourceComicInfo) {
+async function bookFacts(format, book, sourceComicInfo, first) {
   const facts = {
     fileName: book.fileName,
+    source: `${first.width} × ${first.height}`,
     title: null,
     author: null,
     language: null,
     direction: null,
     comicInfo: 'none',
+    cover: null,
   };
   if (format === 'epub') {
     const files = readZip(book.bytes);
@@ -246,23 +279,42 @@ async function bookFacts(format, book, sourceComicInfo) {
     facts.pages = await pageSizes(
       [...files].filter(([name]) => /^OEBPS\/Images\/c\d+\//.test(name)).map(([, data]) => data),
     );
+    facts.cover = await coverFact(files.get('OEBPS/Images/cover.jpg'));
   } else if (format === 'pdf') {
     Object.assign(facts, pdfFacts(book.bytes));
+    const { pages, images } = pdfPictures(book.bytes);
+    if (images !== pages) throw new Error(`A PDF with ${images} images for ${pages} pages.`);
   } else {
     const files = readZip(book.bytes);
-    const names = [...files.keys()];
-    const extra = otherEntries(names);
+    const extra = otherEntries([...files.keys()]);
     if (extra.length > 0) throw new Error(`A CBZ with more than pages: ${extra.join(', ')}.`);
     const kept = [...files].find(([name]) => name.split('/').pop() === 'ComicInfo.xml');
     if (kept) facts.comicInfo = kept[1].toString('utf8') === sourceComicInfo ? 'copy' : 'changed';
     facts.pages = await pageSizes(pagesOf(book.bytes));
+    facts.cover = await coverFact(files.get('##cover.jpg'));
   }
+  facts.firstPage = facts.pages?.[0] ?? null;
   return facts;
 }
 
 async function pageSizes(pages) {
   const sizes = await Promise.all(pages.map((bytes) => sharp(bytes).metadata()));
   return sizes.map(({ width, height }) => `${width} × ${height}`);
+}
+
+/** The size of a book's cover and whether it is in color, or null for a book with none. */
+async function coverFact(bytes) {
+  if (!bytes) return null;
+  const { width, height, channels } = await sharp(bytes).metadata();
+  return { width, height, color: channels > 1 };
+}
+
+/** The cover image of a book made for the example kind `pictures` with `cover: true`. */
+function coverOf(format, bytes) {
+  const files = readZip(bytes);
+  const cover = files.get(format === 'epub' ? 'OEBPS/Images/cover.jpg' : '##cover.jpg');
+  if (!cover) throw new Error(`The ${format} has no cover.`);
+  return cover;
 }
 
 const round = (value, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
@@ -368,22 +420,40 @@ async function runExample(mangapress, example, scratch) {
   const variants = [];
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
-    const input = (variant.noComicInfo ? withoutInfo : sourceSize).directory;
+    // A variant may have an input of its own, such as a wide first image for the cover.
+    const source = variant.input
+      ? await prepareInput(
+          { ...example, id: `${example.id}-${variant.id}`, input: variant.input },
+          scratch,
+          withInfo && !variant.noComicInfo,
+        )
+      : variant.noComicInfo
+        ? withoutInfo
+        : sourceSize;
+    const input = source.directory;
     const format = variant.format ?? example.format ?? base.format;
     const profile = variant.profile ?? example.profile ?? base.profile;
+    // A cover of one's own is a file named on the command line, as `--cover cover.jpg`.
+    const ownCover = variant.ownCover
+      ? await writeOwnCover(variant.ownCover, path.join(scratch, 'covers', example.id, variant.id))
+      : undefined;
+    if (ownCover) entry.flags = [...entry.flags, '--cover', ownCover.name];
     const flags = variant.original
       ? []
-      : combine(base.flags, variant.flags, [
-          ...(example.without ?? []),
-          ...(variant.without ?? []),
-        ]);
+      : [
+          ...combine(base.flags, variant.flags, [
+            ...(example.without ?? []),
+            ...(variant.without ?? []),
+          ]),
+          ...(ownCover ? ['--cover', ownCover.file] : []),
+        ];
     if (example.kind === 'book') {
       const work = path.join(scratch, 'output', example.id, variant.id);
       const book = makeBook(mangapress, input, flags, work, profile, format);
       const given = withInfo && !variant.noComicInfo ? comicInfoXml(example.comicInfo) : undefined;
       entry.format = format;
       entry.profile = profile;
-      entry.facts = await bookFacts(format, book, given);
+      entry.facts = await bookFacts(format, book, given, source.first);
       variants.push(entry);
       console.log(`  ${variant.id.padEnd(28)} ${JSON.stringify(entry.facts)}`);
       continue;
@@ -391,7 +461,23 @@ async function runExample(mangapress, example, scratch) {
     let pages;
     if (variant.original) {
       entry.original = true;
-      pages = [readFileSync(sourceSize.file)];
+      pages = [readFileSync(source.file)];
+    } else if (example.cover) {
+      // The picture is the book's cover, not a page.
+      pages = [
+        coverOf(
+          format,
+          makeBook(
+            mangapress,
+            input,
+            flags,
+            path.join(scratch, 'output', example.id, variant.id),
+            profile,
+            format,
+          ).bytes,
+        ),
+      ];
+      pages.extensions = ['jpg'];
     } else {
       pages = convert(
         mangapress,
@@ -438,7 +524,8 @@ async function runExample(mangapress, example, scratch) {
         picture = sharp(picked[0])
           .extract(example.zoom)
           .resize({ width: PICTURE_WIDTH, kernel: 'nearest' });
-      else if (example.screen) picture = await onScreen(picked[0], example.screen);
+      else if (example.screen && !variant.original)
+        picture = await onScreen(picked[0], example.screen);
       else picture = sharp(picked[0]).resize({ width: PICTURE_WIDTH });
       const encoded = await picture
         .webp({ quality: 80, effort: 6 })
@@ -456,7 +543,16 @@ async function runExample(mangapress, example, scratch) {
       : `${entry.width}x${entry.height}`;
     console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
-  const used = [...new Set(refsOf(example.input).map((ref) => ref.source))];
+  const used = [
+    ...new Set(
+      [
+        example.input,
+        ...example.variants.flatMap((variant) => [variant.input, variant.ownCover]).filter(Boolean),
+      ]
+        .flatMap(refsOf)
+        .map((ref) => ref.source),
+    ),
+  ];
   return {
     kind: example.kind,
     layout: all ? 'rows' : 'grid',

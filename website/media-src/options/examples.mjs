@@ -55,6 +55,15 @@ const BOOK = {
     LanguageISO: 'en',
   },
 };
+// The first page of the episode, in color: the image a book's cover is made from.
+const PEPPER_FIRST = { source: 'pepper-ep06', page: '001.jpg' };
+// Three pages side by side, 3240 x 1440: `ratio` cuts the middle of it to a width of that many heights.
+const WIDE_STRIP = [{ source: 'gogo-04' }, { source: 'gogo-03' }, { source: 'gogo-02' }];
+const KPW6_SCREEN = {
+  profile: 'KPW6',
+  screen: { width: 1272, height: 1696 },
+  screenLabel: 'Kindle Paperwhite 6, 1272 × 1696',
+};
 const TITLE = 'Pepper & Carrot 6';
 const AUTHOR = 'D. Revoy';
 
@@ -663,5 +672,140 @@ export const examples = [
         profile: 'KPW6',
       },
     ],
+  },
+
+  {
+    // The picture is the cover of an EPUB, which is made from the whole first image.
+    id: 'cover-fit-fill',
+    kind: 'pictures',
+    cover: true,
+    format: 'epub',
+    input: PEPPER_FIRST,
+    ...KPW6_SCREEN,
+    variants: [
+      { id: 'fit', label: 'Crop the cover to fill the screen: Off', flags: [] },
+      { id: 'fill', label: 'Crop the cover to fill the screen: On', flags: ['--coverfill'] },
+      { id: 'color', label: 'Color pages: Keep in color', flags: ['--forcecolor'] },
+    ],
+  },
+  {
+    // A wide first image, as a jacket scan or a spread is: two pages of Go Go! side by side, the later
+    // one on the left, which is where the front of a right-to-left book lies.
+    id: 'cover-smart-crop',
+    kind: 'pictures',
+    cover: true,
+    format: 'epub',
+    input: SPREAD,
+    ...KPW6_SCREEN,
+    variants: [
+      { id: 'source', label: 'The first image as it came', flags: [], original: true },
+      { id: 'whole', label: 'Cut the front cover from a wide image: Off', flags: [] },
+      {
+        id: 'smart',
+        label: 'Cut the front cover from a wide image: On',
+        flags: ['--smartcovercrop'],
+      },
+      {
+        id: 'other-side',
+        label: 'Cut the front cover from a wide image: On, with Manga reading order off',
+        flags: ['--smartcovercrop'],
+        without: ['--manga-style'],
+      },
+      {
+        id: 'fill',
+        label: 'Cut the front cover from a wide image: On, with Crop the cover to fill the screen',
+        flags: ['--smartcovercrop', '--coverfill'],
+      },
+    ],
+  },
+  {
+    id: 'cover-formats',
+    kind: 'book',
+    columns: ['source', 'firstPage', 'cover'],
+    input: PEPPER_FIRST,
+    variants: [
+      { id: 'epub', label: 'EPUB', flags: [], format: 'epub' },
+      {
+        id: 'epub-fill',
+        label: 'EPUB, with Crop the cover to fill the screen',
+        flags: ['--coverfill'],
+        format: 'epub',
+      },
+      {
+        id: 'epub-color',
+        label: 'EPUB, with Color pages: Keep in color',
+        flags: ['--forcecolor'],
+        format: 'epub',
+      },
+      { id: 'cbz', label: 'CBZ', flags: [], format: 'cbz' },
+      {
+        id: 'cbz-fill',
+        label: 'CBZ, with Crop the cover to fill the screen',
+        flags: ['--coverfill'],
+        format: 'cbz',
+      },
+      {
+        id: 'cbz-smart-page',
+        label: 'CBZ, with Cut the front cover from a wide image, on a page',
+        flags: ['--smartcovercrop'],
+        format: 'cbz',
+      },
+      {
+        id: 'cbz-smart-wide',
+        label: 'CBZ, with Cut the front cover from a wide image, on a wide image',
+        flags: ['--smartcovercrop'],
+        format: 'cbz',
+        input: SPREAD,
+      },
+      {
+        id: 'cbz-smart-fill',
+        label: 'CBZ, with that and Crop the cover to fill the screen',
+        flags: ['--smartcovercrop', '--coverfill'],
+        format: 'cbz',
+        input: SPREAD,
+      },
+      {
+        id: 'cbz-own',
+        label: 'CBZ, with a cover of your own',
+        flags: [],
+        format: 'cbz',
+        ownCover: PEPPER_DARK,
+      },
+      {
+        id: 'cbz-own-fill',
+        label: 'CBZ, with a cover of your own and Crop the cover to fill the screen',
+        flags: ['--coverfill'],
+        format: 'cbz',
+        ownCover: PEPPER_DARK,
+      },
+      {
+        id: 'pdf-own',
+        label: 'PDF, with a cover of your own',
+        flags: [],
+        format: 'pdf',
+        ownCover: PEPPER_DARK,
+      },
+      {
+        id: 'pdf-smart-wide',
+        label: 'PDF, with Cut the front cover from a wide image, on a wide image',
+        flags: ['--smartcovercrop'],
+        format: 'pdf',
+        input: SPREAD,
+      },
+    ],
+  },
+  {
+    // One image from each of the shapes mangapress tells apart, cut from the same three pages.
+    id: 'cover-smart-bands',
+    kind: 'book',
+    columns: ['source', 'cover'],
+    format: 'epub',
+    input: { beside: WIDE_STRIP, ratio: 0.75 },
+    variants: [0.75, 1.2, 1.5, 1.75, 1.9, 2.2].map((ratio) => ({
+      id: `ratio-${ratio}`,
+      label: `An image ${ratio} times as wide as tall`,
+      flags: ['--smartcovercrop'],
+      input: { beside: WIDE_STRIP, ratio },
+    })),
   },
 ];

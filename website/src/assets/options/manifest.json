@@ -1317,12 +1317,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1333,12 +1336,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"],
+            "firstPage": "992 × 1494"
           }
         },
         {
@@ -1349,12 +1355,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1365,12 +1374,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1381,12 +1393,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1004", "992 × 1303"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1004", "992 × 1303"],
+            "firstPage": "992 × 1494"
           }
         },
         {
@@ -1397,12 +1412,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"],
+            "firstPage": "992 × 1494"
           }
         },
         {
@@ -1413,12 +1431,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"],
+            "firstPage": "992 × 1494"
           }
         },
         {
@@ -1429,12 +1450,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-webtoon-pages.cbz",
+            "source": "992 × 1500",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"],
+            "firstPage": "992 × 1494"
           }
         }
       ]
@@ -1456,12 +1480,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-direction.epub",
+            "source": "992 × 1373",
             "title": "reading-direction",
             "author": "Unknown",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1472,12 +1499,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-direction.epub",
+            "source": "992 × 1373",
             "title": "reading-direction",
             "author": "Unknown",
             "language": "en-US",
             "direction": "ltr",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1488,12 +1518,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-direction.epub",
+            "source": "992 × 1373",
             "title": "reading-direction",
             "author": "Unknown",
             "language": "en-US",
             "direction": "ltr",
             "comicInfo": "none",
-            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+            "cover": null,
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"],
+            "firstPage": "992 × 1494"
           }
         },
         {
@@ -1504,11 +1537,14 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-direction.pdf",
+            "source": "992 × 1373",
             "title": "reading-direction",
             "author": "Unknown",
             "language": null,
             "direction": null,
-            "comicInfo": "none"
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
           }
         },
         {
@@ -1519,12 +1555,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "reading-direction.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         }
       ]
@@ -1546,12 +1585,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "D. Revoy",
             "language": "ja",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1562,11 +1604,14 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.pdf",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "D. Revoy",
             "language": null,
             "direction": null,
-            "comicInfo": "none"
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
           }
         },
         {
@@ -1577,12 +1622,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         }
       ]
@@ -1604,12 +1652,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper and Carrot 06",
             "author": "Unknown",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1620,12 +1671,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1636,12 +1690,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1652,12 +1709,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "D. Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1668,12 +1728,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "D. Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         }
       ]
@@ -1695,12 +1758,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1711,12 +1777,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006: The Potion Contest",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1727,12 +1796,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "The Potion Contest",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1743,12 +1815,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1759,12 +1834,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper & Carrot 6",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1775,12 +1853,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "The Potion Contest",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1791,12 +1872,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper and Carrot 06",
             "author": "Unknown",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         }
       ]
@@ -1818,12 +1902,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1834,12 +1921,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "copy",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1850,12 +1940,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "copy",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1866,12 +1959,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         },
         {
@@ -1882,12 +1978,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1898,11 +1997,14 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.pdf",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": null,
             "direction": null,
-            "comicInfo": "none"
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
           }
         }
       ]
@@ -1924,12 +2026,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1940,12 +2045,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "ja",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1956,12 +2064,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "pt-BR",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
           }
         },
         {
@@ -1972,11 +2083,14 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.pdf",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": null,
             "direction": null,
-            "comicInfo": "none"
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
           }
         },
         {
@@ -1987,12 +2101,15 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+            "cover": null,
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
           }
         }
       ]
@@ -2014,12 +2131,15 @@
           "profile": "KoLC",
           "facts": {
             "fileName": "Pepper and Carrot 06.kepub.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"],
+            "firstPage": "1214 × 1680"
           }
         },
         {
@@ -2030,12 +2150,15 @@
           "profile": "KoLC",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"],
+            "firstPage": "1214 × 1680"
           }
         },
         {
@@ -2046,12 +2169,15 @@
           "profile": "KoLC",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1000 × 1384", "1000 × 1439", "1000 × 1451"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1000 × 1384", "1000 × 1439", "1000 × 1451"],
+            "firstPage": "1000 × 1384"
           }
         },
         {
@@ -2062,12 +2188,15 @@
           "profile": "KoLC",
           "facts": {
             "fileName": "Pepper and Carrot 06.cbz",
+            "source": "992 × 1373",
             "title": null,
             "author": null,
             "language": null,
             "direction": null,
             "comicInfo": "none",
-            "pages": ["1264 × 1680", "1264 × 1680", "1264 × 1680"]
+            "cover": null,
+            "pages": ["1264 × 1680", "1264 × 1680", "1264 × 1680"],
+            "firstPage": "1264 × 1680"
           }
         },
         {
@@ -2078,12 +2207,506 @@
           "profile": "KPW6",
           "facts": {
             "fileName": "Pepper and Carrot 06.epub",
+            "source": "992 × 1373",
             "title": "Pepper&Carrot Vol. 01 #006",
             "author": "David Revoy",
             "language": "en-US",
             "direction": "rtl",
             "comicInfo": "none",
-            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"],
+            "firstPage": "1225 × 1696"
+          }
+        }
+      ]
+    },
+    "cover-fit-fill": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "screen": { "width": 1272, "height": 1696 },
+      "screenLabel": "Kindle Paperwhite 6, 1272 × 1696",
+      "variants": [
+        {
+          "id": "fit",
+          "label": "Crop the cover to fill the screen: Off",
+          "flags": [],
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 251548,
+          "file": "cover-fit-fill-fit.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 43756,
+          "sha256": "fedb95d174dbd01891b990c9289670e72e08df83584484f8a5d30b2242e6e828"
+        },
+        {
+          "id": "fill",
+          "label": "Crop the cover to fill the screen: On",
+          "flags": ["--coverfill"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 314070,
+          "file": "cover-fit-fill-fill.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 66510,
+          "sha256": "e56d45024cf0d9802295569eac8f38a96d86ddc12cdbf4331ea1fddce721de49"
+        },
+        {
+          "id": "color",
+          "label": "Color pages: Keep in color",
+          "flags": ["--forcecolor"],
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 278780,
+          "file": "cover-fit-fill-color.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 50374,
+          "sha256": "6e0f61fc6b8f94007f5dbdc5c0a193c4129ffd182009d4eb3533e192db996a9c"
+        }
+      ]
+    },
+    "cover-smart-crop": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["gogo-04", "gogo-03"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source": { "width": 2160, "height": 1440 },
+      "screen": { "width": 1272, "height": 1696 },
+      "screenLabel": "Kindle Paperwhite 6, 1272 × 1696",
+      "variants": [
+        {
+          "id": "source",
+          "label": "The first image as it came",
+          "flags": [],
+          "original": true,
+          "width": 2160,
+          "height": 1440,
+          "pageBytes": 1321177,
+          "file": "cover-smart-crop-source.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 467,
+          "bytes": 65850,
+          "sha256": "249c9673a0e1163c1aabbd97f9bb9dd138103e61546c0be96986ac9396005f81"
+        },
+        {
+          "id": "whole",
+          "label": "Cut the front cover from a wide image: Off",
+          "flags": [],
+          "width": 1272,
+          "height": 848,
+          "pageBytes": 269389,
+          "file": "cover-smart-crop-whole.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 64646,
+          "sha256": "8d5d1b8742efe9c5abeb21383d5765639ffbef74d2103aecf894a60d6eeb81e4"
+        },
+        {
+          "id": "smart",
+          "label": "Cut the front cover from a wide image: On",
+          "flags": ["--smartcovercrop"],
+          "width": 1015,
+          "height": 1440,
+          "pageBytes": 289625,
+          "file": "cover-smart-crop-smart.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 71980,
+          "sha256": "de4235071650c54c558b8b147e818e41f35f18a4230f36287de4b32cdc01e545"
+        },
+        {
+          "id": "other-side",
+          "label": "Cut the front cover from a wide image: On, with Manga reading order off",
+          "flags": ["--smartcovercrop"],
+          "width": 1015,
+          "height": 1440,
+          "pageBytes": 296870,
+          "file": "cover-smart-crop-other-side.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 75388,
+          "sha256": "92fae58e14696eb230c9352927a912db93de4339159cdbba71ffcdeed968f81e"
+        },
+        {
+          "id": "fill",
+          "label": "Cut the front cover from a wide image: On, with Crop the cover to fill the screen",
+          "flags": ["--smartcovercrop", "--coverfill"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 374444,
+          "file": "cover-smart-crop-fill.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 99266,
+          "sha256": "ebbcf72d4a8226b44bac156dac98d15d179a90924a605835a226471f04b69b0b"
+        }
+      ]
+    },
+    "cover-formats": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06", "gogo-04", "gogo-03", "pepper-ep01"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["source", "firstPage", "cover"],
+      "variants": [
+        {
+          "id": "epub",
+          "label": "EPUB",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.epub",
+            "source": "992 × 1373",
+            "title": "cover-formats",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1225 × 1696"],
+            "firstPage": "1225 × 1696"
+          }
+        },
+        {
+          "id": "epub-fill",
+          "label": "EPUB, with Crop the cover to fill the screen",
+          "flags": ["--coverfill"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.epub",
+            "source": "992 × 1373",
+            "title": "cover-formats",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 1272, "height": 1696, "color": false },
+            "pages": ["1225 × 1696"],
+            "firstPage": "1225 × 1696"
+          }
+        },
+        {
+          "id": "epub-color",
+          "label": "EPUB, with Color pages: Keep in color",
+          "flags": ["--forcecolor"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.epub",
+            "source": "992 × 1373",
+            "title": "cover-formats",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 992, "height": 1373, "color": true },
+            "pages": ["1225 × 1696"],
+            "firstPage": "1225 × 1696"
+          }
+        },
+        {
+          "id": "cbz",
+          "label": "CBZ",
+          "flags": [],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.cbz",
+            "source": "992 × 1373",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": null,
+            "pages": ["1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-fill",
+          "label": "CBZ, with Crop the cover to fill the screen",
+          "flags": ["--coverfill"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.cbz",
+            "source": "992 × 1373",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": null,
+            "pages": ["1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-smart-page",
+          "label": "CBZ, with Cut the front cover from a wide image, on a page",
+          "flags": ["--smartcovercrop"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.cbz",
+            "source": "992 × 1373",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": null,
+            "pages": ["1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-smart-wide",
+          "label": "CBZ, with Cut the front cover from a wide image, on a wide image",
+          "flags": ["--smartcovercrop"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats-cbz-smart-wide.cbz",
+            "source": "2160 × 1440",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": { "width": 1015, "height": 1440, "color": false },
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-smart-fill",
+          "label": "CBZ, with that and Crop the cover to fill the screen",
+          "flags": ["--smartcovercrop", "--coverfill"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats-cbz-smart-fill.cbz",
+            "source": "2160 × 1440",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": { "width": 1272, "height": 1696, "color": false },
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-own",
+          "label": "CBZ, with a cover of your own",
+          "flags": ["--cover", "cover.jpg"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.cbz",
+            "source": "992 × 1373",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": { "width": 992, "height": 1373, "color": false },
+            "pages": ["1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "cbz-own-fill",
+          "label": "CBZ, with a cover of your own and Crop the cover to fill the screen",
+          "flags": ["--coverfill", "--cover", "cover.jpg"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.cbz",
+            "source": "992 × 1373",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": { "width": 1272, "height": 1696, "color": false },
+            "pages": ["1272 × 1696"],
+            "firstPage": "1272 × 1696"
+          }
+        },
+        {
+          "id": "pdf-own",
+          "label": "PDF, with a cover of your own",
+          "flags": ["--cover", "cover.jpg"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats.pdf",
+            "source": "992 × 1373",
+            "title": "cover-formats",
+            "author": "Unknown",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
+          }
+        },
+        {
+          "id": "pdf-smart-wide",
+          "label": "PDF, with Cut the front cover from a wide image, on a wide image",
+          "flags": ["--smartcovercrop"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-formats-pdf-smart-wide.pdf",
+            "source": "2160 × 1440",
+            "title": "cover-formats-pdf-smart-wide",
+            "author": "Unknown",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "cover": null,
+            "firstPage": null
+          }
+        }
+      ]
+    },
+    "cover-smart-bands": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["gogo-04", "gogo-03", "gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source": { "width": 1080, "height": 1440 },
+      "columns": ["source", "cover"],
+      "variants": [
+        {
+          "id": "ratio-0.75",
+          "label": "An image 0.75 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-0.75.epub",
+            "source": "1080 × 1440",
+            "title": "cover-smart-bands-ratio-0",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 1080, "height": 1440, "color": false },
+            "pages": ["1181 × 1696"],
+            "firstPage": "1181 × 1696"
+          }
+        },
+        {
+          "id": "ratio-1.2",
+          "label": "An image 1.2 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-1.2.epub",
+            "source": "1728 × 1440",
+            "title": "cover-smart-bands-ratio-1",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 1106, "height": 1440, "color": false },
+            "pages": ["1144 × 1696", "1144 × 1696", "1257 × 1696"],
+            "firstPage": "1144 × 1696"
+          }
+        },
+        {
+          "id": "ratio-1.5",
+          "label": "An image 1.5 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-1.5.epub",
+            "source": "2160 × 1440",
+            "title": "cover-smart-bands-ratio-1",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 1015, "height": 1440, "color": false },
+            "pages": ["1272 × 1509", "1272 × 1509", "1006 × 1696"],
+            "firstPage": "1272 × 1509"
+          }
+        },
+        {
+          "id": "ratio-1.75",
+          "label": "An image 1.75 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-1.75.epub",
+            "source": "2520 × 1440",
+            "title": "cover-smart-bands-ratio-1",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 965, "height": 1440, "color": false },
+            "pages": ["863 × 1696"],
+            "firstPage": "863 × 1696"
+          }
+        },
+        {
+          "id": "ratio-1.9",
+          "label": "An image 1.9 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-1.9.epub",
+            "source": "2736 × 1440",
+            "title": "cover-smart-bands-ratio-1",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 1053, "height": 1440, "color": false },
+            "pages": ["795 × 1696"],
+            "firstPage": "795 × 1696"
+          }
+        },
+        {
+          "id": "ratio-2.2",
+          "label": "An image 2.2 times as wide as tall",
+          "flags": ["--smartcovercrop"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "cover-smart-bands-ratio-2.2.epub",
+            "source": "3168 × 1440",
+            "title": "cover-smart-bands-ratio-2",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "cover": { "width": 993, "height": 1440, "color": false },
+            "pages": ["726 × 1696"],
+            "firstPage": "726 × 1696"
           }
         }
       ]

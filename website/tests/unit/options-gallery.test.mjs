@@ -6,8 +6,11 @@ import { checkGallery, referencedExamples } from '../../scripts/options-gallery-
 import {
   epubFacts,
   hasComicInfo,
+  isCover,
+  isPage,
   otherEntries,
   pdfFacts,
+  pdfPictures,
   unescapeXml,
 } from '../../scripts/options-gallery/book-facts.mjs';
 import { readZip } from '../../scripts/options-gallery/zip.mjs';
@@ -143,21 +146,37 @@ test('the title, author, language and direction of a PDF are what it states, and
   });
 });
 
-test('a CBZ is known by its ComicInfo.xml and by what else it holds apart from pages', () => {
+test('a CBZ is known by its ComicInfo.xml, its cover and what else it holds apart from pages', () => {
   assert.equal(hasComicInfo(['Untitled/p0001.jpg', 'ComicInfo.xml']), true);
   assert.equal(hasComicInfo(['book/ComicInfo.xml']), true);
   assert.equal(hasComicInfo(['Untitled/p0001.jpg', 'NotComicInfo.xml']), false);
+  assert.equal(isCover('##cover.jpg'), true);
+  assert.equal(isCover('Untitled/p0001.jpg'), false);
+  assert.equal(isPage('Untitled/p0001.jpg'), true);
+  assert.equal(isPage('##cover.jpg'), false);
+  assert.equal(isPage('ComicInfo.xml'), false);
   assert.deepEqual(
     otherEntries([
       'a/p0001.JPG',
       'a/p0002.png',
       'a/p0003.gif',
+      '##cover.jpg',
       'ComicInfo.xml',
       'extra.txt',
       'x/y.xml',
     ]),
     ['extra.txt', 'x/y.xml'],
   );
+});
+
+test('the pages and the images of a PDF are counted, so that an image beyond the pages shows', () => {
+  const pdf = Buffer.from(
+    '<</Type/Catalog/Pages 4 0 R>> <</Type/Pages/Count 2>> <</Type/Page/Parent 4 0 R>> <</Type /Page /MediaBox[0 0 1 1]>> ' +
+      '<</Subtype/Image/Width 1>> <</Subtype /Image>> <</Subtype/Image>>',
+    'latin1',
+  );
+  assert.deepEqual(pdfPictures(pdf), { pages: 2, images: 3 });
+  assert.deepEqual(pdfPictures(Buffer.from('%PDF-1.3', 'latin1')), { pages: 0, images: 0 });
 });
 
 // ---- the check ------------------------------------------------------------------------------------
