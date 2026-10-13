@@ -1,0 +1,83 @@
+---
+title: 'Imagens das páginas (Page images)'
+description: 'O que Page format, JPEG quality, Keep all 256 grays, 8-bit PNG, Color pages as PNG too e Use the images as they are fazem com o arquivo em que cada página é gravada, com tamanhos de arquivo medidos e detalhes ampliados.'
+---
+
+import OptionExample from '../../../../../components/OptionExample.astro';
+import OptionSizes from '../../../../../components/OptionSizes.astro';
+
+A seção **Page images** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options) trata do arquivo em que cada página é gravada, não de como a página parece: o mesmo desenho, num arquivo maior ou menor, com os tons mantidos ou reduzidos. Os números abaixo são os tamanhos dos arquivos que o mangapress gravou para uma página de _Pepper&Carrot_, de 992 × 1373 pixels, convertida para o Kindle Paperwhite 6, como nas outras páginas deste guia.
+
+## Page format
+
+- **JPEG, full tone**, a escolha inicial: cada página é um JPEG cinza que mantém os 256 tons. Não há pontilhado. `--forcepng` não é dado.
+- **PNG, reduced to the screen's grays**: cada página é reduzida aos cinzas que a tela do dispositivo consegue mostrar, com o pontilhado que o Pillow usa (Floyd–Steinberg), e gravada como PNG sem perda. São 16 cinzas para todos os perfis menos dois: o Kindle 1 tem 4, o Kindle 2 tem 15. O arquivo é um PNG de paleta, que guarda 4 bits por pixel (2 no Kindle 1). `--forcepng`.
+
+A imagem é um quadrado de 120 pixels da página, ampliado para 700 pixels sem suavização, para que os pixels apareçam. A primeira é o JPEG, a segunda o PNG, a terceira o PNG com **Keep all 256 grays**, que pula a redução:
+
+<OptionExample
+  id="format-zoom"
+  alt={{
+    jpeg: 'Um detalhe ampliado de um desenho em tons de cinza suaves.',
+    png: 'O mesmo detalhe com um pontilhado fino nas áreas sombreadas, vindo da redução para 16 cinzas.',
+    'png-256': 'O mesmo detalhe, tão suave quanto o JPEG.',
+  }}
+/>
+
+PNG não é o arquivo menor aqui. Um PNG guarda todos os pixels que recebe, e o pontilhado cria pixels que um compressor não consegue juntar, então o PNG de 16 cinzas desta página é maior que o JPEG:
+
+<OptionSizes id="format-files" />
+
+Num CBZ para os quatro Kindles mais antigos (Kindle 1, Kindle 2, Kindle Keyboard/Touch e Kindle DX/DXG), e num PDF, uma página PNG é sempre um PNG cinza de 8 bits, como em **8-bit PNG** abaixo.
+
+## Keep all 256 grays
+
+Pula a redução: a página mantém todos os tons e é gravada como um PNG cinza de 8 bits sem perda. É o maior dos arquivos cinza da tabela acima, cerca de três vezes o JPEG, e a página é tão suave quanto o JPEG na imagem. Vale só para páginas PNG, então fica esmaecida com **JPEG, full tone**. `--noquantize`.
+
+## 8-bit PNG
+
+Para leitores que não abrem o PNG de paleta, mais compacto. Os pixels são os mesmos, os 16 cinzas, e o arquivo é um PNG cinza de 8 bits, que ocupa mais: a terceira linha da tabela, contra a segunda. Fica esmaecida a menos que **Page format** seja PNG, enquanto **Keep all 256 grays** está ligada (a página já é de 8 bits) e num PDF (sempre 8 bits). `--pnglegacy`.
+
+## Color pages as PNG too
+
+A cor é escolhida em [Cor e tom](../color-and-tone/); aqui o assunto é o arquivo em que uma página colorida é gravada. Uma página mantida em cor é gravada como um JPEG RGB, e continua sendo mesmo quando **Page format** é PNG: o **PNG** só reduz os cinzas das páginas que são cinza. **Color pages as PNG too** grava as páginas coloridas também como PNG, sem perda, e é a única opção daqui que muda o tamanho em uma ordem de grandeza: nas três últimas linhas da tabela, o JPEG colorido, o mesmo com páginas PNG e o PNG colorido têm 293 KB, 293 KB e 2 MB para a mesma página, sete vezes mais. Fica esmaecida a menos que as páginas coloridas sejam mantidas em cor e **Page format** seja PNG. `--force-png-rgb`.
+
+## JPEG quality
+
+A qualidade das páginas gravadas como JPEG, de 1 a 100. Vazia, usa-se a do dispositivo: 90 para os perfis Kindle Scribe e Colorsoft e 85 para os outros. A página abaixo é gravada em 85:
+
+<OptionSizes id="jpeg-quality-files" />
+
+O tamanho cai muito rápido conforme o número diminui. A imagem mostra o que isso custa: um balão de fala da página, ampliado, em 85, 30 e 10:
+
+<OptionExample
+  id="jpeg-quality-zoom"
+  alt={{
+    'quality-85':
+      'Um balão de fala com o texto Fan-tas-tic sobre um fundo cinza, com bordas limpas.',
+    'quality-30': 'O mesmo balão com o fundo cinza um pouco mais áspero.',
+    'quality-10':
+      'O mesmo balão com blocos quadrados visíveis no fundo cinza e em volta das letras.',
+  }}
+/>
+
+A configuração vale para as páginas JPEG, para as páginas coloridas que continuam JPEG e para a capa de um EPUB, que é sempre um JPEG, sejam as páginas o que forem. Fica esmaecida quando nada é gravado como JPEG: num CBZ ou PDF cujas páginas são todas PNG. `--jpeg-quality`.
+
+## Use the images as they are
+
+Empacota as páginas intactas: nada é cortado, redimensionado, passado para cinza ou gravado de novo. Num CBZ, o arquivo no livro é o arquivo da entrada, byte a byte; a tabela o compara com a página convertida:
+
+<OptionSizes id="as-they-are" />
+
+A página acima já é um JPEG com mais tons do que a convertida precisa, então o arquivo intacto é o maior dos dois, e tem 992 × 1373 pixels, não os 1272 × 1696 da tela. A ordem de leitura, o corte de webtoon e a visão de duas páginas continuam valendo, e a capa de um EPUB ainda é feita da primeira imagem, então num EPUB **Color pages** e **JPEG quality** ainda a decidem. Um EPUB não guarda uma página BMP sem mudá-la: a conversão é recusada e diz para desligar a opção ou escolher CBZ.
+
+Com ela ligada, o app esmaece tudo que mudaria uma imagem: **Page format** e as três opções de PNG, **Gamma**, **Reduce rainbow effect**, as opções de corte, tamanho e bordas e **Autocontrast**; num CBZ ou PDF, também **Color pages** e **JPEG quality**. `--noprocessing`.
+
+## Opções e flags
+
+- **Page format**: `--forcepng` para PNG; nenhum para JPEG.
+- **Keep all 256 grays**: `--noquantize`.
+- **8-bit PNG**: `--pnglegacy`.
+- **Color pages as PNG too**: `--force-png-rgb`.
+- **JPEG quality**: `--jpeg-quality`, de 1 a 100.
+- **Use the images as they are**: `--noprocessing`.

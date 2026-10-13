@@ -917,6 +917,294 @@
           "sha256": "19db9e457ebc69bd9b1ccaded469b038db2bcb964a9a38fc85ef0e12c9cbf7c4"
         }
       ]
+    },
+    "format-zoom": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "jpeg",
+          "label": "Page format: JPEG, full tone",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "file": "format-zoom-jpeg.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 700,
+          "bytes": 28130,
+          "sha256": "83f52e2ed973634719b4b744ed9879836848598e106692dfc660ca5209b48a27"
+        },
+        {
+          "id": "png",
+          "label": "Page format: PNG, reduced to the screen’s grays",
+          "flags": ["--forcepng"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 347521,
+          "file": "format-zoom-png.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 700,
+          "bytes": 32658,
+          "sha256": "e372db87bd57a59e8ead845a9c8c7db3c5d573de41797d0029bcd20f69d8b28b"
+        },
+        {
+          "id": "png-256",
+          "label": "Page format: PNG, with Keep all 256 grays",
+          "flags": ["--forcepng", "--noquantize"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 755923,
+          "file": "format-zoom-png-256.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 700,
+          "bytes": 27074,
+          "sha256": "422446f5c85b61a3bfb6733be48b817ba136d431973c98e0b669334ac8e157e4"
+        }
+      ]
+    },
+    "format-files": {
+      "kind": "files",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "jpeg",
+          "label": "Page format: JPEG, full tone",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "png",
+          "label": "Page format: PNG, reduced to the screen’s grays",
+          "flags": ["--forcepng"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 347521,
+          "fileType": "PNG",
+          "sameAsInput": false
+        },
+        {
+          "id": "png-8bit",
+          "label": "PNG with 8-bit PNG",
+          "flags": ["--forcepng", "--pnglegacy"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 416169,
+          "fileType": "PNG",
+          "sameAsInput": false
+        },
+        {
+          "id": "png-256",
+          "label": "PNG with Keep all 256 grays",
+          "flags": ["--forcepng", "--noquantize"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 755923,
+          "fileType": "PNG",
+          "sameAsInput": false
+        },
+        {
+          "id": "color",
+          "label": "Color pages: Keep in color",
+          "flags": ["--forcecolor"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 299560,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "color-png",
+          "label": "Color pages: Keep in color, with PNG pages",
+          "flags": ["--forcecolor", "--forcepng"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 299560,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "color-png-rgb",
+          "label": "Color pages: Keep in color, with Color pages as PNG too",
+          "flags": ["--forcecolor", "--forcepng", "--force-png-rgb"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 2099905,
+          "fileType": "PNG",
+          "sameAsInput": false
+        }
+      ]
+    },
+    "jpeg-quality-files": {
+      "kind": "files",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "quality-100",
+          "label": "JPEG quality: 100",
+          "flags": ["--jpeg-quality", "100"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 767393,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-95",
+          "label": "JPEG quality: 95",
+          "flags": ["--jpeg-quality", "95"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 447358,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-90",
+          "label": "JPEG quality: 90",
+          "flags": ["--jpeg-quality", "90"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 323356,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-85",
+          "label": "JPEG quality: 85",
+          "flags": ["--jpeg-quality", "85"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-70",
+          "label": "JPEG quality: 70",
+          "flags": ["--jpeg-quality", "70"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 178793,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-50",
+          "label": "JPEG quality: 50",
+          "flags": ["--jpeg-quality", "50"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 131244,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-30",
+          "label": "JPEG quality: 30",
+          "flags": ["--jpeg-quality", "30"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 94209,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "quality-10",
+          "label": "JPEG quality: 10",
+          "flags": ["--jpeg-quality", "10"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 45633,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        }
+      ]
+    },
+    "jpeg-quality-zoom": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "quality-85",
+          "label": "JPEG quality: 85",
+          "flags": ["--jpeg-quality", "85"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "file": "jpeg-quality-zoom-quality-85.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 438,
+          "bytes": 14204,
+          "sha256": "d74045394ac4462ec7f252d61961dd231bb12a8971f78478de5bbad384bc4f1d"
+        },
+        {
+          "id": "quality-30",
+          "label": "JPEG quality: 30",
+          "flags": ["--jpeg-quality", "30"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 94209,
+          "file": "jpeg-quality-zoom-quality-30.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 438,
+          "bytes": 14310,
+          "sha256": "8a179deeb77a71ead728d4c0d81a7bbee8f5c1a85825642f02c2dcb8082845b4"
+        },
+        {
+          "id": "quality-10",
+          "label": "JPEG quality: 10",
+          "flags": ["--jpeg-quality", "10"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 45633,
+          "file": "jpeg-quality-zoom-quality-10.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 438,
+          "bytes": 12624,
+          "sha256": "bfb4cdf8a8f4acdcd206ffcb94d972b7c935bf7f9e4c241eab98a513089be442"
+        }
+      ]
+    },
+    "as-they-are": {
+      "kind": "files",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "processed",
+          "label": "Use the images as they are: Off",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "fileType": "JPEG",
+          "sameAsInput": false
+        },
+        {
+          "id": "untouched",
+          "label": "Use the images as they are: On",
+          "flags": ["--noprocessing"],
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 396499,
+          "fileType": "JPEG",
+          "sameAsInput": true
+        }
+      ]
     }
   }
 }

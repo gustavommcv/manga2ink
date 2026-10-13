@@ -4,7 +4,13 @@ import { expect, test } from '@playwright/test';
 import { base } from '../../site.config.mjs';
 
 const root = base.replace(/\/?$/, '/');
-const pages = ['cropping', 'color-and-tone', 'double-page-spreads', 'size-and-borders'];
+const pages = [
+  'cropping',
+  'color-and-tone',
+  'double-page-spreads',
+  'size-and-borders',
+  'page-images',
+];
 
 for (const locale of ['', 'pt-br/']) {
   for (const colorScheme of ['light', 'dark']) {
@@ -43,7 +49,7 @@ for (const locale of ['', 'pt-br/']) {
   }
 }
 
-for (const slug of ['cropping', 'double-page-spreads', 'size-and-borders']) {
+for (const slug of ['cropping', 'double-page-spreads', 'size-and-borders', 'page-images']) {
   test(`every picture of an example says which flags made it, and every table says its source: ${slug}`, async ({
     page,
   }) => {
@@ -79,20 +85,22 @@ for (const locale of ['', 'pt-br/']) {
 }
 
 for (const locale of ['', 'pt-br/']) {
-  test(`a table of sizes can be scrolled with the keyboard on a very narrow screen: ${locale || 'en'}`, async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 320, height: 700 });
-    await page.goto(`${root}${locale}user-guide/advanced-options/cropping/`);
-    const regions = page.locator('[data-option-sizes][role="region"]');
-    expect(await regions.count()).toBeGreaterThan(0);
-    for (const region of await regions.all()) {
-      await expect(region).toHaveAttribute('tabindex', '0');
-      await expect(region).toHaveAttribute('aria-label', /.+: .+/);
-    }
-    const scan = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .analyze();
-    expect(scan.violations).toEqual([]);
-  });
+  for (const slug of ['cropping', 'page-images']) {
+    test(`a table of sizes can be scrolled with the keyboard on a very narrow screen: ${slug} ${locale || 'en'}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 320, height: 700 });
+      await page.goto(`${root}${locale}user-guide/advanced-options/${slug}/`);
+      const regions = page.locator('[data-option-sizes][role="region"]');
+      expect(await regions.count()).toBeGreaterThan(0);
+      for (const region of await regions.all()) {
+        await expect(region).toHaveAttribute('tabindex', '0');
+        await expect(region).toHaveAttribute('aria-label', /.+: .+/);
+      }
+      const scan = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      expect(scan.violations).toEqual([]);
+    });
+  }
 }

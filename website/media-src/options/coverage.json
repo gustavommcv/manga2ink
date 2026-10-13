@@ -69,5 +69,5 @@
     ],
     "cli/mangapress": ["--dry-run", "-n", "--quiet", "-q"]
   },
-  "planned": ["reading", "page-images", "cover", "book-metadata"]
+  "planned": ["reading", "cover", "book-metadata"]
 }

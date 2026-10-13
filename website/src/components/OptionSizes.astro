@@ -13,34 +13,52 @@ const example = (
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
 const portuguese = Astro.currentLocale === 'pt-br';
+const files = example.kind === 'files';
 const heads = portuguese
   ? {
-      region: 'tamanhos medidos',
+      region: files ? 'tamanhos de arquivo medidos' : 'tamanhos medidos',
       setting: 'Opção',
       flag: 'No terminal',
-      size: 'Tamanho da página',
-      kept: 'Fica da página',
+      size: files ? 'Página' : 'Tamanho da página',
+      kept: files ? 'Tamanho do arquivo' : 'Fica da página',
     }
   : {
-      region: 'measured sizes',
+      region: files ? 'measured file sizes' : 'measured sizes',
       setting: 'Setting',
       flag: 'On the command line',
-      size: 'Page size',
-      kept: 'Of the page kept',
+      size: files ? 'Page' : 'Page size',
+      kept: files ? 'File size' : 'Of the page kept',
     };
 const group = example.variants[0].label.split(':')[0];
 const source = example.source;
 const caption = portuguese
-  ? `Página de origem: ${source.width} × ${source.height} px. As páginas não são ampliadas, então o tamanho mostra o que foi cortado.`
-  : `Source page: ${source.width} × ${source.height} px. The pages are not enlarged, so the size shows what was cropped.`;
+  ? files
+    ? `Página de origem: ${source.width} × ${source.height} px. Os tamanhos são os do arquivo da página que o mangapress gravou.`
+    : `Página de origem: ${source.width} × ${source.height} px. As páginas não são ampliadas, então o tamanho mostra o que foi cortado.`
+  : files
+    ? `Source page: ${source.width} × ${source.height} px. The sizes are those of the file of the page mangapress wrote.`
+    : `Source page: ${source.width} × ${source.height} px. The pages are not enlarged, so the size shows what was cropped.`;
+const number = new Intl.NumberFormat(portuguese ? 'pt-BR' : 'en', { maximumFractionDigits: 1 });
+const fileSize = (bytes: number) =>
+  bytes >= 1024 * 1024
+    ? `${number.format(bytes / 1024 / 1024)} MB`
+    : `${Math.round(bytes / 1024)} KB`;
 const percent = new Intl.NumberFormat(portuguese ? 'pt-BR' : 'en', { maximumFractionDigits: 1 });
+const unchanged = portuguese ? 'a própria entrada, sem mudança' : 'the input, unchanged';
 const rows = example.variants.map((variant) => {
-  const sized = variant as { keptPercent?: number };
+  const sized = variant as {
+    keptPercent?: number;
+    pageBytes: number;
+    fileType?: string;
+    sameAsInput?: boolean;
+  };
   return {
     label: variant.label,
-    flags: variant.flags.join(' '),
-    size: `${variant.width} × ${variant.height}`,
-    kept: `${percent.format(sized.keptPercent ?? 100)}%`,
+    flags: variant.flags.length > 0 ? variant.flags.join(' ') : portuguese ? 'sem flag' : 'no flag',
+    size: files
+      ? `${variant.width} × ${variant.height}, ${sized.fileType}${sized.sameAsInput ? ` (${unchanged})` : ''}`
+      : `${variant.width} × ${variant.height}`,
+    kept: files ? fileSize(sized.pageBytes) : `${percent.format(sized.keptPercent ?? 100)}%`,
   };
 });
 ---
@@ -121,6 +139,8 @@ const rows = example.variants.map((variant) => {
   td:nth-child(3),
   td:nth-child(4) {
     font-variant-numeric: tabular-nums;
+  }
+  td:nth-child(4) {
     white-space: nowrap;
   }
 </style>

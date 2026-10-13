@@ -302,4 +302,88 @@ export const examples = [
       { id: 'black', label: 'Borders: Black', flags: ['--blackborders'] },
     ],
   },
+
+  {
+    id: 'format-zoom',
+    kind: 'pictures',
+    input: PEPPER_SUN,
+    zoom: { left: 330, top: 470, width: 120, height: 120 },
+    variants: [
+      { id: 'jpeg', label: 'Page format: JPEG, full tone', flags: [] },
+      {
+        id: 'png',
+        label: 'Page format: PNG, reduced to the screen’s grays',
+        flags: ['--forcepng'],
+      },
+      {
+        id: 'png-256',
+        label: 'Page format: PNG, with Keep all 256 grays',
+        flags: ['--forcepng', '--noquantize'],
+      },
+    ],
+  },
+  {
+    id: 'format-files',
+    kind: 'files',
+    input: PEPPER_SUN,
+    variants: [
+      { id: 'jpeg', label: 'Page format: JPEG, full tone', flags: [] },
+      {
+        id: 'png',
+        label: 'Page format: PNG, reduced to the screen’s grays',
+        flags: ['--forcepng'],
+      },
+      {
+        id: 'png-8bit',
+        label: 'PNG with 8-bit PNG',
+        flags: ['--forcepng', '--pnglegacy'],
+      },
+      {
+        id: 'png-256',
+        label: 'PNG with Keep all 256 grays',
+        flags: ['--forcepng', '--noquantize'],
+      },
+      { id: 'color', label: 'Color pages: Keep in color', flags: ['--forcecolor'] },
+      {
+        id: 'color-png',
+        label: 'Color pages: Keep in color, with PNG pages',
+        flags: ['--forcecolor', '--forcepng'],
+      },
+      {
+        id: 'color-png-rgb',
+        label: 'Color pages: Keep in color, with Color pages as PNG too',
+        flags: ['--forcecolor', '--forcepng', '--force-png-rgb'],
+      },
+    ],
+  },
+  {
+    id: 'jpeg-quality-files',
+    kind: 'files',
+    input: PEPPER_SUN,
+    variants: [100, 95, 90, 85, 70, 50, 30, 10].map((quality) => ({
+      id: `quality-${quality}`,
+      label: `JPEG quality: ${quality}`,
+      flags: ['--jpeg-quality', String(quality)],
+    })),
+  },
+  {
+    id: 'jpeg-quality-zoom',
+    kind: 'pictures',
+    input: PEPPER_SUN,
+    zoom: { left: 700, top: 1100, width: 320, height: 200 },
+    variants: [
+      { id: 'quality-85', label: 'JPEG quality: 85', flags: ['--jpeg-quality', '85'] },
+      { id: 'quality-30', label: 'JPEG quality: 30', flags: ['--jpeg-quality', '30'] },
+      { id: 'quality-10', label: 'JPEG quality: 10', flags: ['--jpeg-quality', '10'] },
+    ],
+  },
+  {
+    id: 'as-they-are',
+    kind: 'files',
+    input: PEPPER_SUN,
+    variants: [
+      { id: 'processed', label: 'Use the images as they are: Off', flags: [] },
+      { id: 'untouched', label: 'Use the images as they are: On', flags: ['--noprocessing'] },
+    ],
+  },
 ];

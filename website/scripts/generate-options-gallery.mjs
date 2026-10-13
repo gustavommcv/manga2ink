@@ -160,10 +160,12 @@ function convert(mangapress, input, flags, work, profile) {
     { stdio: 'pipe' },
   );
   const book = readdirSync(work).find((name) => name.endsWith('.cbz'));
-  return [...readZip(readFileSync(path.join(work, book)))]
+  const made = [...readZip(readFileSync(path.join(work, book)))]
     .filter(([name]) => /\.(jpe?g|png|gif)$/i.test(name))
-    .sort(([a], [b]) => (a < b ? -1 : 1))
-    .map(([, data]) => data);
+    .sort(([a], [b]) => (a < b ? -1 : 1));
+  const pages = made.map(([, data]) => data);
+  pages.extensions = made.map(([name]) => name.split('.').pop().toLowerCase());
+  return pages;
 }
 
 const round = (value, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
@@ -254,6 +256,7 @@ async function runExample(mangapress, example, scratch) {
         example.profile ?? base.profile,
       );
     }
+    const extension = (pages.extensions ?? [sourceSize.file.split('.').pop()])[example.show ?? 0];
     const picked = all ? pages : [pages[example.show ?? 0]];
     if (picked.some((bytes) => !bytes))
       throw new Error(
@@ -263,16 +266,21 @@ async function runExample(mangapress, example, scratch) {
     entry.width = sizes[0].width;
     entry.height = sizes[0].height;
     entry.pageBytes = picked.reduce((sum, bytes) => sum + bytes.length, 0);
+    if (example.kind === 'files') {
+      entry.fileType = ['jpg', 'jpeg'].includes(extension) ? 'JPEG' : extension.toUpperCase();
+      entry.sameAsInput = sha256(picked[0]) === sha256(readFileSync(sourceSize.file));
+    }
     if (all)
       entry.pages = sizes.map((size, i) => ({
         width: size.width,
         height: size.height,
         bytes: picked[i].length,
       }));
-    if (example.kind === 'sizes') {
-      entry.keptPercent = round(
-        ((entry.width * entry.height) / (sourceSize.width * sourceSize.height)) * 100,
-      );
+    if (example.kind === 'sizes' || example.kind === 'files') {
+      if (example.kind === 'sizes')
+        entry.keptPercent = round(
+          ((entry.width * entry.height) / (sourceSize.width * sourceSize.height)) * 100,
+        );
     } else {
       if (example.stats) {
         const channel = (await sharp(picked[0]).grayscale().stats()).channels[0];
