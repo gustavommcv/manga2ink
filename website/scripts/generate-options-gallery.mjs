@@ -113,9 +113,15 @@ async function page({ source, page: name }) {
  * size of what is in the folder and the path of the file.
  */
 async function writeInput(example, directory) {
-  const { stack, beside } = example.input;
-  const refs = stack ?? beside ?? [example.input];
+  const { stack, beside, crop } = example.input;
+  const refs = stack ?? beside ?? [crop ?? example.input];
   const pages = await Promise.all(refs.map(page));
+  if (crop) {
+    const cut = await sharp(pages[0].bytes).extract(crop.rect).png().toBuffer();
+    const file = path.join(directory, '001.png');
+    writeFileSync(file, cut);
+    return { width: crop.rect.width, height: crop.rect.height, file };
+  }
   if (!stack && !beside) {
     const { bytes, extension } = pages[0];
     const file = path.join(directory, `001.${extension}`);
@@ -151,12 +157,12 @@ async function writeInput(example, directory) {
   return { width, height, file };
 }
 
-function convert(mangapress, input, flags, work) {
+function convert(mangapress, input, flags, work, profile) {
   rmSync(work, { recursive: true, force: true });
   mkdirSync(work, { recursive: true });
   execFileSync(
     mangapress,
-    [input, '--profile', base.profile, '--format', base.format, '-o', work, '--quiet', ...flags],
+    [input, '--profile', profile, '--format', base.format, '-o', work, '--quiet', ...flags],
     { stdio: 'pipe' },
   );
   const book = readdirSync(work).find((name) => name.endsWith('.cbz'));
@@ -210,6 +216,25 @@ function combine(shared, own, without) {
   ];
 }
 
+/** The page as the reader would hold it: centered on the screen's own size, on a gray mat. */
+async function onScreen(bytes, screen) {
+  const page = await sharp(bytes).flatten({ background: '#fff' }).toBuffer();
+  const { width, height } = await sharp(page).metadata();
+  const canvas = await sharp({
+    create: { width: screen.width, height: screen.height, channels: 3, background: '#bdbdbd' },
+  })
+    .composite([
+      {
+        input: page,
+        left: Math.max(0, Math.round((screen.width - width) / 2)),
+        top: Math.max(0, Math.round((screen.height - height) / 2)),
+      },
+    ])
+    .png()
+    .toBuffer();
+  return sharp(canvas).resize({ width: PICTURE_WIDTH });
+}
+
 async function runExample(mangapress, example, scratch) {
   const input = path.join(scratch, 'input', example.id);
   mkdirSync(input, { recursive: true });
@@ -232,6 +257,7 @@ async function runExample(mangapress, example, scratch) {
         input,
         flags,
         path.join(scratch, 'output', example.id, variant.id),
+        example.profile ?? base.profile,
       );
     }
     const picked = all ? pages : [pages[example.show ?? 0]];
@@ -265,6 +291,7 @@ async function runExample(mangapress, example, scratch) {
         picture = sharp(picked[0])
           .extract(example.zoom)
           .resize({ width: PICTURE_WIDTH, kernel: 'nearest' });
+      else if (example.screen) picture = await onScreen(picked[0], example.screen);
       else picture = sharp(picked[0]).resize({ width: PICTURE_WIDTH });
       const encoded = await picture
         .webp({ quality: 80, effort: 6 })
@@ -282,12 +309,13 @@ async function runExample(mangapress, example, scratch) {
       : `${entry.width}x${entry.height}`;
     console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
-  const refs = example.input.stack ?? example.input.beside ?? [example.input];
+  const refs = example.input.stack ?? example.input.beside ?? [example.input.crop ?? example.input];
   return {
     kind: example.kind,
     layout: all ? 'rows' : 'grid',
     sources: [...new Set(refs.map((ref) => ref.source))],
     source: { width: sourceSize.width, height: sourceSize.height },
+    ...(example.screen ? { screen: example.screen, screenLabel: example.screenLabel } : {}),
     variants,
   };
 }

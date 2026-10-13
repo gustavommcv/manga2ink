@@ -22,6 +22,7 @@ const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
   import: 'default',
 });
 const rows = (example as { layout?: string }).layout === 'rows';
+const screenLabel = (example as { screenLabel?: string }).screenLabel;
 const fullSize = portuguese ? 'Abrir imagem em tamanho maior' : 'Open the larger image';
 
 const variants = example.variants.map((variant) => {
@@ -88,9 +89,21 @@ const variants = example.variants.map((variant) => {
     </figure>
   ))}
 </div>
+{screenLabel && (
+  <p class="screen-note">
+    {portuguese
+      ? `O cinza é a tela em volta da página: ${screenLabel} pixels.`
+      : `The gray is the screen around the page: ${screenLabel} pixels.`}
+  </p>
+)}
 <OptionCredit from={example.sources} mangapress={manifest.mangapress} />
 
 <style>
+  .screen-note {
+    margin-block: -0.75rem 0.5rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+  }
   .option-example {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));

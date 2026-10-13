@@ -734,6 +734,189 @@
           "sha256": "56009424d190cb03e0024de4f41dab5f22d18567b019d0ecc0a4957878f31bb7"
         }
       ]
+    },
+    "size-fit-enlarge": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "screen": { "width": 1272, "height": 1696 },
+      "screenLabel": "Kindle Paperwhite 6, 1272 × 1696",
+      "variants": [
+        {
+          "id": "fit",
+          "label": "Page size: Fit, never enlarge",
+          "flags": [],
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 225634,
+          "file": "size-fit-enlarge-fit.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 41594,
+          "sha256": "7b00966cc0d4b0ef740bc3aa756b7be95d5c868ea8b37b049a1cfe65463e9cb5"
+        },
+        {
+          "id": "enlarge",
+          "label": "Page size: Fit, enlarging small pages",
+          "flags": ["--upscale"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "file": "size-fit-enlarge-enlarge.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 55900,
+          "sha256": "22f1b1653c8a6925aaa6508ae23bd29b24149d7766fed0d14cf8ee1e40a6d3ed"
+        }
+      ]
+    },
+    "size-stretch-fill": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "screen": { "width": 954, "height": 1696 },
+      "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
+      "variants": [
+        {
+          "id": "enlarge",
+          "label": "Page size: Fit, enlarging small pages",
+          "flags": ["--upscale"],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 189300,
+          "file": "size-stretch-fill-enlarge.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 63656,
+          "sha256": "f6a26d27fd48164419d51cf0f9efc8b99b1463433bcd98f255241345ca28ff36"
+        },
+        {
+          "id": "stretch",
+          "label": "Page size: Stretch to the screen",
+          "flags": ["--stretch"],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 223773,
+          "file": "size-stretch-fill-stretch.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 77410,
+          "sha256": "eeec63a99abaa6a385ccd85f0967f8f3776dff4d02fb43ee40177932eeaffa4f"
+        },
+        {
+          "id": "fill",
+          "label": "Page size: Crop to fill the screen",
+          "flags": ["--wallpaper"],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 237023,
+          "file": "size-stretch-fill-fill.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 87790,
+          "sha256": "4e216cc25e99f2a3dfe0ac5ec7b5f0b427d3c6cb362516bac15891ddab727303"
+        }
+      ]
+    },
+    "borders-light-page": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "screen": { "width": 954, "height": 1696 },
+      "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
+      "variants": [
+        {
+          "id": "automatic",
+          "label": "Borders: Automatic",
+          "flags": [],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 189300,
+          "file": "borders-light-page-automatic.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 63656,
+          "sha256": "f6a26d27fd48164419d51cf0f9efc8b99b1463433bcd98f255241345ca28ff36"
+        },
+        {
+          "id": "white",
+          "label": "Borders: White",
+          "flags": ["--whiteborders"],
+          "width": 954,
+          "height": 1320,
+          "pageBytes": 186880,
+          "file": "borders-light-page-white.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 63796,
+          "sha256": "3fddaa11955642cc90849e8b26af31b3a8c14bac228486ab91e548095a37b447"
+        },
+        {
+          "id": "black",
+          "label": "Borders: Black",
+          "flags": ["--blackborders"],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 191409,
+          "file": "borders-light-page-black.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 63488,
+          "sha256": "555d3683313e5e7bc3c6a3e30c275a83884419e81765cb4438a542c17897d519"
+        }
+      ]
+    },
+    "borders-dark-page": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["pepper-ep01"],
+      "source": { "width": 380, "height": 438 },
+      "screen": { "width": 954, "height": 1696 },
+      "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
+      "variants": [
+        {
+          "id": "automatic",
+          "label": "Borders: Automatic",
+          "flags": [],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 71936,
+          "file": "borders-dark-page-automatic.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 16556,
+          "sha256": "cd8cd2c5f1f68309f0eb2e2bb347a5ad4cf54bf3c9377d1805dea951accef0bd"
+        },
+        {
+          "id": "white",
+          "label": "Borders: White",
+          "flags": ["--whiteborders"],
+          "width": 954,
+          "height": 1100,
+          "pageBytes": 66608,
+          "file": "borders-dark-page-white.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 16884,
+          "sha256": "e4f9288e54f78660fdbddc3868f159bee3324c48d143286dad2ef8bd10b497fe"
+        },
+        {
+          "id": "black",
+          "label": "Borders: Black",
+          "flags": ["--blackborders"],
+          "width": 954,
+          "height": 1696,
+          "pageBytes": 71936,
+          "file": "borders-dark-page-black.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 1244,
+          "bytes": 16556,
+          "sha256": "cd8cd2c5f1f68309f0eb2e2bb347a5ad4cf54bf3c9377d1805dea951accef0bd"
+        }
+      ]
     }
   }
 }

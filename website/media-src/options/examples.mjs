@@ -18,6 +18,18 @@ const PEPPER_SUN = { source: 'pepper-ep06', page: '002.jpg' };
 const PEPPER_DARK = { source: 'pepper-ep01', page: '001.jpg' };
 const GOGO = { source: 'gogo-02' };
 const WITHOUT_ENLARGING = ['--upscale'];
+
+// A screen that is not the shape of a page, so that what surrounds the page can be seen: the
+// reMarkable Paper Pro Move is 954 x 1696, a ratio of 0.56 against 0.72 of a page of Pepper&Carrot.
+const TALL_SCREEN = {
+  profile: 'RmkPPMove',
+  screen: { width: 954, height: 1696 },
+  screenLabel: 'reMarkable Paper Pro Move, 954 × 1696',
+};
+// The first panel of episode 1, cut to its left part: a dark picture whose own edges are dark.
+const DARK_PANEL = {
+  crop: { ...PEPPER_DARK, rect: { left: 41, top: 13, width: 380, height: 438 } },
+};
 // Two consecutive pages of one comic joined side by side, as a scan of a double page is. The later
 // page is on the left and the earlier one on the right, which is how a book read right to left lies open.
 const SPREAD = { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }] };
@@ -234,6 +246,62 @@ export const examples = [
     variants: [
       { id: 'off', label: 'Restack 4-panel strips as 2×2: Off', flags: [] },
       { id: 'on', label: 'Restack 4-panel strips as 2×2: On', flags: ['--maximizestrips'] },
+    ],
+  },
+
+  {
+    id: 'size-fit-enlarge',
+    kind: 'pictures',
+    input: PEPPER_SUN,
+    profile: 'KPW6',
+    screen: { width: 1272, height: 1696 },
+    screenLabel: 'Kindle Paperwhite 6, 1272 × 1696',
+    variants: [
+      { id: 'fit', label: 'Page size: Fit, never enlarge', flags: [], without: ['--upscale'] },
+      { id: 'enlarge', label: 'Page size: Fit, enlarging small pages', flags: ['--upscale'] },
+    ],
+  },
+  {
+    id: 'size-stretch-fill',
+    kind: 'pictures',
+    input: PEPPER_SUN,
+    ...TALL_SCREEN,
+    variants: [
+      { id: 'enlarge', label: 'Page size: Fit, enlarging small pages', flags: ['--upscale'] },
+      {
+        id: 'stretch',
+        label: 'Page size: Stretch to the screen',
+        flags: ['--stretch'],
+        without: ['--upscale'],
+      },
+      {
+        id: 'fill',
+        label: 'Page size: Crop to fill the screen',
+        flags: ['--wallpaper'],
+        without: ['--upscale'],
+      },
+    ],
+  },
+  {
+    id: 'borders-light-page',
+    kind: 'pictures',
+    input: PEPPER_SUN,
+    ...TALL_SCREEN,
+    variants: [
+      { id: 'automatic', label: 'Borders: Automatic', flags: [] },
+      { id: 'white', label: 'Borders: White', flags: ['--whiteborders'] },
+      { id: 'black', label: 'Borders: Black', flags: ['--blackborders'] },
+    ],
+  },
+  {
+    id: 'borders-dark-page',
+    kind: 'pictures',
+    input: DARK_PANEL,
+    ...TALL_SCREEN,
+    variants: [
+      { id: 'automatic', label: 'Borders: Automatic', flags: [] },
+      { id: 'white', label: 'Borders: White', flags: ['--whiteborders'] },
+      { id: 'black', label: 'Borders: Black', flags: ['--blackborders'] },
     ],
   },
 ];

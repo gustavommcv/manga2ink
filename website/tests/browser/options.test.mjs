@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { base } from '../../site.config.mjs';
 
 const root = base.replace(/\/?$/, '/');
-const pages = ['cropping', 'color-and-tone', 'double-page-spreads'];
+const pages = ['cropping', 'color-and-tone', 'double-page-spreads', 'size-and-borders'];
 
 for (const locale of ['', 'pt-br/']) {
   for (const colorScheme of ['light', 'dark']) {
@@ -43,7 +43,7 @@ for (const locale of ['', 'pt-br/']) {
   }
 }
 
-for (const slug of ['cropping', 'double-page-spreads']) {
+for (const slug of ['cropping', 'double-page-spreads', 'size-and-borders']) {
   test(`every picture of an example says which flags made it, and every table says its source: ${slug}`, async ({
     page,
   }) => {
@@ -55,7 +55,7 @@ for (const slug of ['cropping', 'double-page-spreads']) {
     for (const table of await page.locator('[data-option-sizes] table').all()) {
       await expect(table.locator('caption')).toContainText('Source page:');
     }
-    await expect(page.locator('.credit').first()).toContainText('CC BY-SA 4.0');
+    await expect(page.locator('.credit').first()).toContainText(/CC BY(-SA)? 4\.0/);
   });
 }
 
