@@ -1,14 +1,16 @@
-// Mutation testing of the domain and application layers.
+// Mutation testing of the layers that hold logic: the domain, the application, the library, the
+// adapters, OPDS, the main process and the preload.
 //
-//   npm run test:mutation                      every file of both layers
+//   npm run test:mutation                      every file of every layer
+//   npm run test:mutation -- src/library       every file of a folder
 //   npm run test:mutation -- src/domain/x.ts   only these files
 //   MUTATE_STRINGS=1 npm run test:mutation     also change the text of messages
 //
 // Each source file is its own Stryker run, tested with only the unit tests that import it: a
 // mutant that is not noticed by those is not noticed by anything that is meant to cover it. The
-// run is long (an hour or more for both layers), so it is run on purpose and is not a gate.
+// run is long (hours for every layer), so it is run on purpose and is not a gate.
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -27,15 +29,23 @@ const walk = (directory) =>
   );
 const relative = (file) => path.relative(root, file).split(path.sep).join('/');
 
+const layers = [
+  'src/domain',
+  'src/application',
+  'src/library',
+  'src/adapters',
+  'src/opds',
+  'src/main',
+  'src/preload',
+];
+/** What no test is meant to change: stories, and declarations, which hold no code to mutate. */
+const mutable = (file) => !file.endsWith('.stories.ts') && !file.endsWith('.d.ts');
+const filesOf = (entry) => {
+  const absolute = path.join(root, entry);
+  return statSync(absolute).isDirectory() ? walk(absolute).map(relative).filter(mutable) : [entry];
+};
 const requested = process.argv.slice(2);
-const sources =
-  requested.length > 0
-    ? requested
-    : ['src/domain', 'src/application'].flatMap((layer) =>
-        walk(path.join(root, layer))
-          .map(relative)
-          .filter((file) => !file.endsWith('.stories.ts')),
-      );
+const sources = (requested.length > 0 ? requested : layers).flatMap(filesOf);
 
 const unitDirectory = path.join(root, 'tests', 'unit');
 /** These run the real downloaded tools, which a changed copy of the sources has nothing to do with. */
