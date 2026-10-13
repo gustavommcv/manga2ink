@@ -17,8 +17,52 @@ Use `--list-profiles` para encontrar o código e a resolução do dispositivo. P
 
 A CLI utiliza **KV** por padrão. Adicione `--manga-style` para a leitura da direita para a esquerda e `--keepcomicinfo` para preservar os dados de ComicInfo compatíveis. O Mangabound define seus próprios padrões; ao comparar uma conversão do terminal com a do aplicativo, utilize opções equivalentes.
 
+## Escolhendo o dispositivo e o formato
+
+`--profile CÓDIGO`, ou `-p`, escolhe o dispositivo pelo código. `--list-profiles` imprime todos os códigos com o nome e o tamanho da tela do dispositivo: as primeiras linhas são `K1  Kindle 1  600x670`, `K2  Kindle 2  600x670` e `KDX  Kindle DX/DXG  824x1000`. Sem ele, a CLI usa **KV**, o Kindle Voyage (1072 × 1448), enquanto o Mangabound começa no Kindle Paperwhite 6 (**KPW6**, 1272 × 1696). Um código que ela não conhece é recusado com uma sugestão:
+
+```text
+Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profiles)
+```
+
+`--customwidth` e `--customheight` substituem o tamanho da tela, em pixels. Com um perfil nomeado, cada uma substitui a sua dimensão e a outra continua a do perfil: `--profile KPW6 --customwidth 1000` converte para 1000 × 1696. O perfil **OTHER** não tem tamanho próprio, então exige as duas, e avisa quando não as recebe:
+
+```text
+Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
+```
+
+Um tamanho personalizado também faz o mangapress deixar de tratar o dispositivo como um Kobo, então o EPUB se chama `.epub` e não `.kepub.epub`.
+
+`--format FORMATO`, ou `-f`, é `epub`, `cbz`, `pdf` ou `auto`, que é o padrão. `auto` escolhe CBZ para um Kindle, PDF para um reMarkable e EPUB para os outros dispositivos: `-p KPW6` e `-p K11` dão um CBZ, `-p KoLC` um EPUB e `-p Rmk2` um PDF. O livro recebe o nome da entrada com a extensão do formato, e um arquivo que já existe nunca é sobrescrito: o livro ganha outro nome, e o relatório diz qual.
+
+No Mangabound, isso são **Device**, **Book format**, **Custom width** e **Custom height** nas [Configurações de conversão](../../user-guide/output-profiles/). O app sempre nomeia o formato; ele não usa `auto`.
+
+## Prévia de uma conversão
+
+`--dry-run`, ou `-n`, lê a entrada e relata o que seria feito, sem processar uma página nem gravar um arquivo. Isto foi o que ele imprimiu para um CBZ de quatro páginas, com o caminho encurtado:
+
+```text
+mangapress: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
+warning: 4 of 4 pages are smaller than the device's 1072x1448 screen. Consider --upscale (or --stretch) to make them easier to read.
+found 1 chapter(s), 4 page(s) total
+warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangapress).cbz
+dry run -- no pages will be processed, nothing will be written
+title: Pepper and Carrot - Episode 01
+author: Unknown
+format: cbz
+device: Kindle Voyage (1072x1448)
+chapters: 1, pages: 4
+would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
+```
+
+Os avisos são os mesmos que uma execução de verdade imprime, então a prévia é um jeito barato de vê-los antes. O aviso de tamanho trata do assunto de [Tamanho e bordas](../../user-guide/advanced-options/size-and-borders/).
+
+## Saída mais enxuta
+
+`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Mangabound isso é **Quiet mode**, em **Tool behavior**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
+
 ## Outras opções
 
-O [README da ferramenta](https://github.com/gustavommcv/mangapress#readme) descreve ajustes de imagem, dimensões personalizadas, metadados, índice aninhado e dry runs.
+Toda opção que o app mostra tem uma página própria, com a mesma página convertida com e sem ela, em [Opções avançadas de conversão](../../user-guide/advanced-options/). O [README da ferramenta](https://github.com/gustavommcv/mangapress#readme) descreve metadados, índice aninhado e o resto da linha de comando.
 
 Para integrações, consulte o [protocolo de máquina](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md). Use a referência correspondente à versão instalada.

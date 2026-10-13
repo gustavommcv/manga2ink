@@ -17,8 +17,52 @@ Use `--list-profiles` to find your device's code and resolution. For example, Ko
 
 The CLI defaults to **KV**. Add `--manga-style` for right-to-left reading order and `--keepcomicinfo` to retain supported ComicInfo data. Mangabound sets its own defaults, so use matching options when comparing a terminal conversion with the app.
 
+## Choosing the device and the format
+
+`--profile CODE`, or `-p`, picks the device by its code. `--list-profiles` prints every code with the device's name and screen size: the first lines are `K1  Kindle 1  600x670`, `K2  Kindle 2  600x670` and `KDX  Kindle DX/DXG  824x1000`. Without it the CLI uses **KV**, the Kindle Voyage (1072 × 1448), where Mangabound starts on the Kindle Paperwhite 6 (**KPW6**, 1272 × 1696). A code it does not know is refused with a suggestion:
+
+```text
+Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profiles)
+```
+
+`--customwidth` and `--customheight` replace the screen size, in pixels. With a named profile each one replaces its own dimension and the other stays the profile's: `--profile KPW6 --customwidth 1000` converts for 1000 × 1696. The profile **OTHER** has no size of its own, so it needs both, and says so when it does not get them:
+
+```text
+Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
+```
+
+A custom size also stops mangapress from treating the device as a Kobo, so its EPUB is named `.epub` and not `.kepub.epub`.
+
+`--format FORMAT`, or `-f`, is `epub`, `cbz`, `pdf` or `auto`, which is the default. `auto` picks CBZ for a Kindle, PDF for a reMarkable and EPUB for every other device: `-p KPW6` and `-p K11` give a CBZ, `-p KoLC` an EPUB and `-p Rmk2` a PDF. A book is named after its input with the format's extension, and a file that is already there is never overwritten: the book gets another name, and the report says which.
+
+In Mangabound these are **Device**, **Book format**, **Custom width** and **Custom height** in [Conversion settings](../../user-guide/output-profiles/). The app always names the format; it does not use `auto`.
+
+## Previewing a conversion
+
+`--dry-run`, or `-n`, reads the input and reports what would be made, without processing a page or writing a file. This is what it printed for a four-page CBZ, with the path shortened:
+
+```text
+mangapress: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
+warning: 4 of 4 pages are smaller than the device's 1072x1448 screen. Consider --upscale (or --stretch) to make them easier to read.
+found 1 chapter(s), 4 page(s) total
+warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangapress).cbz
+dry run -- no pages will be processed, nothing will be written
+title: Pepper and Carrot - Episode 01
+author: Unknown
+format: cbz
+device: Kindle Voyage (1072x1448)
+chapters: 1, pages: 4
+would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
+```
+
+The warnings are the ones a real run prints, so a dry run is a cheap way to see them first. The size warning is about [Size and borders](../../user-guide/advanced-options/size-and-borders/).
+
+## Quieter output
+
+`--quiet`, or `-q`, drops the progress lines: the line that says what is being converted, the count of chapters and pages, each chapter done and the path of the book written. Warnings and errors still print. The same conversion prints six lines by default and, with `--quiet`, only the warning about the small pages. Mangabound has this as **Quiet mode** under **Tool behavior**; the app reads mangapress's own events, so the setting changes nothing you see there.
+
 ## More options
 
-The tool's [README](https://github.com/gustavommcv/mangapress#readme) covers image adjustments, custom dimensions, metadata, nested contents, and dry runs.
+Every option the app shows has a page of its own, with the same page converted with and without it, in [Advanced conversion options](../../user-guide/advanced-options/). The tool's [README](https://github.com/gustavommcv/mangapress#readme) covers metadata, nested contents and the rest of the command line.
 
 For integrations, see the [machine protocol](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md). Use the reference for your installed version.

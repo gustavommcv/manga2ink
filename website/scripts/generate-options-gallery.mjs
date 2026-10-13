@@ -231,6 +231,20 @@ async function onScreen(bytes, screen) {
   return sharp(canvas).resize({ width: PICTURE_WIDTH });
 }
 
+/**
+ * The licence the pictures of an example carry: the one of the page they are made from. When the
+ * pages differ, a ShareAlike one wins, because an adaptation of a page under CC BY 4.0 may be
+ * shared under CC BY-SA 4.0 and not the other way round; two other licences are not mixed.
+ */
+function licenceOf(ids) {
+  const found = [...new Map(ids.map((id) => [sources[id].license, sources[id]])).values()];
+  const shareAlike = found.filter((source) => source.license.includes('-SA'));
+  if (shareAlike.length > 1 || (shareAlike.length === 0 && found.length > 1))
+    throw new Error(`Cannot tell the licence of pictures made from ${ids.join(', ')}.`);
+  const chosen = shareAlike[0] ?? found[0];
+  return { license: chosen.license, licenseUrl: chosen.licenseUrl };
+}
+
 async function runExample(mangapress, example, scratch) {
   const input = path.join(scratch, 'input', example.id);
   mkdirSync(input, { recursive: true });
@@ -312,14 +326,46 @@ async function runExample(mangapress, example, scratch) {
     console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
   const refs = example.input.stack ?? example.input.beside ?? [example.input];
+  const used = [...new Set(refs.map((ref) => ref.source))];
   return {
     kind: example.kind,
     layout: all ? 'rows' : 'grid',
-    sources: [...new Set(refs.map((ref) => ref.source))],
+    sources: used,
+    ...licenceOf(used),
     source: { width: sourceSize.width, height: sourceSize.height },
     ...(example.screen ? { screen: example.screen, screenLabel: example.screenLabel } : {}),
     variants,
   };
+}
+
+/** What goes next to the pictures, so that whoever has the files and not the site can read it. */
+function licencesFile(manifest) {
+  const rows = Object.entries(manifest.examples)
+    .filter(([, example]) => example.variants.some((variant) => variant.file))
+    .map(([id, example]) => {
+      const made = example.sources
+        .map(
+          (source) =>
+            `[${sources[source].title}](${sources[source].page}) by ${sources[source].author}`,
+        )
+        .join('; ');
+      return `| \`${id}-*.webp\` | ${made} | [${example.license}](${example.licenseUrl}) |`;
+    });
+  return [
+    '# Licences of these pictures',
+    '',
+    'The pictures in this folder are adaptations of pages of comics whose authors allow them to be copied and adapted.',
+    'Each keeps the licence of the page it was made from, **not the MIT licence of this repository**, and must be',
+    'credited as below wherever it is shared. They were converted, resized and saved again by mangapress',
+    `${manifest.mangapress}; some are magnified details, some join several pages side by side or one under the other.`,
+    'The pages are listed with their download addresses and checksums in `website/media-src/options/sources.json`.',
+    'This file is written by `npm run site:options`.',
+    '',
+    '| Pictures | Made from | Licence |',
+    '| --- | --- | --- |',
+    ...rows,
+    '',
+  ].join('\n');
 }
 
 const only = process.argv.slice(2);
@@ -354,6 +400,14 @@ try {
   };
   const prettierOptions = { ...(await resolveConfig(manifestFile)), filepath: manifestFile };
   writeFileSync(manifestFile, await format(JSON.stringify(manifest), prettierOptions));
+  const licencesPath = path.join(output, 'LICENSES.md');
+  writeFileSync(
+    licencesPath,
+    await format(licencesFile(manifest), {
+      ...(await resolveConfig(licencesPath)),
+      filepath: licencesPath,
+    }),
+  );
   // A full run also removes the pictures that no example makes any more.
   if (only.length === 0) {
     const listed = new Set(

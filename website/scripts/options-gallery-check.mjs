@@ -16,12 +16,22 @@ const longFlags = (flags) => flags.filter((flag) => flag.startsWith('--'));
  * - manifest: the manifest the generator wrote.
  * - pin: the mangapress version Mangabound ships.
  * - pictures: file name -> SHA-256 of each picture in the assets folder.
+ * - licenses: the text of LICENSES.md, which lists the pictures with the licence of their source.
  * - userFlags: every flag of mangapress that a person can choose, from schemas/cli-capabilities.json.
  * - coverage: { pages: { slug: [flag] }, elsewhere: { 'docs/path': [flag] }, planned: [slug] }.
  * - pages: { en: { slug: text }, 'pt-br': { slug: text } } for the advanced-options pages that exist.
- * - guides: { en: [path], 'pt-br': [path] } for the other pages the coverage points to.
+ * - guides: { en: { path: text }, 'pt-br': { path: text } } for the other pages the coverage points to.
  */
-export function checkGallery({ manifest, pin, pictures, userFlags, coverage, pages, guides }) {
+export function checkGallery({
+  manifest,
+  pin,
+  pictures,
+  licenses,
+  userFlags,
+  coverage,
+  pages,
+  guides,
+}) {
   const problems = [];
   const locales = Object.keys(pages);
 
@@ -33,6 +43,12 @@ export function checkGallery({ manifest, pin, pictures, userFlags, coverage, pag
 
   const listed = new Set();
   for (const [id, example] of Object.entries(manifest.examples)) {
+    if (example.variants.some((variant) => variant.file)) {
+      if (!example.license)
+        problems.push(`${id}: the licence of its pictures is not in the manifest.`);
+      if (!licenses.includes(`\`${id}-*.webp\``))
+        problems.push(`${id}: its pictures are not in LICENSES.md. Run npm run site:options.`);
+    }
     for (const variant of example.variants) {
       if (!variant.file) continue;
       listed.add(variant.file);
@@ -104,10 +120,16 @@ export function checkGallery({ manifest, pin, pictures, userFlags, coverage, pag
   for (const slug of planned) {
     if (!(slug in coverage.pages)) problems.push(`${slug} is planned and covers no option.`);
   }
-  for (const path of Object.keys(coverage.elsewhere)) {
+  for (const [path, flags] of Object.entries(coverage.elsewhere)) {
     for (const locale of locales) {
-      if (!guides[locale].includes(path))
+      const text = guides[locale][path];
+      if (text === undefined) {
         problems.push(`${locale}/${path} is where options are covered, and it does not exist.`);
+        continue;
+      }
+      for (const flag of longFlags(flags)) {
+        if (!text.includes(flag)) problems.push(`${locale}/${path} does not mention ${flag}.`);
+      }
     }
   }
 

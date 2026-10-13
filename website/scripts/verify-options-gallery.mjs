@@ -24,6 +24,14 @@ const pagesIn = (directory) =>
     mdx(directory).map((slug) => [slug, readFileSync(path.join(directory, `${slug}.mdx`), 'utf8')]),
   );
 
+/** Every page under a folder, by its path without the extension, with its text. */
+const guidesIn = (directory, keep) =>
+  Object.fromEntries(
+    mdx(directory)
+      .filter(keep)
+      .map((name) => [name, readFileSync(path.join(directory, `${name}.mdx`), 'utf8')]),
+  );
+
 const pictures = new Map(
   readdirSync(assets)
     .filter((name) => name.endsWith('.webp'))
@@ -40,6 +48,7 @@ const problems = checkGallery({
   manifest: json(assets, 'manifest.json'),
   pin: json(root, 'toolchain.lock.json').tools.mangapress.pin.releaseTag.replace(/^v/, ''),
   pictures,
+  licenses: readFileSync(path.join(assets, 'LICENSES.md'), 'utf8'),
   userFlags: json(root, 'schemas', 'cli-capabilities.json').tools.mangapress.user,
   coverage: json(website, 'media-src', 'options', 'coverage.json'),
   pages: {
@@ -47,8 +56,8 @@ const problems = checkGallery({
     'pt-br': pagesIn(path.join(pt, 'user-guide', 'advanced-options')),
   },
   guides: {
-    en: mdx(docs).filter((name) => !name.startsWith('pt-br/')),
-    'pt-br': mdx(pt),
+    en: guidesIn(docs, (name) => !name.startsWith('pt-br/')),
+    'pt-br': guidesIn(pt, () => true),
   },
 });
 

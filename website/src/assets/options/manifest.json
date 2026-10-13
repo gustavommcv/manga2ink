@@ -11,6 +11,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 1080, "height": 1440 },
       "variants": [
         {
@@ -45,6 +47,8 @@
       "kind": "sizes",
       "layout": "grid",
       "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 1080, "height": 1440 },
       "variants": [
         {
@@ -116,6 +120,8 @@
       "kind": "sizes",
       "layout": "grid",
       "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 1080, "height": 1440 },
       "variants": [
         {
@@ -169,6 +175,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 1080, "height": 1440 },
       "variants": [
         {
@@ -203,6 +211,8 @@
       "kind": "sizes",
       "layout": "grid",
       "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 1080, "height": 1440 },
       "variants": [
         {
@@ -247,6 +257,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 4119 },
       "variants": [
         {
@@ -294,6 +306,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -328,6 +342,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep01"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -381,6 +397,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep01"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -434,6 +452,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -468,6 +488,8 @@
       "kind": "pictures",
       "layout": "rows",
       "sources": ["gogo-04", "gogo-03"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 2160, "height": 1440 },
       "variants": [
         {
@@ -540,6 +562,8 @@
       "kind": "pictures",
       "layout": "rows",
       "sources": ["gogo-04", "gogo-03", "gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 3240, "height": 1440 },
       "variants": [
         {
@@ -577,6 +601,8 @@
       "kind": "pictures",
       "layout": "rows",
       "sources": ["gogo-04", "gogo-03"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 2160, "height": 1440 },
       "variants": [
         {
@@ -619,6 +645,8 @@
       "kind": "pictures",
       "layout": "rows",
       "sources": ["gogo-04", "gogo-03"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 2160, "height": 1440 },
       "variants": [
         {
@@ -699,6 +727,8 @@
       "kind": "pictures",
       "layout": "rows",
       "sources": ["gogo-04", "gogo-03"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "source": { "width": 2160, "height": 1440 },
       "variants": [
         {
@@ -739,6 +769,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "screen": { "width": 1272, "height": 1696 },
       "screenLabel": "Kindle Paperwhite 6, 1272 × 1696",
@@ -775,6 +807,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "screen": { "width": 954, "height": 1696 },
       "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
@@ -824,6 +858,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "screen": { "width": 954, "height": 1696 },
       "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
@@ -873,6 +909,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["wikipetan-darknesses"],
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
       "source": { "width": 699, "height": 1078 },
       "screen": { "width": 954, "height": 1696 },
       "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
@@ -922,6 +960,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -969,6 +1009,8 @@
       "kind": "files",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -1047,6 +1089,8 @@
       "kind": "files",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -1135,6 +1179,8 @@
       "kind": "pictures",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {
@@ -1182,6 +1228,8 @@
       "kind": "files",
       "layout": "grid",
       "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "source": { "width": 992, "height": 1373 },
       "variants": [
         {

@@ -83,6 +83,7 @@ function gallery(changes = {}) {
       mangapress: '0.7.3',
       examples: {
         crop: {
+          license: 'CC BY 4.0',
           variants: [
             { id: 'off', file: 'crop-off.webp', sha256: 'aa' },
             { id: 'on', file: 'crop-on.webp', sha256: 'bb' },
@@ -92,6 +93,7 @@ function gallery(changes = {}) {
       },
     },
     pin: '0.7.3',
+    licenses: '| `crop-*.webp` | a page | CC BY 4.0 |',
     pictures: new Map([
       ['crop-off.webp', 'aa'],
       ['crop-on.webp', 'bb'],
@@ -112,7 +114,10 @@ function gallery(changes = {}) {
           'Use `--cropping`. <OptionExample id="crop" alt={{}} /> <OptionSizes id="sizes" />',
       },
     },
-    guides: { en: ['cli/mangapress'], 'pt-br': ['cli/mangapress'] },
+    guides: {
+      en: { 'cli/mangapress': 'Use `--quiet` or `-q`.' },
+      'pt-br': { 'cli/mangapress': 'Use `--quiet`.' },
+    },
   };
   return { ...base, ...changes };
 }
@@ -129,6 +134,17 @@ test('the examples a page uses are found, over several lines too', () => {
 
 test('pages, pictures and options that agree are no problem', () => {
   assert.deepEqual(checkGallery(gallery()), []);
+});
+
+test('pictures with no licence in the manifest, or not in the licences file, are a problem', () => {
+  const manifest = gallery().manifest;
+  delete manifest.examples.crop.license;
+  assert.deepEqual(checkGallery(gallery({ manifest })), [
+    'crop: the licence of its pictures is not in the manifest.',
+  ]);
+  assert.deepEqual(checkGallery(gallery({ licenses: 'Nothing about them.' })), [
+    'crop: its pictures are not in LICENSES.md. Run npm run site:options.',
+  ]);
 });
 
 test('pictures made with another mangapress than the one shipped are a problem', () => {
@@ -238,9 +254,21 @@ test('a page must exist in both languages and name every long option it covers',
   ]);
 });
 
-test('the other pages that cover options must exist in both languages', () => {
-  const problems = checkGallery(gallery({ guides: { en: [], 'pt-br': ['cli/mangapress'] } }));
-  assert.deepEqual(problems, [
+test('the other pages that cover options must exist in both languages and name every long option', () => {
+  const missing = checkGallery(
+    gallery({ guides: { en: {}, 'pt-br': { 'cli/mangapress': 'Use `--quiet`.' } } }),
+  );
+  assert.deepEqual(missing, [
     'en/cli/mangapress is where options are covered, and it does not exist.',
   ]);
+
+  const silent = checkGallery(
+    gallery({
+      guides: {
+        en: { 'cli/mangapress': 'Nothing about it.' },
+        'pt-br': { 'cli/mangapress': 'Use `--quiet`.' },
+      },
+    }),
+  );
+  assert.deepEqual(silent, ['en/cli/mangapress does not mention --quiet.']);
 });
