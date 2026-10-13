@@ -32,6 +32,9 @@ const root = path.resolve(website, '..');
 const cache = path.join(website, '.cache', 'options-art');
 const output = path.join(website, 'src', 'assets', 'options');
 const PICTURE_WIDTH = 700;
+const ROW_HEIGHT = 560;
+const ROW_GAP = 14;
+const ROW_WIDTH_LIMIT = 1100;
 
 const sources = JSON.parse(
   readFileSync(path.join(website, 'media-src', 'options', 'sources.json'), 'utf8'),
@@ -104,15 +107,21 @@ async function page({ source, page: name }) {
   throw new Error(`${source} has no page ${name}.`);
 }
 
-/** The input of an example as a folder mangapress can read, and the pixel size of what is in it. */
+/**
+ * The input of an example as a folder mangapress can read: one page, pages joined into a tall strip
+ * (`stack`) or pages joined side by side into a spread (`beside`, left to right). Returns the pixel
+ * size of what is in the folder and the path of the file.
+ */
 async function writeInput(example, directory) {
-  const refs = example.input.stack ?? [example.input];
+  const { stack, beside } = example.input;
+  const refs = stack ?? beside ?? [example.input];
   const pages = await Promise.all(refs.map(page));
-  if (!example.input.stack) {
+  if (!stack && !beside) {
     const { bytes, extension } = pages[0];
-    writeFileSync(path.join(directory, `001.${extension}`), bytes);
+    const file = path.join(directory, `001.${extension}`);
+    writeFileSync(file, bytes);
     const { width, height } = await sharp(bytes).metadata();
-    return { width, height };
+    return { width, height, file };
   }
   const decoded = await Promise.all(
     pages.map(({ bytes }) =>
@@ -121,20 +130,25 @@ async function writeInput(example, directory) {
         .then((m) => ({ bytes, ...m })),
     ),
   );
-  const width = Math.max(...decoded.map((p) => p.width));
-  const height = decoded.reduce((sum, p) => sum + p.height, 0);
-  let top = 0;
-  const layers = decoded.map((p) => ({
-    input: p.bytes,
-    left: 0,
-    top: ((top += p.height), top - p.height),
-  }));
-  const strip = await sharp({ create: { width, height, channels: 3, background: '#fff' } })
+  const width = beside
+    ? decoded.reduce((sum, p) => sum + p.width, 0)
+    : Math.max(...decoded.map((p) => p.width));
+  const height = beside
+    ? Math.max(...decoded.map((p) => p.height))
+    : decoded.reduce((sum, p) => sum + p.height, 0);
+  let offset = 0;
+  const layers = decoded.map((p) => {
+    const at = offset;
+    offset += beside ? p.width : p.height;
+    return { input: p.bytes, left: beside ? at : 0, top: beside ? 0 : at };
+  });
+  const joined = await sharp({ create: { width, height, channels: 3, background: '#fff' } })
     .composite(layers)
     .png()
     .toBuffer();
-  writeFileSync(path.join(directory, '001.png'), strip);
-  return { width, height };
+  const file = path.join(directory, '001.png');
+  writeFileSync(file, joined);
+  return { width, height, file };
 }
 
 function convert(mangapress, input, flags, work) {
@@ -154,45 +168,104 @@ function convert(mangapress, input, flags, work) {
 
 const round = (value, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
 
+/** Pages side by side at one height on a gray mat, the way a reader turns through them. */
+async function row(pages) {
+  const tiles = await Promise.all(
+    pages.map((bytes) =>
+      sharp(bytes).flatten({ background: '#fff' }).resize({ height: ROW_HEIGHT }).png().toBuffer(),
+    ),
+  );
+  const widths = await Promise.all(tiles.map(async (tile) => (await sharp(tile).metadata()).width));
+  const total = widths.reduce((sum, w) => sum + w, 0) + ROW_GAP * (tiles.length + 1);
+  let left = ROW_GAP;
+  const layers = tiles.map((input, i) => {
+    const layer = { input, left, top: ROW_GAP };
+    left += widths[i] + ROW_GAP;
+    return layer;
+  });
+  const mat = await sharp({
+    create: { width: total, height: ROW_HEIGHT + 2 * ROW_GAP, channels: 3, background: '#cfcfcf' },
+  })
+    .composite(layers)
+    .png()
+    .toBuffer();
+  return sharp(mat).resize({ width: Math.min(total, ROW_WIDTH_LIMIT) });
+}
+
+/**
+ * The flags of a run: Mangabound's starting ones, without those the example or variant takes out and
+ * without those the variant sets again (mangapress refuses a flag given twice), then the variant's.
+ */
+function combine(shared, own, without) {
+  const groups = [];
+  for (const token of shared) {
+    if (token.startsWith('--') || groups.length === 0) groups.push([token]);
+    else groups.at(-1).push(token);
+  }
+  const named = (group) => group[0];
+  const set = new Set(own.filter((token) => token.startsWith('--')));
+  return [
+    ...groups.filter((group) => !without.includes(named(group)) && !set.has(named(group))).flat(),
+    ...own,
+  ];
+}
+
 async function runExample(mangapress, example, scratch) {
   const input = path.join(scratch, 'input', example.id);
   mkdirSync(input, { recursive: true });
   const sourceSize = await writeInput(example, input);
-  const sharedFlags = base.flags.filter((flag) => !(example.without ?? []).includes(flag));
+  const all = example.show === 'all';
   const variants = [];
   for (const variant of example.variants) {
-    const pages = convert(
-      mangapress,
-      input,
-      [...sharedFlags, ...variant.flags],
-      path.join(scratch, 'output', example.id, variant.id),
-    );
-    const picked = pages[example.show ?? 0];
-    if (!picked)
-      throw new Error(
-        `${example.id}/${variant.id}: mangapress made ${pages.length} pages, no page ${example.show ?? 0}.`,
+    const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
+    let pages;
+    if (variant.original) {
+      entry.original = true;
+      pages = [readFileSync(sourceSize.file)];
+    } else {
+      const flags = combine(base.flags, variant.flags, [
+        ...(example.without ?? []),
+        ...(variant.without ?? []),
+      ]);
+      pages = convert(
+        mangapress,
+        input,
+        flags,
+        path.join(scratch, 'output', example.id, variant.id),
       );
-    const { width, height } = await sharp(picked).metadata();
-    const entry = {
-      id: variant.id,
-      label: variant.label,
-      flags: variant.flags,
-      width,
-      height,
-      pageBytes: picked.length,
-    };
+    }
+    const picked = all ? pages : [pages[example.show ?? 0]];
+    if (picked.some((bytes) => !bytes))
+      throw new Error(
+        `${example.id}/${variant.id}: mangapress made ${pages.length} pages, no page ${example.show}.`,
+      );
+    const sizes = await Promise.all(picked.map((bytes) => sharp(bytes).metadata()));
+    entry.width = sizes[0].width;
+    entry.height = sizes[0].height;
+    entry.pageBytes = picked.reduce((sum, bytes) => sum + bytes.length, 0);
+    if (all)
+      entry.pages = sizes.map((size, i) => ({
+        width: size.width,
+        height: size.height,
+        bytes: picked[i].length,
+      }));
     if (example.kind === 'sizes') {
-      entry.keptPercent = round(((width * height) / (sourceSize.width * sourceSize.height)) * 100);
+      entry.keptPercent = round(
+        ((entry.width * entry.height) / (sourceSize.width * sourceSize.height)) * 100,
+      );
     } else {
       if (example.stats) {
-        const channel = (await sharp(picked).grayscale().stats()).channels[0];
+        const channel = (await sharp(picked[0]).grayscale().stats()).channels[0];
         entry.darkest = channel.min;
         entry.mean = round(channel.mean);
       }
-      let picture = sharp(picked);
-      if (example.zoom)
-        picture = picture.extract(example.zoom).resize({ width: PICTURE_WIDTH, kernel: 'nearest' });
-      else picture = picture.resize({ width: PICTURE_WIDTH });
+      let picture;
+      if (all) picture = await row(picked);
+      else if (example.zoom)
+        picture = sharp(picked[0])
+          .extract(example.zoom)
+          .resize({ width: PICTURE_WIDTH, kernel: 'nearest' });
+      else picture = sharp(picked[0]).resize({ width: PICTURE_WIDTH });
       const encoded = await picture
         .webp({ quality: 80, effort: 6 })
         .toBuffer({ resolveWithObject: true });
@@ -204,12 +277,19 @@ async function runExample(mangapress, example, scratch) {
       writeFileSync(path.join(output, entry.file), encoded.data);
     }
     variants.push(entry);
-    console.log(
-      `  ${variant.id.padEnd(28)} ${width}x${height}${entry.file ? `  ${entry.bytes} bytes` : ''}`,
-    );
+    const shape = all
+      ? sizes.map((s) => `${s.width}x${s.height}`).join(' + ')
+      : `${entry.width}x${entry.height}`;
+    console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
-  const used = (example.input.stack ?? [example.input]).map((ref) => ref.source);
-  return { kind: example.kind, sources: [...new Set(used)], source: sourceSize, variants };
+  const refs = example.input.stack ?? example.input.beside ?? [example.input];
+  return {
+    kind: example.kind,
+    layout: all ? 'rows' : 'grid',
+    sources: [...new Set(refs.map((ref) => ref.source))],
+    source: { width: sourceSize.width, height: sourceSize.height },
+    variants,
+  };
 }
 
 const only = process.argv.slice(2);

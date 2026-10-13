@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { base } from '../../site.config.mjs';
 
 const root = base.replace(/\/?$/, '/');
-const pages = ['cropping', 'color-and-tone'];
+const pages = ['cropping', 'color-and-tone', 'double-page-spreads'];
 
 for (const locale of ['', 'pt-br/']) {
   for (const colorScheme of ['light', 'dark']) {
@@ -43,19 +43,21 @@ for (const locale of ['', 'pt-br/']) {
   }
 }
 
-test('every picture of an example says which flags made it, and every table says its source', async ({
-  page,
-}) => {
-  await page.goto(`${root}user-guide/advanced-options/cropping/`);
-  for (const caption of await page.locator('[data-option-example] figcaption').all()) {
-    await expect(caption.locator('code')).toHaveText(/^(--[a-z-]+.*|no flag)$/);
-    await expect(caption).toContainText(/\d+ × \d+ px, \d+ KB/);
-  }
-  for (const table of await page.locator('[data-option-sizes] table').all()) {
-    await expect(table.locator('caption')).toContainText('Source page:');
-  }
-  await expect(page.locator('.credit').first()).toContainText('CC BY-SA 4.0');
-});
+for (const slug of ['cropping', 'double-page-spreads']) {
+  test(`every picture of an example says which flags made it, and every table says its source: ${slug}`, async ({
+    page,
+  }) => {
+    await page.goto(`${root}user-guide/advanced-options/${slug}/`);
+    for (const caption of await page.locator('[data-option-example] figcaption').all()) {
+      await expect(caption.locator('code')).toHaveText(/^(--[a-z-]+.*|no flag|not converted)$/);
+      await expect(caption).toContainText(/\d+ × \d+ px, \d+ KB/);
+    }
+    for (const table of await page.locator('[data-option-sizes] table').all()) {
+      await expect(table.locator('caption')).toContainText('Source page:');
+    }
+    await expect(page.locator('.credit').first()).toContainText('CC BY-SA 4.0');
+  });
+}
 
 for (const locale of ['', 'pt-br/']) {
   for (const colorScheme of ['light', 'dark']) {

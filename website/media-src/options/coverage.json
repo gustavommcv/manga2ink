@@ -69,12 +69,5 @@
     ],
     "cli/mangapress": ["--dry-run", "-n", "--quiet", "-q"]
   },
-  "planned": [
-    "reading",
-    "double-page-spreads",
-    "size-and-borders",
-    "page-images",
-    "cover",
-    "book-metadata"
-  ]
+  "planned": ["reading", "size-and-borders", "page-images", "cover", "book-metadata"]
 }

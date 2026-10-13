@@ -9,6 +9,7 @@
   "examples": {
     "cropping-modes": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["gogo-02"],
       "source": { "width": 1080, "height": 1440 },
       "variants": [
@@ -42,6 +43,7 @@
     },
     "cropping-power-sizes": {
       "kind": "sizes",
+      "layout": "grid",
       "sources": ["gogo-02"],
       "source": { "width": 1080, "height": 1440 },
       "variants": [
@@ -112,6 +114,7 @@
     },
     "cropping-minimum-sizes": {
       "kind": "sizes",
+      "layout": "grid",
       "sources": ["gogo-02"],
       "source": { "width": 1080, "height": 1440 },
       "variants": [
@@ -164,6 +167,7 @@
     },
     "cropping-preserve": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["gogo-02"],
       "source": { "width": 1080, "height": 1440 },
       "variants": [
@@ -197,6 +201,7 @@
     },
     "cropping-preserve-sizes": {
       "kind": "sizes",
+      "layout": "grid",
       "sources": ["gogo-02"],
       "source": { "width": 1080, "height": 1440 },
       "variants": [
@@ -240,6 +245,7 @@
     },
     "cropping-gutters": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["pepper-ep06"],
       "source": { "width": 992, "height": 4119 },
       "variants": [
@@ -286,6 +292,7 @@
     },
     "color-pages": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["pepper-ep06"],
       "source": { "width": 992, "height": 1373 },
       "variants": [
@@ -319,6 +326,7 @@
     },
     "gamma": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["pepper-ep01"],
       "source": { "width": 992, "height": 1373 },
       "variants": [
@@ -371,6 +379,7 @@
     },
     "autocontrast": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["pepper-ep01"],
       "source": { "width": 992, "height": 1373 },
       "variants": [
@@ -423,6 +432,7 @@
     },
     "rainbow": {
       "kind": "pictures",
+      "layout": "grid",
       "sources": ["pepper-ep06"],
       "source": { "width": 992, "height": 1373 },
       "variants": [
@@ -451,6 +461,277 @@
           "pictureHeight": 700,
           "bytes": 30180,
           "sha256": "4f4d1abc5ad20ee8baacde5903bf079a0a22498a858dd4f4a8bd24baa71699a6"
+        }
+      ]
+    },
+    "spreads-wide-pages": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["gogo-04", "gogo-03"],
+      "source": { "width": 2160, "height": 1440 },
+      "variants": [
+        {
+          "id": "source",
+          "label": "The spread as it came",
+          "flags": [],
+          "original": true,
+          "width": 2160,
+          "height": 1440,
+          "pageBytes": 1321177,
+          "pages": [{ "width": 2160, "height": 1440, "bytes": 1321177 }],
+          "file": "spreads-wide-pages-source.webp",
+          "pictureWidth": 868,
+          "pictureHeight": 588,
+          "bytes": 87226,
+          "sha256": "51a431e43d45d6a998625d3949b4a9063fd9c72865221bdf2445c5ef00259973"
+        },
+        {
+          "id": "split",
+          "label": "Wide pages: Split into two pages",
+          "flags": ["--splitter", "split"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 765965,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 }
+          ],
+          "file": "spreads-wide-pages-split.webp",
+          "pictureWidth": 882,
+          "pictureHeight": 588,
+          "bytes": 99760,
+          "sha256": "d7ff69911c0c1b7674dab20b69363931cbc70d0663cb15386c037d09120a3925"
+        },
+        {
+          "id": "rotate",
+          "label": "Wide pages: Keep whole, as one page",
+          "flags": ["--splitter", "rotate"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 462055,
+          "pages": [{ "width": 1272, "height": 1696, "bytes": 462055 }],
+          "file": "spreads-wide-pages-rotate.webp",
+          "pictureWidth": 448,
+          "pictureHeight": 588,
+          "bytes": 52570,
+          "sha256": "969bb0c914200351940e44d67f41e387dae13d28ea2d3d183f1bc1c9535455cf"
+        },
+        {
+          "id": "both",
+          "label": "Wide pages: Both: the halves, then the whole",
+          "flags": ["--splitter", "both"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1228020,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1272, "height": 1696, "bytes": 462055 }
+          ],
+          "file": "spreads-wide-pages-both.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 114918,
+          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+        }
+      ]
+    },
+    "spreads-too-wide": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["gogo-04", "gogo-03", "gogo-02"],
+      "source": { "width": 3240, "height": 1440 },
+      "variants": [
+        {
+          "id": "source",
+          "label": "The wide page as it came",
+          "flags": [],
+          "original": true,
+          "width": 3240,
+          "height": 1440,
+          "pageBytes": 2107759,
+          "pages": [{ "width": 3240, "height": 1440, "bytes": 2107759 }],
+          "file": "spreads-too-wide-source.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 502,
+          "bytes": 103408,
+          "sha256": "e1d5f84754bb67da389ff69be629e95b07cd6a966f77a2da22dfc959e4732efc"
+        },
+        {
+          "id": "split",
+          "label": "Wide pages: Split into two pages",
+          "flags": ["--splitter", "split"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 383078,
+          "pages": [{ "width": 1272, "height": 1696, "bytes": 383078 }],
+          "file": "spreads-too-wide-split.webp",
+          "pictureWidth": 448,
+          "pictureHeight": 588,
+          "bytes": 37330,
+          "sha256": "9d88cf6cf0ac83f317d3eccfef62a921e43d84209f32491dd6c520af9590e02d"
+        }
+      ]
+    },
+    "spreads-reading-order": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["gogo-04", "gogo-03"],
+      "source": { "width": 2160, "height": 1440 },
+      "variants": [
+        {
+          "id": "right-to-left",
+          "label": "Manga reading order: On",
+          "flags": ["--splitter", "split"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 765965,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 }
+          ],
+          "file": "spreads-reading-order-right-to-left.webp",
+          "pictureWidth": 882,
+          "pictureHeight": 588,
+          "bytes": 99760,
+          "sha256": "d7ff69911c0c1b7674dab20b69363931cbc70d0663cb15386c037d09120a3925"
+        },
+        {
+          "id": "left-to-right",
+          "label": "Manga reading order: Off",
+          "flags": ["--splitter", "split"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 765965,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1272, "height": 1696, "bytes": 385517 }
+          ],
+          "file": "spreads-reading-order-left-to-right.webp",
+          "pictureWidth": 882,
+          "pictureHeight": 588,
+          "bytes": 99940,
+          "sha256": "339cdcbd133704d0996bfb141574bfb50a2ea471caeb217eaab140bf34796a90"
+        }
+      ]
+    },
+    "spreads-whole-copy": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["gogo-04", "gogo-03"],
+      "source": { "width": 2160, "height": 1440 },
+      "variants": [
+        {
+          "id": "default",
+          "label": "Wide pages: Both, with the whole spread last",
+          "flags": ["--splitter", "both"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1228020,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1272, "height": 1696, "bytes": 462055 }
+          ],
+          "file": "spreads-whole-copy-default.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 114918,
+          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+        },
+        {
+          "id": "first",
+          "label": "Whole spread first",
+          "flags": ["--splitter", "both", "--rotatefirst"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1228020,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 462055 },
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 }
+          ],
+          "file": "spreads-whole-copy-first.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 114234,
+          "sha256": "c553aa17b0eec91aab66856ff69e61af7d34197d5e6db0114a7d4cef508599d5"
+        },
+        {
+          "id": "upright",
+          "label": "Keep the whole spread upright",
+          "flags": ["--splitter", "both", "--norotate"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1347967,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1972, "height": 1306, "bytes": 582002 }
+          ],
+          "file": "spreads-whole-copy-upright.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 371,
+          "bytes": 98718,
+          "sha256": "52ecd1805e9ace29b56560d77ea394a35f612d1465ae82acf2e15619065d2a3c"
+        },
+        {
+          "id": "clockwise",
+          "label": "Rotate clockwise",
+          "flags": ["--splitter", "both", "--rotateright"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1229756,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1272, "height": 1696, "bytes": 463791 }
+          ],
+          "file": "spreads-whole-copy-clockwise.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 114526,
+          "sha256": "ec250215a616e5b5ba9e6d1cb9af523521381d819b0fae946f6316e26830e3d2"
+        }
+      ]
+    },
+    "spreads-restack": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["gogo-04", "gogo-03"],
+      "source": { "width": 2160, "height": 1440 },
+      "variants": [
+        {
+          "id": "off",
+          "label": "Restack 4-panel strips as 2×2: Off",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 1228020,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 385517 },
+            { "width": 1272, "height": 1696, "bytes": 380448 },
+            { "width": 1272, "height": 1696, "bytes": 462055 }
+          ],
+          "file": "spreads-restack-off.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 114918,
+          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+        },
+        {
+          "id": "on",
+          "label": "Restack 4-panel strips as 2×2: On",
+          "flags": ["--maximizestrips"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 317195,
+          "pages": [{ "width": 1272, "height": 1696, "bytes": 317195 }],
+          "file": "spreads-restack-on.webp",
+          "pictureWidth": 448,
+          "pictureHeight": 588,
+          "bytes": 32588,
+          "sha256": "56009424d190cb03e0024de4f41dab5f22d18567b019d0ecc0a4957878f31bb7"
         }
       ]
     }

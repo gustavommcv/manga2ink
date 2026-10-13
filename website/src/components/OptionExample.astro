@@ -21,19 +21,33 @@ const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
   eager: true,
   import: 'default',
 });
+const rows = (example as { layout?: string }).layout === 'rows';
 const fullSize = portuguese ? 'Abrir imagem em tamanho maior' : 'Open the larger image';
 
 const variants = example.variants.map((variant) => {
   const meta = pictures[`../assets/options/${(variant as { file?: string }).file}`];
   if (!meta) throw new Error(`Missing picture for ${id}/${variant.id}. Run npm run site:options.`);
   if (!alt[variant.id]) throw new Error(`The example ${id} needs alt text for ${variant.id}.`);
-  const stats = variant as { darkest?: number; mean?: number; pageBytes: number };
+  const stats = variant as {
+    darkest?: number;
+    mean?: number;
+    pageBytes: number;
+    original?: boolean;
+    pages?: { width: number; height: number }[];
+  };
+  const sizes = (stats.pages ?? [variant]).map((page) => `${page.width} × ${page.height}`);
+  const count = stats.pages?.length ?? 1;
+  const noun = portuguese ? (count === 1 ? 'página' : 'páginas') : count === 1 ? 'page' : 'pages';
   return {
     ...variant,
     meta,
     alt: alt[variant.id],
     fileSize: `${Math.round(stats.pageBytes / 1024)} KB`,
-    flagsText: variant.flags.length > 0 ? variant.flags.join(' ') : null,
+    flagsText: stats.original ? null : variant.flags.length > 0 ? variant.flags.join(' ') : null,
+    original: stats.original === true,
+    shape: stats.pages
+      ? `${count} ${noun}: ${sizes.join(portuguese ? ', ' : ', ')} px`
+      : `${sizes[0]} px`,
     tone:
       stats.mean === undefined
         ? null
@@ -44,7 +58,7 @@ const variants = example.variants.map((variant) => {
 });
 ---
 
-<div class="option-example" data-option-example={id}>
+<div class:list={['option-example', { rows }]} data-option-example={id}>
   {variants.map((variant) => (
     <figure>
       <a href={variant.meta.src} title={fullSize}>
@@ -59,9 +73,15 @@ const variants = example.variants.map((variant) => {
       </a>
       <figcaption>
         <strong>{variant.label}</strong>
-        <code>{variant.flagsText ?? (portuguese ? 'sem flag' : 'no flag')}</code>
+        <code>
+          {variant.original
+            ? portuguese
+              ? 'sem conversão'
+              : 'not converted'
+            : (variant.flagsText ?? (portuguese ? 'sem flag' : 'no flag'))}
+        </code>
         <span>
-          {variant.width} × {variant.height} px, {variant.fileSize}
+          {variant.shape}, {variant.fileSize}
         </span>
         {variant.tone && <span>{variant.tone}</span>}
       </figcaption>
@@ -76,6 +96,9 @@ const variants = example.variants.map((variant) => {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
     gap: 1rem;
     margin-block: 1.5rem;
+  }
+  .option-example.rows {
+    grid-template-columns: 1fr;
   }
   figure {
     margin: 0;

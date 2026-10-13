@@ -1,0 +1,133 @@
+---
+title: 'Double-page spreads'
+description: 'What Wide pages, Manga reading order, Whole spread first, Keep the whole spread upright, Rotate clockwise, Restack 4-panel strips and the two-page view options do, shown on a spread converted each way.'
+---
+
+import OptionExample from '../../../../components/OptionExample.astro';
+
+The **Double-page spreads** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options) says what becomes of a page that is two pages wide. Most scans of a spread are one image across both pages, and a reader that shows one page at a time cannot show it whole at a readable size.
+
+The examples join pages of _Go Go! Encyclopedia Girls_ side by side into one image, the way a scan of a spread is. The later page is on the left and the earlier one on the right, as a book read right to left lies open. The conversion is Mangabound's starting one, with **Wide pages** set to **Both** and small pages enlarged, so each half comes out filling the screen.
+
+## When a page counts as a spread
+
+mangapress calls a page a spread when it is a landscape page and the screen is a portrait one, and its width is more than 1.16 times its height. The test is made after the margins are cropped, so it is the ratio of the cropped page. A page less wide than that is an ordinary page and is left alone, except with **Keep whole, as one page**: there, a landscape page that fits the screen once it is turned is turned whatever its ratio.
+
+A page 1.8 times as wide as it is tall, or more, is too wide to cut in two and is turned on its side even when **Wide pages** says **Split into two pages**. The example below is three pages side by side, 3240 × 1440 pixels, a ratio of 2.25:
+
+<OptionExample
+  id="spreads-too-wide"
+  alt={{
+    source: 'Three pages of a comic side by side as one very wide image.',
+    split:
+      'One page with the very wide image turned on its side, small, with white bands above and below.',
+  }}
+/>
+
+## Wide pages
+
+- **Split into two pages**: the spread becomes its two halves, two pages.
+- **Keep whole, as one page**: the spread stays one image and is turned on its side, so you read it by turning the device. One page.
+- **Both: the halves, then the whole**: the two halves, then the whole spread turned. Three pages. This is the starting choice.
+
+<OptionExample
+  id="spreads-wide-pages"
+  alt={{
+    source: 'Two pages of a comic side by side as one wide image, the later page on the left.',
+    split: 'Two pages, the right half first and then the left half, each filling the screen.',
+    rotate:
+      'One page holding the whole spread turned on its side, with white bands above and below it.',
+    both: 'Three pages: the two halves, and then the whole spread turned on its side.',
+  }}
+/>
+
+`--splitter` takes `split`, `rotate` or `both`, and `-r` is its short form.
+
+## Manga reading order
+
+With **Manga reading order** on, the right half of a spread is the first page, and the left half the second. With it off, the left half comes first. The pictures use the same spread, laid out as a right-to-left book lies open: the right half is the earlier page. With the option off the book would show the later page first.
+
+<OptionExample
+  id="spreads-reading-order"
+  alt={{
+    'right-to-left': 'The two halves, the right half first: the earlier page, then the later one.',
+    'left-to-right':
+      'The same two halves with the left half first, which puts the later page before the earlier one.',
+  }}
+/>
+
+Set it to match how the book is read: on for manga. In an EPUB the option also sets the book's direction in its package file, which a reader that follows the book's direction uses to turn pages: `page-progression-direction` is `rtl` with it on and `ltr` with it off. `--manga-style` turns it on, and `-m` is its short form. It does not apply to **Webtoon strips**.
+
+## The whole spread: first, upright or clockwise
+
+These three apply only when the whole spread is kept, which is **Keep whole** or **Both**.
+
+- **Whole spread first** puts the whole spread before its two halves instead of after. It needs **Both**, since only then are there two kinds of page to put in order. `--rotatefirst`.
+- **Keep the whole spread upright** does not turn it on its side: you read it with the device in landscape. The page it makes has the spread's own shape and can be wider than the screen: in the example below it is 1972 × 1306 pixels, for a screen 1272 pixels wide. `--norotate`.
+- **Rotate clockwise** turns the whole spread to the right instead of the left, the default. It means nothing while the spread is kept upright, since nothing is turned. `--rotateright`.
+
+<OptionExample
+  id="spreads-whole-copy"
+  alt={{
+    default: 'The two halves, then the whole spread turned to the left, on its side.',
+    first: 'The whole spread turned to the left first, then the two halves.',
+    upright: 'The two halves, then the whole spread upright, as wide as two pages.',
+    clockwise: 'The two halves, then the whole spread turned to the right, on its side.',
+  }}
+/>
+
+## Restack 4-panel strips as 2×2
+
+This option is for pages that are not spreads at all: a page made of two tall strips, such as a 1×4 comic strip printed as one long page. mangapress cuts each page in two and stacks the halves one over the other, so four panels in a row become two rows of two. It replaces the handling of wide pages, so **Wide pages** and the three options above are dimmed while it is on.
+
+The example has no strip to restack, so it uses the spread: the two halves are two whole pages, and they come out stacked on one page, the right half above the left one.
+
+<OptionExample
+  id="spreads-restack"
+  alt={{
+    off: 'The two halves and the whole spread as three pages.',
+    on: 'One page with the two halves stacked, the right half above the left half, smaller than before.',
+  }}
+/>
+
+`--maximizestrips` turns it on.
+
+## Two-page view
+
+For readers that show two pages side by side, such as Kobo's and Kindle's own. An EPUB carries these three options in its package file and nothing else does, so the app dims them for CBZ and PDF. KOReader ignores them.
+
+The sides below were read from the package file of a book of three ordinary pages, with **Manga reading order** on, so that the book turns right to left:
+
+- With none of the three options, pages 1, 2 and 3 sit on the right, left and right.
+- **Start on the other side**: the book still turns right to left, and the pages sit left, right, left.
+- **Invert page turns**: the book turns left to right, and the pages sit left, right, left.
+- Both of those: the book turns left to right, and the pages sit right, left, right.
+- **One page in landscape**: every page is centered.
+
+What each one does:
+
+- **Start on the other side** starts the book on the other side of the two-page view, so that spreads line up. It changes where an ordinary page sits, and only when no spread follows it: the halves of a spread always take a pair of sides, and the pages before one are placed so that they end on the pair before it. In a book that has a spread after its first pages, the setting changes nothing there. `--spreadshift`.
+- **Invert page turns** reverses the direction the book turns, in its package file, and starts it on the other side as well; with both options on, the sides cancel out and only the direction stays reversed. KOReader has its own setting for this. `--invertdirection`.
+- **One page in landscape** shows each page alone and centered instead of in a pair. `--onepagelandscape`.
+
+## When these options are dimmed
+
+The app dims an option that another choice leaves without effect, and says why.
+
+- **Use the images as they are** dims **Wide pages**, the three whole-spread options and **Restack 4-panel strips**: the pages are not touched, so nothing is split or turned. **Manga reading order** and the two-page view still apply.
+- **Webtoon strips** dims **Manga reading order**, **Wide pages**, the three whole-spread options and **Restack 4-panel strips**: a webtoon is never read right to left or split.
+- **Restack 4-panel strips as 2×2** dims **Wide pages** and the three whole-spread options, which it replaces.
+- **Whole spread first** is dimmed unless **Wide pages** is **Both**. **Keep the whole spread upright** and **Rotate clockwise** are dimmed while **Wide pages** is **Split into two pages**, and **Rotate clockwise** also while the spread is kept upright.
+- The three two-page-view options are dimmed for CBZ and PDF.
+
+## Options and flags
+
+- **Manga reading order**: `--manga-style`, or `-m`.
+- **Wide pages**: `--splitter`, or `-r`, with `split`, `rotate` or `both`.
+- **Whole spread first**: `--rotatefirst`.
+- **Keep the whole spread upright**: `--norotate`.
+- **Rotate clockwise**: `--rotateright`.
+- **Restack 4-panel strips as 2×2**: `--maximizestrips`.
+- **Start on the other side**: `--spreadshift`.
+- **One page in landscape**: `--onepagelandscape`.
+- **Invert page turns**: `--invertdirection`.

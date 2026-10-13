@@ -18,6 +18,9 @@ const PEPPER_SUN = { source: 'pepper-ep06', page: '002.jpg' };
 const PEPPER_DARK = { source: 'pepper-ep01', page: '001.jpg' };
 const GOGO = { source: 'gogo-02' };
 const WITHOUT_ENLARGING = ['--upscale'];
+// Two consecutive pages of one comic joined side by side, as a scan of a double page is. The later
+// page is on the left and the earlier one on the right, which is how a book read right to left lies open.
+const SPREAD = { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }] };
 
 /**
  * kind 'pictures': one picture per variant, the first page of the result.
@@ -150,6 +153,87 @@ export const examples = [
     variants: [
       { id: 'off', label: 'Reduce rainbow effect: Off', flags: ['--forcecolor'] },
       { id: 'on', label: 'Reduce rainbow effect: On', flags: ['--forcecolor', '--eraserainbow'] },
+    ],
+  },
+
+  {
+    id: 'spreads-wide-pages',
+    kind: 'pictures',
+    input: SPREAD,
+    show: 'all',
+    variants: [
+      { id: 'source', label: 'The spread as it came', original: true },
+      { id: 'split', label: 'Wide pages: Split into two pages', flags: ['--splitter', 'split'] },
+      {
+        id: 'rotate',
+        label: 'Wide pages: Keep whole, as one page',
+        flags: ['--splitter', 'rotate'],
+      },
+      {
+        id: 'both',
+        label: 'Wide pages: Both: the halves, then the whole',
+        flags: ['--splitter', 'both'],
+      },
+    ],
+  },
+  {
+    id: 'spreads-too-wide',
+    kind: 'pictures',
+    // Three pages side by side: 3240 x 1440, a page 2.25 times as wide as it is tall.
+    input: { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }, { source: 'gogo-02' }] },
+    show: 'all',
+    variants: [
+      { id: 'source', label: 'The wide page as it came', original: true },
+      { id: 'split', label: 'Wide pages: Split into two pages', flags: ['--splitter', 'split'] },
+    ],
+  },
+  {
+    id: 'spreads-reading-order',
+    kind: 'pictures',
+    input: SPREAD,
+    show: 'all',
+    variants: [
+      { id: 'right-to-left', label: 'Manga reading order: On', flags: ['--splitter', 'split'] },
+      {
+        id: 'left-to-right',
+        label: 'Manga reading order: Off',
+        flags: ['--splitter', 'split'],
+        without: ['--manga-style'],
+      },
+    ],
+  },
+  {
+    id: 'spreads-whole-copy',
+    kind: 'pictures',
+    input: SPREAD,
+    show: 'all',
+    variants: [
+      {
+        id: 'default',
+        label: 'Wide pages: Both, with the whole spread last',
+        flags: ['--splitter', 'both'],
+      },
+      { id: 'first', label: 'Whole spread first', flags: ['--splitter', 'both', '--rotatefirst'] },
+      {
+        id: 'upright',
+        label: 'Keep the whole spread upright',
+        flags: ['--splitter', 'both', '--norotate'],
+      },
+      {
+        id: 'clockwise',
+        label: 'Rotate clockwise',
+        flags: ['--splitter', 'both', '--rotateright'],
+      },
+    ],
+  },
+  {
+    id: 'spreads-restack',
+    kind: 'pictures',
+    input: SPREAD,
+    show: 'all',
+    variants: [
+      { id: 'off', label: 'Restack 4-panel strips as 2×2: Off', flags: [] },
+      { id: 'on', label: 'Restack 4-panel strips as 2×2: On', flags: ['--maximizestrips'] },
     ],
   },
 ];

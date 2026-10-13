@@ -1,0 +1,136 @@
+---
+title: 'Páginas duplas (Double-page spreads)'
+description: 'O que Wide pages, Manga reading order, Whole spread first, Keep the whole spread upright, Rotate clockwise, Restack 4-panel strips e as opções de visão de duas páginas fazem, mostrado numa página dupla convertida de cada jeito.'
+---
+
+import OptionExample from '../../../../../components/OptionExample.astro';
+
+A seção **Double-page spreads** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options) diz o que acontece com uma página que tem a largura de duas. A maioria dos scans de uma página dupla é uma imagem só atravessando as duas páginas, e um leitor que mostra uma página por vez não consegue mostrá-la inteira num tamanho legível.
+
+Os exemplos juntam páginas de _Go Go! Encyclopedia Girls_ lado a lado numa imagem só, como é um scan de página dupla. A página seguinte fica à esquerda e a anterior à direita, como um livro lido da direita para a esquerda fica aberto. A conversão é a inicial do Mangabound, com **Wide pages** em **Both** e as páginas pequenas ampliadas, então cada metade sai ocupando a tela.
+
+## Quando uma página conta como dupla
+
+O mangapress considera uma página dupla quando ela é horizontal, a tela é vertical e a largura é mais de 1,16 vez a altura. O teste é feito depois do corte das margens, então vale a proporção da página cortada. Uma página menos larga que isso é uma página comum e fica como está, exceto com **Keep whole, as one page**: nele, uma página horizontal que cabe na tela depois de girada é girada qualquer que seja a proporção.
+
+Uma página com 1,8 vez a largura da altura, ou mais, é larga demais para ser cortada ao meio e é girada de lado mesmo quando **Wide pages** diz **Split into two pages**. O exemplo abaixo são três páginas lado a lado, 3240 × 1440 pixels, uma proporção de 2,25:
+
+<OptionExample
+  id="spreads-too-wide"
+  alt={{
+    source: 'Três páginas de um quadrinho lado a lado, numa imagem larguíssima.',
+    split:
+      'Uma página com a imagem larguíssima girada de lado, pequena, com faixas brancas em cima e embaixo.',
+  }}
+/>
+
+## Wide pages
+
+- **Split into two pages**: a página dupla vira as suas duas metades, duas páginas.
+- **Keep whole, as one page**: a página dupla continua uma imagem e é girada de lado, então você a lê girando o aparelho. Uma página.
+- **Both: the halves, then the whole**: as duas metades, depois a página dupla inteira girada. Três páginas. É a escolha inicial.
+
+<OptionExample
+  id="spreads-wide-pages"
+  alt={{
+    source:
+      'Duas páginas de um quadrinho lado a lado numa imagem larga, a página seguinte à esquerda.',
+    split:
+      'Duas páginas, a metade da direita primeiro e depois a da esquerda, cada uma ocupando a tela.',
+    rotate:
+      'Uma página com a página dupla inteira girada de lado, com faixas brancas em cima e embaixo.',
+    both: 'Três páginas: as duas metades e depois a página dupla inteira girada de lado.',
+  }}
+/>
+
+`--splitter` aceita `split`, `rotate` ou `both`, e `-r` é a forma curta.
+
+## Manga reading order
+
+Com **Manga reading order** ligada, a metade da direita da página dupla é a primeira página, e a da esquerda a segunda. Desligada, a da esquerda vem primeiro. As imagens usam a mesma página dupla, disposta como um livro da direita para a esquerda fica aberto: a metade da direita é a página anterior. Com a opção desligada, o livro mostraria a página seguinte primeiro.
+
+<OptionExample
+  id="spreads-reading-order"
+  alt={{
+    'right-to-left':
+      'As duas metades, a da direita primeiro: a página anterior e depois a seguinte.',
+    'left-to-right':
+      'As mesmas duas metades com a da esquerda primeiro, o que põe a página seguinte antes da anterior.',
+  }}
+/>
+
+Ajuste-a ao jeito como o livro é lido: ligada para mangá. Num EPUB a opção também define a direção do livro no arquivo de pacote, que um leitor que segue a direção do livro usa para virar as páginas: `page-progression-direction` é `rtl` com ela ligada e `ltr` desligada. `--manga-style` a liga, e `-m` é a forma curta. Ela não vale para **Webtoon strips**.
+
+## A página dupla inteira: primeiro, em pé ou no sentido horário
+
+Estas três só valem quando a página dupla inteira é mantida, ou seja, em **Keep whole** ou **Both**.
+
+- **Whole spread first** põe a página dupla inteira antes das duas metades, em vez de depois. Exige **Both**, porque só então há dois tipos de página para ordenar. `--rotatefirst`.
+- **Keep the whole spread upright** não a gira de lado: você a lê com o aparelho na horizontal. A página que ela gera tem o formato da própria página dupla e pode ser mais larga que a tela: no exemplo abaixo ela tem 1972 × 1306 pixels, para uma tela de 1272 pixels de largura. `--norotate`.
+- **Rotate clockwise** gira a página dupla inteira para a direita em vez da esquerda, que é o padrão. Não significa nada enquanto a página é mantida em pé, já que nada é girado. `--rotateright`.
+
+<OptionExample
+  id="spreads-whole-copy"
+  alt={{
+    default: 'As duas metades e depois a página dupla inteira girada para a esquerda, de lado.',
+    first: 'A página dupla inteira girada para a esquerda primeiro, e depois as duas metades.',
+    upright: 'As duas metades e depois a página dupla inteira em pé, larga como duas páginas.',
+    clockwise: 'As duas metades e depois a página dupla inteira girada para a direita, de lado.',
+  }}
+/>
+
+## Restack 4-panel strips as 2×2
+
+Esta opção é para páginas que não são páginas duplas: uma página feita de duas tiras altas, como uma tira de quadrinhos 1×4 impressa numa página comprida. O mangapress corta cada página ao meio e empilha as metades uma sobre a outra, então quatro quadros em fila viram duas fileiras de dois. Ela substitui o tratamento das páginas largas, então **Wide pages** e as três opções acima ficam esmaecidas enquanto ela está ligada.
+
+O exemplo não tem uma tira para reempilhar, então usa a página dupla: as duas metades são duas páginas inteiras, e saem empilhadas numa página, a metade da direita acima da da esquerda.
+
+<OptionExample
+  id="spreads-restack"
+  alt={{
+    off: 'As duas metades e a página dupla inteira em três páginas.',
+    on: 'Uma página com as duas metades empilhadas, a da direita acima da da esquerda, menores que antes.',
+  }}
+/>
+
+`--maximizestrips` a liga.
+
+## Two-page view
+
+Para leitores que mostram duas páginas lado a lado, como os próprios do Kobo e do Kindle. Um EPUB leva estas três opções no seu arquivo de pacote e mais nada leva, então o app as esmaece para CBZ e PDF. O KOReader as ignora.
+
+Os lados abaixo foram lidos do arquivo de pacote de um livro de três páginas comuns, com **Manga reading order** ligada, de modo que o livro vira da direita para a esquerda:
+
+- Sem nenhuma das três opções, as páginas 1, 2 e 3 ficam na direita, esquerda e direita.
+- **Start on the other side**: o livro continua virando da direita para a esquerda, e as páginas ficam esquerda, direita, esquerda.
+- **Invert page turns**: o livro vira da esquerda para a direita, e as páginas ficam esquerda, direita, esquerda.
+- As duas juntas: o livro vira da esquerda para a direita, e as páginas ficam direita, esquerda, direita.
+- **One page in landscape**: toda página fica centralizada.
+
+O que cada uma faz:
+
+- **Start on the other side** começa o livro no outro lado da visão de duas páginas, para alinhar as páginas duplas. Muda onde uma página comum fica, e só quando nenhuma página dupla vem depois dela: as metades de uma página dupla sempre ocupam um par de lados, e as páginas antes dela são posicionadas para terminar no par anterior. Num livro que tem uma página dupla depois das primeiras páginas, o ajuste não muda nada ali. `--spreadshift`.
+- **Invert page turns** inverte a direção em que o livro vira, no seu arquivo de pacote, e também começa o livro no outro lado; com as duas opções ligadas, os lados se anulam e só a direção fica invertida. O KOReader tem um ajuste próprio para isso. `--invertdirection`.
+- **One page in landscape** mostra cada página sozinha e centralizada em vez de em par. `--onepagelandscape`.
+
+## Quando estas opções ficam esmaecidas
+
+O app esmaece uma opção que outra escolha deixa sem efeito, e diz o motivo.
+
+- **Use the images as they are** esmaece **Wide pages**, as três opções da página dupla inteira e **Restack 4-panel strips**: as páginas não são tocadas, então nada é cortado ou girado. **Manga reading order** e a visão de duas páginas continuam valendo.
+- **Webtoon strips** esmaece **Manga reading order**, **Wide pages**, as três opções da página dupla inteira e **Restack 4-panel strips**: um webtoon nunca é lido da direita para a esquerda nem cortado.
+- **Restack 4-panel strips as 2×2** esmaece **Wide pages** e as três opções da página dupla inteira, que ela substitui.
+- **Whole spread first** fica esmaecida a menos que **Wide pages** seja **Both**. **Keep the whole spread upright** e **Rotate clockwise** ficam esmaecidas enquanto **Wide pages** é **Split into two pages**, e **Rotate clockwise** também enquanto a página dupla é mantida em pé.
+- As três opções da visão de duas páginas ficam esmaecidas em CBZ e PDF.
+
+## Opções e flags
+
+- **Manga reading order**: `--manga-style`, ou `-m`.
+- **Wide pages**: `--splitter`, ou `-r`, com `split`, `rotate` ou `both`.
+- **Whole spread first**: `--rotatefirst`.
+- **Keep the whole spread upright**: `--norotate`.
+- **Rotate clockwise**: `--rotateright`.
+- **Restack 4-panel strips as 2×2**: `--maximizestrips`.
+- **Start on the other side**: `--spreadshift`.
+- **One page in landscape**: `--onepagelandscape`.
+- **Invert page turns**: `--invertdirection`.

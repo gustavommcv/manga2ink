@@ -34,6 +34,30 @@
       "sha256": "15e5a4187a6eb78ade720b19eb9b002ff7ede945cca157f1aa545606415e2324",
       "kind": "image",
       "extension": "png"
+    },
+    "gogo-03": {
+      "title": "Go Go! Encyclopedia Girls, page 3",
+      "author": "Kasuga, English version by Masatami",
+      "attribution": "Kasuga, English version by Masatami",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "page": "https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_03.png",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Go_Go!_Encyclopedia_Girls_-_English_03.png",
+      "sha256": "69a45ac68c393b536bed3c998b62925cd52b0cbff87cc3bf2011d935b7390e76",
+      "kind": "image",
+      "extension": "png"
+    },
+    "gogo-04": {
+      "title": "Go Go! Encyclopedia Girls, page 4",
+      "author": "Kasuga, English version by Masatami",
+      "attribution": "Kasuga, English version by Masatami",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "page": "https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_04.png",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Go_Go!_Encyclopedia_Girls_-_English_04.png",
+      "sha256": "fdfd9741c9fff000f03534fd8f8bf1747cf1678d3c3abef266bcd64df37dbc00",
+      "kind": "image",
+      "extension": "png"
     }
   }
 }
