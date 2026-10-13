@@ -42,6 +42,7 @@ export default defineConfig({
         'src/main/renderer-files.ts',
         'src/opds/**/*.ts',
         'src/preload/dropped-paths.ts',
+        'src/preload/index.ts',
         'src/renderer/lib/**/*.ts',
       ],
       provider: 'v8',
