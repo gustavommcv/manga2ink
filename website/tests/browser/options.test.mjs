@@ -77,3 +77,22 @@ for (const locale of ['', 'pt-br/']) {
     });
   }
 }
+
+for (const locale of ['', 'pt-br/']) {
+  test(`a table of sizes can be scrolled with the keyboard on a very narrow screen: ${locale || 'en'}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 700 });
+    await page.goto(`${root}${locale}user-guide/advanced-options/cropping/`);
+    const regions = page.locator('[data-option-sizes][role="region"]');
+    expect(await regions.count()).toBeGreaterThan(0);
+    for (const region of await regions.all()) {
+      await expect(region).toHaveAttribute('tabindex', '0');
+      await expect(region).toHaveAttribute('aria-label', /.+: .+/);
+    }
+    const scan = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    expect(scan.violations).toEqual([]);
+  });
+}
