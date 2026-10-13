@@ -197,16 +197,6 @@ export const examples = [
       },
     ],
   },
-  {
-    id: 'rainbow',
-    kind: 'pictures',
-    input: PEPPER_SUN,
-    zoom: { left: 520, top: 180, width: 260, height: 260 },
-    variants: [
-      { id: 'off', label: 'Reduce rainbow effect: Off', flags: ['--forcecolor'] },
-      { id: 'on', label: 'Reduce rainbow effect: On', flags: ['--forcecolor', '--eraserainbow'] },
-    ],
-  },
 
   {
     // `flow` says, for each page of the result, which part of the spread it is made of and whether it is

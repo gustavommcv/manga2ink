@@ -66,12 +66,4 @@ Os números embaixo das imagens mostram o quanto cada valor move a página. Um g
 
 **Reduce rainbow effect** é o jeito do mangapress de apagar o efeito arco-íris das telas e-ink coloridas, atenuando as frequências que interferem. Ela muda os pixels de toda página em que é aplicada, também as cinza: as páginas que o mangapress grava com e sem ela não são iguais. Deixe desligada, a menos que sua tela seja e-ink colorida. `--eraserainbow`.
 
-A imagem é um quadrado de 260 pixels da página, ampliado 2,7 vezes sem suavização, para que os pixels apareçam. Com a opção ligada, o céu liso ganha uma textura diagonal fina. Se isso remove o arco-íris numa tela de verdade, só a tela pode mostrar.
-
-<OptionExample
-  id="rainbow"
-  alt={{
-    off: 'Um detalhe ampliado de uma vassoura voadora e suas cordas contra um céu claro, em cores.',
-    on: 'O mesmo detalhe com uma textura diagonal fraca no céu.',
-  }}
-/>
+Esta é uma opção que a tela de um computador não mostra. O efeito que ela combate é da tela do leitor, não do arquivo, então nada na página convertida parece diferente num monitor. O que a opção muda é o arquivo, e muito pouco: numa página de 1272 × 1696 pixels, convertida para o Kindle Paperwhite 6 e gravada sem perdas, cerca de 60% dos valores dos pixels ficam diferentes com a opção ligada, em média por cerca de um nível de 255 e por 33 a 52 no máximo, tanto numa página colorida quanto numa em preto e branco. Uma mudança tão fina não aparece numa imagem, então aqui não há nenhuma. Para julgá-la, converta uma página dos dois jeitos e compare no leitor.

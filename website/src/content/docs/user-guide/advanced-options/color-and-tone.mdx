@@ -65,12 +65,4 @@ The numbers under the pictures show how far each value moves the page. A gamma o
 
 **Reduce rainbow effect** is mangapress's way of erasing the rainbow effect of color e-ink screens, by attenuating the frequencies that interfere. It changes the pixels of every page it is applied to, grayscale pages too: the pages mangapress writes with and without it are not the same. Leave it off unless your screen is a color e-ink one. `--eraserainbow`.
 
-The picture is a 260-pixel square of the page, enlarged 2.7 times without smoothing, so that single pixels are visible. With the option on, the smooth sky gets a fine diagonal texture. Whether that removes the rainbow on a real screen is something only the screen can show.
-
-<OptionExample
-  id="rainbow"
-  alt={{
-    off: 'A close-up of a flying broom and its ropes against a pale sky, in color.',
-    on: 'The same close-up with a faint diagonal texture in the sky.',
-  }}
-/>
+This is one a computer screen cannot show. The effect it fights belongs to the reader's screen, not to the file, so nothing in the converted page looks different on a monitor. What the option changes is the file, and by very little: on a page of 1272 × 1696 pixels, converted for the Kindle Paperwhite 6 and saved without loss, about 60% of the pixel values differ with the option on, by about one level of 255 on average and by 33 to 52 at most, on a color page and on a black-and-white one alike. A change that fine does not show in a picture, so there is none here. To judge it, convert a page both ways and compare them on the reader.
