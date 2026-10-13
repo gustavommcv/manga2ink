@@ -19,6 +19,10 @@ MUTATE_STRINGS=1 npm run test:mutation         also change the text of messages
 It is not a gate. It is a package of its own, as `website/` is, because Stryker needs Babel 8 and
 none of it should reach the app's lockfile. The report of each file is in `reports/` (JSON).
 
+It also runs by itself once a week (`.github/workflows/mutation.yml`, Mondays, and on request from the
+Actions tab): the score and the lowest files are in the summary of the run, and the reports are
+kept for a month as an artifact. That run is not a gate either; nothing fails on a score.
+
 ## How it is run, and why
 
 - **One Stryker run per source file**, tested with only the unit tests that import it (found by the
