@@ -63,12 +63,12 @@ Queue drafts and sessions are not restored; scratch workspaces are cleaned up. T
 
 ## Tests, by layer
 
-| Layer                                                                                       | Tests                                                                                                 |
-| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Domain, application, adapters, library, OPDS, renderer helpers, selected main/preload units | Vitest with real fixtures and recorded responses; 100% coverage on files listed in `vitest.config.ts` |
-| React behavior                                                                              | React Testing Library against a fake bridge                                                           |
-| UI states                                                                                   | Storybook interactions and axe accessibility checks; Playwright visual baselines                      |
-| Critical desktop flows                                                                      | WebdriverIO against the packaged Electron app and real converters                                     |
+| Layer                                                                                         | Tests                                                                                                 |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Domain, application, adapters, library, OPDS, renderer helpers, the main process, the preload | Vitest with real fixtures and recorded responses; 100% coverage on files listed in `vitest.config.ts` |
+| React behavior                                                                                | React Testing Library against a fake bridge                                                           |
+| UI states                                                                                     | Storybook interactions and axe accessibility checks; Playwright visual baselines                      |
+| Critical desktop flows                                                                        | WebdriverIO against the packaged Electron app and real converters                                     |
 
 These are complementary checks, not a claim of whole-app 100% coverage. [CONTRIBUTING](../CONTRIBUTING.md#testing-expectations) describes the commands and expectations.
 

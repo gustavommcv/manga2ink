@@ -40,22 +40,22 @@ The user guide is the independent Astro/Starlight package under `website/`; `doc
 
 `npm run check` runs formatting, linting, module-boundary tests, type checking, the production dependency audit, tool-pin verification, unit and component tests, story tests, and the Storybook build. Visual and packaged-app tests are separate commands.
 
-| Command                                   | Purpose                                                                          |
-| ----------------------------------------- | -------------------------------------------------------------------------------- |
-| `npm run format:check`                    | Prettier; `npm run format` applies formatting.                                   |
-| `npm run lint`                            | ESLint, with no warnings allowed.                                                |
-| `npm run lint:boundaries`                 | Regression tests for the module-boundary rule.                                   |
-| `npm run typecheck`                       | Strict TypeScript over source and tests.                                         |
-| `npm run audit:production`                | Audit the app's production dependencies.                                         |
-| `npm run toolchain:check`                 | Validate the pinned converter manifest.                                          |
-| `npm run test:unit`                       | Logic, adapters, and selected main/preload helpers; acquires the verified tools. |
-| `npm run capabilities:check`              | Detect CLI flags the app does not represent.                                     |
-| `npm run test:component`                  | Accessible React behavior against a fake desktop bridge.                         |
-| `npm run test:stories`                    | Storybook interactions and axe accessibility checks.                             |
-| `npm run build-storybook`                 | Build the isolated UI reference.                                                 |
-| `npm run test:visual`                     | Compare selected UI states with Windows CI baselines.                            |
-| `npm run test:mutation`                   | Not a gate. Changes the domain and application layers one thing at a time.       |
-| `npm run package:e2e`, `npm run test:e2e` | Exercise the packaged Electron app with real converters.                         |
+| Command                                   | Purpose                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------- |
+| `npm run format:check`                    | Prettier; `npm run format` applies formatting.                                  |
+| `npm run lint`                            | ESLint, with no warnings allowed.                                               |
+| `npm run lint:boundaries`                 | Regression tests for the module-boundary rule.                                  |
+| `npm run typecheck`                       | Strict TypeScript over source and tests.                                        |
+| `npm run audit:production`                | Audit the app's production dependencies.                                        |
+| `npm run toolchain:check`                 | Validate the pinned converter manifest.                                         |
+| `npm run test:unit`                       | Logic, adapters, the main process and the preload; acquires the verified tools. |
+| `npm run capabilities:check`              | Detect CLI flags the app does not represent.                                    |
+| `npm run test:component`                  | Accessible React behavior against a fake desktop bridge.                        |
+| `npm run test:stories`                    | Storybook interactions and axe accessibility checks.                            |
+| `npm run build-storybook`                 | Build the isolated UI reference.                                                |
+| `npm run test:visual`                     | Compare selected UI states with Windows CI baselines.                           |
+| `npm run test:mutation`                   | Not a gate. Changes the domain and application layers one thing at a time.      |
+| `npm run package:e2e`, `npm run test:e2e` | Exercise the packaged Electron app with real converters.                        |
 
 ## Module boundaries
 
