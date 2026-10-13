@@ -63,11 +63,13 @@ export default defineConfig({
               translations: { 'pt-BR': 'Opções avançadas' },
               items: [
                 { slug: 'user-guide/advanced-options' },
+                { slug: 'user-guide/advanced-options/reading' },
                 { slug: 'user-guide/advanced-options/cropping' },
                 { slug: 'user-guide/advanced-options/color-and-tone' },
                 { slug: 'user-guide/advanced-options/double-page-spreads' },
                 { slug: 'user-guide/advanced-options/size-and-borders' },
                 { slug: 'user-guide/advanced-options/page-images' },
+                { slug: 'user-guide/advanced-options/book-metadata' },
               ],
             },
             { slug: 'user-guide/processing' },

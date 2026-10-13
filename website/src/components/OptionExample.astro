@@ -16,7 +16,7 @@ const example = (
   manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
-const portuguese = Astro.currentLocale === 'pt-br';
+const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
 const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
   eager: true,
   import: 'default',
@@ -30,13 +30,15 @@ const variants = example.variants.map((variant) => {
   if (!meta) throw new Error(`Missing picture for ${id}/${variant.id}. Run npm run site:options.`);
   if (!alt[variant.id]) throw new Error(`The example ${id} needs alt text for ${variant.id}.`);
   const stats = variant as {
+    width: number;
+    height: number;
     darkest?: number;
     mean?: number;
     pageBytes: number;
     original?: boolean;
     pages?: { width: number; height: number }[];
   };
-  const sizes = (stats.pages ?? [variant]).map((page) => `${page.width} × ${page.height}`);
+  const sizes = (stats.pages ?? [stats]).map((page) => `${page.width} × ${page.height}`);
   const count = stats.pages?.length ?? 1;
   const noun = portuguese ? (count === 1 ? 'página' : 'páginas') : count === 1 ? 'page' : 'pages';
   return {

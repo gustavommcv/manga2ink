@@ -9,19 +9,22 @@ description: 'What the advanced options of Mangabound’s conversion settings do
 
 | Page                                        | Options                                                                                                                                         | What it shows                                                                                                                       |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [Reading](reading/)                         | Content, Manga reading order                                                                                                                    | A webtoon-shaped chapter converted as pages and as strips, and the reading direction each book format records                       |
 | [Cropping](cropping/)                       | Page cropping, Cropping power, Minimum retained area, Preserved margin, Inter-panel cropping                                                    | How much of a page is cut away, in pixels, and what the cut keeps                                                                   |
 | [Color and tone](color-and-tone/)           | Color pages, Autocontrast, Auto-level black point, Gamma, Reduce rainbow effect                                                                 | The same page in grayscale and in color, lighter and darker, with the numbers behind the change                                     |
 | [Double-page spreads](double-page-spreads/) | Wide pages, Manga reading order, Whole spread first, Keep the whole spread upright, Rotate clockwise, Restack 4-panel strips, the two-page view | A spread split, kept whole or both, in which order, and what the two-page view writes into an EPUB                                  |
 | [Size and borders](size-and-borders/)       | Page size, Borders                                                                                                                              | How a page is fitted to the screen, enlarged, stretched or cropped to fill, and what surrounds it when it is not the screen's shape |
 | [Page images](page-images/)                 | Page format, JPEG quality, Keep all 256 grays, 8-bit PNG, Color pages as PNG too, Use the images as they are                                    | The file each page is saved as: JPEG or PNG, how many grays, and what each costs in bytes                                           |
+| [Book metadata](book-metadata/)             | ComicInfo title, EPUB language, Keep ComicInfo.xml, Name the book .epub, and a book's title and author                                          | Where each format keeps the title, author and language, what a ComicInfo.xml changes, and when a Kobo book is named .kepub.epub     |
 
-The other options are described in [Conversion settings](../output-profiles/#advanced-conversion-options) until they have a page of their own.
+The cover options are described in [Conversion settings](../output-profiles/#advanced-conversion-options) until they have a page of their own.
 
 ## How the examples were made
 
 - **The pages** come from comics whose authors allow copying: _Pepper&Carrot_ by David Revoy, in color, _Go Go! Encyclopedia Girls_ by Kasuga, in black and white, and a page by Polylerus with a black background. The credits and licences are at the end of this page, and under every picture.
 - **The conversion** is the mangapress that Mangabound ships, started from Mangabound's starting settings: Kindle Paperwhite 6 (1272 × 1696 pixels), CBZ, manga reading order, double-page spreads kept both ways, small pages enlarged, margins and page numbers cropped. Only the option named in the caption is different between two pictures.
 - **The captions** give the setting as the app names it, the flag that setting passes to mangapress when you run it from a terminal (`no flag` is the default), and the size of each page mangapress wrote (`not converted` is a picture of the input). Click a picture to open it larger.
+- **The tables of values** are not pictures: the title, author, language, reading direction and file name in them were read back from the book mangapress wrote, converted with the same starting settings unless a row says otherwise.
 - **What is not shown.** The free black-and-white manga there is has little printed screentone, so what depends on it, such as moiré, is described and not pictured. Pictures show pixels on your screen, not the e-ink screen of a reader.
 
 ## Credits and licences

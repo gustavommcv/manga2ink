@@ -1,0 +1,124 @@
+---
+title: 'Metadados do livro (Book metadata)'
+description: 'Onde um livro guarda o título, o autor e o idioma, o que o ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub, com valores lidos de volta dos livros que o mangapress gravou.'
+---
+
+import OptionBook from '../../../../../components/OptionBook.astro';
+
+O título, o autor e o idioma de um livro são gravados no arquivo, e cada formato tem um lugar diferente para eles, ou nenhum. **Book metadata**, nas [Advanced conversion options](../../output-profiles/#advanced-conversion-options), reúne **ComicInfo title**, **EPUB language** e **Keep ComicInfo.xml**. O título, o autor e o idioma de cada livro são definidos por item, na ação de detalhes do livro na fila, como descrito em [Adicionando mangás](../../adding-manga/#confira-um-item), e **Name the book .epub** fica junto do dispositivo. Esta página lê de volta cada um deles de um livro de verdade.
+
+Os exemplos convertem três páginas de _Pepper&Carrot_, episódio 6, guardadas numa pasta chamada `Pepper and Carrot 06`, para um EPUB do Kindle Paperwhite 6, a menos que a linha diga outra coisa. _Pepper&Carrot_ não tem ComicInfo.xml, então a pasta recebeu um, escrito para os exemplos, com o título, o número da série e o autor do próprio quadrinho:
+
+```xml
+<ComicInfo>
+  <Title>The Potion Contest</Title>
+  <Series>Pepper&amp;Carrot</Series>
+  <Number>6</Number>
+  <Volume>1</Volume>
+  <Writer>David Revoy</Writer>
+  <LanguageISO>en</LanguageISO>
+</ComicInfo>
+```
+
+## Onde cada formato guarda
+
+As três linhas foram convertidas com o mesmo título, autor e idioma: `--title`, `--author` e `--language`.
+
+<OptionBook id="metadata-formats" labels={{ epub: 'EPUB', pdf: 'PDF', cbz: 'CBZ' }} />
+
+- Um **EPUB** guarda os três no arquivo de pacote.
+- Um **PDF** guarda o título e o autor nas propriedades do documento, e o mangapress não grava idioma nele.
+- Um **CBZ** feito pelo mangapress contém só as páginas, e um ComicInfo.xml quando você pede, como abaixo. O título, o autor e o idioma não estão nele, então o livro é conhecido pelo nome do arquivo.
+
+## Título e autor do livro
+
+Sem eles, o título é montado a partir do ComicInfo.xml quando a entrada tem um, e é o nome da entrada quando não tem. O autor é o `Writer` do ComicInfo.xml, ou `Unknown`. `--title` e `--author` os substituem, e `-t` e `-a` são as formas curtas.
+
+<OptionBook
+  id="metadata-title-author"
+  labels={{
+    plain: 'Nada informado, e sem ComicInfo.xml',
+    info: 'Nada informado, com um ComicInfo.xml',
+    title: 'Título informado',
+    author: 'Autor informado',
+    both: 'Os dois informados',
+  }}
+/>
+
+No app, o título e o autor de um livro vêm de **Series title** ou **Book title** e de **Author** nos seus detalhes. `--title` e `--author` só chegam a um EPUB ou a um PDF; num CBZ não mudam nada.
+
+## ComicInfo title
+
+Qual título um ComicInfo.xml dá é a escolha de **ComicInfo title**. O padrão o monta a partir da série, do volume e do número; **Append the ComicInfo title** acrescenta o `Title` do próprio ComicInfo depois dele; **Use the ComicInfo title only** usa esse `Title` sozinho, e então nem um título que você der é usado. `--metadatatitle` aceita `series-only`, `combine` ou `title-only`.
+
+<OptionBook
+  id="metadata-comicinfo-title"
+  labels={{
+    'series-only': 'ComicInfo title: Use series, volume, and number',
+    combine: 'ComicInfo title: Append the ComicInfo title',
+    'title-only': 'ComicInfo title: Use the ComicInfo title only',
+    'given-series-only': 'Um título informado, com Use series, volume, and number',
+    'given-combine': 'Um título informado, com Append the ComicInfo title',
+    'given-title-only': 'Um título informado, com Use the ComicInfo title only',
+    'no-info': 'Use the ComicInfo title only, e sem ComicInfo.xml',
+  }}
+/>
+
+Sem ComicInfo.xml na entrada não há título a aplicar, e a última linha é o nome da entrada. Um título que você dá vence em todas as linhas menos uma: **Use the ComicInfo title only**, porque é para isso que ela serve.
+
+## Keep ComicInfo.xml
+
+Um CBZ feito pelo mangapress não tem ComicInfo.xml, a menos que isto esteja ligado. Com `--keepcomicinfo`, o da entrada é copiado como está, sem ser reescrito, mesmo quando você dá um título e um autor. Uma entrada sem ele não ganha nenhum. A opção vale para um CBZ e para mais nada, e o app a esmaece para um EPUB e um PDF; as duas últimas linhas dão a flag mesmo assim, para mostrar que ela não acrescenta nada a eles.
+
+<OptionBook
+  id="metadata-keep-comicinfo"
+  labels={{
+    off: 'CBZ, Keep ComicInfo.xml: Off',
+    on: 'CBZ, Keep ComicInfo.xml: On',
+    'on-given': 'CBZ, Keep ComicInfo.xml: On, com um título e um autor informados',
+    'on-plain': 'CBZ, Keep ComicInfo.xml: On, e sem ComicInfo.xml na entrada',
+    epub: 'EPUB, Keep ComicInfo.xml: On',
+    pdf: 'PDF, Keep ComicInfo.xml: On',
+  }}
+/>
+
+## EPUB language
+
+O idioma é gravado no arquivo de pacote do EPUB, e `en-US` é usado quando nenhum é dado. Um CBZ e um PDF não recebem idioma, como a primeira tabela mostrou. `--language` recebe o código do idioma.
+
+<OptionBook
+  id="metadata-language"
+  labels={{
+    default: 'EPUB language: não informado',
+    ja: 'EPUB language: ja',
+    'pt-BR': 'EPUB language: pt-BR',
+    pdf: 'PDF, com ja',
+    cbz: 'CBZ, com ja',
+  }}
+/>
+
+A configuração pede um código que não esteja vazio, e os detalhes de um livro indicam o idioma na forma `pt-BR`; um livro cujos detalhes indicam um idioma usa esse, e não o da configuração. Veja [Adicionando mangás](../../adding-manga/#confira-um-item).
+
+## Name the book .epub
+
+O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangapress dá esse nome ao EPUB que faz para um perfil Kobo, quando monta o nome a partir da entrada. **Name the book .epub** mantém o `.epub` simples. Só o nome muda: o livro por dentro é o mesmo arquivo. Um tamanho de tela personalizado faz o mangapress deixar de tratar o dispositivo como um Kobo, um livro para qualquer outro dispositivo já se chama `.epub`, e um CBZ é sempre `.cbz`.
+
+<OptionBook
+  id="metadata-kepub"
+  labels={{
+    kobo: 'Kobo Libra Colour, EPUB',
+    'kobo-plain': 'Kobo Libra Colour, EPUB, Name the book .epub: On',
+    'kobo-custom': 'Kobo Libra Colour, EPUB, com um Custom width',
+    'kobo-cbz': 'Kobo Libra Colour, CBZ',
+    kindle: 'Kindle Paperwhite 6, EPUB',
+  }}
+/>
+
+## Opções e flags
+
+- **Book title**, nos detalhes de um item: `--title`, ou `-t`.
+- **Author**, nos detalhes de um item: `--author`, ou `-a`.
+- **ComicInfo title**: `--metadatatitle`, com `series-only`, `combine` ou `title-only`.
+- **Keep ComicInfo.xml**: `--keepcomicinfo`.
+- **EPUB language**: `--language`.
+- **Name the book .epub**: `--nokepub`.

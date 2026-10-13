@@ -32,11 +32,44 @@ const DARK_PAGE = { source: 'wikipetan-darknesses' };
 // page is on the left and the earlier one on the right, which is how a book read right to left lies open.
 const SPREAD = { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }] };
 
+// Three consecutive pages of Pepper&Carrot, episode 6, joined one under the other: a strip 992 x 4119,
+// as tall as a webtoon, with the white gaps between panels a webtoon has.
+const PEPPER_STRIP = [
+  PEPPER_SUN,
+  { source: 'pepper-ep06', page: '003.jpg' },
+  { source: 'pepper-ep06', page: '004.jpg' },
+];
+
+// Pepper&Carrot has no ComicInfo.xml, so the examples about metadata give it one, written for them:
+// the fields mangapress reads, with the comic's own title, series number and author.
+const BOOK = {
+  name: 'Pepper and Carrot 06',
+  format: 'epub',
+  input: { pages: PEPPER_STRIP },
+  comicInfo: {
+    Title: 'The Potion Contest',
+    Series: 'Pepper&Carrot',
+    Number: 6,
+    Volume: 1,
+    Writer: 'David Revoy',
+    LanguageISO: 'en',
+  },
+};
+const TITLE = 'Pepper & Carrot 6';
+const AUTHOR = 'D. Revoy';
+
 /**
  * kind 'pictures': one picture per variant, the first page of the result.
  * kind 'sizes': no pictures, only the size of the page each variant gives and the share of the source
  *   page it keeps; the pages are not enlarged, so the size says what was cropped.
- * `input` is one page, or `{ stack: [...] }` for pages joined into one tall strip.
+ * kind 'files': no pictures, the type and size of the file of the page each variant gives.
+ * kind 'book': no pictures, what the finished book says: for each variant the facts named in
+ *   `columns` (title, author, language, direction, fileName, comicInfo, pages), read back from the
+ *   book. A variant may name its own `format` and `profile`, or run on the input `noComicInfo`.
+ * `input` is one page; `{ pages: [...] }` for several; `{ stack: [...] }` for pages joined into one
+ *   tall strip; `{ beside: [...] }` for pages joined into a spread; `{ slices: { of, every } }` for a
+ *   strip cut into images of `every` pixels. `comicInfo` puts a ComicInfo.xml in the folder, and
+ *   `name` names it, which names the book.
  * `without` takes flags out of `base` for this example; `show` is the index of the page to picture.
  */
 export const examples = [
@@ -384,6 +417,251 @@ export const examples = [
     variants: [
       { id: 'processed', label: 'Use the images as they are: Off', flags: [] },
       { id: 'untouched', label: 'Use the images as they are: On', flags: ['--noprocessing'] },
+    ],
+  },
+
+  {
+    // The strip cut every 1500 pixels is the shape a webtoon is handed out in: each image ends where
+    // it ends, and that is not between panels.
+    id: 'reading-webtoon',
+    kind: 'pictures',
+    input: { slices: { of: PEPPER_STRIP, every: 1500 } },
+    show: 'all',
+    variants: [
+      { id: 'pages', label: 'Content: Manga or comic pages', flags: [] },
+      { id: 'webtoon', label: 'Content: Webtoon strips', flags: ['--webtoon'] },
+    ],
+  },
+  {
+    id: 'reading-webtoon-pages',
+    kind: 'book',
+    columns: ['pages'],
+    input: { slices: { of: PEPPER_STRIP, every: 1500 } },
+    variants: [
+      { id: 'pages', label: 'Content: Manga or comic pages', flags: [] },
+      { id: 'webtoon', label: 'Content: Webtoon strips', flags: ['--webtoon'] },
+      {
+        id: 'fill',
+        label: 'Webtoon strips, with Page size: Crop to fill the screen',
+        flags: ['--webtoon', '--wallpaper'],
+      },
+      {
+        id: 'stretch',
+        label: 'Webtoon strips, with Page size: Stretch to the screen',
+        flags: ['--webtoon', '--stretch'],
+      },
+      {
+        id: 'gutters',
+        label: 'Webtoon strips, with Inter-panel cropping: Horizontal gaps',
+        flags: ['--webtoon', '--ipc', 'horizontal'],
+      },
+      {
+        id: 'borders',
+        label: 'Webtoon strips, with Borders: Black',
+        flags: ['--webtoon', '--blackborders'],
+      },
+      {
+        id: 'cropping',
+        label: 'Webtoon strips, with Page cropping: Disabled',
+        flags: ['--webtoon', '--cropping', 'disabled'],
+      },
+      {
+        id: 'untouched',
+        label: 'Webtoon strips, with Use the images as they are',
+        flags: ['--webtoon', '--noprocessing'],
+      },
+    ],
+  },
+  {
+    id: 'reading-direction',
+    kind: 'book',
+    columns: ['direction'],
+    input: { pages: PEPPER_STRIP },
+    variants: [
+      {
+        id: 'epub-on',
+        label: 'EPUB, Manga reading order: On',
+        flags: ['--manga-style'],
+        format: 'epub',
+      },
+      {
+        id: 'epub-off',
+        label: 'EPUB, Manga reading order: Off',
+        flags: [],
+        without: ['--manga-style'],
+        format: 'epub',
+      },
+      {
+        id: 'epub-webtoon',
+        label: 'EPUB, Webtoon strips, with Manga reading order on',
+        flags: ['--webtoon', '--manga-style'],
+        format: 'epub',
+      },
+      {
+        id: 'pdf-on',
+        label: 'PDF, Manga reading order: On',
+        flags: ['--manga-style'],
+        format: 'pdf',
+      },
+      {
+        id: 'cbz-on',
+        label: 'CBZ, Manga reading order: On',
+        flags: ['--manga-style'],
+        format: 'cbz',
+      },
+    ],
+  },
+
+  {
+    id: 'metadata-formats',
+    kind: 'book',
+    ...BOOK,
+    columns: ['title', 'author', 'language'],
+    variants: ['epub', 'pdf', 'cbz'].map((format) => ({
+      id: format,
+      label: format.toUpperCase(),
+      flags: ['--title', TITLE, '--author', AUTHOR, '--language', 'ja'],
+      format,
+    })),
+  },
+  {
+    id: 'metadata-title-author',
+    kind: 'book',
+    ...BOOK,
+    columns: ['title', 'author'],
+    variants: [
+      { id: 'plain', label: 'Nothing given, and no ComicInfo.xml', flags: [], noComicInfo: true },
+      { id: 'info', label: 'Nothing given, with a ComicInfo.xml', flags: [] },
+      { id: 'title', label: 'Title given', flags: ['--title', TITLE] },
+      { id: 'author', label: 'Author given', flags: ['--author', AUTHOR] },
+      { id: 'both', label: 'Both given', flags: ['--title', TITLE, '--author', AUTHOR] },
+    ],
+  },
+  {
+    id: 'metadata-comicinfo-title',
+    kind: 'book',
+    ...BOOK,
+    columns: ['title'],
+    variants: [
+      {
+        id: 'series-only',
+        label: 'ComicInfo title: Use series, volume, and number',
+        flags: ['--metadatatitle', 'series-only'],
+      },
+      {
+        id: 'combine',
+        label: 'ComicInfo title: Append the ComicInfo title',
+        flags: ['--metadatatitle', 'combine'],
+      },
+      {
+        id: 'title-only',
+        label: 'ComicInfo title: Use the ComicInfo title only',
+        flags: ['--metadatatitle', 'title-only'],
+      },
+      {
+        id: 'given-series-only',
+        label: 'A title given, with Use series, volume, and number',
+        flags: ['--title', TITLE, '--metadatatitle', 'series-only'],
+      },
+      {
+        id: 'given-combine',
+        label: 'A title given, with Append the ComicInfo title',
+        flags: ['--title', TITLE, '--metadatatitle', 'combine'],
+      },
+      {
+        id: 'given-title-only',
+        label: 'A title given, with Use the ComicInfo title only',
+        flags: ['--title', TITLE, '--metadatatitle', 'title-only'],
+      },
+      {
+        id: 'no-info',
+        label: 'Use the ComicInfo title only, and no ComicInfo.xml',
+        flags: ['--metadatatitle', 'title-only'],
+        noComicInfo: true,
+      },
+    ],
+  },
+  {
+    id: 'metadata-keep-comicinfo',
+    kind: 'book',
+    ...BOOK,
+    columns: ['comicInfo'],
+    variants: [
+      { id: 'off', label: 'CBZ, Keep ComicInfo.xml: Off', flags: [], format: 'cbz' },
+      { id: 'on', label: 'CBZ, Keep ComicInfo.xml: On', flags: ['--keepcomicinfo'], format: 'cbz' },
+      {
+        id: 'on-given',
+        label: 'CBZ, Keep ComicInfo.xml: On, with a title and an author given',
+        flags: ['--keepcomicinfo', '--title', TITLE, '--author', AUTHOR],
+        format: 'cbz',
+      },
+      {
+        id: 'on-plain',
+        label: 'CBZ, Keep ComicInfo.xml: On, and no ComicInfo.xml in the input',
+        flags: ['--keepcomicinfo'],
+        format: 'cbz',
+        noComicInfo: true,
+      },
+      {
+        id: 'epub',
+        label: 'EPUB, Keep ComicInfo.xml: On',
+        flags: ['--keepcomicinfo'],
+        format: 'epub',
+      },
+      {
+        id: 'pdf',
+        label: 'PDF, Keep ComicInfo.xml: On',
+        flags: ['--keepcomicinfo'],
+        format: 'pdf',
+      },
+    ],
+  },
+  {
+    id: 'metadata-language',
+    kind: 'book',
+    ...BOOK,
+    columns: ['language'],
+    variants: [
+      { id: 'default', label: 'EPUB language: not given', flags: [], format: 'epub' },
+      { id: 'ja', label: 'EPUB language: ja', flags: ['--language', 'ja'], format: 'epub' },
+      {
+        id: 'pt-BR',
+        label: 'EPUB language: pt-BR',
+        flags: ['--language', 'pt-BR'],
+        format: 'epub',
+      },
+      { id: 'pdf', label: 'PDF, with ja', flags: ['--language', 'ja'], format: 'pdf' },
+      { id: 'cbz', label: 'CBZ, with ja', flags: ['--language', 'ja'], format: 'cbz' },
+    ],
+  },
+  {
+    id: 'metadata-kepub',
+    kind: 'book',
+    ...BOOK,
+    columns: ['fileName'],
+    profile: 'KoLC',
+    variants: [
+      { id: 'kobo', label: 'Kobo Libra Colour, EPUB', flags: [], format: 'epub' },
+      {
+        id: 'kobo-plain',
+        label: 'Kobo Libra Colour, EPUB, Name the book .epub: On',
+        flags: ['--nokepub'],
+        format: 'epub',
+      },
+      {
+        id: 'kobo-custom',
+        label: 'Kobo Libra Colour, EPUB, with a Custom width',
+        flags: ['--customwidth', '1000'],
+        format: 'epub',
+      },
+      { id: 'kobo-cbz', label: 'Kobo Libra Colour, CBZ', flags: [], format: 'cbz' },
+      {
+        id: 'kindle',
+        label: 'Kindle Paperwhite 6, EPUB',
+        flags: [],
+        format: 'epub',
+        profile: 'KPW6',
+      },
     ],
   },
 ];

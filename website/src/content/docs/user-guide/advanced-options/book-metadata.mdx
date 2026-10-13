@@ -1,0 +1,76 @@
+---
+title: 'Book metadata'
+description: 'Where a book keeps its title, author and language, what ComicInfo.xml changes, and when a Kobo book is named .kepub.epub, with values read back from the books mangapress wrote.'
+---
+
+import OptionBook from '../../../../components/OptionBook.astro';
+
+The title, the author and the language of a book are written into the file, and each format has a different place for them, or none. **Book metadata** in [Advanced conversion options](../../output-profiles/#advanced-conversion-options) holds **ComicInfo title**, **EPUB language** and **Keep ComicInfo.xml**. A book's own title, author and language are set per item with the book-details action of the queue, as described in [Adding manga](../../adding-manga/#review-an-item), and **Name the book .epub** is next to the device. This page reads every one of them back from a real book.
+
+The examples convert three pages of _Pepper&Carrot_, episode 6, kept in a folder named `Pepper and Carrot 06`, to an EPUB for the Kindle Paperwhite 6 unless a row says otherwise. _Pepper&Carrot_ has no ComicInfo.xml, so the folder has one written for the examples, with the comic's own title, series number and author:
+
+```xml
+<ComicInfo>
+  <Title>The Potion Contest</Title>
+  <Series>Pepper&amp;Carrot</Series>
+  <Number>6</Number>
+  <Volume>1</Volume>
+  <Writer>David Revoy</Writer>
+  <LanguageISO>en</LanguageISO>
+</ComicInfo>
+```
+
+## Where each format keeps it
+
+The three rows were converted with the same title, author and language: `--title`, `--author` and `--language`.
+
+<OptionBook id="metadata-formats" />
+
+- An **EPUB** keeps all three in its package file.
+- A **PDF** keeps the title and the author in its document properties, and mangapress writes no language in it.
+- A **CBZ** made by mangapress holds only the pages, and a ComicInfo.xml when you ask for one, as below. The title, the author and the language are not in it, so the book is known by its file name.
+
+## Book title and author
+
+Without them, the title is built from the ComicInfo.xml when the input has one, and is the name of the input when it has none. The author is the `Writer` of the ComicInfo.xml, or `Unknown`. `--title` and `--author` replace them, and `-t` and `-a` are their short forms.
+
+<OptionBook id="metadata-title-author" />
+
+In the app, a book's title and author come from **Series title** or **Book title** and **Author** in its details. `--title` and `--author` only reach an EPUB or a PDF; in a CBZ they change nothing.
+
+## ComicInfo title
+
+Which title a ComicInfo.xml gives is the choice of **ComicInfo title**. The default builds it from the series, the volume and the number; **Append the ComicInfo title** adds the ComicInfo's own `Title` after it; **Use the ComicInfo title only** takes that `Title` alone, and then not even a title you give is used. `--metadatatitle` takes `series-only`, `combine` or `title-only`.
+
+<OptionBook id="metadata-comicinfo-title" />
+
+With no ComicInfo.xml in the input there is no title to apply, and the last row is the name of the input. A title you give wins in every row but one: **Use the ComicInfo title only**, since that is what it is for.
+
+## Keep ComicInfo.xml
+
+A CBZ made by mangapress has no ComicInfo.xml unless this is on. With `--keepcomicinfo` the one of the input is copied in as it is, not rewritten, even when you give a title and an author. An input without one gets none. The option applies to a CBZ and nothing else, and the app dims it for an EPUB and a PDF; the last two rows give the flag anyway, to show that it adds nothing to them.
+
+<OptionBook id="metadata-keep-comicinfo" />
+
+## EPUB language
+
+The language is written in the EPUB's package file, and `en-US` is used when none is given. A CBZ and a PDF are not given one, as the first table showed. `--language` takes the language code.
+
+<OptionBook id="metadata-language" />
+
+The setting asks for a code that is not empty, and a book's own details name a language in the form `pt-BR`; a book whose details name one uses it and not the setting. See [Adding manga](../../adding-manga/#review-an-item).
+
+## Name the book .epub
+
+A Kobo's own reader looks for the name `.kepub.epub`, so mangapress names the EPUB it makes for a Kobo profile that way, when it makes the name from the input. **Name the book .epub** keeps the plain `.epub`. Only the name changes: the book inside is the same file. A custom screen size stops mangapress from treating the device as a Kobo, a book for any other device is named `.epub` anyway, and a CBZ is always `.cbz`.
+
+<OptionBook id="metadata-kepub" />
+
+## Options and flags
+
+- **Book title**, in the details of an item: `--title`, or `-t`.
+- **Author**, in the details of an item: `--author`, or `-a`.
+- **ComicInfo title**: `--metadatatitle`, with `series-only`, `combine` or `title-only`.
+- **Keep ComicInfo.xml**: `--keepcomicinfo`.
+- **EPUB language**: `--language`.
+- **Name the book .epub**: `--nokepub`.

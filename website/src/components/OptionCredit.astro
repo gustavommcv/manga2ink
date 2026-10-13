@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { from, mangapress } = Astro.props;
-const portuguese = Astro.currentLocale === 'pt-br';
+const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
 const credited = [
   ...new Map(from.map((id) => [id, sources.sources[id as keyof typeof sources.sources]])).values(),
 ];

@@ -25,6 +25,7 @@ import { format, resolveConfig } from 'prettier';
 import sharp from 'sharp';
 
 import { base, examples } from '../media-src/options/examples.mjs';
+import { epubFacts, hasComicInfo, otherEntries, pdfFacts } from './options-gallery/book-facts.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -107,22 +108,14 @@ async function page({ source, page: name }) {
   throw new Error(`${source} has no page ${name}.`);
 }
 
-/**
- * The input of an example as a folder mangapress can read: one page, pages joined into a tall strip
- * (`stack`) or pages joined side by side into a spread (`beside`, left to right). Returns the pixel
- * size of what is in the folder and the path of the file.
- */
-async function writeInput(example, directory) {
-  const { stack, beside } = example.input;
-  const refs = stack ?? beside ?? [example.input];
+/** The pages an input is made from, in the order they are used. */
+function refsOf(input) {
+  return input.slices?.of ?? input.pages ?? input.stack ?? input.beside ?? [input];
+}
+
+/** Pages joined into one image: one under the other, or side by side (left to right). */
+async function join(refs, beside) {
   const pages = await Promise.all(refs.map(page));
-  if (!stack && !beside) {
-    const { bytes, extension } = pages[0];
-    const file = path.join(directory, `001.${extension}`);
-    writeFileSync(file, bytes);
-    const { width, height } = await sharp(bytes).metadata();
-    return { width, height, file };
-  }
   const decoded = await Promise.all(
     pages.map(({ bytes }) =>
       sharp(bytes)
@@ -142,30 +135,134 @@ async function writeInput(example, directory) {
     offset += beside ? p.width : p.height;
     return { input: p.bytes, left: beside ? at : 0, top: beside ? 0 : at };
   });
-  const joined = await sharp({ create: { width, height, channels: 3, background: '#fff' } })
+  const bytes = await sharp({ create: { width, height, channels: 3, background: '#fff' } })
     .composite(layers)
     .png()
     .toBuffer();
-  const file = path.join(directory, '001.png');
-  writeFileSync(file, joined);
-  return { width, height, file };
+  return { bytes, width, height };
 }
 
-function convert(mangapress, input, flags, work, profile) {
+const numbered = (index, extension) => `${String(index + 1).padStart(3, '0')}.${extension}`;
+
+/** The ComicInfo.xml of an example: its fields in the order given, with the text escaped. */
+function comicInfoXml(fields) {
+  const escape = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  return [
+    '<?xml version="1.0" encoding="utf-8"?>',
+    '<ComicInfo>',
+    ...Object.entries(fields).map(([name, value]) => `  <${name}>${escape(value)}</${name}>`),
+    '</ComicInfo>',
+    '',
+  ].join('\n');
+}
+
+/**
+ * The input of an example as a folder mangapress can read: one page; several pages as they are
+ * (`pages`); pages joined into a tall strip (`stack`); pages joined side by side into a spread
+ * (`beside`, left to right); or a tall strip cut into images of `every` pixels (`slices`), the way a
+ * webtoon is handed out. A ComicInfo.xml goes in the folder when the example has one. Returns the
+ * pixel size of what is in the folder and the path of its first file.
+ */
+async function writeInput(example, directory, comicInfo) {
+  const { stack, beside, slices } = example.input;
+  let made;
+  if (slices || stack || beside) {
+    const joined = await join(refsOf(example.input), beside !== undefined);
+    const { width, height } = joined;
+    if (slices) {
+      const files = [];
+      for (let top = 0; top < height; top += slices.every) {
+        const piece = await sharp(joined.bytes)
+          .extract({ left: 0, top, width, height: Math.min(slices.every, height - top) })
+          .png()
+          .toBuffer();
+        files.push(path.join(directory, numbered(files.length, 'png')));
+        writeFileSync(files.at(-1), piece);
+      }
+      made = { width, height, file: files[0] };
+    } else {
+      const file = path.join(directory, '001.png');
+      writeFileSync(file, joined.bytes);
+      made = { width, height, file };
+    }
+  } else {
+    const pages = await Promise.all(refsOf(example.input).map(page));
+    const files = pages.map(({ bytes, extension }, i) => {
+      const file = path.join(directory, numbered(i, extension));
+      writeFileSync(file, bytes);
+      return file;
+    });
+    const { width, height } = await sharp(pages[0].bytes).metadata();
+    made = { width, height, file: files[0] };
+  }
+  if (comicInfo) writeFileSync(path.join(directory, 'ComicInfo.xml'), comicInfoXml(comicInfo));
+  return made;
+}
+
+/** Runs mangapress on a folder and gives the book it wrote: its file name and bytes. */
+function makeBook(mangapress, input, flags, work, profile, format) {
   rmSync(work, { recursive: true, force: true });
   mkdirSync(work, { recursive: true });
   execFileSync(
     mangapress,
-    [input, '--profile', profile, '--format', base.format, '-o', work, '--quiet', ...flags],
+    [input, '--profile', profile, '--format', format, '-o', work, '--quiet', ...flags],
     { stdio: 'pipe' },
   );
-  const book = readdirSync(work).find((name) => name.endsWith('.cbz'));
-  const made = [...readZip(readFileSync(path.join(work, book)))]
+  const [fileName] = readdirSync(work);
+  return { fileName, bytes: readFileSync(path.join(work, fileName)) };
+}
+
+/** The pages of a CBZ, in order, with the extension of each (`.extensions`). */
+function pagesOf(bytes) {
+  const made = [...readZip(bytes)]
     .filter(([name]) => /\.(jpe?g|png|gif)$/i.test(name))
     .sort(([a], [b]) => (a < b ? -1 : 1));
   const pages = made.map(([, data]) => data);
   pages.extensions = made.map(([name]) => name.split('.').pop().toLowerCase());
   return pages;
+}
+
+function convert(mangapress, input, flags, work, profile) {
+  return pagesOf(makeBook(mangapress, input, flags, work, profile, base.format).bytes);
+}
+
+/**
+ * What a book says about itself, for the example kind `book`: the values mangapress wrote into it,
+ * read back from the file. A value the format has no place for is null.
+ */
+async function bookFacts(format, book, sourceComicInfo) {
+  const facts = {
+    fileName: book.fileName,
+    title: null,
+    author: null,
+    language: null,
+    direction: null,
+    comicInfo: 'none',
+  };
+  if (format === 'epub') {
+    const files = readZip(book.bytes);
+    Object.assign(facts, epubFacts(files.get('OEBPS/content.opf').toString('utf8')));
+    if (hasComicInfo([...files.keys()])) throw new Error('An EPUB with a ComicInfo.xml.');
+    facts.pages = await pageSizes(
+      [...files].filter(([name]) => /^OEBPS\/Images\/c\d+\//.test(name)).map(([, data]) => data),
+    );
+  } else if (format === 'pdf') {
+    Object.assign(facts, pdfFacts(book.bytes));
+  } else {
+    const files = readZip(book.bytes);
+    const names = [...files.keys()];
+    const extra = otherEntries(names);
+    if (extra.length > 0) throw new Error(`A CBZ with more than pages: ${extra.join(', ')}.`);
+    const kept = [...files].find(([name]) => name.split('/').pop() === 'ComicInfo.xml');
+    if (kept) facts.comicInfo = kept[1].toString('utf8') === sourceComicInfo ? 'copy' : 'changed';
+    facts.pages = await pageSizes(pagesOf(book.bytes));
+  }
+  return facts;
+}
+
+async function pageSizes(pages) {
+  const sizes = await Promise.all(pages.map((bytes) => sharp(bytes).metadata()));
+  return sizes.map(({ width, height }) => `${width} × ${height}`);
 }
 
 const round = (value, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
@@ -245,29 +342,63 @@ function licenceOf(ids) {
   return { license: chosen.license, licenseUrl: chosen.licenseUrl };
 }
 
+/**
+ * A folder holding the input of an example. A book is named after its folder, so an example that
+ * shows a file name gives it one (`name`); `withInfo` puts the example's ComicInfo.xml in it.
+ */
+async function prepareInput(example, scratch, withInfo) {
+  const directory = path.join(
+    scratch,
+    'input',
+    example.id,
+    withInfo ? 'with-info' : 'without-info',
+    example.name ?? example.id,
+  );
+  mkdirSync(directory, { recursive: true });
+  return { directory, ...(await writeInput(example, directory, withInfo && example.comicInfo)) };
+}
+
 async function runExample(mangapress, example, scratch) {
-  const input = path.join(scratch, 'input', example.id);
-  mkdirSync(input, { recursive: true });
-  const sourceSize = await writeInput(example, input);
+  const withInfo = example.comicInfo !== undefined;
+  const sourceSize = await prepareInput(example, scratch, withInfo);
+  const withoutInfo = example.variants.some((variant) => variant.noComicInfo)
+    ? await prepareInput(example, scratch, false)
+    : undefined;
   const all = example.show === 'all';
   const variants = [];
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
+    const input = (variant.noComicInfo ? withoutInfo : sourceSize).directory;
+    const format = variant.format ?? example.format ?? base.format;
+    const profile = variant.profile ?? example.profile ?? base.profile;
+    const flags = variant.original
+      ? []
+      : combine(base.flags, variant.flags, [
+          ...(example.without ?? []),
+          ...(variant.without ?? []),
+        ]);
+    if (example.kind === 'book') {
+      const work = path.join(scratch, 'output', example.id, variant.id);
+      const book = makeBook(mangapress, input, flags, work, profile, format);
+      const given = withInfo && !variant.noComicInfo ? comicInfoXml(example.comicInfo) : undefined;
+      entry.format = format;
+      entry.profile = profile;
+      entry.facts = await bookFacts(format, book, given);
+      variants.push(entry);
+      console.log(`  ${variant.id.padEnd(28)} ${JSON.stringify(entry.facts)}`);
+      continue;
+    }
     let pages;
     if (variant.original) {
       entry.original = true;
       pages = [readFileSync(sourceSize.file)];
     } else {
-      const flags = combine(base.flags, variant.flags, [
-        ...(example.without ?? []),
-        ...(variant.without ?? []),
-      ]);
       pages = convert(
         mangapress,
         input,
         flags,
         path.join(scratch, 'output', example.id, variant.id),
-        example.profile ?? base.profile,
+        profile,
       );
     }
     const extension = (pages.extensions ?? [sourceSize.file.split('.').pop()])[example.show ?? 0];
@@ -325,8 +456,7 @@ async function runExample(mangapress, example, scratch) {
       : `${entry.width}x${entry.height}`;
     console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
-  const refs = example.input.stack ?? example.input.beside ?? [example.input];
-  const used = [...new Set(refs.map((ref) => ref.source))];
+  const used = [...new Set(refsOf(example.input).map((ref) => ref.source))];
   return {
     kind: example.kind,
     layout: all ? 'rows' : 'grid',
@@ -334,6 +464,7 @@ async function runExample(mangapress, example, scratch) {
     ...licenceOf(used),
     source: { width: sourceSize.width, height: sourceSize.height },
     ...(example.screen ? { screen: example.screen, screenLabel: example.screenLabel } : {}),
+    ...(example.columns ? { columns: example.columns } : {}),
     variants,
   };
 }

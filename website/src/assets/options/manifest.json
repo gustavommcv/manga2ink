@@ -1253,6 +1253,840 @@
           "sameAsInput": true
         }
       ]
+    },
+    "reading-webtoon": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 4119 },
+      "variants": [
+        {
+          "id": "pages",
+          "label": "Content: Manga or comic pages",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 936006,
+          "pages": [
+            { "width": 1272, "height": 1696, "bytes": 255251 },
+            { "width": 1272, "height": 1696, "bytes": 309005 },
+            { "width": 1272, "height": 1696, "bytes": 371750 }
+          ],
+          "file": "reading-webtoon-pages.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 491,
+          "bytes": 67848,
+          "sha256": "808e369384f493ab70ef7cd169f54f1f4a6aff787fec1a95d4392fcafa78b3ee"
+        },
+        {
+          "id": "webtoon",
+          "label": "Content: Webtoon strips",
+          "flags": ["--webtoon"],
+          "width": 992,
+          "height": 1494,
+          "pageBytes": 768824,
+          "pages": [
+            { "width": 992, "height": 1494, "bytes": 256418 },
+            { "width": 992, "height": 1092, "bytes": 184379 },
+            { "width": 992, "height": 1347, "bytes": 328027 }
+          ],
+          "file": "reading-webtoon-webtoon.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 479,
+          "bytes": 73804,
+          "sha256": "ed40e19a1a45092fa11a042caddde21e75bc8271a2919d6dac69e6fb9d3cb8c6"
+        }
+      ]
+    },
+    "reading-webtoon-pages": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 4119 },
+      "columns": ["pages"],
+      "variants": [
+        {
+          "id": "pages",
+          "label": "Content: Manga or comic pages",
+          "flags": [],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "webtoon",
+          "label": "Content: Webtoon strips",
+          "flags": ["--webtoon"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+          }
+        },
+        {
+          "id": "fill",
+          "label": "Webtoon strips, with Page size: Crop to fill the screen",
+          "flags": ["--webtoon", "--wallpaper"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "stretch",
+          "label": "Webtoon strips, with Page size: Stretch to the screen",
+          "flags": ["--webtoon", "--stretch"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "gutters",
+          "label": "Webtoon strips, with Inter-panel cropping: Horizontal gaps",
+          "flags": ["--webtoon", "--ipc", "horizontal"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1004", "992 × 1303"]
+          }
+        },
+        {
+          "id": "borders",
+          "label": "Webtoon strips, with Borders: Black",
+          "flags": ["--webtoon", "--blackborders"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+          }
+        },
+        {
+          "id": "cropping",
+          "label": "Webtoon strips, with Page cropping: Disabled",
+          "flags": ["--webtoon", "--cropping", "disabled"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+          }
+        },
+        {
+          "id": "untouched",
+          "label": "Webtoon strips, with Use the images as they are",
+          "flags": ["--webtoon", "--noprocessing"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-webtoon-pages.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+          }
+        }
+      ]
+    },
+    "reading-direction": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["direction"],
+      "variants": [
+        {
+          "id": "epub-on",
+          "label": "EPUB, Manga reading order: On",
+          "flags": ["--manga-style"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-direction.epub",
+            "title": "reading-direction",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "epub-off",
+          "label": "EPUB, Manga reading order: Off",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-direction.epub",
+            "title": "reading-direction",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "ltr",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "epub-webtoon",
+          "label": "EPUB, Webtoon strips, with Manga reading order on",
+          "flags": ["--webtoon", "--manga-style"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-direction.epub",
+            "title": "reading-direction",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "ltr",
+            "comicInfo": "none",
+            "pages": ["992 × 1494", "992 × 1092", "992 × 1347"]
+          }
+        },
+        {
+          "id": "pdf-on",
+          "label": "PDF, Manga reading order: On",
+          "flags": ["--manga-style"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-direction.pdf",
+            "title": "reading-direction",
+            "author": "Unknown",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none"
+          }
+        },
+        {
+          "id": "cbz-on",
+          "label": "CBZ, Manga reading order: On",
+          "flags": ["--manga-style"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "reading-direction.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        }
+      ]
+    },
+    "metadata-formats": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["title", "author", "language"],
+      "variants": [
+        {
+          "id": "epub",
+          "label": "EPUB",
+          "flags": ["--title", "Pepper & Carrot 6", "--author", "D. Revoy", "--language", "ja"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper & Carrot 6",
+            "author": "D. Revoy",
+            "language": "ja",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "pdf",
+          "label": "PDF",
+          "flags": ["--title", "Pepper & Carrot 6", "--author", "D. Revoy", "--language", "ja"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.pdf",
+            "title": "Pepper & Carrot 6",
+            "author": "D. Revoy",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none"
+          }
+        },
+        {
+          "id": "cbz",
+          "label": "CBZ",
+          "flags": ["--title", "Pepper & Carrot 6", "--author", "D. Revoy", "--language", "ja"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        }
+      ]
+    },
+    "metadata-title-author": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["title", "author"],
+      "variants": [
+        {
+          "id": "plain",
+          "label": "Nothing given, and no ComicInfo.xml",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper and Carrot 06",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "info",
+          "label": "Nothing given, with a ComicInfo.xml",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "title",
+          "label": "Title given",
+          "flags": ["--title", "Pepper & Carrot 6"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper & Carrot 6",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "author",
+          "label": "Author given",
+          "flags": ["--author", "D. Revoy"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "D. Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "both",
+          "label": "Both given",
+          "flags": ["--title", "Pepper & Carrot 6", "--author", "D. Revoy"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper & Carrot 6",
+            "author": "D. Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        }
+      ]
+    },
+    "metadata-comicinfo-title": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["title"],
+      "variants": [
+        {
+          "id": "series-only",
+          "label": "ComicInfo title: Use series, volume, and number",
+          "flags": ["--metadatatitle", "series-only"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "combine",
+          "label": "ComicInfo title: Append the ComicInfo title",
+          "flags": ["--metadatatitle", "combine"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006: The Potion Contest",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "title-only",
+          "label": "ComicInfo title: Use the ComicInfo title only",
+          "flags": ["--metadatatitle", "title-only"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "The Potion Contest",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "given-series-only",
+          "label": "A title given, with Use series, volume, and number",
+          "flags": ["--title", "Pepper & Carrot 6", "--metadatatitle", "series-only"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper & Carrot 6",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "given-combine",
+          "label": "A title given, with Append the ComicInfo title",
+          "flags": ["--title", "Pepper & Carrot 6", "--metadatatitle", "combine"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper & Carrot 6",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "given-title-only",
+          "label": "A title given, with Use the ComicInfo title only",
+          "flags": ["--title", "Pepper & Carrot 6", "--metadatatitle", "title-only"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "The Potion Contest",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "no-info",
+          "label": "Use the ComicInfo title only, and no ComicInfo.xml",
+          "flags": ["--metadatatitle", "title-only"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper and Carrot 06",
+            "author": "Unknown",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        }
+      ]
+    },
+    "metadata-keep-comicinfo": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["comicInfo"],
+      "variants": [
+        {
+          "id": "off",
+          "label": "CBZ, Keep ComicInfo.xml: Off",
+          "flags": [],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "on",
+          "label": "CBZ, Keep ComicInfo.xml: On",
+          "flags": ["--keepcomicinfo"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "copy",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "on-given",
+          "label": "CBZ, Keep ComicInfo.xml: On, with a title and an author given",
+          "flags": ["--keepcomicinfo", "--title", "Pepper & Carrot 6", "--author", "D. Revoy"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "copy",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "on-plain",
+          "label": "CBZ, Keep ComicInfo.xml: On, and no ComicInfo.xml in the input",
+          "flags": ["--keepcomicinfo"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        },
+        {
+          "id": "epub",
+          "label": "EPUB, Keep ComicInfo.xml: On",
+          "flags": ["--keepcomicinfo"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "pdf",
+          "label": "PDF, Keep ComicInfo.xml: On",
+          "flags": ["--keepcomicinfo"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.pdf",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none"
+          }
+        }
+      ]
+    },
+    "metadata-language": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["language"],
+      "variants": [
+        {
+          "id": "default",
+          "label": "EPUB language: not given",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "ja",
+          "label": "EPUB language: ja",
+          "flags": ["--language", "ja"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "ja",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "pt-BR",
+          "label": "EPUB language: pt-BR",
+          "flags": ["--language", "pt-BR"],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "pt-BR",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        },
+        {
+          "id": "pdf",
+          "label": "PDF, with ja",
+          "flags": ["--language", "ja"],
+          "format": "pdf",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.pdf",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": null,
+            "direction": null,
+            "comicInfo": "none"
+          }
+        },
+        {
+          "id": "cbz",
+          "label": "CBZ, with ja",
+          "flags": ["--language", "ja"],
+          "format": "cbz",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1272 × 1696", "1272 × 1696", "1272 × 1696"]
+          }
+        }
+      ]
+    },
+    "metadata-kepub": {
+      "kind": "book",
+      "layout": "grid",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "columns": ["fileName"],
+      "variants": [
+        {
+          "id": "kobo",
+          "label": "Kobo Libra Colour, EPUB",
+          "flags": [],
+          "format": "epub",
+          "profile": "KoLC",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.kepub.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"]
+          }
+        },
+        {
+          "id": "kobo-plain",
+          "label": "Kobo Libra Colour, EPUB, Name the book .epub: On",
+          "flags": ["--nokepub"],
+          "format": "epub",
+          "profile": "KoLC",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1214 × 1680", "1168 × 1680", "1158 × 1680"]
+          }
+        },
+        {
+          "id": "kobo-custom",
+          "label": "Kobo Libra Colour, EPUB, with a Custom width",
+          "flags": ["--customwidth", "1000"],
+          "format": "epub",
+          "profile": "KoLC",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1000 × 1384", "1000 × 1439", "1000 × 1451"]
+          }
+        },
+        {
+          "id": "kobo-cbz",
+          "label": "Kobo Libra Colour, CBZ",
+          "flags": [],
+          "format": "cbz",
+          "profile": "KoLC",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.cbz",
+            "title": null,
+            "author": null,
+            "language": null,
+            "direction": null,
+            "comicInfo": "none",
+            "pages": ["1264 × 1680", "1264 × 1680", "1264 × 1680"]
+          }
+        },
+        {
+          "id": "kindle",
+          "label": "Kindle Paperwhite 6, EPUB",
+          "flags": [],
+          "format": "epub",
+          "profile": "KPW6",
+          "facts": {
+            "fileName": "Pepper and Carrot 06.epub",
+            "title": "Pepper&Carrot Vol. 01 #006",
+            "author": "David Revoy",
+            "language": "en-US",
+            "direction": "rtl",
+            "comicInfo": "none",
+            "pages": ["1225 × 1696", "1179 × 1696", "1169 × 1696"]
+          }
+        }
+      ]
     }
   }
 }

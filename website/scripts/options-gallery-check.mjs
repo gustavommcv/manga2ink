@@ -1,7 +1,7 @@
 // What must hold between the option examples, the pages that show them and the tool they were made
 // with. Pure: scripts/verify-options-gallery.mjs reads the files and passes them in.
 
-const EXAMPLE_REFERENCE = /<Option(?:Example|Sizes)\b[^>]*?\bid="([^"]+)"/g;
+const EXAMPLE_REFERENCE = /<Option(?:Example|Sizes|Book)\b[^>]*?\bid="([^"]+)"/g;
 
 /** The ids of the examples a page uses, in the order it uses them. */
 export function referencedExamples(text) {

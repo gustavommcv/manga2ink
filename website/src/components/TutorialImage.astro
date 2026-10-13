@@ -12,7 +12,9 @@ interface Props {
 
 const { name, alt, caption } = Astro.props;
 const fullSizeLabel =
-  Astro.currentLocale === 'pt-br' ? 'Abrir imagem em tamanho original' : 'Open full-size image';
+  Astro.locals.starlightRoute.lang === 'pt-BR'
+    ? 'Abrir imagem em tamanho original'
+    : 'Open full-size image';
 const images = import.meta.glob<ImageMetadata>('../assets/tutorial/**/*.png', {
   eager: true,
   import: 'default',

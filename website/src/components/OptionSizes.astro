@@ -12,7 +12,7 @@ const example = (
   manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
-const portuguese = Astro.currentLocale === 'pt-br';
+const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
 const files = example.kind === 'files';
 const heads = portuguese
   ? {
@@ -47,6 +47,8 @@ const percent = new Intl.NumberFormat(portuguese ? 'pt-BR' : 'en', { maximumFrac
 const unchanged = portuguese ? 'a própria entrada, sem mudança' : 'the input, unchanged';
 const rows = example.variants.map((variant) => {
   const sized = variant as {
+    width: number;
+    height: number;
     keptPercent?: number;
     pageBytes: number;
     fileType?: string;
@@ -56,8 +58,8 @@ const rows = example.variants.map((variant) => {
     label: variant.label,
     flags: variant.flags.length > 0 ? variant.flags.join(' ') : portuguese ? 'sem flag' : 'no flag',
     size: files
-      ? `${variant.width} × ${variant.height}, ${sized.fileType}${sized.sameAsInput ? ` (${unchanged})` : ''}`
-      : `${variant.width} × ${variant.height}`,
+      ? `${sized.width} × ${sized.height}, ${sized.fileType}${sized.sameAsInput ? ` (${unchanged})` : ''}`
+      : `${sized.width} × ${sized.height}`,
     kept: files ? fileSize(sized.pageBytes) : `${percent.format(sized.keptPercent ?? 100)}%`,
   };
 });
