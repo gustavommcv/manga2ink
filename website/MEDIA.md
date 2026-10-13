@@ -69,6 +69,28 @@ The recommended-settings page shows one useful main image per task and native `<
 
 The Lua example uses `inverse_reading_order` for right-to-left tap/swipe behavior only. Readers preserve the existing configuration structure, replace the example directory, and back up the file. Review the [official plugin instructions](https://github.com/koreader/koreader/wiki/Tweak-document-settings-by-directory) and current KOReader source when changing this guidance.
 
+## Option examples
+
+The pictures and size tables of the [advanced-options pages](src/content/docs/user-guide/advanced-options/) are made from open-licensed comic pages with the mangapress that Mangabound ships. See [ADR 0048](../docs/adr/0048-option-examples-from-open-pages.md).
+
+- **Make them again:** `npm run site:options` at the repository root acquires the pinned tools and runs [generate-options-gallery.mjs](scripts/generate-options-gallery.mjs); pass example ids to make only those. It downloads the source pages the first time into the ignored `.cache/options-art/` and refuses a file whose SHA-256 is not the one in [sources.json](media-src/options/sources.json). The pictures go to `src/assets/options/`, with `manifest.json`; commit both.
+- **After changing the pinned mangapress:** the site's tests fail until the pictures are made again. Then read the pages for what the new pictures and numbers say: the captions and tables follow the manifest, but a number written in the text does not.
+- **Sources:** only a work whose licence allows adaptation and redistribution (CC BY, CC BY-SA, CC0, public domain). Add its author, licence, page, download URL and SHA-256 (`sha256sum` of the file you downloaded) to `sources.json`; do not commit the page. A picture keeps its source's licence, and the credit is shown under every example by `OptionCredit.astro`.
+- **Examples** are in [examples.mjs](media-src/options/examples.mjs): the page, the flags of the starting settings every variant shares (`base`, to be kept in step with `defaultMangapressSettings` in `src/domain/output-profile.ts`), and the flags that differ. A `pictures` example makes one WebP per variant; a `sizes` example records only the page size and the share of the source page kept.
+- **A page** is an MDX file in both locales under `user-guide/advanced-options/`, listed in the sidebar and in [coverage.json](media-src/options/coverage.json) with the flags it covers (take the slug off `planned`). `OptionExample` takes the example's id and an alt text for each variant, written in the page's language; `OptionSizes` takes the id. Labels in the captions are the application's English ones, as everywhere else. Titles must differ between languages.
+- **Checks:** `npm --prefix website test` runs [verify-options-gallery.mjs](scripts/verify-options-gallery.mjs): the manifest's mangapress version is the pin, each picture is the file the manifest describes, each example is used in both languages, and each option in `schemas/cli-capabilities.json` is covered by a page, by a page named under `elsewhere`, or by one still `planned`.
+
+### Try the option pages on your machine
+
+Commands are for PowerShell at the repository root.
+
+1. Get the branch and the dependencies: `gh pr checkout <number>` (or `git switch <branch>`), then `npm ci` and `npm --prefix website ci`.
+2. First time only: `npm run site:media` makes the tutorial captures that the guide's other pages need. It builds Storybook and runs Playwright; if Playwright's own Chromium is missing, `npx playwright install chromium` first.
+3. See the pages: `npm --prefix website run dev`, then open <http://localhost:4321/mangabound/user-guide/advanced-options/> (and `/mangabound/pt-br/user-guide/advanced-options/`). Pictures, captions and tables are read from `src/assets/options/manifest.json`, so a regenerated picture shows after a reload.
+4. Make the pictures again: `npm run site:options`, or `npm run site:options -- gamma cropping-modes` for some examples. `git diff --stat website/src/assets/options` shows what moved; the same mangapress and sources give the same files.
+5. Run the checks: `npm --prefix website test` (unit tests, language parity, the options check, links, search data), and `$env:PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH = 'C:\Program Files\Google\Chrome\Application\chrome.exe'; npm --prefix website run test:browser` for the browser and accessibility tests with your Chrome.
+6. See what is published: `npm --prefix website run build`, then `npm --prefix website run preview`.
+
 ## Logo placement
 
 The logo replaces the final `intro-logo` authoring marker in both introductions. The unused placement plan and placeholder component were removed; all planned positions now contain real media. The README logo remains a separate follow-up.

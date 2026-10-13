@@ -19,6 +19,9 @@ website/dist/
 website/playwright-report/
 website/src/assets/tutorial/generated/
 
+# Source pages of the option examples, downloaded and checked by `npm run site:options`.
+website/.cache/
+
 # Copied in by the Arch package job, from the app's icon.
 packaging/arch/mangabound.png
 

@@ -13,6 +13,7 @@
     "package:e2e": "node scripts/package-e2e.mjs",
     "make": "electron-forge make",
     "site:media": "npm run build-storybook && playwright test --config playwright.tutorial.config.ts",
+    "site:options": "npm run toolchain:acquire && npm --prefix website run options --",
     "site:dev": "npm run site:media && npm --prefix website run dev",
     "site:build": "npm run site:media && npm --prefix website run build",
     "site:check": "npm run site:media && npm --prefix website run check",

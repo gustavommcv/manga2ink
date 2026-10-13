@@ -1,0 +1,89 @@
+---
+title: 'Cropping'
+description: 'What Page cropping, Cropping power, Minimum retained area, Preserved margin and Inter-panel cropping do to a page, with measured sizes and pictures.'
+---
+
+import OptionExample from '../../../../components/OptionExample.astro';
+import OptionSizes from '../../../../components/OptionSizes.astro';
+
+Cropping cuts the empty margin off a page before the page is fitted to the screen, so the drawing comes out larger. The settings are in the **Cropping** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options), **Page cropping** is dimmed, with the reason, for **Webtoon strips** and for **Use the images as they are**. The three numbers (power, minimum, margin) follow it and are also dimmed while it is **Disabled**. **Inter-panel cropping** is dimmed only for **Use the images as they are**.
+
+## Page cropping
+
+The default is **Margins and page numbers**.
+
+<OptionExample
+  id="cropping-modes"
+  alt={{
+    disabled: 'A manga page with its white margin left around the panels.',
+    'margins-and-page-numbers':
+      'The same page with the margin cut off, so the panels fill the screen.',
+  }}
+/>
+
+The page is the same shape as the screen, so with cropping **Disabled** the margin stays and the drawing is smaller. With cropping on, the margin goes and the drawing grows to take its place.
+
+- **Disabled**: the page goes to the screen as it is.
+- **Margins**: mangapress looks for where the drawing is. It turns the page gray (and inverts it when the background is dark), stretches its tones, blurs it slightly, and counts as paper everything lighter than a threshold. The box around what is left is the drawing, and the page is cut to it. No page is cut by more than 10% of its width or height on each side, so a scan with a very wide border keeps what is beyond that.
+- **Margins and page numbers**: the same, then one more look at a thin strip just above the bottom edge of the box. If it holds exactly one small dark shape, about the size of a number of one to three digits, the page is cut from just above it. Two or more shapes, or one that is too large, are taken for drawing and left alone.
+
+The page above has no page number, so **Margins** gives the same result as **Margins and page numbers**. `--cropping` takes `disabled`, `margins` or `margins-and-page-numbers`; `-c` is its short form.
+
+## Cropping power
+
+The default is 1, and the app accepts 0 to 10. The power sets the threshold the page is judged by: **240 − 64 × power**, on a scale where 255 is white. At 1 the threshold is 176, so every tone lighter than that is paper. A higher power lowers the threshold, and darker and darker tones count as paper too, so the crop reaches into shading and thin lines.
+
+<OptionSizes id="cropping-power-sizes" />
+
+Higher is not always more. At 3.75 the threshold is 0: only pure black still counts as drawing, so the crop hugs the blackest lines and cuts into the page, down to 887 pixels wide here. A power of 3.76 or more puts the threshold below zero. Nothing counts as drawing, mangapress finds none, and the page is left uncropped. A power above 3.75 therefore turns cropping off instead of strengthening it. If a scan has gray margins, try 2 before going higher.
+
+`--croppingpower` sets it.
+
+## Minimum retained area
+
+The default is 0%. mangapress crops only when the cropped page keeps at least this share of the page's area, and leaves the page as it is otherwise.
+
+<OptionSizes id="cropping-minimum-sizes" />
+
+The crop of this page keeps 80.1%, so a minimum of 80 allows it and 81 refuses it. Use it to protect pages that are mostly empty, where the detected drawing is a small part of the page and cutting to it would blow up a few lines to fill the screen: with a minimum of 70, a crop that would leave less than 70% of the page is not made. `--croppingminimum` sets it.
+
+## Preserved margin
+
+The default is 0%. The crop is backed off by this percentage after the 10% limit, so some margin stays: at 50% half of what would have been removed is kept, at 100% nothing is removed.
+
+<OptionExample
+  id="cropping-preserve"
+  alt={{
+    '0': 'A manga page cropped to its panels, with no margin left.',
+    '50': 'The same page cropped to half as much, with a thin margin left around the panels.',
+  }}
+/>
+
+<OptionSizes id="cropping-preserve-sizes" />
+
+`--preservemargin` sets it.
+
+## Inter-panel cropping
+
+The default is **Disabled**. This option removes the empty gutters _between_ panels, not the margin around the page. **Horizontal gaps** removes the rows that are paper from edge to edge; **Horizontal and vertical gaps** removes the columns too. A gutter within 1% of the page's border is not removed, and a thin strip of every gap stays so that panels do not touch. Cropping power does not apply to it: its threshold is fixed.
+
+It is meant for webtoon-style pages that have long empty stretches. The example joins three pages of _Pepper&Carrot_ into one tall strip, converts it as **Webtoon strips**, and shows the second page of the result.
+
+<OptionExample
+  id="cropping-gutters"
+  alt={{
+    disabled: 'A page cut from a strip, with white gaps between its panels.',
+    horizontal: 'The same page with the gaps between the panels closed up, so it is shorter.',
+    both: 'The same page with the gaps closed up and its sides trimmed, so it is shorter and narrower.',
+  }}
+/>
+
+`--ipc` takes `disabled`, `horizontal` or `both`.
+
+## Options and flags
+
+- **Page cropping**: `--cropping`, or `-c`, with `disabled`, `margins` or `margins-and-page-numbers`.
+- **Cropping power**: `--croppingpower`, a number; the app accepts 0 to 10.
+- **Minimum retained area**: `--croppingminimum`, from 0 to 100 percent.
+- **Preserved margin**: `--preservemargin`, from 0 to 100 percent.
+- **Inter-panel cropping**: `--ipc`, with `disabled`, `horizontal` or `both`.

@@ -1,0 +1,109 @@
+---
+import type { ImageMetadata } from 'astro';
+
+import manifest from '../assets/options/manifest.json';
+import OptionCredit from './OptionCredit.astro';
+
+interface Props {
+  /** The example in src/assets/options/manifest.json. */
+  id: string;
+  /** What each variant's picture shows, by the variant's id; the alt text is written for the page. */
+  alt: Record<string, string>;
+}
+
+const { id, alt } = Astro.props;
+const example = (
+  manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
+)[id];
+if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
+const portuguese = Astro.currentLocale === 'pt-br';
+const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
+  eager: true,
+  import: 'default',
+});
+const fullSize = portuguese ? 'Abrir imagem em tamanho maior' : 'Open the larger image';
+
+const variants = example.variants.map((variant) => {
+  const meta = pictures[`../assets/options/${(variant as { file?: string }).file}`];
+  if (!meta) throw new Error(`Missing picture for ${id}/${variant.id}. Run npm run site:options.`);
+  if (!alt[variant.id]) throw new Error(`The example ${id} needs alt text for ${variant.id}.`);
+  const stats = variant as { darkest?: number; mean?: number; pageBytes: number };
+  return {
+    ...variant,
+    meta,
+    alt: alt[variant.id],
+    fileSize: `${Math.round(stats.pageBytes / 1024)} KB`,
+    flagsText: variant.flags.length > 0 ? variant.flags.join(' ') : null,
+    tone:
+      stats.mean === undefined
+        ? null
+        : portuguese
+          ? `Pixel mais escuro ${stats.darkest}, brilho médio ${stats.mean} de 255`
+          : `Darkest pixel ${stats.darkest}, average brightness ${stats.mean} of 255`,
+  };
+});
+---
+
+<div class="option-example" data-option-example={id}>
+  {variants.map((variant) => (
+    <figure>
+      <a href={variant.meta.src} title={fullSize}>
+        <img
+          src={variant.meta.src}
+          width={variant.meta.width}
+          height={variant.meta.height}
+          alt={variant.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <figcaption>
+        <strong>{variant.label}</strong>
+        <code>{variant.flagsText ?? (portuguese ? 'sem flag' : 'no flag')}</code>
+        <span>
+          {variant.width} × {variant.height} px, {variant.fileSize}
+        </span>
+        {variant.tone && <span>{variant.tone}</span>}
+      </figcaption>
+    </figure>
+  ))}
+</div>
+<OptionCredit from={example.sources} mangapress={manifest.mangapress} />
+
+<style>
+  .option-example {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+    margin-block: 1.5rem;
+  }
+  figure {
+    margin: 0;
+  }
+  a {
+    display: block;
+    overflow: hidden;
+    padding: 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: var(--sl-border-radius, 0.5rem);
+    box-shadow: var(--sl-shadow-sm);
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin-block-start: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+  }
+  figcaption code {
+    align-self: flex-start;
+    font-size: var(--sl-text-xs);
+  }
+</style>

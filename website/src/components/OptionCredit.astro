@@ -1,0 +1,38 @@
+---
+import sources from '../../media-src/options/sources.json';
+
+interface Props {
+  /** The ids of the sources in media-src/options/sources.json that the example is made from. */
+  from: string[];
+  mangapress: string;
+}
+
+const { from, mangapress } = Astro.props;
+const portuguese = Astro.currentLocale === 'pt-br';
+const credited = [
+  ...new Map(from.map((id) => [id, sources.sources[id as keyof typeof sources.sources]])).values(),
+];
+---
+
+<p class="credit">
+  {portuguese ? 'Arte:' : 'Art:'}
+  {credited.map((source, index) => (
+    <>
+      {index > 0 && '; '}
+      <a href={source.page}>{source.title}</a>
+      {portuguese ? ', de ' : ' by '}
+      {source.author} (<a href={source.licenseUrl}>{source.license}</a>)
+    </>
+  ))}
+  {portuguese
+    ? `. Convertida com o mangapress ${mangapress}.`
+    : `. Converted with mangapress ${mangapress}.`}
+</p>
+
+<style>
+  .credit {
+    margin-block: -0.75rem 1.5rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+  }
+</style>

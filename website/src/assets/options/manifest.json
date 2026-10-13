@@ -1,0 +1,458 @@
+{
+  "schema": 1,
+  "mangapress": "0.8.0",
+  "base": {
+    "profile": "KPW6",
+    "format": "cbz",
+    "flags": ["--manga-style", "--splitter", "both", "--upscale"]
+  },
+  "examples": {
+    "cropping-modes": {
+      "kind": "pictures",
+      "sources": ["gogo-02"],
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "disabled",
+          "label": "Page cropping: Disabled",
+          "flags": ["--cropping", "disabled"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 386826,
+          "file": "cropping-modes-disabled.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 100514,
+          "sha256": "7dd54b01531ad0a30707c745e14ae170c806b926c9dac33a40bd4678ef637c35"
+        },
+        {
+          "id": "margins-and-page-numbers",
+          "label": "Page cropping: Margins and page numbers",
+          "flags": ["--cropping", "margins-and-page-numbers"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 437815,
+          "file": "cropping-modes-margins-and-page-numbers.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 116914,
+          "sha256": "8a9c9795d5e5fdcdeb9c9e72df594fb67950a3d0f50fe72119c934571b638bde"
+        }
+      ]
+    },
+    "cropping-power-sizes": {
+      "kind": "sizes",
+      "sources": ["gogo-02"],
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "power-0",
+          "label": "Cropping power: 0",
+          "flags": ["--croppingpower", "0"],
+          "width": 975,
+          "height": 1284,
+          "pageBytes": 326389,
+          "keptPercent": 80.5
+        },
+        {
+          "id": "power-1",
+          "label": "Cropping power: 1",
+          "flags": ["--croppingpower", "1"],
+          "width": 973,
+          "height": 1281,
+          "pageBytes": 322934,
+          "keptPercent": 80.1
+        },
+        {
+          "id": "power-2",
+          "label": "Cropping power: 2",
+          "flags": ["--croppingpower", "2"],
+          "width": 970,
+          "height": 1280,
+          "pageBytes": 322812,
+          "keptPercent": 79.8
+        },
+        {
+          "id": "power-3",
+          "label": "Cropping power: 3",
+          "flags": ["--croppingpower", "3"],
+          "width": 954,
+          "height": 1278,
+          "pageBytes": 321822,
+          "keptPercent": 78.4
+        },
+        {
+          "id": "power-3.5",
+          "label": "Cropping power: 3.5",
+          "flags": ["--croppingpower", "3.5"],
+          "width": 946,
+          "height": 1277,
+          "pageBytes": 321475,
+          "keptPercent": 77.7
+        },
+        {
+          "id": "power-3.75",
+          "label": "Cropping power: 3.75",
+          "flags": ["--croppingpower", "3.75"],
+          "width": 887,
+          "height": 1262,
+          "pageBytes": 314906,
+          "keptPercent": 72
+        },
+        {
+          "id": "power-3.76",
+          "label": "Cropping power: 3.76",
+          "flags": ["--croppingpower", "3.76"],
+          "width": 1080,
+          "height": 1440,
+          "pageBytes": 326636,
+          "keptPercent": 100
+        }
+      ]
+    },
+    "cropping-minimum-sizes": {
+      "kind": "sizes",
+      "sources": ["gogo-02"],
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "minimum-0",
+          "label": "Minimum retained area: 0%",
+          "flags": ["--croppingminimum", "0"],
+          "width": 973,
+          "height": 1281,
+          "pageBytes": 322934,
+          "keptPercent": 80.1
+        },
+        {
+          "id": "minimum-70",
+          "label": "Minimum retained area: 70%",
+          "flags": ["--croppingminimum", "70"],
+          "width": 973,
+          "height": 1281,
+          "pageBytes": 322934,
+          "keptPercent": 80.1
+        },
+        {
+          "id": "minimum-80",
+          "label": "Minimum retained area: 80%",
+          "flags": ["--croppingminimum", "80"],
+          "width": 973,
+          "height": 1281,
+          "pageBytes": 322934,
+          "keptPercent": 80.1
+        },
+        {
+          "id": "minimum-81",
+          "label": "Minimum retained area: 81%",
+          "flags": ["--croppingminimum", "81"],
+          "width": 1080,
+          "height": 1440,
+          "pageBytes": 326636,
+          "keptPercent": 100
+        },
+        {
+          "id": "minimum-90",
+          "label": "Minimum retained area: 90%",
+          "flags": ["--croppingminimum", "90"],
+          "width": 1080,
+          "height": 1440,
+          "pageBytes": 326636,
+          "keptPercent": 100
+        }
+      ]
+    },
+    "cropping-preserve": {
+      "kind": "pictures",
+      "sources": ["gogo-02"],
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "0",
+          "label": "Preserved margin: 0%",
+          "flags": ["--preservemargin", "0"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 437815,
+          "file": "cropping-preserve-0.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 116914,
+          "sha256": "8a9c9795d5e5fdcdeb9c9e72df594fb67950a3d0f50fe72119c934571b638bde"
+        },
+        {
+          "id": "50",
+          "label": "Preserved margin: 50%",
+          "flags": ["--preservemargin", "50"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 413685,
+          "file": "cropping-preserve-50.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 110048,
+          "sha256": "ed68f2b91f9ab33d696940c30f12530c7b4515e1a6a5227cc504218ac07682d2"
+        }
+      ]
+    },
+    "cropping-preserve-sizes": {
+      "kind": "sizes",
+      "sources": ["gogo-02"],
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "preserve-0",
+          "label": "Preserved margin: 0%",
+          "flags": ["--preservemargin", "0"],
+          "width": 973,
+          "height": 1281,
+          "pageBytes": 322934,
+          "keptPercent": 80.1
+        },
+        {
+          "id": "preserve-25",
+          "label": "Preserved margin: 25%",
+          "flags": ["--preservemargin", "25"],
+          "width": 1000,
+          "height": 1321,
+          "pageBytes": 326286,
+          "keptPercent": 84.9
+        },
+        {
+          "id": "preserve-50",
+          "label": "Preserved margin: 50%",
+          "flags": ["--preservemargin", "50"],
+          "width": 1027,
+          "height": 1360,
+          "pageBytes": 326514,
+          "keptPercent": 89.8
+        },
+        {
+          "id": "preserve-100",
+          "label": "Preserved margin: 100%",
+          "flags": ["--preservemargin", "100"],
+          "width": 1080,
+          "height": 1440,
+          "pageBytes": 326636,
+          "keptPercent": 100
+        }
+      ]
+    },
+    "cropping-gutters": {
+      "kind": "pictures",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 4119 },
+      "variants": [
+        {
+          "id": "disabled",
+          "label": "Inter-panel cropping: Disabled",
+          "flags": ["--webtoon"],
+          "width": 992,
+          "height": 1092,
+          "pageBytes": 184379,
+          "file": "cropping-gutters-disabled.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 771,
+          "bytes": 55302,
+          "sha256": "79d0b6fdd930001c9bf96f6bfd31cbf4bee2eb8631fd1b4e49dc12d7ddf1658c"
+        },
+        {
+          "id": "horizontal",
+          "label": "Inter-panel cropping: Horizontal gaps",
+          "flags": ["--webtoon", "--ipc", "horizontal"],
+          "width": 992,
+          "height": 1004,
+          "pageBytes": 177621,
+          "file": "cropping-gutters-horizontal.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 708,
+          "bytes": 53644,
+          "sha256": "0d059fa3b4c0029b48a5c0aebeda7d033f1d7bc0ec03c276bee43e5d8ea97a9c"
+        },
+        {
+          "id": "both",
+          "label": "Inter-panel cropping: Horizontal and vertical gaps",
+          "flags": ["--webtoon", "--ipc", "both"],
+          "width": 956,
+          "height": 1004,
+          "pageBytes": 177239,
+          "file": "cropping-gutters-both.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 735,
+          "bytes": 57928,
+          "sha256": "98cd0e08619d35a8caeccf768ab85514b5499b108bbefca249876b3d9475e4aa"
+        }
+      ]
+    },
+    "color-pages": {
+      "kind": "pictures",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "grayscale",
+          "label": "Color pages: Convert to grayscale",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 260931,
+          "file": "color-pages-grayscale.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 54792,
+          "sha256": "94d5198d4382a72bafddfeee37d935ef36e2f17287d81e36fba1dfdb0d459ecb"
+        },
+        {
+          "id": "color",
+          "label": "Color pages: Keep in color",
+          "flags": ["--forcecolor"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 299560,
+          "file": "color-pages-color.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 64110,
+          "sha256": "04cbc3bc8ab014961398e645c977747bf5b698d784cdded4bb279329bbb3daa9"
+        }
+      ]
+    },
+    "gamma": {
+      "kind": "pictures",
+      "sources": ["pepper-ep01"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "0.6",
+          "label": "Gamma: 0.6",
+          "flags": ["--gamma", "0.6"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 216198,
+          "darkest": 31,
+          "mean": 141.6,
+          "file": "gamma-0.6.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 39394,
+          "sha256": "7af408d175032156edd62193e23a803c72d4aae6ade8ea573359df4c3022e6be"
+        },
+        {
+          "id": "1",
+          "label": "Gamma: 1.0",
+          "flags": ["--gamma", "1.0"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 215518,
+          "darkest": 5,
+          "mean": 108.6,
+          "file": "gamma-1.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 40102,
+          "sha256": "99d6ad61b3ff1a84267cf34c43eec84a635269b68c3c836a98913e28fae91e3c"
+        },
+        {
+          "id": "1.8",
+          "label": "Gamma: 1.8",
+          "flags": ["--gamma", "1.8"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 186932,
+          "darkest": 0,
+          "mean": 78.5,
+          "file": "gamma-1.8.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 33932,
+          "sha256": "964122ab2541cec713ffd97db59b2cd4f1d8114e36d780758f1e7dcda863f9f5"
+        }
+      ]
+    },
+    "autocontrast": {
+      "kind": "pictures",
+      "sources": ["pepper-ep01"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "monochrome",
+          "label": "Autocontrast: Black-and-white pages only",
+          "flags": [],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 215518,
+          "darkest": 5,
+          "mean": 108.6,
+          "file": "autocontrast-monochrome.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 40102,
+          "sha256": "99d6ad61b3ff1a84267cf34c43eec84a635269b68c3c836a98913e28fae91e3c"
+        },
+        {
+          "id": "all",
+          "label": "Autocontrast: Color pages too",
+          "flags": ["--colorautocontrast"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 222647,
+          "darkest": 0,
+          "mean": 101.6,
+          "file": "autocontrast-all.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 41792,
+          "sha256": "f4a93bec1244b1c4d22df9855b2822c29315cc3ca0bdc40abfc6171f2bc8eb4d"
+        },
+        {
+          "id": "all-autolevel",
+          "label": "Autocontrast: Color pages too, with Auto-level black point",
+          "flags": ["--colorautocontrast", "--autolevel"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 218379,
+          "darkest": 0,
+          "mean": 82.9,
+          "file": "autocontrast-all-autolevel.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 933,
+          "bytes": 42732,
+          "sha256": "3325366fc9a8fd0efb8bf41398cd39437c4679d754bb5849022de9ceadab6d51"
+        }
+      ]
+    },
+    "rainbow": {
+      "kind": "pictures",
+      "sources": ["pepper-ep06"],
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "off",
+          "label": "Reduce rainbow effect: Off",
+          "flags": ["--forcecolor"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 299560,
+          "file": "rainbow-off.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 700,
+          "bytes": 30690,
+          "sha256": "a0ea3ba9695e2ef83c904153680925e6ad3ecacf93ac0f7a088c902023af18f6"
+        },
+        {
+          "id": "on",
+          "label": "Reduce rainbow effect: On",
+          "flags": ["--forcecolor", "--eraserainbow"],
+          "width": 1272,
+          "height": 1696,
+          "pageBytes": 298718,
+          "file": "rainbow-on.webp",
+          "pictureWidth": 700,
+          "pictureHeight": 700,
+          "bytes": 30180,
+          "sha256": "4f4d1abc5ad20ee8baacde5903bf079a0a22498a858dd4f4a8bd24baa71699a6"
+        }
+      ]
+    }
+  }
+}

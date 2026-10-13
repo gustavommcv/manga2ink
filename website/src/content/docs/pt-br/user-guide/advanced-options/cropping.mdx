@@ -1,0 +1,89 @@
+---
+title: 'Recorte (Cropping)'
+description: 'O que Page cropping, Cropping power, Minimum retained area, Preserved margin e Inter-panel cropping fazem com uma página, com tamanhos medidos e imagens.'
+---
+
+import OptionExample from '../../../../../components/OptionExample.astro';
+import OptionSizes from '../../../../../components/OptionSizes.astro';
+
+O recorte tira a margem vazia de uma página antes de ela ser ajustada à tela, e o desenho sai maior. As opções ficam na seção **Cropping** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** fica esmaecida, com o motivo, em **Webtoon strips** e em **Use the images as they are**. Os três números (power, minimum, margin) a acompanham e também ficam esmaecidos enquanto ela está **Disabled**. **Inter-panel cropping** só fica esmaecida em **Use the images as they are**.
+
+## Page cropping
+
+O padrão é **Margins and page numbers**.
+
+<OptionExample
+  id="cropping-modes"
+  alt={{
+    disabled: 'Uma página de mangá com a margem branca deixada em volta dos quadros.',
+    'margins-and-page-numbers':
+      'A mesma página com a margem cortada, e os quadros ocupando a tela.',
+  }}
+/>
+
+A página tem o mesmo formato da tela, então com o recorte **Disabled** a margem fica e o desenho é menor. Com o recorte ligado, a margem sai e o desenho cresce para ocupar o lugar.
+
+- **Disabled**: a página vai para a tela como está.
+- **Margins**: o mangapress procura onde está o desenho. Ele passa a página para cinza (e inverte quando o fundo é escuro), estica os tons, borra levemente e trata como papel tudo que é mais claro que um limite. A caixa em volta do que sobra é o desenho, e a página é cortada nela. Nenhuma página perde mais de 10% da largura ou da altura em cada lado, então um scan com borda muito larga mantém o que passa disso.
+- **Margins and page numbers**: o mesmo, e depois mais um olhar para uma faixa fina logo acima da borda de baixo da caixa. Se ela tiver exatamente uma forma escura pequena, do tamanho de um número de um a três dígitos, a página é cortada de logo acima dela. Duas ou mais formas, ou uma grande demais, são tomadas por desenho e ficam como estão.
+
+A página acima não tem número de página, então **Margins** dá o mesmo resultado que **Margins and page numbers**. `--cropping` aceita `disabled`, `margins` ou `margins-and-page-numbers`; `-c` é a forma curta.
+
+## Cropping power
+
+O padrão é 1, e o app aceita de 0 a 10. A potência define o limite pelo qual a página é julgada: **240 − 64 × potência**, numa escala em que 255 é branco. Em 1 o limite é 176, então todo tom mais claro que isso é papel. Uma potência maior baixa o limite, e tons cada vez mais escuros também viram papel, então o corte alcança sombreados e linhas finas.
+
+<OptionSizes id="cropping-power-sizes" />
+
+Maior nem sempre é mais. Em 3,75 o limite é 0: só o preto puro ainda conta como desenho, então o corte se agarra às linhas mais pretas e entra na página, até 887 pixels de largura aqui. Uma potência de 3,76 ou mais põe o limite abaixo de zero. Nada conta como desenho, o mangapress não encontra nenhum e a página fica sem corte. Uma potência acima de 3,75 desliga o recorte em vez de reforçá-lo. Se um scan tem margens cinza, tente 2 antes de ir mais alto.
+
+`--croppingpower` define o valor.
+
+## Minimum retained area
+
+O padrão é 0%. O mangapress só corta quando a página cortada mantém pelo menos essa fração da área da página, e deixa a página como está caso contrário.
+
+<OptionSizes id="cropping-minimum-sizes" />
+
+O corte desta página mantém 80,1%, então um mínimo de 80 o permite e 81 o recusa. Use-o para proteger páginas quase vazias, em que o desenho detectado é uma parte pequena da página e cortar até ele ampliaria poucas linhas até encher a tela: com mínimo de 70, um corte que deixaria menos de 70% da página não é feito. `--croppingminimum` define o valor.
+
+## Preserved margin
+
+O padrão é 0%. O corte recua por essa porcentagem depois do limite de 10%, então sobra um pouco de margem: com 50%, metade do que seria removido é mantida; com 100%, nada é removido.
+
+<OptionExample
+  id="cropping-preserve"
+  alt={{
+    '0': 'Uma página de mangá cortada rente aos quadros, sem margem.',
+    '50': 'A mesma página cortada pela metade, com uma margem fina em volta dos quadros.',
+  }}
+/>
+
+<OptionSizes id="cropping-preserve-sizes" />
+
+`--preservemargin` define o valor.
+
+## Inter-panel cropping
+
+O padrão é **Disabled**. Esta opção remove os vãos vazios _entre_ os quadros, não a margem em volta da página. **Horizontal gaps** remove as linhas que são papel de ponta a ponta; **Horizontal and vertical gaps** remove também as colunas. Um vão a menos de 1% da borda da página não é removido, e uma faixa fina de cada vão fica para os quadros não se encostarem. A potência de corte não vale para ela: o limite é fixo.
+
+Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junta três páginas de _Pepper&Carrot_ numa tira alta, converte como **Webtoon strips** e mostra a segunda página do resultado.
+
+<OptionExample
+  id="cropping-gutters"
+  alt={{
+    disabled: 'Uma página cortada de uma tira, com vãos brancos entre os quadros.',
+    horizontal: 'A mesma página com os vãos entre os quadros fechados, e por isso mais curta.',
+    both: 'A mesma página com os vãos fechados e as laterais aparadas, e por isso mais curta e mais estreita.',
+  }}
+/>
+
+`--ipc` aceita `disabled`, `horizontal` ou `both`.
+
+## Opções e flags
+
+- **Page cropping**: `--cropping`, ou `-c`, com `disabled`, `margins` ou `margins-and-page-numbers`.
+- **Cropping power**: `--croppingpower`, um número; o app aceita de 0 a 10.
+- **Minimum retained area**: `--croppingminimum`, de 0 a 100 por cento.
+- **Preserved margin**: `--preservemargin`, de 0 a 100 por cento.
+- **Inter-panel cropping**: `--ipc`, com `disabled`, `horizontal` ou `both`.

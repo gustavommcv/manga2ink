@@ -1,0 +1,80 @@
+{
+  "pages": {
+    "cropping": [
+      "--cropping",
+      "-c",
+      "--croppingpower",
+      "--croppingminimum",
+      "--preservemargin",
+      "--ipc"
+    ],
+    "color-and-tone": [
+      "--forcecolor",
+      "--colorautocontrast",
+      "--noautocontrast",
+      "--autolevel",
+      "--gamma",
+      "-g",
+      "--eraserainbow"
+    ],
+    "reading": ["--webtoon", "-w", "--manga-style", "-m"],
+    "double-page-spreads": [
+      "--splitter",
+      "-r",
+      "--rotatefirst",
+      "--norotate",
+      "--rotateright",
+      "--maximizestrips",
+      "--spreadshift",
+      "--onepagelandscape",
+      "--invertdirection"
+    ],
+    "size-and-borders": [
+      "--upscale",
+      "-u",
+      "--stretch",
+      "-s",
+      "--wallpaper",
+      "--blackborders",
+      "--whiteborders"
+    ],
+    "page-images": [
+      "--forcepng",
+      "--noquantize",
+      "--pnglegacy",
+      "--force-png-rgb",
+      "--jpeg-quality",
+      "--noprocessing"
+    ],
+    "cover": ["--smartcovercrop", "--coverfill"],
+    "book-metadata": [
+      "--title",
+      "-t",
+      "--author",
+      "-a",
+      "--metadatatitle",
+      "--keepcomicinfo",
+      "--language",
+      "--nokepub"
+    ]
+  },
+  "elsewhere": {
+    "user-guide/output-profiles": [
+      "--profile",
+      "-p",
+      "--format",
+      "-f",
+      "--customwidth",
+      "--customheight"
+    ],
+    "cli/mangapress": ["--dry-run", "-n", "--quiet", "-q"]
+  },
+  "planned": [
+    "reading",
+    "double-page-spreads",
+    "size-and-borders",
+    "page-images",
+    "cover",
+    "book-metadata"
+  ]
+}

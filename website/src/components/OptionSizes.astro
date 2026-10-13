@@ -1,0 +1,83 @@
+---
+import manifest from '../assets/options/manifest.json';
+import OptionCredit from './OptionCredit.astro';
+
+interface Props {
+  /** The example in src/assets/options/manifest.json. */
+  id: string;
+}
+
+const { id } = Astro.props;
+const example = (
+  manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
+)[id];
+if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
+const portuguese = Astro.currentLocale === 'pt-br';
+const heads = portuguese
+  ? { setting: 'Opção', flag: 'No terminal', size: 'Tamanho da página', kept: 'Fica da página' }
+  : {
+      setting: 'Setting',
+      flag: 'On the command line',
+      size: 'Page size',
+      kept: 'Of the page kept',
+    };
+const source = example.source;
+const caption = portuguese
+  ? `Página de origem: ${source.width} × ${source.height} px. As páginas não são ampliadas, então o tamanho mostra o que foi cortado.`
+  : `Source page: ${source.width} × ${source.height} px. The pages are not enlarged, so the size shows what was cropped.`;
+const percent = new Intl.NumberFormat(portuguese ? 'pt-BR' : 'en', { maximumFractionDigits: 1 });
+const rows = example.variants.map((variant) => {
+  const sized = variant as { keptPercent?: number };
+  return {
+    label: variant.label,
+    flags: variant.flags.join(' '),
+    size: `${variant.width} × ${variant.height}`,
+    kept: `${percent.format(sized.keptPercent ?? 100)}%`,
+  };
+});
+---
+
+<div class="option-sizes" data-option-sizes={id}>
+  <table>
+    <caption>{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{heads.setting}</th>
+        <th scope="col">{heads.flag}</th>
+        <th scope="col">{heads.size}</th>
+        <th scope="col">{heads.kept}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <th scope="row">{row.label}</th>
+          <td>
+            <code>{row.flags}</code>
+          </td>
+          <td>{row.size}</td>
+          <td>{row.kept}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<OptionCredit from={example.sources} mangapress={manifest.mangapress} />
+
+<style>
+  .option-sizes {
+    overflow-x: auto;
+    margin-block: 1.5rem;
+  }
+  caption {
+    caption-side: bottom;
+    padding-block-start: 0.5rem;
+    color: var(--sl-color-gray-3);
+    font-size: var(--sl-text-xs);
+    text-align: start;
+  }
+  td:nth-child(3),
+  td:nth-child(4) {
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -58,6 +58,15 @@ export default defineConfig({
             { slug: 'user-guide/adding-manga' },
             { slug: 'user-guide/mapping-editor' },
             { slug: 'user-guide/output-profiles' },
+            {
+              label: 'Advanced options',
+              translations: { 'pt-BR': 'Opções avançadas' },
+              items: [
+                { slug: 'user-guide/advanced-options' },
+                { slug: 'user-guide/advanced-options/cropping' },
+                { slug: 'user-guide/advanced-options/color-and-tone' },
+              ],
+            },
             { slug: 'user-guide/processing' },
             { slug: 'user-guide/exporting' },
             { slug: 'getting-started/overview' },

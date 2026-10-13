@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "sources": {
+    "pepper-ep01": {
+      "title": "Pepper&Carrot, episode 1",
+      "author": "David Revoy",
+      "attribution": "David Revoy, www.davidrevoy.com",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "page": "https://archive.org/details/peppercarrot-en",
+      "url": "https://archive.org/download/peppercarrot-en/peppercarrot_episode01.cbz",
+      "sha256": "02e28b6d55d9d02b7ebaa2e0ba4a20e652c4fdcb63579b1169f8c0328689d2fe",
+      "kind": "cbz"
+    },
+    "pepper-ep06": {
+      "title": "Pepper&Carrot, episode 6",
+      "author": "David Revoy",
+      "attribution": "David Revoy, www.davidrevoy.com",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "page": "https://archive.org/details/peppercarrot-en",
+      "url": "https://archive.org/download/peppercarrot-en/peppercarrot_episode06.cbz",
+      "sha256": "84f96cfcd30620a7650554bde2842b537fc5436284e72f73f1ea6d39726c701b",
+      "kind": "cbz"
+    },
+    "gogo-02": {
+      "title": "Go Go! Encyclopedia Girls, page 2",
+      "author": "Kasuga, English version by Masatami",
+      "attribution": "Kasuga, English version by Masatami",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "page": "https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_02.png",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Go_Go!_Encyclopedia_Girls_-_English_02.png",
+      "sha256": "15e5a4187a6eb78ade720b19eb9b002ff7ede945cca157f1aa545606415e2324",
+      "kind": "image",
+      "extension": "png"
+    }
+  }
+}

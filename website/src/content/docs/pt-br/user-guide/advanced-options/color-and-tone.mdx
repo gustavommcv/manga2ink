@@ -1,0 +1,85 @@
+---
+title: 'Cor e tom (Color and tone)'
+description: 'O que Color pages, Autocontrast, Auto-level black point, Gamma e Reduce rainbow effect fazem com uma página, com a mesma página convertida de cada jeito e os números da mudança.'
+---
+
+import OptionExample from '../../../../../components/OptionExample.astro';
+
+A seção **Color and tone** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options) decide se uma página mantém a cor e como seus tons são corrigidos. Os exemplos são páginas de _Pepper&Carrot_, desenhado em cores. Onde uma legenda traz números, eles foram medidos na página que o mangapress gravou: o pixel mais escuro (0 é preto) e o brilho médio da página inteira (255 é branco).
+
+## Color pages
+
+**Convert to grayscale** passa toda página para cinza. **Keep in color** mantém a cor das páginas que têm cor de verdade; uma página sem nenhuma continua sendo passada para cinza. Qual começa selecionada depende do dispositivo: é **Keep in color** para Kindle Colorsoft, Kindle Scribe Colorsoft, Kobo Clara Colour, Kobo Libra Colour, reMarkable Paper Pro e Paper Pro Move, e **Convert to grayscale** para os outros. Escolher outro dispositivo devolve a opção ao que aquele dispositivo usa.
+
+<OptionExample
+  id="color-pages"
+  alt={{
+    grayscale:
+      'Uma página de Pepper&Carrot, uma bruxa dormindo numa cama voadora, em tons de cinza.',
+    color: 'A mesma página em cores, com tons quentes de laranja e marrom.',
+  }}
+/>
+
+Uma página colorida dá um arquivo maior que uma cinza: compare os tamanhos embaixo das imagens. Uma tela preto e branco não mostra a cor, então mantenha a cor para uma tela colorida. `--forcecolor` é o flag; sem ele, toda página fica cinza.
+
+Com **Use the images as they are** ligada, esta opção fica esmaecida em CBZ e PDF, porque as páginas não são tocadas. Em EPUB ela ainda decide a capa.
+
+## Autocontrast
+
+**Autocontrast** estica os tons de uma página em direção ao preto e ao branco. Tem três valores:
+
+- **Black-and-white pages only**, o padrão: páginas sem cor de verdade são esticadas, páginas com cor não.
+- **Color pages too**: toda página é esticada. `--colorautocontrast`.
+- **Off**: nenhuma página é esticada. `--noautocontrast`.
+
+A página do exemplo tem cor, então o padrão não mexe nela. A primeira imagem é isso, e a segunda é **Color pages too**: o pixel mais escuro vai de 5 para 0 e a página fica mais escura no todo.
+
+**Auto-level black point** acrescenta um passo antes do esticamento: toma o tom escuro mais comum da página como preto. Só importa numa página que está sendo esticada: nesta página, com o padrão, a página convertida é byte a byte a mesma com a opção ligada ou desligada. Ela fica esmaecida enquanto **Autocontrast** está **Off**. A terceira imagem é **Color pages too** com ela ligada, e a página fica ainda mais escura. `--autolevel`.
+
+<OptionExample
+  id="autocontrast"
+  alt={{
+    monochrome:
+      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, em cinzas, com o autocontraste padrão.',
+    all: 'A mesma página com autocontraste também nas páginas coloridas, um pouco mais escura nas sombras.',
+    'all-autolevel': 'A mesma página com o auto-level também ligado, ainda mais escura.',
+  }}
+/>
+
+## Gamma
+
+**Gamma** clareia ou escurece a página. Vazio, usa-se o gama do perfil do dispositivo, que é 1,0 em todos os perfis hoje: nenhuma mudança. Acima de 1 a página escurece, abaixo de 1 clareia. O app aceita de 0,1 a 4: um gama de 18, digitado no lugar de 1,8, já deixou toda página quase preta e a conversão ainda terminou como sucesso, então o campo o recusa. `--gamma`, ou `-g`.
+
+<OptionExample
+  id="gamma"
+  alt={{
+    '0.6':
+      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, clareada, com as sombras levantadas.',
+    '1': 'A mesma página com gama 1,0, como é por padrão.',
+    '1.8': 'A mesma página com gama 1,8, mais escura, com as sombras quase pretas.',
+  }}
+/>
+
+Os números embaixo das imagens mostram o quanto cada valor move a página. Um gama de 1,0 dá os mesmos bytes que deixar o campo vazio.
+
+## Reduce rainbow effect
+
+**Reduce rainbow effect** é o jeito do mangapress de apagar o efeito arco-íris das telas e-ink coloridas, atenuando as frequências que interferem. Ela muda os pixels de toda página em que é aplicada, também as cinza: as páginas que o mangapress grava com e sem ela não são iguais. Deixe desligada, a menos que sua tela seja e-ink colorida. `--eraserainbow`.
+
+A imagem é um quadrado de 260 pixels da página, ampliado 2,7 vezes sem suavização, para que os pixels apareçam. Com a opção ligada, o céu liso ganha uma textura diagonal fina. Se isso remove o arco-íris numa tela de verdade, só a tela pode mostrar.
+
+<OptionExample
+  id="rainbow"
+  alt={{
+    off: 'Um detalhe ampliado de uma vassoura voadora e suas cordas contra um céu claro, em cores.',
+    on: 'O mesmo detalhe com uma textura diagonal fraca no céu.',
+  }}
+/>
+
+## Opções e flags
+
+- **Color pages**: `--forcecolor`. Ligado mantém a cor, desligado converte para tons de cinza.
+- **Autocontrast**: `--colorautocontrast` estica também as páginas coloridas, e `--noautocontrast` desliga; se os dois forem dados, desligar vence.
+- **Auto-level black point**: `--autolevel`.
+- **Gamma**: `--gamma`, ou `-g`, um número; o app aceita de 0,1 a 4.
+- **Reduce rainbow effect**: `--eraserainbow`.

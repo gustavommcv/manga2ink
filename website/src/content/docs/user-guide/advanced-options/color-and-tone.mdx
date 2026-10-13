@@ -1,0 +1,84 @@
+---
+title: 'Color and tone'
+description: 'What Color pages, Autocontrast, Auto-level black point, Gamma and Reduce rainbow effect do to a page, with the same page converted each way and the numbers behind the change.'
+---
+
+import OptionExample from '../../../../components/OptionExample.astro';
+
+The **Color and tone** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options) decides whether a page keeps its color and how its tones are corrected. The examples are pages of _Pepper&Carrot_, which is drawn in color. Where a caption gives numbers, they are measured on the page mangapress wrote: the darkest pixel (0 is black) and the average brightness of the whole page (255 is white).
+
+## Color pages
+
+**Convert to grayscale** turns every page gray. **Keep in color** keeps the color of the pages that have real color; a page without any is still turned gray. Which one starts selected depends on the device: it is **Keep in color** for Kindle Colorsoft, Kindle Scribe Colorsoft, Kobo Clara Colour, Kobo Libra Colour, reMarkable Paper Pro and Paper Pro Move, and **Convert to grayscale** for every other device. Choosing another device puts it back to what that device starts with.
+
+<OptionExample
+  id="color-pages"
+  alt={{
+    grayscale: 'A page of Pepper&Carrot, a witch asleep in a flying bed, in shades of gray.',
+    color: 'The same page in color, with warm orange and brown tones.',
+  }}
+/>
+
+A color page is a bigger file than a gray one: compare the sizes under the pictures. A black-and-white screen cannot show the color, so keep it for a color screen. `--forcecolor` is the flag; without it, every page is gray.
+
+With **Use the images as they are** on, this setting is dimmed for CBZ and PDF, because the pages are not touched. In an EPUB it still decides the cover.
+
+## Autocontrast
+
+**Autocontrast** stretches the tones of a page toward black and white. It has three values:
+
+- **Black-and-white pages only**, the default: pages with no real color are stretched, pages with color are not.
+- **Color pages too**: every page is stretched. `--colorautocontrast`.
+- **Off**: no page is stretched. `--noautocontrast`.
+
+The example page has color, so the default leaves it alone. The first picture is that, and the second is **Color pages too**: the darkest pixel goes from 5 to 0 and the page gets darker overall.
+
+**Auto-level black point** adds one step before the stretch: it takes the most common dark tone of the page as black. It only matters on a page that is being stretched: on this page, under the default, the converted page is byte for byte the same with it on or off. It is dimmed while **Autocontrast** is **Off**. The third picture is **Color pages too** with it on, and the page is darker again. `--autolevel`.
+
+<OptionExample
+  id="autocontrast"
+  alt={{
+    monochrome:
+      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, in grays, with the default autocontrast.',
+    all: 'The same page with autocontrast on color pages too, a little darker in the shadows.',
+    'all-autolevel': 'The same page with auto-level on as well, darker still.',
+  }}
+/>
+
+## Gamma
+
+**Gamma** lightens or darkens the page. Left empty, the device profile's own gamma is used, which is 1.0 for every profile today: no change. Above 1 the page gets darker, below 1 lighter. The app accepts 0.1 to 4: a gamma of 18, typed for 1.8, once turned every page nearly black and the conversion still ended as a success, so the field refuses it. `--gamma`, or `-g`.
+
+<OptionExample
+  id="gamma"
+  alt={{
+    '0.6':
+      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, lightened, with the shadows lifted.',
+    '1': 'The same page with gamma 1.0, as it is by default.',
+    '1.8': 'The same page with gamma 1.8, darker, with the shadows nearly black.',
+  }}
+/>
+
+The numbers under the pictures show how far each value moves the page. A gamma of 1.0 gives the same bytes as leaving the field empty.
+
+## Reduce rainbow effect
+
+**Reduce rainbow effect** is mangapress's way of erasing the rainbow effect of color e-ink screens, by attenuating the frequencies that interfere. It changes the pixels of every page it is applied to, grayscale pages too: the pages mangapress writes with and without it are not the same. Leave it off unless your screen is a color e-ink one. `--eraserainbow`.
+
+The picture is a 260-pixel square of the page, enlarged 2.7 times without smoothing, so that single pixels are visible. With the option on, the smooth sky gets a fine diagonal texture. Whether that removes the rainbow on a real screen is something only the screen can show.
+
+<OptionExample
+  id="rainbow"
+  alt={{
+    off: 'A close-up of a flying broom and its ropes against a pale sky, in color.',
+    on: 'The same close-up with a faint diagonal texture in the sky.',
+  }}
+/>
+
+## Options and flags
+
+- **Color pages**: `--forcecolor`. On keeps color, off converts to grayscale.
+- **Autocontrast**: `--colorautocontrast` stretches color pages too, and `--noautocontrast` turns it off; if both are given, off wins.
+- **Auto-level black point**: `--autolevel`.
+- **Gamma**: `--gamma`, or `-g`, a number; the app accepts 0.1 to 4.
+- **Reduce rainbow effect**: `--eraserainbow`.
