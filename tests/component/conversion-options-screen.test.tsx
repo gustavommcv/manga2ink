@@ -24,7 +24,9 @@ const props = (
   overrides: Partial<ConversionOptionsScreenProps> = {},
 ): ConversionOptionsScreenProps => ({
   format: defaultFormat,
+  itemsWithOptions: 0,
   onBack: vi.fn(),
+  onClearItemOptions: vi.fn(),
   onFormat: vi.fn(),
   onNotify: vi.fn(),
   onReset: vi.fn(),
@@ -49,6 +51,44 @@ describe('the conversion options screen', () => {
     await user.keyboard('{Enter}');
     expect(onBack).toHaveBeenCalledOnce();
   });
+
+  it('says nothing of items when none has options of its own', () => {
+    render(<ConversionOptionsScreen {...props()} />);
+
+    expect(screen.queryByRole('group', { name: 'Items with options of their own' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /for all/u })).toBeNull();
+  });
+
+  it.each([
+    [1, '1 item in the queue is converted with options of their own.'],
+    [3, '3 items in the queue are converted with options of their own.'],
+  ])(
+    'says how many items have options of their own (%i), and puts them all back on request',
+    async (count, sentence) => {
+      const user = userEvent.setup();
+      const onClearItemOptions = vi.fn();
+      const { rerender } = render(
+        <ConversionOptionsScreen {...props({ itemsWithOptions: count, onClearItemOptions })} />,
+      );
+      const notice = screen.getByRole('group', { name: 'Items with options of their own' });
+      expect(within(notice).getByText(sentence)).toBeVisible();
+      expect(within(notice).getByText(/They keep what they set/u)).toBeVisible();
+
+      await user.click(
+        within(notice).getByRole('button', { name: 'Use the queue’s options for all' }),
+      );
+      expect(onClearItemOptions).toHaveBeenCalledOnce();
+      // The workflow clears them; the answer takes the place of the notice and holds the focus.
+      rerender(<ConversionOptionsScreen {...props({ itemsWithOptions: 0, onClearItemOptions })} />);
+
+      const answer = screen.getByText(/now follows? the queue’s options\./u);
+      expect(answer).toHaveTextContent(
+        `${String(count)} ${count === 1 ? 'item now follows' : 'items now follow'} the queue’s options.`,
+      );
+      expect(answer).toHaveFocus();
+      expect(screen.queryByRole('group', { name: 'Items with options of their own' })).toBeNull();
+    },
+  );
 
   it('does not ask to reset when every option is already at its default', async () => {
     const user = userEvent.setup();

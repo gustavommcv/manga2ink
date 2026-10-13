@@ -14,10 +14,16 @@ import {
 function Stateful(props: ConversionOptionsScreenProps): React.JSX.Element {
   const [format, setFormat] = useState(props.format);
   const [settings, setSettings] = useState(props.settings);
+  const [itemsWithOptions, setItemsWithOptions] = useState(props.itemsWithOptions);
   return (
     <ConversionOptionsScreen
       {...props}
       format={format}
+      itemsWithOptions={itemsWithOptions}
+      onClearItemOptions={() => {
+        setItemsWithOptions(0);
+        props.onClearItemOptions();
+      }}
       onFormat={setFormat}
       onReset={() => {
         setFormat(defaultFormat);
@@ -46,7 +52,9 @@ const meta = {
   parameters: { layout: 'fullscreen' },
   args: {
     format: defaultFormat,
+    itemsWithOptions: 0,
     onBack: () => undefined,
+    onClearItemOptions: () => undefined,
     onFormat: () => undefined,
     onNotify: () => undefined,
     onReset: () => undefined,
@@ -121,5 +129,20 @@ export const ValidationError: Story = {
       'aria-invalid',
       'true',
     );
+  },
+};
+
+export const ItemsWithOptionsOfTheirOwn: Story = {
+  args: { itemsWithOptions: 2 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const notice = canvas.getByRole('group', { name: 'Items with options of their own' });
+    await expect(
+      within(notice).getByText('2 items in the queue are converted with options of their own.'),
+    ).toBeVisible();
+    await userEvent.click(
+      within(notice).getByRole('button', { name: 'Use the queue’s options for all' }),
+    );
+    await expect(canvas.getByText('2 items now follow the queue’s options.')).toHaveFocus();
   },
 };

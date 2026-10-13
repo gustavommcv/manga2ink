@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import type { BookFormat } from '@/domain/conversion';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { isDefaultMangapress } from '@/domain/preferences';
+import { ItemsWithOptionsNotice } from '@/renderer/components/settings/items-with-options-notice';
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { Button } from '@/renderer/components/ui/button';
@@ -11,7 +12,11 @@ import type { DeviceProfileSummary } from '@/shared/workflow-contract';
 
 export interface ConversionOptionsScreenProps {
   readonly format: BookFormat;
+  /** How many inputs and titles are converted with options of their own (ADR 0046). */
+  readonly itemsWithOptions: number;
   readonly onBack: () => void;
+  /** Puts every item back to the queue's options; the workflow owns the queue. */
+  readonly onClearItemOptions: () => void;
   readonly onFormat: (format: BookFormat) => void;
   readonly onNotify: (message: string) => void;
   /** The workflow owns resetting and persisting the choices; this screen asks for confirmation. */
@@ -25,7 +30,9 @@ export interface ConversionOptionsScreenProps {
 /** Conversion choices stay in the workflow; page composition and entry focus belong here. */
 export function ConversionOptionsScreen({
   format,
+  itemsWithOptions,
   onBack,
+  onClearItemOptions,
   onFormat,
   onNotify,
   onReset,
@@ -68,6 +75,7 @@ export function ConversionOptionsScreen({
           />
         </div>
       </div>
+      <ItemsWithOptionsNotice count={itemsWithOptions} onClear={onClearItemOptions} />
       <MangapressSettingsEditor
         format={format}
         onFormat={onFormat}

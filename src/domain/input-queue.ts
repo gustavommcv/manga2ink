@@ -129,6 +129,8 @@ export type QueueAction =
       readonly title: string;
       readonly options: ItemOptions | undefined;
     }
+  /** Every input and title follows the queue's options again, whatever it had set of its own. */
+  | { readonly type: 'clear-options' }
   | { readonly type: 'remove'; readonly ids: readonly string[] }
   | { readonly type: 'clear' };
 
@@ -260,6 +262,17 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
             }
           : row,
       );
+    case 'clear-options':
+      return rows.map((row) => {
+        if (row.state !== 'inspected') return row;
+        const own = hasItemOptions(row.options);
+        const ofTitles = row.titles?.some((title) => hasItemOptions(title.options)) ?? false;
+        if (!own && !ofTitles) return row;
+        const cleared = withOptions(row, undefined);
+        return row.titles === undefined
+          ? cleared
+          : { ...cleared, titles: row.titles.map((title) => withOptions(title, undefined)) };
+      });
     case 'remove': {
       const removed = new Set(action.ids);
       return rows.filter((row) => !removed.has(row.id));
@@ -518,6 +531,20 @@ export function summarizeQueue(rows: readonly QueueRow[], mode: ProcessMode): Qu
     else if (describeRow(row, mode).runnable) runnable += 1;
   }
   return { total: rows.length, runnable, skipped: rows.length - runnable - inspecting, inspecting };
+}
+
+/**
+ * How many inputs, and titles of libraries, are converted with options of their own (ADR 0046):
+ * what the options page of the queue says does not reach them for the options they set.
+ */
+export function itemsWithOptions(rows: readonly QueueRow[]): number {
+  let count = 0;
+  for (const row of rows) {
+    if (row.state !== 'inspected') continue;
+    if (hasItemOptions(row.options)) count += 1;
+    count += row.titles?.filter((title) => hasItemOptions(title.options)).length ?? 0;
+  }
+  return count;
 }
 
 /** The rows a run processes, in the order the user added them, each with its process. */

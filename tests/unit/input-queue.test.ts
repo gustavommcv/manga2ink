@@ -6,6 +6,7 @@ import {
   type InspectedRow,
   isPendingTitle,
   isWaitingTitle,
+  itemsWithOptions,
   type QueueInput,
   type QueueRow,
   queueReducer,
@@ -858,6 +859,96 @@ describe('what an item is converted with differently from the queue', () => {
     expect(rows[2]).toBe(others[2]);
     expect(folder).toEqual(others);
     expect(notALibrary[0]).not.toHaveProperty('titles');
+  });
+
+  it('are all put back at once, for every input and every title of a library', () => {
+    const library = libraryRow(readTitle('Good', 1), readTitle('Bad', 1), readTitle('Plain', 1));
+    const rows = [
+      inspectedFolder(grouped),
+      { ...library, id: 'lib' },
+      { ...cbzInput, state: 'inspecting' } as QueueRow,
+    ];
+    const withOptions = queueReducer(
+      queueReducer(
+        queueReducer(
+          queueReducer(rows, {
+            type: 'set-options',
+            id: 'a',
+            options: { format: 'pdf', settings: { webtoon: true } },
+          }),
+          { type: 'set-title-options', id: 'lib', title: 'Good', options: { format: 'epub' } },
+        ),
+        {
+          type: 'set-title-options',
+          id: 'lib',
+          title: 'Bad',
+          options: { settings: { gamma: 1.2 } },
+        },
+      ),
+      {
+        type: 'set-title-details',
+        id: 'lib',
+        title: 'Good',
+        details: { title: 'Good Manga', author: 'Someone' },
+      },
+    );
+    expect(itemsWithOptions(withOptions)).toBe(3);
+
+    const cleared = queueReducer(withOptions, { type: 'clear-options' });
+
+    expect(itemsWithOptions(cleared)).toBe(0);
+    expect(cleared[0]).not.toHaveProperty('options');
+    const titles = (cleared[1] as InspectedRow).titles ?? [];
+    expect(titles.map((title) => title.title)).toEqual(['Good', 'Bad', 'Plain']);
+    titles.forEach((title) => {
+      expect(title).not.toHaveProperty('options');
+    });
+    // Only the options go: what was typed for a title and what the row is stay as they were.
+    expect(titles[0]?.details).toEqual({ title: 'Good Manga', author: 'Someone' });
+    expect((cleared[0] as InspectedRow).mapping).toBe((withOptions[0] as InspectedRow).mapping);
+    expect(cleared[2]).toBe(withOptions[2]);
+  });
+
+  it('leaves a queue with nothing of its own as it is', () => {
+    const rows: readonly QueueRow[] = [
+      inspectedFolder(grouped),
+      libraryRow(readTitle('Good', 1)),
+      { ...folderInput, state: 'unreadable', message: 'It is gone.' },
+    ];
+
+    const cleared = queueReducer(rows, { type: 'clear-options' });
+
+    expect(cleared).toEqual(rows);
+    cleared.forEach((row, index) => {
+      expect(row).toBe(rows[index]);
+    });
+    expect(itemsWithOptions(emptyQueue)).toBe(0);
+    expect(itemsWithOptions(cleared)).toBe(0);
+  });
+
+  it('are counted by input and by title of a library, each once', () => {
+    const library = { ...libraryRow(readTitle('A', 1), readTitle('B', 1)), id: 'lib' };
+    const rows = queueReducer(
+      queueReducer(
+        queueReducer([inspectedFolder(grouped), library], {
+          type: 'set-options',
+          id: 'a',
+          options: { format: 'pdf' },
+        }),
+        { type: 'set-title-options', id: 'lib', title: 'B', options: { format: 'epub' } },
+      ),
+      {
+        type: 'set-title-options',
+        id: 'lib',
+        title: 'A',
+        options: { settings: { webtoon: true } },
+      },
+    );
+
+    expect(itemsWithOptions(rows)).toBe(3);
+    expect(
+      itemsWithOptions(queueReducer(rows, { type: 'set-options', id: 'a', options: undefined })),
+    ).toBe(2);
   });
 
   it('stays with a title when the library is read again, saved or not', () => {

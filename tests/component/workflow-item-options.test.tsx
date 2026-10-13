@@ -136,6 +136,72 @@ describe('the conversion options of one item', () => {
     ]);
   });
 
+  it('are counted on the page of the queue’s options, and put back for every item there', async () => {
+    const user = userEvent.setup();
+    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    installBridge(twoFolders({ convert }));
+    render(<App />);
+    await addFolder(user);
+    await user.click(await screen.findByRole('button', { name: 'Advanced conversion options' }));
+    expect(screen.queryByRole('group', { name: 'Items with options of their own' })).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+    for (const name of ['First', 'Second']) {
+      await openOptions(user, name);
+      await user.selectOptions(screen.getByLabelText('Device profile'), 'K11');
+      await user.click(screen.getByRole('button', { name: 'Queue' }));
+    }
+
+    await user.click(screen.getByRole('button', { name: 'Advanced conversion options' }));
+    const notice = await screen.findByRole('group', { name: 'Items with options of their own' });
+    expect(
+      within(notice).getByText('2 items in the queue are converted with options of their own.'),
+    ).toBeVisible();
+    await user.click(
+      within(notice).getByRole('button', { name: 'Use the queue’s options for all' }),
+    );
+
+    expect(screen.getByText('2 items now follow the queue’s options.')).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+    for (const name of ['First', 'Second']) {
+      expect(
+        screen.getByRole('button', { name: `Edit conversion options of ${name}` }),
+      ).not.toHaveClass('text-override');
+    }
+    await user.click(await runButton(2));
+    await screen.findByRole('heading', { name: /ready/u });
+    expect(convert.mock.calls.map(([command]) => command.settings.deviceProfile)).toEqual([
+      'KPW6',
+      'KPW6',
+    ]);
+  });
+
+  it('count the titles of a library one by one, and give them up with the rest', async () => {
+    const user = userEvent.setup();
+    installBridge(libraryBridge([goodTitle, looseTitle], { getDeviceProfiles: profiles }));
+    render(<App />);
+    await addFolder(user);
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Edit conversion options of Good Manga' }),
+    );
+    await user.selectOptions(await screen.findByLabelText('Device profile'), 'K11');
+    await user.click(screen.getByRole('button', { name: 'Manga Library' }));
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    await user.click(screen.getByRole('button', { name: 'Advanced conversion options' }));
+    expect(
+      await screen.findByText('1 item in the queue is converted with options of their own.'),
+    ).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Use the queue’s options for all' }));
+    expect(screen.getByText('1 item now follows the queue’s options.')).toHaveFocus();
+
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    expect(
+      screen.getByRole('button', { name: 'Edit conversion options of Good Manga' }),
+    ).toHaveAttribute('title', 'Edit conversion options for this title');
+  });
+
   it('are not an option an item has when it only equals the queue’s', async () => {
     const user = userEvent.setup();
     installBridge(twoFolders());

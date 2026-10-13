@@ -12,6 +12,7 @@ import {
   emptyQueue,
   type InspectedRow,
   isPendingTitle,
+  itemsWithOptions,
   type QueueInput,
   queueReducer,
   rowMode,
@@ -969,8 +970,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
           {navigation.screen === 'options' && (
             <ConversionOptionsScreen
               format={format}
+              itemsWithOptions={itemsWithOptions(rows)}
               onBack={() => {
                 setNavigation({ screen: 'queue' });
+              }}
+              onClearItemOptions={() => {
+                dispatch({ type: 'clear-options' });
               }}
               onFormat={handleFormat}
               onNotify={notify}
