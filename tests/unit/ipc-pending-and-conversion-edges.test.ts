@@ -134,7 +134,8 @@ describe('pending books, at the edges', () => {
 
     expect(result).toEqual({ ok: true, value: { saved: true } });
     expect(result).not.toHaveProperty('value.warning');
-    expect(context.lastSaveFolder).toBe('/exports');
+    // The folder of a destination is written the way this platform writes it.
+    expect(context.lastSaveFolder).toBe(path.normalize('/exports'));
     expect(pendingRuns.exportAndRecord).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
@@ -214,7 +215,8 @@ describe('pending books, at the edges', () => {
     });
     expect(result).toMatchObject({ ok: true, value: { savedIds: ids } });
     for (const call of pendingRuns.exportAndRecord.mock.calls) expect(call[3]).toBe(false);
-    expect(context.lastSaveFolder).toBe('/exports');
+    // The folder of a destination is written the way this platform writes it.
+    expect(context.lastSaveFolder).toBe(path.normalize('/exports'));
   });
 
   it('remembers the folder that was chosen even when none of the books could be saved into it', async () => {
@@ -226,7 +228,8 @@ describe('pending books, at the edges', () => {
     const result = await call('pending:save-all', ids);
 
     expect(result).toMatchObject({ ok: true, value: { savedIds: [] } });
-    expect(context.lastSaveFolder).toBe('/exports');
+    // The folder of a destination is written the way this platform writes it.
+    expect(context.lastSaveFolder).toBe(path.normalize('/exports'));
   });
 
   it('saves nothing, and keeps the folder it had, when the dialog is cancelled or gives no folder', async () => {
