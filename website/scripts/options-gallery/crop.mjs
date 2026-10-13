@@ -214,3 +214,100 @@ export async function boxesPicture({ source, size, boxes }) {
   ]);
   return sharp(base);
 }
+
+/**
+ * Which rows (or columns) of a page were deleted to make another: both are lossless output of the same
+ * pipeline, so the second is the first with some lines taken out, and the lines are found by matching them
+ * in order. A line of the second that is not in the first is an error, not a guess. Lines that are alike
+ * (the blank rows of a gutter) could have been taken out from anywhere in their run, and the picture is the
+ * same whichever they were, so they are put in the middle of it, where a gutter is cut. Returns runs of
+ * deleted lines in the numbering of the first page, as `[start, end)`.
+ */
+export async function findRemoved(whole, part, axis) {
+  const a = await sharp(whole).grayscale().raw().toBuffer({ resolveWithObject: true });
+  const b = await sharp(part).grayscale().raw().toBuffer({ resolveWithObject: true });
+  const rows = axis === 'rows';
+  const { width: aw, height: ah } = a.info;
+  const { width: bw, height: bh } = b.info;
+  if (rows ? bw !== aw : bh !== ah)
+    throw new Error(`A page of ${bw}x${bh} is not a page of ${aw}x${ah} with ${axis} taken out.`);
+  const line = (image, index) => {
+    const { width, height } = image.info;
+    if (rows) return image.data.subarray(index * width, (index + 1) * width);
+    return Buffer.from(Array.from({ length: height }, (_, y) => image.data[y * width + index]));
+  };
+  const count = rows ? ah : aw;
+  const kept = rows ? bh : bw;
+  const lines = Array.from({ length: count }, (_, i) => line(a, i));
+  const wanted = Array.from({ length: kept }, (_, i) => line(b, i));
+  // Runs of alike lines of the first page, and how many of each were taken out.
+  const taken = [];
+  let next = 0;
+  for (let start = 0; start < count;) {
+    let end = start + 1;
+    while (end < count && Buffer.compare(lines[end], lines[start]) === 0) end++;
+    let used = 0;
+    while (next < kept && used < end - start && Buffer.compare(wanted[next], lines[start]) === 0) {
+      used++;
+      next++;
+    }
+    taken.push([start, end, end - start - used]);
+    start = end;
+  }
+  if (next !== kept)
+    throw new Error(`The ${axis} of a page of ${bw}x${bh} are not in the page of ${aw}x${ah}.`);
+  const spans = [];
+  for (const [start, end, gone] of taken) {
+    if (gone === 0) continue;
+    const first = start + Math.floor((end - start - gone) / 2);
+    // A span that begins where the one before ends is one gap.
+    if (spans.length > 0 && spans.at(-1)[1] === first) spans.at(-1)[1] = first + gone;
+    else spans.push([first, first + gone]);
+  }
+  return spans;
+}
+
+/**
+ * The page with the rows and columns that were deleted shaded, an arrow, and the page that is left, at the
+ * same scale, so that its being shorter or narrower is seen. With nothing deleted the page is the same on
+ * both sides.
+ */
+export async function gapsPicture({ source, size, rows, columns, result }) {
+  const height = 360;
+  const k = height / size.height;
+  const pageWidth = Math.round(size.width * k);
+  const meta = await sharp(result).metadata();
+  const resultSize = { width: Math.round(meta.width * k), height: Math.round(meta.height * k) };
+  const flat = (bytes, width, tall) =>
+    sharp(bytes).flatten({ background: '#fff' }).resize({ width, height: tall }).png().toBuffer();
+  const arrow = 90;
+  const left = Math.round((WIDTH - (pageWidth + arrow + resultSize.width)) / 2);
+  const resultLeft = left + pageWidth + arrow;
+  const resultTop = MARGIN + Math.round((height - resultSize.height) / 2);
+  const arrowX = left + pageWidth + arrow / 2;
+  const middle = MARGIN + height / 2;
+  const shade = (x, y, width, tall) =>
+    `<rect x="${x}" y="${y}" width="${width}" height="${tall}" fill="rgba(${CUT}, 0.6)"/>`;
+  const shapes = [
+    ...rows.map(([start, end]) =>
+      shade(left, MARGIN + start * k, pageWidth, Math.max((end - start) * k, 1.5)),
+    ),
+    ...columns.map(([start, end]) =>
+      shade(left + start * k, MARGIN, Math.max((end - start) * k, 1.5), height),
+    ),
+    `<rect x="${left}" y="${MARGIN}" width="${pageWidth}" height="${height}" fill="none" stroke="${INK}" stroke-width="2"/>`,
+    `<rect x="${resultLeft - 3}" y="${resultTop - 3}" width="${resultSize.width + 6}" height="${resultSize.height + 6}" fill="none" stroke="${KEPT}" stroke-width="6"/>`,
+    `<path d="M${arrowX - 22} ${middle} H${arrowX + 22} M${arrowX + 6} ${middle - 16} L${arrowX + 24} ${middle} L${arrowX + 6} ${middle + 16}" fill="none" stroke="${INK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  ];
+  return sharp(
+    await onMat(WIDTH, MARGIN * 2 + height, [
+      { input: await flat(source, pageWidth, height), left, top: MARGIN },
+      {
+        input: await flat(result, resultSize.width, resultSize.height),
+        left: resultLeft,
+        top: resultTop,
+      },
+      { input: svg(WIDTH, MARGIN * 2 + height, shapes), left: 0, top: 0 },
+    ]),
+  );
+}

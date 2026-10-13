@@ -169,8 +169,12 @@ export const examples = [
     })),
   },
   {
+    // `gaps` draws the rows and columns that were cut out of a page: the page of every variant is found
+    // converted without enlarging, `reference` is the one that was not cut, and a variant says which
+    // page each of its `rows` and `columns` was taken out of (the page cut, the page that is left).
     id: 'cropping-gutters',
     kind: 'pictures',
+    layout: 'rows',
     input: {
       stack: [
         PEPPER_SUN,
@@ -179,17 +183,20 @@ export const examples = [
       ],
     },
     show: 1,
+    gaps: { reference: 'disabled' },
     variants: [
       { id: 'disabled', label: 'Inter-panel cropping: Disabled', flags: ['--webtoon'] },
       {
         id: 'horizontal',
         label: 'Inter-panel cropping: Horizontal gaps',
         flags: ['--webtoon', '--ipc', 'horizontal'],
+        gaps: { rows: ['disabled', 'horizontal'] },
       },
       {
         id: 'both',
         label: 'Inter-panel cropping: Horizontal and vertical gaps',
         flags: ['--webtoon', '--ipc', 'both'],
+        gaps: { rows: ['disabled', 'horizontal'], columns: ['horizontal', 'both'] },
       },
     ],
   },

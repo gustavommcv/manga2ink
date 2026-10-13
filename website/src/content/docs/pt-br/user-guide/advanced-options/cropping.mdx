@@ -8,7 +8,7 @@ import OptionSizes from '../../../../../components/OptionSizes.astro';
 
 O recorte tira a margem vazia de uma página antes de ela ser ajustada à tela, e o desenho sai maior. As opções ficam na seção **Cropping** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** fica esmaecida, com o motivo, em **Webtoon strips** e em **Use the images as they are**. Os três números (power, minimum, margin) a acompanham e também ficam esmaecidos enquanto ela está **Disabled**. **Inter-panel cropping** só fica esmaecida em **Use the images as they are**.
 
-Nas imagens desta página, a página convertida está à esquerda, com a parte mantida contornada em verde-azulado e a parte cortada sombreada de rosa; à direita está a página como sai, numa tela.
+Nas imagens das duas próximas seções, a página convertida está à esquerda, com a parte mantida contornada em verde-azulado e a parte cortada sombreada de rosa; à direita está a página como sai, numa tela.
 
 ## Page cropping
 
@@ -80,15 +80,19 @@ O padrão é 0%, e o app aceita de 0 a 100%. O corte recua por essa porcentagem 
 
 O padrão é **Disabled**. Esta opção remove os vãos vazios _entre_ os quadros, não a margem em volta da página. **Horizontal gaps** remove as linhas que são papel de ponta a ponta; **Horizontal and vertical gaps** remove também as colunas. Um vão a menos de 1% da borda da página não é removido, e uma faixa fina de cada vão fica para os quadros não se encostarem. A potência de corte não vale para ela: o limite é fixo.
 
-Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junta três páginas de _Pepper&Carrot_ numa tira alta, como em [Leitura](../reading/#content), converte como **Webtoon strips** e mostra a segunda página do resultado.
+Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junta três páginas de _Pepper&Carrot_ numa tira alta, como em [Leitura](../reading/#content), converte como **Webtoon strips** e mostra a segunda página do resultado. Em cada imagem a página está à esquerda, com as linhas e colunas removidas sombreadas de rosa, e à direita está a página que sobra, na mesma escala.
 
 <OptionExample
   id="cropping-gutters"
   alt={{
-    disabled: 'Uma página cortada de uma tira, com vãos brancos entre os quadros.',
-    horizontal: 'A mesma página com os vãos entre os quadros fechados, e por isso mais curta.',
-    both: 'A mesma página com os vãos fechados e as laterais aparadas, e por isso mais curta e mais estreita.',
+    disabled:
+      'Uma página cortada de uma tira, com vãos brancos entre os quadros. Nada está sombreado, e a mesma página aparece à direita.',
+    horizontal:
+      'A página com os vãos brancos entre os quadros sombreados de rosa, e à direita a mesma página sem essas linhas: ela é mais curta.',
+    both: 'A página com os vãos brancos entre os quadros sombreados de rosa e também uma faixa branca ao longo da borda direita, e à direita a página sem essas linhas e colunas: ela é mais curta e mais estreita.',
   }}
 />
+
+Na última imagem a faixa da borda direita também some, e ela não é um vão entre quadros. Para as colunas, o 1% da borda é medido pela altura da página, não pela largura, que é como o KCC faz e o mangapress o segue. Numa página mais alta que larga, uma faixa branca ao longo da borda direita é por isso removida como se fosse um vão, enquanto a da borda esquerda fica.
 
 `--ipc` aceita `disabled`, `horizontal` ou `both`.

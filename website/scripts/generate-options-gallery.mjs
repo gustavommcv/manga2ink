@@ -33,7 +33,13 @@ import {
   pdfFacts,
   pdfPictures,
 } from './options-gallery/book-facts.mjs';
-import { boxesPicture, cropPicture, findBox } from './options-gallery/crop.mjs';
+import {
+  boxesPicture,
+  cropPicture,
+  findBox,
+  findRemoved,
+  gapsPicture,
+} from './options-gallery/crop.mjs';
 import { flowPicture } from './options-gallery/flow.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
@@ -259,10 +265,10 @@ function convert(mangapress, input, flags, work, profile) {
   return pagesOf(makeBook(mangapress, input, flags, work, profile, base.format).bytes);
 }
 
-/** The first page converted without enlarging and without loss, so that a crop of it is a piece of it. */
-function nativePage(mangapress, input, flags, work, profile) {
+/** A page converted without enlarging and without loss, so that a crop of it is a piece of it. */
+function nativePage(mangapress, input, flags, work, profile, index) {
   const all = combine(base.flags, [...flags, '--forcepng', '--noquantize'], ['--upscale']);
-  return pagesOf(makeBook(mangapress, input, all, work, profile, base.format).bytes)[0];
+  return pagesOf(makeBook(mangapress, input, all, work, profile, base.format).bytes)[index];
 }
 
 /** Writes the picture of a variant as a WebP in the assets folder and records it in the entry. */
@@ -449,6 +455,7 @@ async function runExample(mangapress, example, scratch) {
       flags,
       path.join(scratch, 'native', example.id, name),
       example.profile ?? base.profile,
+      example.show ?? 0,
     );
   const reference = cropping ? native('reference', cropping.reference) : undefined;
   const referenceSize = reference ? await sharp(reference).metadata() : undefined;
@@ -456,6 +463,22 @@ async function runExample(mangapress, example, scratch) {
   if (example.crop)
     for (const variant of example.variants)
       boxOf.set(variant.id, await findBox(reference, native(variant.id, variant.flags)));
+  // For the pictures of the gaps cut out of a page: the page of each variant, and which of its rows and
+  // columns the variants took out of one another (`gaps.rows` and `gaps.columns` name the page that was
+  // cut and the page that is left).
+  const gapPages = new Map();
+  const gapsOf = new Map();
+  if (example.gaps) {
+    for (const variant of example.variants)
+      gapPages.set(variant.id, native(variant.id, variant.flags));
+    const found = (axis, pair) =>
+      pair ? findRemoved(gapPages.get(pair[0]), gapPages.get(pair[1]), axis) : [];
+    for (const variant of example.variants)
+      gapsOf.set(variant.id, {
+        rows: await found('rows', variant.gaps?.rows),
+        columns: await found('columns', variant.gaps?.columns),
+      });
+  }
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
     // A variant may have an input of its own, such as a wide first image for the cover.
@@ -600,6 +623,13 @@ async function runExample(mangapress, example, scratch) {
           compare: variant.compare ? boxOf.get(variant.compare) : undefined,
           result: picked[0],
           screen: example.crop.screen,
+        });
+      else if (example.gaps)
+        picture = await gapsPicture({
+          source: gapPages.get(example.gaps.reference),
+          size: await sharp(gapPages.get(example.gaps.reference)).metadata(),
+          ...gapsOf.get(variant.id),
+          result: gapPages.get(variant.id),
         });
       else if (all) picture = await row(picked);
       else if (example.zoom)

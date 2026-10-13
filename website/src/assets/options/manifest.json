@@ -279,7 +279,7 @@
     },
     "cropping-gutters": {
       "kind": "pictures",
-      "layout": "grid",
+      "layout": "rows",
       "sources": ["pepper-ep06"],
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
@@ -293,10 +293,10 @@
           "height": 1092,
           "pageBytes": 184379,
           "file": "cropping-gutters-disabled.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 771,
-          "bytes": 55302,
-          "sha256": "79d0b6fdd930001c9bf96f6bfd31cbf4bee2eb8631fd1b4e49dc12d7ddf1658c"
+          "pictureWidth": 800,
+          "pictureHeight": 420,
+          "bytes": 31562,
+          "sha256": "90f62afe0dbf96953fb925bbb4e9d5634f9b6d847da0772910196e12093abe3c"
         },
         {
           "id": "horizontal",
@@ -306,10 +306,10 @@
           "height": 1004,
           "pageBytes": 177621,
           "file": "cropping-gutters-horizontal.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 708,
-          "bytes": 53644,
-          "sha256": "0d059fa3b4c0029b48a5c0aebeda7d033f1d7bc0ec03c276bee43e5d8ea97a9c"
+          "pictureWidth": 800,
+          "pictureHeight": 420,
+          "bytes": 31504,
+          "sha256": "4f696e3c304bd3a373699a8d9ffe3e705e6a306b5c3e92770d7ebb707289fe32"
         },
         {
           "id": "both",
@@ -319,10 +319,10 @@
           "height": 1004,
           "pageBytes": 177239,
           "file": "cropping-gutters-both.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 735,
-          "bytes": 57928,
-          "sha256": "98cd0e08619d35a8caeccf768ab85514b5499b108bbefca249876b3d9475e4aa"
+          "pictureWidth": 800,
+          "pictureHeight": 420,
+          "bytes": 31482,
+          "sha256": "8b69fe5a5fa2981e1c8985884ffb3528e925e3e7996698c610ab0b754ffc224c"
         }
       ]
     },

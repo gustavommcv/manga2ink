@@ -8,7 +8,7 @@ import OptionSizes from '../../../../components/OptionSizes.astro';
 
 Cropping cuts the empty margin off a page before the page is fitted to the screen, so the drawing comes out larger. The settings are in the **Cropping** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** is dimmed, with the reason, for **Webtoon strips** and for **Use the images as they are**, and the three numbers (power, minimum, margin) follow it: they are also dimmed while it is **Disabled**. **Inter-panel cropping** is dimmed only for **Use the images as they are**.
 
-In the pictures of this page, the page that was converted is on the left, with the part that is kept outlined in teal and the part that is cut away shaded pink; on the right is the page as it comes out, on a screen.
+In the pictures of the next two sections, the page that was converted is on the left, with the part that is kept outlined in teal and the part that is cut away shaded pink; on the right is the page as it comes out, on a screen.
 
 ## Page cropping
 
@@ -80,15 +80,19 @@ The default is 0%, and the app accepts 0 to 100%. The crop is backed off by this
 
 The default is **Disabled**. This option removes the empty gutters _between_ panels, not the margin around the page. **Horizontal gaps** removes the rows that are paper from edge to edge; **Horizontal and vertical gaps** removes the columns too. A gutter within 1% of the page's border is not removed, and a thin strip of every gap stays so that panels do not touch. Cropping power does not apply to it: its threshold is fixed.
 
-It is meant for webtoon-style pages that have long empty stretches. The example joins three pages of _Pepper&Carrot_ into one tall strip, as [Reading](../reading/#content) does, converts it as **Webtoon strips**, and shows the second page of the result.
+It is meant for webtoon-style pages that have long empty stretches. The example joins three pages of _Pepper&Carrot_ into one tall strip, as [Reading](../reading/#content) does, converts it as **Webtoon strips**, and shows the second page of the result. In each picture the page is on the left, with the rows and columns that were removed shaded pink, and on the right is the page that is left, at the same scale.
 
 <OptionExample
   id="cropping-gutters"
   alt={{
-    disabled: 'A page cut from a strip, with white gaps between its panels.',
-    horizontal: 'The same page with the gaps between the panels closed up, so it is shorter.',
-    both: 'The same page with the gaps closed up and its sides trimmed, so it is shorter and narrower.',
+    disabled:
+      'A page cut from a strip, with white gaps between its panels. Nothing is shaded, and the same page is on the right.',
+    horizontal:
+      'The page with the white gaps between its panels shaded pink, and on the right the same page without those rows: it is shorter.',
+    both: 'The page with the white gaps between its panels shaded pink and a white strip along its right edge shaded too, and on the right the page without those rows and columns: it is shorter and narrower.',
   }}
 />
+
+In the last picture the strip along the right edge goes too, and that is not a gutter between panels. For columns, the 1% of the border is measured against the page's height, not its width, which is how KCC does it and mangapress follows it. On a page taller than it is wide, a white strip along the right edge is therefore removed as if it were a gutter, while the one along the left edge stays.
 
 `--ipc` takes `disabled`, `horizontal` or `both`.
