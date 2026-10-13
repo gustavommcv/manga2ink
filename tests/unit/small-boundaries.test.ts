@@ -15,6 +15,10 @@ import { fromTheMainFrame } from '@/main/ipc/handle';
 import { isOwnHost } from '@/opds/host';
 
 type StatFunction = typeof nodeStat;
+// The handler module takes `ipcMain` from Electron; this test only reads a function of it, and must
+// not need the Electron binary to be there (a runner without it fails on the import alone).
+vi.mock('electron', () => ({ ipcMain: { handle: vi.fn() } }));
+
 const directories: string[] = [];
 afterEach(async () => {
   await Promise.all(directories.splice(0).map((d) => rm(d, { recursive: true, force: true })));
