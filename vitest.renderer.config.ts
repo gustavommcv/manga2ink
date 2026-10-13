@@ -13,8 +13,8 @@ const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
  * The renderer is not under the 100% gate of `npm run test:unit`: its behavior is checked through
  * React Testing Library and Storybook, and a floor says when a change leaves a screen less covered
  * than it was, without asking for every branch of a layout. The numbers sit a little under what the
- * suite reaches (96% of statements, 93.5% of branches, 96% of functions, 97% of lines on
- * 2026-10-13): raise them when the suite does, never lower them to let a change through.
+ * suite reaches (98.4% of statements, 94.4% of branches, 99.3% of functions, 99.5% of lines
+ * on 2026-10-13): raise them when the suite does, never lower them to let a change through.
  */
 export default defineConfig({
   resolve: {
@@ -36,10 +36,10 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text-summary'],
       thresholds: {
-        branches: 92,
-        functions: 95,
-        lines: 96,
-        statements: 95,
+        branches: 93,
+        functions: 98,
+        lines: 98,
+        statements: 97,
       },
     },
   },
