@@ -15,7 +15,7 @@ mangapress "Volume.cbz" --profile KV --manga-style --format epub
 
 Use `--list-profiles` to find your device's code and resolution. For example, Kobo Libra 2 uses **KoL** and reMarkable Paper Pro uses **RmkPP**.
 
-The CLI defaults to **KV**. Add `--manga-style` for right-to-left reading order and `--keepcomicinfo` to retain supported ComicInfo data. Mangabound sets its own defaults, so use matching options when comparing a terminal conversion with the app.
+Add `--manga-style` for right-to-left reading order and `--keepcomicinfo` to retain supported ComicInfo data. The CLI's defaults are not Mangabound's, starting with the device (see below), so use matching options when comparing a terminal conversion with the app.
 
 ## Choosing the device and the format
 
@@ -31,7 +31,7 @@ Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profil
 Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
 ```
 
-A custom size also stops mangapress from treating the device as a Kobo, so its EPUB is named `.epub` and not `.kepub.epub`.
+A custom size also changes the name of a Kobo's EPUB: see [Book metadata](../../user-guide/advanced-options/book-metadata/#name-the-book-epub).
 
 `--format FORMAT`, or `-f`, is `epub`, `cbz`, `pdf` or `auto`, which is the default. `auto` picks CBZ for a Kindle, PDF for a reMarkable and EPUB for every other device: `-p KPW6` and `-p K11` give a CBZ, `-p KoLC` an EPUB and `-p Rmk2` a PDF. A book is named after its input with the format's extension, and a file that is already there is never overwritten: the book gets another name, and the report says which.
 

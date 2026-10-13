@@ -59,7 +59,7 @@ Com **Manga reading order** ligada, a metade da direita da página dupla é a pr
   }}
 />
 
-Ajuste-a ao jeito como o livro é lido: ligada para mangá. Num EPUB a opção também define a direção do livro no arquivo de pacote, que um leitor que segue a direção do livro usa para virar as páginas: `page-progression-direction` é `rtl` com ela ligada e `ltr` desligada. `--manga-style` a liga, e `-m` é a forma curta. Ela não vale para **Webtoon strips**.
+Ajuste-a ao jeito como o livro é lido: ligada para mangá. [Leitura](../reading/#manga-reading-order) diz o que mais ela faz, como a direção que um EPUB registra, e por que não vale para **Webtoon strips**.
 
 ## A página dupla inteira: primeiro, em pé ou no sentido horário
 
@@ -117,20 +117,7 @@ O que cada uma faz:
 
 O app esmaece uma opção que outra escolha deixa sem efeito, e diz o motivo.
 
-- **Use the images as they are** esmaece **Wide pages**, as três opções da página dupla inteira e **Restack 4-panel strips**: as páginas não são tocadas, então nada é cortado ou girado. **Manga reading order** e a visão de duas páginas continuam valendo.
-- **Webtoon strips** esmaece **Manga reading order**, **Wide pages**, as três opções da página dupla inteira e **Restack 4-panel strips**: um webtoon nunca é lido da direita para a esquerda nem cortado.
+- **Use the images as they are** e **Webtoon strips** esmaecem **Wide pages**, as três opções da página dupla inteira e **Restack 4-panel strips**, já que nada é cortado nem girado; **Webtoon strips** esmaece também **Manga reading order**. As listas completas estão em [Imagens das páginas](../page-images/#use-the-images-as-they-are) e [Leitura](../reading/#o-que-mais-muda-com-ela).
 - **Restack 4-panel strips as 2×2** esmaece **Wide pages** e as três opções da página dupla inteira, que ela substitui.
 - **Whole spread first** fica esmaecida a menos que **Wide pages** seja **Both**. **Keep the whole spread upright** e **Rotate clockwise** ficam esmaecidas enquanto **Wide pages** é **Split into two pages**, e **Rotate clockwise** também enquanto a página dupla é mantida em pé.
 - As três opções da visão de duas páginas ficam esmaecidas em CBZ e PDF.
-
-## Opções e flags
-
-- **Manga reading order**: `--manga-style`, ou `-m`.
-- **Wide pages**: `--splitter`, ou `-r`, com `split`, `rotate` ou `both`.
-- **Whole spread first**: `--rotatefirst`.
-- **Keep the whole spread upright**: `--norotate`.
-- **Rotate clockwise**: `--rotateright`.
-- **Restack 4-panel strips as 2×2**: `--maximizestrips`.
-- **Start on the other side**: `--spreadshift`.
-- **One page in landscape**: `--onepagelandscape`.
-- **Invert page turns**: `--invertdirection`.

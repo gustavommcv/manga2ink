@@ -19,9 +19,9 @@ The **Color and tone** section of [Advanced conversion options](../../output-pro
   }}
 />
 
-A color page is a bigger file than a gray one: compare the sizes under the pictures. A black-and-white screen cannot show the color, so keep it for a color screen. `--forcecolor` is the flag; without it, every page is gray. In the app, choosing another device puts this back to what that device starts with: **Keep in color** for the readers with a color screen, such as the Kobo Libra Colour and the reMarkable Paper Pro, and grayscale for every other.
+A color page is a bigger file than a gray one: compare the sizes under the pictures. A black-and-white screen cannot show the color, so keep it for a color screen. `--forcecolor` is the flag; without it, every page is gray.
 
-With **Use the images as they are** on, this setting is dimmed for CBZ and PDF, because the pages are not touched. In an EPUB it still decides the cover.
+With **Use the images as they are** on, this setting is dimmed for CBZ and PDF; [Page images](../page-images/#use-the-images-as-they-are) says what else it dims.
 
 ## Autocontrast
 
@@ -29,7 +29,7 @@ With **Use the images as they are** on, this setting is dimmed for CBZ and PDF, 
 
 - **Black-and-white pages only**, the default: pages with no real color are stretched, pages with color are not.
 - **Color pages too**: every page is stretched. `--colorautocontrast`.
-- **Off**: no page is stretched. `--noautocontrast`.
+- **Off**: no page is stretched. `--noautocontrast`, which wins if `--colorautocontrast` is given too.
 
 The example page has color, so the default leaves it alone. The first picture is that, and the second is **Color pages too**: the darkest pixel goes from 5 to 0 and the page gets darker overall.
 
@@ -74,11 +74,3 @@ The picture is a 260-pixel square of the page, enlarged 2.7 times without smooth
     on: 'The same close-up with a faint diagonal texture in the sky.',
   }}
 />
-
-## Options and flags
-
-- **Color pages**: `--forcecolor`. On keeps color, off converts to grayscale.
-- **Autocontrast**: `--colorautocontrast` stretches color pages too, and `--noautocontrast` turns it off; if both are given, off wins.
-- **Auto-level black point**: `--autolevel`.
-- **Gamma**: `--gamma`, or `-g`, a number; the app accepts 0.1 to 4.
-- **Reduce rainbow effect**: `--eraserainbow`.

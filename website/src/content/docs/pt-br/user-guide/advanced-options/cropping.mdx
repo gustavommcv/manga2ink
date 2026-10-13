@@ -41,7 +41,7 @@ Maior nem sempre é mais. Em 3,75 o limite é 0: só o preto puro ainda conta co
 
 ## Minimum retained area
 
-O padrão é 0%. O mangapress só corta quando a página cortada mantém pelo menos essa fração da área da página, e deixa a página como está caso contrário.
+O padrão é 0%, e o app aceita de 0 a 100%. O mangapress só corta quando a página cortada mantém pelo menos essa fração da área da página, e deixa a página como está caso contrário.
 
 <OptionSizes id="cropping-minimum-sizes" />
 
@@ -49,7 +49,7 @@ O corte desta página mantém 80,1%, então um mínimo de 80 o permite e 81 o re
 
 ## Preserved margin
 
-O padrão é 0%. O corte recua por essa porcentagem depois do limite de 10%, então sobra um pouco de margem: com 50%, metade do que seria removido é mantida; com 100%, nada é removido.
+O padrão é 0%, e o app aceita de 0 a 100%. O corte recua por essa porcentagem depois do limite de 10%, então sobra um pouco de margem: com 50%, metade do que seria removido é mantida; com 100%, nada é removido.
 
 <OptionExample
   id="cropping-preserve"
@@ -67,7 +67,7 @@ O padrão é 0%. O corte recua por essa porcentagem depois do limite de 10%, ent
 
 O padrão é **Disabled**. Esta opção remove os vãos vazios _entre_ os quadros, não a margem em volta da página. **Horizontal gaps** remove as linhas que são papel de ponta a ponta; **Horizontal and vertical gaps** remove também as colunas. Um vão a menos de 1% da borda da página não é removido, e uma faixa fina de cada vão fica para os quadros não se encostarem. A potência de corte não vale para ela: o limite é fixo.
 
-Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junta três páginas de _Pepper&Carrot_ numa tira alta, converte como **Webtoon strips** e mostra a segunda página do resultado.
+Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junta três páginas de _Pepper&Carrot_ numa tira alta, como em [Leitura](../reading/#content), converte como **Webtoon strips** e mostra a segunda página do resultado.
 
 <OptionExample
   id="cropping-gutters"
@@ -79,11 +79,3 @@ Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junt
 />
 
 `--ipc` aceita `disabled`, `horizontal` ou `both`.
-
-## Opções e flags
-
-- **Page cropping**: `--cropping`, ou `-c`, com `disabled`, `margins` ou `margins-and-page-numbers`.
-- **Cropping power**: `--croppingpower`, um número; o app aceita de 0 a 10.
-- **Minimum retained area**: `--croppingminimum`, de 0 a 100 por cento.
-- **Preserved margin**: `--preservemargin`, de 0 a 100 por cento.
-- **Inter-panel cropping**: `--ipc`, com `disabled`, `horizontal` ou `both`.

@@ -101,7 +101,7 @@ A configuração pede um código que não esteja vazio, e os detalhes de um livr
 
 ## Name the book .epub
 
-O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangapress dá esse nome ao EPUB que faz para um perfil Kobo, quando monta o nome a partir da entrada. **Name the book .epub** mantém o `.epub` simples. Só o nome muda: o livro por dentro é o mesmo arquivo. Um tamanho de tela personalizado faz o mangapress deixar de tratar o dispositivo como um Kobo, um livro para qualquer outro dispositivo já se chama `.epub`, e um CBZ é sempre `.cbz`.
+O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangapress dá esse nome ao EPUB que faz para um perfil Kobo, quando monta o nome a partir da entrada. **Name the book .epub**, `--nokepub`, mantém o `.epub` simples. Só o nome muda: o livro por dentro é o mesmo arquivo. Um tamanho de tela personalizado faz o mangapress deixar de tratar o dispositivo como um Kobo, um livro para qualquer outro dispositivo já se chama `.epub`, e um CBZ é sempre `.cbz`.
 
 <OptionBook
   id="metadata-kepub"
@@ -113,12 +113,3 @@ O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangapress d
     kindle: 'Kindle Paperwhite 6, EPUB',
   }}
 />
-
-## Opções e flags
-
-- **Book title**, nos detalhes de um item: `--title`, ou `-t`.
-- **Author**, nos detalhes de um item: `--author`, ou `-a`.
-- **ComicInfo title**: `--metadatatitle`, com `series-only`, `combine` ou `title-only`.
-- **Keep ComicInfo.xml**: `--keepcomicinfo`.
-- **EPUB language**: `--language`.
-- **Name the book .epub**: `--nokepub`.

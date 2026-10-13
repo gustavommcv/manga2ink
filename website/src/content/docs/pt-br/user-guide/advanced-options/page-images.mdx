@@ -72,12 +72,3 @@ Empacota as páginas intactas: nada é cortado, redimensionado, passado para cin
 A página acima já é um JPEG com mais tons do que a convertida precisa, então o arquivo intacto é o maior dos dois, e tem 992 × 1373 pixels, não os 1272 × 1696 da tela. A ordem de leitura, o corte de webtoon e a visão de duas páginas continuam valendo, e a capa de um EPUB ainda é feita da primeira imagem, então num EPUB **Color pages** e **JPEG quality** ainda a decidem. Um EPUB não guarda uma página BMP sem mudá-la: a conversão é recusada e diz para desligar a opção ou escolher CBZ.
 
 Com ela ligada, o app esmaece tudo que mudaria uma imagem: **Page format** e as três opções de PNG, **Gamma**, **Reduce rainbow effect**, as opções de corte, tamanho e bordas e **Autocontrast**; num CBZ ou PDF, também **Color pages** e **JPEG quality**. `--noprocessing`.
-
-## Opções e flags
-
-- **Page format**: `--forcepng` para PNG; nenhum para JPEG.
-- **Keep all 256 grays**: `--noquantize`.
-- **8-bit PNG**: `--pnglegacy`.
-- **Color pages as PNG too**: `--force-png-rgb`.
-- **JPEG quality**: `--jpeg-quality`, de 1 a 100.
-- **Use the images as they are**: `--noprocessing`.

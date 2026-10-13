@@ -6,7 +6,7 @@ description: 'What Page cropping, Cropping power, Minimum retained area, Preserv
 import OptionExample from '../../../../components/OptionExample.astro';
 import OptionSizes from '../../../../components/OptionSizes.astro';
 
-Cropping cuts the empty margin off a page before the page is fitted to the screen, so the drawing comes out larger. The settings are in the **Cropping** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options), **Page cropping** is dimmed, with the reason, for **Webtoon strips** and for **Use the images as they are**. The three numbers (power, minimum, margin) follow it and are also dimmed while it is **Disabled**. **Inter-panel cropping** is dimmed only for **Use the images as they are**.
+Cropping cuts the empty margin off a page before the page is fitted to the screen, so the drawing comes out larger. The settings are in the **Cropping** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** is dimmed, with the reason, for **Webtoon strips** and for **Use the images as they are**, and the three numbers (power, minimum, margin) follow it: they are also dimmed while it is **Disabled**. **Inter-panel cropping** is dimmed only for **Use the images as they are**.
 
 ## Page cropping
 
@@ -41,7 +41,7 @@ Higher is not always more. At 3.75 the threshold is 0: only pure black still cou
 
 ## Minimum retained area
 
-The default is 0%. mangapress crops only when the cropped page keeps at least this share of the page's area, and leaves the page as it is otherwise.
+The default is 0%, and the app accepts 0 to 100%. mangapress crops only when the cropped page keeps at least this share of the page's area, and leaves the page as it is otherwise.
 
 <OptionSizes id="cropping-minimum-sizes" />
 
@@ -49,7 +49,7 @@ The crop of this page keeps 80.1%, so a minimum of 80 allows it and 81 refuses i
 
 ## Preserved margin
 
-The default is 0%. The crop is backed off by this percentage after the 10% limit, so some margin stays: at 50% half of what would have been removed is kept, at 100% nothing is removed.
+The default is 0%, and the app accepts 0 to 100%. The crop is backed off by this percentage after the 10% limit, so some margin stays: at 50% half of what would have been removed is kept, at 100% nothing is removed.
 
 <OptionExample
   id="cropping-preserve"
@@ -67,7 +67,7 @@ The default is 0%. The crop is backed off by this percentage after the 10% limit
 
 The default is **Disabled**. This option removes the empty gutters _between_ panels, not the margin around the page. **Horizontal gaps** removes the rows that are paper from edge to edge; **Horizontal and vertical gaps** removes the columns too. A gutter within 1% of the page's border is not removed, and a thin strip of every gap stays so that panels do not touch. Cropping power does not apply to it: its threshold is fixed.
 
-It is meant for webtoon-style pages that have long empty stretches. The example joins three pages of _Pepper&Carrot_ into one tall strip, converts it as **Webtoon strips**, and shows the second page of the result.
+It is meant for webtoon-style pages that have long empty stretches. The example joins three pages of _Pepper&Carrot_ into one tall strip, as [Reading](../reading/#content) does, converts it as **Webtoon strips**, and shows the second page of the result.
 
 <OptionExample
   id="cropping-gutters"
@@ -79,11 +79,3 @@ It is meant for webtoon-style pages that have long empty stretches. The example 
 />
 
 `--ipc` takes `disabled`, `horizontal` or `both`.
-
-## Options and flags
-
-- **Page cropping**: `--cropping`, or `-c`, with `disabled`, `margins` or `margins-and-page-numbers`.
-- **Cropping power**: `--croppingpower`, a number; the app accepts 0 to 10.
-- **Minimum retained area**: `--croppingminimum`, from 0 to 100 percent.
-- **Preserved margin**: `--preservemargin`, from 0 to 100 percent.
-- **Inter-panel cropping**: `--ipc`, with `disabled`, `horizontal` or `both`.

@@ -56,7 +56,7 @@ With **Manga reading order** on, the right half of a spread is the first page, a
   }}
 />
 
-Set it to match how the book is read: on for manga. In an EPUB the option also sets the book's direction in its package file, which a reader that follows the book's direction uses to turn pages: `page-progression-direction` is `rtl` with it on and `ltr` with it off. `--manga-style` turns it on, and `-m` is its short form. It does not apply to **Webtoon strips**.
+Set it to match how the book is read: on for manga. [Reading](../reading/#manga-reading-order) says what else it does, such as the direction an EPUB records, and why it does not apply to **Webtoon strips**.
 
 ## The whole spread: first, upright or clockwise
 
@@ -114,20 +114,7 @@ What each one does:
 
 The app dims an option that another choice leaves without effect, and says why.
 
-- **Use the images as they are** dims **Wide pages**, the three whole-spread options and **Restack 4-panel strips**: the pages are not touched, so nothing is split or turned. **Manga reading order** and the two-page view still apply.
-- **Webtoon strips** dims **Manga reading order**, **Wide pages**, the three whole-spread options and **Restack 4-panel strips**: a webtoon is never read right to left or split.
+- **Use the images as they are** and **Webtoon strips** dim **Wide pages**, the three whole-spread options and **Restack 4-panel strips**, since nothing is split or turned; **Webtoon strips** dims **Manga reading order** too. The full lists are in [Page images](../page-images/#use-the-images-as-they-are) and [Reading](../reading/#what-else-changes-with-it).
 - **Restack 4-panel strips as 2×2** dims **Wide pages** and the three whole-spread options, which it replaces.
 - **Whole spread first** is dimmed unless **Wide pages** is **Both**. **Keep the whole spread upright** and **Rotate clockwise** are dimmed while **Wide pages** is **Split into two pages**, and **Rotate clockwise** also while the spread is kept upright.
 - The three two-page-view options are dimmed for CBZ and PDF.
-
-## Options and flags
-
-- **Manga reading order**: `--manga-style`, or `-m`.
-- **Wide pages**: `--splitter`, or `-r`, with `split`, `rotate` or `both`.
-- **Whole spread first**: `--rotatefirst`.
-- **Keep the whole spread upright**: `--norotate`.
-- **Rotate clockwise**: `--rotateright`.
-- **Restack 4-panel strips as 2×2**: `--maximizestrips`.
-- **Start on the other side**: `--spreadshift`.
-- **One page in landscape**: `--onepagelandscape`.
-- **Invert page turns**: `--invertdirection`.

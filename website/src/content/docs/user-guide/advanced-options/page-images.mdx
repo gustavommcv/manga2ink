@@ -71,12 +71,3 @@ Packages the pages untouched: nothing is cropped, resized, turned to gray or sav
 The page above is already a JPEG with more tones than the converted one needs, so the untouched file is the bigger of the two, and it is 992 × 1373 pixels, not the screen's 1272 × 1696. The reading order, the webtoon cut and the two-page view still apply, and an EPUB's cover is still made from the first image, so for an EPUB, **Color pages** and **JPEG quality** still decide it. An EPUB cannot hold a BMP page unchanged: the conversion is refused and says to turn the option off or choose CBZ.
 
 While it is on, the app dims everything that would change an image: **Page format** and the three PNG options, **Gamma**, **Reduce rainbow effect**, the cropping, size and border options and **Autocontrast**; for a CBZ or PDF, **Color pages** and **JPEG quality** too. `--noprocessing`.
-
-## Options and flags
-
-- **Page format**: `--forcepng` for PNG; none for JPEG.
-- **Keep all 256 grays**: `--noquantize`.
-- **8-bit PNG**: `--pnglegacy`.
-- **Color pages as PNG too**: `--force-png-rgb`.
-- **JPEG quality**: `--jpeg-quality`, from 1 to 100.
-- **Use the images as they are**: `--noprocessing`.

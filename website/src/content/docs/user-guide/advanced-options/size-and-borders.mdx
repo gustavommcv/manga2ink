@@ -28,8 +28,6 @@ If more than one size option is given on the command line, `--stretch` wins over
 - **Stretch to the screen**: the page fills the screen exactly, without keeping its proportions. `--stretch`, or `-s`.
 - **Crop to fill the screen**: the page is cropped until it fills the whole screen. `--wallpaper`.
 
-In the app, choosing another device also puts the enlarging back to what that device starts with: **Fit, enlarging small pages** for most, **Fit, never enlarge** for older or low-resolution readers, the Kindle Scribe family and the OTHER profile.
-
 A page smaller than the screen is where the first two differ. The Paperwhite 6's screen is larger than a page of Pepper&Carrot, so **Fit, never enlarge** leaves the page at its own size in the middle of the screen, and the other fits it to the screen. The page is 3.7% narrower than the screen's shape, so enlarging leaves a thin band of the page's background down each side, about 23 pixels:
 
 <OptionExample
@@ -58,7 +56,7 @@ Stretching and cropping change the page where the screen is another shape. The r
 
 **Stretch** pulls the drawing about 28% taller against its width. **Crop to fill** scales the page to the screen's height, 1696 pixels, which makes it 1225 wide, and cuts 271 of them, 22% of the width, from the sides. Neither keeps the page whole: use them for a page that has a margin to spare, or when filling the screen matters more than the edges.
 
-With **Webtoon strips**, pages are never enlarged: the app says so under **Page size**. **Use the images as they are** dims **Page size** and **Borders**, since the pages are not touched.
+With **Webtoon strips**, pages are never enlarged and borders are always white, and the app says so; with **Use the images as they are**, **Page size** and **Borders** are dimmed, since the pages are not touched. [Reading](../reading/#what-else-changes-with-it) has the full list for webtoons.
 
 ## Borders
 
@@ -66,7 +64,7 @@ When a page does not have the screen's shape, the room around it is the borders.
 
 - **Automatic**: each page gets the background its own edges have. mangapress looks at the page and takes it as white or as dark, and pads with white or with black.
 - **White**: in a CBZ or PDF, pages are not padded: the file is the page alone, as small as it comes out. In an EPUB, a white background behind every page, dark ones included. `--whiteborders`.
-- **Black**: pages are padded to the screen with black; in an EPUB, a black background behind every page. `--blackborders`.
+- **Black**: pages are padded to the screen with black; in an EPUB, a black background behind every page. `--blackborders`, which wins if `--whiteborders` is given too.
 
 A light page and a screen taller than it:
 
@@ -95,10 +93,4 @@ A dark page is where **Automatic** shows. The picture below is a page with a bla
 
 **Automatic** found a dark page and padded with black, so the first and the third picture are the same file here. **White** gives the page alone, 954 × 1471 pixels, and in an EPUB would give it a white background that would show as a bright frame around a dark picture.
 
-With **Webtoon strips**, borders are always white, and the app says so. A page that is cropped to fit, as in the fourth rule above, has no borders to choose.
-
-## Options and flags
-
-- **Page size**: `--upscale` or `-u` for **Fit, enlarging small pages**; `--stretch` or `-s`; `--wallpaper`. None for **Fit, never enlarge**.
-- **Borders**: `--whiteborders`, `--blackborders`. If both are given, black wins.
-- **Custom width** and **Custom height**: `--customwidth` and `--customheight`, in pixels, described in [Conversion settings](../../output-profiles/).
+A page that is cropped to fit, as in the fourth rule above, has no borders to choose.

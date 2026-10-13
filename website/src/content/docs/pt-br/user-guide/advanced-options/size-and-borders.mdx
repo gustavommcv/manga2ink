@@ -28,8 +28,6 @@ Se mais de uma opção de tamanho for dada na linha de comando, `--stretch` venc
 - **Stretch to the screen**: a página preenche a tela exatamente, sem manter as proporções. `--stretch`, ou `-s`.
 - **Crop to fill the screen**: a página é cortada até preencher a tela inteira. `--wallpaper`.
 
-No app, escolher outro dispositivo também devolve a ampliação ao que esse dispositivo traz de início: **Fit, enlarging small pages** para a maioria, **Fit, never enlarge** para os leitores mais antigos ou de baixa resolução, a família Kindle Scribe e o perfil OTHER.
-
 Uma página menor que a tela é onde as duas primeiras diferem. A tela do Paperwhite 6 é maior que uma página de Pepper&Carrot, então **Fit, never enlarge** deixa a página no seu tamanho, no meio da tela, e a outra a ajusta à tela. A página é 3,7% mais estreita que o formato da tela, então ampliar deixa uma faixa fina do fundo da página de cada lado, de cerca de 23 pixels:
 
 <OptionExample
@@ -58,7 +56,7 @@ Esticar e cortar mudam a página quando a tela tem outro formato. O reMarkable P
 
 **Stretch** puxa o desenho cerca de 28% mais alto em relação à largura. **Crop to fill** escala a página até a altura da tela, 1696 pixels, o que a deixa com 1225 de largura, e corta 271 deles, 22% da largura, dos lados. Nenhuma das duas mantém a página inteira: use-as numa página que tem margem de sobra, ou quando preencher a tela importa mais que as bordas.
 
-Com **Webtoon strips**, as páginas nunca são ampliadas: o app avisa isso em **Page size**. **Use the images as they are** esmaece **Page size** e **Borders**, já que as páginas não são tocadas.
+Com **Webtoon strips**, as páginas nunca são ampliadas e as bordas são sempre brancas, e o app avisa; com **Use the images as they are**, **Page size** e **Borders** ficam esmaecidas, já que as páginas não são tocadas. [Leitura](../reading/#o-que-mais-muda-com-ela) tem a lista completa para webtoons.
 
 ## Borders
 
@@ -66,7 +64,7 @@ Quando uma página não tem o formato da tela, o espaço em volta dela são as b
 
 - **Automatic**: cada página recebe o fundo que as suas próprias bordas têm. O mangapress olha a página e a toma como clara ou escura, e preenche com branco ou com preto.
 - **White**: em CBZ ou PDF, as páginas não são preenchidas: o arquivo é só a página, do tamanho em que ela sai. Em EPUB, um fundo branco atrás de toda página, as escuras também. `--whiteborders`.
-- **Black**: as páginas são preenchidas até a tela com preto; em EPUB, um fundo preto atrás de toda página. `--blackborders`.
+- **Black**: as páginas são preenchidas até a tela com preto; em EPUB, um fundo preto atrás de toda página. `--blackborders`, que vence se `--whiteborders` também for dado.
 
 Uma página clara e uma tela mais alta que ela:
 
@@ -96,10 +94,4 @@ Uma página escura é onde **Automatic** aparece. A imagem abaixo é uma página
 
 **Automatic** achou uma página escura e preencheu com preto, então a primeira e a terceira imagens são o mesmo arquivo aqui. **White** dá a página sozinha, 954 × 1471 pixels, e em EPUB lhe daria um fundo branco que apareceria como uma moldura clara em volta de uma imagem escura.
 
-Com **Webtoon strips**, as bordas são sempre brancas, e o app avisa. Uma página cortada para caber, como na quarta regra acima, não tem bordas para escolher.
-
-## Opções e flags
-
-- **Page size**: `--upscale` ou `-u` para **Fit, enlarging small pages**; `--stretch` ou `-s`; `--wallpaper`. Nenhum para **Fit, never enlarge**.
-- **Borders**: `--whiteborders`, `--blackborders`. Se os dois forem dados, o preto vence.
-- **Custom width** e **Custom height**: `--customwidth` e `--customheight`, em pixels, descritas nas [Configurações de conversão](../../output-profiles/).
+Uma página cortada para caber, como na quarta regra acima, não tem bordas para escolher.

@@ -49,11 +49,6 @@ Whether the book itself says which way it turns depends on the format. The table
 
 <OptionBook id="reading-direction" />
 
-- An **EPUB** records the direction in its package file, as `page-progression-direction`: `rtl` with the option on and `ltr` with it off. A reader that follows the direction of the book turns the pages that way.
+- An **EPUB** records the direction in its package file, as `page-progression-direction`: `rtl` with the option on and `ltr` with it off, unless **Invert page turns** in the [two-page view](../double-page-spreads/#two-page-view) reverses it. A reader that follows the direction of the book turns the pages that way.
 - With **Webtoon strips** an EPUB is left to right even when **Manga reading order** is on: mangapress's description of the mode says it implies left-to-right order. That is why the control is dimmed.
 - A **PDF** and a **CBZ** made by mangapress record no direction, so the reader's own setting decides how they turn. The [KOReader settings](../../../koreader/recommended-settings/) page has an example that swaps the tap zones and swipes for right-to-left reading.
-
-## Options and flags
-
-- **Content**: `--webtoon` for **Webtoon strips**, or `-w`; no flag for **Manga or comic pages**.
-- **Manga reading order**: `--manga-style`, or `-m`.
