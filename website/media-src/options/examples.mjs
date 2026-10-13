@@ -26,10 +26,8 @@ const TALL_SCREEN = {
   screen: { width: 954, height: 1696 },
   screenLabel: 'reMarkable Paper Pro Move, 954 × 1696',
 };
-// The first panel of episode 1, cut to its left part: a dark picture whose own edges are dark.
-const DARK_PANEL = {
-  crop: { ...PEPPER_DARK, rect: { left: 41, top: 13, width: 380, height: 438 } },
-};
+// A whole page with a black background: white line art on black, in the manga and anime manner.
+const DARK_PAGE = { source: 'wikipetan-darknesses' };
 // Two consecutive pages of one comic joined side by side, as a scan of a double page is. The later
 // page is on the left and the earlier one on the right, which is how a book read right to left lies open.
 const SPREAD = { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }] };
@@ -296,7 +294,7 @@ export const examples = [
   {
     id: 'borders-dark-page',
     kind: 'pictures',
-    input: DARK_PANEL,
+    input: DARK_PAGE,
     ...TALL_SCREEN,
     variants: [
       { id: 'automatic', label: 'Borders: Automatic', flags: [] },

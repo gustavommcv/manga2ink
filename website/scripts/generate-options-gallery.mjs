@@ -113,15 +113,9 @@ async function page({ source, page: name }) {
  * size of what is in the folder and the path of the file.
  */
 async function writeInput(example, directory) {
-  const { stack, beside, crop } = example.input;
-  const refs = stack ?? beside ?? [crop ?? example.input];
+  const { stack, beside } = example.input;
+  const refs = stack ?? beside ?? [example.input];
   const pages = await Promise.all(refs.map(page));
-  if (crop) {
-    const cut = await sharp(pages[0].bytes).extract(crop.rect).png().toBuffer();
-    const file = path.join(directory, '001.png');
-    writeFileSync(file, cut);
-    return { width: crop.rect.width, height: crop.rect.height, file };
-  }
   if (!stack && !beside) {
     const { bytes, extension } = pages[0];
     const file = path.join(directory, `001.${extension}`);
@@ -309,7 +303,7 @@ async function runExample(mangapress, example, scratch) {
       : `${entry.width}x${entry.height}`;
     console.log(`  ${variant.id.padEnd(28)} ${shape}${entry.file ? `  ${entry.bytes} bytes` : ''}`);
   }
-  const refs = example.input.stack ?? example.input.beside ?? [example.input.crop ?? example.input];
+  const refs = example.input.stack ?? example.input.beside ?? [example.input];
   return {
     kind: example.kind,
     layout: all ? 'rows' : 'grid',

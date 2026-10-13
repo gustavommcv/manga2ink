@@ -872,8 +872,8 @@
     "borders-dark-page": {
       "kind": "pictures",
       "layout": "grid",
-      "sources": ["pepper-ep01"],
-      "source": { "width": 380, "height": 438 },
+      "sources": ["wikipetan-darknesses"],
+      "source": { "width": 699, "height": 1078 },
       "screen": { "width": 954, "height": 1696 },
       "screenLabel": "reMarkable Paper Pro Move, 954 × 1696",
       "variants": [
@@ -883,25 +883,25 @@
           "flags": [],
           "width": 954,
           "height": 1696,
-          "pageBytes": 71936,
+          "pageBytes": 232278,
           "file": "borders-dark-page-automatic.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 16556,
-          "sha256": "cd8cd2c5f1f68309f0eb2e2bb347a5ad4cf54bf3c9377d1805dea951accef0bd"
+          "bytes": 89722,
+          "sha256": "19db9e457ebc69bd9b1ccaded469b038db2bcb964a9a38fc85ef0e12c9cbf7c4"
         },
         {
           "id": "white",
           "label": "Borders: White",
           "flags": ["--whiteborders"],
           "width": 954,
-          "height": 1100,
-          "pageBytes": 66608,
+          "height": 1471,
+          "pageBytes": 229944,
           "file": "borders-dark-page-white.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 16884,
-          "sha256": "e4f9288e54f78660fdbddc3868f159bee3324c48d143286dad2ef8bd10b497fe"
+          "bytes": 89876,
+          "sha256": "0705a7da8ffd48dc8830e15a27a78d380be14a649b5a7744f849e3c42df33051"
         },
         {
           "id": "black",
@@ -909,12 +909,12 @@
           "flags": ["--blackborders"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 71936,
+          "pageBytes": 232278,
           "file": "borders-dark-page-black.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 16556,
-          "sha256": "cd8cd2c5f1f68309f0eb2e2bb347a5ad4cf54bf3c9377d1805dea951accef0bd"
+          "bytes": 89722,
+          "sha256": "19db9e457ebc69bd9b1ccaded469b038db2bcb964a9a38fc85ef0e12c9cbf7c4"
         }
       ]
     }

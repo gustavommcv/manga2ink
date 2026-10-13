@@ -58,6 +58,18 @@
       "sha256": "fdfd9741c9fff000f03534fd8f8bf1747cf1678d3c3abef266bcd64df37dbc00",
       "kind": "image",
       "extension": "png"
+    },
+    "wikipetan-darknesses": {
+      "title": "Wikipe-tan Battling a Wikitroll in the Darknesses of Ignorance",
+      "author": "Polylerus",
+      "attribution": "Polylerus",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+      "page": "https://commons.wikimedia.org/wiki/File:Wikipe-tan_Battling_a_Wikitroll_in_the_Darknesses_of_Ignorance.JPG",
+      "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Wikipe-tan_Battling_a_Wikitroll_in_the_Darknesses_of_Ignorance.JPG",
+      "sha256": "8da42a426e1e9614f922c12edce524bd88d9f6a84dd933b477febe58e9ef0d5b",
+      "kind": "image",
+      "extension": "jpg"
     }
   }
 }
