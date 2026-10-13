@@ -15,6 +15,11 @@ export default defineConfig({
     },
   },
   test: {
+    // Vitest's own limit is five seconds. A few tests do real work (the bundled tools, a whole
+    // workflow, a page of React), and on a loaded Windows runner one of them takes longer than that
+    // now and then: it failed for the time alone and passed on a rerun, more than once. A test that
+    // is actually stuck still fails, a little later.
+    testTimeout: 15_000,
     coverage: {
       include: [
         'src/adapters/**/*.ts',

@@ -27,6 +27,8 @@ export default defineConfig({
     include: ['tests/component/**/*.test.tsx'],
     name: 'component',
     setupFiles: ['./tests/component/setup.ts'],
+    // As in vitest.config.ts, and for the same reason: the instrumented run is slower still.
+    testTimeout: 15_000,
     coverage: {
       // The entry that mounts the page is the one file of the renderer with nothing to test.
       exclude: ['**/*.stories.*', 'src/renderer/index.tsx'],
