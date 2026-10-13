@@ -493,21 +493,6 @@
       "source": { "width": 2160, "height": 1440 },
       "variants": [
         {
-          "id": "source",
-          "label": "The spread as it came",
-          "flags": [],
-          "original": true,
-          "width": 2160,
-          "height": 1440,
-          "pageBytes": 1321177,
-          "pages": [{ "width": 2160, "height": 1440, "bytes": 1321177 }],
-          "file": "spreads-wide-pages-source.webp",
-          "pictureWidth": 868,
-          "pictureHeight": 588,
-          "bytes": 87226,
-          "sha256": "51a431e43d45d6a998625d3949b4a9063fd9c72865221bdf2445c5ef00259973"
-        },
-        {
           "id": "split",
           "label": "Wide pages: Split into two pages",
           "flags": ["--splitter", "split"],
@@ -519,10 +504,10 @@
             { "width": 1272, "height": 1696, "bytes": 380448 }
           ],
           "file": "spreads-wide-pages-split.webp",
-          "pictureWidth": 882,
-          "pictureHeight": 588,
-          "bytes": 99760,
-          "sha256": "d7ff69911c0c1b7674dab20b69363931cbc70d0663cb15386c037d09120a3925"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 82308,
+          "sha256": "e05c94a338df057a72850fb37c19edc914e5d95880de00be826e0425a5982334"
         },
         {
           "id": "rotate",
@@ -533,10 +518,10 @@
           "pageBytes": 462055,
           "pages": [{ "width": 1272, "height": 1696, "bytes": 462055 }],
           "file": "spreads-wide-pages-rotate.webp",
-          "pictureWidth": 448,
-          "pictureHeight": 588,
-          "bytes": 52570,
-          "sha256": "969bb0c914200351940e44d67f41e387dae13d28ea2d3d183f1bc1c9535455cf"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 56188,
+          "sha256": "3c41b0714dcc7a67502e5fbb20ebdcb0c8ea21b1b4bf17cd2e067857058c1e75"
         },
         {
           "id": "both",
@@ -552,9 +537,9 @@
           ],
           "file": "spreads-wide-pages-both.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 491,
-          "bytes": 114918,
-          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+          "pictureHeight": 810,
+          "bytes": 110558,
+          "sha256": "442262e9f9d939ac10e6211791ff52b20ce6ae9e9555079e8e7cb527d15f0703"
         }
       ]
     },
@@ -567,21 +552,6 @@
       "source": { "width": 3240, "height": 1440 },
       "variants": [
         {
-          "id": "source",
-          "label": "The wide page as it came",
-          "flags": [],
-          "original": true,
-          "width": 3240,
-          "height": 1440,
-          "pageBytes": 2107759,
-          "pages": [{ "width": 3240, "height": 1440, "bytes": 2107759 }],
-          "file": "spreads-too-wide-source.webp",
-          "pictureWidth": 1100,
-          "pictureHeight": 502,
-          "bytes": 103408,
-          "sha256": "e1d5f84754bb67da389ff69be629e95b07cd6a966f77a2da22dfc959e4732efc"
-        },
-        {
           "id": "split",
           "label": "Wide pages: Split into two pages",
           "flags": ["--splitter", "split"],
@@ -590,10 +560,10 @@
           "pageBytes": 383078,
           "pages": [{ "width": 1272, "height": 1696, "bytes": 383078 }],
           "file": "spreads-too-wide-split.webp",
-          "pictureWidth": 448,
-          "pictureHeight": 588,
-          "bytes": 37330,
-          "sha256": "9d88cf6cf0ac83f317d3eccfef62a921e43d84209f32491dd6c520af9590e02d"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 62654,
+          "sha256": "43a38c5a5d1bf706ffbde820e0b12722770c26facd9ce56286e560f078793827"
         }
       ]
     },
@@ -617,10 +587,10 @@
             { "width": 1272, "height": 1696, "bytes": 380448 }
           ],
           "file": "spreads-reading-order-right-to-left.webp",
-          "pictureWidth": 882,
-          "pictureHeight": 588,
-          "bytes": 99760,
-          "sha256": "d7ff69911c0c1b7674dab20b69363931cbc70d0663cb15386c037d09120a3925"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 82308,
+          "sha256": "e05c94a338df057a72850fb37c19edc914e5d95880de00be826e0425a5982334"
         },
         {
           "id": "left-to-right",
@@ -634,10 +604,10 @@
             { "width": 1272, "height": 1696, "bytes": 385517 }
           ],
           "file": "spreads-reading-order-left-to-right.webp",
-          "pictureWidth": 882,
-          "pictureHeight": 588,
-          "bytes": 99940,
-          "sha256": "339cdcbd133704d0996bfb141574bfb50a2ea471caeb217eaab140bf34796a90"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 82136,
+          "sha256": "5ecb3951f56112a42a27aefc00f00f2f0086b699663dac762172e494e5b7215f"
         }
       ]
     },
@@ -663,9 +633,9 @@
           ],
           "file": "spreads-whole-copy-default.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 491,
-          "bytes": 114918,
-          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+          "pictureHeight": 810,
+          "bytes": 110558,
+          "sha256": "442262e9f9d939ac10e6211791ff52b20ce6ae9e9555079e8e7cb527d15f0703"
         },
         {
           "id": "first",
@@ -681,9 +651,9 @@
           ],
           "file": "spreads-whole-copy-first.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 491,
-          "bytes": 114234,
-          "sha256": "c553aa17b0eec91aab66856ff69e61af7d34197d5e6db0114a7d4cef508599d5"
+          "pictureHeight": 810,
+          "bytes": 110834,
+          "sha256": "65f938bc288ca36798e1753ea798d7d9052fb67df2e3be56305343a8df9d2dda"
         },
         {
           "id": "upright",
@@ -699,9 +669,9 @@
           ],
           "file": "spreads-whole-copy-upright.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 371,
-          "bytes": 98718,
-          "sha256": "52ecd1805e9ace29b56560d77ea394a35f612d1465ae82acf2e15619065d2a3c"
+          "pictureHeight": 810,
+          "bytes": 99886,
+          "sha256": "1d431f4f2be0d4a68b1e7cd59aa4210295469952c7d412420206804da3477897"
         },
         {
           "id": "clockwise",
@@ -717,9 +687,9 @@
           ],
           "file": "spreads-whole-copy-clockwise.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 491,
-          "bytes": 114526,
-          "sha256": "ec250215a616e5b5ba9e6d1cb9af523521381d819b0fae946f6316e26830e3d2"
+          "pictureHeight": 810,
+          "bytes": 110564,
+          "sha256": "ea6d68937af121d20ab3a457ce31b70c96f55c6c229915a96c0b42aaf7cce04b"
         }
       ]
     },
@@ -745,9 +715,9 @@
           ],
           "file": "spreads-restack-off.webp",
           "pictureWidth": 1100,
-          "pictureHeight": 491,
-          "bytes": 114918,
-          "sha256": "54ea25b74cfc6269f1d48bb8e985cc7143a21e78f45314d9b9c38b403c664c79"
+          "pictureHeight": 810,
+          "bytes": 110558,
+          "sha256": "442262e9f9d939ac10e6211791ff52b20ce6ae9e9555079e8e7cb527d15f0703"
         },
         {
           "id": "on",
@@ -758,10 +728,10 @@
           "pageBytes": 317195,
           "pages": [{ "width": 1272, "height": 1696, "bytes": 317195 }],
           "file": "spreads-restack-on.webp",
-          "pictureWidth": 448,
-          "pictureHeight": 588,
-          "bytes": 32588,
-          "sha256": "56009424d190cb03e0024de4f41dab5f22d18567b019d0ecc0a4957878f31bb7"
+          "pictureWidth": 1100,
+          "pictureHeight": 810,
+          "bytes": 47508,
+          "sha256": "be54d59632b12de003c5526edc331fcee683a68762b2fbb100a8f3c4254d1d2c"
         }
       ]
     },

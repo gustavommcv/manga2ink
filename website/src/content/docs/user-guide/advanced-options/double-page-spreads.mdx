@@ -9,6 +9,8 @@ The **Double-page spreads** section of [Advanced conversion options](../../outpu
 
 The examples join pages of _Go Go! Encyclopedia Girls_ side by side into one image, the way a scan of a spread is. The later page is on the left and the earlier one on the right, as a book read right to left lies open. The conversion is Mangabound's starting one, with **Wide pages** set to **Both** and small pages enlarged, so each half comes out filling the screen.
 
+Each picture shows the spread on top and, under it, the pages mangapress makes from it, in the order they are read, each drawn as a screen. A part of the spread and the page it becomes have the same number and color. A page that was turned on its side is drawn as you read it, with the device turned, and the arrow says which way to turn it.
+
 ## When a page counts as a spread
 
 mangapress calls a page a spread when it is a landscape page and the screen is a portrait one, and its width is more than 1.16 times its height. The test is made after the margins are cropped, so it is the ratio of the cropped page. A page less wide than that is an ordinary page and is left alone, except with **Keep whole, as one page**: there, a landscape page that fits the screen once it is turned is turned whatever its ratio.
@@ -18,9 +20,8 @@ A page 1.8 times as wide as it is tall, or more, is too wide to cut in two and i
 <OptionExample
   id="spreads-too-wide"
   alt={{
-    source: 'Three pages of a comic side by side as one very wide image.',
     split:
-      'One page with the very wide image turned on its side, small, with white bands above and below.',
+      'Three pages of a comic side by side as one very wide image on top, marked 1, and under it one page: the whole image, small, on a screen turned sideways, with an arrow for turning the device.',
   }}
 />
 
@@ -33,11 +34,11 @@ A page 1.8 times as wide as it is tall, or more, is too wide to cut in two and i
 <OptionExample
   id="spreads-wide-pages"
   alt={{
-    source: 'Two pages of a comic side by side as one wide image, the later page on the left.',
-    split: 'Two pages, the right half first and then the left half, each filling the screen.',
+    split:
+      'The spread on top, with its right half marked 1 and its left half marked 2, and under it two pages, 1 and 2, each filling a screen: the right half first, then the left half.',
     rotate:
-      'One page holding the whole spread turned on its side, with white bands above and below it.',
-    both: 'Three pages: the two halves, and then the whole spread turned on its side.',
+      'The whole spread on top, marked 1, and under it one page, 1: the whole spread on a screen turned sideways, with an arrow for turning the device.',
+    both: 'The spread on top, with its right half marked 1, its left half marked 2 and the whole spread marked 3, and under it three pages: the two halves on upright screens, and the whole spread on a screen turned sideways.',
   }}
 />
 
@@ -50,9 +51,10 @@ With **Manga reading order** on, the right half of a spread is the first page, a
 <OptionExample
   id="spreads-reading-order"
   alt={{
-    'right-to-left': 'The two halves, the right half first: the earlier page, then the later one.',
+    'right-to-left':
+      'The spread on top, with its right half marked 1 and its left half marked 2, and under it two pages in that order: the right half first.',
     'left-to-right':
-      'The same two halves with the left half first, which puts the later page before the earlier one.',
+      'The spread on top, with its left half marked 1 and its right half marked 2, and under it two pages in that order: the left half first.',
   }}
 />
 
@@ -69,10 +71,14 @@ These three apply only when the whole spread is kept, which is **Keep whole** or
 <OptionExample
   id="spreads-whole-copy"
   alt={{
-    default: 'The two halves, then the whole spread turned to the left, on its side.',
-    first: 'The whole spread turned to the left first, then the two halves.',
-    upright: 'The two halves, then the whole spread upright, as wide as two pages.',
-    clockwise: 'The two halves, then the whole spread turned to the right, on its side.',
+    default:
+      'The spread on top, with its right half marked 1, its left half marked 2 and the whole spread marked 3, and under it the two halves and then the whole spread on a screen turned sideways.',
+    first:
+      'The spread on top, with the whole spread marked 1, its right half marked 2 and its left half marked 3, and under it the whole spread on a screen turned sideways, and then the two halves.',
+    upright:
+      'The two halves, 1 and 2, and then the whole spread, 3, upright and small on a screen taller than wide, with room above and below it.',
+    clockwise:
+      'The two halves, 1 and 2, and then the whole spread, 3, on a screen turned the other way, with the arrow for turning the device reversed.',
   }}
 />
 
@@ -85,8 +91,8 @@ The example has no strip to restack, so it uses the spread: the two halves are t
 <OptionExample
   id="spreads-restack"
   alt={{
-    off: 'The two halves and the whole spread as three pages.',
-    on: 'One page with the two halves stacked, the right half above the left half, smaller than before.',
+    off: 'The spread on top, and under it three pages: the right half, the left half and the whole spread on a screen turned sideways.',
+    on: 'The spread on top, with its right half marked 1 and its left half marked 2, and under it one page that holds both, 1 above 2, each smaller than a page of its own.',
   }}
 />
 

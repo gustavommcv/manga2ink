@@ -33,6 +33,7 @@ import {
   pdfFacts,
   pdfPictures,
 } from './options-gallery/book-facts.mjs';
+import { flowPicture } from './options-gallery/flow.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -519,7 +520,14 @@ async function runExample(mangapress, example, scratch) {
         entry.mean = round(channel.mean);
       }
       let picture;
-      if (all) picture = await row(picked);
+      if (variant.flow)
+        picture = await flowPicture({
+          source: readFileSync(source.file),
+          pages: picked,
+          flow: variant.flow,
+          screen: example.flowScreen,
+        });
+      else if (all) picture = await row(picked);
       else if (example.zoom)
         picture = sharp(picked[0])
           .extract(example.zoom)

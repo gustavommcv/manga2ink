@@ -9,6 +9,8 @@ A seção **Double-page spreads** das [Advanced conversion options](../../output
 
 Os exemplos juntam páginas de _Go Go! Encyclopedia Girls_ lado a lado numa imagem só, como é um scan de página dupla. A página seguinte fica à esquerda e a anterior à direita, como um livro lido da direita para a esquerda fica aberto. A conversão é a inicial do Mangabound, com **Wide pages** em **Both** e as páginas pequenas ampliadas, então cada metade sai ocupando a tela.
 
+Cada imagem mostra a página dupla em cima e, embaixo, as páginas que o mangapress faz dela, na ordem em que são lidas, cada uma desenhada como uma tela. Uma parte da página dupla e a página em que ela se torna têm o mesmo número e a mesma cor. Uma página que foi girada de lado é desenhada como você a lê, com o aparelho girado, e a seta diz para que lado girá-lo.
+
 ## Quando uma página conta como dupla
 
 O mangapress considera uma página dupla quando ela é horizontal, a tela é vertical e a largura é mais de 1,16 vez a altura. O teste é feito depois do corte das margens, então vale a proporção da página cortada. Uma página menos larga que isso é uma página comum e fica como está, exceto com **Keep whole, as one page**: nele, uma página horizontal que cabe na tela depois de girada é girada qualquer que seja a proporção.
@@ -18,9 +20,8 @@ Uma página com 1,8 vez a largura da altura, ou mais, é larga demais para ser c
 <OptionExample
   id="spreads-too-wide"
   alt={{
-    source: 'Três páginas de um quadrinho lado a lado, numa imagem larguíssima.',
     split:
-      'Uma página com a imagem larguíssima girada de lado, pequena, com faixas brancas em cima e embaixo.',
+      'Três páginas de um quadrinho lado a lado numa imagem larguíssima em cima, marcada com 1, e embaixo uma página: a imagem inteira, pequena, numa tela virada de lado, com uma seta para girar o aparelho.',
   }}
 />
 
@@ -33,13 +34,11 @@ Uma página com 1,8 vez a largura da altura, ou mais, é larga demais para ser c
 <OptionExample
   id="spreads-wide-pages"
   alt={{
-    source:
-      'Duas páginas de um quadrinho lado a lado numa imagem larga, a página seguinte à esquerda.',
     split:
-      'Duas páginas, a metade da direita primeiro e depois a da esquerda, cada uma ocupando a tela.',
+      'A página dupla em cima, com a metade da direita marcada com 1 e a da esquerda com 2, e embaixo duas páginas, 1 e 2, cada uma ocupando uma tela: primeiro a metade da direita, depois a da esquerda.',
     rotate:
-      'Uma página com a página dupla inteira girada de lado, com faixas brancas em cima e embaixo.',
-    both: 'Três páginas: as duas metades e depois a página dupla inteira girada de lado.',
+      'A página dupla inteira em cima, marcada com 1, e embaixo uma página, 1: a página dupla inteira numa tela virada de lado, com uma seta para girar o aparelho.',
+    both: 'A página dupla em cima, com a metade da direita marcada com 1, a da esquerda com 2 e a página inteira com 3, e embaixo três páginas: as duas metades em telas em pé, e a página inteira numa tela virada de lado.',
   }}
 />
 
@@ -53,9 +52,9 @@ Com **Manga reading order** ligada, a metade da direita da página dupla é a pr
   id="spreads-reading-order"
   alt={{
     'right-to-left':
-      'As duas metades, a da direita primeiro: a página anterior e depois a seguinte.',
+      'A página dupla em cima, com a metade da direita marcada com 1 e a da esquerda com 2, e embaixo duas páginas nessa ordem: primeiro a metade da direita.',
     'left-to-right':
-      'As mesmas duas metades com a da esquerda primeiro, o que põe a página seguinte antes da anterior.',
+      'A página dupla em cima, com a metade da esquerda marcada com 1 e a da direita com 2, e embaixo duas páginas nessa ordem: primeiro a metade da esquerda.',
   }}
 />
 
@@ -72,10 +71,14 @@ Estas três só valem quando a página dupla inteira é mantida, ou seja, em **K
 <OptionExample
   id="spreads-whole-copy"
   alt={{
-    default: 'As duas metades e depois a página dupla inteira girada para a esquerda, de lado.',
-    first: 'A página dupla inteira girada para a esquerda primeiro, e depois as duas metades.',
-    upright: 'As duas metades e depois a página dupla inteira em pé, larga como duas páginas.',
-    clockwise: 'As duas metades e depois a página dupla inteira girada para a direita, de lado.',
+    default:
+      'A página dupla em cima, com a metade da direita marcada com 1, a da esquerda com 2 e a página inteira com 3, e embaixo as duas metades e depois a página inteira numa tela virada de lado.',
+    first:
+      'A página dupla em cima, com a página inteira marcada com 1, a metade da direita com 2 e a da esquerda com 3, e embaixo a página inteira numa tela virada de lado, e depois as duas metades.',
+    upright:
+      'As duas metades, 1 e 2, e depois a página inteira, 3, em pé e pequena numa tela mais alta que larga, com espaço em cima e embaixo.',
+    clockwise:
+      'As duas metades, 1 e 2, e depois a página inteira, 3, numa tela virada para o outro lado, com a seta para girar o aparelho invertida.',
   }}
 />
 
@@ -88,8 +91,8 @@ O exemplo não tem uma tira para reempilhar, então usa a página dupla: as duas
 <OptionExample
   id="spreads-restack"
   alt={{
-    off: 'As duas metades e a página dupla inteira em três páginas.',
-    on: 'Uma página com as duas metades empilhadas, a da direita acima da da esquerda, menores que antes.',
+    off: 'A página dupla em cima, e embaixo três páginas: a metade da direita, a da esquerda e a página inteira numa tela virada de lado.',
+    on: 'A página dupla em cima, com a metade da direita marcada com 1 e a da esquerda com 2, e embaixo uma página que guarda as duas, 1 acima de 2, cada uma menor que uma página só dela.',
   }}
 />
 

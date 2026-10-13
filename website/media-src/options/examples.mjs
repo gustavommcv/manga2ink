@@ -209,22 +209,31 @@ export const examples = [
   },
 
   {
+    // `flow` says, for each page of the result, which part of the spread it is made of and whether it is
+    // turned on its side: the picture draws the spread, the pages in order and the link between them.
     id: 'spreads-wide-pages',
     kind: 'pictures',
     input: SPREAD,
+    flowScreen: KPW6_SCREEN.screen,
     show: 'all',
     variants: [
-      { id: 'source', label: 'The spread as it came', original: true },
-      { id: 'split', label: 'Wide pages: Split into two pages', flags: ['--splitter', 'split'] },
+      {
+        id: 'split',
+        label: 'Wide pages: Split into two pages',
+        flags: ['--splitter', 'split'],
+        flow: [{ from: 'right' }, { from: 'left' }],
+      },
       {
         id: 'rotate',
         label: 'Wide pages: Keep whole, as one page',
         flags: ['--splitter', 'rotate'],
+        flow: [{ from: 'whole', turned: 'left' }],
       },
       {
         id: 'both',
         label: 'Wide pages: Both: the halves, then the whole',
         flags: ['--splitter', 'both'],
+        flow: [{ from: 'right' }, { from: 'left' }, { from: 'whole', turned: 'left' }],
       },
     ],
   },
@@ -233,24 +242,36 @@ export const examples = [
     kind: 'pictures',
     // Three pages side by side: 3240 x 1440, a page 2.25 times as wide as it is tall.
     input: { beside: [{ source: 'gogo-04' }, { source: 'gogo-03' }, { source: 'gogo-02' }] },
+    flowScreen: KPW6_SCREEN.screen,
     show: 'all',
     variants: [
-      { id: 'source', label: 'The wide page as it came', original: true },
-      { id: 'split', label: 'Wide pages: Split into two pages', flags: ['--splitter', 'split'] },
+      {
+        id: 'split',
+        label: 'Wide pages: Split into two pages',
+        flags: ['--splitter', 'split'],
+        flow: [{ from: 'whole', turned: 'left' }],
+      },
     ],
   },
   {
     id: 'spreads-reading-order',
     kind: 'pictures',
     input: SPREAD,
+    flowScreen: KPW6_SCREEN.screen,
     show: 'all',
     variants: [
-      { id: 'right-to-left', label: 'Manga reading order: On', flags: ['--splitter', 'split'] },
+      {
+        id: 'right-to-left',
+        label: 'Manga reading order: On',
+        flags: ['--splitter', 'split'],
+        flow: [{ from: 'right' }, { from: 'left' }],
+      },
       {
         id: 'left-to-right',
         label: 'Manga reading order: Off',
         flags: ['--splitter', 'split'],
         without: ['--manga-style'],
+        flow: [{ from: 'left' }, { from: 'right' }],
       },
     ],
   },
@@ -258,23 +279,32 @@ export const examples = [
     id: 'spreads-whole-copy',
     kind: 'pictures',
     input: SPREAD,
+    flowScreen: KPW6_SCREEN.screen,
     show: 'all',
     variants: [
       {
         id: 'default',
         label: 'Wide pages: Both, with the whole spread last',
         flags: ['--splitter', 'both'],
+        flow: [{ from: 'right' }, { from: 'left' }, { from: 'whole', turned: 'left' }],
       },
-      { id: 'first', label: 'Whole spread first', flags: ['--splitter', 'both', '--rotatefirst'] },
+      {
+        id: 'first',
+        label: 'Whole spread first',
+        flags: ['--splitter', 'both', '--rotatefirst'],
+        flow: [{ from: 'whole', turned: 'left' }, { from: 'right' }, { from: 'left' }],
+      },
       {
         id: 'upright',
         label: 'Keep the whole spread upright',
         flags: ['--splitter', 'both', '--norotate'],
+        flow: [{ from: 'right' }, { from: 'left' }, { from: 'whole' }],
       },
       {
         id: 'clockwise',
         label: 'Rotate clockwise',
         flags: ['--splitter', 'both', '--rotateright'],
+        flow: [{ from: 'right' }, { from: 'left' }, { from: 'whole', turned: 'right' }],
       },
     ],
   },
@@ -282,10 +312,21 @@ export const examples = [
     id: 'spreads-restack',
     kind: 'pictures',
     input: SPREAD,
+    flowScreen: KPW6_SCREEN.screen,
     show: 'all',
     variants: [
-      { id: 'off', label: 'Restack 4-panel strips as 2×2: Off', flags: [] },
-      { id: 'on', label: 'Restack 4-panel strips as 2×2: On', flags: ['--maximizestrips'] },
+      {
+        id: 'off',
+        label: 'Restack 4-panel strips as 2×2: Off',
+        flags: [],
+        flow: [{ from: 'right' }, { from: 'left' }, { from: 'whole', turned: 'left' }],
+      },
+      {
+        id: 'on',
+        label: 'Restack 4-panel strips as 2×2: On',
+        flags: ['--maximizestrips'],
+        flow: [{ from: ['right', 'left'] }],
+      },
     ],
   },
 
