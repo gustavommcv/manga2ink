@@ -134,8 +134,7 @@ describe('pending books, at the edges', () => {
 
     expect(result).toEqual({ ok: true, value: { saved: true } });
     expect(result).not.toHaveProperty('value.warning');
-    // The folder of a destination is written the way this platform writes it.
-    expect(context.lastSaveFolder).toBe(path.normalize('/exports'));
+    expect(context.lastSaveFolder).toBe('/exports');
     expect(pendingRuns.exportAndRecord).toHaveBeenCalledWith(
       expect.anything(),
       expect.anything(),
@@ -228,8 +227,7 @@ describe('pending books, at the edges', () => {
     const result = await call('pending:save-all', ids);
 
     expect(result).toMatchObject({ ok: true, value: { savedIds: [] } });
-    // The folder of a destination is written the way this platform writes it.
-    expect(context.lastSaveFolder).toBe(path.normalize('/exports'));
+    expect(context.lastSaveFolder).toBe('/exports');
   });
 
   it('saves nothing, and keeps the folder it had, when the dialog is cancelled or gives no folder', async () => {
