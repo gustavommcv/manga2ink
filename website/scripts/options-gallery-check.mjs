@@ -19,7 +19,8 @@ const longFlags = (flags) => flags.filter((flag) => flag.startsWith('--'));
  * - licenses: the text of LICENSES.md, which lists the pictures with the licence of their source.
  * - userFlags: every flag of mangapress that a person can choose, from schemas/cli-capabilities.json.
  * - coverage: { pages: { slug: [flag] }, elsewhere: { 'docs/path': [flag] }, planned: [slug] }.
- * - pages: { en: { slug: text }, 'pt-br': { slug: text } } for the advanced-options pages that exist.
+ * - pages: { en: { slug: text }, 'pt-br': { slug: text } } for the advanced-options pages that exist,
+ *   `index` being the overview page, which must list every option the coverage names.
  * - guides: { en: { path: text }, 'pt-br': { path: text } } for the other pages the coverage points to.
  */
 export function checkGallery({
@@ -130,6 +131,19 @@ export function checkGallery({
       for (const flag of longFlags(flags)) {
         if (!text.includes(flag)) problems.push(`${locale}/${path} does not mention ${flag}.`);
       }
+    }
+  }
+
+  // The overview page lists every option, so that a flag is found from there in either language.
+  for (const locale of locales) {
+    const listing = pages[locale].index;
+    if (listing === undefined) {
+      problems.push(`The overview page of the options does not exist in ${locale}.`);
+      continue;
+    }
+    for (const flag of longFlags([...claimed.keys()])) {
+      if (!listing.includes(flag))
+        problems.push(`The overview in ${locale} does not list ${flag}.`);
     }
   }
 

@@ -7,18 +7,88 @@ As **Advanced conversion options** das [Configurações de conversão](../output
 
 ## Uma página para cada grupo de opções
 
-| Página                                                       | Opções                                                                                                                                                | O que mostra                                                                                                                      |
-| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| [Leitura (Reading)](reading/)                                | Content, Manga reading order                                                                                                                          | Um capítulo no formato de webtoon convertido como páginas e como tiras, e a direção de leitura que cada formato de livro registra |
-| [Recorte (Cropping)](cropping/)                              | Page cropping, Cropping power, Minimum retained area, Preserved margin, Inter-panel cropping                                                          | Quanto de uma página é cortado, em pixels, e o que o corte mantém                                                                 |
-| [Cor e tom (Color and tone)](color-and-tone/)                | Color pages, Autocontrast, Auto-level black point, Gamma, Reduce rainbow effect                                                                       | A mesma página em tons de cinza e em cor, mais clara e mais escura, com os números da mudança                                     |
-| [Páginas duplas (Double-page spreads)](double-page-spreads/) | Wide pages, Manga reading order, Whole spread first, Keep the whole spread upright, Rotate clockwise, Restack 4-panel strips, a visão de duas páginas | Uma página dupla cortada, mantida inteira ou das duas formas, em que ordem, e o que a visão de duas páginas grava num EPUB        |
-| [Tamanho e bordas (Size and borders)](size-and-borders/)     | Page size, Borders                                                                                                                                    | Como uma página é ajustada à tela, ampliada, esticada ou cortada para preencher, e o que a cerca quando não tem o formato dela    |
-| [Imagens das páginas (Page images)](page-images/)            | Page format, JPEG quality, Keep all 256 grays, 8-bit PNG, Color pages as PNG too, Use the images as they are                                          | O arquivo em que cada página é gravada: JPEG ou PNG, quantos cinzas, e o que cada um custa em bytes                               |
-| [Capa (Cover)](cover/)                                       | Cut the front cover from a wide image, Crop the cover to fill the screen, uma capa sua                                                                | Como a capa de um livro é feita a partir da primeira imagem, quais formatos têm uma, e a frente de uma imagem larga cortada dela  |
-| [Metadados do livro (Book metadata)](book-metadata/)         | ComicInfo title, EPUB language, Keep ComicInfo.xml, Name the book .epub, e o título e o autor de um livro                                             | Onde cada formato guarda título, autor e idioma, o que um ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub     |
+| Página                                                       | O que mostra                                                                                                                      |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| [Leitura (Reading)](reading/)                                | Um capítulo no formato de webtoon convertido como páginas e como tiras, e a direção de leitura que cada formato de livro registra |
+| [Recorte (Cropping)](cropping/)                              | Quanto de uma página é cortado, em pixels, e o que o corte mantém                                                                 |
+| [Cor e tom (Color and tone)](color-and-tone/)                | A mesma página em tons de cinza e em cor, mais clara e mais escura, com os números da mudança                                     |
+| [Páginas duplas (Double-page spreads)](double-page-spreads/) | Uma página dupla cortada, mantida inteira ou das duas formas, em que ordem, e o que a visão de duas páginas grava num EPUB        |
+| [Tamanho e bordas (Size and borders)](size-and-borders/)     | Como uma página é ajustada à tela, ampliada, esticada ou cortada para preencher, e o que a cerca quando não tem o formato dela    |
+| [Imagens das páginas (Page images)](page-images/)            | O arquivo em que cada página é gravada: JPEG ou PNG, quantos cinzas, e o que cada um custa em bytes                               |
+| [Capa (Cover)](cover/)                                       | Como a capa de um livro é feita a partir da primeira imagem, quais formatos têm uma, e a frente de uma imagem larga cortada dela  |
+| [Metadados do livro (Book metadata)](book-metadata/)         | Onde cada formato guarda título, autor e idioma, o que um ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub     |
 
-O dispositivo, o formato e o tamanho da tela estão descritos em [Configurações de conversão](../output-profiles/), e a linha de comando inteira em [CLI mangapress](../../cli/mangapress/).
+## Todas as opções
+
+Cada opção com o nome que o app usa, as flags que a definem na linha de comando e onde ela é explicada. Uma opção que você não encontra no app, como `--dry-run`, existe só na linha de comando.
+
+### Dispositivo e saída
+
+- [Device, Book format, Custom width e Custom height](../output-profiles/#dispositivo-e-formato): `--profile` (`-p`), `--format` (`-f`), `--customwidth` e `--customheight`. O que as flags fazem, com a saída da própria ferramenta, está no [CLI mangapress](../../cli/mangapress/#escolhendo-o-dispositivo-e-o-formato).
+
+### Leitura
+
+- [Content](reading/#content): `--webtoon`, ou `-w`.
+- [Manga reading order](reading/#manga-reading-order): `--manga-style`, ou `-m`. O que ela faz com uma página dupla dividida está em [Páginas duplas](double-page-spreads/#manga-reading-order).
+
+### Páginas duplas
+
+- [Wide pages](double-page-spreads/#wide-pages): `--splitter`, ou `-r`.
+- [Whole spread first](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotatefirst`.
+- [Keep the whole spread upright](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--norotate`.
+- [Rotate clockwise](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotateright`.
+- [Restack 4-panel strips as 2×2](double-page-spreads/#restack-4-panel-strips-as-22): `--maximizestrips`.
+- [Start on the other side](double-page-spreads/#two-page-view): `--spreadshift`.
+- [Invert page turns](double-page-spreads/#two-page-view): `--invertdirection`.
+- [One page in landscape](double-page-spreads/#two-page-view): `--onepagelandscape`.
+
+### Tamanho e bordas
+
+- [Page size](size-and-borders/#page-size): `--upscale` (`-u`) para **Fit, enlarging small pages**, `--stretch` (`-s`) para **Stretch to the screen**, `--wallpaper` para **Crop to fill the screen**.
+- [Borders](size-and-borders/#borders): `--whiteborders` e `--blackborders`.
+
+### Recorte
+
+- [Page cropping](cropping/#page-cropping): `--cropping`, ou `-c`.
+- [Cropping power](cropping/#cropping-power): `--croppingpower`.
+- [Minimum retained area](cropping/#minimum-retained-area): `--croppingminimum`.
+- [Preserved margin](cropping/#preserved-margin): `--preservemargin`.
+- [Inter-panel cropping](cropping/#inter-panel-cropping): `--ipc`.
+
+### Cor e tom
+
+- [Color pages](color-and-tone/#color-pages): `--forcecolor`.
+- [Autocontrast](color-and-tone/#autocontrast): `--colorautocontrast` e `--noautocontrast`.
+- [Auto-level black point](color-and-tone/#autocontrast): `--autolevel`.
+- [Gamma](color-and-tone/#gamma): `--gamma`, ou `-g`.
+- [Reduce rainbow effect](color-and-tone/#reduce-rainbow-effect): `--eraserainbow`.
+
+### Imagens das páginas
+
+- [Page format](page-images/#page-format): `--forcepng`.
+- [Keep all 256 grays](page-images/#keep-all-256-grays): `--noquantize`.
+- [8-bit PNG](page-images/#8-bit-png): `--pnglegacy`.
+- [Color pages as PNG too](page-images/#color-pages-as-png-too): `--force-png-rgb`.
+- [JPEG quality](page-images/#jpeg-quality): `--jpeg-quality`.
+- [Use the images as they are](page-images/#use-the-images-as-they-are): `--noprocessing`.
+
+### Capa
+
+- [Cut the front cover from a wide image](cover/#cut-the-front-cover-from-a-wide-image): `--smartcovercrop`.
+- [Crop the cover to fill the screen](cover/#crop-the-cover-to-fill-the-screen): `--coverfill`.
+
+### Metadados do livro
+
+- [Título e autor do livro](book-metadata/#título-e-autor-do-livro): `--title` (`-t`) e `--author` (`-a`).
+- [ComicInfo title](book-metadata/#comicinfo-title): `--metadatatitle`.
+- [Keep ComicInfo.xml](book-metadata/#keep-comicinfoxml): `--keepcomicinfo`.
+- [EPUB language](book-metadata/#epub-language): `--language`.
+- [Name the book .epub](book-metadata/#name-the-book-epub): `--nokepub`.
+
+### Comportamento da ferramenta
+
+- [Quiet mode](../../cli/mangapress/#saída-mais-enxuta): `--quiet`, ou `-q`.
+- [Prévia de uma conversão](../../cli/mangapress/#prévia-de-uma-conversão), só na linha de comando: `--dry-run`, ou `-n`.
 
 ## Como os exemplos foram feitos
 

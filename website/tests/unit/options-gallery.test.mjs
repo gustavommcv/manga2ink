@@ -181,6 +181,9 @@ test('the pages and the images of a PDF are counted, so that an image beyond the
 
 // ---- the check ------------------------------------------------------------------------------------
 
+/** The overview page: it lists every long option that the other pages and the fixture mention. */
+const overview = 'Lists --cropping, --quiet and --invented.';
+
 function gallery(changes = {}) {
   const base = {
     manifest: {
@@ -210,10 +213,12 @@ function gallery(changes = {}) {
     },
     pages: {
       en: {
+        index: overview,
         cropping:
           'Use `--cropping`. <OptionExample id="crop" alt={{}} /> <OptionSizes\n  id="sizes"\n/>',
       },
       'pt-br': {
+        index: overview,
         cropping:
           'Use `--cropping`. <OptionExample id="crop" alt={{}} /> <OptionSizes id="sizes" />',
       },
@@ -279,9 +284,10 @@ test('an example that no page uses, or that does not exist, is a problem in each
     gallery({
       pages: {
         en: {
+          index: overview,
           cropping: 'Use `--cropping`. <OptionExample id="crop" /> <OptionExample id="ghost" />',
         },
-        'pt-br': { cropping: 'Use `--cropping`. <OptionSizes id="sizes" />' },
+        'pt-br': { index: overview, cropping: 'Use `--cropping`. <OptionSizes id="sizes" />' },
       },
     }),
   );
@@ -344,6 +350,7 @@ test('a page must exist in both languages and name every long option it covers',
     gallery({
       pages: {
         en: {
+          index: overview,
           cropping:
             'Use `--cropping` and `-c`. <OptionExample id="crop" /> <OptionSizes id="sizes" />',
         },
@@ -355,7 +362,28 @@ test('a page must exist in both languages and name every long option it covers',
     'The example crop is on no page in pt-br.',
     'The example sizes is on no page in pt-br.',
     'The page cropping has no pt-br version.',
+    'The overview page of the options does not exist in pt-br.',
   ]);
+});
+
+test('the overview page must list every long option, in each language', () => {
+  const problems = checkGallery(
+    gallery({
+      pages: {
+        en: {
+          index: 'Lists --cropping and --invented.',
+          cropping:
+            'Use `--cropping`. <OptionExample id="crop" alt={{}} /> <OptionSizes id="sizes" />',
+        },
+        'pt-br': {
+          index: 'Lista --cropping, --quiet e --invented.',
+          cropping:
+            'Use `--cropping`. <OptionExample id="crop" alt={{}} /> <OptionSizes id="sizes" />',
+        },
+      },
+    }),
+  );
+  assert.deepEqual(problems, ['The overview in en does not list --quiet.']);
 });
 
 test('the other pages that cover options must exist in both languages and name every long option', () => {
