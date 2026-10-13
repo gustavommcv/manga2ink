@@ -50,7 +50,7 @@ The user guide is the independent Astro/Starlight package under `website/`; `doc
 | `npm run toolchain:check`                 | Validate the pinned converter manifest.                                         |
 | `npm run test:unit`                       | Logic, adapters, the main process and the preload; acquires the verified tools. |
 | `npm run capabilities:check`              | Detect CLI flags the app does not represent.                                    |
-| `npm run test:component`                  | Accessible React behavior against a fake desktop bridge.                        |
+| `npm run test:component`                  | Accessible React behavior against a fake desktop bridge, with a coverage floor. |
 | `npm run test:stories`                    | Storybook interactions and axe accessibility checks.                            |
 | `npm run build-storybook`                 | Build the isolated UI reference.                                                |
 | `npm run test:visual`                     | Compare selected UI states with Windows CI baselines.                           |

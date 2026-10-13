@@ -35,6 +35,7 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "vitest.config.ts",
+    "vitest.renderer.config.ts",
     "wdio.conf.ts",
     "webpack.*.config.ts",
     "webpack.rules.ts"

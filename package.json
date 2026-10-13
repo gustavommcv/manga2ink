@@ -25,7 +25,7 @@
     "typecheck": "tsc --noEmit",
     "pretest:unit": "npm run toolchain:acquire",
     "test:unit": "vitest run --project unit --coverage",
-    "test:component": "vitest run --project component",
+    "test:component": "vitest run --config vitest.renderer.config.ts --coverage",
     "test:mutation": "node tests/mutation/run.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
