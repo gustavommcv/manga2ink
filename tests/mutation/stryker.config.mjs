@@ -9,6 +9,8 @@ export default {
   // survive, which is the one result this tool must never give by accident.
   testRunner: 'command',
   coverageAnalysis: 'off',
+  // `vendor` is not ignored: the tests that run the real tools look for them there (run
+  // `npm run toolchain:acquire` first).
   ignorePatterns: [
     '.git',
     '.stryker-tmp',
@@ -24,7 +26,6 @@ export default {
     'tests/mutation/reports',
     'tests/tutorial',
     'tests/visual',
-    'vendor',
     'website',
   ],
   concurrency: 3,

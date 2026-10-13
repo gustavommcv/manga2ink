@@ -1,7 +1,7 @@
 {
   "name": "mangabound-mutation",
   "private": true,
-  "description": "Mutation testing of the domain and application layers. It is a package of its own, as website/ is: Stryker needs Babel 8, and none of it should reach the app's lockfile.",
+  "description": "Mutation testing of the layers that hold logic: domain, application, library, adapters, OPDS, main and preload. It is a package of its own, as website/ is: Stryker needs Babel 8, and none of it should reach the app's lockfile.",
   "type": "module",
   "devDependencies": {
     "@stryker-mutator/core": "10.0.0",

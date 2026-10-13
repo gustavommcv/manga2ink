@@ -48,10 +48,10 @@ const requested = process.argv.slice(2);
 const sources = (requested.length > 0 ? requested : layers).flatMap(filesOf);
 
 const unitDirectory = path.join(root, 'tests', 'unit');
-/** These run the real downloaded tools, which a changed copy of the sources has nothing to do with. */
-const realTools = new Set(['pinned-tools-output.test.ts', 'toolchain-verification.test.ts']);
+// The two tests that run the real downloaded tools are among them: the sandbox holds the tools too
+// (see stryker.config.mjs), and they are the only tests of what verifies and starts them.
 const tests = readdirSync(unitDirectory)
-  .filter((file) => file.endsWith('.test.ts') && !realTools.has(file))
+  .filter((file) => file.endsWith('.test.ts'))
   .map((file) => ({
     path: `tests/unit/${file}`,
     text: readFileSync(path.join(unitDirectory, file), 'utf8'),
