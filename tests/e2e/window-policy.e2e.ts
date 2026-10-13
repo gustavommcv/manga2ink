@@ -24,6 +24,60 @@ after(async () => {
  * out, switch on a microphone or a location, share the books on every network.
  */
 describe('packaged window policy', () => {
+  // What the page sees of the bridge, in the real window: the preload freezes it, and the context
+  // bridge hands the page a copy that is frozen too, so this holds even if the preload's own freeze
+  // were lost. The unit test of the preload holds the list of methods; this holds what is reachable.
+  it('hands the page one frozen bridge of functions, and nothing of Node or of Electron', async () => {
+    const seen = JSON.parse(
+      await browser.execute(() => {
+        const page = window as unknown as Record<string, unknown>;
+        const bridge = page.mangabound as Record<string, unknown>;
+        // A frozen object refuses the addition (and says so, in strict mode, which a page is not).
+        const changed = (() => {
+          try {
+            bridge.addedByThePage = true;
+            return bridge.addedByThePage === true;
+          } catch {
+            return false;
+          }
+        })();
+        return JSON.stringify({
+          frozen: Object.isFrozen(bridge),
+          runtimeFrozen: Object.isFrozen(bridge.runtime),
+          changed,
+          methods: Object.entries(bridge)
+            .filter(([, value]) => typeof value === 'function')
+            .map(([name]) => name),
+          others: Object.entries(bridge)
+            .filter(([, value]) => typeof value !== 'function')
+            .map(([name]) => name),
+          globals: ['require', 'module', 'process', 'Buffer', 'ipcRenderer', 'electron'].filter(
+            (name) => typeof page[name] !== 'undefined',
+          ),
+        });
+      }),
+    ) as {
+      frozen: boolean;
+      runtimeFrozen: boolean;
+      changed: boolean;
+      methods: string[];
+      others: string[];
+      globals: string[];
+    };
+
+    assert.equal(seen.frozen, true);
+    assert.equal(seen.runtimeFrozen, true);
+    assert.equal(seen.changed, false);
+    // Everything but the runtime's own values is a function, and nothing in it names the IPC layer.
+    assert.deepEqual(seen.others, ['runtime']);
+    assert.ok(seen.methods.length > 20, 'the bridge has the methods the page needs');
+    assert.deepEqual(
+      seen.methods.filter((name) => /ipc|electron|require|invoke|send|shell|node/iu.test(name)),
+      [],
+    );
+    assert.deepEqual(seen.globals, []);
+  });
+
   it('does not let the page read a local file', async () => {
     const directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-window-policy-'));
     temporaryDirectories.push(directory);
