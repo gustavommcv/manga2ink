@@ -206,7 +206,7 @@ describe('mangapress default settings', () => {
 });
 
 describe('the page size, one choice for three flags', () => {
-  it('reads the flag that wins: cropping to fill, then stretching, then enlarging', () => {
+  it('reads the flag that wins: stretching, then cropping to fill, then enlarging', () => {
     const flags = (upscale: boolean, stretch: boolean, wallpaper: boolean) => ({
       upscale,
       stretch,
@@ -216,7 +216,9 @@ describe('the page size, one choice for three flags', () => {
     expect(pageSizeOf(flags(true, false, false))).toBe('enlarge');
     expect(pageSizeOf(flags(true, true, false))).toBe('stretch');
     expect(pageSizeOf(flags(false, true, false))).toBe('stretch');
-    expect(pageSizeOf(flags(true, true, true))).toBe('fill');
+    expect(pageSizeOf(flags(true, true, true))).toBe('stretch');
+    expect(pageSizeOf(flags(false, true, true))).toBe('stretch');
+    expect(pageSizeOf(flags(true, false, true))).toBe('fill');
     expect(pageSizeOf(flags(false, false, true))).toBe('fill');
   });
 

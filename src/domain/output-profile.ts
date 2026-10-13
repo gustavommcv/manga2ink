@@ -240,13 +240,14 @@ export function restoreSettingDefault<K extends keyof MangapressSettings>(
 
 /**
  * The one choice the three size flags amount to. mangapress lets all three be set and then lets
- * one win: cropping to fill over stretching, stretching over enlarging.
+ * one win: stretching over cropping to fill, cropping to fill over enlarging. That is the order of
+ * Kindle Comic Converter's `resizeImage` and of mangapress's `resize.rs`; ADR 0050.
  */
 export function pageSizeOf(
   settings: Pick<MangapressSettings, 'upscale' | 'stretch' | 'wallpaper'>,
 ): PageSizeMode {
-  if (settings.wallpaper) return 'fill';
   if (settings.stretch) return 'stretch';
+  if (settings.wallpaper) return 'fill';
   return settings.upscale ? 'enlarge' : 'fit';
 }
 
