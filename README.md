@@ -92,6 +92,8 @@ Bundled converters are pinned in `toolchain.lock.json`. Updating a pin is a sepa
 - **[mangabind](https://github.com/gustavommcv/mangabind)** handles chapter grouping and volume creation.
 - **[mangapress](https://github.com/gustavommcv/mangapress)** processes pages and creates the finished books.
 - **[MangaDex](https://mangadex.org)** provides optional volume and author metadata. Mangabound is free and ad-free; see the [provider guide](docs/adding-a-metadata-provider.md) for attribution and API requirements.
+- **The comics the guide converts** to show what each option does: _Pepper&Carrot_ by David Revoy ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), _Go Go! Encyclopedia Girls_ by Kasuga, English version by Masatami ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)), and a page by Polylerus ([CC BY 2.5](https://creativecommons.org/licenses/by/2.5/)). Each picture is credited where it appears, and all are listed in [LICENSES.md](website/src/assets/options/LICENSES.md).
+- **[JPmarquesbraga](https://github.com/JPmarquesbraga)** drew the app icon ([the asset guide](assets/README.md)).
 - **[Kindle Comic Converter](https://github.com/ciromattia/kcc)** informs mangapress's conversion algorithms and Mangabound's default image settings ([ADR 0011](docs/adr/0011-kcc-default-options.md), [ADR 0015](docs/adr/0015-paperwhite-as-the-starting-device.md)).
 
 ## AI disclosure
@@ -100,4 +102,4 @@ Parts of Mangabound, including code, tests, and documentation, were written with
 
 ## License
 
-Mangabound is released under the [MIT license](LICENSE). The bundled tools and third-party dependencies retain their own licenses. Each package includes the converters' licenses and notices under `toolchain/<target>/licenses/` in the app's resources directory, alongside the [filename dependency notices](THIRD-PARTY-NOTICES.md).
+Mangabound is released under the [MIT license](LICENSE). The bundled tools and third-party dependencies retain their own licenses, and so do the pictures of comics in `website/src/assets/options/`, which are adaptations of CC-licensed pages ([LICENSES.md](website/src/assets/options/LICENSES.md)), not MIT. Each package includes the converters' licenses and notices under `toolchain/<target>/licenses/` in the app's resources directory, alongside the [filename dependency notices](THIRD-PARTY-NOTICES.md).

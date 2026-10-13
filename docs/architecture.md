@@ -74,6 +74,6 @@ These are complementary checks, not a claim of whole-app 100% coverage. [CONTRIB
 
 ## Documentation website
 
-The independent Astro/Starlight package under `website/` imports no application modules. CI captures selected Storybook states from the same source commit and shares that artifact with site checks and publication. Astro produces responsive, losslessly optimized images; KOReader captures remain manual. Tutorial images do not replace visual baselines or enter the app installer.
+The independent Astro/Starlight package under `website/` imports no application modules. CI captures selected Storybook states from the same source commit and shares that artifact with site checks and publication. Astro produces responsive, losslessly optimized images; KOReader captures remain manual. Tutorial images do not replace visual baselines or enter the app installer. The pictures and measured tables of the advanced-options pages are committed files, made by running the pinned mangapress on open-licensed comic pages ([ADR 0048](adr/0048-option-examples-from-open-pages.md)); the site's tests fail when they were made with another version than the one in `toolchain.lock.json`.
 
 The guide and app captures follow `main`, not release tags ([ADR 0034](adr/0034-tutorial-images-from-the-site-source-commit.md)). Development, media, indexing, and dependency-audit details live in [website/README.md](../website/README.md), [MEDIA.md](../website/MEDIA.md), [SEO.md](../website/SEO.md), and [website/SECURITY.md](../website/SECURITY.md).

@@ -3,7 +3,7 @@
 The pictures in this folder are adaptations of pages of comics whose authors allow them to be copied and adapted.
 Each keeps the licence of the page it was made from, **not the MIT licence of this repository**, and must be
 credited as below wherever it is shared. They were converted, resized and saved again by mangapress
-0.8.0; some are magnified details, some join several pages side by side or one under the other.
+0.8.0; some are magnified details, some join several pages side by side or one under the other, and on the spreads page the pages are placed in frames with numbers and arrows drawn for the guide.
 The pages are listed with their download addresses and checksums in `website/media-src/options/sources.json`.
 This file is written by `npm run site:options`.
 
