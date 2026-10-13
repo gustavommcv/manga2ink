@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 type Handler = (...args: never[]) => unknown;
@@ -210,7 +212,7 @@ describe('starting the app', () => {
       'register-scheme',
       'cover-store:/covers',
       'bootstrap',
-      'settings-store:/home/userData/settings.json',
+      `settings-store:${path.join('/home/userData', 'settings.json')}`,
       'preferences',
       'pending-runs:/pending-root',
       'use-root',
