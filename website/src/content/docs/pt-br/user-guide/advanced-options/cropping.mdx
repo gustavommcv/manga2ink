@@ -8,6 +8,8 @@ import OptionSizes from '../../../../../components/OptionSizes.astro';
 
 O recorte tira a margem vazia de uma página antes de ela ser ajustada à tela, e o desenho sai maior. As opções ficam na seção **Cropping** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** fica esmaecida, com o motivo, em **Webtoon strips** e em **Use the images as they are**. Os três números (power, minimum, margin) a acompanham e também ficam esmaecidos enquanto ela está **Disabled**. **Inter-panel cropping** só fica esmaecida em **Use the images as they are**.
 
+Nas imagens desta página, a página convertida está à esquerda, com a parte mantida contornada em verde-azulado e a parte cortada sombreada de rosa; à direita está a página como sai, numa tela.
+
 ## Page cropping
 
 O padrão é **Margins and page numbers**.
@@ -15,9 +17,10 @@ O padrão é **Margins and page numbers**.
 <OptionExample
   id="cropping-modes"
   alt={{
-    disabled: 'Uma página de mangá com a margem branca deixada em volta dos quadros.',
+    disabled:
+      'Uma página de mangá contornada inteira, sem nada sombreado, e ao lado a página como sai numa tela: a mesma página, com a margem branca.',
     'margins-and-page-numbers':
-      'A mesma página com a margem cortada, e os quadros ocupando a tela.',
+      'A página de mangá com a margem sombreada de rosa e a parte mantida contornada em verde-azulado, e ao lado a página como sai numa tela, sem a margem e com o desenho maior.',
   }}
 />
 
@@ -32,6 +35,16 @@ A página acima não tem número de página, então **Margins** dá o mesmo resu
 ## Cropping power
 
 O padrão é 1, e o app aceita de 0 a 10. A potência define o limite pelo qual a página é julgada: **240 − 64 × potência**, numa escala em que 255 é branco. Em 1 o limite é 176, então todo tom mais claro que isso é papel. Uma potência maior baixa o limite, e tons cada vez mais escuros também viram papel, então o corte alcança sombreados e linhas finas.
+
+A imagem contorna a parte de uma página que é mantida em cada potência, com a potência ao lado da cor do contorno. Os contornos de 0, 1, 2 e 3 são quase um só; o de 3,75 é o mais apertado; e em 3,76 nada é cortado, então o contorno tracejado dele é a página inteira.
+
+<OptionExample
+  id="cropping-power-boxes"
+  alt={{
+    boxes:
+      'Uma página de mangá com cinco contornos, um dentro do outro, cada um com a sua cor, e uma legenda ao lado com a potência de cada um: 0, 1, 2 e 3 são quase o mesmo contorno, 3,75 é mais apertado, e 3,76 é um contorno tracejado em volta da página inteira.',
+  }}
+/>
 
 <OptionSizes id="cropping-power-sizes" />
 
@@ -49,13 +62,13 @@ O corte desta página mantém 80,1%, então um mínimo de 80 o permite e 81 o re
 
 ## Preserved margin
 
-O padrão é 0%, e o app aceita de 0 a 100%. O corte recua por essa porcentagem depois do limite de 10%, então sobra um pouco de margem: com 50%, metade do que seria removido é mantida; com 100%, nada é removido.
+O padrão é 0%, e o app aceita de 0 a 100%. O corte recua por essa porcentagem depois do limite de 10%, então sobra um pouco de margem: com 50%, metade do que seria removido é mantida; com 100%, nada é removido. Na segunda imagem, o contorno tracejado é onde o corte estava com 0%.
 
 <OptionExample
   id="cropping-preserve"
   alt={{
-    '0': 'Uma página de mangá cortada rente aos quadros, sem margem.',
-    '50': 'A mesma página cortada pela metade, com uma margem fina em volta dos quadros.',
+    '0': 'A página de mangá com a margem sombreada de rosa e a parte mantida contornada em verde-azulado, e ao lado a página como sai numa tela.',
+    '50': 'A mesma página com a margem sombreada mais estreita: a parte mantida, contornada em verde-azulado, é maior que o contorno tracejado da parte mantida com 0%, e ao lado a página como sai.',
   }}
 />
 

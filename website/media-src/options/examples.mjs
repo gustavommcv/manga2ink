@@ -83,15 +83,39 @@ const AUTHOR = 'D. Revoy';
  */
 export const examples = [
   {
+    // `crop` draws what is kept of the page; it finds it by matching the page converted without
+    // enlarging against the page converted without cropping, so `reference` is the flags of that one.
     id: 'cropping-modes',
     kind: 'pictures',
+    layout: 'rows',
     input: GOGO,
+    crop: { reference: ['--cropping', 'disabled'], screen: KPW6_SCREEN.screen },
     variants: [
       { id: 'disabled', label: 'Page cropping: Disabled', flags: ['--cropping', 'disabled'] },
       {
         id: 'margins-and-page-numbers',
         label: 'Page cropping: Margins and page numbers',
         flags: ['--cropping', 'margins-and-page-numbers'],
+      },
+    ],
+  },
+  {
+    // One picture for the example: the part kept at each power, from the loosest to the tightest.
+    id: 'cropping-power-boxes',
+    kind: 'pictures',
+    input: GOGO,
+    boxes: {
+      reference: ['--cropping', 'disabled'],
+      settings: [0, 1, 2, 3, 3.75, 3.76].map((power) => ({
+        label: String(power),
+        flags: ['--croppingpower', String(power)],
+      })),
+    },
+    variants: [
+      {
+        id: 'boxes',
+        label: 'Cropping power: 0, 1, 2, 3, 3.75 and 3.76',
+        flags: ['--croppingpower'],
       },
     ],
   },
@@ -120,10 +144,17 @@ export const examples = [
   {
     id: 'cropping-preserve',
     kind: 'pictures',
+    layout: 'rows',
     input: GOGO,
+    crop: { reference: ['--cropping', 'disabled'], screen: KPW6_SCREEN.screen },
     variants: [
       { id: '0', label: 'Preserved margin: 0%', flags: ['--preservemargin', '0'] },
-      { id: '50', label: 'Preserved margin: 50%', flags: ['--preservemargin', '50'] },
+      {
+        id: '50',
+        label: 'Preserved margin: 50%',
+        flags: ['--preservemargin', '50'],
+        compare: '0',
+      },
     ],
   },
   {

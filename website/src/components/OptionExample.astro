@@ -36,6 +36,7 @@ const variants = example.variants.map((variant) => {
     mean?: number;
     pageBytes: number;
     original?: boolean;
+    plain?: boolean;
     pages?: { width: number; height: number }[];
   };
   const sizes = (stats.pages ?? [stats]).map((page) => `${page.width} × ${page.height}`);
@@ -48,6 +49,7 @@ const variants = example.variants.map((variant) => {
     fileSize: `${Math.round(stats.pageBytes / 1024)} KB`,
     flagsText: stats.original ? null : variant.flags.length > 0 ? variant.flags.join(' ') : null,
     original: stats.original === true,
+    plain: stats.plain === true,
     shape: stats.pages
       ? `${count} ${noun}: ${sizes.join(portuguese ? ', ' : ', ')} px`
       : `${sizes[0]} px`,
@@ -63,7 +65,7 @@ const variants = example.variants.map((variant) => {
 
 <div class:list={['option-example', { rows }]} data-option-example={id}>
   {variants.map((variant) => (
-    <figure>
+    <figure data-plain={variant.plain || undefined}>
       <a href={variant.meta.src} title={fullSize}>
         <img
           src={variant.meta.src}
@@ -83,9 +85,11 @@ const variants = example.variants.map((variant) => {
               : 'not converted'
             : (variant.flagsText ?? (portuguese ? 'sem flag' : 'no flag'))}
         </code>
-        <span>
-          {variant.shape}, {variant.fileSize}
-        </span>
+        {!variant.plain && (
+          <span>
+            {variant.shape}, {variant.fileSize}
+          </span>
+        )}
         {variant.tone && <span>{variant.tone}</span>}
       </figcaption>
     </figure>

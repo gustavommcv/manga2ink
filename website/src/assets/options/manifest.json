@@ -9,7 +9,7 @@
   "examples": {
     "cropping-modes": {
       "kind": "pictures",
-      "layout": "grid",
+      "layout": "rows",
       "sources": ["gogo-02"],
       "license": "CC BY-SA 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -23,10 +23,10 @@
           "height": 1696,
           "pageBytes": 386826,
           "file": "cropping-modes-disabled.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 100514,
-          "sha256": "7dd54b01531ad0a30707c745e14ae170c806b926c9dac33a40bd4678ef637c35"
+          "pictureWidth": 800,
+          "pictureHeight": 500,
+          "bytes": 59736,
+          "sha256": "57ec7d1371c038f1cc76b216058751d2404e6bc2382aeac8bf6c1105ea7cedab"
         },
         {
           "id": "margins-and-page-numbers",
@@ -36,10 +36,34 @@
           "height": 1696,
           "pageBytes": 437815,
           "file": "cropping-modes-margins-and-page-numbers.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 116914,
-          "sha256": "8a9c9795d5e5fdcdeb9c9e72df594fb67950a3d0f50fe72119c934571b638bde"
+          "pictureWidth": 800,
+          "pictureHeight": 500,
+          "bytes": 64898,
+          "sha256": "6aa0bde7779098497a8291c613995fa959d08d90d0aff7fe747842ed66ea116e"
+        }
+      ]
+    },
+    "cropping-power-boxes": {
+      "kind": "pictures",
+      "layout": "grid",
+      "sources": ["gogo-02"],
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source": { "width": 1080, "height": 1440 },
+      "variants": [
+        {
+          "id": "boxes",
+          "label": "Cropping power: 0, 1, 2, 3, 3.75 and 3.76",
+          "flags": ["--croppingpower"],
+          "file": "cropping-power-boxes-boxes.webp",
+          "pictureWidth": 800,
+          "pictureHeight": 580,
+          "bytes": 46572,
+          "sha256": "aa56a60b3e06cf47fa3988bee9c21f6ac797df212080b3e928f5887ebfc8d1d0",
+          "plain": true,
+          "width": 1080,
+          "height": 1440,
+          "pageBytes": 0
         }
       ]
     },
@@ -173,7 +197,7 @@
     },
     "cropping-preserve": {
       "kind": "pictures",
-      "layout": "grid",
+      "layout": "rows",
       "sources": ["gogo-02"],
       "license": "CC BY-SA 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -187,10 +211,10 @@
           "height": 1696,
           "pageBytes": 437815,
           "file": "cropping-preserve-0.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 116914,
-          "sha256": "8a9c9795d5e5fdcdeb9c9e72df594fb67950a3d0f50fe72119c934571b638bde"
+          "pictureWidth": 800,
+          "pictureHeight": 500,
+          "bytes": 64898,
+          "sha256": "6aa0bde7779098497a8291c613995fa959d08d90d0aff7fe747842ed66ea116e"
         },
         {
           "id": "50",
@@ -200,10 +224,10 @@
           "height": 1696,
           "pageBytes": 413685,
           "file": "cropping-preserve-50.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 110048,
-          "sha256": "ed68f2b91f9ab33d696940c30f12530c7b4515e1a6a5227cc504218ac07682d2"
+          "pictureWidth": 800,
+          "pictureHeight": 500,
+          "bytes": 64092,
+          "sha256": "40e9144e9f854381e7eeb5f8c86a6b7e7acd2fe004332aae6336bab56da4769e"
         }
       ]
     },

@@ -83,9 +83,12 @@ for (const slug of [
     page,
   }) => {
     await page.goto(`${root}user-guide/advanced-options/${slug}/`);
-    for (const caption of await page.locator('[data-option-example] figcaption').all()) {
+    for (const figure of await page.locator('[data-option-example] figure').all()) {
+      const caption = figure.locator('figcaption');
       await expect(caption.locator('code')).toHaveText(/^(--[a-z-]+.*|no flag|not converted)$/);
-      await expect(caption).toContainText(/\d+ × \d+ px, \d+ KB/);
+      // A picture of several settings in one page has no size of its own to give.
+      if ((await figure.getAttribute('data-plain')) === null)
+        await expect(caption).toContainText(/\d+ × \d+ px, \d+ KB/);
     }
     for (const table of await page.locator('[data-option-sizes] table').all()) {
       await expect(table.locator('caption')).toContainText('Source page:');

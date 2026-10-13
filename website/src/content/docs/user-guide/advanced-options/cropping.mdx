@@ -8,6 +8,8 @@ import OptionSizes from '../../../../components/OptionSizes.astro';
 
 Cropping cuts the empty margin off a page before the page is fitted to the screen, so the drawing comes out larger. The settings are in the **Cropping** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options). **Page cropping** is dimmed, with the reason, for **Webtoon strips** and for **Use the images as they are**, and the three numbers (power, minimum, margin) follow it: they are also dimmed while it is **Disabled**. **Inter-panel cropping** is dimmed only for **Use the images as they are**.
 
+In the pictures of this page, the page that was converted is on the left, with the part that is kept outlined in teal and the part that is cut away shaded pink; on the right is the page as it comes out, on a screen.
+
 ## Page cropping
 
 The default is **Margins and page numbers**.
@@ -15,9 +17,10 @@ The default is **Margins and page numbers**.
 <OptionExample
   id="cropping-modes"
   alt={{
-    disabled: 'A manga page with its white margin left around the panels.',
+    disabled:
+      'A manga page outlined whole, with nothing shaded, and next to it the page as it comes out on a screen: the same page, with its white margin.',
     'margins-and-page-numbers':
-      'The same page with the margin cut off, so the panels fill the screen.',
+      'The manga page with its margin shaded pink and the part kept outlined in teal, and next to it the page as it comes out on a screen, with the margin gone and the drawing larger.',
   }}
 />
 
@@ -32,6 +35,16 @@ The page above has no page number, so **Margins** gives the same result as **Mar
 ## Cropping power
 
 The default is 1, and the app accepts 0 to 10. The power sets the threshold the page is judged by: **240 − 64 × power**, on a scale where 255 is white. At 1 the threshold is 176, so every tone lighter than that is paper. A higher power lowers the threshold, and darker and darker tones count as paper too, so the crop reaches into shading and thin lines.
+
+The picture outlines the part of one page that is kept at each power, with the power beside the color of its outline. The outlines for 0, 1, 2 and 3 are almost one; 3.75 is the tightest; and at 3.76 nothing is cropped, so its dashed outline is the whole page.
+
+<OptionExample
+  id="cropping-power-boxes"
+  alt={{
+    boxes:
+      'One manga page with five outlines, one inside the other, each in its own color, and a key beside it with the power of each: 0, 1, 2 and 3 are almost the same outline, 3.75 is tighter, and 3.76 is a dashed outline around the whole page.',
+  }}
+/>
 
 <OptionSizes id="cropping-power-sizes" />
 
@@ -49,13 +62,13 @@ The crop of this page keeps 80.1%, so a minimum of 80 allows it and 81 refuses i
 
 ## Preserved margin
 
-The default is 0%, and the app accepts 0 to 100%. The crop is backed off by this percentage after the 10% limit, so some margin stays: at 50% half of what would have been removed is kept, at 100% nothing is removed.
+The default is 0%, and the app accepts 0 to 100%. The crop is backed off by this percentage after the 10% limit, so some margin stays: at 50% half of what would have been removed is kept, at 100% nothing is removed. In the second picture the dashed outline is where the cut was at 0%.
 
 <OptionExample
   id="cropping-preserve"
   alt={{
-    '0': 'A manga page cropped to its panels, with no margin left.',
-    '50': 'The same page cropped to half as much, with a thin margin left around the panels.',
+    '0': 'The manga page with its margin shaded pink and the part kept outlined in teal, and next to it the page as it comes out on a screen.',
+    '50': 'The same page with the shaded margin narrower: the part kept, outlined in teal, is larger than the dashed outline of the part kept at 0%, and next to it the page as it comes out.',
   }}
 />
 

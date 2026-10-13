@@ -33,6 +33,7 @@ import {
   pdfFacts,
   pdfPictures,
 } from './options-gallery/book-facts.mjs';
+import { boxesPicture, cropPicture, findBox } from './options-gallery/crop.mjs';
 import { flowPicture } from './options-gallery/flow.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
@@ -258,6 +259,25 @@ function convert(mangapress, input, flags, work, profile) {
   return pagesOf(makeBook(mangapress, input, flags, work, profile, base.format).bytes);
 }
 
+/** The first page converted without enlarging and without loss, so that a crop of it is a piece of it. */
+function nativePage(mangapress, input, flags, work, profile) {
+  const all = combine(base.flags, [...flags, '--forcepng', '--noquantize'], ['--upscale']);
+  return pagesOf(makeBook(mangapress, input, all, work, profile, base.format).bytes)[0];
+}
+
+/** Writes the picture of a variant as a WebP in the assets folder and records it in the entry. */
+async function savePicture(entry, example, variant, picture) {
+  const encoded = await picture
+    .webp({ quality: 80, effort: 6 })
+    .toBuffer({ resolveWithObject: true });
+  entry.file = `${example.id}-${variant.id}.webp`;
+  entry.pictureWidth = encoded.info.width;
+  entry.pictureHeight = encoded.info.height;
+  entry.bytes = encoded.data.length;
+  entry.sha256 = sha256(encoded.data);
+  writeFileSync(path.join(output, entry.file), encoded.data);
+}
+
 /**
  * What a book says about itself, for the example kind `book`: the values mangapress wrote into it,
  * read back from the file. A value the format has no place for is null.
@@ -419,6 +439,23 @@ async function runExample(mangapress, example, scratch) {
     : undefined;
   const all = example.show === 'all';
   const variants = [];
+  // For the pictures of what cropping keeps: the page converted without cropping, and where the crop of
+  // each variant sits in it.
+  const cropping = example.crop ?? example.boxes;
+  const native = (name, flags) =>
+    nativePage(
+      mangapress,
+      sourceSize.directory,
+      flags,
+      path.join(scratch, 'native', example.id, name),
+      example.profile ?? base.profile,
+    );
+  const reference = cropping ? native('reference', cropping.reference) : undefined;
+  const referenceSize = reference ? await sharp(reference).metadata() : undefined;
+  const boxOf = new Map();
+  if (example.crop)
+    for (const variant of example.variants)
+      boxOf.set(variant.id, await findBox(reference, native(variant.id, variant.flags)));
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
     // A variant may have an input of its own, such as a wide first image for the cover.
@@ -448,6 +485,34 @@ async function runExample(mangapress, example, scratch) {
           ]),
           ...(ownCover ? ['--cover', ownCover.file] : []),
         ];
+    if (example.boxes) {
+      // One picture for the whole example: the part kept by each setting, one inside the other.
+      const settings = [];
+      for (const [index, setting] of example.boxes.settings.entries())
+        settings.push({
+          label: setting.label,
+          box: await findBox(reference, native(`setting-${index}`, setting.flags)),
+        });
+      await savePicture(
+        entry,
+        example,
+        variant,
+        await boxesPicture({
+          source: readFileSync(source.file),
+          size: referenceSize,
+          boxes: settings,
+        }),
+      );
+      entry.plain = true;
+      entry.width = referenceSize.width;
+      entry.height = referenceSize.height;
+      entry.pageBytes = 0;
+      variants.push(entry);
+      console.log(
+        `  ${variant.id.padEnd(28)} ${settings.map((b) => `${b.label}: ${b.box.width}x${b.box.height}`).join(', ')}`,
+      );
+      continue;
+    }
     if (example.kind === 'book') {
       const work = path.join(scratch, 'output', example.id, variant.id);
       const book = makeBook(mangapress, input, flags, work, profile, format);
@@ -527,6 +592,15 @@ async function runExample(mangapress, example, scratch) {
           flow: variant.flow,
           screen: example.flowScreen,
         });
+      else if (example.crop)
+        picture = await cropPicture({
+          source: readFileSync(source.file),
+          size: referenceSize,
+          box: boxOf.get(variant.id),
+          compare: variant.compare ? boxOf.get(variant.compare) : undefined,
+          result: picked[0],
+          screen: example.crop.screen,
+        });
       else if (all) picture = await row(picked);
       else if (example.zoom)
         picture = sharp(picked[0])
@@ -535,15 +609,7 @@ async function runExample(mangapress, example, scratch) {
       else if (example.screen && !variant.original)
         picture = await onScreen(picked[0], example.screen);
       else picture = sharp(picked[0]).resize({ width: PICTURE_WIDTH });
-      const encoded = await picture
-        .webp({ quality: 80, effort: 6 })
-        .toBuffer({ resolveWithObject: true });
-      entry.file = `${example.id}-${variant.id}.webp`;
-      entry.pictureWidth = encoded.info.width;
-      entry.pictureHeight = encoded.info.height;
-      entry.bytes = encoded.data.length;
-      entry.sha256 = sha256(encoded.data);
-      writeFileSync(path.join(output, entry.file), encoded.data);
+      await savePicture(entry, example, variant, picture);
     }
     variants.push(entry);
     const shape = all
@@ -563,7 +629,7 @@ async function runExample(mangapress, example, scratch) {
   ];
   return {
     kind: example.kind,
-    layout: all ? 'rows' : 'grid',
+    layout: example.layout ?? (all ? 'rows' : 'grid'),
     sources: used,
     ...licenceOf(used),
     source: { width: sourceSize.width, height: sourceSize.height },
