@@ -7,15 +7,15 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## Dispositivo e formato
 
-Escolha seu modelo em **Device**. Para definir o tamanho das páginas, abra **Advanced conversion options** e preencha **Custom width** e **Custom height** em pixels. Um perfil de dispositivo personalizado exige ambas as dimensões. Na linha de comando, são `--profile`, `--format`, `--customwidth` e `--customheight`; a página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
+Escolha o seu modelo em **Device**. Para definir o tamanho das páginas, abra **Advanced conversion options** e preencha **Custom width** e **Custom height**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
 
 | Formato | Quando escolher                                                                                         |
 | ------- | ------------------------------------------------------------------------------------------------------- |
-| CBZ     | O formato inicial. Imagens processadas em um ZIP: o que o guia do próprio KOReader recomenda para mangá |
+| CBZ     | O formato com que o Mangabound começa. Imagens processadas em um ZIP. O guia do próprio KOReader o recomenda para mangá |
 | EPUB    | Livro com navegação de capítulos e autor; obrigatório para o modo de livro único                        |
 | PDF     | Páginas fixas para leitores ou tablets com suporte a PDF                                                |
 
-A compatibilidade depende do aplicativo de leitura, não apenas do dispositivo. O leitor nativo do Kindle não abre EPUB diretamente: use um serviço de transferência/conversão compatível ou um leitor instalado, como KOReader. O KOReader trata EPUB de forma diferente de CBZ/PDF: ele diagrama o EPUB como texto, com margens e barra de status próprias em volta de cada página, então a página pode ficar menor que a tela. Veja [configurações do leitor](../../koreader/recommended-settings/).
+O que funciona depende do aplicativo de leitura, e não só do dispositivo. O leitor do próprio Kindle não abre EPUB diretamente: envie o arquivo por um serviço que o converta, como o Send to Kindle da Amazon, ou leia em um aplicativo instalado, como o KOReader. O KOReader trata o EPUB de um jeito diferente de CBZ e PDF. Ele monta o EPUB como texto, com margens e barra de status próprias em volta de cada página, então a página pode ficar menor que a tela. Veja [configurações do leitor](../../koreader/recommended-settings/).
 
 <TutorialImage
   name="generated/device-settings"
@@ -26,9 +26,9 @@ Essas dimensões são apenas um exemplo; use o tamanho adequado à sua tela.
 
 ## Advanced conversion options
 
-**Advanced conversion options** disponibiliza os ajustes do mangapress, agrupados por finalidade: **Reading**, **Double-page spreads**, **Size and borders**, **Cropping**, **Two-page view**, **Color and tone**, **Page images**, **Cover** e **Book metadata**. Comece pelos padrões do dispositivo, altere um ajuste de cada vez e confira o livro gerado. Se cortar a arte, reduza ou desative o recorte.
+**Advanced conversion options** reúne os ajustes do mangapress, agrupados por finalidade: **Reading**, **Double-page spreads**, **Size and borders**, **Cropping**, **Two-page view**, **Color and tone**, **Page images**, **Cover** e **Book metadata**. Comece pelos padrões do seu dispositivo, altere um ajuste de cada vez e confira o livro que sai. Se a arte for cortada, reduza o recorte ou desative-o.
 
-Cada grupo tem uma página própria na [visão geral](../advanced-options/), onde a mesma página é convertida com e sem cada opção, e onde toda opção é listada com a flag de linha de comando que a define.
+Cada grupo tem uma página própria na [visão geral](../advanced-options/). Lá, a mesma página é convertida com e sem cada opção, e toda opção é listada com a flag de linha de comando que a define.
 
 <TutorialImage
   name="generated/page-layout"
@@ -36,7 +36,7 @@ Cada grupo tem uma página própria na [visão geral](../advanced-options/), ond
   caption="Com Webtoon strips, a ordem de leitura de mangá e os controles de páginas largas não se aplicam. Para páginas comuns de mangá, mantenha Manga or comic pages."
 />
 
-Algumas opções só importam depois de outra. As páginas mantidas em cor continuam em JPEG mesmo quando **Page format** é PNG, até que **Color pages as PNG too** esteja ligada, como os controles abaixo mostram; a página [Imagens das páginas](../advanced-options/page-images/) mede o que cada uma custa.
+Algumas opções só importam depois de outra. Por exemplo, as páginas mantidas em cor continuam em JPEG mesmo quando **Page format** é PNG, até que **Color pages as PNG too** seja ligada. Os controles abaixo mostram isso, e a página [Imagens das páginas](../advanced-options/page-images/) mede o que cada escolha custa.
 
 <TutorialImage
   name="generated/page-images"
@@ -44,21 +44,21 @@ Algumas opções só importam depois de outra. As páginas mantidas em cor conti
   caption="Neste exemplo, as páginas coloridas continuam em JPEG. Color pages as PNG too também as salva em PNG."
 />
 
-**Use the images as they are**, junto do dispositivo, empacota as páginas sem tocar nelas, e **Name the book .epub**, também junto do dispositivo, evita que o EPUB de um Kobo se chame `.kepub.epub`: veja [Imagens das páginas](../advanced-options/page-images/#use-the-images-as-they-are) e [Metadados do livro](../advanced-options/book-metadata/#name-the-book-epub).
+Duas opções ficam ao lado do dispositivo. **Use the images as they are** empacota as páginas sem tocar nelas ([Imagens das páginas](../advanced-options/page-images/#use-the-images-as-they-are)). **Name the book .epub** evita que o EPUB de um Kobo se chame `.kepub.epub` ([Metadados do livro](../advanced-options/book-metadata/#name-the-book-epub)).
 
-Uma opção que outra escolha deixa sem efeito continua visível, esmaecida, e diz o motivo. **Webtoon strips**, por exemplo, trava as opções que um webtoon nunca usa ([Leitura](../advanced-options/reading/#o-que-mais-muda-com-ela) as lista), e o que você tinha escolhido volta quando você retorna às páginas.
+Uma opção que outra escolha torna inútil continua visível, esmaecida, e diz o motivo. Por exemplo, **Webtoon strips** trava as opções que um webtoon nunca usa ([Leitura](../advanced-options/reading/#o-que-mais-muda-com-ela) as lista). O que você tinha escolhido volta quando você retorna às páginas.
 
-Campos modificados podem ser restaurados individualmente ou em conjunto com **Reset to defaults**. As opções são lembradas entre sessões.
+Você pode restaurar um campo alterado sozinho, ou todos de uma vez com **Reset to defaults**. As suas opções são lembradas entre sessões.
 
 ## Um livro para a série
 
-Ative **Create one book for the series** na fila para reunir seus capítulos e volumes em um único livro, com os capítulos organizados por volume no índice.
+Ative **Create one book for the series** na fila para reunir os capítulos e volumes dela em um único livro. No índice, os capítulos ficam dentro dos seus volumes.
 
-Esse modo usa EPUB e mantém as duas etapas ativadas. Desative-o para mudar o formato ou as etapas. Livros combinados maiores podem demorar mais para abrir no e-reader.
+Esse modo usa EPUB e mantém as duas etapas ligadas. Desative-o para mudar o formato ou as etapas. Um livro combinado grande pode demorar mais para abrir no e-reader.
 
 <TutorialImage
   name="generated/single-book"
   alt="Create one book for the series ativado, com as etapas e o formato EPUB bloqueados."
 />
 
-A CLI independente tem padrões próprios; não presuma que sejam iguais aos da interface. Para uso no terminal, veja [mangapress](../../cli/mangapress/).
+A ferramenta de linha de comando tem padrões próprios, que não são os do aplicativo. Para uso no terminal, veja [mangapress](../../cli/mangapress/).
