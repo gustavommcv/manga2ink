@@ -93,7 +93,7 @@ Commands are for PowerShell at the repository root.
 
 ## Logo placement
 
-The logo replaces the final `intro-logo` authoring marker in both introductions. The unused placement plan and placeholder component were removed; all planned positions now contain real media. The README logo remains a separate follow-up.
+The logo replaces the final `intro-logo` authoring marker in both introductions. The unused placement plan and placeholder component were removed; all planned positions now contain real media. The README shows the same native-resolution master (`assets/branding/mangabound.png`, 1055 × 1055 pixels) at 256 CSS pixels, centered under the title, so that it stays sharp at 4× density.
 
 JPmarquesbraga supplied the artwork; on 2026-10-11 the maintainer confirmed permission to distribute it under MIT and supplied the larger original. [The asset guide](../assets/README.md) records the unchanged source, conventional crop, platform-specific spacing and exports. No generative editing was used.
 
