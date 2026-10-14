@@ -7,17 +7,15 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## Ajustes para o seu livro
 
-O KOReader trata EPUB de forma diferente de CBZ e PDF, por isso os controles de página dependem do formato do livro. CBZ é o formato inicial do Mangabound e o que o guia do próprio KOReader recomenda para mangá, com os controles de página de imagem abaixo; EPUB é útil para navegar pelo índice de capítulos e volumes, mas o KOReader desenha suas páginas com margens e barra de status em volta.
+O KOReader trata EPUB de um jeito diferente de CBZ e PDF, então os controles de página que você tem dependem do formato do livro. CBZ é o formato com que o Mangabound começa e o que o guia do próprio KOReader recomenda para mangá. Ele tem os controles de página de imagem descritos abaixo. O EPUB é útil se você quer um índice com capítulos e volumes, mas o KOReader desenha as páginas dele com margens e barra de status em volta.
 
-Abra algumas páginas e experimente os ajustes abaixo na sua tela. Os nomes e a posição dos menus podem variar conforme a versão, o idioma e o dispositivo. O [guia oficial do KOReader](https://koreader.rocks/user_guide/) explica os controles de cada formato e a pesquisa de menus.
+Abra algumas páginas e experimente os ajustes abaixo na sua tela. Os nomes e o lugar dos menus podem mudar conforme a versão, o idioma e o dispositivo. O [guia oficial do KOReader](https://koreader.rocks/user_guide/) explica os controles de cada formato e como pesquisar nos menus.
 
-Estas capturas foram feitas em um **Kindle 2024 com KOReader 2026.07.2-198**. Os menus estão em inglês; use os destaques vermelhos para localizar cada opção.
+Estas capturas foram feitas em um **Kindle 2024 com KOReader 2026.07.2-198**. Os menus estão em inglês, e os destaques vermelhos marcam cada opção.
 
 ## Overlap status bar
 
 Com um livro aberto, procure **Status bar → Overlap status bar**. A opção permite que a página use a área reservada à barra de status. Confira se a barra não cobre detalhes que você quer ver.
-
-Veja as [configurações da barra de status do KOReader](https://github.com/koreader/koreader/blob/master/frontend/apps/reader/modules/readerfooter.lua).
 
 <TutorialImage
   name="koreader/status-overlap"
@@ -80,15 +78,17 @@ A atualização completa pode reduzir essas marcas, mas também causar um flash 
 
 ## Controles de página para CBZ/PDF
 
-Experimente a exibição por página e o ajuste da página inteira à tela. Se o livro já ocupa bem a tela, deixe o recorte desativado: a conversão pode ter removido as margens, e outro recorte pode cortar a arte.
+Experimente uma exibição que mostre uma página por vez, com o zoom ajustado para caber a página inteira. Se o livro já ocupa bem a tela, deixe o recorte desativado: a conversão pode já ter removido as margens, e recortar de novo pode cortar a arte.
 
-Esses são controles de CBZ/PDF. Para EPUB, use as opções do próprio menu de leitura. Altere um ajuste por vez e compare algumas páginas antes de salvar suas preferências.
+Esses controles são para CBZ e PDF. Para EPUB, use as opções do próprio menu de leitura. Altere um ajuste por vez e compare algumas páginas antes de salvar as suas preferências.
+
+O KOReader também tem o **Panel Zoom**, para mangás e quadrinhos. Ele fica no menu superior, sob o ícone de documento, e funciona com CBZ e PDF: um toque longo em um quadro aproxima esse quadro. O [guia oficial](https://koreader.rocks/user_guide/) tem os detalhes.
 
 ## Tweak document settings
 
-Para usar padrões diferentes em uma pasta de mangás e outra de livros de texto, há o plugin avançado **Tweak document settings**. Ele aplica os padrões da pasta na primeira abertura de um livro.
+Para usar padrões diferentes em uma pasta de mangás e em outra de livros de texto, há o plugin avançado **Tweak document settings**. Ele aplica os padrões da pasta quando um livro é aberto pela primeira vez.
 
-O plugin usa um arquivo de configuração Lua e não é a mesma função dos ajustes de estilo de EPUB. Siga as [instruções oficiais](https://github.com/koreader/koreader/wiki/Tweak-document-settings-by-directory) e faça backup antes de editar a configuração. Livros que você já abriu podem manter seus ajustes individuais.
+O plugin usa um arquivo de configuração Lua, e não os ajustes de estilo de EPUB. Siga as [instruções oficiais](https://github.com/koreader/koreader/wiki/Tweak-document-settings-by-directory) e faça backup antes de editar a configuração. Livros que você já abriu podem manter os próprios ajustes.
 
 Se o plugin não aparecer, ative **Tweak document settings** em **Tools → Plugin management**. Depois abra **Tools → More tools → Tweak document settings**.
 
@@ -132,6 +132,6 @@ Esse exemplo troca as zonas de toque e a direção dos gestos para leitura da di
 
 ## Salvando um padrão
 
-Alguns controles permitem salvar um padrão com toque longo; outros abrem ajuda ou outro diálogo. Siga a confirmação exibida para aquele controle. Livros já abertos podem manter seus próprios ajustes.
+Alguns controles permitem salvar um padrão com um toque longo. Outros abrem uma ajuda ou outro diálogo. Siga a confirmação que o KOReader mostra para aquele controle. Livros que você já abriu podem manter os próprios ajustes.
 
-Se um livro continuar sendo exibido incorretamente, informe a versão do KOReader, o dispositivo, o formato e os ajustes ao pedir ajuda.
+Se um livro continuar sendo exibido de forma incorreta, informe a versão do KOReader, o dispositivo, o formato e os seus ajustes ao pedir ajuda.
