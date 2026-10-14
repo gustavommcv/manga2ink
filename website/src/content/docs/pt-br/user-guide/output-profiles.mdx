@@ -9,11 +9,11 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 Escolha o seu modelo em **Device**. Para definir o tamanho das páginas, abra **Advanced conversion options** e preencha **Custom width** e **Custom height**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
 
-| Formato | Quando escolher                                                                                         |
-| ------- | ------------------------------------------------------------------------------------------------------- |
+| Formato | Quando escolher                                                                                                         |
+| ------- | ----------------------------------------------------------------------------------------------------------------------- |
 | CBZ     | O formato com que o Mangabound começa. Imagens processadas em um ZIP. O guia do próprio KOReader o recomenda para mangá |
-| EPUB    | Livro com navegação de capítulos e autor; obrigatório para o modo de livro único                        |
-| PDF     | Páginas fixas para leitores ou tablets com suporte a PDF                                                |
+| EPUB    | Livro com navegação de capítulos e autor; obrigatório para o modo de livro único                                        |
+| PDF     | Páginas fixas para leitores ou tablets com suporte a PDF                                                                |
 
 O que funciona depende do aplicativo de leitura, e não só do dispositivo. O leitor do próprio Kindle não abre EPUB diretamente: envie o arquivo por um serviço que o converta, como o Send to Kindle da Amazon, ou leia em um aplicativo instalado, como o KOReader. O KOReader trata o EPUB de um jeito diferente de CBZ e PDF. Ele monta o EPUB como texto, com margens e barra de status próprias em volta de cada página, então a página pode ficar menor que a tela. Veja [configurações do leitor](../../koreader/recommended-settings/).
 
