@@ -123,6 +123,10 @@ export function auditSearchData(pages, { site, base }) {
     if ($('link[rel="canonical"]').attr('href') !== address)
       fail(`Canonical address is not ${address}`);
 
+    const card = new URL('social-preview.png', root).href;
+    if ($('meta[property="og:image"]').attr('content') !== card)
+      fail(`Social preview image is not ${card}`);
+
     const headings = $('h1').length;
     if (headings !== 1) fail(`Expected one h1, found ${headings}`);
 

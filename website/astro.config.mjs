@@ -4,6 +4,9 @@ import starlight from '@astrojs/starlight';
 
 import { base, site } from './site.config.mjs';
 
+// The card that a link to any page of the guide shows when it is shared: `public/social-preview.png`.
+const socialPreview = new URL(`${base.replace(/\/?$/, '/')}social-preview.png`, site).href;
+
 // https://astro.build/config
 export default defineConfig({
   site,
@@ -28,6 +31,13 @@ export default defineConfig({
       description:
         'Mangabound organizes manga chapters into volumes, converts them into EPUB, CBZ or PDF for your e-reader, and shares books with KOReader over your local network.',
       routeMiddleware: './src/routeData.ts',
+      head: [
+        { tag: 'meta', attrs: { property: 'og:image', content: socialPreview } },
+        { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+        { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+        { tag: 'meta', attrs: { property: 'og:image:alt', content: 'Mangabound logo' } },
+        { tag: 'meta', attrs: { name: 'twitter:image', content: socialPreview } },
+      ],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/gustavommcv/mangabound' },
       ],

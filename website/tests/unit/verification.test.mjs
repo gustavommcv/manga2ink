@@ -177,6 +177,7 @@ const indexed = (
   return (
     `<html lang="${lang}"><head><title>${title}</title><meta name="description" content="${text}">` +
     `<link rel="canonical" href="${url}">` +
+    `<meta property="og:image" content="https://example.org${root}social-preview.png">` +
     `<script type="application/ld+json">${JSON.stringify(data)}</script></head>${body}</html>`
   );
 };
@@ -206,6 +207,7 @@ test('a page with nothing for a search engine reports each missing part', () => 
       'No title',
       'No description',
       'Canonical address is not https://example.org/mangabound/',
+      'Social preview image is not https://example.org/mangabound/social-preview.png',
       'Expected one h1, found 0',
       'Page language is not en',
       'No structured data',
@@ -227,6 +229,21 @@ test('a repeated title, a blank description, and broken structured data fail', (
     { source: 'a/index.html', reason: 'Title is also used by index.html' },
     { source: 'a/index.html', reason: 'No description' },
     { source: 'b/index.html', reason: 'Structured data is not valid JSON' },
+  ]);
+});
+
+test('a page whose social preview card is missing, or is another file, fails', () => {
+  const card = 'https://example.org/mangabound/social-preview.png';
+  const result = auditSearchData(
+    [
+      page('a/index.html', indexed('a/').replace(card, 'https://example.org/other.png')),
+      page('b/index.html', indexed('b/').replace(/<meta property="og:image"[^>]*>/, '')),
+    ],
+    options,
+  );
+  assert.deepEqual(result.errors, [
+    { source: 'a/index.html', reason: `Social preview image is not ${card}` },
+    { source: 'b/index.html', reason: `Social preview image is not ${card}` },
   ]);
 });
 

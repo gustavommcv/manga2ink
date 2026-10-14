@@ -15,6 +15,8 @@ Each page has a description of its own task. Write for readers, not a keyword sc
 - `noindex` on `404.html`, including when GitHub Pages serves that file at its own address with status 200;
 - the Search Console verification tag, only when the owner has supplied its value in `site.config.mjs`.
 
+`astro.config.mjs` adds the social preview card, `public/social-preview.png` (1200 × 630 pixels, made from the logo as [the asset guide](../assets/README.md) records), to every page as `og:image` and `twitter:image`, with its size and a text alternative, so that a link to the guide shows it when shared.
+
 `src/structured-data.mjs` constructs that small data model and escapes `<` before placing JSON into a script element. The documentation's language varies by page; the application's declared language remains English, matching its controls. This is static build output, not a server or client-side SEO library.
 
 ### What the data can and cannot do
@@ -31,7 +33,7 @@ After generating the current tutorial images, run `npm --prefix website run chec
 
 - an indexable guide in each locale, with no unexpected `noindex` on any documentation page;
 - `noindex` on the 404 page;
-- distinct nonempty titles, nonempty descriptions, a canonical URL matching the deployed path, one `h1`, the expected page language, and image alternative-text attributes;
+- distinct nonempty titles, nonempty descriptions, a canonical URL matching the deployed path, the social preview image at this site's own address, one `h1`, the expected page language, and image alternative-text attributes;
 - the expected structured-data entities, their identity, URLs, descriptions, languages, and ordered breadcrumbs.
 
 Pure-helper unit tests retain the 100% coverage gate. `tests/built/search-data.test.mjs` uses the output of the actual Astro/Starlight build, not handwritten stand-ins for the framework. Its deliberate mutations prove that a globally or individually excluded guide, empty JSON, a wrong entity URL, a breadcrumb crossing locales, and a missing 404 directive fail. These are checks of this site's contract, not a general schema.org validator or proof that Google will use the markup.
@@ -55,5 +57,5 @@ Search Console is a useful submission and diagnostic tool, not a requirement for
 - **Robots policy belongs to the host root.** Crawlers read `https://gustavommcv.github.io/robots.txt`, not `/mangabound/robots.txt`; see [Google's location requirements](https://developers.google.com/crawling/docs/robots-txt/create-robots-txt). The root is managed separately from this project. No redundant project-level file is added. If the owner manages the root site, its policy may reference this project's sitemap; review that policy for all projects it affects.
 - **Repository topics are optional discoverability metadata.** They belong to repository settings, not this PR. Adding them requires the owner's approval and is separate from Search Console or the site's build.
 - **No tracking is added.** Google Analytics is not needed for the changes here. Search Console provides search reports without adding visitor-tracking scripts to the documentation.
-- **No meta keywords or temporary branding.** The site does not add keyword tags to satisfy an extension's score. Add a social preview image with the finished, approved logo, following [MEDIA.md](MEDIA.md), rather than shipping a placeholder.
+- **No meta keywords or temporary branding.** The site does not add keyword tags to satisfy an extension's score. The social preview card is the finished, approved logo ([MEDIA.md](MEDIA.md)), not a placeholder.
 - **Descriptions follow the pages.** Update both locales with actual UI changes. Preserve local KOReader sharing in the main description and do not describe planned capabilities as shipped.

@@ -99,6 +99,8 @@ JPmarquesbraga supplied the artwork; on 2026-10-11 the maintainer confirmed perm
 
 Starlight's [built-in logo configuration](https://starlight.astro.build/reference/configuration/#logo) displays a compact 128 px lossless WebP beside the visible site title. The introduction displays the native-resolution square master at 256 CSS pixels, with Astro-generated lossless WebP alternatives through 4× density and a link to the full-resolution image. The image is decorative beside the app name; the full-size link has a localized accessible label. It is not mixed into tutorial instructions or Storybook capture.
 
+The social preview card shown when a link to the guide is shared is `public/social-preview.png`, 1200 × 630 pixels: the square master at 630 px, centered on the artwork's own background color, with no added text. It is set in `astro.config.mjs` and checked in the built pages; [the asset guide](../assets/README.md) records how it is exported.
+
 The browser favicon contains 16, 32, 48 and 64 px representations. A separate public `mangabound.ico` matches the desktop ICO and supplies Squirrel's installed-program entry without forcing browsers to download the larger frames. Branding browser tests cover both languages, both themes, mobile layout, actual image loading, full-size navigation, favicon and desktop-icon responses, accessibility, and 4× source selection.
 
 ## Asset and authoring conventions
