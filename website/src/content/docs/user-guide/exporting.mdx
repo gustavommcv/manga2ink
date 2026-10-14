@@ -9,9 +9,9 @@ import TutorialImage from '../../../components/TutorialImage.astro';
 
 Use **Save as…** beside a book to choose its name and destination. For multiple books, **Save all to folder…** copies them into the selected folder.
 
-You can save again while the pending books remain available. Batch saving does not replace existing files: it chooses a free numbered name, so repeated saves may create extra copies. Individual **Save as…** uses the native save dialog's overwrite confirmation.
+You can save again as long as the pending books are still there. **Save all to folder…** never replaces existing files. It picks a free numbered name instead, so saving repeatedly can leave extra copies. **Save as…** uses your system's save dialog, which asks before it overwrites a file.
 
-If saving fails or shows a warning, read the message and retry. A book may have been copied even if recording it in the destination catalog failed; check that folder before making another copy. The pending copy remains available for recovery.
+If saving fails or shows a warning, read the message and try again. Mangabound also records each saved book in a list inside the destination folder, which is what sharing uses. A book may have been copied even though that record failed, so check the folder before you copy it again. The pending copy stays available.
 
 <TutorialImage
   name="generated/save-results"
@@ -20,7 +20,7 @@ If saving fails or shows a warning, read the message and retry. A book may have 
 
 ## Warnings about the books
 
-When mangapress notices something about a book it still made, the results say so below the books: once for each kind of warning, naming the books it is in. The books are ready all the same; a warning is advice, not a failure.
+Sometimes there is something worth knowing about a book that was still made. The results then say so below the books: once for each kind of warning, naming the books it applies to. The books are ready all the same. A warning is advice, not a failure.
 
 <TutorialImage
   name="generated/book-warnings"
@@ -29,32 +29,32 @@ When mangapress notices something about a book it still made, the results say so
 
 - **Pages smaller than the screen**: more than a quarter of the pages are smaller than the screen and nothing enlarges them. Choose **Fit, enlarging small pages** under **Page size** in the [conversion options](../output-profiles/) and convert again.
 - **Pages already converted once**: the pages look like Kindle Comic Converter already converted them. Converting again lowers their quality; use the original files if you have them.
-- **Files that are not images were left out**: the input holds files that are not page images, and they are not in the book.
-- **A .json file beside the book was not used** and **Some labelled spreads were not joined**: mangapress reads a file of spread labels that sits beside a CBZ converted as it is; these say that the file was not such a list, or that a labelled position had no page to be joined with.
-- **Saved under another name**: the book would have replaced its own source.
-- **Pages that end early have a blank part**: the file of a page ends before its image does, usually because a download stopped. The book keeps what could be read and the rest of that page is blank. Download the chapter again to get the whole page.
+- **Files that are not images were left out**: what you added holds files that are not page images, so they are not in the book.
+- **A .json file beside the book was not used** and **Some labelled spreads were not joined**: mangapress looks for a `.json` file of spread labels next to a CBZ that you add. The first notice says that the file was not a list of spread labels, so the book was made without it. The second says that a labelled position had no page to be joined with.
+- **Saved under another name**: the book would have replaced the file it was made from, so it got another name.
+- **Pages that end early have a blank part**: a page's file ends before the whole image is there, usually because a download stopped. The book keeps what could be read, and the rest of that page is blank. Download the chapter again to get the whole page.
 
-The step that joins the chapters into volumes, mangabind, gives warnings of its own when it leaves something of yours out of a book:
+The step that joins the chapters into volumes, done by mangabind, adds notices of its own when it leaves something out of a book:
 
 - **Chapters with more than one copy were left out**: a chapter is in the folder more than once, so none of its copies is in the book. Remove all but one and convert again.
 - **Chapters are missing inside a volume** and **Chapters with no pages were left out**: a chapter number is missing between the first and the last of a volume, or a chapter holds no pages.
 - **Links that lead outside the folder were left out**: a file in the folder is a link that does not lead to a file inside it, so it was not copied. Put a copy of the file in the folder if it is meant to be there.
 - **Files in a chapter that are not page images were left out**: the names of these files do not say they are images (JPEG, PNG, WebP, GIF, BMP, AVIF, JPEG XL or TIFF). If one is a page, give it the extension of its format and convert again. Hidden system files such as `.DS_Store` are left out without a warning.
-- **Pages that expand to too much were left out**: a page in a CBZ says it expands to far more than a page can be, which is how a file made to fill a computer's memory looks.
+- **Pages that expand to too much were left out**: a page inside a CBZ claims to unpack to far more than any page could be (over 256 MiB, or over a thousand times its size in the archive). That is what a file built to fill a computer's memory looks like, so it was left out.
 
-A warning of a kind this version does not know is shown in mangapress's own words. Warnings are shown with the results of the conversion that gave them; books reopened later from **Ready books** are listed without them.
+If a newer mangapress sends a kind of warning that this version does not know, it is shown in mangapress's own words, under **A note from mangapress**. Warnings appear with the results of the conversion that produced them. Books you reopen later from **Ready books** are listed without them.
 
 ## Open or share
 
-- The open action beside a book launches the operating system's default application. If none is associated with EPUB/CBZ/PDF, install a compatible reader or set the file association.
-- The folder action appears for a saved book and reveals its saved location.
-- **Share these books** serves the ready books, those of every pending conversion, over OPDS without requiring a separate export first. See [local sharing](../../koreader/opds-sharing/).
+- The open action beside a book opens it in your system's default application. If none is set for EPUB, CBZ or PDF, install a compatible reader or choose one in your system settings.
+- The folder action appears for a saved book and shows where it was saved.
+- **Share these books** shares all the ready books, from every pending conversion, with KOReader over your local network. You do not have to save them first. See [local sharing](../../koreader/opds-sharing/).
 
 ## What survives a restart?
 
-Pending books are stored in Mangabound's persistent local app data, not the OS temporary directory. Unsaved, partly saved, or warning-affected conversions remain under **Ready books** in the queue. **View books** opens their results.
+Pending books are kept in Mangabound's own app data on your computer, not in a temporary folder. A conversion that is unsaved, partly saved or has warnings stays under **Ready books** in the queue. **View books** opens its results.
 
-When every book in a completed conversion has been successfully saved and recorded, its pending copies can be cleaned up on app exit. The exported copies remain where you saved them. Keep your own backups; pending app data is not a permanent library.
+When every book of a finished conversion has been saved and recorded, Mangabound can clean up its pending copies when you close the app. The copies you saved stay where you saved them. Keep your own backups: the pending books are not a permanent library.
 
 <TutorialImage
   name="generated/ready-books"
@@ -63,10 +63,10 @@ When every book in a completed conversion has been successfully saved and record
 
 ## Delete pending books
 
-The queue's **Ready books** section has a **Delete** action for each conversion group. It permanently removes **all pending generated books in that group**, after confirmation—not just a list entry or one chosen volume.
+In the queue's **Ready books** section, each group of conversions has a **Delete** action. After you confirm, it permanently removes **all the pending books of that group**. It is not just a list entry, and it is not limited to one volume.
 
-It does not remove your original input or copies exported to another folder. Deletion is blocked while conversion is running or that group's books are being saved or shared. Stop sharing or wait for the operation to finish, then retry.
+It does not remove your original files or the copies you saved to another folder. You cannot delete while a conversion is running, or while that group's books are being saved or shared. Stop sharing, or wait for the operation to finish, and try again.
 
 :::caution[Save first]
-If the pending conversion is your only copy, Delete discards its generated books. To get them back, you would need to process the original input again.
+If the pending conversion is your only copy, Delete throws away its books. To get them back you would have to process the original files again.
 :::

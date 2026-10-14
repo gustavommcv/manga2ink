@@ -13,7 +13,7 @@ import TutorialImage from '../../../components/TutorialImage.astro';
 | Several manga folders in one library directory     | The library folder; inspect its individual titles before processing |
 | A complete volume already in a CBZ                 | The CBZ itself                                                      |
 
-Use **Files**, **Folder**, or drag files/folders onto the queue. The clickable drop area offers the same choices. Mangabound inspects the input before conversion; chapter folders with missing or conflicting assignments may need review.
+Use **Files** or **Folder**, or drag files and folders onto the queue. Clicking the drop area offers the same choices. Mangabound inspects what you add before converting. A chapter folder with missing or conflicting volume assignments may need your review.
 
 <TutorialImage
   name="generated/queue-inputs"
@@ -22,9 +22,11 @@ Use **Files**, **Folder**, or drag files/folders onto the queue. The clickable d
 
 ## Review an item
 
-Use **Edit volumes** for chapter-to-volume mapping. A library opens its list of titles so you can review each manga separately. Removing an input from the queue does not delete its source files.
+Use **Edit volumes** to say which chapters belong to which volume. A library opens a list of its titles, so you can review each manga on its own. Removing an item from the queue does not delete its files.
 
-Use the book-details action to set **Series title** or **Book title**, **Author**, and **Language** for each item. You can enter the author yourself or look it up online. If the folder names say the manga is in another language than the one the books are made in, the **Language** field offers a button to use it, such as **Use pt-BR**; nothing changes until you click it. You can type a language in any capitalization: books are always written with the standard form, so `pt-br` becomes `pt-BR`. For a library, set these details for each title.
+Use the book-details action to set the **Series title** or **Book title**, the **Author** and the **Language** of each item. You can type the author yourself or look it up online. For a library, set these details for each title.
+
+If the folder names show that the manga is in a different language from the books you are making, the **Language** field offers a button to use it, such as **Use pt-BR**. Nothing changes until you click it. You can type a language in any capitalization: books always use the standard form, so `pt-br` becomes `pt-BR`.
 
 <TutorialImage
   name="generated/book-details"
@@ -34,31 +36,43 @@ Use the book-details action to set **Series title** or **Book title**, **Author*
 
 ### Options for one item
 
-The sliders button on a row opens the conversion options for that item only. It is the same page as **Advanced conversion options**, so the device, the format and every other choice are there, and what you change is used for this item alone. A library has the button on each of its titles. The button is colored when the item has options of its own, and **Use the queue’s options** on that page drops them again.
+The sliders button on a row opens the conversion options for that item only. It opens the same page as **Advanced conversion options**, so the device, the format and every other choice are there, and what you change applies to this item alone. A library has the button on each of its titles.
 
-On that page an option is in color when it differs from the queue’s, and the arrow beside it, **Use the queue’s value**, puts the queue’s value back for that one option; **Use the queue’s options** puts back all of them. An option that has been put back is no longer something the item sets.
+A colored button means the item has options of its own. **Use the queue’s options** on that page removes them again.
 
-On the page of **Advanced conversion options**, when some items have options of their own, a notice says how many, and **Use the queue’s options for all** puts all of them back at once. **Reset to defaults** there only puts back the queue’s own options and leaves what the items set.
+On that page, an option is shown in color when it differs from the queue's. The arrow beside it, **Use the queue’s value**, sets that one option back to the queue's value. **Use the queue’s options** does this for all of them. Once an option is set back, the item follows the queue for it again.
 
-An item keeps following the queue for everything it did not set: if you change the device of the queue later, an item that never chose a device of its own changes with it. Options of one item are kept while the queue is open and are not saved for the next launch. The button is not shown when you only join volumes, because mangapress is not run then, and with **Create one book for the series** the format stays EPUB for every item.
+When some items have options of their own, the queue's **Advanced conversion options** page shows a notice that says how many. **Use the queue’s options for all** removes all of them at once. **Reset to defaults** on that page only resets the queue's own options. It leaves what the items set.
+
+An item keeps following the queue for everything it has not set. If you change the queue's device later, an item that never chose a device of its own changes with it.
+
+The options of an item are kept while the queue is open. They are not saved for the next time you start the app.
+
+The button is not shown when you only join volumes, because no conversion runs then. With **Create one book for the series**, the format stays EPUB for every item.
 
 ### A cover of your own
 
-The same page has **Covers**, with one line for each book the item makes. A book without a cover of its own uses its first page, as before.
+The same page has **Covers**, with one line for each book the item makes. A book without a cover of its own uses its first page.
 
-- **Choose cover…** picks an image for that book; dropping an image on the line does the same. The image can be anywhere and have any name: Mangabound keeps its own copy, so the original can be moved or deleted afterwards.
-- **Add covers from a folder…** gives the folder's images to the books in order of name: the first to the first book, the second to the second. Dropping a folder, or several images, on the list does the same. A cover you chose by hand is never replaced this way; one that came from an earlier folder is.
-- Each cover can be changed or removed on its line. The covers are remembered for that folder or file, and come back the next time you add it.
+- **Choose cover…** picks an image for that book. You can also drop an image on the line. The image can be anywhere and have any name. Mangabound keeps its own copy, so you can move or delete the original afterwards.
+- **Add covers from a folder…** gives the folder's images to the books in order of name: the first image to the first book, the second to the second, and so on. You can also drop a folder, or several images, on the list. A cover you chose by hand is never replaced this way. A cover that came from an earlier folder is.
+- You can change or remove each cover on its line. Covers are remembered for that folder or file and come back the next time you add it.
 
 <TutorialImage
   name="generated/book-covers"
   alt="Covers assigned from a folder or chosen individually, with two books still using their first page."
 />
 
-Covers are JPEG, PNG, WebP, GIF or BMP images. Mangabound checks that a file really is one when you choose it: a damaged file, or one that only has an image's name, is not used, and the page says so. In a folder, such an image keeps its place in the order, so the images after it still go to the books they line up with, and its book keeps its first page. If a cover still cannot be used when the book is made, the error names the book and says to remove the cover or choose another image on this page. The cover options in the [conversion options](../output-profiles/) apply to them too, and a CBZ keeps a cover of your own whatever they are; a PDF has no cover. [Cover](../advanced-options/cover/) shows what each does.
+Covers can be JPEG, PNG, WebP, GIF or BMP images. When you choose a file, Mangabound checks that it really is an image. A damaged file, or one that only has an image's name, is not used, and the page tells you.
+
+In a folder, an image that cannot be used keeps its place in the order. The images after it still go to the books they line up with, and its book keeps its first page.
+
+If a cover still cannot be used when the book is made, the error names the book and tells you to remove the cover or choose another image on this page.
+
+The cover options in the [conversion options](../output-profiles/) apply to your covers too. A CBZ keeps a cover of your own whatever those options are. A PDF has no cover. The [Cover](../advanced-options/cover/) page shows what each option does.
 
 ## Chapters have no volume names
 
-You do not have to rename the whole collection. Open the mapping editor: if no volume grouping exists, it switches to **Manual** and offers **Online source** as an optional alternative. Follow [volume mapping](../mapping-editor/).
+You do not have to rename your whole collection. Open the volume editor. If no volumes were recognized, it opens **Manual** and offers **Online source** as an optional alternative. Follow [volume mapping](../mapping-editor/).
 
-A loose chapter CBZ added as a file is considered a complete volume. Add its folder if you want it grouped with other chapters.
+A single chapter CBZ that you add as a file is treated as a complete volume. Add its folder instead if you want it grouped with other chapters.

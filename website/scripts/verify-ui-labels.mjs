@@ -24,7 +24,7 @@ const allowed = new Map([
   ['On, with Manga reading order off', 'a value of a table'],
   ['On, with Crop the cover to fill the screen', 'a value of a table'],
   ['240 − 64 × power', 'a formula'],
-  ['all pending generated books in that group', 'emphasis on what Delete removes'],
+  ['all the pending books of that group', 'emphasis on what Delete removes'],
   ['A PDF is never given a cover', 'emphasis on a sentence of the cover page'],
 ]);
 

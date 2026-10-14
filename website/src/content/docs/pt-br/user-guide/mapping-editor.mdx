@@ -5,13 +5,13 @@ description: 'Agrupe capítulos de mangá em volumes no Mangabound: use os núme
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
 
-O editor define a quais volumes pertencem os capítulos locais. As três abas de **Chapters from** trabalham na mesma organização: você pode corrigir uma sugestão ou criar volumes do zero.
+O editor de volumes define a qual volume pertence cada um dos seus capítulos. As três abas de **Chapters from** trabalham sobre os mesmos volumes, então você pode corrigir uma sugestão do mesmo jeito que cria volumes do zero.
 
 ## File names
 
-Se os nomes contiverem números de volume, **File names** mostra um resumo da organização reconhecida. O agrupamento usa esses números, não uma quantidade fixa de capítulos por volume.
+Se os nomes tiverem números de volume, **File names** mostra um resumo dos volumes reconhecidos. Ele não adivinha onde um volume termina a partir da quantidade usual de capítulos.
 
-Use **Edit chapter mapping** para abrir os controles manuais quando precisar corrigir o resumo. **Start over from the names** restaura a organização inicial pelos nomes e descarta as edições.
+Se o resumo precisar de correção, use **Edit chapter mapping** para abrir os controles manuais. **Start over from the names** volta aos volumes encontrados nos nomes e descarta as suas edições.
 
 ## Manual: sem consulta online
 
@@ -21,7 +21,7 @@ Use **Edit chapter mapping** para abrir os controles manuais quando precisar cor
 4. Repita para os outros volumes. Atribuir um capítulo já colocado o move, sem duplicá-lo.
 5. Resolva os problemas listados e use **Confirm mapping**.
 
-Use os controles do editor para alterar números de volume ou mesclar volumes. Os botões de desfazer/refazer permitem reverter alterações.
+Use os controles do editor para mudar números de volume ou juntar volumes. Os botões de desfazer e refazer revertem as suas alterações.
 
 <TutorialImage
   name="generated/manual-mapping"
@@ -49,21 +49,25 @@ Selecione capítulos, escolha o volume e use **Assign selected**.
 
 ## O mesmo capítulo duas vezes
 
-Às vezes uma pasta traz um capítulo de dois grupos, por exemplo `Ch.0002 [G1]` e `Ch.0002 [G2]`. O mangabind não consegue escolher entre as cópias: ele deixa **todas** de fora do livro, e colocar uma delas em um volume não muda isso. Por isso o editor mostra um erro, **Chapter 2 is in the folder more than once**, até você remover todas as cópias menos uma da pasta e adicionar a pasta de novo.
+Às vezes uma pasta traz o mesmo capítulo de dois grupos, por exemplo `Ch.0002 [G1]` e `Ch.0002 [G2]`. O Mangabound não consegue escolher entre as cópias, então deixa **todas** de fora do livro. Colocar uma delas em um volume não muda isso. O editor mostra um erro, **Chapter 2 is in the folder more than once**, até você remover todas as cópias menos uma da pasta e adicionar a pasta de novo.
 
-Se um livro for feito mesmo assim e algo ficou de fora, os resultados avisam abaixo do livro: por exemplo, capítulos com mais de uma cópia, capítulos faltando dentro de um volume, capítulos sem páginas ou links que levam para fora da pasta que ficaram de fora. Um link em uma pasta de mangá só é seguido quando leva a um arquivo dentro dessa pasta, para que uma pasta vinda de outra pessoa não ponha um arquivo seu em um livro; para manter essa página, coloque uma cópia do arquivo na pasta.
+Se um livro for feito mesmo assim e algo tiver ficado de fora, os resultados avisam abaixo do livro. Por exemplo, eles podem dizer que ficaram de fora capítulos com mais de uma cópia, capítulos que faltam dentro de um volume, capítulos sem páginas ou links que levam para fora da pasta. Esses avisos estão listados em [Salvamento e livros prontos](../exporting/#avisos-sobre-os-livros).
+
+Um link em uma pasta de mangá só é seguido quando leva a um arquivo dentro dessa pasta. Isso impede que uma pasta vinda de outra pessoa coloque um arquivo seu em um livro. Para manter essa página, coloque uma cópia do arquivo na pasta.
 
 ## Pastas cujo nome não é um nome de capítulo
 
-O mangabind procura um número de capítulo no nome de cada pasta. Uma pasta que ele não consegue ler (`Omake`, `Ch.004 [GroupA]`, um nome em outro alfabeto sem número) não entra em nenhum volume nem em nenhum livro, e o editor não consegue colocá-la, porque não sabe qual capítulo é. A linha da fila e o editor avisam, com os nomes, em **Folders left out**. Renomeie as pastas para incluir um número de capítulo, por exemplo `Ch.005`, e adicione a pasta de novo. Em uma biblioteca, a linha da fila nomeia cada título com as pastas que ficaram de fora, e o editor desse título as lista; depois de renomear, adicione a biblioteca de novo.
+O Mangabound procura um número de capítulo no nome de cada pasta. Uma pasta cujo nome ele não consegue ler (`Omake`, `Ch.004 [GroupA]` ou um nome em outro alfabeto sem número) não entra em nenhum volume nem em nenhum livro, e o editor não consegue colocá-la, porque não sabe qual capítulo ela é. A linha da fila e o editor listam essas pastas pelo nome em **Folders left out**.
 
-Uma série guardada na biblioteca como link para uma pasta também não é lida, porque o mangabind não segue links para uma série. A tela dos títulos da biblioteca diz quais pastas ficaram de fora, pelo nome, acima da lista; se todas as pastas da biblioteca forem links, a linha dela na fila diz isso em vez de pedir que você desligue o agrupamento. Coloque as pastas de verdade na biblioteca e adicione-a de novo.
+Renomeie as pastas para incluir um número de capítulo, por exemplo `Ch.005`, e adicione a pasta de novo. Em uma biblioteca, a linha da fila mostra cada título com as pastas que ficaram de fora dele, e o editor desse título as lista. Depois de renomear, adicione a biblioteca de novo.
+
+Uma série guardada na biblioteca como link para uma pasta também não é lida, porque links para uma série não são seguidos. A tela com os títulos da biblioteca lista, pelo nome, as pastas que ficaram de fora, acima da lista. Se todas as pastas da biblioteca forem links, a linha dela na fila diz isso, em vez de pedir que você desligue o agrupamento. Coloque as pastas de verdade na biblioteca e adicione-a de novo.
 
 ## Online source: sugestões opcionais
 
 Escolha **Online source**, selecione MangaDex, informe o título e pressione **Search**.
 
-Escolha a obra com **Use these volumes**, confira o resumo e confirme ou use **Edit chapter mapping**. Uma sugestão pode estar incompleta ou diferir da sua edição; confira capítulos especiais e decimais. Se a obra não existir na fonte, use **Manual**.
+Escolha a obra certa com **Use these volumes**, confira o resumo e confirme, ou use **Edit chapter mapping**. Uma sugestão pode estar incompleta ou diferir da sua edição, então confira os capítulos especiais e decimais. Se a obra não estiver na lista, use **Manual**.
 
 <TutorialImage
   name="generated/online-mapping"
@@ -91,6 +95,6 @@ Confira os volumes sugeridos antes de confirmar ou editar a organização.
 
 ## Pulando o agrupamento
 
-**Skip grouping** aparece quando o fluxo permite converter sem reagrupar. Fica bloqueado em **Create one book for the series**, pois esse modo precisa dos volumes organizados para o índice aninhado do EPUB.
+**Skip grouping** aparece quando o Mangabound pode converter sem reagrupar. Ele fica desativado em **Create one book for the series**, porque esse modo precisa dos volumes para montar o índice do EPUB, com os capítulos dentro de cada volume.
 
-A organização é enviada ao mangabind no [formato de metadados documentado](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md). Não é necessário editar JSON para utilizar o editor.
+O editor passa os seus volumes ao mangabind em um [formato de metadados documentado](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md). Você nunca precisa editar esse arquivo JSON.

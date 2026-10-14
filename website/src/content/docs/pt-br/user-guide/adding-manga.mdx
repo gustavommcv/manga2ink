@@ -13,7 +13,7 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 | Várias pastas de mangá em uma biblioteca                       | A pasta da biblioteca; confira suas obras antes de processar |
 | Um volume completo já em CBZ                                   | O próprio CBZ                                                |
 
-Use **Files**, **Folder** ou arraste arquivos e pastas para a fila. Você também pode clicar na área de arquivos para escolher o que adicionar. O Mangabound analisa os capítulos antes de converter e indica quais precisam de revisão.
+Use **Files** ou **Folder**, ou arraste arquivos e pastas para a fila. Clicar na área de arrastar e soltar oferece as mesmas opções. O Mangabound analisa o que você adicionou antes de converter. Uma pasta de capítulos com atribuições de volume ausentes ou conflitantes pode precisar da sua revisão.
 
 <TutorialImage
   name="generated/queue-inputs"
@@ -22,9 +22,11 @@ Use **Files**, **Folder** ou arraste arquivos e pastas para a fila. Você també
 
 ## Confira um item
 
-Use **Edit volumes** para organizar capítulos em volumes. Uma biblioteca abre a lista de obras, permitindo revisar cada mangá. Remover uma entrada da fila não apaga seus arquivos originais.
+Use **Edit volumes** para dizer quais capítulos pertencem a cada volume. Uma biblioteca abre uma lista com as suas obras, para você revisar cada mangá separadamente. Remover um item da fila não apaga os arquivos dele.
 
-Use a ação de detalhes do livro para definir **Series title** ou **Book title**, **Author** e **Language** de cada item. Você pode preencher o autor ou buscá-lo online. Se os nomes das pastas indicarem que o mangá está em outro idioma que não o dos livros, o campo **Language** oferece um botão para usá-lo, como **Use pt-BR**; nada muda até você clicar. Você pode digitar o idioma com qualquer combinação de maiúsculas e minúsculas: os livros sempre são gravados na forma padrão, então `pt-br` vira `pt-BR`. Em uma biblioteca, defina os dados de cada obra.
+Use a ação de detalhes do livro para definir **Series title** ou **Book title**, **Author** e **Language** de cada item. Você pode digitar o autor ou buscá-lo online. Em uma biblioteca, defina esses dados para cada obra.
+
+Se os nomes das pastas mostrarem que o mangá está em um idioma diferente do dos livros que você está criando, o campo **Language** oferece um botão para usá-lo, como **Use pt-BR**. Nada muda até você clicar. Você pode digitar o idioma com qualquer combinação de maiúsculas e minúsculas: os livros sempre usam a forma padrão, então `pt-br` vira `pt-BR`.
 
 <TutorialImage
   name="generated/book-details"
@@ -34,31 +36,43 @@ Use a ação de detalhes do livro para definir **Series title** ou **Book title*
 
 ### Opções para um item
 
-O botão com controles deslizantes em uma linha abre as opções de conversão só daquele item. É a mesma página de **Advanced conversion options**, então o dispositivo, o formato e todas as outras escolhas estão lá, e o que você muda vale apenas para esse item. Uma biblioteca tem o botão em cada uma de suas obras. O botão fica colorido quando o item tem opções próprias, e **Use the queue’s options** nessa página as descarta.
+O botão com controles deslizantes em uma linha abre as opções de conversão só daquele item. Ele abre a mesma página de **Advanced conversion options**, então o dispositivo, o formato e todas as outras escolhas estão lá, e o que você muda vale apenas para esse item. Uma biblioteca tem o botão em cada uma das suas obras.
 
-Nessa página, uma opção fica colorida quando difere da fila, e a seta ao lado dela, **Use the queue’s value**, devolve o valor da fila só para aquela opção; **Use the queue’s options** devolve todas. Uma opção devolvida deixa de ser algo que o item define.
+Um botão colorido significa que o item tem opções próprias. **Use the queue’s options**, nessa página, remove essas opções.
 
-Na página de **Advanced conversion options**, quando alguns itens têm opções próprias, um aviso diz quantos são, e **Use the queue’s options for all** devolve todos de uma vez. **Reset to defaults** ali só devolve as opções da própria fila e não mexe no que os itens definiram.
+Nessa página, uma opção aparece colorida quando é diferente da fila. A seta ao lado dela, **Use the queue’s value**, volta aquela opção para o valor da fila. **Use the queue’s options** faz isso com todas. Depois que uma opção volta, o item passa a seguir a fila nela de novo.
 
-Um item continua seguindo a fila em tudo o que não definiu: se você mudar depois o dispositivo da fila, um item que nunca escolheu um dispositivo próprio muda junto. As opções de um item ficam enquanto a fila está aberta e não são salvas para a próxima abertura. O botão não aparece quando você só junta volumes, porque o mangapress não é executado, e com **Create one book for the series** o formato continua EPUB para todos os itens.
+Quando alguns itens têm opções próprias, a página **Advanced conversion options** da fila mostra um aviso com a quantidade. **Use the queue’s options for all** remove todas de uma vez. **Reset to defaults**, nessa página, só redefine as opções da própria fila. Ele não mexe no que os itens definiram.
+
+Um item continua seguindo a fila em tudo o que não definiu. Se você mudar o dispositivo da fila depois, um item que nunca escolheu um dispositivo próprio muda junto.
+
+As opções de um item ficam guardadas enquanto a fila está aberta. Elas não são salvas para a próxima vez que você abrir o app.
+
+O botão não aparece quando você só junta volumes, porque nenhuma conversão é executada. Com **Create one book for the series**, o formato continua EPUB para todos os itens.
 
 ### Uma capa sua
 
-A mesma página tem **Covers**, com uma linha para cada livro que o item gera. Um livro sem capa própria usa a primeira página, como antes.
+A mesma página tem **Covers**, com uma linha para cada livro que o item gera. Um livro sem capa própria usa a primeira página.
 
-- **Choose cover…** escolhe uma imagem para aquele livro; soltar uma imagem na linha faz o mesmo. A imagem pode estar em qualquer lugar e ter qualquer nome: o Mangabound guarda a sua própria cópia, então o original pode ser movido ou apagado depois.
-- **Add covers from a folder…** distribui as imagens da pasta entre os livros em ordem de nome: a primeira para o primeiro livro, a segunda para o segundo. Soltar uma pasta, ou várias imagens, na lista faz o mesmo. Uma capa que você escolheu à mão nunca é substituída assim; uma que veio de uma pasta anterior é.
-- Cada capa pode ser trocada ou removida na sua linha. As capas ficam lembradas para aquela pasta ou arquivo, e voltam na próxima vez que você o adicionar.
+- **Choose cover…** escolhe uma imagem para aquele livro. Você também pode soltar uma imagem na linha. A imagem pode estar em qualquer lugar e ter qualquer nome. O Mangabound guarda a sua própria cópia, então você pode mover ou apagar o original depois.
+- **Add covers from a folder…** distribui as imagens da pasta entre os livros em ordem de nome: a primeira imagem para o primeiro livro, a segunda para o segundo, e assim por diante. Você também pode soltar uma pasta, ou várias imagens, na lista. Uma capa que você escolheu à mão nunca é substituída assim. Uma capa que veio de uma pasta anterior é.
+- Você pode trocar ou remover cada capa na linha dela. As capas ficam lembradas para aquela pasta ou arquivo e voltam na próxima vez que você o adicionar.
 
 <TutorialImage
   name="generated/book-covers"
   alt="Capas vindas de uma pasta ou escolhidas individualmente, com dois livros ainda usando a primeira página."
 />
 
-As capas são imagens JPEG, PNG, WebP, GIF ou BMP. O Mangabound confere se o arquivo é mesmo uma imagem quando você o escolhe: um arquivo danificado, ou que só tem o nome de uma imagem, não é usado, e a página avisa. Numa pasta, uma imagem assim mantém o seu lugar na ordem, então as imagens seguintes continuam indo para os livros com que se alinham, e o livro dela fica com a primeira página. Se uma capa ainda assim não puder ser usada quando o livro for feito, o erro diz qual é o livro e orienta a remover a capa ou escolher outra imagem nesta página. As opções de capa, nas [opções de conversão](../output-profiles/), valem para elas também, e um CBZ guarda uma capa sua quaisquer que sejam; um PDF não tem capa. [Capa](../advanced-options/cover/) mostra o que cada uma faz.
+As capas podem ser imagens JPEG, PNG, WebP, GIF ou BMP. Quando você escolhe um arquivo, o Mangabound confere se ele é mesmo uma imagem. Um arquivo danificado, ou que só tem o nome de uma imagem, não é usado, e a página avisa.
+
+Em uma pasta, uma imagem que não pode ser usada mantém o seu lugar na ordem. As imagens seguintes continuam indo para os livros com que se alinham, e o livro dela fica com a primeira página.
+
+Se uma capa ainda assim não puder ser usada quando o livro for feito, o erro diz qual é o livro e orienta a remover a capa ou escolher outra imagem nesta página.
+
+As opções de capa, nas [opções de conversão](../output-profiles/), valem também para as suas capas. Um CBZ guarda uma capa sua quaisquer que sejam essas opções. Um PDF não tem capa. A página [Capa](../advanced-options/cover/) mostra o que cada opção faz.
 
 ## Os capítulos não têm volume no nome
 
-Você não precisa renomear toda a coleção. Abra o editor: se não houver volumes reconhecidos, ele muda para **Manual** e oferece **Online source** como alternativa opcional. Siga [organização de volumes](../mapping-editor/).
+Você não precisa renomear toda a sua coleção. Abra o editor de volumes. Se nenhum volume for reconhecido, ele abre em **Manual** e oferece **Online source** como alternativa opcional. Siga [organização de volumes](../mapping-editor/).
 
-Um CBZ de capítulo adicionado sozinho é considerado um volume completo. Adicione sua pasta para agrupá-lo com os demais.
+Um CBZ de um único capítulo, adicionado como arquivo, é tratado como um volume completo. Adicione a pasta dele se quiser agrupá-lo com os outros capítulos.

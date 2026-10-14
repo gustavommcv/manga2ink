@@ -16,9 +16,9 @@ Download the latest available version for your system below, or browse [all rele
 
 <ReleaseDownloads platform="windows" />
 
-Use the installer for a normal installation. For the portable version, extract the ZIP and run the executable inside the extracted folder.
+Use the installer for a normal installation. For the portable version, extract the ZIP and run the program inside the extracted folder.
 
-The alpha installer is not commercially signed. SmartScreen may warn about it. Only proceed if you expected this download and obtained it from the official release page; do not disable Windows security globally.
+The alpha installer is not signed with a commercial certificate, so Windows SmartScreen may warn you. Continue only if you downloaded it from the official release page. Do not turn off Windows security for this.
 
 </TabItem>
 <TabItem label="macOS">
@@ -27,9 +27,9 @@ The alpha installer is not commercially signed. SmartScreen may warn about it. O
 
 <ReleaseDownloads platform="macOS" />
 
-Extract the ZIP and move **Mangabound.app** to **Applications**. There is currently no Intel Mac package.
+Extract the ZIP and move **Mangabound.app** to **Applications**. There is no package for Intel Macs yet.
 
-The alpha app is not notarized. If macOS blocks an app you trust, first try opening it, then use **System Settings → Privacy & Security → Open Anyway** if available. Follow [Apple's guidance](https://support.apple.com/en-us/102445); do not disable Gatekeeper globally.
+The alpha app is not notarized by Apple, so macOS may refuse to open it. If that happens, open **System Settings → Privacy & Security** and choose **Open Anyway**, if the button is there. [Apple explains the steps](https://support.apple.com/en-us/102445). Do not turn off Gatekeeper for this.
 
 </TabItem>
 <TabItem label="Linux">
@@ -40,7 +40,7 @@ Choose the package for your distribution:
 
 <ReleaseDownloads platform="linux" />
 
-Open a terminal in the folder containing your download and use the command for your distribution below. Replace `package.deb`, `package.rpm`, or `package.pkg.tar.zst` with the exact name of the file you downloaded. Keep its original filename; you do not need to rename it.
+Open a terminal in the folder with your download and run the command for your distribution. In the command, replace `package.deb`, `package.rpm` or `package.pkg.tar.zst` with the exact name of the file you downloaded. Do not rename the file.
 
 **[Debian / Ubuntu](https://documentation.ubuntu.com/project/contributors/bug-fix/install-built-packages/)**
 
@@ -60,23 +60,30 @@ sudo dnf install ./package.rpm
 sudo pacman -U ./package.pkg.tar.zst
 ```
 
-Then open **Mangabound** from your application menu. Use `sudo` only to install it, not to run the app.
+Then open **Mangabound** from your application menu. Use `sudo` only to install it, not to run it.
 
 </TabItem>
 </Tabs>
 
 ## Check your download
 
-Each release has a `SHA256SUMS` file that lists the checksum of every other file of the release. Put it in the folder you downloaded to and run `sha256sum -c SHA256SUMS` (`shasum -a 256 -c SHA256SUMS` on macOS). On Windows, `Get-FileHash <file>` in PowerShell prints the value to compare with the line of that file. A file that is not in the folder is reported as missing, and one that does not match is reported as failed.
+Each release has a `SHA256SUMS` file. It lists a checksum for every other file in that release. To check your downloads:
 
-The checksums show that a download is what the release collected and that it arrived whole. They do not show where the files were built, and there is no build attestation yet. Releases before alpha.11 have no `SHA256SUMS`.
+1. Put `SHA256SUMS` in the folder with the files you downloaded.
+2. Run `sha256sum -c SHA256SUMS`. On macOS, run `shasum -a 256 -c SHA256SUMS`.
+
+On Windows, run `Get-FileHash <file>` in PowerShell and compare the value with the line for that file in `SHA256SUMS`.
+
+A file that is not in the folder is reported as missing, and a file that does not match is reported as failed.
+
+A matching checksum shows that the file is the one the release published and that it arrived whole. It does not show where the files were built, and there is no build attestation yet (a signed record of where a file was made). Releases before alpha.11 have no `SHA256SUMS`.
 
 ## If installation fails
 
-Check that the download matches your system and architecture. Never download an unofficial replacement executable to bypass a toolchain verification error.
+Check that you downloaded the package for your system and architecture. If Mangabound says that mangabind or mangapress “could not be verified”, reinstall Mangabound from the official release page. Do not replace the tools with files from another source.
 
 ## Reporting a problem
 
-[Open an issue](https://github.com/gustavommcv/mangabound/issues) and include the release version, your operating system, what you were trying to do and what happened. For a crash or a failed conversion, include the exact error message.
+[Open an issue](https://github.com/gustavommcv/mangabound/issues) and include the version, your operating system, what you were trying to do and what happened. For a crash or a failed conversion, include the exact error message.
 
 Ready? Follow the [quickstart](../quickstart/).

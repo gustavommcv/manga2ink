@@ -7,7 +7,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 import ReleaseDownloads from '../../../../components/ReleaseDownloads.astro';
 
-Baixe a última versão disponível para seu sistema abaixo ou consulte [todas as releases](https://github.com/gustavommcv/mangabound/releases).
+Baixe a última versão disponível para o seu sistema abaixo ou veja [todas as versões](https://github.com/gustavommcv/mangabound/releases).
 
 <Tabs>
 <TabItem label="Windows">
@@ -16,9 +16,9 @@ Baixe a última versão disponível para seu sistema abaixo ou consulte [todas a
 
 <ReleaseDownloads platform="windows" />
 
-Use o instalador para uma instalação normal. Na versão portátil, extraia o ZIP e execute o aplicativo dentro da pasta extraída.
+Use o instalador para uma instalação normal. Na versão portátil, extraia o ZIP e execute o programa dentro da pasta extraída.
 
-O instalador alfa não possui assinatura comercial. O SmartScreen pode mostrar um aviso. Só prossiga se esperava esse download e o obteve na página oficial; não desative a segurança do Windows globalmente.
+O instalador alfa não é assinado com um certificado comercial, então o Windows SmartScreen pode mostrar um aviso. Continue só se você baixou o arquivo da página oficial de versões. Não desative a segurança do Windows por causa disso.
 
 </TabItem>
 <TabItem label="macOS">
@@ -29,7 +29,7 @@ O instalador alfa não possui assinatura comercial. O SmartScreen pode mostrar u
 
 Extraia o ZIP e mova **Mangabound.app** para **Applications**. Ainda não há pacote para Mac Intel.
 
-O aplicativo alfa não é notarizado. Se o macOS bloquear um aplicativo em que você confia, primeiro tente abri-lo e depois use **Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim**, se disponível. Siga as [orientações da Apple](https://support.apple.com/pt-br/102445); não desative o Gatekeeper globalmente.
+O aplicativo alfa não é notarizado pela Apple, então o macOS pode se recusar a abri-lo. Se isso acontecer, abra **Ajustes do Sistema → Privacidade e Segurança** e escolha **Abrir Mesmo Assim**, se o botão aparecer. [A Apple explica os passos](https://support.apple.com/pt-br/102445). Não desative o Gatekeeper por causa disso.
 
 </TabItem>
 <TabItem label="Linux">
@@ -40,7 +40,7 @@ Escolha o pacote da sua distribuição:
 
 <ReleaseDownloads platform="linux" />
 
-Abra um terminal na pasta do download e use o comando da sua distribuição abaixo. Substitua `package.deb`, `package.rpm` ou `package.pkg.tar.zst` pelo nome exato do arquivo que você baixou. Preserve o nome original; não é preciso renomeá-lo.
+Abra um terminal na pasta com o arquivo baixado e execute o comando da sua distribuição. No comando, troque `package.deb`, `package.rpm` ou `package.pkg.tar.zst` pelo nome exato do arquivo que você baixou. Não renomeie o arquivo.
 
 **[Debian / Ubuntu](https://documentation.ubuntu.com/project/contributors/bug-fix/install-built-packages/)**
 
@@ -60,23 +60,30 @@ sudo dnf install ./package.rpm
 sudo pacman -U ./package.pkg.tar.zst
 ```
 
-Depois, abra **Mangabound** pelo menu de aplicativos. Use `sudo` apenas para instalar, não para abrir o aplicativo.
+Depois, abra **Mangabound** pelo menu de aplicativos. Use `sudo` apenas para instalar, não para abri-lo.
 
 </TabItem>
 </Tabs>
 
 ## Confira o download
 
-Cada release tem um arquivo `SHA256SUMS` com o checksum de todos os outros arquivos dela. Coloque-o na pasta onde você baixou e execute `sha256sum -c SHA256SUMS` (`shasum -a 256 -c SHA256SUMS` no macOS). No Windows, `Get-FileHash <arquivo>` no PowerShell mostra o valor para comparar com a linha daquele arquivo. Um arquivo que não está na pasta é informado como ausente, e um que não confere é informado como falho.
+Cada versão tem um arquivo `SHA256SUMS`. Ele lista o checksum de todos os outros arquivos daquela versão. Para conferir os seus downloads:
 
-Os checksums mostram que o download é o que a release reuniu e que chegou inteiro. Eles não mostram onde os arquivos foram construídos, e ainda não há atestado de build. As releases anteriores à alpha.11 não têm `SHA256SUMS`.
+1. Coloque `SHA256SUMS` na pasta com os arquivos que você baixou.
+2. Execute `sha256sum -c SHA256SUMS`. No macOS, execute `shasum -a 256 -c SHA256SUMS`.
+
+No Windows, execute `Get-FileHash <arquivo>` no PowerShell e compare o valor com a linha daquele arquivo em `SHA256SUMS`.
+
+Um arquivo que não está na pasta é informado como ausente, e um que não confere é informado como falho.
+
+Um checksum que confere mostra que o arquivo é o que a versão publicou e que chegou inteiro. Ele não mostra onde os arquivos foram construídos, e ainda não existe um atestado de build (um registro assinado de onde o arquivo foi gerado). As versões anteriores à alpha.11 não têm `SHA256SUMS`.
 
 ## Se a instalação falhar
 
-Confira se o download corresponde ao sistema e à arquitetura. Não baixe executáveis substitutos não oficiais para contornar um erro de verificação das ferramentas.
+Confira se você baixou o pacote do seu sistema e da sua arquitetura. Se o Mangabound disser que o mangabind ou o mangapress “could not be verified” (não pôde ser verificado), reinstale o Mangabound pela página oficial de versões. Não troque as ferramentas por arquivos de outra origem.
 
 ## Relatar um problema
 
-[Abra uma issue](https://github.com/gustavommcv/mangabound/issues) e inclua a versão da release, o sistema operacional, o que você tentava fazer e o que aconteceu. Para uma falha ou conversão que não terminou, inclua a mensagem de erro exata.
+[Abra uma issue](https://github.com/gustavommcv/mangabound/issues) e inclua a versão do aplicativo, o sistema operacional, o que você tentava fazer e o que aconteceu. Para uma falha ou conversão que não terminou, inclua a mensagem de erro exata.
 
 Tudo pronto? Siga o [guia rápido](../quickstart/).
