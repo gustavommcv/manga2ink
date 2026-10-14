@@ -10,9 +10,9 @@ The **Reading** section of [Advanced conversion options](../../output-profiles/#
 
 ## Content
 
-**Manga or comic pages** is the starting choice: each image is one page. **Webtoon strips** is for a webtoon, which is drawn as one long vertical strip and handed out cut into images wherever a file ended. Read one image at a time, a panel can be split between two pages. With **Webtoon strips**, mangapress joins the images of each chapter into one strip and cuts it again into pages between panels. `--webtoon` turns it on, and `-w` is its short form.
+**Manga or comic pages** is the starting choice: each image is one page. **Webtoon strips** is for a webtoon. A webtoon is drawn as one long vertical strip, but it is handed out cut into images wherever a file ended. Read one image at a time, a panel can end up split between two pages. With **Webtoon strips**, mangapress joins the images of each chapter into one strip and cuts it again into pages between panels. `--webtoon` turns it on, and `-w` is its short form.
 
-_Pepper&Carrot_ is not a webtoon, but three of its pages one under the other make a strip of the same shape: 992 × 4119 pixels, with white gaps between the panels. Cut every 1500 pixels into three images, it is what a webtoon site would hand out, and each cut falls where an image ends, not between panels. The first row converts those three images as pages. The second converts the same three as strips.
+_Pepper&Carrot_ is not a webtoon, but three of its pages one under the other make a strip of the same shape: 992 × 4119 pixels, with white gaps between the panels. Cut every 1500 pixels into three images, it looks like what a webtoon site hands out: each cut falls wherever an image ends, not between panels. The first row converts those three images as pages. The second converts the same three as strips.
 
 <OptionExample
   id="reading-webtoon"

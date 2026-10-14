@@ -16,7 +16,7 @@ O mangapress decide nesta ordem, e vale a primeira regra que se aplica:
 1. **Stretch to the screen** está escolhida: a página é redimensionada para a tela exata.
 2. **Crop to fill the screen** está escolhida: a página é escalada até cobrir a tela e o resto é cortado.
 3. A página já cabe dentro da tela e **Fit, never enlarge** está escolhida: a página fica como está, mesmo que menor.
-4. O formato da página é próximo ao da tela, dentro de cerca de 1,5%: ela é cortada nos poucos pixels que não cabem e não tem borda nenhuma. Uma página 0,9% fora do formato da tela foi cortada num teste, e uma 1,7% fora foi preenchida.
+4. O formato da página é próximo ao da tela, dentro de cerca de 1,5%: ela é cortada nos poucos pixels que não cabem e não tem borda nenhuma. Nos testes, uma página 0,9% fora do formato da tela foi cortada, e uma 1,7% fora foi preenchida.
 5. Caso contrário, em CBZ ou PDF, a página é ajustada para caber na tela e preenchida até ela com uma cor; com borda **White** ela só é ajustada, sem preenchimento. Um EPUB só é ajustado, e suas bordas são o fundo da página.
 
 Se mais de uma opção de tamanho for dada na linha de comando, `--stretch` vence `--wallpaper`, e as duas vencem `--upscale`: as duas primeiras regras, portanto. O app define exatamente uma delas.

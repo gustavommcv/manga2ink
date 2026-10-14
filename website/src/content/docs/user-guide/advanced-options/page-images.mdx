@@ -11,7 +11,7 @@ The **Page images** section of [Advanced conversion options](../../output-profil
 ## Page format
 
 - **JPEG, full tone**, the starting choice: each page is a gray JPEG that keeps all 256 tones. It is not dithered. `--forcepng` is not given.
-- **PNG, reduced to the screen's grays**: each page is reduced to the grays the device's screen can show, with the dither Pillow uses (Floyd–Steinberg), and saved as a PNG without loss. That is 16 grays for every profile but two: Kindle 1 has 4, Kindle 2 has 15. The file is a palette PNG, which stores 4 bits per pixel (2 for Kindle 1). `--forcepng`.
+- **PNG, reduced to the screen's grays**: each page is reduced to the grays the device's screen can show, with Floyd–Steinberg dithering, and saved as a PNG without loss. That is 16 grays for every profile but two: Kindle 1 has 4, Kindle 2 has 15. The file is a palette PNG, which stores 4 bits per pixel (2 for Kindle 1). `--forcepng`.
 
 The picture is a 120-pixel square of the page, enlarged to 700 pixels without smoothing, so that single pixels show. The first is the JPEG, the second the PNG, the third the PNG with **Keep all 256 grays**, which skips the reduction:
 

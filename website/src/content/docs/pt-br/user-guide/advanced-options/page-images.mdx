@@ -11,7 +11,7 @@ A seção **Page images** das [Advanced conversion options](../../output-profile
 ## Page format
 
 - **JPEG, full tone**, a escolha inicial: cada página é um JPEG cinza que mantém os 256 tons. Não há pontilhado. `--forcepng` não é dado.
-- **PNG, reduced to the screen's grays**: cada página é reduzida aos cinzas que a tela do dispositivo consegue mostrar, com o pontilhado que o Pillow usa (Floyd–Steinberg), e gravada como PNG sem perda. São 16 cinzas para todos os perfis menos dois: o Kindle 1 tem 4, o Kindle 2 tem 15. O arquivo é um PNG de paleta, que guarda 4 bits por pixel (2 no Kindle 1). `--forcepng`.
+- **PNG, reduced to the screen's grays**: cada página é reduzida aos cinzas que a tela do dispositivo consegue mostrar, com pontilhado Floyd–Steinberg, e gravada como PNG sem perda. São 16 cinzas para todos os perfis menos dois: o Kindle 1 tem 4, o Kindle 2 tem 15. O arquivo é um PNG de paleta, que guarda 4 bits por pixel (2 no Kindle 1). `--forcepng`.
 
 A imagem é um quadrado de 120 pixels da página, ampliado para 700 pixels sem suavização, para que os pixels apareçam. A primeira é o JPEG, a segunda o PNG, a terceira o PNG com **Keep all 256 grays**, que pula a redução:
 

@@ -50,7 +50,7 @@ Next to each page is the count of its tones, a histogram: one bar for each group
 
 ## Gamma
 
-**Gamma** lightens or darkens the page. Left empty, the device profile's own gamma is used, which is 1.0 for every profile today: no change. Above 1 the page gets darker, below 1 lighter. The app accepts 0.1 to 4: a gamma of 18, typed for 1.8, once turned every page nearly black and the conversion still ended as a success, so the field refuses it. `--gamma`, or `-g`.
+**Gamma** lightens or darkens the page. Left empty, the device profile's own gamma is used, which is 1.0 for every profile today: no change. Above 1 the page gets darker, below 1 lighter. The app accepts 0.1 to 4: a gamma of 18, typed by mistake for 1.8, turns every page almost black, and the conversion still ends as a success, so the field refuses it. `--gamma`, or `-g`.
 
 <OptionExample
   id="gamma"
@@ -69,6 +69,6 @@ Each page has its histogram next to it, read as under [Autocontrast](#autocontra
 
 **Reduce rainbow effect** is mangapress's way of erasing the rainbow effect of color e-ink screens, by attenuating the frequencies that interfere. It changes the pixels of every page it is applied to, grayscale pages too: the pages mangapress writes with and without it are not the same. Leave it off unless your screen is a color e-ink one. `--eraserainbow`.
 
-This is one a computer screen cannot show. The effect it fights belongs to the reader's screen, not to the file, so nothing in the converted page looks different on a monitor. A photograph of the screen does show it, and KCC's README has one, taken on a Kobo Clara Colour: [its picture of the rainbow eraser](https://github.com/ciromattia/kcc/blob/master/images/rainbow720.jpeg). The same panel is shown three times: with rainbow fringes of color on the screen, after a plain blur like the one Kobo's own option applies, which smooths the fringes away along with the detail, and after KCC's eraser, which leaves a fine diagonal texture and no colored fringe. KCC says its eraser works without blur, and mangapress follows it: its checks against KCC 12.0.0 include this option.
+A computer screen cannot show this one. The effect it fights belongs to the reader's screen, not to the file, so nothing in the converted page looks different on a monitor. A photograph of the screen does show it, and KCC's README has one, taken on a Kobo Clara Colour: [its picture of the rainbow eraser](https://github.com/ciromattia/kcc/blob/master/images/rainbow720.jpeg). The same panel is shown three times: with rainbow fringes of color on the screen, after a plain blur like the one Kobo's own option applies, which smooths the fringes away along with the detail, and after KCC's eraser, which leaves a fine diagonal texture and no colored fringe. KCC says its eraser works without blur, and mangapress follows it: its checks against KCC 12.0.0 include this option.
 
 What the option changes in the file is very little: on a page of 1272 × 1696 pixels, converted for the Kindle Paperwhite 6 and saved without loss, about 60% of the pixel values differ with the option on, by about one level of 255 on average and by 33 to 52 at most, on a color page and on a black-and-white one alike. To judge it on your own reader, convert a page both ways and compare them there.

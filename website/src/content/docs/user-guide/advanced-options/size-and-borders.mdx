@@ -16,7 +16,7 @@ mangapress decides in this order, and the first rule that applies wins:
 1. **Stretch to the screen** is chosen: the page is resized to the exact screen.
 2. **Crop to fill the screen** is chosen: the page is scaled until it covers the screen and the rest is cut off.
 3. The page already fits inside the screen and **Fit, never enlarge** is chosen: the page is left as it is, even if it is smaller.
-4. The page's shape is close to the screen's, within about 1.5%: it is cropped by the few pixels that do not fit, and has no borders at all. A page 0.9% off the screen's shape was cropped in a test, and one 1.7% off was padded.
+4. The page's shape is close to the screen's, within about 1.5%: it is cropped by the few pixels that do not fit, and has no borders at all. In the tests, a page 0.9% off the screen's shape was cropped, and one 1.7% off was padded.
 5. Otherwise, in a CBZ or PDF, the page is fitted inside the screen and padded to it with a color; with **White** borders it is only fitted, and not padded. An EPUB is only fitted, and its borders are the page's background.
 
 If more than one size option is given on the command line, `--stretch` wins over `--wallpaper`, and both win over `--upscale`: the first two rules, then. The app sets exactly one of them.
