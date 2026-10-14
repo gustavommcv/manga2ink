@@ -36,13 +36,16 @@ A página do exemplo tem cor, então o padrão não mexe nela. A primeira imagem
 
 **Auto-level black point** acrescenta um passo antes do esticamento: toma o tom escuro mais comum da página como preto. Só importa numa página que está sendo esticada: nesta página, com o padrão, a página convertida é byte a byte a mesma com a opção ligada ou desligada. Ela fica esmaecida enquanto **Autocontrast** está **Off**. A terceira imagem é **Color pages too** com ela ligada, e a página fica ainda mais escura. `--autolevel`.
 
+Ao lado de cada página está a contagem dos tons dela, um histograma: uma barra para cada grupo de tons, do preto à esquerda ao branco à direita, tão alta quanto a parte da página que tem esses tons. Uma barra alta demais para a imagem é cortada e quebrada. A linha tracejada é a mesma contagem da página convertida com **Off**, então o que difere das barras é o que a opção moveu. A primeira imagem fica sobre a linha, porque nada foi feito na página. Na segunda as sombras se movem um pouco em direção ao preto, e a ponta branca fica onde estava, já que o pixel mais claro já era branco. Na terceira as sombras são cortadas no ponto preto e cerca de um quinto da página vira preto puro, que é a barra quebrada à esquerda.
+
 <OptionExample
   id="autocontrast"
   alt={{
     monochrome:
-      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, em cinzas, com o autocontraste padrão.',
-    all: 'A mesma página com autocontraste também nas páginas coloridas, um pouco mais escura nas sombras.',
-    'all-autolevel': 'A mesma página com o auto-level também ligado, ainda mais escura.',
+      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, em cinzas, com o autocontraste padrão, e ao lado o histograma dos tons dela: a maioria dos pixels é de cinzas escuros e uma barra alta é de branco. As barras ficam exatamente sobre a linha tracejada da página sem autocontraste.',
+    all: 'A mesma página com autocontraste também nas páginas coloridas, um pouco mais escura nas sombras, e o histograma dela: as barras dos tons escuros ficam à esquerda da linha tracejada.',
+    'all-autolevel':
+      'A mesma página com o auto-level também ligado, ainda mais escura, e o histograma dela: as sombras se amontoam numa barra quebrada junto ao preto, e os outros tons ficam abaixo da linha tracejada.',
   }}
 />
 

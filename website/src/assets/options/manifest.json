@@ -419,7 +419,7 @@
     },
     "autocontrast": {
       "kind": "pictures",
-      "layout": "grid",
+      "layout": "rows",
       "sources": ["pepper-ep01"],
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
@@ -435,10 +435,10 @@
           "darkest": 5,
           "mean": 108.6,
           "file": "autocontrast-monochrome.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 40102,
-          "sha256": "99d6ad61b3ff1a84267cf34c43eec84a635269b68c3c836a98913e28fae91e3c"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 12008,
+          "sha256": "2056e3508d5fbaa736318e30a7391cf1d50d832eab9a7a61b14561e362b900a7"
         },
         {
           "id": "all",
@@ -450,10 +450,10 @@
           "darkest": 0,
           "mean": 101.6,
           "file": "autocontrast-all.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 41792,
-          "sha256": "f4a93bec1244b1c4d22df9855b2822c29315cc3ca0bdc40abfc6171f2bc8eb4d"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 12540,
+          "sha256": "b88b1ed38ddb903ab79e8ff573e9048fb32a26455c6473573e3e73f272a98fb1"
         },
         {
           "id": "all-autolevel",
@@ -465,10 +465,10 @@
           "darkest": 0,
           "mean": 82.9,
           "file": "autocontrast-all-autolevel.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 42732,
-          "sha256": "3325366fc9a8fd0efb8bf41398cd39437c4679d754bb5849022de9ceadab6d51"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 12888,
+          "sha256": "213251e36567b714d546028251e3f77d05deaaac7c89107f8381e1f8afb1266f"
         }
       ]
     },

@@ -41,6 +41,7 @@ import {
   gapsPicture,
 } from './options-gallery/crop.mjs';
 import { flowPicture } from './options-gallery/flow.mjs';
+import { histogramPicture } from './options-gallery/histogram.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -479,6 +480,17 @@ async function runExample(mangapress, example, scratch) {
         columns: await found('columns', variant.gaps?.columns),
       });
   }
+  // For the pictures of the tones of a page: the page converted without the correction, to count the
+  // tones of it as well.
+  const toneReference = example.histogram
+    ? convert(
+        mangapress,
+        sourceSize.directory,
+        combine(base.flags, example.histogram.reference, example.without ?? []),
+        path.join(scratch, 'output', example.id, 'reference'),
+        example.profile ?? base.profile,
+      )[example.show ?? 0]
+    : undefined;
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
     // A variant may have an input of its own, such as a wide first image for the cover.
@@ -631,6 +643,8 @@ async function runExample(mangapress, example, scratch) {
           ...gapsOf.get(variant.id),
           result: gapPages.get(variant.id),
         });
+      else if (example.histogram)
+        picture = await histogramPicture({ page: picked[0], reference: toneReference });
       else if (all) picture = await row(picked);
       else if (example.zoom)
         picture = sharp(picked[0])

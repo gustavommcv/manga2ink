@@ -221,10 +221,14 @@ export const examples = [
     ],
   },
   {
+    // `histogram` counts the tones of every page, and of the page converted with the flags of
+    // `reference`, the one without the correction, which is the dashed line.
     id: 'autocontrast',
     kind: 'pictures',
+    layout: 'rows',
     input: PEPPER_DARK,
     stats: true,
+    histogram: { reference: ['--noautocontrast'] },
     variants: [
       { id: 'monochrome', label: 'Autocontrast: Black-and-white pages only', flags: [] },
       { id: 'all', label: 'Autocontrast: Color pages too', flags: ['--colorautocontrast'] },

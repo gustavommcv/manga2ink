@@ -35,13 +35,16 @@ The example page has color, so the default leaves it alone. The first picture is
 
 **Auto-level black point** adds one step before the stretch: it takes the most common dark tone of the page as black. It only matters on a page that is being stretched: on this page, under the default, the converted page is byte for byte the same with it on or off. It is dimmed while **Autocontrast** is **Off**. The third picture is **Color pages too** with it on, and the page is darker again. `--autolevel`.
 
+Next to each page is the count of its tones, a histogram: one bar for each group of tones, from black on the left to white on the right, as tall as the share of the page that has them. A bar too tall for the picture is cut and broken. The dashed line is the same count for the page converted with **Off**, so what differs from the bars is what the setting moved. The first picture sits on its line, because nothing was done to the page. In the second the shadows move a little toward black, and the white end stays where it was, since the lightest pixel was already white. In the third the shadows are cut at the black point and about a fifth of the page ends up pure black, which is the broken bar on the left.
+
 <OptionExample
   id="autocontrast"
   alt={{
     monochrome:
-      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, in grays, with the default autocontrast.',
-    all: 'The same page with autocontrast on color pages too, a little darker in the shadows.',
-    'all-autolevel': 'The same page with auto-level on as well, darker still.',
+      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, in grays, with the default autocontrast, and next to it the histogram of its tones: most pixels are dark grays and a tall bar is white. The bars sit exactly on the dashed line of the page without autocontrast.',
+    all: 'The same page with autocontrast on color pages too, a little darker in the shadows, and its histogram: the bars of the dark tones are left of the dashed line.',
+    'all-autolevel':
+      'The same page with auto-level on as well, darker still, and its histogram: the shadows are piled up in one broken bar against black, and the other tones lie lower than the dashed line.',
   }}
 />
 
