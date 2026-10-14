@@ -56,13 +56,14 @@ Next to each page is the count of its tones, a histogram: one bar for each group
   id="gamma"
   alt={{
     '0.6':
-      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, lightened, with the shadows lifted.',
-    '1': 'The same page with gamma 1.0, as it is by default.',
-    '1.8': 'The same page with gamma 1.8, darker, with the shadows nearly black.',
+      'A dark page of Pepper&Carrot, a witch brewing in a kitchen, lightened, with the shadows lifted, and its histogram: the bars of the shadows are right of the dashed line of gamma 1.0.',
+    '1': 'The same page with gamma 1.0, as it is by default, and its histogram, exactly on the dashed line.',
+    '1.8':
+      'The same page with gamma 1.8, darker, with the shadows nearly black, and its histogram: the shadows are piled up against black, left of the dashed line.',
   }}
 />
 
-The numbers under the pictures show how far each value moves the page. A gamma of 1.0 gives the same bytes as leaving the field empty.
+Each page has its histogram next to it, read as under [Autocontrast](#autocontrast), and the dashed line is the page at gamma 1.0. Below 1 the shadows move toward white and above 1 they move toward black; pure black and pure white do not move at any gamma, only the tones between them. The numbers under the pictures show how far each value moves the page. A gamma of 1.0 gives the same bytes as leaving the field empty.
 
 ## Reduce rainbow effect
 

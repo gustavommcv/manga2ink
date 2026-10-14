@@ -364,7 +364,7 @@
     },
     "gamma": {
       "kind": "pictures",
-      "layout": "grid",
+      "layout": "rows",
       "sources": ["pepper-ep01"],
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
@@ -380,10 +380,10 @@
           "darkest": 31,
           "mean": 141.6,
           "file": "gamma-0.6.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 39394,
-          "sha256": "7af408d175032156edd62193e23a803c72d4aae6ade8ea573359df4c3022e6be"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 12716,
+          "sha256": "f9370c548e12eca81664be9d49b6a55a41e4f4d9c9cefadfa93783fb9c7c9a6b"
         },
         {
           "id": "1",
@@ -395,10 +395,10 @@
           "darkest": 5,
           "mean": 108.6,
           "file": "gamma-1.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 40102,
-          "sha256": "99d6ad61b3ff1a84267cf34c43eec84a635269b68c3c836a98913e28fae91e3c"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 12008,
+          "sha256": "2056e3508d5fbaa736318e30a7391cf1d50d832eab9a7a61b14561e362b900a7"
         },
         {
           "id": "1.8",
@@ -410,10 +410,10 @@
           "darkest": 0,
           "mean": 78.5,
           "file": "gamma-1.8.webp",
-          "pictureWidth": 700,
-          "pictureHeight": 933,
-          "bytes": 33932,
-          "sha256": "964122ab2541cec713ffd97db59b2cd4f1d8114e36d780758f1e7dcda863f9f5"
+          "pictureWidth": 800,
+          "pictureHeight": 340,
+          "bytes": 11330,
+          "sha256": "918bbb7314c049f4c3b35d61a6e329ab6b517b4f73b89c04e02a5ec3f70bf3ac"
         }
       ]
     },

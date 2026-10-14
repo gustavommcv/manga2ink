@@ -57,13 +57,14 @@ Ao lado de cada página está a contagem dos tons dela, um histograma: uma barra
   id="gamma"
   alt={{
     '0.6':
-      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, clareada, com as sombras levantadas.',
-    '1': 'A mesma página com gama 1,0, como é por padrão.',
-    '1.8': 'A mesma página com gama 1,8, mais escura, com as sombras quase pretas.',
+      'Uma página escura de Pepper&Carrot, uma bruxa preparando uma poção numa cozinha, clareada, com as sombras levantadas, e o histograma dela: as barras das sombras estão à direita da linha tracejada do gama 1,0.',
+    '1': 'A mesma página com gama 1,0, como é por padrão, e o histograma dela, exatamente sobre a linha tracejada.',
+    '1.8':
+      'A mesma página com gama 1,8, mais escura, com as sombras quase pretas, e o histograma dela: as sombras se amontoam junto ao preto, à esquerda da linha tracejada.',
   }}
 />
 
-Os números embaixo das imagens mostram o quanto cada valor move a página. Um gama de 1,0 dá os mesmos bytes que deixar o campo vazio.
+Cada página tem o histograma ao lado, lido como em [Autocontrast](#autocontrast), e a linha tracejada é a página com gama 1,0. Abaixo de 1 as sombras se movem em direção ao branco e acima de 1 em direção ao preto; o preto puro e o branco puro não se movem em gama nenhum, só os tons entre eles. Os números embaixo das imagens mostram o quanto cada valor move a página. Um gama de 1,0 dá os mesmos bytes que deixar o campo vazio.
 
 ## Reduce rainbow effect
 

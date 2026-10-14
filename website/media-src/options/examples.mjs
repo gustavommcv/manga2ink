@@ -210,10 +210,13 @@ export const examples = [
     ],
   },
   {
+    // As for 'autocontrast', with the page at the default gamma as the dashed line.
     id: 'gamma',
     kind: 'pictures',
+    layout: 'rows',
     input: PEPPER_DARK,
     stats: true,
+    histogram: { reference: ['--gamma', '1.0'] },
     variants: [
       { id: '0.6', label: 'Gamma: 0.6', flags: ['--gamma', '0.6'] },
       { id: '1', label: 'Gamma: 1.0', flags: ['--gamma', '1.0'] },
