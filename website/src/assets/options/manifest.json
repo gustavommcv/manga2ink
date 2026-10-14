@@ -723,6 +723,86 @@
         }
       ]
     },
+    "two-page-view": {
+      "kind": "pictures",
+      "layout": "rows",
+      "sources": ["pepper-ep06"],
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "source": { "width": 992, "height": 1373 },
+      "variants": [
+        {
+          "id": "none",
+          "label": "Two-page view: none of the three options",
+          "flags": [],
+          "file": "two-page-view-none.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 336,
+          "bytes": 17384,
+          "sha256": "4a794fb70277c80300c371e2f6b36c2ecd7f33b898fd6fa44c109b8523fe2485",
+          "plain": true,
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 0
+        },
+        {
+          "id": "start-other-side",
+          "label": "Two-page view: Start on the other side",
+          "flags": ["--spreadshift"],
+          "file": "two-page-view-start-other-side.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 336,
+          "bytes": 17584,
+          "sha256": "5176c385b2caa6865fd1d1dc37bad3a5866045dabba55ede8778cefee9cb6547",
+          "plain": true,
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 0
+        },
+        {
+          "id": "invert-page-turns",
+          "label": "Two-page view: Invert page turns",
+          "flags": ["--invertdirection"],
+          "file": "two-page-view-invert-page-turns.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 336,
+          "bytes": 17540,
+          "sha256": "2beb822e1f0201ca9fc80b188b8d88327f79b6c8a4dddaad8ecae58a99d811c9",
+          "plain": true,
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 0
+        },
+        {
+          "id": "start-and-invert",
+          "label": "Two-page view: Start on the other side and Invert page turns",
+          "flags": ["--spreadshift", "--invertdirection"],
+          "file": "two-page-view-start-and-invert.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 336,
+          "bytes": 17442,
+          "sha256": "276923851ce44e8c5865365514055ea9edb663c3e005590b8bb600082e165a83",
+          "plain": true,
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 0
+        },
+        {
+          "id": "one-page-landscape",
+          "label": "Two-page view: One page in landscape",
+          "flags": ["--onepagelandscape"],
+          "file": "two-page-view-one-page-landscape.webp",
+          "pictureWidth": 1100,
+          "pictureHeight": 336,
+          "bytes": 17980,
+          "sha256": "fd87e48525bb929a10918cbc6d54044a4b2a637236fdfe59aa3718eee9939106",
+          "plain": true,
+          "width": 992,
+          "height": 1373,
+          "pageBytes": 0
+        }
+      ]
+    },
     "size-fit-enlarge": {
       "kind": "pictures",
       "layout": "grid",

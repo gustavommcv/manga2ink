@@ -5,6 +5,7 @@ import test from 'node:test';
 import { checkGallery, referencedExamples } from '../../scripts/options-gallery-check.mjs';
 import {
   epubFacts,
+  epubSides,
   hasComicInfo,
   isCover,
   isPage,
@@ -115,6 +116,19 @@ test('the title, author, language and direction of an EPUB come from its package
     language: null,
     direction: null,
   });
+});
+
+test('the side each page of an EPUB takes in the two-page view is read from its spine', () => {
+  const opf = [
+    '<spine toc="ncx" page-progression-direction="rtl">',
+    '<itemref idref="page1" linear="yes" properties="page-spread-right"/>',
+    '<itemref idref="page2" linear="yes" properties="page-spread-left"/>',
+    '<itemref idref="page3" linear="yes" properties="rendition:page-spread-center"/>',
+    '<itemref idref="page4" linear="yes"/>',
+    '</spine>',
+  ].join('\n');
+  assert.deepEqual(epubSides(opf), ['right', 'left', 'center', null]);
+  assert.deepEqual(epubSides('<package/>'), []);
 });
 
 /** A PDF string as the document properties store it: hexadecimal UTF-16, with or without the byte order mark. */

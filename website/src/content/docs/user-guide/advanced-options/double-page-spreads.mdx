@@ -110,6 +110,23 @@ The sides below were read from the package file of a book of three ordinary page
 - Both of those: the book turns left to right, and the pages sit right, left, right.
 - **One page in landscape**: every page is centered.
 
+The pictures show the same five cases as a reader lays them out. Each screen is a pair of sides, with the pages numbered 1 to 3; the screens are in the order they are read, the first one where the arrow starts, and the arrow points the way the book turns. A side with no page is left empty, and a page shown alone fills its screen. The sides and the direction are read from the package file of an EPUB made for each case.
+
+<OptionExample
+  id="two-page-view"
+  alt={{
+    none: 'Two screens, the book turning right to left. The first, on the right, has page 1 on its right side and nothing on its left; the second has page 2 on the left and page 3 on the right.',
+    'start-other-side':
+      'Two screens, the book turning right to left. The first, on the right, has page 1 on the left and page 2 on the right; the second has page 3 on its left and nothing on its right.',
+    'invert-page-turns':
+      'Two screens, the book turning left to right. The first, on the left, has page 1 on its left and page 2 on its right; the second has page 3 on its left and nothing on its right.',
+    'start-and-invert':
+      'Two screens, the book turning left to right. The first, on the left, has nothing on its left and page 1 on its right; the second has page 2 on its left and page 3 on its right.',
+    'one-page-landscape':
+      'Three screens, the book turning right to left, each with one page alone and centered: page 1 on the right, then page 2, then page 3 on the left.',
+  }}
+/>
+
 What each one does:
 
 - **Start on the other side** starts the book on the other side of the two-page view, so that spreads line up. It changes where an ordinary page sits, and only when no spread follows it: the halves of a spread always take a pair of sides, and the pages before one are placed so that they end on the pair before it. In a book that has a spread after its first pages, the setting changes nothing there. `--spreadshift`.

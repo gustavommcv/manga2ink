@@ -5,7 +5,7 @@
 // picture serves both languages, and numerals are drawn as paths so that no font changes the file.
 import sharp from 'sharp';
 
-const COLORS = ['#d1495b', '#00798c', '#e0a030'];
+export const COLORS = ['#d1495b', '#00798c', '#e0a030'];
 const MAT = '#cfcfcf';
 const BEZEL = '#2b2b2b';
 const SCREEN = '#ececec';
@@ -26,11 +26,13 @@ const DIGITS = {
   3: 'M-7 -10 C-5 -16 7 -16 7 -9 C7 -3 0 -1 -2 -1 C0 -1 8 0 8 7 C8 16 -5 16 -8 10',
 };
 
-function badge(number, x, y) {
+/** A disc in the color of its number, from one to three, with the number drawn in it, centered on (x, y). */
+export function badge(number, x, y, radius = BADGE) {
+  const scale = radius === BADGE ? '' : ` scale(${radius / BADGE})`;
   return (
-    `<circle cx="${x}" cy="${y}" r="${BADGE + 3}" fill="#fff"/>` +
-    `<circle cx="${x}" cy="${y}" r="${BADGE}" fill="${COLORS[number - 1]}"/>` +
-    `<path d="${DIGITS[number]}" transform="translate(${x} ${y})" fill="none" stroke="#fff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>`
+    `<circle cx="${x}" cy="${y}" r="${radius + 3}" fill="#fff"/>` +
+    `<circle cx="${x}" cy="${y}" r="${radius}" fill="${COLORS[number - 1]}"/>` +
+    `<path d="${DIGITS[number]}" transform="translate(${x} ${y})${scale}" fill="none" stroke="#fff" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>`
   );
 }
 

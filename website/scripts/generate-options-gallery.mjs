@@ -27,6 +27,7 @@ import sharp from 'sharp';
 import { base, examples } from '../media-src/options/examples.mjs';
 import {
   epubFacts,
+  epubSides,
   hasComicInfo,
   isPage,
   otherEntries,
@@ -42,6 +43,7 @@ import {
 } from './options-gallery/crop.mjs';
 import { flowPicture } from './options-gallery/flow.mjs';
 import { histogramPicture } from './options-gallery/histogram.mjs';
+import { readerPicture } from './options-gallery/reader.mjs';
 import { readZip } from './options-gallery/zip.mjs';
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -491,6 +493,10 @@ async function runExample(mangapress, example, scratch) {
         example.profile ?? base.profile,
       )[example.show ?? 0]
     : undefined;
+  // For the pictures of where the pages sit in a two-page view: the pages of the example, as they are.
+  const readerPages = example.reader
+    ? (await Promise.all(refsOf(example.input).map(page))).map(({ bytes }) => bytes)
+    : undefined;
   for (const variant of example.variants) {
     const entry = { id: variant.id, label: variant.label, flags: variant.flags ?? [] };
     // A variant may have an input of its own, such as a wide first image for the cover.
@@ -546,6 +552,28 @@ async function runExample(mangapress, example, scratch) {
       console.log(
         `  ${variant.id.padEnd(28)} ${settings.map((b) => `${b.label}: ${b.box.width}x${b.box.height}`).join(', ')}`,
       );
+      continue;
+    }
+    if (example.reader) {
+      // One picture of the book's pages in the screens of a two-page view, as its package file places them.
+      const work = path.join(scratch, 'output', example.id, variant.id);
+      const opf = readZip(makeBook(mangapress, input, flags, work, profile, 'epub').bytes)
+        .get('OEBPS/content.opf')
+        .toString('utf8');
+      const { direction } = epubFacts(opf);
+      const sides = epubSides(opf);
+      await savePicture(
+        entry,
+        example,
+        variant,
+        await readerPicture({ pages: readerPages, sides, direction }),
+      );
+      entry.plain = true;
+      entry.width = sourceSize.first.width;
+      entry.height = sourceSize.first.height;
+      entry.pageBytes = 0;
+      variants.push(entry);
+      console.log(`  ${variant.id.padEnd(28)} ${direction}: ${sides.join(', ')}`);
       continue;
     }
     if (example.kind === 'book') {

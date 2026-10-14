@@ -364,6 +364,39 @@ export const examples = [
       },
     ],
   },
+  {
+    // `reader` draws a book of the pages of the example in the screens of a two-page view: it makes an
+    // EPUB for each variant and places the pages by the side its package file gives each, and the arrow
+    // is the direction the book turns, which the package file gives too.
+    id: 'two-page-view',
+    kind: 'pictures',
+    layout: 'rows',
+    input: { pages: PEPPER_STRIP },
+    reader: true,
+    variants: [
+      { id: 'none', label: 'Two-page view: none of the three options', flags: [] },
+      {
+        id: 'start-other-side',
+        label: 'Two-page view: Start on the other side',
+        flags: ['--spreadshift'],
+      },
+      {
+        id: 'invert-page-turns',
+        label: 'Two-page view: Invert page turns',
+        flags: ['--invertdirection'],
+      },
+      {
+        id: 'start-and-invert',
+        label: 'Two-page view: Start on the other side and Invert page turns',
+        flags: ['--spreadshift', '--invertdirection'],
+      },
+      {
+        id: 'one-page-landscape',
+        label: 'Two-page view: One page in landscape',
+        flags: ['--onepagelandscape'],
+      },
+    ],
+  },
 
   {
     id: 'size-fit-enlarge',

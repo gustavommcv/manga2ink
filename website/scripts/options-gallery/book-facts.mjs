@@ -29,6 +29,16 @@ export function epubFacts(opf) {
   };
 }
 
+/**
+ * The side of the two-page view that each page of an EPUB takes, in reading order, as its package file
+ * gives it on the spine: `'left'`, `'right'` or `'center'`, or null for a page with none.
+ */
+export function epubSides(opf) {
+  return (opf.match(/<itemref\b[^>]*>/g) ?? []).map(
+    (itemref) => itemref.match(/page-spread-(left|right|center)/)?.[1] ?? null,
+  );
+}
+
 /** A PDF string written as hexadecimal UTF-16, which is how the document properties are stored. */
 function decodeHexString(hex) {
   const bytes = Buffer.from(hex, 'hex');
