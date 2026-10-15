@@ -1,5 +1,6 @@
 ---
 import sources from '../../media-src/options/sources.json';
+import { stringsFor } from '../i18n/strings';
 
 interface Props {
   /** The ids of the sources in media-src/options/sources.json that the example is made from. */
@@ -8,25 +9,23 @@ interface Props {
 }
 
 const { from, mangapress } = Astro.props;
-const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
+const words = stringsFor(Astro.locals.starlightRoute.lang).optionCredit;
 const credited = [
   ...new Map(from.map((id) => [id, sources.sources[id as keyof typeof sources.sources]])).values(),
 ];
 ---
 
 <p class="credit">
-  {portuguese ? 'Arte:' : 'Art:'}
+  {words.art}
   {credited.map((source, index) => (
     <>
       {index > 0 && '; '}
       <a href={source.page}>{source.title}</a>
-      {portuguese ? ', de ' : ' by '}
+      {words.by}
       {source.author} (<a href={source.licenseUrl}>{source.license}</a>)
     </>
   ))}
-  {portuguese
-    ? `. Convertida com o mangapress ${mangapress}.`
-    : `. Converted with mangapress ${mangapress}.`}
+  {words.converted(mangapress)}
 </p>
 
 <style>

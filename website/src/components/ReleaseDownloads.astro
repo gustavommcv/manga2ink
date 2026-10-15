@@ -1,6 +1,7 @@
 ---
 import { LinkButton } from '@astrojs/starlight/components';
 
+import { stringsFor } from '../i18n/strings';
 import { publishedRelease } from '../published-release.mjs';
 
 interface Props {
@@ -9,46 +10,32 @@ interface Props {
 
 const { platform } = Astro.props;
 const release = await publishedRelease;
-const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
+const words = stringsFor(Astro.locals.starlightRoute.lang).releaseDownloads;
 const choices = {
-  windows: [
-    { key: 'windowsInstaller', en: 'Download installer (.exe)', pt: 'Baixar instalador (.exe)' },
-    { key: 'windowsPortable', en: 'Download portable (.zip)', pt: 'Baixar versão portátil (.zip)' },
-  ],
-  macOS: [
-    {
-      key: 'macOS',
-      en: 'Download for Apple Silicon (.zip)',
-      pt: 'Baixar para Apple Silicon (.zip)',
-    },
-  ],
-  linux: [
-    { key: 'debian', en: 'Debian / Ubuntu (.deb)', pt: 'Debian / Ubuntu (.deb)' },
-    { key: 'fedora', en: 'Fedora (.rpm)', pt: 'Fedora (.rpm)' },
-    { key: 'arch', en: 'Arch Linux (.pkg.tar.zst)', pt: 'Arch Linux (.pkg.tar.zst)' },
-  ],
-};
+  windows: ['windowsInstaller', 'windowsPortable'],
+  macOS: ['macOS'],
+  linux: ['debian', 'fedora', 'arch'],
+} as const;
 ---
 
 <div class="release-downloads" data-release-tag={release.tag}>
   <div class="buttons">
-    {choices[platform].map((choice, index) => (
+    {choices[platform].map((key, index) => (
       <LinkButton
-        href={release.assets[choice.key]}
+        href={release.assets[key]}
         variant={platform !== 'linux' && index === 0 ? 'primary' : 'secondary'}
         icon="download"
         iconPlacement="start"
       >
-        {portuguese ? choice.pt : choice.en}
+        {words.buttons[key]}
       </LinkButton>
     ))}
   </div>
   <p class="release-info">
-    {portuguese ? 'Última versão disponível:' : 'Latest available version:'}{' '}
-    <strong>{release.tag}</strong>
-    {release.prerelease && (portuguese ? ' (pré-release)' : ' (pre-release)')}
+    {words.latest} <strong>{release.tag}</strong>
+    {release.prerelease && words.prerelease}
     {' · '}
-    <a href={release.notes}>{portuguese ? 'Notas da versão' : 'Release notes'}</a>
+    <a href={release.notes}>{words.notes}</a>
     {' · '}
     <a href={release.assets.checksums}>SHA256SUMS</a>
   </p>

@@ -37,6 +37,7 @@ Before publishing, `npm run check` also runs `npm run audit`: npm's full depende
 ## Write or translate a page
 
 - Add the English page and the same relative path under `src/content/docs/pt-br/` together. Parity checks page presence, not translation quality; review both texts.
+- The words the components write themselves (the captions and table heads of the option pictures, the download buttons, the labels of the logo and of the tutorial images) are in `src/i18n/strings.ts`, one catalog for each language. A page of a language that has no catalog stops the build.
 - Use the application's **actual English control labels** in both languages. Explain the task around them; do not invent buttons or silently translate a label the reader cannot find.
 - The published guide and automatic app captures follow `main`, which may be ahead of the latest downloadable release (ADR 0034). Check current UI/source and update both locales together. Do not describe a planned feature as implemented.
 - An advanced-options page follows [MEDIA.md](MEDIA.md#option-examples): its pictures come from the generator, each option's flag is in the text where the option is explained, and the overview's "Every option" list gets a line for any option the page adds (`npm test` fails when one is missing). A fact that applies to several options, such as what Webtoon strips locks, is said once, where it is measured.

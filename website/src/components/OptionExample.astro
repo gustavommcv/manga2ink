@@ -2,6 +2,7 @@
 import type { ImageMetadata } from 'astro';
 
 import manifest from '../assets/options/manifest.json';
+import { stringsFor } from '../i18n/strings';
 import OptionCredit from './OptionCredit.astro';
 
 interface Props {
@@ -16,14 +17,14 @@ const example = (
   manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
-const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
+const words = stringsFor(Astro.locals.starlightRoute.lang).optionExample;
 const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
   eager: true,
   import: 'default',
 });
 const rows = (example as { layout?: string }).layout === 'rows';
 const screenLabel = (example as { screenLabel?: string }).screenLabel;
-const fullSize = portuguese ? 'Abrir imagem em tamanho maior' : 'Open the larger image';
+const fullSize = words.openLarger;
 
 const variants = example.variants.map((variant) => {
   const meta = pictures[`../assets/options/${(variant as { file?: string }).file}`];
@@ -41,7 +42,6 @@ const variants = example.variants.map((variant) => {
   };
   const sizes = (stats.pages ?? [stats]).map((page) => `${page.width} × ${page.height}`);
   const count = stats.pages?.length ?? 1;
-  const noun = portuguese ? (count === 1 ? 'página' : 'páginas') : count === 1 ? 'page' : 'pages';
   return {
     ...variant,
     meta,
@@ -50,15 +50,8 @@ const variants = example.variants.map((variant) => {
     flagsText: stats.original ? null : variant.flags.length > 0 ? variant.flags.join(' ') : null,
     original: stats.original === true,
     plain: stats.plain === true,
-    shape: stats.pages
-      ? `${count} ${noun}: ${sizes.join(portuguese ? ', ' : ', ')} px`
-      : `${sizes[0]} px`,
-    tone:
-      stats.mean === undefined
-        ? null
-        : portuguese
-          ? `Pixel mais escuro ${stats.darkest}, brilho médio ${stats.mean} de 255`
-          : `Darkest pixel ${stats.darkest}, average brightness ${stats.mean} of 255`,
+    shape: stats.pages ? `${words.pageCount(count)}: ${sizes.join(', ')} px` : `${sizes[0]} px`,
+    tone: stats.mean === undefined ? null : words.tone(stats.darkest as number, stats.mean),
   };
 });
 ---
@@ -78,13 +71,7 @@ const variants = example.variants.map((variant) => {
       </a>
       <figcaption>
         <strong>{variant.label}</strong>
-        <code>
-          {variant.original
-            ? portuguese
-              ? 'sem conversão'
-              : 'not converted'
-            : (variant.flagsText ?? (portuguese ? 'sem flag' : 'no flag'))}
-        </code>
+        <code>{variant.original ? words.notConverted : (variant.flagsText ?? words.noFlag)}</code>
         {!variant.plain && (
           <span>
             {variant.shape}, {variant.fileSize}
@@ -95,13 +82,7 @@ const variants = example.variants.map((variant) => {
     </figure>
   ))}
 </div>
-{screenLabel && (
-  <p class="screen-note">
-    {portuguese
-      ? `O cinza é a tela em volta da página: ${screenLabel} pixels.`
-      : `The gray is the screen around the page: ${screenLabel} pixels.`}
-  </p>
-)}
+{screenLabel && <p class="screen-note">{words.screenNote(screenLabel)}</p>}
 <OptionCredit from={example.sources} mangapress={manifest.mangapress} />
 
 <style>

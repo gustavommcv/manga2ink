@@ -3,6 +3,7 @@ import type { ImageMetadata } from 'astro';
 import { getImage, Image } from 'astro:assets';
 
 import captureManifest from '../assets/tutorial/generated/capture.json';
+import { stringsFor } from '../i18n/strings';
 
 interface Props {
   name: string;
@@ -11,10 +12,7 @@ interface Props {
 }
 
 const { name, alt, caption } = Astro.props;
-const fullSizeLabel =
-  Astro.locals.starlightRoute.lang === 'pt-BR'
-    ? 'Abrir imagem em tamanho original'
-    : 'Open full-size image';
+const fullSizeLabel = stringsFor(Astro.locals.starlightRoute.lang).tutorialImage.openFullSize;
 const images = import.meta.glob<ImageMetadata>('../assets/tutorial/**/*.png', {
   eager: true,
   import: 'default',

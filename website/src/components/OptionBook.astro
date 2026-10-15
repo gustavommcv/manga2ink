@@ -1,5 +1,6 @@
 ---
 import manifest from '../assets/options/manifest.json';
+import { stringsFor } from '../i18n/strings';
 
 interface Props {
   /** The example in src/assets/options/manifest.json, of the kind `book`. */
@@ -39,69 +40,8 @@ const example = (
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
 const columns = (example as { columns?: Fact[] }).columns;
 if (!columns) throw new Error(`The option example ${id} is not a book example.`);
-const portuguese = Astro.locals.starlightRoute.lang === 'pt-BR';
-
-const words = portuguese
-  ? {
-      setting: 'Opção',
-      flag: 'No terminal',
-      noFlag: 'sem flag',
-      missing: 'não consta do livro',
-      no: 'não',
-      notRead: 'não lido',
-      gray: 'cinza',
-      color: 'colorida',
-      copy: 'sim, a da entrada, sem mudança',
-      changed: 'sim, alterada',
-      ltr: 'da esquerda para a direita (ltr)',
-      rtl: 'da direita para a esquerda (rtl)',
-      page: 'página',
-      pages: 'páginas',
-      region: 'valores medidos',
-      caption: `Medido com o mangapress ${manifest.mangapress}: cada valor é lido de volta do livro que ele gravou.`,
-      heads: {
-        title: 'Título do livro',
-        author: 'Autor',
-        language: 'Idioma',
-        direction: 'Direção de leitura',
-        fileName: 'Nome do arquivo',
-        comicInfo: 'ComicInfo.xml no livro',
-        pages: 'Páginas',
-        source: 'Primeira imagem',
-        firstPage: 'Primeira página do livro',
-        cover: 'Capa',
-      },
-    }
-  : {
-      setting: 'Setting',
-      flag: 'On the command line',
-      noFlag: 'no flag',
-      missing: 'not in the book',
-      no: 'no',
-      notRead: 'not read',
-      gray: 'gray',
-      color: 'color',
-      copy: 'yes, the input’s own, unchanged',
-      changed: 'yes, changed',
-      ltr: 'left to right (ltr)',
-      rtl: 'right to left (rtl)',
-      page: 'page',
-      pages: 'pages',
-      region: 'measured values',
-      caption: `Measured with mangapress ${manifest.mangapress}: each value is read back from the book it wrote.`,
-      heads: {
-        title: 'Book title',
-        author: 'Author',
-        language: 'Language',
-        direction: 'Reading direction',
-        fileName: 'File name',
-        comicInfo: 'ComicInfo.xml in the book',
-        pages: 'Pages',
-        source: 'First image',
-        firstPage: 'First page of the book',
-        cover: 'Cover',
-      },
-    };
+const lang = Astro.locals.starlightRoute.lang;
+const words = stringsFor(lang).optionBook;
 
 /** A flag value with a space in it is quoted, as it would be typed. */
 const flagsText = (flags: string[]) =>
@@ -137,7 +77,7 @@ function show(column: Fact, facts: Facts): { text: string; missing: boolean } {
 const rows = example.variants.map((variant) => {
   const row = variant as unknown as { id: string; label: string; flags: string[]; facts: Facts };
   const label = labels?.[row.id];
-  if (portuguese && !label) throw new Error(`The example ${id} needs a label for ${row.id}.`);
+  if (lang !== 'en' && !label) throw new Error(`The example ${id} needs a label for ${row.id}.`);
   return {
     label: label ?? row.label,
     flags: row.flags.length > 0 ? flagsText(row.flags) : words.noFlag,
@@ -155,7 +95,7 @@ const region = `${words.region}: ${columns.map((column) => words.heads[column].t
   tabindex="0"
 >
   <table>
-    <caption>{words.caption}</caption>
+    <caption>{words.caption(manifest.mangapress)}</caption>
     <thead>
       <tr>
         <th scope="col">{words.setting}</th>
