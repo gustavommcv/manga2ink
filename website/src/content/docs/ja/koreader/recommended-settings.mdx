@@ -1,0 +1,140 @@
+---
+title: 'KOReader の設定'
+description: 'E-ink リーダーでマンガを読むための KOReader の設定: ステータスバーの重なり、フルリフレッシュの頻度、CBZ と PDF のページ操作、そして既定値として保存する方法。'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+## 本に合わせて設定を選ぶ
+
+KOReader は EPUB と、CBZ・PDF とで扱いが異なるため、使えるページ操作は本の形式によって変わります。CBZ は Mangabound が最初に選ぶ形式で、KOReader 自身のガイドもマンガ向けに勧めています。後述の、画像ページ向けの操作が使えます。EPUB は、各話や巻の目次がほしいときに便利ですが、KOReader はページの周りに余白とステータスバーを付けて表示します。
+
+まずは数ページで試し、画面に合わせて、以下の設定を調整してください。メニューの名前や場所は、KOReader のバージョン、言語、端末によって変わることがあります。[KOReader の公式ガイド](https://koreader.rocks/user_guide/)に、各形式の操作と、メニューの検索のしかたが説明されています。
+
+以下の画像は、**KOReader 2026.07.2-198 を動かした Kindle 2024** で撮影したものです。メニューは英語で、赤い枠が各オプションを示しています。
+
+## Overlap status bar
+
+本を開いた状態で、**Status bar → Overlap status bar** を探します。これにより、ページがステータスバー用に確保された領域も使えるようになります。見たい絵がバーに隠れていないか確認してください。
+
+<TutorialImage
+  name="koreader/status-overlap"
+  alt="KOReader の Status bar メニューで Overlap status bar にチェックが入っています。"
+/>
+
+<details>
+<summary>手順を表示</summary>
+
+1. トップメニューを開き、歯車アイコンを選んで **Status bar** をタップします。
+
+<TutorialImage name="koreader/status-menu" alt="Status bar が強調表示された設定メニュー。" />
+
+2. **Overlap status bar** を有効にします。
+
+<TutorialImage
+  name="koreader/status-overlap"
+  alt="KOReader の Status bar メニューで Overlap status bar にチェックが入っています。"
+/>
+
+</details>
+
+## Full refresh rate
+
+E-ink リーダーで、前のページの残像が見える場合は、**Screen → E-ink settings → Full refresh rate → Every page** を試してください。
+
+フルリフレッシュで残像を減らせることがありますが、目立つ点滅が出たり、ページめくりが遅くなったりすることがあります。お使いの端末の既定値と比べてください。この設定は、対応する E-ink 画面向けで、LCD ディスプレイには当てはまりません。リフレッシュのオプションは [KOReader のガイド](https://koreader.rocks/user_guide/)を参照してください。
+
+<TutorialImage
+  name="koreader/refresh-every-page"
+  alt="KOReader の Full refresh rate メニューで Every page にチェックが入っています。"
+/>
+
+<details>
+<summary>手順を表示</summary>
+
+1. トップメニューで歯車アイコンを選び、**Screen** を開きます。
+
+<TutorialImage name="koreader/refresh-screen" alt="Screen が強調表示された設定メニュー。" />
+
+2. **E-ink settings** を開きます。
+
+<TutorialImage
+  name="koreader/refresh-eink"
+  alt="E-ink settings が強調表示された Screen メニュー。"
+/>
+
+3. **Full refresh rate** を開きます。
+
+<TutorialImage
+  name="koreader/refresh-rate"
+  alt="Full refresh rate が強調表示された E-ink settings メニュー。"
+/>
+
+4. **Every page** を選びます。端末のほかの設定まで、そのまま真似する必要はありません。
+
+<TutorialImage
+  name="koreader/refresh-every-page"
+  alt="KOReader の Full refresh rate メニューで Every page にチェックが入っています。"
+/>
+
+</details>
+
+## CBZ/PDF のページ操作
+
+1 ページずつ表示するビューを試し、ズームはページ全体に合わせます。本がすでに画面いっぱいになっている場合は、クロップをオフのままにしてください。変換の時点で余白がすでに取り除かれていることがあり、もう一度クロップすると、絵が切れる場合があります。
+
+これらの操作は CBZ と PDF 用です。EPUB では、その本の読書メニューにあるオプションを使ってください。設定を 1 つずつ変え、数ページを見比べてから、好みを保存します。
+
+KOReader には、マンガやコミック向けの **Panel Zoom** もあります。トップメニューのドキュメントアイコンの下にあり、CBZ と PDF で動作します。コマを長押しすると、そのコマが拡大されます。詳細は[公式ガイド](https://koreader.rocks/user_guide/)を参照してください。
+
+## Tweak document settings
+
+マンガのフォルダーに、テキストの本とは別の既定値を与えるには、KOReader の高度なプラグイン **Tweak document settings** を使います。本を初めて開くときに、フォルダー単位の既定値が適用されます。
+
+このプラグインは、EPUB のスタイル調整ではなく、Lua の設定ファイルを使います。[公式のセットアップ手順](https://github.com/koreader/koreader/wiki/Tweak-document-settings-by-directory)に従い、編集する前に設定のバックアップを取ってください。すでに開いたことのある本は、それぞれの設定を保持したままになることがあります。
+
+プラグインが見当たらない場合は、**Tools → Plugin management** で **Tweak document settings** を有効にします。そのあと **Tools → More tools → Tweak document settings** を開きます。
+
+<TutorialImage
+  name="koreader/tweak-menu"
+  alt="Tweak document settings が強調表示された More tools メニュー。"
+/>
+
+<details>
+<summary>手順を表示</summary>
+
+1. トップメニューのツールアイコンを選び、**More tools** を開きます。
+
+<TutorialImage name="koreader/tweak-tools" alt="More tools が強調表示された Tools メニュー。" />
+
+2. **Tweak document settings** をタップして、**directory_defaults.lua** を開きます。
+
+<TutorialImage
+  name="koreader/tweak-menu"
+  alt="Tweak document settings が強調表示された More tools メニュー。"
+/>
+
+<TutorialImage
+  name="koreader/tweak-editor"
+  alt="右から左に読む設定を表示している directory_defaults.lua のエディター。"
+/>
+
+3. 既存のテーブルの中に、次のような項目を追加します。パスは、お使いのリーダー上のマンガフォルダーに置き換えてください。ほかの項目とファイルの構造はそのままにします。
+
+```lua
+["/mnt/us/library/mangas"] = {
+    ["inverse_reading_order"] = true,
+},
+```
+
+この例は、右から左に読むために、タップの領域とスワイプの向きを入れ替えるものです。画面のリフレッシュやステータスバーの設定は行いません。パスは Kindle のフォルダーの例であり、Mangabound が作ったフォルダーではありません。
+
+4. **Save** で保存します。既定値は、そのフォルダーの中の、まだ開いたことのない本に適用されます。以前に開いた本は、それぞれの設定を保持することがあります。
+
+</details>
+
+## 既定値として保存する
+
+一部の操作では、長押しで既定値を保存できます。ほかの操作では、ヘルプや別のダイアログが開きます。その操作について KOReader が表示する確認に従ってください。すでに開いたことのある本は、それぞれの設定を保持することがあります。
+
+本が正しく表示されない場合は、助けを求めるときに、KOReader のバージョン、端末、ファイル形式、設定を添えてください。

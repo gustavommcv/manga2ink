@@ -1,0 +1,57 @@
+---
+title: 'KOReader に接続する'
+description: 'Mangabound を KOReader の OPDS カタログとして追加し、変換したマンガをローカルネットワーク経由でダウンロードして電子書籍リーダーで開きます。各手順の画面付きです。'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+まず [Mangabound で共有を開始](../opds-sharing/)し、リーダーを同じローカルネットワークに接続してください。
+
+Mangabound を KOReader の OPDS カタログとして追加します。**Recently converted** には、処理したばかりの本が新しい順に並びます。**Other files** には、共有ライブラリにあるその他の本が並びます。
+
+<TutorialImage
+  name="koreader/opds-catalog"
+  alt="KOReader の Mangabound のカタログ。Recently converted が Other files の上で強調表示されています。"
+  caption="Kindle 2024 · KOReader 2026.07.2-198。メニューの名前は、バージョンや言語によって異なることがあります。"
+/>
+
+<details>
+<summary>手順を表示</summary>
+
+1. KOReader のファイルブラウザーで、検索メニュー（虫めがね）を開き、**OPDS catalog** をタップします。
+
+<TutorialImage name="koreader/opds-menu" alt="OPDS catalog が強調表示された検索メニュー。" />
+
+2. カタログのメニュー（横 3 本線）を開き、**Add catalog** をタップします。
+
+<TutorialImage
+  name="koreader/opds-add-catalog"
+  alt="Add catalog が強調表示された OPDS カタログのメニュー。"
+/>
+
+3. カタログの名前を **Mangabound** にし、アプリに表示されたとおりのアドレスを入力します。画像にあるのは例のアドレスなので、使わないでください。Mangabound で設定していない限り、**Username (optional)** と **Password (optional)** は空のままにして、**Save** をタップします。
+
+<TutorialImage
+  name="koreader/opds-setup"
+  alt="Mangabound、例のローカルアドレス、任意の認証情報、Save が入力された OPDS カタログのフォーム。"
+/>
+
+4. カタログの一覧で **Mangabound** を開き、続けて **Recently converted** を開きます。
+
+<TutorialImage
+  name="koreader/opds-catalog"
+  alt="KOReader の Mangabound のカタログ。Recently converted が Other files の上で強調表示されています。"
+/>
+
+5. 本を選びます。保存先を変えるには、ダウンロードの前に **Choose folder** をタップします。形式のボタン（この例では **EPUB**）をタップしてダウンロードし、ダウンロードしたファイルを KOReader で開きます。
+
+<TutorialImage
+  name="koreader/opds-download"
+  alt="本のダウンロード操作。EPUB のダウンロードボタンが、Choose folder と Change filename の上で強調表示されています。"
+/>
+
+</details>
+
+ダウンロードが終われば、本はリーダーに保存されています。読むために Mangabound を開いたままにしておく必要はなく、追加のダウンロードのときだけ必要です。コンピューターのアドレスが変わらなければ、次に共有を始めるときも同じカタログを使えます。
+
+接続に問題がある場合は、[共有のチェックリスト](../opds-sharing/#if-your-reader-cannot-connect)を参照してください。表示の設定は、[KOReader の設定](../recommended-settings/)を参照してください。
