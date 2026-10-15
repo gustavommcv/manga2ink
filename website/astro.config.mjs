@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-import { base, site } from './site.config.mjs';
+import { base, languages, site } from './site.config.mjs';
 
 // The card that a link to any page of the guide shows when it is shared: `public/social-preview.png`.
 const socialPreview = new URL(`${base.replace(/\/?$/, '/')}social-preview.png`, site).href;
@@ -42,16 +42,7 @@ export default defineConfig({
         { icon: 'github', label: 'GitHub', href: 'https://github.com/gustavommcv/mangabound' },
       ],
       defaultLocale: 'root',
-      locales: {
-        root: {
-          label: 'English',
-          lang: 'en',
-        },
-        'pt-br': {
-          label: 'Português (Brasil)',
-          lang: 'pt-BR',
-        },
-      },
+      locales: Object.fromEntries(languages.map(({ key, label, lang }) => [key, { label, lang }])),
       customCss: ['./src/styles/custom.css'],
       sidebar: [
         {

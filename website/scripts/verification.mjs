@@ -2,19 +2,53 @@ import { isDeepStrictEqual } from 'node:util';
 
 import { load } from 'cheerio';
 
+import { languages as siteLanguages } from '../site.config.mjs';
+
 const portablePath = (value) => value.replaceAll('\\', '/');
 
-export function translationGaps(paths) {
+/**
+ * The pages of each language against the pages of the default one, which are the source. A language may
+ * leave pages untranslated on purpose: `untranslated` names them for the language (by its `id`, the pages as
+ * paths under the docs folder), and the site shows the default page there. The list has to stay true: a
+ * page that is on it and is translated, or that is not a page at all, is a gap of the list.
+ *
+ * For each language but the default one: `missing` are the pages that are neither translated nor listed,
+ * `orphans` the translated pages that have no source, and `stale` the entries of the list that are no longer
+ * true. `counts` has the number of pages of every language, and `listed` how many a language leaves out.
+ */
+export function translationGaps(paths, { languages = siteLanguages, untranslated = {} } = {}) {
   if (paths.length === 0) throw new Error('No documentation pages found');
   const files = paths.map(portablePath);
-  const english = files.filter((file) => !file.startsWith('pt-br/'));
-  const portuguese = files.filter((file) => file.startsWith('pt-br/')).map((file) => file.slice(6));
-  return {
-    englishCount: english.length,
-    portugueseCount: portuguese.length,
-    missingPortuguese: english.filter((file) => !portuguese.includes(file)),
-    missingEnglish: portuguese.filter((file) => !english.includes(file)),
+  const [source, ...others] = languages;
+  const directories = others.map(({ directory }) => `${directory}/`);
+  const inLanguage = ({ directory }) =>
+    directory
+      ? files
+          .filter((file) => file.startsWith(`${directory}/`))
+          .map((file) => file.slice(directory.length + 1))
+      : files.filter((file) => !directories.some((prefix) => file.startsWith(prefix)));
+  const sourcePages = inLanguage(source);
+  const result = {
+    counts: { [source.id]: sourcePages.length },
+    listed: {},
+    missing: {},
+    orphans: {},
+    stale: {},
   };
+  for (const language of others) {
+    const translated = inLanguage(language);
+    const listed = untranslated[language.id] ?? [];
+    result.counts[language.id] = translated.length;
+    result.listed[language.id] = listed.length;
+    result.missing[language.id] = sourcePages.filter(
+      (file) => !translated.includes(file) && !listed.includes(file),
+    );
+    result.orphans[language.id] = translated.filter((file) => !sourcePages.includes(file));
+    result.stale[language.id] = listed.filter(
+      (file) => translated.includes(file) || !sourcePages.includes(file),
+    );
+  }
+  return result;
 }
 
 /** Resolve actual browser URLs against the deployed base, not guessed filesystem paths. */
@@ -87,7 +121,7 @@ export function auditLinks(pages, { site, base, assets = [] }) {
 }
 
 /** Check the published documentation contract, not general schema.org validity or ranking. */
-export function auditSearchData(pages, { site, base }) {
+export function auditSearchData(pages, { site, base, languages = siteLanguages }) {
   if (pages.length === 0) throw new Error('No built HTML pages found');
   const root = new URL(base.replace(/\/?$/, '/'), site);
   const titles = new Map();
@@ -130,9 +164,11 @@ export function auditSearchData(pages, { site, base }) {
     const headings = $('h1').length;
     if (headings !== 1) fail(`Expected one h1, found ${headings}`);
 
-    const portuguese = source.startsWith('pt-br/');
-    const home = new URL(portuguese ? 'pt-br/' : '', root).href;
-    const lang = portuguese ? 'pt-BR' : 'en';
+    const language =
+      languages.find(({ directory }) => directory && source.startsWith(`${directory}/`)) ??
+      languages[0];
+    const home = new URL(language.directory ? `${language.directory}/` : '', root).href;
+    const lang = language.lang;
     if ($('html').attr('lang') !== lang) fail(`Page language is not ${lang}`);
 
     const data = $('script[type="application/ld+json"]').toArray();

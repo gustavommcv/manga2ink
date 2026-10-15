@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { sep } from 'node:path';
 import test from 'node:test';
 
 import { auditLinks, auditSearchData, translationGaps } from '../../scripts/verification.mjs';
@@ -15,21 +16,53 @@ test('empty input cannot produce a false green verification', () => {
 test('translation parity accepts Windows and POSIX separators', () => {
   for (const paths of [
     ['guide/start.mdx', 'pt-br/guide/start.mdx'],
-    ['guide\\start.mdx', 'pt-br\\guide\\start.mdx'],
+    ['guide' + sep + 'start.mdx', 'pt-br' + sep + 'guide' + sep + 'start.mdx'],
   ]) {
     assert.deepEqual(translationGaps(paths), {
-      englishCount: 1,
-      portugueseCount: 1,
-      missingPortuguese: [],
-      missingEnglish: [],
+      counts: { en: 1, 'pt-br': 1 },
+      listed: { 'pt-br': 0 },
+      missing: { 'pt-br': [] },
+      orphans: { 'pt-br': [] },
+      stale: { 'pt-br': [] },
     });
   }
 });
 
-test('translation parity reports missing counterparts in both directions', () => {
+test('translation parity reports a page with no counterpart in either direction', () => {
   const result = translationGaps(['en-only.mdx', 'pt-br/pt-only.mdx']);
-  assert.deepEqual(result.missingPortuguese, ['en-only.mdx']);
-  assert.deepEqual(result.missingEnglish, ['pt-only.mdx']);
+  assert.deepEqual(result.missing, { 'pt-br': ['en-only.mdx'] });
+  assert.deepEqual(result.orphans, { 'pt-br': ['pt-only.mdx'] });
+});
+
+const threeLanguages = [
+  { id: 'en', directory: '', lang: 'en' },
+  { id: 'pt-br', directory: 'pt-br', lang: 'pt-BR' },
+  { id: 'ja', directory: 'ja', lang: 'ja' },
+];
+
+test('each language is compared with the default one, and a folder of another language is not English', () => {
+  const result = translationGaps(
+    ['a.mdx', 'b.mdx', 'pt-br/a.mdx', 'pt-br/b.mdx', 'ja/a.mdx', 'ja/extra.mdx'],
+    { languages: threeLanguages },
+  );
+  assert.deepEqual(result.counts, { en: 2, 'pt-br': 2, ja: 2 });
+  assert.deepEqual(result.missing, { 'pt-br': [], ja: ['b.mdx'] });
+  assert.deepEqual(result.orphans, { 'pt-br': [], ja: ['extra.mdx'] });
+});
+
+test('a language may leave pages untranslated on purpose, and the list has to stay true', () => {
+  const paths = ['a.mdx', 'b.mdx', 'pt-br/a.mdx', 'pt-br/b.mdx', 'ja/a.mdx'];
+  const gaps = (untranslated) =>
+    translationGaps(paths, { languages: threeLanguages, untranslated });
+  const listed = gaps({ ja: ['b.mdx'] });
+  assert.deepEqual(listed.missing.ja, []);
+  assert.deepEqual(listed.stale.ja, []);
+  assert.equal(listed.listed.ja, 1);
+  // The page is translated after all, or never was a page: the list has gone stale.
+  assert.deepEqual(gaps({ ja: ['a.mdx'] }).stale.ja, ['a.mdx']);
+  assert.deepEqual(gaps({ ja: ['gone.mdx'] }).stale.ja, ['gone.mdx']);
+  // The list of a language does not excuse another one.
+  assert.deepEqual(gaps({ 'pt-br': ['b.mdx'] }).missing.ja, ['b.mdx']);
 });
 
 test('valid relative, project-root, query, and encoded-anchor URLs resolve', () => {
@@ -144,13 +177,17 @@ test('unsafe schemes, malformed URLs, and malformed encoding fail', () => {
 });
 
 const description = 'd'.repeat(120);
+const languagesForTests = threeLanguages;
 const indexed = (
   address,
   { title = `Page ${address}`, text = description, body = '<h1>T</h1>', root = options.base } = {},
 ) => {
   const url = `https://example.org${root}${address}`;
-  const lang = address.startsWith('pt-br/') ? 'pt-BR' : 'en';
-  const home = `https://example.org${root}${lang === 'pt-BR' ? 'pt-br/' : ''}`;
+  const language =
+    languagesForTests.find(({ directory }) => directory && address.startsWith(`${directory}/`)) ??
+    languagesForTests[0];
+  const lang = language.lang;
+  const home = `https://example.org${root}${language.directory ? `${language.directory}/` : ''}`;
   const data =
     url === home
       ? {
@@ -184,6 +221,29 @@ const indexed = (
 
 const withData = (html, data) =>
   html.replace(/(<script type="application\/ld\+json">).*?(<\/script>)/, `$1${data}$2`);
+
+test('a page of any language of the list is checked against that language', () => {
+  const withJapanese = { ...options, languages: threeLanguages };
+  assert.deepEqual(
+    auditSearchData(
+      [
+        page('index.html', indexed('')),
+        page('ja/index.html', indexed('ja/')),
+        page('ja/guide/index.html', indexed('ja/guide/')),
+      ],
+      withJapanese,
+    ),
+    { indexable: 3, errors: [] },
+  );
+  const wrong = indexed('ja/guide/').replace('<html lang="ja">', '<html lang="en">');
+  const reasons = auditSearchData([page('ja/guide/index.html', wrong)], withJapanese).errors.map(
+    ({ reason }) => reason,
+  );
+  assert.deepEqual(
+    reasons.filter((reason) => /language/.test(reason)),
+    ['Page language is not ja'],
+  );
+});
 
 test('both locales pass, while only the noindex 404 is exempt', () => {
   const result = auditSearchData(

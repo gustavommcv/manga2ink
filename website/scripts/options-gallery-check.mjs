@@ -20,8 +20,11 @@ const longFlags = (flags) => flags.filter((flag) => flag.startsWith('--'));
  * - userFlags: every flag of mangapress that a person can choose, from schemas/cli-capabilities.json.
  * - coverage: { pages: { slug: [flag] }, elsewhere: { 'docs/path': [flag] }, planned: [slug] }.
  * - pages: { en: { slug: text }, 'pt-br': { slug: text } } for the advanced-options pages that exist,
+ *   one entry for each language of the site, named by its `id`,
  *   `index` being the overview page, which must list every option the coverage names.
  * - guides: { en: { path: text }, 'pt-br': { path: text } } for the other pages the coverage points to.
+ * - untranslated: { 'pt-br': [path] }, the pages (paths under the docs folder, without the extension) that a
+ *   language leaves untranslated on purpose, which it need not have, and the examples that only they use.
  */
 export function checkGallery({
   manifest,
@@ -32,9 +35,12 @@ export function checkGallery({
   coverage,
   pages,
   guides,
+  untranslated = {},
 }) {
   const problems = [];
   const locales = Object.keys(pages);
+  const optionsFolder = 'user-guide/advanced-options';
+  const left = (locale, path) => (untranslated[locale] ?? []).includes(path);
 
   if (manifest.mangapress !== pin) {
     problems.push(
@@ -76,9 +82,17 @@ export function checkGallery({
       }
     }
   }
+  // An example is on a page of every language, unless the pages that show it are left out of a language.
+  const shownBy = {};
+  for (const [slug, text] of Object.entries(pages[locales[0]])) {
+    for (const id of referencedExamples(text))
+      (shownBy[id] ??= []).push(`${optionsFolder}/${slug}`);
+  }
   for (const id of Object.keys(manifest.examples)) {
     for (const locale of locales) {
-      if (!used[locale].has(id)) problems.push(`The example ${id} is on no page in ${locale}.`);
+      const needed = (shownBy[id] ?? []).some((path) => !left(locale, path));
+      if (!used[locale].has(id) && (needed || !(id in shownBy)))
+        problems.push(`The example ${id} is on no page in ${locale}.`);
     }
   }
 
@@ -109,7 +123,8 @@ export function checkGallery({
     }
     if (planned.has(slug)) problems.push(`The page ${slug} exists and is still listed as planned.`);
     for (const locale of locales.filter((candidate) => !present.includes(candidate))) {
-      problems.push(`The page ${slug} has no ${locale} version.`);
+      if (!left(locale, `${optionsFolder}/${slug}`))
+        problems.push(`The page ${slug} has no ${locale} version.`);
     }
     for (const locale of present) {
       for (const flag of longFlags(flags)) {
@@ -125,7 +140,8 @@ export function checkGallery({
     for (const locale of locales) {
       const text = guides[locale][path];
       if (text === undefined) {
-        problems.push(`${locale}/${path} is where options are covered, and it does not exist.`);
+        if (!left(locale, path))
+          problems.push(`${locale}/${path} is where options are covered, and it does not exist.`);
         continue;
       }
       for (const flag of longFlags(flags)) {
@@ -138,7 +154,8 @@ export function checkGallery({
   for (const locale of locales) {
     const listing = pages[locale].index;
     if (listing === undefined) {
-      problems.push(`The overview page of the options does not exist in ${locale}.`);
+      if (!left(locale, `${optionsFolder}/index`))
+        problems.push(`The overview page of the options does not exist in ${locale}.`);
       continue;
     }
     for (const flag of longFlags([...claimed.keys()])) {

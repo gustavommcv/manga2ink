@@ -245,6 +245,41 @@ function gallery(changes = {}) {
   return { ...base, ...changes };
 }
 
+test('a language may leave pages out on purpose, and the pages it does not leave out are still needed', () => {
+  const base = gallery();
+  const withoutJapanese = {
+    ...base,
+    pages: { ...base.pages, ja: {} },
+    guides: { ...base.guides, ja: {} },
+  };
+  // Nothing in Japanese, and nothing said about it: every page and example is missing there.
+  const problems = checkGallery(withoutJapanese);
+  assert.ok(problems.includes('The page cropping has no ja version.'));
+  assert.ok(problems.includes('The example crop is on no page in ja.'));
+  assert.ok(problems.includes('The overview page of the options does not exist in ja.'));
+  assert.ok(
+    problems.includes('ja/cli/mangapress is where options are covered, and it does not exist.'),
+  );
+  // All of it listed: nothing is missing, and the examples only those pages show need not be there.
+  const all = [
+    'user-guide/advanced-options/cropping',
+    'user-guide/advanced-options/index',
+    'cli/mangapress',
+  ];
+  assert.deepEqual(checkGallery({ ...withoutJapanese, untranslated: { ja: all } }), []);
+  // Only the overview listed: the rest is still needed, and the list of one language excuses no other.
+  const partial = checkGallery({
+    ...withoutJapanese,
+    untranslated: { ja: ['user-guide/advanced-options/index'], 'pt-br': all },
+  });
+  assert.deepEqual(partial, [
+    'The example crop is on no page in ja.',
+    'The example sizes is on no page in ja.',
+    'The page cropping has no ja version.',
+    'ja/cli/mangapress is where options are covered, and it does not exist.',
+  ]);
+});
+
 test('the examples a page uses are found, over several lines too', () => {
   assert.deepEqual(
     referencedExamples(

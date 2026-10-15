@@ -36,7 +36,7 @@ Before publishing, `npm run check` also runs `npm run audit`: npm's full depende
 
 ## Write or translate a page
 
-- Add the English page and the same relative path under `src/content/docs/pt-br/` together. Parity checks page presence, not translation quality; review both texts.
+- Add the English page and the same relative path under the folder of each language (`src/content/docs/pt-br/`, and so on for the languages in `site.config.mjs`) together. Parity checks page presence, not translation quality; review the texts. A language that does not translate a page yet lists it in `i18n-gaps.json`, by language and as a path under the docs folder: the site shows the English page there, and the check fails when a listed page is translated or is not a page, so the list stays true.
 - The words the components write themselves (the captions and table heads of the option pictures, the download buttons, the labels of the logo and of the tutorial images) are in `src/i18n/strings.ts`, one catalog for each language. A page of a language that has no catalog stops the build.
 - Use the application's **actual English control labels** in both languages. Explain the task around them; do not invent buttons or silently translate a label the reader cannot find.
 - The published guide and automatic app captures follow `main`, which may be ahead of the latest downloadable release (ADR 0034). Check current UI/source and update both locales together. Do not describe a planned feature as implemented.
