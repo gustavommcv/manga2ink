@@ -4,7 +4,7 @@ import { getImage, Image } from 'astro:assets';
 import logo from '../../../assets/branding/mangabound.png';
 import { stringsFor } from '../i18n/strings';
 
-const label = stringsFor(Astro.locals.starlightRoute.lang).brandLogo.openFullSize;
+const label = stringsFor(Astro.locals.starlightRoute).brandLogo.openFullSize;
 const fullSize = await getImage({ src: logo, format: 'webp', quality: 'max' });
 ---
 

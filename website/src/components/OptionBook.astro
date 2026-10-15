@@ -40,8 +40,8 @@ const example = (
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
 const columns = (example as { columns?: Fact[] }).columns;
 if (!columns) throw new Error(`The option example ${id} is not a book example.`);
-const lang = Astro.locals.starlightRoute.lang;
-const words = stringsFor(lang).optionBook;
+const route = Astro.locals.starlightRoute;
+const words = stringsFor(route).optionBook;
 
 /** A flag value with a space in it is quoted, as it would be typed. */
 const flagsText = (flags: string[]) =>
@@ -77,7 +77,8 @@ function show(column: Fact, facts: Facts): { text: string; missing: boolean } {
 const rows = example.variants.map((variant) => {
   const row = variant as unknown as { id: string; label: string; flags: string[]; facts: Facts };
   const label = labels?.[row.id];
-  if (lang !== 'en' && !label) throw new Error(`The example ${id} needs a label for ${row.id}.`);
+  if (route.lang !== 'en' && !route.isFallback && !label)
+    throw new Error(`The example ${id} needs a label for ${row.id}.`);
   return {
     label: label ?? row.label,
     flags: row.flags.length > 0 ? flagsText(row.flags) : words.noFlag,

@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { name, alt, caption } = Astro.props;
-const fullSizeLabel = stringsFor(Astro.locals.starlightRoute.lang).tutorialImage.openFullSize;
+const fullSizeLabel = stringsFor(Astro.locals.starlightRoute).tutorialImage.openFullSize;
 const images = import.meta.glob<ImageMetadata>('../assets/tutorial/**/*.png', {
   eager: true,
   import: 'default',

@@ -17,7 +17,7 @@ const example = (
   manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
-const words = stringsFor(Astro.locals.starlightRoute.lang).optionExample;
+const words = stringsFor(Astro.locals.starlightRoute).optionExample;
 const pictures = import.meta.glob<ImageMetadata>('../assets/options/*.webp', {
   eager: true,
   import: 'default',

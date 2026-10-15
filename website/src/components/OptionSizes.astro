@@ -9,12 +9,12 @@ interface Props {
 }
 
 const { id } = Astro.props;
-const { numberLocale } = stringsFor(Astro.locals.starlightRoute.lang);
+const { numberLocale } = stringsFor(Astro.locals.starlightRoute);
 const example = (
   manifest.examples as Record<string, (typeof manifest.examples)[keyof typeof manifest.examples]>
 )[id];
 if (!example) throw new Error(`There is no option example called ${id}. Run npm run site:options.`);
-const words = stringsFor(Astro.locals.starlightRoute.lang).optionSizes;
+const words = stringsFor(Astro.locals.starlightRoute).optionSizes;
 const files = example.kind === 'files';
 const heads = {
   region: words.region(files),

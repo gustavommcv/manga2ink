@@ -6,6 +6,8 @@ The documentation is published at <https://gustavommcv.github.io/mangabound/>. T
 
 Astro and Starlight already supply canonical URLs, language alternatives (`hreflang`), a sitemap, Open Graph metadata, and localized page language. Keep these framework features rather than implementing another sitemap or metadata system. The home pages use a descriptive browser title while keeping **Mangabound** as the visible heading and sidebar label.
 
+A language that has not translated a page yet shows the English page under its own address (Starlight's fallback page, with a notice and its text marked as English). Those pages stay indexable, with their own canonical address and the language alternatives, as Starlight builds them; [ADR 0051](../docs/adr/0051-a-language-of-the-guide-may-leave-pages-in-english.md) says why, and what to change if search turns out to dislike the duplicate text. A title is unique within a language, not across the site.
+
 Each page has a description of its own task. Write for readers, not a keyword score: [Google may use the description or a passage from the page](https://developers.google.com/search/docs/appearance/snippet), and truncates results according to available space. A preferred editorial length is not a reason to reject an otherwise useful description. There is no character-count build gate.
 
 `src/routeData.ts` uses [Starlight's route middleware](https://starlight.astro.build/guides/route-data/) to add:

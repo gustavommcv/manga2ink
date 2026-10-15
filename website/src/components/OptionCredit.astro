@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { from, mangapress } = Astro.props;
-const words = stringsFor(Astro.locals.starlightRoute.lang).optionCredit;
+const words = stringsFor(Astro.locals.starlightRoute).optionCredit;
 const credited = [
   ...new Map(from.map((id) => [id, sources.sources[id as keyof typeof sources.sources]])).values(),
 ];

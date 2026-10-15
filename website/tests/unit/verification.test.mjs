@@ -13,12 +13,17 @@ test('empty input cannot produce a false green verification', () => {
   assert.throws(() => auditSearchData([], options), /No built HTML pages found/);
 });
 
+const twoLanguages = [
+  { id: 'en', directory: '', lang: 'en' },
+  { id: 'pt-br', directory: 'pt-br', lang: 'pt-BR' },
+];
+
 test('translation parity accepts Windows and POSIX separators', () => {
   for (const paths of [
     ['guide/start.mdx', 'pt-br/guide/start.mdx'],
     ['guide' + sep + 'start.mdx', 'pt-br' + sep + 'guide' + sep + 'start.mdx'],
   ]) {
-    assert.deepEqual(translationGaps(paths), {
+    assert.deepEqual(translationGaps(paths, { languages: twoLanguages }), {
       counts: { en: 1, 'pt-br': 1 },
       listed: { 'pt-br': 0 },
       missing: { 'pt-br': [] },
@@ -29,7 +34,7 @@ test('translation parity accepts Windows and POSIX separators', () => {
 });
 
 test('translation parity reports a page with no counterpart in either direction', () => {
-  const result = translationGaps(['en-only.mdx', 'pt-br/pt-only.mdx']);
+  const result = translationGaps(['en-only.mdx', 'pt-br/pt-only.mdx'], { languages: twoLanguages });
   assert.deepEqual(result.missing, { 'pt-br': ['en-only.mdx'] });
   assert.deepEqual(result.orphans, { 'pt-br': ['pt-only.mdx'] });
 });
@@ -242,6 +247,32 @@ test('a page of any language of the list is checked against that language', () =
   assert.deepEqual(
     reasons.filter((reason) => /language/.test(reason)),
     ['Page language is not ja'],
+  );
+});
+
+test('a title is unique within a language, and a page not translated yet has the default language title', () => {
+  const withJapanese = { ...options, languages: threeLanguages };
+  const same = indexed('guide/', { title: 'Guide' });
+  assert.deepEqual(
+    auditSearchData(
+      [
+        page('guide/index.html', same),
+        page('ja/guide/index.html', indexed('ja/guide/', { title: 'Guide' })),
+      ],
+      withJapanese,
+    ).errors,
+    [],
+  );
+  const twice = auditSearchData(
+    [
+      page('ja/guide/index.html', indexed('ja/guide/', { title: 'Guide' })),
+      page('ja/other/index.html', indexed('ja/other/', { title: 'Guide' })),
+    ],
+    withJapanese,
+  ).errors;
+  assert.deepEqual(
+    twice.map(({ reason }) => reason),
+    ['Title is also used by ja/guide/index.html'],
   );
 });
 

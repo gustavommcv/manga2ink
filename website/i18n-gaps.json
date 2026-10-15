@@ -1,3 +1,30 @@
 {
-  "pt-br": []
+  "pt-br": [],
+  "ja": [
+    "cli/machine-protocol.mdx",
+    "cli/mangabind.mdx",
+    "cli/mangapress.mdx",
+    "development/architecture.mdx",
+    "development/metadata-providers.mdx",
+    "getting-started/installation.mdx",
+    "getting-started/overview.mdx",
+    "getting-started/quickstart.mdx",
+    "koreader/connecting.mdx",
+    "koreader/opds-sharing.mdx",
+    "koreader/recommended-settings.mdx",
+    "user-guide/adding-manga.mdx",
+    "user-guide/advanced-options/book-metadata.mdx",
+    "user-guide/advanced-options/color-and-tone.mdx",
+    "user-guide/advanced-options/cover.mdx",
+    "user-guide/advanced-options/cropping.mdx",
+    "user-guide/advanced-options/double-page-spreads.mdx",
+    "user-guide/advanced-options/index.mdx",
+    "user-guide/advanced-options/page-images.mdx",
+    "user-guide/advanced-options/reading.mdx",
+    "user-guide/advanced-options/size-and-borders.mdx",
+    "user-guide/exporting.mdx",
+    "user-guide/mapping-editor.mdx",
+    "user-guide/output-profiles.mdx",
+    "user-guide/processing.mdx"
+  ]
 }

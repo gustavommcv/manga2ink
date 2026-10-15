@@ -47,12 +47,12 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Introduction',
-          translations: { 'pt-BR': 'Introdução' },
+          translations: { 'pt-BR': 'Introdução', ja: 'はじめに' },
           slug: 'index',
         },
         {
           label: 'User Guide',
-          translations: { 'pt-BR': 'Guia do Usuário' },
+          translations: { 'pt-BR': 'Guia do Usuário', ja: 'ユーザーガイド' },
           items: [
             { slug: 'getting-started/installation' },
             { slug: 'getting-started/quickstart' },
@@ -61,7 +61,7 @@ export default defineConfig({
             { slug: 'user-guide/output-profiles' },
             {
               label: 'Advanced options',
-              translations: { 'pt-BR': 'Opções avançadas' },
+              translations: { 'pt-BR': 'Opções avançadas', ja: '詳細オプション' },
               items: [
                 { slug: 'user-guide/advanced-options' },
                 { slug: 'user-guide/advanced-options/reading' },
@@ -81,7 +81,7 @@ export default defineConfig({
         },
         {
           label: 'KOReader & E-Reader Setup',
-          translations: { 'pt-BR': 'KOReader e E-Readers' },
+          translations: { 'pt-BR': 'KOReader e E-Readers', ja: 'KOReader と電子書籍リーダー' },
           items: [
             { slug: 'koreader/opds-sharing' },
             { slug: 'koreader/connecting' },
@@ -90,7 +90,7 @@ export default defineConfig({
         },
         {
           label: 'CLI Reference (Power Users)',
-          translations: { 'pt-BR': 'Referência das CLIs' },
+          translations: { 'pt-BR': 'Referência das CLIs', ja: 'CLI リファレンス（上級者向け）' },
           items: [
             { slug: 'cli/mangabind' },
             { slug: 'cli/mangapress' },
@@ -99,7 +99,7 @@ export default defineConfig({
         },
         {
           label: 'Contributing & Development',
-          translations: { 'pt-BR': 'Contribuição e Desenvolvimento' },
+          translations: { 'pt-BR': 'Contribuição e Desenvolvimento', ja: '貢献と開発' },
           items: [{ slug: 'development/architecture' }, { slug: 'development/metadata-providers' }],
         },
       ],

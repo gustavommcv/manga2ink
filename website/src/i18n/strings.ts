@@ -227,10 +227,94 @@ const portuguese: Strings = {
   },
 };
 
-const catalogs: Record<string, Strings> = { en: english, 'pt-BR': portuguese };
+const japanese: Strings = {
+  numberLocale: 'ja',
+  brandLogo: { openFullSize: 'ロゴを元のサイズで開く' },
+  tutorialImage: { openFullSize: '画像を元のサイズで開く' },
+  releaseDownloads: {
+    latest: '公開されている最新バージョン:',
+    prerelease: '（プレリリース）',
+    notes: 'リリースノート',
+    buttons: {
+      windowsInstaller: 'インストーラーをダウンロード (.exe)',
+      windowsPortable: 'ポータブル版をダウンロード (.zip)',
+      macOS: 'Apple Silicon 版をダウンロード (.zip)',
+      debian: 'Debian / Ubuntu (.deb)',
+      fedora: 'Fedora (.rpm)',
+      arch: 'Arch Linux (.pkg.tar.zst)',
+    },
+  },
+  optionCredit: {
+    art: '絵:',
+    by: '、作者: ',
+    converted: (mangapress) => `。mangapress ${mangapress} で変換しました。`,
+  },
+  optionExample: {
+    openLarger: '大きい画像を開く',
+    notConverted: '変換なし',
+    noFlag: 'フラグなし',
+    pageCount: (count) => `${count} ページ`,
+    tone: (darkest, mean) => `最も暗いピクセル ${darkest}、平均の明るさ ${mean} / 255`,
+    screenNote: (screen) => `灰色はページのまわりの画面です: ${screen} ピクセル。`,
+  },
+  optionSizes: {
+    setting: '設定',
+    flag: 'コマンドライン',
+    noFlag: 'フラグなし',
+    unchanged: '入力そのまま',
+    region: (files) => (files ? '測定したファイルサイズ' : '測定したサイズ'),
+    size: (files) => (files ? 'ページ' : 'ページのサイズ'),
+    kept: (files) => (files ? 'ファイルサイズ' : 'ページに残る割合'),
+    caption: (files, width, height) =>
+      files
+        ? `元のページ: ${width} × ${height} px。サイズは、mangapress が書き出したページのファイルのものです。`
+        : `元のページ: ${width} × ${height} px。ページは拡大していないので、サイズを見れば切り取られた量が分かります。`,
+  },
+  optionBook: {
+    setting: '設定',
+    flag: 'コマンドライン',
+    noFlag: 'フラグなし',
+    missing: '本には記載なし',
+    no: 'いいえ',
+    notRead: '読み取れず',
+    gray: 'グレー',
+    color: 'カラー',
+    copy: 'はい、入力のものをそのまま',
+    changed: 'はい、変更あり',
+    ltr: '左から右 (ltr)',
+    rtl: '右から左 (rtl)',
+    page: 'ページ',
+    pages: 'ページ',
+    region: '測定した値',
+    caption: (mangapress) =>
+      `mangapress ${mangapress} で測定: 各値は、mangapress が書き出した本から読み戻したものです。`,
+    heads: {
+      title: '書名',
+      author: '著者',
+      language: '言語',
+      direction: '読む方向',
+      fileName: 'ファイル名',
+      comicInfo: '本の中の ComicInfo.xml',
+      pages: 'ページ',
+      source: '最初の画像',
+      firstPage: '本の最初のページ',
+      cover: '表紙',
+    },
+  },
+};
 
-/** The words of the components in a language of the site (`Astro.locals.starlightRoute.lang`). */
-export function stringsFor(lang: string): Strings {
+const catalogs: Record<string, Strings> = { en: english, 'pt-BR': portuguese, ja: japanese };
+
+/** The language the pages of every other language fall back to, when they are not translated. */
+const sourceLanguage = 'en';
+
+/**
+ * The words of the components for a page (`Astro.locals.starlightRoute`). A page of a language that is not
+ * translated yet is the page of the default language, shown in the other one, and its words are the default
+ * language's too: the components must not write a Japanese caption under an English picture.
+ */
+export function stringsFor(route: { lang: string; isFallback?: boolean }): Strings {
+  const lang = route.isFallback ? sourceLanguage : route.lang;
   const catalog = catalogs[lang];
   if (!catalog) throw new Error(`The components have no words for the language ${lang}.`);
   return catalog;

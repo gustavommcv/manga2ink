@@ -6,7 +6,7 @@ import { base } from '../../site.config.mjs';
 const root = base.replace(/\/?$/, '/');
 
 test('published guides never expose authoring media markers', async ({ page }) => {
-  for (const locale of ['', 'pt-br/']) {
+  for (const locale of ['', 'pt-br/', 'ja/']) {
     for (const route of ['', 'getting-started/quickstart/', 'user-guide/output-profiles/']) {
       await page.goto(`${root}${locale}${route}`);
       await expect(page.locator('[data-media-slot]')).toHaveCount(0);
@@ -49,7 +49,7 @@ test('language switching preserves the page and translates navigation', async ({
   ).toBeVisible();
 });
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   test(`installation tabs support keyboard navigation: ${locale || 'en'}`, async ({
     page,
   }, testInfo) => {
@@ -103,7 +103,7 @@ test('unknown routes return the site 404 page', async ({ page }) => {
   expect(response.status()).toBe(404);
 });
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   for (const colorScheme of ['light', 'dark']) {
     test(`representative page is accessible: ${locale || 'en'} ${colorScheme}`, async ({
       page,

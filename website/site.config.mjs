@@ -9,6 +9,7 @@ export const base = process.env.BASE_PATH || '/mangabound/';
 export const languages = [
   { id: 'en', key: 'root', directory: '', lang: 'en', label: 'English' },
   { id: 'pt-br', key: 'pt-br', directory: 'pt-br', lang: 'pt-BR', label: 'Português (Brasil)' },
+  { id: 'ja', key: 'ja', directory: 'ja', lang: 'ja', label: '日本語' },
 ];
 
 /**

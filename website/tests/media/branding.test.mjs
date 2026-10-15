@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { base } from '../../site.config.mjs';
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   test(`the real logo and its full-size link load during development: ${locale || 'en'}`, async ({
     page,
     request,

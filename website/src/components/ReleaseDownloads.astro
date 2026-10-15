@@ -10,7 +10,7 @@ interface Props {
 
 const { platform } = Astro.props;
 const release = await publishedRelease;
-const words = stringsFor(Astro.locals.starlightRoute.lang).releaseDownloads;
+const words = stringsFor(Astro.locals.starlightRoute).releaseDownloads;
 const choices = {
   windows: ['windowsInstaller', 'windowsPortable'],
   macOS: ['macOS'],

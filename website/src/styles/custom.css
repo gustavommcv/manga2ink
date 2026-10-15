@@ -22,3 +22,22 @@
 .starlight-aside {
   border-radius: 0.625rem;
 }
+
+/* Japanese: the fonts a Japanese reader has, no italics (there are none in Japanese type), and breaks of
+   lines at the end of a phrase rather than in the middle of one where the browser can tell. */
+:root:lang(ja) {
+  --sl-font-system:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', Meiryo, 'Noto Sans CJK JP',
+    'Noto Sans JP', sans-serif;
+}
+
+.sl-markdown-content:lang(ja) {
+  line-break: strict;
+  word-break: auto-phrase;
+}
+
+.sl-markdown-content:lang(ja) em {
+  font-style: normal;
+  font-weight: 600;
+}

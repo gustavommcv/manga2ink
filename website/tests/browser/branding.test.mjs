@@ -7,7 +7,13 @@ import { base } from '../../site.config.mjs';
 
 const root = base.replace(/\/?$/, '/');
 
-for (const locale of ['', 'pt-br/']) {
+const fullSizeLabel = {
+  '': 'Open full-size logo',
+  'pt-br/': 'Abrir logo em tamanho original',
+  'ja/': 'ロゴを元のサイズで開く',
+};
+
+for (const locale of Object.keys(fullSizeLabel)) {
   for (const colorScheme of ['light', 'dark']) {
     test(`branding loads without replacing the title: ${locale || 'en'} ${colorScheme}`, async ({
       page,
@@ -19,9 +25,7 @@ for (const locale of ['', 'pt-br/']) {
       await expect(header).toHaveAccessibleName('Mangabound');
       await expect(header.locator('span')).toBeVisible();
       const logo = page.locator('.brand-logo');
-      await expect(logo).toHaveAccessibleName(
-        locale ? 'Abrir logo em tamanho original' : 'Open full-size logo',
-      );
+      await expect(logo).toHaveAccessibleName(fullSizeLabel[locale]);
       for (const image of [header.locator('img'), logo.locator('img')]) {
         await expect(image).toBeVisible();
         await expect.poll(() => image.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);

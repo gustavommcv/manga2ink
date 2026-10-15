@@ -145,10 +145,15 @@ export function auditSearchData(pages, { site, base, languages = siteLanguages }
     }
     indexable++;
 
+    // A page not translated yet has the title of the default language, so a title is unique within a language.
+    const language =
+      languages.find(({ directory }) => directory && source.startsWith(`${directory}/`)) ??
+      languages[0];
     const title = $('head > title').text().trim();
+    const titleKey = `${language.id}: ${title}`;
     if (!title) fail('No title');
-    else if (titles.has(title)) fail(`Title is also used by ${titles.get(title)}`);
-    else titles.set(title, source);
+    else if (titles.has(titleKey)) fail(`Title is also used by ${titles.get(titleKey)}`);
+    else titles.set(titleKey, source);
 
     const description = $('meta[name="description"]').attr('content') ?? '';
     if (!description.trim()) fail('No description');
@@ -164,9 +169,6 @@ export function auditSearchData(pages, { site, base, languages = siteLanguages }
     const headings = $('h1').length;
     if (headings !== 1) fail(`Expected one h1, found ${headings}`);
 
-    const language =
-      languages.find(({ directory }) => directory && source.startsWith(`${directory}/`)) ??
-      languages[0];
     const home = new URL(language.directory ? `${language.directory}/` : '', root).href;
     const lang = language.lang;
     if ($('html').attr('lang') !== lang) fail(`Page language is not ${lang}`);
