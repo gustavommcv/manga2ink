@@ -11,11 +11,13 @@ const platforms = [
       {
         en: 'Download installer (.exe)',
         pt: 'Baixar instalador (.exe)',
+        ja: 'インストーラーをダウンロード (.exe)',
         filename: /^Mangabound-.+\.Setup\.exe$/,
       },
       {
         en: 'Download portable (.zip)',
         pt: 'Baixar versão portátil (.zip)',
+        ja: 'ポータブル版をダウンロード (.zip)',
         filename: /^Mangabound-win32-x64-.+\.zip$/,
       },
     ],
@@ -26,6 +28,7 @@ const platforms = [
       {
         en: 'Download for Apple Silicon (.zip)',
         pt: 'Baixar para Apple Silicon (.zip)',
+        ja: 'Apple Silicon 版をダウンロード (.zip)',
         filename: /^Mangabound-darwin-arm64-.+\.zip$/,
       },
     ],
@@ -33,18 +36,33 @@ const platforms = [
   {
     name: 'Linux',
     buttons: [
-      { en: 'Debian / Ubuntu (.deb)', pt: 'Debian / Ubuntu (.deb)', filename: /^.+_amd64\.deb$/ },
-      { en: 'Fedora (.rpm)', pt: 'Fedora (.rpm)', filename: /^.+\.x86_64\.rpm$/ },
+      {
+        en: 'Debian / Ubuntu (.deb)',
+        pt: 'Debian / Ubuntu (.deb)',
+        ja: 'Debian / Ubuntu (.deb)',
+        filename: /^.+_amd64\.deb$/,
+      },
+      {
+        en: 'Fedora (.rpm)',
+        pt: 'Fedora (.rpm)',
+        ja: 'Fedora (.rpm)',
+        filename: /^.+\.x86_64\.rpm$/,
+      },
       {
         en: 'Arch Linux (.pkg.tar.zst)',
         pt: 'Arch Linux (.pkg.tar.zst)',
+        ja: 'Arch Linux (.pkg.tar.zst)',
         filename: /^.+-x86_64\.pkg\.tar\.zst$/,
       },
     ],
   },
 ];
 
-for (const locale of ['', 'pt-br/']) {
+const notesLabel = { en: 'Release notes', pt: 'Notas da versão', ja: 'リリースノート' };
+const languageOf = { '': 'en', 'pt-br/': 'pt', 'ja/': 'ja' };
+
+for (const locale of Object.keys(languageOf)) {
+  const lang = languageOf[locale];
   for (const colorScheme of ['light', 'dark']) {
     test(`installation downloads work without browser API calls: ${locale || 'en'} ${colorScheme}`, async ({
       page,
@@ -79,9 +97,7 @@ for (const locale of ['', 'pt-br/']) {
         selectedTag = tag;
         await expect(group.locator('.buttons a')).toHaveCount(platform.buttons.length);
         await expect(group.locator('.release-info strong')).toHaveText(tag);
-        const notes = group.getByRole('link', {
-          name: locale ? 'Notas da versão' : 'Release notes',
-        });
+        const notes = group.getByRole('link', { name: notesLabel[lang] });
         await expect(notes).toHaveAttribute(
           'href',
           `https://github.com/gustavommcv/mangabound/releases/tag/${encodeURIComponent(tag)}`,
@@ -91,18 +107,18 @@ for (const locale of ['', 'pt-br/']) {
           `https://github.com/gustavommcv/mangabound/releases/download/${encodeURIComponent(tag)}/SHA256SUMS`,
         );
         const first = group.getByRole('link', {
-          name: locale ? platform.buttons[0].pt : platform.buttons[0].en,
+          name: platform.buttons[0][lang],
           exact: true,
         });
         await first.focus();
         await first.press('Tab');
         const next = platform.buttons[1];
         await expect(
-          next ? group.getByRole('link', { name: locale ? next.pt : next.en, exact: true }) : notes,
+          next ? group.getByRole('link', { name: next[lang], exact: true }) : notes,
         ).toBeFocused();
         for (const button of platform.buttons) {
           const link = group.getByRole('link', {
-            name: locale ? button.pt : button.en,
+            name: button[lang],
             exact: true,
           });
           const target = new URL(await link.getAttribute('href'));

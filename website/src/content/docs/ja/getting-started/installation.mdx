@@ -1,0 +1,89 @@
+---
+title: 'インストール'
+description: 'Windows・macOS・Linux（.deb、.rpm、Arch）向けの Mangabound を公式のリリースページからダウンロードしてインストールする方法と、署名のないアルファ版を安全に開く方法を説明します。'
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+import ReleaseDownloads from '../../../../components/ReleaseDownloads.astro';
+
+お使いのシステム向けの最新バージョンを下からダウンロードするか、[すべてのリリース](https://github.com/gustavommcv/mangabound/releases)を確認してください。
+
+<Tabs>
+<TabItem label="Windows">
+
+### Windows x64
+
+<ReleaseDownloads platform="windows" />
+
+通常のインストールにはインストーラーを使います。ポータブル版を使う場合は、ZIP を展開し、展開したフォルダー内のプログラムを実行してください。
+
+アルファ版のインストーラーは商用の証明書で署名されていないため、Windows SmartScreen が警告を表示することがあります。公式のリリースページからダウンロードした場合に限り、続行してください。このために Windows のセキュリティを無効にしないでください。
+
+</TabItem>
+<TabItem label="macOS">
+
+### macOS Apple Silicon
+
+<ReleaseDownloads platform="macOS" />
+
+ZIP を展開し、**Mangabound.app** を **アプリケーション** フォルダーに移動してください。Intel Mac 向けのパッケージはまだありません。
+
+アルファ版のアプリは Apple の公証（notarization）を受けていないため、macOS が開くのを拒否することがあります。その場合は **システム設定 → プライバシーとセキュリティ** を開き、ボタンが表示されていれば **このまま開く** を選んでください。[Apple による手順の説明](https://support.apple.com/ja-jp/102445)があります。このために Gatekeeper を無効にしないでください。
+
+</TabItem>
+<TabItem label="Linux">
+
+### Linux x64
+
+お使いのディストリビューション向けのパッケージを選んでください:
+
+<ReleaseDownloads platform="linux" />
+
+ダウンロードしたファイルのあるフォルダーでターミナルを開き、お使いのディストリビューション用のコマンドを実行します。コマンド中の `package.deb`、`package.rpm`、`package.pkg.tar.zst` は、ダウンロードしたファイルの正確な名前に置き換えてください。ファイル名は変更しないでください。
+
+**[Debian / Ubuntu](https://documentation.ubuntu.com/project/contributors/bug-fix/install-built-packages/)**
+
+```bash
+sudo apt install ./package.deb
+```
+
+**[Fedora](https://dnf.readthedocs.io/en/latest/command_ref.html#install-command)**
+
+```bash
+sudo dnf install ./package.rpm
+```
+
+**[Arch Linux](https://man.archlinux.org/man/pacman.8.en)**
+
+```bash
+sudo pacman -U ./package.pkg.tar.zst
+```
+
+その後、アプリケーションメニューから **Mangabound** を開きます。`sudo` はインストールのときだけ使い、アプリの実行には使わないでください。
+
+</TabItem>
+</Tabs>
+
+## ダウンロードを確認する
+
+各リリースには `SHA256SUMS` というファイルがあります。そのリリースにある他のすべてのファイルのチェックサムが書かれています。ダウンロードしたファイルを確認するには:
+
+1. `SHA256SUMS` を、ダウンロードしたファイルと同じフォルダーに置きます。
+2. `sha256sum -c SHA256SUMS` を実行します。macOS では `shasum -a 256 -c SHA256SUMS` を実行します。
+
+Windows では、PowerShell で `Get-FileHash <ファイル名>` を実行し、その値を `SHA256SUMS` の該当ファイルの行と比べます。
+
+フォルダーにないファイルは見つからないものとして、一致しないファイルは失敗として報告されます。
+
+チェックサムが一致すれば、そのファイルがリリースで公開されたものであり、欠けずに届いたことが分かります。ただし、ファイルがどこでビルドされたかは分かりません。ビルドの証明（ファイルがどこで作られたかを示す署名付きの記録）もまだありません。alpha.11 より前のリリースには `SHA256SUMS` がありません。
+
+## インストールに失敗したら
+
+お使いのシステムとアーキテクチャ向けのパッケージをダウンロードしたか確認してください。Mangabound が mangabind または mangapress を「could not be verified」（検証できませんでした）と表示した場合は、公式のリリースページから Mangabound をインストールし直してください。ツールを、ほかの入手元のファイルに置き換えないでください。
+
+## 問題を報告する
+
+[issue を作成](https://github.com/gustavommcv/mangabound/issues)し、バージョン、お使いの OS、やろうとしていたこと、起きたことを書いてください。クラッシュや変換の失敗の場合は、エラーメッセージをそのまま添えてください。
+
+準備はいいですか？ [クイックスタート](../quickstart/)に進みましょう。

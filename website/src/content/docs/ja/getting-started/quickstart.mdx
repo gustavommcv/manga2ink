@@ -1,0 +1,52 @@
+---
+title: 'クイックスタート'
+description: 'Mangabound で最初のマンガを変換します。フォルダーまたは CBZ を追加し、巻を確認し、電子書籍リーダーと形式を選んで、処理した本を保存します。'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+## 1. マンガを追加する
+
+マンガのフォルダーまたは CBZ をキューにドラッグするか、**Files** または **Folder** を使います。ドロップ領域をクリックして、追加するものを選ぶこともできます。
+
+フォルダーには、各話が別々に入っています。CBZ が 1 つだけの場合は、完結した 1 巻として扱われます。各話ごとに別々の CBZ がある場合は、それらが入っているフォルダーを追加してください。
+
+<TutorialImage
+  name="generated/queue-inputs"
+  alt="キューにある、各話のフォルダー、ライブラリ、CBZ。"
+/>
+
+## 2. 巻を確認する
+
+各話のフォルダーでは、**Edit volumes** のアクションで割り当てを確認します。
+
+- **File names** は、各話の名前からすでに認識できた巻をまとめて表示します。
+- **Manual** では、巻を作り、選んだ各話や各話の範囲を割り当てられます。
+- **Online source** は、必要なら MangaDex を検索して提案を出します。確定する前に、結果を確認してください。
+
+巻が 1 つも認識されなかった場合、エディターは説明付きで **Manual** を開きます。すべてをオフラインで整理でき、オンラインの入力は必須ではありません。手順は[巻の割り当て](../../user-guide/mapping-editor/)を参照してください。
+
+## 3. 端末と形式を選ぶ
+
+**Steps** で、**Group chapters into volumes** と **Convert for e-reader** をオンにしたままにすると、両方を行います。そのうえで **Device** と **Format** を選びます。画像の設定を変える必要があるときだけ、**Advanced conversion options** を開いてください。
+
+シリーズ全体を 1 冊の本にしたいですか？ **Create one book for the series** をオンにします。このモードは EPUB を使い、2 つのステップをオンのままにします。形式やステップを変えるには、オフにしてください。
+
+## 4. 処理する
+
+**Process**（キューに複数の項目があるときは **Process N items**）をクリックします。アプリは全体の進み具合を表示し、**Show details** では、利用できる場合に各巻の進み具合を表示します。大きな本ほど時間がかかり、ページの処理が終わったあとも保存が続くことがあります。
+
+## 5. 保存または共有する
+
+本の横の **Save as…** を使うか、複数の本には **Save all to folder…** を使います。保留中の本が残っているあいだは、もう一度変換しなくても、別の場所に保存し直せます。
+
+**Share these books** を使うと、コピーを保存する前でも、KOReader がローカルネットワーク経由で本をダウンロードできます。[共有ガイド](../../koreader/opds-sharing/)に従ってください。
+
+<TutorialImage
+  name="generated/save-results"
+  alt="完成した 3 冊の本と、Save as、Save all to folder、Share these books。"
+/>
+
+:::note[唯一のコピーを捨てないでください]
+保存していない完成した本は、アプリを再起動したあとも **Ready books** に残ります。**Delete** は、行だけでなく、その変換の保留中の本を削除します。残したいものは先に保存してください。[保存と削除の仕組み](../../user-guide/exporting/)
+:::

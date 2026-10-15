@@ -218,7 +218,7 @@ test('published tutorial images and their full-size links retain the source pixe
   }
 });
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   for (const colorScheme of ['light', 'dark']) {
     test(`application captures load in the published guide: ${locale || 'en'} ${colorScheme}`, async ({
       page,

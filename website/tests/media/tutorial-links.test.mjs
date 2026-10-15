@@ -3,7 +3,7 @@ import { test } from '@playwright/test';
 import { base } from '../../site.config.mjs';
 import { openFullSizeImage } from '../support/tutorial-images.mjs';
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   test(`full-size tutorial links open real images during development: ${locale || 'en'}`, async ({
     page,
   }) => {

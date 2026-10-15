@@ -1,6 +1,7 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
+import { languages } from '../site.config.mjs';
 import { missingLabels } from './ui-labels.mjs';
 
 /** The guides of the app itself. The other pages speak of other programs' menus, or of code. */
@@ -26,6 +27,18 @@ const allowed = new Map([
   ['240 − 64 × power', 'a formula'],
   ['all the pending books of that group', 'emphasis on what Delete removes'],
   ['A PDF is never given a cover', 'emphasis on a sentence of the cover page'],
+  // The same emphasis, in the Portuguese guide.
+  ['todos os livros pendentes daquele grupo', 'emphasis on what Delete removes'],
+  ['todas', 'emphasis on a word of the mapping editor page'],
+  ['Uma capa sua é guardada num CBZ', 'emphasis on a sentence of the cover page'],
+  ['Um PDF nunca recebe capa', 'emphasis on a sentence of the cover page'],
+  ['On, com Manga reading order desligada', 'a value of a table'],
+  ['On, com Crop the cover to fill the screen', 'a value of a table'],
+  ['240 − 64 × potência', 'a formula'],
+  ['As páginas', 'emphasis on a part of the options page'],
+  ['A conversão', 'emphasis on a part of the options page'],
+  ['As legendas', 'emphasis on a part of the options page'],
+  ['As tabelas de valores', 'emphasis on a part of the options page'],
 ]);
 
 const root = path.resolve(import.meta.dirname, '..', '..');
@@ -44,10 +57,17 @@ const interfaceText = sourceFolders
   .join('\n');
 
 const docs = path.resolve(import.meta.dirname, '..', 'src', 'content', 'docs');
-const pages = guides.flatMap((guide) => {
-  const target = path.join(docs, guide);
-  return /\.mdx$/u.test(guide) ? [target] : filesIn(target).filter((file) => /\.mdx$/u.test(file));
-});
+// The guides of every language name the controls as the interface does, in English: a language has them
+// once it has translated them, and the pages it leaves in English are the English ones, already checked.
+const pages = languages.flatMap(({ directory }) =>
+  guides.flatMap((guide) => {
+    const target = path.join(docs, directory, guide);
+    if (!existsSync(target)) return [];
+    return /\.mdx$/u.test(guide)
+      ? [target]
+      : filesIn(target).filter((file) => /\.mdx$/u.test(file));
+  }),
+);
 
 let problems = 0;
 for (const page of pages) {
