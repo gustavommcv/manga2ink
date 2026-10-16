@@ -1,3 +1,4 @@
+import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
@@ -62,6 +63,12 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
     loadSettings: () =>
       Promise.resolve({ ok: true, value: { preferences: defaultPreferences, notices: [] } }),
     saveSettings: () => nothing,
+    loadAppSettings: () =>
+      Promise.resolve({
+        ok: true,
+        value: { settings: defaultAppSettings, language: 'en', unreadable: false },
+      }),
+    saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
     ...overrides,
   };
 }

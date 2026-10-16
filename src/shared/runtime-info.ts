@@ -1,3 +1,8 @@
+import type {
+  RestoredAppSettings,
+  SaveAppSettingsCommand,
+  SavedAppSettings,
+} from './app-settings-contract';
 import type { NetworkInterfaceOption, OpdsAuthConfig, OpdsSharingStatus } from './opds-contract';
 import type { RestoredSettings, SaveSettingsCommand } from './settings-contract';
 import type { ToolchainStatus } from './toolchain-status';
@@ -130,4 +135,10 @@ export interface MangaboundBridge {
   readonly loadSettings: () => Promise<WorkflowResult<RestoredSettings>>;
   /** Keeps the options; the last native Save-dialog folder remains main-process state. */
   readonly saveSettings: (command: SaveSettingsCommand) => Promise<WorkflowResult<undefined>>;
+  /** What a person decided about the app itself, and the language it comes to (ADR 0052). */
+  readonly loadAppSettings: () => Promise<WorkflowResult<RestoredAppSettings>>;
+  /** Keeps the app settings, and says the language they come to. */
+  readonly saveAppSettings: (
+    command: SaveAppSettingsCommand,
+  ) => Promise<WorkflowResult<SavedAppSettings>>;
 }

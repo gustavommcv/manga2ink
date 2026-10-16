@@ -10,6 +10,7 @@ import type { MetadataProviderPort } from '@/application/ports/metadata-provider
 import type { NetworkInterfaceOption } from '@/application/ports/network-interfaces';
 import type { OpdsServerHandle } from '@/application/ports/opds-server';
 import { LibraryPublisher } from '@/application/workflows/library-publisher';
+import { type AppSettingsWorkflow } from '@/application/workflows/app-settings';
 import { type PreferencesWorkflow } from '@/application/workflows/preferences';
 import { type ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { InputSelection } from '@/domain/conversion';
@@ -42,6 +43,8 @@ export interface MainContext {
   readonly opdsServer: NodeOpdsServer;
   readonly networkInterfaces: OsNetworkInterfaces;
   preferences: PreferencesWorkflow | undefined;
+  /** What a person decided about the app itself (ADR 0052); built with `preferences`. */
+  appSettings: AppSettingsWorkflow | undefined;
   activeSharing: OpdsServerHandle | undefined;
   /** What is being shared, or about to be: set before the server is up, so a second start is refused. */
   activeSharingTarget: SharingTarget | undefined;
@@ -79,6 +82,7 @@ export function createMainContext(): MainContext {
     opdsServer: new NodeOpdsServer(pendingCatalog),
     networkInterfaces: new OsNetworkInterfaces(),
     preferences: undefined,
+    appSettings: undefined,
     activeSharing: undefined,
     activeSharingTarget: undefined,
     lastPickerFolder: undefined,

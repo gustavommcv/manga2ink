@@ -10,7 +10,9 @@ import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
+import { FsAppSettingsStore } from '@/adapters/settings/fs-app-settings-store';
 import { FsSettingsStore } from '@/adapters/settings/fs-settings-store';
+import { AppSettingsWorkflow } from '@/application/workflows/app-settings';
 import { PreferencesWorkflow } from '@/application/workflows/preferences';
 
 import { registerRendererScheme, serveRenderer } from './app-protocol';
@@ -23,6 +25,7 @@ import { registerInputHandlers } from './ipc/inputs';
 import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { registerPendingHandlers } from './ipc/pending';
+import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { bootstrapToolchain } from './toolchain-bootstrap';
 import { createMainWindow } from './window';
@@ -72,6 +75,11 @@ void app.whenReady().then(async () => {
     directoryExists,
   );
   context.preferences = preferencesWorkflow;
+  const appSettingsWorkflow = new AppSettingsWorkflow(
+    new FsAppSettingsStore(path.join(app.getPath('userData'), 'app-settings.json')),
+    () => app.getPreferredSystemLanguages(),
+  );
+  context.appSettings = appSettingsWorkflow;
   context.pendingRuns = new FsPendingRuns(
     pendingRoot(process.platform, process.env, app.getPath('home')),
     context.libraryStore,
@@ -92,6 +100,7 @@ void app.whenReady().then(async () => {
   });
 
   registerSettingsHandlers(context, preferencesWorkflow);
+  registerAppSettingsHandlers(appSettingsWorkflow);
   registerInputHandlers(context);
   registerConversionHandlers(context);
   registerCoverHandlers(context);
@@ -120,6 +129,8 @@ app.on('before-quit', (event) => {
         context.activeSharing === undefined ? undefined : () => context.activeSharing!.stop(),
       settlePreferences:
         context.preferences === undefined ? undefined : () => context.preferences!.settled(),
+      settleAppSettings:
+        context.appSettings === undefined ? undefined : () => context.appSettings!.settled(),
       pruneCompleted:
         context.pendingRuns === undefined ? undefined : () => context.pendingRuns!.pruneCompleted(),
     },

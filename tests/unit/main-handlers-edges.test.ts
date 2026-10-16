@@ -47,6 +47,7 @@ describe('what is let go of when the app quits', () => {
     releaseAll: undefined,
     stopSharing: undefined,
     settlePreferences: undefined,
+    settleAppSettings: undefined,
     pruneCompleted: undefined,
   });
 
@@ -60,7 +61,13 @@ describe('what is let go of when the app quits', () => {
     expect(quit).toHaveBeenCalledOnce();
   });
 
-  it.each(['releaseAll', 'stopSharing', 'settlePreferences', 'pruneCompleted'] as const)(
+  it.each([
+    'releaseAll',
+    'stopSharing',
+    'settlePreferences',
+    'settleAppSettings',
+    'pruneCompleted',
+  ] as const)(
     'does not miss %s when it is the only thing there is, and does not wait for what is not',
     async (step) => {
       const done = vi.fn().mockResolvedValue(undefined);
@@ -95,6 +102,10 @@ describe('what is let go of when the app quits', () => {
           order.push('settle');
           return Promise.resolve();
         },
+        settleAppSettings: () => {
+          order.push('settle app');
+          return Promise.resolve();
+        },
         pruneCompleted: () => {
           order.push('prune');
           return Promise.resolve();
@@ -104,7 +115,7 @@ describe('what is let go of when the app quits', () => {
       vi.fn(),
     );
 
-    expect(order).toEqual(['abort', 'release', 'stop', 'settle', 'prune', 'quit']);
+    expect(order).toEqual(['abort', 'release', 'stop', 'settle', 'settle app', 'prune', 'quit']);
   });
 
   it('reports a prune that failed, with the reason, and quits all the same', async () => {

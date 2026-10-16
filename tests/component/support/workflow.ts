@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { type UserEvent } from '@testing-library/user-event';
 import { expect } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
+import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
 import { type MangaboundBridge } from '@/shared/runtime-info';
 import { type RestoredSettings } from '@/shared/settings-contract';
@@ -150,6 +151,12 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
     loadSettings: () =>
       Promise.resolve({ ok: true, value: { preferences: defaultPreferences, notices: [] } }),
     saveSettings: () => Promise.resolve({ ok: true, value: undefined }),
+    loadAppSettings: () =>
+      Promise.resolve({
+        ok: true,
+        value: { settings: defaultAppSettings, language: 'en', unreadable: false },
+      }),
+    saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
     ...overrides,
   };
 }

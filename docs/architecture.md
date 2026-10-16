@@ -44,6 +44,7 @@ Grouping and conversion can run together or separately. For chapter folders, sin
 ## What is kept between runs
 
 - **Preferences:** device/options, the last save-dialog folder, and the chosen sharing interface live in per-user `settings.json`. A remembered folder is a suggestion, not an automatic output destination.
+- **App settings:** what a person decided about the app itself, today the language, lives in its own per-user `app-settings.json` ([ADR 0052](adr/0052-the-app-language-is-chosen-behind-a-gear.md)). It is not part of the preferences above, so a reset of the conversion options leaves it alone and a damaged file of one does not cost the other.
 - **Pending books:** isolated directories under persistent local app data, not OS temporary storage. Unsaved, partly saved, and warning-affected runs survive restart. Successfully exported runs are cleaned up on exit; explicit deletion never deletes exported copies and is refused while the run is in use.
 - **Library catalogs:** `<library>/.mangabound/library.json` records completed books for sharing.
 - **Folder metadata:** `mangabind.json` retains the author and language beside the input.
