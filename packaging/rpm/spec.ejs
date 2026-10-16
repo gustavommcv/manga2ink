@@ -1,11 +1,20 @@
 %define _binary_payload w<%= compressionLevel %>.xzdio
 
-# This is electron-installer-redhat's own spec template with two lines added, right below.
+# This is electron-installer-redhat's own spec template with two lines added: the two global
+# definitions after this comment.
 # Everything in the package is prebuilt, and the app checks the bundled mangabind and mangapress
 # against the SHA-256 pinned in toolchain.lock.json every time it starts. rpmbuild's default
 # post-install steps (stripping, removing the .comment section, debug-info extraction) rewrite
 # ELF files, so the installed tools no longer matched their pin and the app refused every
 # conversion. With these off, the files in the package are the files that were put in it.
+#
+# Where it comes from: RPM's own default for the post-install steps, in its platform macros
+# (https://github.com/rpm-software-management/rpm/blob/master/platform.in), runs the brp scripts
+# brp-compress, brp-strip, brp-strip-static-archive, brp-strip-comment-note and
+# brp-remove-la-files (https://github.com/rpm-software-management/rpm/tree/master/scripts), and the
+# debug-info step is the one that debug_package turns off. The template is taken by the maker from
+# its specTemplate option (https://github.com/electron-userland/electron-installer-redhat#optionsspectemplate).
+# Do not write a percent sign in these comments: rpm expands macros in comments too.
 %global __os_install_post %{nil}
 %global debug_package %{nil}
 
