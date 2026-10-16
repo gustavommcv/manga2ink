@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { presentBindingProgress } from '@/application/workflows/binding-progress';
+import { presentBindingProgress as presentBindingProgressOf } from '@/application/workflows/binding-progress';
+
+import { inEnglish } from './support/say';
+
+/** What the progress says, in the English a person read before it was carried by codes. */
+const presentBindingProgress = (...given: Parameters<typeof presentBindingProgressOf>) =>
+  inEnglish(presentBindingProgressOf(...given));
 
 describe('binding progress presentation', () => {
   it('keeps inspection messages distinct from archive writing', () => {

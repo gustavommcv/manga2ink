@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { IssueCallout } from './workflow-app';
 import { RunningScreen } from './screens/running-screen';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 const meta = {
   title: 'Workflows/Run and errors',
@@ -28,10 +28,10 @@ export const Progress: Story = {
     position: { name: 'A Quiet Journey', index: 2, total: 5 },
     progress: {
       stage: 'processing',
-      message: 'Processed page 42 of 120.',
+      message: message('progress.pageProcessed', { completed: 42, total: 120 }),
       completed: 42,
       total: 120,
-      volume: '1 of 2',
+      volume: { number: 1, count: 2 },
     },
   },
 };

@@ -16,6 +16,7 @@ import {
 import type { MangapressSettings } from '@/domain/output-profile';
 import type { ProcessMode } from '@/domain/process-mode';
 import { message } from '@/domain/message';
+import type { VolumePosition } from '@/domain/messages/run';
 
 /** A file to make a book of: one volume of a series, or a book that is not a volume. */
 export interface BookInput {
@@ -76,7 +77,7 @@ export class BookProduction {
         },
         {
           ...(context.title === undefined ? {} : { title: context.title }),
-          volume: `${String(index + 1)} of ${String(inputs.length)}`,
+          volume: { number: index + 1, count: inputs.length },
           onProgress,
           signal,
         },
@@ -108,24 +109,29 @@ export class BookProduction {
     },
     context: {
       readonly title?: string;
-      readonly volume: string;
+      readonly volume: VolumePosition;
       readonly onProgress: (progress: ConversionProgress) => void;
       readonly signal?: AbortSignal | undefined;
     },
   ): Promise<ConversionArtifact> {
-    const where =
-      context.title === undefined
-        ? `volume ${context.volume}`
-        : `${context.title} · volume ${context.volume}`;
+    // Where in the title's volumes this is: what the progress is tagged with, and what it says.
     const tag = {
       ...(context.title === undefined ? {} : { title: context.title }),
       volume: context.volume,
     };
     if (mode === 'bind-only') {
-      context.onProgress({ stage: 'saving', ...tag, message: `Saving ${where}…` });
+      context.onProgress({
+        stage: 'saving',
+        ...tag,
+        message: message('progress.savingVolume', tag),
+      });
       return this.saveVolume(request.inputPath, request.libraryPath, context.signal);
     }
-    context.onProgress({ stage: 'processing', ...tag, message: `Converting ${where}…` });
+    context.onProgress({
+      stage: 'processing',
+      ...tag,
+      message: message('progress.converting', tag),
+    });
     // The tool writes into a folder of its own and the book is then given a name no other book of
     // the run has, so two books that would be called the same never overwrite each other.
     // Set from inside the callback below, so it is read as a property, not as a variable that the

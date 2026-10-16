@@ -272,7 +272,9 @@ describe('a warning that is the same kind', () => {
     ]);
 
     expect(notices).toHaveLength(1);
-    expect(notices[0]?.where).toContain('One.cbz');
-    expect(notices[0]?.where).toContain('Two.cbz');
+    expect(notices[0]?.where).toEqual({
+      id: 'warning.inTwo',
+      values: { first: 'One.cbz', second: 'Two.cbz' },
+    });
   });
 });

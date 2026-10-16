@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import type { ConversionProgress } from '@/domain/conversion';
 import { isPageEvent, milestone } from '@/renderer/lib/announcements';
+import { raw } from '@/domain/message';
 
 const page: ConversionProgress = {
   stage: 'processing',
-  message: 'Processed page 3 of 50.',
+  message: raw('Processed page 3 of 50.'),
   page: 3,
   completed: 3,
   total: 50,
@@ -18,7 +19,7 @@ describe('isPageEvent', () => {
 
   it('is not a message about a stage or a volume, which has no page', () => {
     expect(
-      isPageEvent({ ...page, page: undefined, message: '1 of 3 volumes converted.' }, 33),
+      isPageEvent({ ...page, page: undefined, message: raw('1 of 3 volumes converted.') }, 33),
     ).toBe(false);
   });
 
@@ -34,13 +35,13 @@ describe('isPageEvent', () => {
 
 describe('milestone', () => {
   it.each([
-    [0, '0% complete'],
-    [9, '0% complete'],
-    [10, '10% complete'],
-    [59, '50% complete'],
-    [99, '90% complete'],
-    [100, '100% complete'],
-  ])('tells %i%% as %s', (percentage, told) => {
+    [0, 0],
+    [9, 0],
+    [10, 10],
+    [59, 50],
+    [99, 90],
+    [100, 100],
+  ])('tells %i%% as the tenth %i%% it has reached', (percentage, told) => {
     expect(milestone(percentage)).toBe(told);
   });
 });

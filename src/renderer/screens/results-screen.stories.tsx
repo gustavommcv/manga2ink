@@ -1,7 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { message, raw } from '@/domain/message';
+import { messagesFor } from '@/i18n/messages';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
+import { I18nContext } from '@/renderer/hooks/use-messages';
 
 import { ResultsScreen, type ResultsScreenProps } from './results-screen';
 
@@ -53,7 +56,11 @@ const meta = {
     onSaveAs: () => undefined,
     onSaveAll: () => undefined,
     outcomes: saved,
-    summary: 'Kobo Libra Colour · EPUB',
+    summary: message('summary.books', {
+      device: 'Kobo Libra Colour',
+      format: 'EPUB',
+      ownOptions: 0,
+    }),
   },
 } satisfies Meta<typeof ResultsScreen>;
 
@@ -139,6 +146,34 @@ export const WithWarnings: Story = {
         ],
       },
     ],
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/**
+ * The books of a run with warnings in Brazilian Portuguese: the sizes written with a decimal comma,
+ * and each warning in the app's words with the books it is in (ADR 0053).
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: {
+    ...WithWarnings.args,
+    savedIds: new Set(['one']),
+    summary: message('summary.books', {
+      device: 'Kobo Libra Colour',
+      format: 'EPUB',
+      ownOptions: 0,
+    }),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('heading', { name: '3 livros prontos' })).toBeVisible();
+    await expect(canvas.getByRole('list', { name: 'Avisos sobre os livros' })).toBeVisible();
   },
 };
 

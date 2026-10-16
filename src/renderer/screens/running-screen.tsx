@@ -1,8 +1,9 @@
 import { ChevronDown, LoaderCircle, Square } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 
-import type { ConversionProgress, VolumeConversionProgress } from '@/domain/conversion';
+import type { ConversionProgress } from '@/domain/conversion';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { isPageEvent, milestone } from '@/renderer/lib/announcements';
 
 export interface RunPosition {
@@ -45,13 +46,6 @@ function ProgressMeter({
   );
 }
 
-const volumeStatus: Record<VolumeConversionProgress['status'], string> = {
-  waiting: 'Waiting',
-  processing: 'Converting',
-  saving: 'Saving',
-  done: 'Complete',
-};
-
 export function RunningScreen({
   onCancel,
   position,
@@ -61,6 +55,8 @@ export function RunningScreen({
   readonly position?: RunPosition;
   readonly progress?: ConversionProgress;
 }): React.JSX.Element {
+  const words = useMessages().running;
+  const { say } = useSay();
   const reportedPercentage = percentageOf(progress?.completed, progress?.total);
   const percentage =
     progress?.stage === 'binding' &&
@@ -80,35 +76,38 @@ export function RunningScreen({
       <LoaderCircle aria-hidden="true" className="text-accent size-7 animate-spin" />
       <p className="text-muted-foreground mt-6 text-xs font-medium">
         {position === undefined
-          ? (progress?.stage ?? 'Processing')
-          : `Item ${String(position.index)} of ${String(position.total)}`}
+          ? words.stage[progress?.stage ?? 'none']
+          : words.item(position.index, position.total)}
       </p>
       <h1
         className="focus-visible:ring-ring focus-visible:ring-offset-background mt-2 rounded-md text-2xl font-semibold outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         ref={titleRef}
         tabIndex={-1}
       >
-        {progress?.stage === 'binding' ? 'Building volume files for' : 'Converting'}{' '}
-        {position?.name ?? 'your books'}
+        {(progress?.stage === 'binding' ? words.heading.binding : words.heading.converting)(
+          position?.name ?? words.heading.yourBooks,
+        )}
       </h1>
       {/* A stage or a volume is told as it is; a page is shown and not told (see isPageEvent). */}
       <p aria-live="polite" className="text-muted-foreground mt-3 text-sm empty:hidden">
-        {pageEvent ? undefined : progress?.message}
+        {pageEvent || progress === undefined ? undefined : say(progress.message)}
       </p>
       <p className="text-muted-foreground mt-3 text-sm empty:hidden">
-        {pageEvent ? progress?.message : undefined}
+        {pageEvent && progress !== undefined ? say(progress.message) : undefined}
       </p>
       <p aria-live="polite" className="sr-only">
-        {pageEvent && percentage !== undefined ? milestone(percentage) : undefined}
+        {pageEvent && percentage !== undefined
+          ? words.percentComplete(milestone(percentage))
+          : undefined}
       </p>
       {percentage !== undefined && (
         <div className="mt-5">
-          <ProgressMeter label={`${String(percentage)}% complete`} percentage={percentage} />
+          <ProgressMeter label={words.percentComplete(percentage)} percentage={percentage} />
           {progress?.stage === 'binding' &&
             progress.completed !== undefined &&
             progress.total !== undefined && (
               <p className="text-muted-foreground mt-2 text-xs">
-                {String(progress.completed)} of {String(progress.total)} pages copied
+                {words.pagesCopied(progress.completed, progress.total)}
               </p>
             )}
         </div>
@@ -129,11 +128,11 @@ export function RunningScreen({
               aria-hidden="true"
               className={detailsOpen ? 'rotate-180 transition-transform' : 'transition-transform'}
             />
-            {detailsOpen ? 'Hide details' : 'Show details'}
+            {detailsOpen ? words.details.hide : words.details.show}
           </Button>
           {detailsOpen && (
             <div
-              aria-label="Volume details"
+              aria-label={words.details.region}
               className="border-border bg-surface mt-2 space-y-3 rounded-xl border p-4"
               id={detailsId}
               role="region"
@@ -149,14 +148,14 @@ export function RunningScreen({
                 return (
                   <div className="space-y-1.5" key={volume.number}>
                     <div className="flex items-center justify-between gap-3 text-xs">
-                      <span className="font-medium">Volume {String(volume.number)}</span>
+                      <span className="font-medium">{words.details.volume(volume.number)}</span>
                       <span className="text-muted-foreground">
-                        {volumeStatus[volume.status]}
+                        {words.details.status[volume.status]}
                         {volumePercentage === undefined ? '' : ` · ${String(volumePercentage)}%`}
                       </span>
                     </div>
                     <ProgressMeter
-                      label={`Volume ${String(volume.number)} progress`}
+                      label={words.details.volumeProgress(volume.number)}
                       percentage={volumePercentage}
                     />
                   </div>
@@ -167,7 +166,7 @@ export function RunningScreen({
         </>
       )}
       <Button className="mt-8 self-start" onClick={onCancel} variant="outline">
-        <Square /> Cancel conversion
+        <Square /> {words.cancel}
       </Button>
     </section>
   );

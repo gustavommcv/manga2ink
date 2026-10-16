@@ -14,6 +14,7 @@ import {
   libraryRead,
   openLibrary,
 } from './support/conversion-workflow';
+import { message } from '@/domain/message';
 
 describe('library conversion workflow', () => {
   it('is what a folder is taken for when no chapter has pages and mangabind finds manga in it', async () => {
@@ -438,7 +439,7 @@ describe('library conversion workflow', () => {
     expect(onProgress).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Good Manga',
-        volume: '1 of 1',
+        volume: { number: 1, count: 1 },
       }),
     );
     expect(outcomes).toMatchObject([
@@ -645,7 +646,7 @@ describe('what a library run binds', () => {
     expect(onProgress).toHaveBeenCalledWith({
       stage: 'binding',
       title: 'Good Manga',
-      message: 'Inspecting Good Manga…',
+      message: message('progress.inspecting', { title: 'Good Manga' }),
     });
     expect(outcomes).toMatchObject([{ title: 'Good Manga', status: 'done' }]);
   });

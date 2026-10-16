@@ -183,10 +183,11 @@ export function describeRun(
   deviceName: string,
   format: BookFormat,
   withOwnOptions = 0,
-): string {
-  if (mode === 'bind-only') return 'Joined volumes · CBZ';
-  const queue = `${deviceName} · ${format.toUpperCase()}`;
-  return withOwnOptions === 0
-    ? queue
-    : `${queue} · ${String(withOwnOptions)} with options of their own`;
+): AnyMessage {
+  if (mode === 'bind-only') return message('summary.joined', {});
+  return message('summary.books', {
+    device: deviceName,
+    format: format.toUpperCase(),
+    ownOptions: withOwnOptions,
+  });
 }

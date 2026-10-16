@@ -12,7 +12,9 @@ import { failureRows } from './support/said-failure-rows';
 import { libraryRows } from './support/said-library-rows';
 import { mappingRows } from './support/said-mapping-rows';
 import { optionsRows } from './support/said-options-rows';
+import { runRows } from './support/said-run-rows';
 import type { Rows } from './support/said-table';
+import { warningRows } from './support/said-warning-rows';
 
 /**
  * Every message the domain, the workflows and the main process say by code, in each of the forms it has,
@@ -232,7 +234,15 @@ const queueTable: Table = {
 };
 
 /** The queue's, and what is said when something cannot be done (its own table, in `support/`). */
-const table = { ...queueTable, ...failureRows, ...mappingRows, ...libraryRows, ...optionsRows };
+const table = {
+  ...queueTable,
+  ...failureRows,
+  ...mappingRows,
+  ...libraryRows,
+  ...optionsRows,
+  ...runRows,
+  ...warningRows,
+};
 
 const entries = Object.entries(table) as readonly (readonly [
   MessageId,

@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 import type { LibraryTitle } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
@@ -133,7 +133,17 @@ describe('ResultsScreen', () => {
   });
 
   it('counts ready books, showing their save state and summary', () => {
-    render(<ResultsScreen {...handlers} outcomes={[saved]} summary="Kindle Voyage · EPUB" />);
+    render(
+      <ResultsScreen
+        {...handlers}
+        outcomes={[saved]}
+        summary={message('summary.books', {
+          device: 'Kindle Voyage',
+          format: 'EPUB',
+          ownOptions: 0,
+        })}
+      />,
+    );
 
     expect(screen.getByRole('heading', { name: '1 book ready' })).toBeVisible();
     expect(screen.getByText('Kindle Voyage · EPUB')).toBeVisible();

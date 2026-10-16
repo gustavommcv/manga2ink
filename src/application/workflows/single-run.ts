@@ -77,7 +77,7 @@ export class SingleInputRun {
       const mapping = trustedMapping(session.trustedDraft, request.mapping);
       onProgress({
         stage: 'binding',
-        message: `Organizing ${String(mapping.chapters.length)} chapters into volume files…`,
+        message: message('progress.organizingChapters', { chapters: mapping.chapters.length }),
       });
       const bound = await this.binding.bind(
         session.workspaceId,
@@ -128,7 +128,7 @@ export class SingleInputRun {
     );
     onProgress({
       stage: 'saving',
-      message: `${String(artifacts.length)} book${artifacts.length === 1 ? '' : 's'} saved.`,
+      message: message('progress.booksSaved', { count: artifacts.length }),
       ...(mode === 'bind-only' || inputs.length === 1
         ? {}
         : {
@@ -167,7 +167,12 @@ export class SingleInputRun {
       return {
         tool: 'mangapress',
         title: plan.title,
-        message: `mangapress validated ${plan.profile} · ${String(plan.width)} × ${String(plan.height)}${session.selection.kind === 'folder' ? ' · one book, chapters not grouped' : ''} · no library files written`,
+        message: message('plan.mangapress', {
+          profile: plan.profile,
+          width: plan.width,
+          height: plan.height,
+          chaptersNotGrouped: session.selection.kind === 'folder',
+        }),
         books: [{ name: plan.name, pageCount: plan.pageCount }],
         issues: [],
       };
@@ -187,7 +192,10 @@ export class SingleInputRun {
     return {
       tool: 'mangabind',
       title: plan.title,
-      message: `mangabind validated ${String(plan.volumes.length)} volume${plan.volumes.length === 1 ? '' : 's'}${singleBook ? ' · single book for the series' : mode === 'bind-only' ? ' · saved as CBZ files, mangapress not run' : ''} · no library files written`,
+      message: message('plan.mangabind', {
+        volumes: plan.volumes.length,
+        shape: singleBook ? 'series' : mode === 'bind-only' ? 'joined' : 'books',
+      }),
       books: singleBook
         ? [plannedSingleBook(plan.title, plan.volumes)]
         : usesMangapress(mode)

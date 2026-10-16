@@ -11,6 +11,7 @@ import { isCoverImage } from '@/domain/book-covers';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact, InputSelection } from '@/domain/conversion';
 import { createMappingDraft, type MappingDraft } from '@/domain/mapping';
+import { raw } from '@/domain/message';
 
 export const trustedDraft = createMappingDraft({
   mangaTitle: 'Trusted Manga',
@@ -64,7 +65,7 @@ export function dependencies({
   const convert = vi.fn<ConversionPort['convert']>((request, options) => {
     options.onProgress({
       stage: 'processing',
-      message: 'Processed a page.',
+      message: raw('Processed a page.'),
       page: 1,
       completed: 1,
       total: 1,

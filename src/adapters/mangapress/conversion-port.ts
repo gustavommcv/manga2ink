@@ -226,7 +226,10 @@ function progressFromEvent(event: MangapressEvent): ConversionProgress | undefin
   if (isMangapressPageEvent(event)) {
     return {
       stage: 'processing',
-      message: `Processed page ${String(event.completed)} of ${String(event.total)}.`,
+      message: message('progress.pageProcessed', {
+        completed: event.completed,
+        total: event.total,
+      }),
       completed: event.completed,
       total: event.total,
       chapter: event.chapter,
@@ -236,7 +239,10 @@ function progressFromEvent(event: MangapressEvent): ConversionProgress | undefin
   if (event.type === 'stage' && event.state === 'started' && typeof event.stage === 'string') {
     return {
       stage: event.stage === 'write' ? 'saving' : 'processing',
-      message: event.stage === 'write' ? 'Saving the finished book…' : `Starting ${event.stage}…`,
+      message:
+        event.stage === 'write'
+          ? message('progress.savingBook', {})
+          : message('progress.stageStarted', { stage: event.stage }),
     };
   }
   return undefined;

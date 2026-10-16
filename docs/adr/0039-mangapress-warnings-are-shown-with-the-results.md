@@ -18,7 +18,7 @@ For a volume the app bound, the tool's input is a scratch file mangabind wrote, 
 - **A book carries what mangapress noticed while making it,** as the code and the tool's own sentence. The path is not kept.
 - **The results show the warnings below the books, one notice per kind,** each saying which books it is in: all of them, the one or two it names, or two and how many more. Twenty volumes with the same warning are one notice. A run that made a single book does not name it.
 - **A notice is drawn as the results already draw an item that was skipped** (the amber box with the warning mark), in a list of its own, after any item that failed or was skipped. The heading still counts the books as ready: a warning is advice, not a failure.
-- **A known code is said in the app's own words,** naming the option as the screen does ("Fit, enlarging small pages" under Page size). The texts and the grouping are in the domain (`warningNotices`).
+- **A known code is said in the app's own words,** naming the option as the screen does ("Fit, enlarging small pages" under Page size). The grouping is in the domain (`warningNotices`), which returns codes; the headings and the advice are in `src/i18n/warnings-said.ts`, in each language of the app (ADR 0053).
 - **A code the app does not know is shown in the tool's own words,** under "A note from mangapress", so a warning a later mangapress adds is not lost: its protocol lets a new code be added without a new version, and asks consumers to accept codes they do not know.
 - **No number is shown for small pages.** Reading it out of the sentence is what the protocol forbids. It can be shown once mangapress reports it as fields, which the release the fifth step needs can add.
 

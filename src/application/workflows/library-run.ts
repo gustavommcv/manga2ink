@@ -19,6 +19,7 @@ import type {
   ConversionProgress,
 } from '@/domain/conversion';
 import type { RunOptions } from '@/domain/item-options';
+import { message } from '@/domain/message';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { type BatchProcessMode, usesMangapress } from '@/domain/process-mode';
 
@@ -75,7 +76,7 @@ export class LibraryRun {
     const { session, library } = this.sessions.librarySession(request.sessionId);
     onProgress({
       stage: 'binding',
-      message: 'Building volume files for the library…',
+      message: message('progress.bindingLibrary', {}),
     });
     const showProgress = (progress: BindingProgress): void => {
       onProgress(presentBindingProgress(progress));
@@ -157,7 +158,7 @@ export class LibraryRun {
               },
               {
                 title: title.title,
-                volume: '1 of 1',
+                volume: { number: 1, count: 1 },
                 onProgress,
                 signal,
               },

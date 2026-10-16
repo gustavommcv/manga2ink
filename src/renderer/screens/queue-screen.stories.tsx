@@ -297,7 +297,7 @@ export const PlanValidated: Story = {
         plan: {
           tool: 'mangabind',
           title: 'Chainsaw Man',
-          message: 'mangabind validated 2 volumes · no library files written',
+          message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
           books: [
             { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
             { name: 'Chainsaw Man - Vol.02.cbz', pageCount: 26 },
@@ -341,8 +341,8 @@ export const EmptyInPortuguese: Story = {
  * The screen in Brazilian Portuguese with items, a message about what was not added, books that are
  * ready and a plan that was validated: the longer words of the language still fit where the English
  * ones did. What the queue says about each row (its status, its line and its notes) and why an item
- * was not added are messages the window writes in the language too (ADR 0053); what a plan says is
- * still English until it is a message as well.
+ * was not added are messages the window writes in the language too, and so is what a plan says
+ * (ADR 0053).
  */
 export const InPortuguese: Story = {
   decorators: [inPortuguese],
@@ -367,7 +367,7 @@ export const InPortuguese: Story = {
         plan: {
           tool: 'mangabind',
           title: 'Chainsaw Man',
-          message: 'mangabind validated 2 volumes · no library files written',
+          message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
           books: [
             { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
             { name: 'Chainsaw Man - Vol.02.cbz', pageCount: 26 },

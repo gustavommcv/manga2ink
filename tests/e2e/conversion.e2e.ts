@@ -217,7 +217,8 @@ describe('packaged conversion pipeline', () => {
     const progressSeen = await reportedProgress();
     // All of it is of the one run, and begins with the library being bound.
     assert.equal(new Set(progressSeen.map((progress) => progress.jobId)).size, 1);
-    assert.equal(progressSeen[0]?.message, 'Building volume files for the library…');
+    // What the run says is a code the window writes in its language (ADR 0053).
+    assert.deepEqual(progressSeen[0]?.message, { id: 'progress.bindingLibrary', values: {} });
     const titles = ['Auto-Resolved Manga', 'Needs Mapping Manga'];
     for (const title of titles) {
       const own = progressSeen.filter((progress) => progress.title === title);

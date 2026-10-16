@@ -519,6 +519,7 @@ function PendingRunItem({
 
 function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JSX.Element {
   const words = useMessages().queue.plans;
+  const { say } = useSay();
   return (
     <section
       aria-labelledby="plans-title"
@@ -534,11 +535,13 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
       {plans.map(({ name, plan }) => (
         <div key={name}>
           <h3 className="text-sm font-medium">{name}</h3>
-          <p className="text-muted-foreground mt-1 text-xs">{plan.message}</p>
+          <p className="text-muted-foreground mt-1 text-xs">{say(plan.message)}</p>
           <ul className="mt-2 space-y-1 text-sm">
             {plan.books.map((book) => (
               <li className="flex justify-between gap-4" key={book.name}>
-                <span className="truncate">{book.name}</span>
+                <span className="truncate">
+                  {book.wholeSeries === true ? words.oneBookFor(book.name) : book.name}
+                </span>
                 <span className="text-muted-foreground shrink-0">
                   {words.pages(book.pageCount)}
                 </span>

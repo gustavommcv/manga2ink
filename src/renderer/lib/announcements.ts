@@ -13,7 +13,10 @@ export function isPageEvent(
   return progress?.page !== undefined && percentage !== undefined;
 }
 
-/** What is told instead of the pages: each tenth of the work. The progress bar has the exact number. */
-export function milestone(percentage: number): string {
-  return `${String(Math.floor(percentage / 10) * 10)}% complete`;
+/**
+ * What is told instead of the pages: each tenth of the work, as the percentage it has reached. The
+ * progress bar has the exact number, and the screen says it in the words of its language.
+ */
+export function milestone(percentage: number): number {
+  return Math.floor(percentage / 10) * 10;
 }

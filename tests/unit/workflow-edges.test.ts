@@ -11,6 +11,7 @@ import {
   numbered,
   openLibrary,
 } from './support/conversion-workflow';
+import { message } from '@/domain/message';
 
 // More of what the mutation run found no test noticing, for how a run is reported and for what a
 // library does with a title that did not bind.
@@ -51,7 +52,10 @@ describe('what a run says when it has made its books', () => {
     const progress = await runFolder(dependencies({ volumePaths: ['/work/volume-1.cbz'] }));
 
     const saved = progress.at(-1);
-    expect(saved).toMatchObject({ stage: 'saving', message: '1 book saved.' });
+    expect(saved).toMatchObject({
+      stage: 'saving',
+      message: message('progress.booksSaved', { count: 1 }),
+    });
     expect(saved).not.toHaveProperty('completed');
     expect(saved).not.toHaveProperty('total');
     expect(saved).not.toHaveProperty('volumes');
@@ -62,7 +66,7 @@ describe('what a run says when it has made its books', () => {
 
     expect(progress.at(-1)).toMatchObject({
       stage: 'saving',
-      message: '2 books saved.',
+      message: message('progress.booksSaved', { count: 2 }),
       completed: 2,
       total: 2,
       volumes: [
@@ -76,7 +80,10 @@ describe('what a run says when it has made its books', () => {
     const progress = await runFolder(dependencies(), { mode: 'bind-only' });
 
     const saved = progress.at(-1);
-    expect(saved).toMatchObject({ stage: 'saving', message: '2 books saved.' });
+    expect(saved).toMatchObject({
+      stage: 'saving',
+      message: message('progress.booksSaved', { count: 2 }),
+    });
     expect(saved).not.toHaveProperty('volumes');
   });
 });

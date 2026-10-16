@@ -10,7 +10,7 @@ import {
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
-import { raw, message } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
 import { type MangaboundBridge } from '@/shared/runtime-info';
@@ -85,6 +85,7 @@ describe('queue application workflow', () => {
     expect(screen.getByText('Recovered.epub')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'View books from Recovered.epub' }));
     expect(screen.getByRole('heading', { name: '1 book ready' })).toBeVisible();
+    expect(screen.getByText('Ready to save or share')).toBeVisible();
     expect(screen.getByText('2.0 KB · Not saved yet')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Save Recovered.epub as' }));
     await waitFor(() => expect(screen.getByText('2.0 KB · Saved')).toBeVisible());
@@ -481,7 +482,7 @@ describe('queue application workflow', () => {
         value: {
           tool: 'mangabind',
           title: 'Offline Work',
-          message: 'mangabind validated 1 volume · no library files written',
+          message: message('plan.mangabind', { volumes: 1, shape: 'books' }),
           books: [{ name: 'Offline Work - Vol.01.cbz', pageCount: 4 }],
           issues: [],
         },
@@ -882,14 +883,16 @@ describe('queue application workflow', () => {
 
     expect(await screen.findByRole('heading', { name: 'Converting Offline Work' })).toBeVisible();
     expect(screen.getByText('Item 1 of 1')).toBeVisible();
+    // Until the tool has said anything, the screen says the run is being prepared.
+    expect(screen.getByText('Preparing…')).toBeVisible();
     const jobId = convert.mock.calls[0]?.[0].jobId ?? '';
     act(() => {
       // Updates for another job are not this run's business.
-      emit({ jobId: 'someone-else', stage: 'processing', message: 'Elsewhere.' });
+      emit({ jobId: 'someone-else', stage: 'processing', message: raw('Elsewhere.') });
       emit({
         jobId,
         stage: 'processing',
-        message: 'Processed page 3 of 10.',
+        message: raw('Processed page 3 of 10.'),
         completed: 3,
         total: 10,
       });
@@ -909,7 +912,11 @@ describe('queue application workflow', () => {
     // the item starting: it belongs to the run all the same.
     const convert = vi.fn<MangaboundBridge['convert']>((command) => {
       act(() => {
-        emit({ jobId: command.jobId, stage: 'processing', message: 'Opened the first chapter.' });
+        emit({
+          jobId: command.jobId,
+          stage: 'processing',
+          message: raw('Opened the first chapter.'),
+        });
       });
       return new Promise(() => undefined);
     });

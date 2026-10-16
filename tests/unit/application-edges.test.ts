@@ -9,6 +9,9 @@ import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion
 import { ConversionWorkflowError } from '@/domain/conversion';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultPreferences } from '@/domain/preferences';
+import { message, raw } from '@/domain/message';
+
+import { english } from './support/say';
 
 // More of what the mutation run found no test noticing, for the application layer.
 
@@ -61,8 +64,8 @@ describe('what is said while several volumes are made at once', () => {
     // Before anything is made.
     expect(updates[0]).toMatchObject({
       stage: 'processing',
-      volume: '1 of 3',
-      message: '0 of 3 volumes converted.',
+      volume: { number: 1, count: 3 },
+      message: message('progress.volumesConverted', { done: 0, total: 3 }),
       completed: 0,
       total: 3,
     });
@@ -74,8 +77,12 @@ describe('what is said while several volumes are made at once', () => {
     ]);
 
     // Half the pages of the second volume: half a volume of the three.
-    reports[1]!({ stage: 'processing', message: 'Page', completed: 1, total: 2 });
-    expect(updates.at(-1)).toMatchObject({ volume: '2 of 3', completed: 0.5, total: 3 });
+    reports[1]!({ stage: 'processing', message: raw('Page'), completed: 1, total: 2 });
+    expect(updates.at(-1)).toMatchObject({
+      volume: { number: 2, count: 3 },
+      completed: 0.5,
+      total: 3,
+    });
     expect(updates.at(-1)?.volumes?.[1]).toStrictEqual({
       number: 2,
       status: 'processing',
@@ -84,9 +91,9 @@ describe('what is said while several volumes are made at once', () => {
     });
 
     // An update with no count says what the volume is doing and nothing it does not know.
-    reports[2]!({ stage: 'processing', message: 'Starting' });
+    reports[2]!({ stage: 'processing', message: raw('Starting') });
     expect(updates.at(-1)?.volumes?.[2]).toStrictEqual({ number: 3, status: 'processing' });
-    reports[2]!({ stage: 'saving', message: 'Writing' });
+    reports[2]!({ stage: 'saving', message: raw('Writing') });
     expect(updates.at(-1)?.volumes?.[2]).toStrictEqual({ number: 3, status: 'saving' });
     expect(updates.at(-1)?.completed).toBe(0.5);
 
@@ -99,7 +106,10 @@ describe('what is said while several volumes are made at once', () => {
       completed: 2,
       total: 2,
     });
-    expect(updates.at(-1)).toMatchObject({ message: '1 of 3 volumes converted.', completed: 1 });
+    expect(updates.at(-1)).toMatchObject({
+      message: message('progress.volumesConverted', { done: 1, total: 3 }),
+      completed: 1,
+    });
 
     // And one that never said how many pages has no count to complete.
     jobs[2]!.resolve(book(2));
@@ -130,12 +140,12 @@ describe('what is said while several volumes are made at once', () => {
       },
     );
 
-    reports[0]!({ stage: 'processing', message: 'Only a count', completed: 3 });
+    reports[0]!({ stage: 'processing', message: raw('Only a count'), completed: 3 });
     expect(updates.at(-1)?.volumes?.[0]).toStrictEqual({ number: 1, status: 'processing' });
-    reports[1]!({ stage: 'processing', message: 'Only a total', total: 8 });
+    reports[1]!({ stage: 'processing', message: raw('Only a total'), total: 8 });
     expect(updates.at(-1)?.volumes?.[1]).toStrictEqual({ number: 2, status: 'processing' });
     // Pages of nothing: the volume is said to have them, and the whole has not moved.
-    reports[2]!({ stage: 'processing', message: 'Empty', completed: 1, total: 0 });
+    reports[2]!({ stage: 'processing', message: raw('Empty'), completed: 1, total: 0 });
     expect(updates.at(-1)?.volumes?.[2]).toStrictEqual({
       number: 3,
       status: 'processing',
@@ -158,7 +168,7 @@ describe('what is said while several volumes are made at once', () => {
     });
 
     expect(updates.every((update) => update.title === 'Chainsaw Man')).toBe(true);
-    expect(updates.at(-1)?.message).toBe('Chainsaw Man · 2 of 2 volumes converted.');
+    expect(english(updates.at(-1)!.message)).toBe('Chainsaw Man · 2 of 2 volumes converted.');
   });
 });
 

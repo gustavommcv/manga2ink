@@ -14,6 +14,7 @@ import {
 } from '@/adapters/mangapress/protocol';
 import type { ToolExecutionError } from '@/domain/conversion';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 
 function event(fields: Record<string, unknown>): MangapressEvent {
   return parseMangapressEventLine(
@@ -374,7 +375,7 @@ describe('mangapress conversion port', () => {
     });
     expect(onProgress).toHaveBeenCalledWith({
       stage: 'processing',
-      message: 'Processed page 7 of 10.',
+      message: message('progress.pageProcessed', { completed: 7, total: 10 }),
       completed: 7,
       total: 10,
       chapter: 'Chapter 1',
@@ -382,7 +383,7 @@ describe('mangapress conversion port', () => {
     });
     expect(onProgress).toHaveBeenCalledWith({
       stage: 'saving',
-      message: 'Saving the finished book…',
+      message: message('progress.savingBook', {}),
     });
     expect(run.mock.calls[0]?.[0]).toMatchObject({
       profile: defaultMangapressSettings.deviceProfile,
