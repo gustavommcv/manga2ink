@@ -2,15 +2,14 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import type { Language, LanguagePreference } from '@/domain/app-settings';
-import { message } from '@/domain/message';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
-import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import { Titlebar } from '@/renderer/components/shell/titlebar';
 import type { AppSettingsBridge } from '@/renderer/hooks/use-app-settings';
 
 import { AppSettingsMenu } from './app-settings-menu';
 import type { AppSettingsTab } from './app-settings-tabs';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
+import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 
 /** Where the app works when nobody has chosen a folder, and when one has been. */
 const ownPlaces: ProcessingFolderStatus = {
@@ -176,7 +175,7 @@ const twoTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
   { id: 'folders', label: () => 'Folders', Panel: () => <p>Folder settings.</p> },
 ];
 
-/** What the dialog looks like once a second tab exists: a row of tabs appears above the panel. */
+/** What the dialog looks like with a tab that is not there yet: the same size, whatever the tab holds. */
 export const WithSeveralTabs: Story = {
   args: { tabs: twoTabs },
   play: async ({ canvas, canvasElement }) => {
@@ -239,6 +238,20 @@ export const WhenAPageCannotBeOpened: Story = {
     await expect(
       await within(dialog).findByText('That page could not be opened. Try again.'),
     ).toBeVisible();
+  },
+};
+
+/** The Updates tab: the app cannot update itself yet, and the choices are drawn and cannot be changed. */
+export const Updates: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Updates' }));
+
+    await expect(within(dialog).getByRole('status', { name: 'Not available yet' })).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Check for updates' })).toBeDisabled();
   },
 };
 

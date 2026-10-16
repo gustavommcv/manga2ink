@@ -1,3 +1,5 @@
+import { type AnyMessage, message } from './message';
+
 export interface MappingChapter {
   readonly id: string;
   readonly name: string;
@@ -38,7 +40,8 @@ export interface MappingIssue {
     | 'unassigned_chapters'
     | 'unparseable_chapter';
   readonly severity: 'warning' | 'error';
-  readonly message: string;
+  /** What to tell the person, as a code the window writes in its language (ADR 0053). */
+  readonly message: AnyMessage;
   readonly chapterIds?: readonly string[];
   readonly volumeIds?: readonly string[];
 }
@@ -53,6 +56,10 @@ export interface MangabindMetadataFile {
   readonly source?: { readonly provider: string; readonly id: string };
 }
 
+/**
+ * An edit that was refused. What it says to the person is `said`, a code the window writes in its
+ * language (ADR 0053); the message of the error itself is that code, for a log.
+ */
 export class MappingOperationError extends Error {
   constructor(
     readonly code:
@@ -65,16 +72,18 @@ export class MappingOperationError extends Error {
       | 'invalid_volume_number'
       | 'same_volume'
       | 'volume_not_found',
-    message: string,
+    readonly said: AnyMessage,
   ) {
-    super(message);
+    super(said.id);
     this.name = 'MappingOperationError';
   }
 }
 
 export class MappingValidationError extends Error {
+  readonly said: AnyMessage = message('mapping.hasErrors', {});
+
   constructor(readonly issues: readonly MappingIssue[]) {
-    super('The chapter-to-volume mapping has errors that must be fixed before it can be saved.');
+    super('mapping.hasErrors');
     this.name = 'MappingValidationError';
   }
 }
@@ -85,7 +94,10 @@ const highestVolumeNumber = 100_000;
 function canonicalVolumeNumber(value: string): string {
   const trimmed = value.trim();
   if (!/^\d+(?:\.\d+)?$/u.test(trimmed)) {
-    throw new MappingOperationError('invalid_volume_number', `Invalid volume number: ${value}`);
+    throw new MappingOperationError(
+      'invalid_volume_number',
+      message('mapping.invalidVolumeNumber', { value }),
+    );
   }
   const number = Number(trimmed);
   const written = String(number);
@@ -93,7 +105,10 @@ function canonicalVolumeNumber(value: string): string {
   // fail later, after the person has done the rest. It is also what keeps the digits the ones
   // typed (past 2^53 they are not) and the number out of an exponent (1e+22): no series has either.
   if (number > highestVolumeNumber || !/^\d+(?:\.\d+)?$/u.test(written)) {
-    throw new MappingOperationError('invalid_volume_number', `Invalid volume number: ${value}`);
+    throw new MappingOperationError(
+      'invalid_volume_number',
+      message('mapping.invalidVolumeNumber', { value }),
+    );
   }
   return written;
 }
@@ -112,13 +127,13 @@ function chapterToken(chapter: MappingChapter): string {
   if (chapter.chapter === undefined || !Number.isFinite(chapter.chapter) || chapter.chapter < 0) {
     throw new MappingOperationError(
       'invalid_chapter',
-      `${chapter.name} does not have a chapter number mangabind can map.`,
+      message('mapping.chapterNotMappable', { name: chapter.name }),
     );
   }
   if (chapter.special !== undefined && !/^[xyz]\d+$/u.test(chapter.special)) {
     throw new MappingOperationError(
       'invalid_chapter',
-      `${chapter.name} has an unsupported special-chapter suffix.`,
+      message('mapping.chapterBadSpecial', { name: chapter.name }),
     );
   }
   return `${String(chapter.chapter)}${chapter.special ?? ''}`;
@@ -167,7 +182,10 @@ function compareChapters(left: MappingChapter, right: MappingChapter): number {
 function chapterById(draft: MappingDraft, chapterId: string): MappingChapter {
   const chapter = draft.chapters.find((candidate) => candidate.id === chapterId);
   if (chapter === undefined) {
-    throw new MappingOperationError('chapter_not_found', `Unknown chapter: ${chapterId}`);
+    throw new MappingOperationError(
+      'chapter_not_found',
+      message('mapping.unknownChapter', { id: chapterId }),
+    );
   }
   return chapter;
 }
@@ -175,14 +193,17 @@ function chapterById(draft: MappingDraft, chapterId: string): MappingChapter {
 function volumeIndex(draft: MappingDraft, volumeId: string): number {
   const index = draft.volumes.findIndex((volume) => volume.id === volumeId);
   if (index === -1) {
-    throw new MappingOperationError('volume_not_found', `Unknown volume: ${volumeId}`);
+    throw new MappingOperationError(
+      'volume_not_found',
+      message('mapping.unknownVolume', { id: volumeId }),
+    );
   }
   return index;
 }
 
 function uniqueChapterIds(draft: MappingDraft, chapterIds: readonly string[]): readonly string[] {
   if (chapterIds.length === 0) {
-    throw new MappingOperationError('empty_selection', 'Choose at least one chapter.');
+    throw new MappingOperationError('empty_selection', message('mapping.chooseOneChapter', {}));
   }
   const unique = [...new Set(chapterIds)];
   for (const chapterId of unique) chapterById(draft, chapterId);
@@ -239,7 +260,7 @@ export function createMappingDraft({
     if (chapterIds.has(chapter.id)) {
       throw new MappingOperationError(
         'duplicate_chapter_id',
-        `Duplicate chapter id: ${chapter.id}`,
+        message('mapping.duplicateChapterId', { id: chapter.id }),
       );
     }
     chapterIds.add(chapter.id);
@@ -247,7 +268,10 @@ export function createMappingDraft({
   const volumeIds = new Set<string>();
   for (const volume of volumes) {
     if (volumeIds.has(volume.id)) {
-      throw new MappingOperationError('duplicate_volume_id', `Duplicate volume id: ${volume.id}`);
+      throw new MappingOperationError(
+        'duplicate_volume_id',
+        message('mapping.duplicateVolumeId', { id: volume.id }),
+      );
     }
     volumeIds.add(volume.id);
   }
@@ -269,7 +293,10 @@ export function createMappingDraft({
 
 export function addVolume(draft: MappingDraft, id: string, number: string): MappingDraft {
   if (draft.volumes.some((volume) => volume.id === id)) {
-    throw new MappingOperationError('duplicate_volume_id', `Duplicate volume id: ${id}`);
+    throw new MappingOperationError(
+      'duplicate_volume_id',
+      message('mapping.duplicateVolumeId', { id }),
+    );
   }
   return {
     ...draft,
@@ -348,15 +375,15 @@ export function splitVolume(
 ): MappingDraft {
   const index = volumeIndex(draft, volumeId);
   if (draft.volumes.some((volume) => volume.id === newVolumeId)) {
-    throw new MappingOperationError('duplicate_volume_id', `Duplicate volume id: ${newVolumeId}`);
+    throw new MappingOperationError(
+      'duplicate_volume_id',
+      message('mapping.duplicateVolumeId', { id: newVolumeId }),
+    );
   }
   const volume = draft.volumes[index]!;
   const splitIndex = volume.chapterIds.indexOf(firstChapterId);
   if (splitIndex <= 0) {
-    throw new MappingOperationError(
-      'invalid_split',
-      'A split must leave at least one chapter in each volume.',
-    );
+    throw new MappingOperationError('invalid_split', message('mapping.splitLeavesNone', {}));
   }
   const left = { ...volume, chapterIds: volume.chapterIds.slice(0, splitIndex) };
   const right = {
@@ -376,7 +403,7 @@ export function mergeVolumes(
   sourceVolumeId: string,
 ): MappingDraft {
   if (targetVolumeId === sourceVolumeId) {
-    throw new MappingOperationError('same_volume', 'Choose two different volumes to merge.');
+    throw new MappingOperationError('same_volume', message('mapping.chooseTwoVolumes', {}));
   }
   const targetIndex = volumeIndex(draft, targetVolumeId);
   const sourceIndex = volumeIndex(draft, sourceVolumeId);
@@ -470,7 +497,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
     issues.push({
       code: 'invalid_source',
       severity: 'error',
-      message: 'A suggested mapping must identify both its provider and work.',
+      message: message('mapping.issue.invalidSource', {}),
     });
   }
 
@@ -482,7 +509,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
       issues.push({
         code: 'empty_volume',
         severity: 'error',
-        message: `Volume ${volume.number} has no chapters.`,
+        message: message('mapping.issue.emptyVolume', { number: volume.number }),
         volumeIds: [volume.id],
       });
     }
@@ -496,7 +523,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
         issues.push({
           code: 'unparseable_chapter',
           severity: 'error',
-          message: `${chapter.name} cannot be represented in mangabind.json.`,
+          message: message('mapping.issue.unparseable', { name: chapter.name }),
           chapterIds: [chapterId],
         });
         continue;
@@ -508,7 +535,11 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
         issues.push({
           code: 'filename_volume_conflict',
           severity: 'error',
-          message: `${chapter.name} names volume ${String(chapter.parsedVolume)}, which mangabind will keep instead of volume ${volume.number}.`,
+          message: message('mapping.issue.filenameConflict', {
+            name: chapter.name,
+            named: chapter.parsedVolume,
+            volume: volume.number,
+          }),
           chapterIds: [chapterId],
           volumeIds: [volume.id],
         });
@@ -521,7 +552,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
       issues.push({
         code: 'duplicate_volume',
         severity: 'error',
-        message: `More than one volume is numbered ${number}.`,
+        message: message('mapping.issue.duplicateVolume', { number }),
         volumeIds,
       });
     }
@@ -533,7 +564,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
       issues.push({
         code: 'duplicate_chapter',
         severity: 'error',
-        message: `More than one source represents chapter ${token}; mangabind cannot choose between them.`,
+        message: message('mapping.issue.duplicateSources', { token }),
         chapterIds: [...chapterIds, ...copies],
       });
     } else if (copies.length > 0) {
@@ -542,7 +573,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
       issues.push({
         code: 'duplicate_chapter',
         severity: 'error',
-        message: `Chapter ${token} is in the folder more than once. mangabind cannot choose between the copies and would leave all of them out of the book; remove all but one from the folder.`,
+        message: message('mapping.issue.copiesInFolder', { token }),
         chapterIds: [...chapterIds, ...copies],
       });
     }
@@ -554,7 +585,7 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
     issues.push({
       code: 'unassigned_chapters',
       severity: 'warning',
-      message: `${String(unassigned.length)} chapter${unassigned.length === 1 ? ' is' : 's are'} not assigned to a volume.`,
+      message: message('mapping.issue.unassigned', { count: unassigned.length }),
       chapterIds: unassigned,
     });
   }

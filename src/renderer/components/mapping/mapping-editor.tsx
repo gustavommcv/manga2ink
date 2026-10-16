@@ -27,16 +27,20 @@ import {
   isVolumeNumber,
   type MappingDraft,
   MappingOperationError,
+  MappingValidationError,
   mappingSignature,
   serializeMangabindMetadata,
   type VolumeSuggestion,
   validateMapping,
 } from '@/domain/mapping';
+import type { MappingMessages } from '@/i18n/mapping-messages';
+
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
-import { useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { SaidError } from '@/renderer/lib/said-error';
 import { Button } from '@/renderer/components/ui/button';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { Input } from '@/renderer/components/ui/input';
@@ -88,23 +92,28 @@ function mappingOriginLabel(
   initialDraft: MappingDraft,
   startedFrom: MappingEditorProps['startedFrom'],
   providers: readonly MetadataProviderDescriptor[],
+  words: MappingMessages['editor']['origin'],
 ): string {
   if (draft.source !== undefined) {
     // The mapping records the source's id; the person is told its name.
     const named = providers.find((provider) => provider.id === draft.source?.provider);
-    return `Suggested by ${named?.displayName ?? draft.source.provider}`;
+    return words.suggestedBy(named?.displayName ?? draft.source.provider);
   }
   // Only claim mangabind's grouping while the draft still says exactly what mangabind proposed.
   if (startedFrom === 'mangabind' && mappingSignature(draft) === mappingSignature(initialDraft)) {
-    return 'Grouped by mangabind · Offline';
+    return words.groupedByMangabind;
   }
-  return 'Manual mapping · Offline';
+  return words.manual;
 }
 
-function volumeName(draft: MappingDraft, volumeId: string | undefined): string {
-  if (volumeId === undefined) return 'Unassigned';
+function volumeName(
+  draft: MappingDraft,
+  volumeId: string | undefined,
+  words: MappingMessages['editor']['chapters'],
+): string {
+  if (volumeId === undefined) return words.unassigned;
   const volume = draft.volumes.find((candidate) => candidate.id === volumeId);
-  return volume === undefined ? 'Unassigned' : `Volume ${volume.number}`;
+  return volume === undefined ? words.unassigned : words.volume(volume.number);
 }
 
 export function MappingEditor({
@@ -123,6 +132,8 @@ export function MappingEditor({
   selectedProviderId,
 }: MappingEditorProps): React.JSX.Element {
   const { say } = useSay();
+  const messages = useMessages();
+  const words = messages.mapping.editor;
   const leftOut = unrecognizedChaptersNote(unrecognized, inLibrary ? 'library' : 'folder');
   const [history, setHistory] = useState<MappingEditorHistory>(() =>
     createMappingHistory(initialDraft),
@@ -177,9 +188,7 @@ export function MappingEditor({
       return true;
     } catch (error) {
       setOperationMessage(
-        error instanceof MappingOperationError
-          ? error.message
-          : 'That edit could not be applied. Nothing was changed.',
+        error instanceof MappingOperationError ? say(error.said) : words.editFailed,
       );
       return false;
     }
@@ -224,10 +233,14 @@ export function MappingEditor({
   const confirm = (): void => {
     try {
       onConfirm?.(serializeMangabindMetadata(draft), draft);
-      setOperationMessage('Mapping confirmed.');
+      setOperationMessage(words.confirmed);
     } catch (error) {
       setOperationMessage(
-        error instanceof Error ? error.message : 'The mapping could not be saved.',
+        error instanceof MappingValidationError
+          ? say(error.said)
+          : error instanceof SaidError
+            ? say(error.said)
+            : words.saveFailed,
       );
     }
   };
@@ -237,9 +250,15 @@ export function MappingEditor({
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-muted-foreground text-xs font-medium">Chapter mapping</p>
+            <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
             <span className="border-border bg-muted text-muted-foreground rounded-full border px-2 py-0.5 text-xs">
-              {mappingOriginLabel(draft, initialDraft, startedFrom, metadataProviders)}
+              {mappingOriginLabel(
+                draft,
+                initialDraft,
+                startedFrom,
+                metadataProviders,
+                words.origin,
+              )}
             </span>
           </div>
           <h1
@@ -248,12 +267,10 @@ export function MappingEditor({
             ref={titleRef}
             tabIndex={-1}
           >
-            Organize {draft.mangaTitle || 'untitled manga'} into volumes
+            {words.title(draft.mangaTitle)}
           </h1>
           <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-            {showEditor
-              ? 'Select chapters, assign them to a volume, and fix any conflicts before continuing. Assigning an already placed chapter moves it.'
-              : 'Review the proposed volumes below, or open the editor to change chapter assignments.'}
+            {showEditor ? words.introEditing : words.introReviewing}
           </p>
         </div>
         {onSkipGrouping !== undefined && (
@@ -264,12 +281,10 @@ export function MappingEditor({
               onClick={onSkipGrouping}
               variant="outline"
             >
-              Skip grouping
+              {words.skipGrouping.button}
             </Button>
             <p className="text-muted-foreground max-w-56 text-xs" id="skip-grouping-detail">
-              {singleBook
-                ? 'Single book mode requires grouping chapters into volumes.'
-                : 'Send the folder to mangapress as one book, without grouping chapters into volumes.'}
+              {singleBook ? words.skipGrouping.singleBook : words.skipGrouping.detail}
             </p>
           </div>
         )}
@@ -282,12 +297,12 @@ export function MappingEditor({
               size="sm"
               variant="outline"
             >
-              Show mapping summary
+              {words.showSummary}
             </Button>
           )}
-          <div className="flex items-center gap-1" aria-label="Edit history" role="group">
+          <div className="flex items-center gap-1" aria-label={words.history.label} role="group">
             <Button
-              aria-label="Undo last mapping edit"
+              aria-label={words.history.undo}
               disabled={history.past.length === 0}
               onClick={() => {
                 setHistory(undoMappingCommand(history));
@@ -298,7 +313,7 @@ export function MappingEditor({
               <Undo2 />
             </Button>
             <Button
-              aria-label="Redo last mapping edit"
+              aria-label={words.history.redo}
               disabled={history.future.length === 0}
               onClick={() => {
                 setHistory(redoMappingCommand(history));
@@ -309,7 +324,7 @@ export function MappingEditor({
               <Redo2 />
             </Button>
             <Button
-              aria-label="Reset all mapping edits"
+              aria-label={words.history.reset}
               disabled={history.past.length === 0}
               onClick={() => {
                 setHistory(createMappingHistory(initialDraft));
@@ -324,13 +339,8 @@ export function MappingEditor({
           </div>
         </div>
       </header>
-      {leftOut !== undefined && <InfoBanner message={say(leftOut)} title="Folders left out" />}
-      {singleBook && (
-        <InfoBanner
-          message="Mapped volumes will form top-level entries in the table of contents of the unified EPUB, with chapters nested under them."
-          title="Single book for the series"
-        />
-      )}
+      {leftOut !== undefined && <InfoBanner message={say(leftOut)} title={words.leftOut} />}
+      {singleBook && <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />}
 
       <ChaptersFrom
         initialSource={
@@ -392,11 +402,9 @@ export function MappingEditor({
 
       {showEditor && draft.volumes.length === 0 && (
         <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl border p-5">
-          <p className="text-muted-foreground text-sm">
-            Start by creating a volume, then assign chapters to it.
-          </p>
-          <Button aria-label="Create first volume" onClick={addNewVolume} size="sm">
-            <Plus /> Create volume {newVolumeNumber}
+          <p className="text-muted-foreground text-sm">{words.start.text}</p>
+          <Button aria-label={words.start.createFirst} onClick={addNewVolume} size="sm">
+            <Plus /> {words.start.createVolume(newVolumeNumber)}
           </Button>
         </div>
       )}
@@ -434,10 +442,10 @@ export function MappingEditor({
             <div className="border-border flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
               <div>
                 <h2 id="chapters-title" className="text-sm font-semibold">
-                  Chapters
+                  {words.chapters.title}
                 </h2>
                 <p className="text-muted-foreground mt-1 text-xs">
-                  {String(selectedChapterIds.size)} of {String(draft.chapters.length)} selected
+                  {words.chapters.selected(selectedChapterIds.size, draft.chapters.length)}
                 </p>
               </div>
               <Button
@@ -451,7 +459,9 @@ export function MappingEditor({
                 size="sm"
                 variant="ghost"
               >
-                {selectedChapterIds.size === draft.chapters.length ? 'Clear all' : 'Select all'}
+                {selectedChapterIds.size === draft.chapters.length
+                  ? words.chapters.clearAll
+                  : words.chapters.selectAll}
               </Button>
             </div>
             <div>
@@ -463,7 +473,7 @@ export function MappingEditor({
                     key={chapter.id}
                   >
                     <Checkbox
-                      aria-label={`Select ${chapter.name}`}
+                      aria-label={words.chapters.select(chapter.name)}
                       checked={selectedChapterIds.has(chapter.id)}
                       id={`chapter-${chapter.id}`}
                       onCheckedChange={(checked) => {
@@ -476,7 +486,7 @@ export function MappingEditor({
                     >
                       <span className="block truncate">{chapter.name}</span>
                       <span className="text-subtle-foreground mt-0.5 block text-xs font-normal">
-                        {String(chapter.pageCount)} pages
+                        {words.chapters.pages(chapter.pageCount)}
                       </span>
                     </Label>
                     <span
@@ -486,7 +496,7 @@ export function MappingEditor({
                           : 'text-muted-foreground text-xs'
                       }
                     >
-                      {volumeName(draft, volumeId)}
+                      {volumeName(draft, volumeId, words.chapters)}
                     </span>
                   </div>
                 );
@@ -495,7 +505,7 @@ export function MappingEditor({
             <div className="border-border bg-muted/30 space-y-4 border-t p-5">
               <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
                 <div className="space-y-2">
-                  <Label htmlFor="target-volume">Move selected chapters to</Label>
+                  <Label htmlFor="target-volume">{words.chapters.moveTo}</Label>
                   <NativeSelect
                     disabled={draft.volumes.length === 0}
                     id="target-volume"
@@ -504,10 +514,12 @@ export function MappingEditor({
                     }}
                     value={effectiveTargetVolumeId}
                   >
-                    {draft.volumes.length === 0 && <option value="">Create a volume first</option>}
+                    {draft.volumes.length === 0 && (
+                      <option value="">{words.chapters.createFirst}</option>
+                    )}
                     {draft.volumes.map((volume) => (
                       <option key={volume.id} value={volume.id}>
-                        Volume {volume.number}
+                        {words.chapters.volume(volume.number)}
                       </option>
                     ))}
                   </NativeSelect>
@@ -517,26 +529,26 @@ export function MappingEditor({
                   onClick={assignSelected}
                 >
                   <ArrowDownToLine />
-                  Assign selected
+                  {words.chapters.assignSelected}
                 </Button>
                 <Button
                   disabled={selectedChapterIds.size === 0}
                   onClick={unassignSelected}
                   variant="outline"
                 >
-                  Unassign
+                  {words.chapters.unassign}
                 </Button>
               </div>
 
               <fieldset className="border-border grid gap-3 rounded-lg border p-4 sm:grid-cols-2 sm:items-end md:grid-cols-[1fr_1fr_1fr_auto]">
                 <legend className="text-muted-foreground px-1 text-xs font-medium">
-                  Assign a chapter range
+                  {words.chapters.range.legend}
                 </legend>
                 <p className="text-muted-foreground text-xs sm:col-span-2 md:col-span-4">
-                  The first and last chapter are both included.
+                  {words.chapters.range.note}
                 </p>
                 <div className="space-y-2">
-                  <Label htmlFor="range-start">From</Label>
+                  <Label htmlFor="range-start">{words.chapters.range.from}</Label>
                   <NativeSelect
                     id="range-start"
                     onChange={(event) => {
@@ -552,7 +564,7 @@ export function MappingEditor({
                   </NativeSelect>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="range-end">Through</Label>
+                  <Label htmlFor="range-end">{words.chapters.range.through}</Label>
                   <NativeSelect
                     id="range-end"
                     onChange={(event) => {
@@ -568,7 +580,7 @@ export function MappingEditor({
                   </NativeSelect>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="range-volume">Volume</Label>
+                  <Label htmlFor="range-volume">{words.chapters.range.volume}</Label>
                   <NativeSelect
                     disabled={draft.volumes.length === 0}
                     id="range-volume"
@@ -577,10 +589,12 @@ export function MappingEditor({
                     }}
                     value={effectiveTargetVolumeId}
                   >
-                    {draft.volumes.length === 0 && <option value="">Create a volume first</option>}
+                    {draft.volumes.length === 0 && (
+                      <option value="">{words.chapters.createFirst}</option>
+                    )}
                     {draft.volumes.map((volume) => (
                       <option key={volume.id} value={volume.id}>
-                        Volume {volume.number}
+                        {words.chapters.volume(volume.number)}
                       </option>
                     ))}
                   </NativeSelect>
@@ -597,7 +611,7 @@ export function MappingEditor({
                   }}
                   variant="outline"
                 >
-                  Assign range
+                  {words.chapters.range.assign}
                 </Button>
               </fieldset>
             </div>
@@ -611,10 +625,10 @@ export function MappingEditor({
               <div className="flex items-end justify-between gap-3">
                 <div>
                   <h2 id="volumes-title" className="text-sm font-semibold">
-                    Volumes
+                    {words.volumes.title}
                   </h2>
                   <p className="text-muted-foreground mt-1 text-xs">
-                    {String(draft.volumes.length)} created
+                    {words.volumes.created(draft.volumes.length)}
                   </p>
                 </div>
                 <div className="flex items-end gap-2">
@@ -623,7 +637,7 @@ export function MappingEditor({
                       className="text-muted-foreground text-xs font-normal"
                       htmlFor="new-volume-number"
                     >
-                      New volume number
+                      {words.volumes.newNumber}
                     </Label>
                     <Input
                       aria-describedby="new-volume-help"
@@ -636,8 +650,8 @@ export function MappingEditor({
                       value={newVolumeNumber}
                     />
                   </div>
-                  <Button aria-label="Add volume" onClick={addNewVolume}>
-                    <Plus /> Add
+                  <Button aria-label={words.volumes.addLabel} onClick={addNewVolume}>
+                    <Plus /> {words.volumes.add}
                   </Button>
                 </div>
               </div>
@@ -645,12 +659,12 @@ export function MappingEditor({
                 className="text-muted-foreground mt-3 text-xs leading-relaxed"
                 id="new-volume-help"
               >
-                Add creates a volume using this number. The next number increases automatically.
+                {words.volumes.help}
               </p>
 
               {draft.volumes.length === 0 ? (
                 <div className="border-border text-muted-foreground mt-5 rounded-lg border border-dashed px-4 py-8 text-center text-sm">
-                  No volumes yet.
+                  {words.volumes.none}
                 </div>
               ) : (
                 <div className="mt-5 space-y-3">
@@ -668,9 +682,11 @@ export function MappingEditor({
                       >
                         <div className="flex items-start gap-2">
                           <div className="min-w-0 flex-1 space-y-2">
-                            <Label htmlFor={`volume-number-${volume.id}`}>Volume number</Label>
+                            <Label htmlFor={`volume-number-${volume.id}`}>
+                              {words.volumes.number}
+                            </Label>
                             <Input
-                              aria-label={`Volume number for volume ${volume.number}`}
+                              aria-label={words.volumes.numberFor(volume.number)}
                               defaultValue={volume.number}
                               id={`volume-number-${volume.id}`}
                               inputMode="decimal"
@@ -694,7 +710,7 @@ export function MappingEditor({
                             />
                           </div>
                           <Button
-                            aria-label={`Remove volume ${volume.number}`}
+                            aria-label={words.volumes.remove(volume.number)}
                             onClick={() => {
                               dispatch({ type: 'remove-volume', volumeId: volume.id });
                             }}
@@ -705,12 +721,13 @@ export function MappingEditor({
                           </Button>
                         </div>
                         <p className="text-muted-foreground mt-3 text-xs">
-                          {String(volume.chapterIds.length)} chapter
-                          {volume.chapterIds.length === 1 ? '' : 's'}
+                          {words.volumes.chapterCount(volume.chapterIds.length)}
                         </p>
                         {volume.chapterIds.length > 1 && (
                           <div className="mt-3 space-y-2">
-                            <Label htmlFor={`split-${volume.id}`}>Split before</Label>
+                            <Label htmlFor={`split-${volume.id}`}>
+                              {words.volumes.splitBefore}
+                            </Label>
                             <div className="flex gap-2">
                               <NativeSelect
                                 id={`split-${volume.id}`}
@@ -732,7 +749,7 @@ export function MappingEditor({
                                 ))}
                               </NativeSelect>
                               <Button
-                                aria-label={`Split volume ${volume.number}`}
+                                aria-label={words.volumes.splitLabel(volume.number)}
                                 onClick={() => {
                                   if (splitBefore === undefined) return;
                                   const splitNumber = nextVolumeNumber(draft);
@@ -749,11 +766,11 @@ export function MappingEditor({
                                 size="sm"
                                 variant="outline"
                               >
-                                <Scissors /> Split
+                                <Scissors /> {words.volumes.split}
                               </Button>
                             </div>
                             <p className="text-muted-foreground text-xs">
-                              This chapter and all later chapters move into a new volume.
+                              {words.volumes.splitHelp}
                             </p>
                           </div>
                         )}
@@ -771,7 +788,7 @@ export function MappingEditor({
                             variant="ghost"
                           >
                             <GitMerge />
-                            Merge into volume {draft.volumes[index - 1]!.number}
+                            {words.volumes.mergeInto(draft.volumes[index - 1]!.number)}
                           </Button>
                         )}
                       </article>
@@ -786,19 +803,19 @@ export function MappingEditor({
               className="border-border bg-surface rounded-xl border p-5"
             >
               <h2 id="validation-title" className="text-sm font-semibold">
-                Ready check
+                {words.check.title}
               </h2>
               {issues.length === 0 ? (
                 <div className="text-status-complete mt-4 flex items-center gap-2 text-sm">
                   <CheckCircle2 aria-hidden="true" className="size-4" />
-                  All chapters are ready to bind.
+                  {words.check.ready}
                 </div>
               ) : (
                 <div className="mt-4 space-y-4">
                   {errors.length > 0 && (
-                    <div aria-label="Mapping errors" role="alert">
+                    <div aria-label={words.check.errorsLabel} role="alert">
                       <p className="text-status-failed text-xs font-medium">
-                        Fix before continuing
+                        {words.check.fixFirst}
                       </p>
                       <ul className="mt-2 space-y-2">
                         {errors.map((issue, index) => (
@@ -806,16 +823,16 @@ export function MappingEditor({
                             className="text-muted-foreground text-sm leading-5"
                             key={`${issue.code}-${String(index)}`}
                           >
-                            {issue.message}
+                            {say(issue.message)}
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
                   {warnings.length > 0 && (
-                    <div aria-label="Mapping warnings" role="group">
+                    <div aria-label={words.check.warningsLabel} role="group">
                       <p className="text-status-warning text-xs font-medium">
-                        Check these chapters
+                        {words.check.checkThese}
                       </p>
                       <ul className="mt-2 space-y-2">
                         {warnings.map((issue, index) => (
@@ -823,7 +840,7 @@ export function MappingEditor({
                             className="text-muted-foreground text-sm leading-5"
                             key={`${issue.code}-${String(index)}`}
                           >
-                            {issue.message}
+                            {say(issue.message)}
                           </li>
                         ))}
                       </ul>
@@ -836,7 +853,7 @@ export function MappingEditor({
                 disabled={errors.length > 0 || draft.volumes.length === 0}
                 onClick={confirm}
               >
-                Confirm mapping
+                {words.check.confirm}
               </Button>
             </section>
           </div>

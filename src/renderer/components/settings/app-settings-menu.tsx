@@ -14,7 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/renderer/components/ui/dialog';
-import { panelId, TabList, tabId } from '@/renderer/components/ui/tabs';
+import { SettingsNav } from '@/renderer/components/settings/app-settings-nav';
+import { panelId, tabId } from '@/renderer/components/ui/tabs';
 import { useMessages } from '@/renderer/hooks/use-messages';
 
 type Tabs = readonly [AppSettingsTab, ...AppSettingsTab[]];
@@ -26,47 +27,54 @@ function AppSettingsContent({ tabs }: { readonly tabs: Tabs }): React.JSX.Elemen
   const messages = useMessages();
   const words = messages.appSettings;
   const [selected, setSelected] = useState(tabs[0].id);
-  // A row of tabs for one tab would only be in the way: it appears when there is a choice to make.
+  // A list of tabs for one tab would only be in the way: it appears when there is a choice to make.
   const several = tabs.length > 1;
+  const current = tabs.find((tab) => tab.id === selected) ?? tabs[0];
 
   return (
     <>
-      <div className="border-border flex items-center justify-between gap-4 border-b px-5 py-3.5">
-        <DialogTitle>{words.title}</DialogTitle>
-        <DialogClose asChild>
-          <Button aria-label={words.close} size="icon" variant="ghost">
-            <X />
-          </Button>
-        </DialogClose>
-      </div>
-      <DialogDescription className="sr-only">{words.description}</DialogDescription>
-      <div className="space-y-5 p-5">
-        {several && (
-          <TabList
+      {several && (
+        <div className="border-border bg-background/40 shrink-0 space-y-3 border-b p-3 md:w-56 md:border-r md:border-b-0 md:p-4">
+          <DialogTitle className="text-muted-foreground px-3 text-xs font-semibold tracking-wide">
+            {words.title}
+          </DialogTitle>
+          <SettingsNav
             group={group}
             label={words.sections}
             onChange={setSelected}
             tabs={tabs.map((tab) => ({ id: tab.id, label: tab.label(messages) }))}
             value={selected}
           />
-        )}
-        {tabs.map(
-          (tab) =>
-            tab.id === selected && (
-              <div
-                key={tab.id}
-                {...(several
-                  ? {
-                      'aria-labelledby': tabId(group, tab.id),
-                      id: panelId(group, tab.id),
-                      role: 'tabpanel',
-                    }
-                  : {})}
-              >
-                <tab.Panel />
-              </div>
-            ),
-        )}
+        </div>
+      )}
+      <DialogDescription className="sr-only">{words.description}</DialogDescription>
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="border-border flex shrink-0 items-center justify-between gap-4 border-b px-6 py-3.5">
+          {several ? (
+            <h3 className="text-base font-semibold">{current.label(messages)}</h3>
+          ) : (
+            <DialogTitle>{words.title}</DialogTitle>
+          )}
+          <DialogClose asChild>
+            <Button aria-label={words.close} size="icon" variant="ghost">
+              <X />
+            </Button>
+          </DialogClose>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <div
+            key={current.id}
+            {...(several
+              ? {
+                  'aria-labelledby': tabId(group, current.id),
+                  id: panelId(group, current.id),
+                  role: 'tabpanel',
+                }
+              : {})}
+          >
+            <current.Panel />
+          </div>
+        </div>
       </div>
     </>
   );
@@ -74,8 +82,8 @@ function AppSettingsContent({ tabs }: { readonly tabs: Tabs }): React.JSX.Elemen
 
 /**
  * The gear on the title bar, and the dialog it opens (ADR 0052): what a person decides about the
- * app itself, a tab for each thing. It is a dialog and not a screen, so it adds nothing to where the
- * window is and can be opened from anywhere.
+ * app itself, a tab for each thing, in a list beside the panel (ADR 0055). It is a dialog and not a
+ * screen, so it adds nothing to where the window is and can be opened from anywhere.
  */
 export function AppSettingsMenu({
   tabs = appSettingsTabs,
@@ -90,7 +98,11 @@ export function AppSettingsMenu({
           <Settings />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      {/*
+        A size of its own (ADR 0055), so the dialog does not change with the tab. It is smaller only
+        when the window is, and the list of tabs goes from a column beside the panel to a row above it.
+      */}
+      <DialogContent className="flex h-[38rem] w-[56rem] flex-col overflow-hidden md:flex-row">
         <AppSettingsContent tabs={tabs} />
       </DialogContent>
     </Dialog>

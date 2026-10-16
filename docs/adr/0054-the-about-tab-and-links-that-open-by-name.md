@@ -1,6 +1,6 @@
 # ADR 0054: The app settings have an Interface tab and an About tab, and a link opens by name
 
-- Status: Accepted
+- Status: Accepted (amended by [ADR 0055](0055-the-settings-dialog-has-a-fixed-size.md): an Updates tab between the choices and About)
 - Date: 2026-10-16
 - Amends: [ADR 0052](0052-the-app-language-is-chosen-behind-a-gear.md) (the first tab was called General)
 - Relates to: [ADR 0013](0013-online-sources-for-volume-data.md) (the page names an online source, never an address), [ADR 0041](0041-the-window-loads-its-page-from-its-own-scheme.md) (what the page may read), [ADR 0016](0016-one-share-panel-fixed-title-bar-clickable-drop-area.md) (the title bar)
