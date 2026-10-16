@@ -9,6 +9,8 @@ import {
   BookDetailsScreen,
   type BookDetailsScreenProps,
 } from '@/renderer/screens/book-details-screen';
+import { raw } from '@/domain/message';
+import { SaidError } from '@/renderer/lib/said-error';
 
 const base: BookDetailsScreenProps = {
   backLabel: 'Queue',
@@ -470,7 +472,7 @@ describe('looking up the author of a work', () => {
     const user = userEvent.setup();
     render(
       <LookingUp
-        onSearch={vi.fn(() => Promise.reject(new Error('Could not reach MangaDex.')))}
+        onSearch={vi.fn(() => Promise.reject(new SaidError(raw('Could not reach MangaDex.'))))}
         selected="mangadex"
       />,
     );

@@ -7,6 +7,8 @@ import type { BookDetails } from '@/domain/book-details';
 import { BookDetailsScreen, type BookDetailsScreenProps } from './book-details-screen';
 
 import type { AuthorLookup } from '@/renderer/components/details/author-lookup';
+import { raw } from '@/domain/message';
+import { SaidError } from '@/renderer/lib/said-error';
 
 /** Keeps what is typed and the source chosen, the way the app does, so the stories work as used. */
 function Stateful(props: BookDetailsScreenProps): React.JSX.Element {
@@ -264,7 +266,9 @@ export const NoAuthorMatches: Story = {
 
 /** The source could not be reached: the author is still typed by hand. */
 export const AuthorSearchFailed: Story = {
-  args: { lookup: lookupWith(() => Promise.reject(new Error('Could not reach MangaDex.'))) },
+  args: {
+    lookup: lookupWith(() => Promise.reject(new SaidError(raw('Could not reach MangaDex.')))),
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Find author' }));

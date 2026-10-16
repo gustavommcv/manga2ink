@@ -8,6 +8,7 @@ import { registerConversionHandlers } from '@/main/ipc/conversion';
 import { registerPendingHandlers } from '@/main/ipc/pending';
 import { PendingRunActivity } from '@/main/pending-run-activity';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const electron = vi.hoisted(() => ({
@@ -151,11 +152,11 @@ describe('pending books, at the edges', () => {
     electron.showSaveDialog.mockResolvedValue({ canceled: false, filePath: '/exports/One.epub' });
 
     const result = (await call('pending:save-as', one!.id)) as {
-      value: { saved: boolean; warning: string };
+      value: { saved: boolean; warning: unknown };
     };
 
     expect(result.value.saved).toBe(true);
-    expect(result.value.warning).toContain('could not remember that it was saved');
+    expect(result.value.warning).toEqual(message('save.copiedNotRecorded', {}));
     expect(logged).toHaveBeenCalledWith(
       'Could not finish recording an exported pending book.',
       cause,

@@ -14,10 +14,11 @@ import {
 
 import type { MainContext } from '../context';
 import { requireWorkflow } from '../context';
+import { dialogWords } from './dialog-words';
 import { handle } from './handle';
 import { ok } from './result';
 
-type CoversContext = Pick<MainContext, 'workflow' | 'lastPickerFolder'>;
+type CoversContext = Pick<MainContext, 'workflow' | 'lastPickerFolder' | 'appSettings'>;
 
 const target = (command: {
   readonly sessionId: string;
@@ -43,10 +44,16 @@ export function registerCoverHandlers(context: CoversContext): void {
     'covers:choose',
     coverOfBookCommandSchema,
     async (_event, command): Promise<WorkflowResult<CoversChange | null>> => {
+      const words = dialogWords(context);
       const result = await dialog.showOpenDialog({
-        title: 'Choose a cover',
+        title: words.chooseCover.title,
         properties: ['openFile'],
-        filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'] }],
+        filters: [
+          {
+            name: words.chooseCover.images,
+            extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'bmp'],
+          },
+        ],
         ...(context.lastPickerFolder === undefined
           ? {}
           : { defaultPath: context.lastPickerFolder }),
@@ -63,7 +70,7 @@ export function registerCoverHandlers(context: CoversContext): void {
     coversFolderCommandSchema,
     async (_event, command): Promise<WorkflowResult<CoversChange | null>> => {
       const result = await dialog.showOpenDialog({
-        title: 'Choose a folder of covers',
+        title: dialogWords(context).chooseCoversFolder.title,
         properties: ['openDirectory'],
         ...(context.lastPickerFolder === undefined
           ? {}

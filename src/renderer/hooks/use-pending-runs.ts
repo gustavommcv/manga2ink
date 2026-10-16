@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { message } from '@/domain/message';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { PendingRunSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
@@ -46,7 +47,7 @@ export function usePendingRuns(
       } catch {
         onFailure({
           code: 'pending_delete_failed',
-          message: 'Mangabound could not delete these pending books. Please try again.',
+          said: message('failure.pendingNotDeleted', {}),
         });
         return false;
       }

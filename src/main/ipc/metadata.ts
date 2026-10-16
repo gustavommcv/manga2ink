@@ -9,6 +9,7 @@ import {
   type VolumeSuggestion,
   type WorkflowResult,
 } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import type { MainContext } from '../context';
 import { handle, ignoredPayloadSchema } from './handle';
@@ -32,13 +33,19 @@ export function registerMetadataHandlers(context: MetadataContext): void {
     async (_event, command): Promise<WorkflowResult<undefined>> => {
       const provider = context.metadataProviders.get(command.providerId);
       if (provider === undefined) {
-        return failed({ code: 'provider_not_found', message: 'That source is not available.' });
+        return failed({
+          code: 'provider_not_found',
+          said: message('failure.sourceUnavailable', {}),
+        });
       }
       // Only the address a provider is registered with is ever opened, and only when it is https:
       // the page can name a provider but never an address.
       const homepage = new URL(provider.descriptor.homepage);
       if (homepage.protocol !== 'https:') {
-        return failed({ code: 'invalid_homepage', message: 'That source has no safe address.' });
+        return failed({
+          code: 'invalid_homepage',
+          said: message('failure.sourceUnsafeAddress', {}),
+        });
       }
       await shell.openExternal(homepage.href);
       return ok(undefined);
@@ -50,10 +57,16 @@ export function registerMetadataHandlers(context: MetadataContext): void {
     async (_event, command): Promise<WorkflowResult<readonly MetadataSearchResult[]>> => {
       const provider = context.metadataProviders.get(command.providerId);
       if (provider === undefined) {
-        return failed({ code: 'provider_not_found', message: 'That source is not available.' });
+        return failed({
+          code: 'provider_not_found',
+          said: message('failure.sourceUnavailable', {}),
+        });
       }
       if (context.activeJobs.has(command.jobId)) {
-        return failed({ code: 'job_exists', message: 'That search is already running.' });
+        return failed({
+          code: 'job_exists',
+          said: message('failure.alreadyRunning', { what: 'search' }),
+        });
       }
       const controller = new AbortController();
       context.activeJobs.set(command.jobId, controller);
@@ -77,10 +90,16 @@ export function registerMetadataHandlers(context: MetadataContext): void {
     > => {
       const provider = context.metadataProviders.get(command.providerId);
       if (provider === undefined) {
-        return failed({ code: 'provider_not_found', message: 'That source is not available.' });
+        return failed({
+          code: 'provider_not_found',
+          said: message('failure.sourceUnavailable', {}),
+        });
       }
       if (context.activeJobs.has(command.jobId)) {
-        return failed({ code: 'job_exists', message: 'That lookup is already running.' });
+        return failed({
+          code: 'job_exists',
+          said: message('failure.alreadyRunning', { what: 'lookup' }),
+        });
       }
       const controller = new AbortController();
       context.activeJobs.set(command.jobId, controller);

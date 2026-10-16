@@ -1,5 +1,6 @@
 import type { SettingsStorePort } from '@/application/ports/settings-store';
 import type { NetworkInterfaceOption } from '@/application/ports/network-interfaces';
+import { type AnyMessage, message } from '@/domain/message';
 import type { Preferences } from '@/domain/preferences';
 
 export interface RestoredPreferences {
@@ -9,8 +10,8 @@ export interface RestoredPreferences {
   /** Where a choose-file or choose-folder dialog should open, when that folder is still there. */
   readonly lastPickerFolder?: string;
   readonly preferredNetworkInterface?: NetworkInterfaceOption;
-  /** What the person should be told about what could not be restored. */
-  readonly notices: readonly string[];
+  /** What the person should be told about what could not be restored, as codes the window writes. */
+  readonly notices: readonly AnyMessage[];
 }
 
 /**
@@ -25,15 +26,13 @@ export class PreferencesWorkflow {
 
   async restore(): Promise<RestoredPreferences> {
     const { settings, unreadable, reset = [] } = await this.store.load();
-    const notices: string[] = [];
+    const notices: AnyMessage[] = [];
     if (unreadable) {
-      notices.push('The saved settings could not be read, so the defaults are in use.');
+      notices.push(message('notice.settingsUnreadable', {}));
     }
     if (reset.length > 0) {
       // The rest of the file was kept: only these were of a kind or in a range the app cannot use.
-      notices.push(
-        `Some saved options could not be used and are back to their defaults: ${reset.join(', ')}.`,
-      );
+      notices.push(message('notice.optionsReset', { options: reset }));
     }
     const {
       mode,

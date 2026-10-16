@@ -8,6 +8,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { RestoredSettings } from '@/shared/settings-contract';
 
 import { inertBridge } from './support/bridge';
+import { raw } from '@/domain/message';
 
 const wifi = { name: 'Wi-Fi', address: '192.168.1.20' };
 const kept: Preferences = {
@@ -156,7 +157,7 @@ describe('useKeptSettings', () => {
     it('keeps a choice made before the kept ones could not be read, with the defaults', async () => {
       const notify = vi.fn();
       const bridge = inertBridge({
-        loadSettings: () => Promise.resolve({ ok: false, error: { code: 'x', message: 'no' } }),
+        loadSettings: () => Promise.resolve({ ok: false, error: { code: 'x', said: raw('no') } }),
       });
       const { result } = renderHook(() => useKeptSettings(bridge, notify));
       act(() => {
@@ -174,7 +175,10 @@ describe('useKeptSettings', () => {
       const notify = vi.fn();
 
       await restoredFrom(
-        { preferences: kept, notices: ['The saved format was not valid.', 'The device is gone.'] },
+        {
+          preferences: kept,
+          notices: [raw('The saved format was not valid.'), raw('The device is gone.')],
+        },
         {},
         notify,
       );
@@ -216,7 +220,7 @@ describe('useKeptSettings', () => {
         loadSettings: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'settings_failed', message: 'Unreadable.' },
+            error: { code: 'settings_failed', said: raw('Unreadable.') },
           }),
       });
 
@@ -248,7 +252,7 @@ describe('useKeptSettings', () => {
         loadSettings: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'settings_failed', message: 'Unreadable.' },
+            error: { code: 'settings_failed', said: raw('Unreadable.') },
           }),
         saveSettings,
       });
@@ -274,7 +278,7 @@ describe('useKeptSettings', () => {
       await act(async () => {
         read.resolve({
           ok: true,
-          value: { preferences: kept, notices: ['The device is gone.'] },
+          value: { preferences: kept, notices: [raw('The device is gone.')] },
         });
         await read.promise;
       });
@@ -437,7 +441,7 @@ describe('useKeptSettings', () => {
         .fn<MangaboundBridge['saveSettings']>()
         .mockResolvedValueOnce({
           ok: false,
-          error: { code: 'settings_failed', message: 'The disk is full.' },
+          error: { code: 'settings_failed', said: raw('The disk is full.') },
         })
         .mockResolvedValue({ ok: true, value: undefined });
       const { result } = await restoredFrom(
@@ -476,7 +480,7 @@ describe('useKeptSettings', () => {
         result.current.setMode('bind-only');
       });
       await waitFor(() => {
-        expect(notify).toHaveBeenCalledExactlyOnceWith('The settings could not be saved.');
+        expect(notify).toHaveBeenCalledExactlyOnceWith('Your settings could not be saved.');
       });
       act(() => {
         result.current.setSettings((current) => ({ ...current }));

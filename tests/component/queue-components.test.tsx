@@ -360,7 +360,7 @@ describe('LibraryScreen', () => {
       title: 'Crashed',
       draft: createMappingDraft({ mangaTitle: 'Crashed', chapters }),
       volumes: [volume],
-      outcome: { status: 'failed', message: 'mangapress crashed.' },
+      outcome: { status: 'failed', message: raw('mangapress crashed.') },
     },
   ];
 

@@ -6,10 +6,13 @@ import { MetadataProviderError } from '@/adapters/metadata-providers/errors';
 import { ProcessCancelledError } from '@/application/ports/process-runner';
 import { SettingsSaveError } from '@/application/ports/settings-store';
 import { ConversionWorkflowError, ToolExecutionError } from '@/domain/conversion';
+import { message, raw } from '@/domain/message';
 import { LibraryIndexError } from '@/library/manifest';
 import { opdsPort } from '@/main/constants';
 import { toFailure } from '@/main/ipc/result';
 import { sharingFailure } from '@/main/ipc/sharing-failure';
+
+import { english } from './support/say';
 
 const systemError = (code: string): Error =>
   Object.assign(new Error(`${code}: the system said no`), { code });
@@ -25,7 +28,7 @@ afterEach(() => {
 });
 
 describe('toFailure', () => {
-  it('keeps the message and the issue of a tool failure, and logs nothing', () => {
+  it('says what the tool said, as it said it, with its issue, and logs nothing', () => {
     const issue = {
       tool: 'mangapress',
       severity: 'error',
@@ -38,10 +41,28 @@ describe('toFailure', () => {
 
     expect(toFailure(new ToolExecutionError(issue, 2))).toEqual({
       code: 'conversion_failed',
-      message: 'mangapress could not read the page.',
+      said: raw('mangapress could not read the page.'),
       issue,
     });
     expect(logged).not.toHaveBeenCalled();
+  });
+
+  it('says what the app says of a tool failure when the tool’s own words are not what to tell', () => {
+    const issue = {
+      tool: 'mangapress',
+      severity: 'error',
+      code: 'cover_read_failed',
+      stage: 'convert',
+      recoverable: false,
+      message: 'The cover chosen for Work could not be used.',
+    } as const;
+    const said = message('failure.coverUnusable', { book: 'Work' });
+
+    expect(toFailure(new ToolExecutionError(issue, 2, { said }))).toEqual({
+      code: 'cover_read_failed',
+      said,
+      issue,
+    });
   });
 
   it('reports a cancellation as one, however it was raised, and logs nothing', () => {
@@ -49,49 +70,48 @@ describe('toFailure', () => {
 
     expect(toFailure(new ProcessCancelledError())).toEqual({
       code: 'cancelled',
-      message: 'Conversion cancelled.',
+      said: message('failure.conversionCancelled', {}),
     });
-    expect(toFailure(aborted)).toEqual({ code: 'cancelled', message: 'Cancelled.' });
+    expect(toFailure(aborted)).toEqual({
+      code: 'cancelled',
+      said: message('failure.cancelled', {}),
+    });
     expect(logged).not.toHaveBeenCalled();
   });
 
-  it('keeps the message of a workflow error, and logs it only when it carries a cause', () => {
-    expect(toFailure(new ConversionWorkflowError('no_volumes', 'No volumes.'))).toEqual({
+  it('keeps what a workflow error says, and logs it only when it carries a cause', () => {
+    const noVolumes = message('workflow.noVolumes', {});
+
+    expect(toFailure(new ConversionWorkflowError('no_volumes', noVolumes))).toEqual({
       code: 'no_volumes',
-      message: 'No volumes.',
+      said: noVolumes,
     });
     expect(logged).not.toHaveBeenCalled();
 
-    const withCause = new ConversionWorkflowError('publish_failed', 'Could not write the book.', {
+    const publishFailed = message('workflow.publishFailed', {});
+    const withCause = new ConversionWorkflowError('publish_failed', publishFailed, {
       cause: systemError('ENOSPC'),
     });
 
-    expect(toFailure(withCause)).toEqual({
-      code: 'publish_failed',
-      message: 'Could not write the book.',
-    });
+    expect(toFailure(withCause)).toEqual({ code: 'publish_failed', said: publishFailed });
     expect(logged).toHaveBeenCalledWith(expect.stringContaining('publish_failed'), withCause);
   });
 
-  it('keeps the message of a provider error, and logs it only when it carries a cause', () => {
-    expect(
-      toFailure(new MetadataProviderError('timeout', 'The source did not answer.', true)),
-    ).toEqual({ code: 'timeout', message: 'The source did not answer.' });
+  it('keeps what a provider error says, and logs it only when it carries a cause', () => {
+    const timeout = message('provider.timeout', { service: 'MangaDex' });
+
+    expect(toFailure(new MetadataProviderError('timeout', timeout, true))).toEqual({
+      code: 'timeout',
+      said: timeout,
+    });
     expect(logged).not.toHaveBeenCalled();
 
-    const withCause = new MetadataProviderError(
-      'network_error',
-      'The source is unreachable.',
-      true,
-      {
-        cause: new TypeError('fetch failed'),
-      },
-    );
-
-    expect(toFailure(withCause)).toEqual({
-      code: 'network_error',
-      message: 'The source is unreachable.',
+    const unreachable = message('provider.unreachable', { service: 'MangaDex' });
+    const withCause = new MetadataProviderError('network_error', unreachable, true, {
+      cause: new TypeError('fetch failed'),
     });
+
+    expect(toFailure(withCause)).toEqual({ code: 'network_error', said: unreachable });
     expect(logged).toHaveBeenCalledWith(expect.stringContaining('network_error'), withCause);
   });
 
@@ -101,35 +121,34 @@ describe('toFailure', () => {
       error: new LibraryIndexError('invalid_manifest', 'The catalog names a path outside.'),
       failure: {
         code: 'invalid_manifest',
-        message: 'The output library catalog could not be read.',
+        said: message('failure.catalogUnreadable', {}),
       },
+      english: 'The output library catalog could not be read.',
     },
     {
       name: 'settings that could not be saved',
       error: new SettingsSaveError({ cause: systemError('EBUSY') }),
-      failure: { code: 'settings_save_failed', message: 'Your settings could not be saved.' },
+      failure: { code: 'settings_save_failed', said: message('failure.settingsNotSaved', {}) },
+      english: 'Your settings could not be saved.',
     },
     {
       name: 'data a tool should not have sent',
       error: new CliProtocolError('invalid_payload', 'Expected a number at volumes[2].'),
-      failure: {
-        code: 'invalid_payload',
-        message:
-          'A bundled conversion tool returned incompatible data. Reinstall Mangabound or open Diagnostics.',
-      },
+      failure: { code: 'invalid_payload', said: message('failure.toolIncompatible', {}) },
+      english:
+        'A bundled conversion tool returned incompatible data. Reinstall Mangabound or open Diagnostics.',
     },
     {
       name: 'a request the page should not have sent',
       error: z.object({ jobId: z.string() }).safeParse({}).error!,
-      failure: {
-        code: 'invalid_request',
-        message: 'Mangabound rejected an invalid workflow request.',
-      },
+      failure: { code: 'invalid_request', said: message('failure.invalidRequest', {}) },
+      english: 'Mangabound rejected an invalid workflow request.',
     },
   ])(
     'tells the person something short about $name and logs the real error',
-    ({ error, failure }) => {
+    ({ error, failure, english: sentence }) => {
       expect(toFailure(error)).toEqual(failure);
+      expect(english(failure.said)).toBe(sentence);
       expect(logged).toHaveBeenCalledOnce();
       expect(logged).toHaveBeenCalledWith(expect.stringContaining(failure.code), error);
     },
@@ -143,8 +162,9 @@ describe('toFailure', () => {
       const failure = toFailure(error);
 
       expect(failure.code).toBe('file_access_denied');
-      expect(failure.message).toContain('permissions');
-      expect(failure.message).not.toMatch(/sharing|network/iu);
+      expect(failure.said).toEqual(message('failure.fileAccessDenied', {}));
+      expect(english(failure.said)).toContain('permissions');
+      expect(english(failure.said)).not.toMatch(/sharing|network/iu);
       expect(logged).toHaveBeenCalledWith(expect.stringContaining('file_access_denied'), error);
     },
   );
@@ -154,7 +174,7 @@ describe('toFailure', () => {
 
     expect(toFailure(error)).toEqual({
       code: 'disk_full',
-      message: 'There is no space left on the drive. Free some space and try again.',
+      said: message('failure.diskFull', {}),
     });
     expect(logged).toHaveBeenCalledWith(expect.stringContaining('disk_full'), error);
   });
@@ -169,7 +189,7 @@ describe('toFailure', () => {
 
     expect(toFailure(bug)).toEqual({
       code: 'internal_error',
-      message: 'Mangabound could not complete that action.',
+      said: message('failure.internal', {}),
     });
     expect(logged).toHaveBeenCalledWith(expect.stringContaining('internal_error'), bug);
   });
@@ -177,7 +197,7 @@ describe('toFailure', () => {
   it('handles something that is not an Error at all', () => {
     expect(toFailure('boom')).toEqual({
       code: 'internal_error',
-      message: 'Mangabound could not complete that action.',
+      said: message('failure.internal', {}),
     });
     expect(logged).toHaveBeenCalledWith(expect.stringContaining('internal_error'), 'boom');
   });
@@ -188,14 +208,13 @@ describe('sharingFailure', () => {
     const failure = sharingFailure(systemError('EADDRINUSE'));
 
     expect(failure?.code).toBe('sharing_failed');
-    expect(failure?.message).toContain(String(opdsPort));
-    expect(failure?.message).toContain('already used by another program');
+    expect(failure?.said).toEqual(message('failure.sharingPortInUse', { port: opdsPort }));
   });
 
   it.each(['EADDRNOTAVAIL', 'EACCES'])('says the address was not usable for %s', (code) => {
     expect(sharingFailure(systemError(code))).toEqual({
       code: 'sharing_failed',
-      message: 'The sharing server could not be started on that network address.',
+      said: message('failure.sharingAddressRefused', {}),
     });
   });
 

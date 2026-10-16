@@ -7,6 +7,7 @@ import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
+import { raw } from '@/domain/message';
 
 const ready: ToolchainStatus = {
   state: 'ready',
@@ -29,7 +30,7 @@ const paperwhite: DeviceProfileSummary = {
 };
 const failure: WorkflowFailure = {
   code: 'tool_failed',
-  message: 'The device list is unavailable.',
+  said: raw('The device list is unavailable.'),
 };
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {

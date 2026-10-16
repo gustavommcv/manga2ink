@@ -8,6 +8,7 @@ import { createMappingDraft } from '@/domain/mapping';
 
 import { addFolder, bridge, folder, installBridge, runButton } from './support/workflow';
 import { converted, goodTitle, libraryBridge, looseTitle } from './support/library';
+import { raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -614,7 +615,7 @@ describe('the conversion options of an item that failed', () => {
       if (command.sessionId === 'session-second' && !secondWorks) {
         return Promise.resolve({
           ok: false as const,
-          error: { code: 'process_failed', message: 'mangapress crashed.' },
+          error: { code: 'process_failed', said: raw('mangapress crashed.') },
         });
       }
       return Promise.resolve(artifactOf(command.sessionId, command.format));
@@ -693,7 +694,7 @@ describe('the conversion options of an item that failed', () => {
             title: 'Second Manga',
             status: 'failed',
             artifacts: [],
-            failure: { code: 'process_failed', message: 'mangapress crashed.' },
+            failure: { code: 'process_failed', said: raw('mangapress crashed.') },
           },
         ],
       })

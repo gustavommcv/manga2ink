@@ -15,6 +15,7 @@ import {
   runButton,
 } from './support/workflow';
 import { converted, goodTitle, libraryBridge, looseTitle } from './support/library';
+import { raw, message } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -252,7 +253,10 @@ describe('looking up the author from the details of an item', () => {
     const searchMetadata = vi.fn<MangaboundBridge['searchMetadata']>(() =>
       Promise.resolve({
         ok: false,
-        error: { code: 'network_error', message: 'Could not reach MangaDex.' },
+        error: {
+          code: 'network_error',
+          said: message('provider.unreachable', { service: 'MangaDex' }),
+        },
       }),
     );
     installBridge(
@@ -431,7 +435,7 @@ describe('keeping the author and language with the folder', () => {
         ok: false,
         error: {
           code: 'details_save_failed',
-          message: "Couldn't keep the author and language with the source folder.",
+          said: raw("Couldn't keep the author and language with the source folder."),
         },
       }),
     );
@@ -580,7 +584,7 @@ describe('the covers a person gives the books of an item', () => {
       .mockResolvedValueOnce({ ok: true, value: null })
       .mockResolvedValueOnce({
         ok: false,
-        error: { code: 'cover_failed', message: 'The cover could not be kept.' },
+        error: { code: 'cover_failed', said: raw('The cover could not be kept.') },
       });
     installBridge(
       bridge({
@@ -614,7 +618,7 @@ describe('the covers a person gives the books of an item', () => {
         listCovers: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'covers_unreadable', message: 'The covers could not be read.' },
+            error: { code: 'covers_unreadable', said: raw('The covers could not be read.') },
           }),
       }),
     );

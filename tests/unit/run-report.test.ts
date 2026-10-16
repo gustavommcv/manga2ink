@@ -12,6 +12,7 @@ import {
 } from '@/domain/run-report';
 
 import { inEnglish } from './support/say';
+import { raw, message } from '@/domain/message';
 
 // The report carries messages, written when they are shown; what a person reads is what these tests
 // look at, so each result is said in English as it comes back.
@@ -77,7 +78,7 @@ describe('one input in a run', () => {
   ])('reports %s without books and stops later work only on cancellation', (code, cancelled) => {
     const report = reportInputRun(folder('Work'), {
       ok: false,
-      error: { code, message: 'The tool stopped.' },
+      error: { code, said: raw('The tool stopped.') },
     });
 
     expect(report).toEqual({
@@ -102,7 +103,7 @@ describe('a library in a run', () => {
   ])('keeps %s at row level without marking any title completed', (code, cancelled) => {
     const report = reportLibraryRun(library('Library', [title('Work')]), {
       ok: false,
-      error: { code, message: 'The library could not run.' },
+      error: { code, said: raw('The library could not run.') },
     });
 
     expect(report).toEqual({
@@ -128,7 +129,7 @@ describe('a library in a run', () => {
           title: 'Partial',
           status: 'failed' as const,
           artifacts: books,
-          failure: { code: 'process_failed', message: 'Volume 2 failed.' },
+          failure: { code: 'process_failed', said: raw('Volume 2 failed.') },
         },
         { title: 'Unknown', status: 'failed' as const, artifacts: [] },
       ]),
@@ -169,7 +170,7 @@ describe('a library in a run', () => {
           title: 'Cancelled',
           status: 'failed',
           artifacts: books,
-          failure: { code: 'cancelled', message: 'Cancelled.' },
+          failure: { code: 'cancelled', said: message('failure.cancelled', {}) },
         },
       ],
     });
@@ -215,13 +216,13 @@ describe('the final run report and remaining queue', () => {
     const unreadable: QueueRow = {
       ...folder('Unreadable'),
       state: 'unreadable',
-      message: 'Cannot read.',
+      message: raw('Cannot read.'),
     };
     const settled = Object.freeze([
       ...reportInputRun(done, { ok: true, value: books }).outcomes,
       ...reportInputRun(failed, {
         ok: false,
-        error: { code: 'process_failed', message: 'Cannot convert.' },
+        error: { code: 'process_failed', said: raw('Cannot convert.') },
       }).outcomes,
     ]);
     const rows = Object.freeze([done, failed, reading, unreadable]);
@@ -250,8 +251,10 @@ describe('the final run report and remaining queue', () => {
     const first = folder('First');
     const report = finish(
       [first, folder('Later'), library('Later library', [title('Work')])],
-      reportInputRun(first, { ok: false, error: { code: 'cancelled', message: 'Cancelled.' } })
-        .outcomes,
+      reportInputRun(first, {
+        ok: false,
+        error: { code: 'cancelled', said: message('failure.cancelled', {}) },
+      }).outcomes,
       new Set(['First']),
     );
 
@@ -349,7 +352,7 @@ describe('the final run report and remaining queue', () => {
   it('removes a library only when this run completed every title not already done', () => {
     const row = library('Library', [
       { ...title('Earlier'), outcome: { status: 'done' } },
-      { ...title('Retry'), outcome: { status: 'failed', message: 'Previous failure.' } },
+      { ...title('Retry'), outcome: { status: 'failed', message: raw('Previous failure.') } },
       title('New'),
     ]);
     const completed = new Map([['Library', new Set(['Retry', 'New'])]]);
@@ -377,7 +380,7 @@ describe('the final run report and remaining queue', () => {
     const row = library('Library', [title('Work')]);
     const ran = reportLibraryRun(row, {
       ok: false,
-      error: { code: 'binding_failed', message: 'Cannot bind.' },
+      error: { code: 'binding_failed', said: raw('Cannot bind.') },
     });
     expect(finish([row], ran.outcomes, new Set(['Library']))).toEqual({
       outcomes: ran.outcomes,

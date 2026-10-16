@@ -13,6 +13,7 @@ import {
   keptSettings,
   runButton,
 } from './support/workflow';
+import { raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -231,7 +232,7 @@ describe('sharing to an e-reader', () => {
         startSharing: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'sharing_failed', message: 'The port is already in use.' },
+            error: { code: 'sharing_failed', said: raw('The port is already in use.') },
           }),
       }),
     );
@@ -253,7 +254,7 @@ describe('sharing to an e-reader', () => {
         chooseLibrary: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'internal_error', message: 'The folder could not be chosen.' },
+            error: { code: 'internal_error', said: raw('The folder could not be chosen.') },
           }),
       }),
     );
@@ -292,7 +293,7 @@ describe('sharing to an e-reader', () => {
         convert: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'process_failed', message: 'mangapress crashed.' },
+            error: { code: 'process_failed', said: raw('mangapress crashed.') },
           }),
       }),
     );

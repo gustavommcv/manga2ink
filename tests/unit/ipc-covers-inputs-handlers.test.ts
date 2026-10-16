@@ -157,7 +157,11 @@ describe('the covers a person attaches', () => {
   });
 
   it('is a failure the screen can say when the tools are not ready', async () => {
-    registerCoverHandlers({ workflow: undefined, lastPickerFolder: undefined });
+    registerCoverHandlers({
+      workflow: undefined,
+      lastPickerFolder: undefined,
+      appSettings: undefined,
+    });
 
     expect((await call('covers:list', { sessionId: 'session' })).ok).toBe(false);
   });
@@ -204,7 +208,7 @@ describe('what a person chooses to convert', () => {
       ok: true;
       value: {
         inputs: { selectionId: string; kind: string; displayName: string; displayPath: string }[];
-        rejected: { name: string; reason: string }[];
+        rejected: { name: string; reason: unknown }[];
       };
     };
 
@@ -316,5 +320,65 @@ describe('what a person chooses to convert', () => {
     electron.showOpenDialog.mockResolvedValueOnce({ canceled: true, filePaths: [] });
     expect(await call('workflow:choose-library')).toEqual({ ok: true, value: null });
     expect(context.selectedLibraries.size).toBe(1);
+  });
+});
+
+describe('what the native dialogs say', () => {
+  const choosing = (language: 'en' | 'pt-BR') => {
+    const context = {
+      workflow: { covers: { choose: vi.fn().mockResolvedValue({ covers: [] }) } },
+      appSettings: { language: () => language },
+      lastPickerFolder: undefined,
+      selectedInputs: new Map(),
+      selectedLibraries: new Map(),
+      preferences: undefined,
+    };
+    registerCoverHandlers(context as never);
+    registerInputHandlers(context as never);
+    electron.showOpenDialog.mockResolvedValue({ canceled: true, filePaths: [] });
+  };
+
+  it('is in the language of the window, titles, filters and the button of the library', async () => {
+    choosing('pt-BR');
+
+    await call('covers:choose', { sessionId: 'session', slot: 1 });
+    await call('covers:choose-folder', { sessionId: 'session', slots: [1] });
+    await call('workflow:choose-inputs', 'folders');
+    await call('workflow:choose-inputs', 'files');
+    await call('workflow:choose-library');
+
+    const asked = electron.showOpenDialog.mock.calls.map(([options]) => options as unknown);
+    expect(asked).toEqual([
+      expect.objectContaining({
+        title: 'Escolher uma capa',
+        filters: [expect.objectContaining({ name: 'Imagens' })],
+      }),
+      expect.objectContaining({ title: 'Escolher uma pasta de capas' }),
+      expect.objectContaining({ title: 'Escolher pastas de mangá' }),
+      expect.objectContaining({
+        title: 'Escolher arquivos de quadrinhos',
+        filters: [expect.objectContaining({ name: 'Arquivo de quadrinhos' })],
+      }),
+      expect.objectContaining({
+        title: 'Escolher uma biblioteca para compartilhar',
+        buttonLabel: 'Usar esta pasta',
+      }),
+    ]);
+  });
+
+  it('is in English for the language that is English, and until the settings have been read', async () => {
+    choosing('en');
+    await call('workflow:choose-inputs', 'folders');
+    electron.listeners.clear();
+    registerInputHandlers({
+      appSettings: undefined,
+      selectedInputs: new Map(),
+      selectedLibraries: new Map(),
+    } as never);
+    await call('workflow:choose-inputs', 'folders');
+
+    expect(
+      electron.showOpenDialog.mock.calls.map(([options]) => (options as { title: string }).title),
+    ).toEqual(['Choose manga folders', 'Choose manga folders']);
   });
 });

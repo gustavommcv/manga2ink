@@ -15,6 +15,8 @@ import {
 } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
 import { defaultProcessMode, type ProcessMode } from '@/domain/process-mode';
+import { message } from '@/domain/message';
+import { useSayLater } from '@/renderer/hooks/use-messages';
 import type { NetworkInterfaceOption } from '@/shared/opds-contract';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { SaveSettingsCommand } from '@/shared/settings-contract';
@@ -69,6 +71,7 @@ export function useKeptSettings(
     SetStateAction<NetworkInterfaceOption | undefined>
   >;
 } {
+  const say = useSayLater();
   const [settings, setSettingsNow] = useState<MangapressSettings>(defaultMangapressSettings);
   const [format, setFormatNow] = useState<BookFormat>(defaultFormat);
   const [mode, setModeNow] = useState<ProcessMode>(defaultProcessMode);
@@ -122,7 +125,7 @@ export function useKeptSettings(
           earlyChoices.current = [];
           // Nothing is saved from here on: what is on screen is only the defaults, and saving
           // them would overwrite what was kept.
-          notify('The saved settings could not be loaded.');
+          notify(say(message('failure.settingsNotLoaded', {})));
           return;
         }
         const restoredSingleBook = Boolean(saved.preferences.singleBook);
@@ -152,13 +155,13 @@ export function useKeptSettings(
         // What was chosen before this arrived, over it: a change from what was kept, so it is saved.
         for (const choose of earlyChoices.current) choose();
         earlyChoices.current = [];
-        for (const notice of saved.notices) notify(notice);
+        for (const notice of saved.notices) notify(say(notice));
         setRestored(true);
       });
     return () => {
       current = false;
     };
-  }, [bridge, notify]);
+  }, [bridge, notify, say]);
 
   useEffect(() => {
     if (!restored) return;
@@ -182,10 +185,10 @@ export function useKeptSettings(
     };
     void bridge.saveSettings(command).then(
       (result) => {
-        if (!result.ok) failedToSave(result.error.message);
+        if (!result.ok) failedToSave(say(result.error.said));
       },
       () => {
-        failedToSave('The settings could not be saved.');
+        failedToSave(say(message('failure.settingsNotSaved', {})));
       },
     );
   }, [
@@ -198,6 +201,7 @@ export function useKeptSettings(
     selectedProviderId,
     preferredNetworkInterface,
     notify,
+    say,
   ]);
 
   return {

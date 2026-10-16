@@ -76,3 +76,22 @@ describe('keeping the app settings', () => {
     expect(settled).toHaveBeenCalledOnce();
   });
 });
+
+describe('the language the main process speaks', () => {
+  it('is English until the settings have been read', () => {
+    const { store } = fakeStore({ settings: defaultAppSettings, unreadable: false });
+
+    expect(new AppSettingsWorkflow(store, () => ['pt-BR']).language()).toBe('en');
+  });
+
+  it('is the language the settings came to when they were read, and when they were changed', async () => {
+    const { store } = fakeStore({ settings: defaultAppSettings, unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => ['pt-BR', 'en']);
+
+    await workflow.restore();
+    expect(workflow.language()).toBe('pt-BR');
+
+    await workflow.save({ language: 'en' });
+    expect(workflow.language()).toBe('en');
+  });
+});

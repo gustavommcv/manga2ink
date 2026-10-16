@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { MetadataProviderError } from '@/adapters/metadata-providers/errors';
+import { message } from '@/domain/message';
 import { requestText, requestTimeoutMs, userAgent } from '@/adapters/metadata-providers/http';
 
 const respond = (status: number, body = ''): Response =>
@@ -39,21 +40,25 @@ describe('the request every metadata provider goes through', () => {
   });
 
   it.each([
-    [() => Promise.reject(new TypeError('offline')), 'network_error', 'Could not reach Example.'],
+    [
+      () => Promise.reject(new TypeError('offline')),
+      'network_error',
+      message('provider.unreachable', { service: 'Example' }),
+    ],
     [
       () => Promise.resolve(respond(429)),
       'rate_limited',
-      'Example is rate-limiting requests. Try again shortly.',
+      message('provider.rateLimited', { service: 'Example' }),
     ],
     [
       () => Promise.resolve(respond(500)),
       'http_error',
-      'Example returned an unexpected status (500).',
+      message('provider.unexpectedStatus', { service: 'Example', status: 500 }),
     ],
-  ])('fails with the service named in the message', async (answer, code, message) => {
+  ])('fails with the service named in what is said', async (answer, code, said) => {
     await expect(
       requestText(vi.fn<typeof fetch>(answer), { url: 'https://x.test', serviceName: 'Example' }),
-    ).rejects.toMatchObject({ code, message, recoverable: true });
+    ).rejects.toMatchObject({ code, said, recoverable: true });
   });
 
   it('keeps the cause of a network failure, and lets a cancellation through untouched', async () => {
@@ -99,7 +104,7 @@ describe('the request every metadata provider goes through', () => {
       expect(failure).toBeInstanceOf(MetadataProviderError);
       expect(failure).toMatchObject({
         code: 'timeout',
-        message: 'Example did not answer in time. Try again shortly.',
+        said: message('provider.timeout', { service: 'Example' }),
         recoverable: true,
       });
     });
@@ -159,7 +164,10 @@ describe('the request every metadata provider goes through', () => {
         serviceName: 'Example',
       }).catch((error: unknown) => error);
 
-      expect(failure).toMatchObject({ code: 'network_error', message: 'Could not reach Example.' });
+      expect(failure).toMatchObject({
+        code: 'network_error',
+        said: message('provider.unreachable', { service: 'Example' }),
+      });
       expect((failure as Error).cause).toBe(cause);
     });
   });

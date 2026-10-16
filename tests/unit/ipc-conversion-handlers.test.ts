@@ -9,6 +9,7 @@ import { defaultMangapressSettings } from '@/domain/output-profile';
 import { registerConversionHandlers } from '@/main/ipc/conversion';
 import { PendingRunActivity } from '@/main/pending-run-activity';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { raw } from '@/domain/message';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const listeners = vi.hoisted(() => new Map<string, Listener>());
@@ -308,7 +309,7 @@ describe('converting a library', () => {
           title: 'Bad',
           status: 'failed',
           artifacts: [],
-          failure: { code: 'process_failed', message: 'mangapress crashed.' },
+          failure: { code: 'process_failed', said: raw('mangapress crashed.') },
         },
       ],
     });

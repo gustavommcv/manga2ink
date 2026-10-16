@@ -101,7 +101,7 @@ describe('packaged OPDS delivery', () => {
         username: 'reader',
         password: 'hunter2',
       });
-      if (!started.ok) throw new Error(started.error.message);
+      if (!started.ok) throw new Error(JSON.stringify(started.error.said));
       return started.value;
     });
     const authorization = `Basic ${Buffer.from('reader:hunter2').toString('base64')}`;
@@ -243,7 +243,7 @@ describe('packaged OPDS delivery', () => {
         username: '',
         password: '',
       });
-      if (!started.ok) throw new Error(started.error.message);
+      if (!started.ok) throw new Error(JSON.stringify(started.error.said));
       return started.value;
     });
 
@@ -303,10 +303,13 @@ describe('packaged OPDS delivery', () => {
       return JSON.stringify(started);
     });
 
-    const result = JSON.parse(raw) as { ok: boolean; error?: { code: string; message: string } };
+    const result = JSON.parse(raw) as {
+      ok: boolean;
+      error?: { code: string; said: { id: string } };
+    };
     assert.equal(result.ok, false, 'Expected sharing to be refused for a corrupt catalog.');
     assert.equal(result.error?.code, 'malformed_json');
-    assert.equal(result.error.message, 'The output library catalog could not be read.');
+    assert.equal(result.error.said.id, 'failure.catalogUnreadable');
     const status = await browser.execute(async () => window.mangabound?.getSharingStatus());
     assert.ok(status?.ok === true && !status.value.active, 'Expected no sharing to be running.');
   });
@@ -332,7 +335,7 @@ describe('packaged OPDS delivery', () => {
         username: '',
         password: '',
       });
-      if (!started.ok) throw new Error(started.error.message);
+      if (!started.ok) throw new Error(JSON.stringify(started.error.said));
       return started.value;
     });
 

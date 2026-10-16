@@ -1,5 +1,6 @@
 import { type BookDetails, volumeBookTitle } from './book-details';
 import type { MappingDraft } from './mapping';
+import type { AnyMessage } from './message';
 import type { MangapressSettings } from './output-profile';
 import type { ProcessMode } from './process-mode';
 
@@ -163,6 +164,10 @@ export interface ConversionRequest {
   readonly details?: BookDetails;
 }
 
+/**
+ * A request the workflow refused. What it says to the person is `said`, a code the window writes in
+ * its language (ADR 0053); the message of the error itself is that code, for the log.
+ */
 export class ConversionWorkflowError extends Error {
   constructor(
     readonly code:
@@ -178,21 +183,25 @@ export class ConversionWorkflowError extends Error {
       | 'session_not_found'
       | 'title_not_found'
       | 'unsupported_mode',
-    message: string,
+    readonly said: AnyMessage,
     options?: ErrorOptions,
   ) {
-    super(message, options);
+    super(said.id, options);
     this.name = 'ConversionWorkflowError';
   }
 }
 
 export class ToolExecutionError extends Error {
+  /** What the app says of it when the tool's own words are not what the person needs. */
+  readonly said: AnyMessage | undefined;
+
   constructor(
     readonly issue: PipelineIssue,
     readonly exitCode: number | null,
-    options?: ErrorOptions,
+    options?: ErrorOptions & { readonly said?: AnyMessage },
   ) {
     super(issue.message, options);
     this.name = 'ToolExecutionError';
+    this.said = options?.said;
   }
 }

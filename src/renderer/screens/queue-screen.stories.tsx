@@ -8,6 +8,8 @@ import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 
 import { QueueScreen, type QueueScreenProps } from './queue-screen';
+import { raw } from '@/domain/message';
+import { message } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 24, chapter: 1 },
@@ -75,7 +77,7 @@ const rows: readonly QueueRow[] = [
     displayName: 'Broken.cbz',
     displayPath: 'D:\\Manga\\Broken.cbz',
     state: 'unreadable',
-    message: 'The file could not be read.',
+    message: raw('The file could not be read.'),
   },
 ];
 
@@ -281,8 +283,8 @@ export const SomeItemsNotAdded: Story = {
   args: {
     rows: rows.slice(0, 1),
     rejected: [
-      { name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' },
-      { name: 'Backups', reason: 'That item could not be read.' },
+      { name: 'notes.txt', reason: message('input.onlyFoldersAndCbz', {}) },
+      { name: 'Backups', reason: message('input.unreadable', {}) },
     ],
   },
 };
@@ -347,7 +349,7 @@ export const InPortuguese: Story = {
   decorators: [inPortuguese],
   args: {
     rows: rows.slice(0, 3),
-    rejected: [{ name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' }],
+    rejected: [{ name: 'notes.txt', reason: message('input.onlyFoldersAndCbz', {}) }],
     pendingRuns: [
       {
         libraryId: 'run-one',

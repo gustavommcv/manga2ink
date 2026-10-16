@@ -11,6 +11,7 @@ import { Notices } from '@/renderer/components/shared/notices';
 import { QueueScreen, type QueueScreenProps } from '@/renderer/screens/queue-screen';
 
 import { inPortuguese } from './support/i18n';
+import { message, raw } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 24, chapter: 1 },
@@ -182,21 +183,21 @@ describe('the queue screen in Portuguese', () => {
       inPortuguese(
         <QueueScreen
           {...props({
-            rejected: [{ name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' }],
+            rejected: [{ name: 'notes.txt', reason: message('input.onlyFoldersAndCbz', {}) }],
           })}
         />,
       ),
     );
 
-    const message = screen
+    const notice = screen
       .getAllByRole('status')
       .find((status) => status.textContent.includes('notes.txt'));
-    expect(message).toBeDefined();
-    if (message === undefined) return;
-    expect(message).toHaveTextContent(
-      'notes.txt não foi adicionado. Only folders and .cbz files can be added.',
+    expect(notice).toBeDefined();
+    if (notice === undefined) return;
+    expect(notice).toHaveTextContent(
+      'notes.txt não foi adicionado. Só é possível adicionar pastas e arquivos .cbz.',
     );
-    expect(within(message).getByRole('button', { name: 'Dispensar esta mensagem' })).toBeVisible();
+    expect(within(notice).getByRole('button', { name: 'Dispensar esta mensagem' })).toBeVisible();
   });
 
   it('writes the plan that was validated, with the pages of each book', () => {
@@ -313,7 +314,7 @@ describe('what the queue says about each row, in Portuguese', () => {
     displayName: 'Broken.cbz',
     displayPath: '/manga/Broken.cbz',
     state: 'unreadable',
-    message: 'The file could not be read.',
+    message: raw('The file could not be read.'),
   };
   const needsVolumes: QueueRow = {
     ...folderRow,

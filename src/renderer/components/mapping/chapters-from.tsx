@@ -4,13 +4,16 @@ import { useState } from 'react';
 import { ProviderPicker } from './provider-picker';
 
 import type { VolumeSuggestion } from '@/domain/mapping';
+import { message } from '@/domain/message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { NoMatchesNotice } from '@/renderer/components/shared/no-matches-notice';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { panelId, TabList, tabId } from '@/renderer/components/ui/tabs';
+import { useSay } from '@/renderer/hooks/use-messages';
 import { useMetadataSearch } from '@/renderer/hooks/use-metadata-search';
+import { SaidError } from '@/renderer/lib/said-error';
 import type { MetadataProviderDescriptor, MetadataSearchResult } from '@/shared/workflow-contract';
 
 type Source = 'names' | 'online' | 'manual';
@@ -163,6 +166,7 @@ function OnlinePanel({
   providers,
   selectedId,
 }: OnlineSource): React.JSX.Element {
+  const { say } = useSay();
   const provider = providers.find((candidate) => candidate.id === selectedId);
   const [query, setQuery] = useState(mangaTitle);
   const [applyingId, setApplyingId] = useState<string>();
@@ -195,7 +199,9 @@ function OnlinePanel({
       })
       .catch((error: unknown) => {
         setPanelError(
-          error instanceof Error ? error.message : 'The suggestion could not be applied.',
+          say(
+            error instanceof SaidError ? error.said : message('failure.suggestionNotApplied', {}),
+          ),
         );
       })
       .finally(() => {

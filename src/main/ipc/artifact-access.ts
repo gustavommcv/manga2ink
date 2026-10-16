@@ -1,10 +1,11 @@
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import { failed, ok } from './result';
 
 const unavailable = {
   code: 'artifact_not_found',
-  message: 'The saved book is no longer available.',
+  said: message('failure.savedBookGone', {}),
 } as const;
 
 /**

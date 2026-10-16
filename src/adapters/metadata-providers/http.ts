@@ -1,3 +1,5 @@
+import { message } from '@/domain/message';
+
 import { MetadataProviderError } from './errors';
 
 /**
@@ -35,15 +37,18 @@ export async function requestText(
     if (timeout.aborted && signal?.aborted !== true) {
       return new MetadataProviderError(
         'timeout',
-        `${serviceName} did not answer in time. Try again shortly.`,
+        message('provider.timeout', { service: serviceName }),
         true,
         { cause: error },
       );
     }
     if (error instanceof Error && error.name === 'AbortError') return error;
-    return new MetadataProviderError('network_error', `Could not reach ${serviceName}.`, true, {
-      cause: error,
-    });
+    return new MetadataProviderError(
+      'network_error',
+      message('provider.unreachable', { service: serviceName }),
+      true,
+      { cause: error },
+    );
   };
 
   let response: Response;
@@ -58,14 +63,14 @@ export async function requestText(
   if (response.status === 429) {
     throw new MetadataProviderError(
       'rate_limited',
-      `${serviceName} is rate-limiting requests. Try again shortly.`,
+      message('provider.rateLimited', { service: serviceName }),
       true,
     );
   }
   if (!response.ok) {
     throw new MetadataProviderError(
       'http_error',
-      `${serviceName} returned an unexpected status (${String(response.status)}).`,
+      message('provider.unexpectedStatus', { service: serviceName, status: response.status }),
       true,
     );
   }

@@ -1,5 +1,6 @@
 import type { InputSelection } from '@/domain/conversion';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import { failed, ok } from './result';
 
@@ -15,7 +16,7 @@ export async function inspectOnce<Inspected>(
 ): Promise<WorkflowResult<Inspected>> {
   const selection = selections.get(selectionId);
   if (selection === undefined) {
-    return failed({ code: 'selection_not_found', message: 'Choose the input again.' });
+    return failed({ code: 'selection_not_found', said: message('failure.chooseInputAgain', {}) });
   }
   try {
     return ok(await inspect(selection));

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { fromTheMainFrame, handle, ignoredPayloadSchema } from '@/main/ipc/handle';
 import { failed, ok } from '@/main/ipc/result';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { raw, message } from '@/domain/message';
 
 const listeners = vi.hoisted(
   () =>
@@ -48,7 +49,7 @@ describe('which frame a request may come from', () => {
     expect(await invoke(undefined, from as unknown as IpcMainInvokeEvent)).toEqual(
       failed({
         code: 'untrusted_sender',
-        message: 'Mangabound only takes requests from its own window.',
+        said: message('failure.untrustedSender', {}),
       }),
     );
     expect(run).not.toHaveBeenCalled();
@@ -77,7 +78,7 @@ describe('IPC handle', () => {
     expect(await invoke(42)).toEqual(
       failed({
         code: 'invalid_request',
-        message: 'Mangabound rejected an invalid workflow request.',
+        said: message('failure.invalidRequest', {}),
       }),
     );
     expect(run).not.toHaveBeenCalled();
@@ -89,7 +90,7 @@ describe('IPC handle', () => {
 
   it('keeps an explicit domain failure without remapping or logging it', async () => {
     const logged = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const result = failed({ code: 'job_exists', message: 'Already running.' });
+    const result = failed({ code: 'job_exists', said: raw('Already running.') });
     handle('test:request', ignoredPayloadSchema, () => result);
 
     expect(await invoke(undefined)).toBe(result);
@@ -109,7 +110,7 @@ describe('IPC handle', () => {
       expect(await invoke(undefined)).toEqual(
         failed({
           code: 'internal_error',
-          message: 'Mangabound could not complete that action.',
+          said: message('failure.internal', {}),
         }),
       );
       expect(logged).toHaveBeenCalledExactlyOnceWith(
@@ -125,7 +126,7 @@ describe('IPC handle', () => {
   });
 
   it('allows a command-specific failure mapping for parse and execution failures', async () => {
-    const failure = { code: 'pending_delete_failed', message: 'Try again.' };
+    const failure = { code: 'pending_delete_failed', said: raw('Try again.') };
     const mapFailure = vi.fn(() => failure);
     const cause = new Error('storage');
     const run = vi.fn(() => Promise.reject(cause));

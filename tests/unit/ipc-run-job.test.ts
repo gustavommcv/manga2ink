@@ -7,6 +7,7 @@ import type { ConversionArtifact } from '@/domain/conversion';
 import { emptyLibraryManifest } from '@/library/manifest';
 import { runJob } from '@/main/ipc/run-job';
 import { PendingRunActivity } from '@/main/pending-run-activity';
+import { message } from '@/domain/message';
 
 type JobContext = Parameters<typeof runJob>[1];
 function deferred<Value>() {
@@ -56,7 +57,7 @@ describe('conversion job lifetime', () => {
       ok: false,
       error: {
         code: 'library_not_found',
-        message: 'The pending conversion is no longer available.',
+        said: message('failure.pendingConversionGone', {}),
       },
     });
     expect(run).not.toHaveBeenCalled();
@@ -74,7 +75,7 @@ describe('conversion job lifetime', () => {
       ok: false,
       error: {
         code: 'pending_in_use',
-        message: 'The pending conversion is being deleted.',
+        said: message('failure.pendingConversionBeingDeleted', {}),
       },
     });
     expect(run).not.toHaveBeenCalled();
@@ -91,7 +92,7 @@ describe('conversion job lifetime', () => {
       ok: false,
       error: {
         code: 'job_exists',
-        message: 'That conversion is already running.',
+        said: message('failure.alreadyRunning', { what: 'conversion' }),
       },
     });
     expect(run).not.toHaveBeenCalled();

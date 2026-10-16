@@ -7,6 +7,7 @@ import type {
 } from '@/application/ports/settings-store';
 import { PreferencesWorkflow } from '@/application/workflows/preferences';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 import { defaultPreferences } from '@/domain/preferences';
 
 const kept: StoredSettings = {
@@ -40,7 +41,7 @@ describe('restoring the options', () => {
     const restored = await new PreferencesWorkflow(port, () => Promise.resolve(true)).restore();
 
     expect(restored.notices).toEqual([
-      'Some saved options could not be used and are back to their defaults: cropping minimum, gamma.',
+      message('notice.optionsReset', { options: ['cropping minimum', 'gamma'] }),
     ]);
     expect(restored.preferences.format).toBe('pdf');
   });
@@ -130,9 +131,7 @@ describe('restoring the options', () => {
     const restored = await new PreferencesWorkflow(port, () => Promise.resolve(true)).restore();
 
     expect(restored.preferences).toEqual(defaultPreferences);
-    expect(restored.notices).toEqual([
-      'The saved settings could not be read, so the defaults are in use.',
-    ]);
+    expect(restored.notices).toEqual([message('notice.settingsUnreadable', {})]);
   });
 });
 
