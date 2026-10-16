@@ -4,6 +4,7 @@ import type {
   SavedAppSettings,
 } from './app-settings-contract';
 import type { NetworkInterfaceOption, OpdsAuthConfig, OpdsSharingStatus } from './opds-contract';
+import type { OpenProjectLinkCommand } from './project-links-contract';
 import type { RestoredSettings, SaveSettingsCommand } from './settings-contract';
 import type { ToolchainStatus } from './toolchain-status';
 import type {
@@ -141,4 +142,9 @@ export interface MangaboundBridge {
   readonly saveAppSettings: (
     command: SaveAppSettingsCommand,
   ) => Promise<WorkflowResult<SavedAppSettings>>;
+  /**
+   * Opens a place the About tab names in the browser of the system. The window names the place and
+   * its own language; it never gives an address (ADR 0054).
+   */
+  readonly openProjectLink: (command: OpenProjectLinkCommand) => Promise<WorkflowResult<undefined>>;
 }

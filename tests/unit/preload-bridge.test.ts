@@ -126,6 +126,12 @@ const forwarded: readonly (readonly [
   ['saveSettings', [{ saved: true }], 'settings:save', { saved: true }],
   ['loadAppSettings', [], 'app:load-settings', undefined],
   ['saveAppSettings', [{ language: 'pt-BR' }], 'app:save-settings', { language: 'pt-BR' }],
+  [
+    'openProjectLink',
+    [{ link: 'guide', language: 'pt-BR' }],
+    'app:open-link',
+    { link: 'guide', language: 'pt-BR' },
+  ],
 ];
 
 describe('what the page is handed', () => {

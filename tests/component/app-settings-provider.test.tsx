@@ -49,14 +49,14 @@ describe('without an AppSettingsProvider', () => {
     function Alone(): React.JSX.Element {
       return (
         <p>
-          {useLanguage()}: {useMessages().appSettings.general}
+          {useLanguage()}: {useMessages().appSettings.interface}
         </p>
       );
     }
 
     render(<Alone />);
 
-    expect(screen.getByText('en: General')).toBeVisible();
+    expect(screen.getByText('en: Interface')).toBeVisible();
   });
 
   it('refuses to keep a choice, since there is nothing to keep it', () => {

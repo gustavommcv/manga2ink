@@ -1,5 +1,6 @@
 import type { Language } from '@/domain/app-settings';
 
+import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
 import { modeSaid } from './mode-said';
 import { type QueueMessages, queueMessages } from './queue-messages';
@@ -15,6 +16,7 @@ import { textSaid } from './text-said';
  * is a compile error, and adding a part is a module and a line here.
  */
 export interface Messages {
+  readonly about: AboutMessages;
   readonly appSettings: AppSettingsMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
@@ -25,6 +27,7 @@ export interface Messages {
 
 function build(language: Language): Messages {
   return {
+    about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],

@@ -25,6 +25,7 @@ import { registerInputHandlers } from './ipc/inputs';
 import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { registerPendingHandlers } from './ipc/pending';
+import { registerProjectLinkHandlers } from './ipc/project-links';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { bootstrapToolchain } from './toolchain-bootstrap';
@@ -101,6 +102,7 @@ void app.whenReady().then(async () => {
 
   registerSettingsHandlers(context, preferencesWorkflow);
   registerAppSettingsHandlers(appSettingsWorkflow);
+  registerProjectLinkHandlers();
   registerInputHandlers(context);
   registerConversionHandlers(context);
   registerCoverHandlers(context);

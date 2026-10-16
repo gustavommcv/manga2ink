@@ -6,13 +6,15 @@ import {
   AppSettingsContext,
   useAppSettingsState,
 } from '@/renderer/hooks/use-app-settings';
+import { type AppInfo, AppInfoContext } from '@/renderer/hooks/use-app-info';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 
 /**
  * Reads what a person decided about the app (ADR 0052) and gives everything under it the language
- * and its messages, and the way to change them. It draws nothing until they are read, which is
- * a moment, so nothing is drawn in a language that is about to change.
+ * and its messages, and the way to change them, and what the app says about itself (its version, and
+ * the way to open a place in the browser of the system, ADR 0054). It draws nothing until the
+ * settings are read, which is a moment, so nothing is drawn in a language that is about to change.
  */
 export function AppSettingsProvider({
   bridge,
@@ -24,6 +26,19 @@ export function AppSettingsProvider({
   const state = useAppSettingsState(bridge);
   const language = state?.language ?? defaultLanguage;
   const i18n = useMemo(() => ({ language, messages: messagesFor(language) }), [language]);
+  const info = useMemo<AppInfo>(
+    () => ({
+      version: bridge.runtime.version,
+      openLink: async (link) => {
+        try {
+          return (await bridge.openProjectLink({ link, language })).ok;
+        } catch {
+          return false;
+        }
+      },
+    }),
+    [bridge, language],
+  );
 
   // The page says which language it is in, for the readers that speak it.
   useEffect(() => {
@@ -33,7 +48,9 @@ export function AppSettingsProvider({
   if (state === undefined) return null;
   return (
     <AppSettingsContext.Provider value={state}>
-      <I18nContext.Provider value={i18n}>{children}</I18nContext.Provider>
+      <AppInfoContext.Provider value={info}>
+        <I18nContext.Provider value={i18n}>{children}</I18nContext.Provider>
+      </AppInfoContext.Provider>
     </AppSettingsContext.Provider>
   );
 }
