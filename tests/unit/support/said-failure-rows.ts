@@ -266,12 +266,20 @@ export const failureRows: Rows<
     [
       { options: ['gamma'] },
       'Some saved options could not be used and are back to their defaults: gamma.',
-      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: gamma.',
+      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: gama.',
     ],
     [
-      { options: ['quiet', 'cropping minimum'] },
+      { options: ['quiet', 'croppingMinimum'] },
       'Some saved options could not be used and are back to their defaults: quiet, cropping minimum.',
-      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: quiet, cropping minimum.',
+      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: modo silencioso, área mínima mantida.',
+    ],
+  ],
+
+  'notice.deviceFallback': [
+    [
+      { profile: 'KPW5', name: 'Kindle Paperwhite 6' },
+      'The device profile KPW5 is not available, so Kindle Paperwhite 6 is selected.',
+      'O perfil de dispositivo KPW5 não está disponível, então Kindle Paperwhite 6 foi selecionado.',
     ],
   ],
 

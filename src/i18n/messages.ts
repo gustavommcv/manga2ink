@@ -12,7 +12,9 @@ import { mappingSaid } from './mapping-said';
 import { type MappingMessages, mappingMessages } from './mapping-messages';
 import { modeSaid } from './mode-said';
 import { noticeSaid } from './notice-said';
+import { type OptionFieldsMessages, optionFieldsMessages } from './option-fields-messages';
 import { type OptionsMessages, optionsMessages } from './options-messages';
+import { optionsSaid } from './options-said';
 import { providerSaid } from './provider-said';
 import { type ProcessingMessages, processingMessages } from './processing-messages';
 import { type QueueMessages, queueMessages } from './queue-messages';
@@ -40,6 +42,7 @@ export interface Messages {
   readonly library: LibraryMessages;
   readonly details: DetailsMessages;
   readonly options: OptionsMessages;
+  readonly fields: OptionFieldsMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
@@ -58,6 +61,7 @@ function build(language: Language): Messages {
     library: libraryMessages[language],
     details: detailsMessages[language],
     options: optionsMessages[language],
+    fields: optionFieldsMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
@@ -69,6 +73,7 @@ function build(language: Language): Messages {
       ...failureSaid[language],
       ...mappingSaid[language],
       ...libraryCoversSaid[language],
+      ...optionsSaid[language],
       ...noticeSaid[language],
       ...workflowSaid[language],
       ...saveSaid[language],

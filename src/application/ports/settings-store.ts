@@ -1,6 +1,7 @@
 import type { Preferences } from '@/domain/preferences';
 
 import type { NetworkInterfaceOption } from './network-interfaces';
+import type { OptionName } from '@/domain/messages/notice';
 
 /** Everything kept between sessions: options, last Save-dialog location and sharing interface. */
 export interface StoredSettings extends Preferences {
@@ -17,7 +18,7 @@ export interface SettingsLoad {
   /** True when a file was there but could not be used, so `settings` are the defaults. */
   readonly unreadable: boolean;
   /** Options in a file that could be used whose saved value could not, and so are the default. */
-  readonly reset?: readonly string[];
+  readonly reset?: readonly OptionName[];
 }
 
 /** Saving failed; what was saved before is still there. */

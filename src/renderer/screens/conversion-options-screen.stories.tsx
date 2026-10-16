@@ -1,9 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/i18n/messages';
 
 import {
   ConversionOptionsScreen,
@@ -144,5 +146,28 @@ export const ItemsWithOptionsOfTheirOwn: Story = {
       within(notice).getByRole('button', { name: 'Use the queue’s options for all' }),
     );
     await expect(canvas.getByText('2 items now follow the queue’s options.')).toHaveFocus();
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/**
+ * The page of the conversion options in Brazilian Portuguese, for webtoon strips, so that the controls
+ * they leave without effect say why in the words of the language (ADR 0053).
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: {
+    itemsWithOptions: 2,
+    settings: { ...defaultMangapressSettings, webtoon: true },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('heading', { name: 'Opções de conversão' })).toBeVisible();
+    await expect(canvas.getByLabelText('Ordem de leitura de mangá')).toBeDisabled();
   },
 };

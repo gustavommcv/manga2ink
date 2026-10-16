@@ -35,13 +35,13 @@ describe('restoring the options', () => {
     const { port } = store({
       settings: kept,
       unreadable: false,
-      reset: ['cropping minimum', 'gamma'],
+      reset: ['croppingMinimum', 'gamma'],
     });
 
     const restored = await new PreferencesWorkflow(port, () => Promise.resolve(true)).restore();
 
     expect(restored.notices).toEqual([
-      message('notice.optionsReset', { options: ['cropping minimum', 'gamma'] }),
+      message('notice.optionsReset', { options: ['croppingMinimum', 'gamma'] }),
     ]);
     expect(restored.preferences.format).toBe('pdf');
   });

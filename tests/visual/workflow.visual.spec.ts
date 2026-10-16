@@ -450,3 +450,11 @@ test('the details of a book in Portuguese remain visually consistent', async ({ 
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('book-details-portuguese.png');
 });
+
+test('the conversion options page in Portuguese remains visually consistent', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-conversion-options--in-portuguese&viewMode=story');
+  await expect(page.getByRole('heading', { name: 'Opções de conversão' })).toBeFocused();
+  await expect(page.getByRole('group', { name: 'Itens com opções próprias' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page).toHaveScreenshot('conversion-options-portuguese.png');
+});

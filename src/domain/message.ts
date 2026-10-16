@@ -5,6 +5,7 @@ import type { LibraryMessageValues } from './messages/library';
 import type { MappingMessageValues } from './messages/mapping';
 import type { ModeMessageValues } from './messages/mode';
 import type { NoticeMessageValues } from './messages/notice';
+import type { OptionsMessageValues } from './messages/options';
 import type { ProviderMessageValues } from './messages/provider';
 import type { QueueMessageValues } from './messages/queue';
 import type { SaveMessageValues } from './messages/save';
@@ -30,6 +31,7 @@ export interface MessageValues
     MappingMessageValues,
     FailureMessageValues,
     NoticeMessageValues,
+    OptionsMessageValues,
     WorkflowMessageValues,
     SaveMessageValues,
     ProviderMessageValues,

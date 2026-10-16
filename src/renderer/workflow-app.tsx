@@ -91,6 +91,7 @@ import type {
   VolumeSuggestion,
   WorkflowFailure,
 } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 /** The volumes of a mapping, numbered, in order: what a series of books is made of. */
 const volumeNumbers = (mapping: MappingDraft | undefined): readonly number[] =>
@@ -878,7 +879,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   const deviceProfileFallback = resolveDeviceProfileFallback(settings.deviceProfile, profiles);
   if (deviceProfileFallback !== undefined) {
     notify(
-      `The device profile ${settings.deviceProfile} is not available, so ${deviceProfileFallback.name} is selected.`,
+      say(
+        message('notice.deviceFallback', {
+          profile: settings.deviceProfile,
+          name: deviceProfileFallback.name,
+        }),
+      ),
     );
     setSettings(withDeviceProfile(settings, deviceProfileFallback.code));
   }

@@ -72,7 +72,7 @@ describe('what the window says when something could not be done, in Portuguese',
       'Não foi possível ler as configurações salvas, então os padrões estão em uso.',
     );
     expect(notices).toHaveTextContent(
-      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: gamma.',
+      'Algumas opções salvas não puderam ser usadas e voltaram aos padrões: gama.',
     );
   });
 
