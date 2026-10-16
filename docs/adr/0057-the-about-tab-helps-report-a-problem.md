@@ -1,6 +1,6 @@
 # ADR 0057: The About tab helps report a problem, and says what it leaves out
 
-- Status: Accepted
+- Status: Accepted (amended by [ADR 0058](0058-the-app-keeps-a-log-file.md): `logs` is a second folder that opens by name)
 - Date: 2026-10-16
 - Relates to: [ADR 0054](0054-the-about-tab-and-links-that-open-by-name.md) (the About tab, and places that open by name), [ADR 0053](0053-what-is-said-outside-the-window-is-a-code.md) (a failure is a code the window writes)
 

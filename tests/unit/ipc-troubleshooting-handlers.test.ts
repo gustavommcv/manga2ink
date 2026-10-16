@@ -119,14 +119,14 @@ describe('copying the diagnostics', () => {
 
 describe('the folders the window can ask to have opened', () => {
   it('are named, and have no path in the command', () => {
-    expect(appFolders).toEqual(['data']);
+    expect(appFolders).toEqual(['data', 'logs']);
     expect(openAppFolderCommandSchema.parse({ folder: 'data' })).toEqual({ folder: 'data' });
     expect(openAppFolderCommandSchema.parse({ folder: 'data', path: '/etc' })).toEqual({
       folder: 'data',
     });
   });
 
-  it.each([{}, { folder: '/etc' }, { folder: '../data' }, { folder: 'logs' }, 'data', null])(
+  it.each([{}, { folder: '/etc' }, { folder: '../data' }, { folder: 'LOGS' }, 'data', null])(
     'refuse %j',
     (command) => {
       expect(openAppFolderCommandSchema.safeParse(command).success).toBe(false);
@@ -155,9 +155,44 @@ describe('opening the data folder', () => {
       error: { code: 'folder_not_opened', said: message('failure.folderNotOpened', {}) },
     });
     expect(console.error).toHaveBeenCalledWith(
-      'A folder of the app could not be opened.',
+      'The data folder of the app could not be opened.',
       'Failed to open path',
     );
+  });
+
+  it('opens the folder of the log, which is made first so that it can be opened before a line is written', async () => {
+    const ensureFolder = vi.fn(() => Promise.resolve('/home/reader/.config/userData/logs'));
+    register({ log: { ensureFolder } });
+
+    expect(await call('app:open-folder', { folder: 'logs' })).toEqual({
+      ok: true,
+      value: undefined,
+    });
+
+    expect(ensureFolder).toHaveBeenCalledOnce();
+    expect(electron.openPath).toHaveBeenCalledExactlyOnceWith('/home/reader/.config/userData/logs');
+  });
+
+  it.each([
+    ['there is no log yet', undefined],
+    [
+      'the folder of the log cannot be made',
+      { ensureFolder: () => Promise.reject(new Error('read-only')) },
+    ],
+    [
+      'the folder of the log cannot be made and the reason is only a text',
+      // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors -- what a caller that throws a text does
+      { ensureFolder: () => Promise.reject('read-only') },
+    ],
+  ])('says it could not when %s, and opens nothing', async (_name, log) => {
+    register({ log });
+
+    expect(await call('app:open-folder', { folder: 'logs' })).toEqual({
+      ok: false,
+      error: { code: 'folder_not_opened', said: message('failure.folderNotOpened', {}) },
+    });
+    expect(electron.openPath).not.toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalled();
   });
 
   it('opens nothing for a folder that is not on the list', async () => {

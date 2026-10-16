@@ -453,6 +453,7 @@ describe('what the app lets go of when it quits', () => {
         settlePreferences: step('settle preferences'),
         settleAppSettings: step('settle app settings'),
         pruneCompleted: step('prune'),
+        settleLog: step('settle log'),
         ...overrides,
       } satisfies QuitCleanup,
     };
@@ -484,6 +485,7 @@ describe('what the app lets go of when it quits', () => {
       'settle preferences',
       'settle app settings',
       'prune',
+      'settle log',
       'quit',
     ]);
   });
@@ -531,6 +533,26 @@ describe('what the app lets go of when it quits', () => {
     expect(order.at(-1)).toBe('quit');
   });
 
+  it('waits for the log last, so that what the clean-up reports is in it, and then quits', async () => {
+    const failure = new Error('permission denied');
+    const { cleanup: steps, order } = cleanup({ pruneCompleted: () => Promise.reject(failure) });
+    const report = vi.fn(() => order.push('report'));
+
+    await cleanUpBeforeQuit(steps, () => order.push('quit'), report);
+
+    expect(order.slice(-3)).toEqual(['report', 'settle log', 'quit']);
+  });
+
+  it('quits even when the log cannot be waited for', async () => {
+    const { cleanup: steps, order } = cleanup({
+      settleLog: () => Promise.reject(new Error('disk')),
+    });
+
+    await cleanUpBeforeQuit(steps, () => order.push('quit'), vi.fn());
+
+    expect(order.at(-1)).toBe('quit');
+  });
+
   it('has nothing to do for what was never set up, and still quits', async () => {
     const quit = vi.fn();
 
@@ -542,6 +564,7 @@ describe('what the app lets go of when it quits', () => {
         settlePreferences: undefined,
         settleAppSettings: undefined,
         pruneCompleted: undefined,
+        settleLog: undefined,
       },
       quit,
       vi.fn(),

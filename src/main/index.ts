@@ -8,6 +8,7 @@ import { directoryExists } from '@/adapters/library/directory-exists';
 import { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
+import { FileLog } from '@/adapters/log/file-log';
 import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
@@ -20,6 +21,7 @@ import { registerRendererScheme, serveRenderer } from './app-protocol';
 import { createMainContext } from './context';
 import { settleEarlierFolders } from './processing-status';
 import { cleanUpBeforeQuit } from './quit-cleanup';
+import { installLog, logFolder } from './log';
 import { registerArtifactHandlers } from './ipc/artifacts';
 import { registerConversionHandlers } from './ipc/conversion';
 import { registerCoverHandlers } from './ipc/covers';
@@ -58,6 +60,17 @@ let cleanupStarted = false;
 
 void app.whenReady().then(async () => {
   if (!holdsTheLock) return;
+  // First, so that what goes wrong from here on is in the log (ADR 0058). A line the log could not
+  // write is told on the terminal, which it has not yet taken over.
+  context.log = new FileLog({
+    directory: logFolder(app.getPath('userData')),
+    onFailure: console.warn.bind(console),
+  });
+  installLog(
+    context.log,
+    { console, process },
+    `Mangabound ${app.getVersion()} started (${app.isPackaged ? 'packaged' : 'development build'}, Electron ${process.versions.electron}, ${process.platform} ${process.arch}).`,
+  );
   // Before anything reads them: an earlier version kept these in the installer's own folder on
   // Windows, which uninstalling the app empties.
   const legacyMove = legacyStorageMove(process.platform, process.env, app.getPath('home'));
@@ -157,6 +170,7 @@ app.on('before-quit', (event) => {
         context.appSettings === undefined ? undefined : () => context.appSettings!.settled(),
       pruneCompleted:
         context.pendingRuns === undefined ? undefined : () => context.pendingRuns!.pruneCompleted(),
+      settleLog: context.log === undefined ? undefined : () => context.log!.settled(),
     },
     () => {
       app.quit();

@@ -1,4 +1,4 @@
-import { ClipboardCopy, ExternalLink, FolderOpen, Heart } from 'lucide-react';
+import { ClipboardCopy, ExternalLink, FolderOpen, Heart, ScrollText } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 
 import mark from '@/renderer/assets/mark-192.webp';
@@ -79,7 +79,7 @@ export function AboutTab(): React.JSX.Element {
 
       <Section title={words.troubleshooting.title}>
         <p className="text-muted-foreground text-xs leading-relaxed">
-          {words.troubleshooting.text}
+          {words.troubleshooting.text} {words.troubleshooting.logsText}
         </p>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -101,6 +101,16 @@ export function AboutTab(): React.JSX.Element {
           >
             {words.troubleshooting.openData}
             <FolderOpen aria-hidden="true" />
+          </Button>
+          <Button
+            onClick={() => {
+              help(() => openFolder('logs'));
+            }}
+            size="sm"
+            variant="outline"
+          >
+            {words.troubleshooting.openLogs}
+            <ScrollText aria-hidden="true" />
           </Button>
         </div>
         <div aria-live="polite">

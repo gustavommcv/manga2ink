@@ -1,4 +1,5 @@
 import type { FsCoverStore } from '@/adapters/covers/fs-cover-store';
+import type { FileLog } from '@/adapters/log/file-log';
 import { FsLibraryStore } from '@/adapters/library/fs-library-store';
 import { PendingCatalogStore } from '@/adapters/library/pending-catalog-store';
 import type { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
@@ -63,6 +64,8 @@ export interface MainContext {
   currentPreferences: Preferences;
   lastSaveFolder: string | undefined;
   workflow: ConversionWorkflow | undefined;
+  /** The log file of the app (ADR 0058); undefined until the app is ready. */
+  log: FileLog | undefined;
   /** What the bundled tools were found to be at launch; undefined until they have been checked. */
   toolchainStatus: ToolchainStatus | undefined;
   mangapressCli: MangapressCliAdapter | undefined;
@@ -92,6 +95,7 @@ export function createMainContext(): MainContext {
     appSettings: undefined,
     processing: undefined,
     toolchainStatus: undefined,
+    log: undefined,
     activeSharing: undefined,
     activeSharingTarget: undefined,
     lastPickerFolder: undefined,
