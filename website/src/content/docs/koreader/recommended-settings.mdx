@@ -78,9 +78,107 @@ A full refresh can reduce these traces, but may add a visible flash or slow page
 
 ## CBZ/PDF page controls
 
-Try a view that shows one page at a time, with the zoom set to fit the whole page. If the book already fills the screen, leave cropping off: the conversion may already have removed the margins, and cropping again could cut off artwork.
-
 These controls are for CBZ and PDF. For EPUB, use the options in its own reading menu. Change one setting at a time and compare a few pages before you save your preferences.
+
+The steps below follow [a video by Eink Dude on reading manga in KOReader](https://www.youtube.com/watch?v=gaakIh9p8tw). The menu names are the ones KOReader uses.
+
+### Show one whole page at a time
+
+With a book open, tap the bottom of the screen to open the bottom menu. It holds the reading settings of the book, in tabs.
+
+1. In the tab with **View Mode**, choose **page**. The other choice, **continuous**, scrolls the pages as a web page does.
+2. In the tab with **Zoom to** and **Fit**, set **Zoom to** to **page** and **Fit** to **full**. Each page then shows whole on the screen.
+
+<TutorialImage
+  name="koreader/zoom-page-full"
+  alt="Zoom to set to page and Fit set to full in the KOReader bottom menu."
+  pending
+/>
+
+<details>
+<summary>Show the steps</summary>
+
+1. With a book open, tap the bottom of the screen. The bottom menu appears.
+
+<TutorialImage
+  name="koreader/bottom-menu"
+  alt="The KOReader bottom menu open over a manga page, with its tabs."
+  pending
+/>
+
+2. In the tab with **View Mode**, choose **page**.
+
+<TutorialImage
+  name="koreader/view-mode-page"
+  alt="View Mode set to page in the KOReader bottom menu."
+  pending
+/>
+
+3. In the tab with **Zoom to** and **Fit**, set **Zoom to** to **page** and **Fit** to **full**.
+
+<TutorialImage
+  name="koreader/zoom-page-full"
+  alt="Zoom to set to page and Fit set to full in the KOReader bottom menu."
+  pending
+/>
+
+</details>
+
+### Turn page cropping off
+
+In the bottom menu, open the tab with **Page Crop** and choose **none**. KOReader's own choice is **auto**: it looks for the margins of every page before it shows the page. Mangabound's starting settings already crop the margins in the conversion (**Margins and page numbers**), so a second crop costs time and can cut off artwork. In the video, **none** makes page turns much faster, and the battery probably lasts longer.
+
+<TutorialImage
+  name="koreader/crop-none"
+  alt="Page Crop set to none in the KOReader bottom menu."
+  pending
+/>
+
+### Choose which way pages turn
+
+A CBZ that mangapress makes does not say which way it turns, so you choose it in KOReader. Open the top menu, tap the gear icon, and go to **Taps and gestures → Page turns**. Tick **Invert page turn taps and swipes** for a book you read from right to left.
+
+Long-press that item to choose what newly opened books use, **LTR** or **RTL**. To set it for one folder only, use [Tweak document settings](#tweak-document-settings).
+
+<TutorialImage
+  name="koreader/page-turns-invert"
+  alt="Page turns menu with Invert page turn taps and swipes checked."
+  pending
+/>
+
+### Turn off the taps you do not want
+
+While you read manga, a tap in the wrong place can open a menu, switch the front light on or change the status bar. Each of these can be turned off.
+
+#### Front light
+
+Open the top menu, tap the gear icon, and go to **Taps and gestures → Gesture manager → Tap corner → Bottom left**. Choose **Nothing**. On a device with a front light, tapping this corner switches the light on and off unless you change it.
+
+<TutorialImage
+  name="koreader/tap-corner-bottom-left"
+  alt="Tap corner menu with Bottom left set to Nothing."
+  pending
+/>
+
+#### Status bar
+
+In the same menu, go to **Status bar → Lock status bar**. Tapping the bar then no longer changes it.
+
+<TutorialImage
+  name="koreader/lock-status-bar"
+  alt="Lock status bar checked in the KOReader Status bar menu."
+  pending
+/>
+
+#### Menus
+
+Go to **Taps and gestures → Activate menu** and untick **With a tap**. The top and bottom menus then open only with a swipe. Keep **With a swipe** ticked, so that you can still open them.
+
+<TutorialImage
+  name="koreader/activate-menu"
+  alt="Activate menu with With a tap unchecked and With a swipe checked."
+  pending
+/>
 
 KOReader also has **Panel Zoom** for manga and comics. It is in the top menu, under the document icon, and works with CBZ and PDF: a long press on a panel zooms in on it. The [official guide](https://koreader.rocks/user_guide/) has the details.
 
@@ -132,6 +230,16 @@ This example swaps tap zones and swipe directions for right-to-left reading; it 
 
 ## Saving a default
 
-Some controls let you save a default with a long press. Others open help or another dialog. Follow the confirmation that KOReader shows for that control. Books you have already opened may keep their own settings.
+In the bottom menu, long-press a value you chose. KOReader asks "Set default … to …?" and offers **Set as default**, so books you open later start with it.
+
+<TutorialImage
+  name="koreader/set-as-default"
+  alt="The question Set default Page Crop to none? with the Set as default button."
+  pending
+/>
+
+To save all the settings of the open book at once, open the top menu, the tab with the document icon, and choose **Document settings → Save document settings as default**.
+
+Books you have already opened may keep their own settings.
 
 If a book still displays incorrectly, include the KOReader version, the device, the file format and your settings when you ask for help.

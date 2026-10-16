@@ -81,9 +81,107 @@ E-ink リーダーで、前のページの残像が見える場合は、**Screen
 
 ## CBZ/PDF のページ操作
 
-1 ページずつ表示するビューを試し、ズームはページ全体に合わせます。本がすでに画面いっぱいになっている場合は、クロップをオフのままにしてください。変換の時点で余白がすでに取り除かれていることがあり、もう一度クロップすると、絵が切れる場合があります。
-
 これらの操作は CBZ と PDF 用です。EPUB では、その本の読書メニューにあるオプションを使ってください。設定を 1 つずつ変え、数ページを見比べてから、好みを保存します。
+
+以下の手順は、[KOReader でマンガを読むことについての Eink Dude の動画](https://www.youtube.com/watch?v=gaakIh9p8tw)に沿っています。メニューの名前は KOReader のものです。
+
+### 1 ページ全体を表示する
+
+本を開いた状態で画面の下をタップすると、ボトムメニューが開きます。ボトムメニューには、その本の読書設定がタブごとに並んでいます。
+
+1. **View Mode** のタブで **page** を選びます。もう 1 つの選択肢 **continuous** は、Web ページのようにページをスクロールします。
+2. **Zoom to** と **Fit** のタブで、**Zoom to** を **page**、**Fit** を **full** にします。これで、各ページが画面に全体で表示されます。
+
+<TutorialImage
+  name="koreader/zoom-page-full"
+  alt="KOReader のボトムメニューで Zoom to を page、Fit を full にした状態。"
+  pending
+/>
+
+<details>
+<summary>手順を表示</summary>
+
+1. 本を開いた状態で、画面の下をタップします。ボトムメニューが表示されます。
+
+<TutorialImage
+  name="koreader/bottom-menu"
+  alt="マンガのページの上に開いた KOReader のボトムメニュー。タブが並んでいます。"
+  pending
+/>
+
+2. **View Mode** のタブで **page** を選びます。
+
+<TutorialImage
+  name="koreader/view-mode-page"
+  alt="KOReader のボトムメニューで View Mode を page にした状態。"
+  pending
+/>
+
+3. **Zoom to** と **Fit** のタブで、**Zoom to** を **page**、**Fit** を **full** にします。
+
+<TutorialImage
+  name="koreader/zoom-page-full"
+  alt="KOReader のボトムメニューで Zoom to を page、Fit を full にした状態。"
+  pending
+/>
+
+</details>
+
+### ページのクロップをオフにする
+
+ボトムメニューで **Page Crop** のあるタブを開き、**none** を選びます。KOReader の標準は **auto** で、ページを表示する前に、毎回そのページの余白を探します。Mangabound の初期設定は、変換の時点で余白をすでにクロップしている (**Margins and page numbers**) ので、2 回目のクロップは時間がかかるうえ、絵を切ることもあります。動画では、**none** にするとページめくりがずっと速くなり、バッテリーもおそらく長持ちします。
+
+<TutorialImage
+  name="koreader/crop-none"
+  alt="KOReader のボトムメニューで Page Crop を none にした状態。"
+  pending
+/>
+
+### ページをめくる向きを選ぶ
+
+mangapress が作る CBZ には、めくる向きが書かれていないので、向きは KOReader で選びます。トップメニューを開き、歯車アイコンをタップして、**Taps and gestures → Page turns** に進みます。右から左へ読む本では、**Invert page turn taps and swipes** にチェックを入れます。
+
+この項目を長押しすると、これから開く本の標準を **LTR** か **RTL** から選べます。フォルダーだけに設定するときは、[Tweak document settings](#tweak-document-settings) を使います。
+
+<TutorialImage
+  name="koreader/page-turns-invert"
+  alt="Invert page turn taps and swipes にチェックが入った Page turns メニュー。"
+  pending
+/>
+
+### 使わないタップをオフにする
+
+マンガを読んでいる最中に、違う場所をタップすると、メニューが開いたり、フロントライトが点いたり、ステータスバーが変わったりすることがあります。これらは、それぞれオフにできます。
+
+#### フロントライト
+
+トップメニューを開き、歯車アイコンをタップして、**Taps and gestures → Gesture manager → Tap corner → Bottom left** に進み、**Nothing** を選びます。フロントライトのある端末では、設定を変えないかぎり、この隅をタップするとライトの点灯と消灯が切り替わります。
+
+<TutorialImage
+  name="koreader/tap-corner-bottom-left"
+  alt="Bottom left が Nothing になった Tap corner メニュー。"
+  pending
+/>
+
+#### ステータスバー
+
+同じメニューの **Status bar → Lock status bar** に進みます。これでバーをタップしても、表示が変わらなくなります。
+
+<TutorialImage
+  name="koreader/lock-status-bar"
+  alt="KOReader の Status bar メニューで Lock status bar にチェックが入った状態。"
+  pending
+/>
+
+#### メニュー
+
+**Taps and gestures → Activate menu** に進み、**With a tap** のチェックを外します。トップメニューとボトムメニューは、スワイプでだけ開くようになります。メニューを開けるように、**With a swipe** にはチェックを入れたままにしてください。
+
+<TutorialImage
+  name="koreader/activate-menu"
+  alt="With a tap のチェックを外し、With a swipe にチェックが入った Activate menu メニュー。"
+  pending
+/>
 
 KOReader には、マンガやコミック向けの **Panel Zoom** もあります。トップメニューのドキュメントアイコンの下にあり、CBZ と PDF で動作します。コマを長押しすると、そのコマが拡大されます。詳細は[公式ガイド](https://koreader.rocks/user_guide/)を参照してください。
 
@@ -135,6 +233,16 @@ KOReader には、マンガやコミック向けの **Panel Zoom** もありま�
 
 ## 既定値として保存する
 
-一部の操作では、長押しで既定値を保存できます。ほかの操作では、ヘルプや別のダイアログが開きます。その操作について KOReader が表示する確認に従ってください。すでに開いたことのある本は、それぞれの設定を保持することがあります。
+ボトムメニューで、選んだ値を長押しします。KOReader が "Set default … to …?" と尋ね、**Set as default** を表示するので、これを選ぶと、あとで開く本はその値で始まります。
+
+<TutorialImage
+  name="koreader/set-as-default"
+  alt="Set default Page Crop to none? という確認と Set as default ボタン。"
+  pending
+/>
+
+開いている本の設定をまとめて保存するには、トップメニューのドキュメントアイコンのタブで、**Document settings → Save document settings as default** を選びます。
+
+すでに開いたことのある本は、それぞれの設定を保持することがあります。
 
 本が正しく表示されない場合は、助けを求めるときに、KOReader のバージョン、端末、ファイル形式、設定を添えてください。

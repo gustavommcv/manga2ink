@@ -69,6 +69,26 @@ The recommended-settings page shows one useful main image per task and native `<
 
 The Lua example uses `inverse_reading_order` for right-to-left tap/swipe behavior only. Readers preserve the existing configuration structure, replace the example directory, and back up the file. Review the [official plugin instructions](https://github.com/koreader/koreader/wiki/Tweak-document-settings-by-directory) and current KOReader source when changing this guidance.
 
+### Captures still to take
+
+The page of reader settings has nine pictures that are not taken yet, for the steps on whole pages, cropping, the direction of page turns, the taps and the default. Each is a `TutorialImage` with the `pending` flag. While its file is missing, the development server (`npm run site:dev`) shows a dashed box with the file name and what the capture shows, and the published page shows nothing: the written steps are enough without the picture, as everywhere else. The check of the built pages fails when a box is in one, so it cannot be published.
+
+| File under `src/assets/tutorial/koreader/` | What it shows                                                                    |
+| ------------------------------------------ | -------------------------------------------------------------------------------- |
+| `bottom-menu.png`                          | The bottom menu open over a manga page, with its tabs                            |
+| `view-mode-page.png`                       | **View Mode** set to **page**                                                    |
+| `zoom-page-full.png`                       | **Zoom to** set to **page** and **Fit** set to **full**                          |
+| `crop-none.png`                            | **Page Crop** set to **none**                                                    |
+| `page-turns-invert.png`                    | **Taps and gestures → Page turns**, with **Invert page turn taps and swipes** on |
+| `tap-corner-bottom-left.png`               | **Gesture manager → Tap corner**, with **Bottom left** set to **Nothing**        |
+| `lock-status-bar.png`                      | **Status bar**, with **Lock status bar** on                                      |
+| `activate-menu.png`                        | **Activate menu**, with **With a tap** off and **With a swipe** on               |
+| `set-as-default.png`                       | The question **Set default … to …?** with its **Set as default** button          |
+
+Take them like the others: the Kindle's screenshot, the control outlined in red, cropped to the menu without manga artwork, as a PNG of the same width. When a file is added the box goes away by itself and the picture appears; the `pending` flag can then be removed in the three languages (leaving it does no harm). The line at the top of the page says that the captures come from a Kindle 2024 with KOReader 2026.07.2-198: a capture from another device or version must say so in its caption.
+
+The menu names of these steps were read in the source of KOReader 2026.07.1 (the desktop build), not on the Kindle, and the steps follow [Eink Dude's video](https://www.youtube.com/watch?v=gaakIh9p8tw): check them on the Kindle when taking the captures, and correct the text where the Kindle's menus differ.
+
 ## Option examples
 
 The pictures and size tables of the [advanced-options pages](src/content/docs/user-guide/advanced-options/) are made from open-licensed comic pages with the mangapress that Mangabound ships. See [ADR 0048](../docs/adr/0048-option-examples-from-open-pages.md).

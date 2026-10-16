@@ -9,60 +9,83 @@ interface Props {
   name: string;
   alt: string;
   caption?: string;
+  /**
+   * The capture is still to be taken. While the file is missing, the development server shows a box
+   * that says where to put it, and the published page shows nothing; once the file is there it is
+   * shown like any other and the flag can go.
+   */
+  pending?: boolean;
 }
 
-const { name, alt, caption } = Astro.props;
+const { name, alt, caption, pending = false } = Astro.props;
 const fullSizeLabel = stringsFor(Astro.locals.starlightRoute).tutorialImage.openFullSize;
 const images = import.meta.glob<ImageMetadata>('../assets/tutorial/**/*.png', {
   eager: true,
   import: 'default',
 });
 const source = images[`../assets/tutorial/${name}.png`];
-if (!source)
+if (!source && !pending)
   throw new Error(
     `Missing tutorial image: ${name}. Run npm run site:media at the repository root.`,
   );
+const showPendingBox = !source && import.meta.env.DEV;
 const capture = name.startsWith('generated/')
   ? captureManifest.captures.find((entry) => entry.name === name.slice('generated/'.length))
   : undefined;
-if (name.startsWith('generated/') && !capture)
+if (source && name.startsWith('generated/') && !capture)
   throw new Error(`Missing tutorial capture record: ${name}`);
-const sources = capture
-  ? capture.variants
-      .map(({ file }) => {
-        const variant = images[`../assets/tutorial/generated/${file}`];
-        if (!variant) throw new Error(`Missing tutorial capture variant: ${file}`);
-        return variant;
-      })
-      .sort((a, b) => a.width - b.width)
-  : [source];
+const sources = !source
+  ? []
+  : capture
+    ? capture.variants
+        .map(({ file }) => {
+          const variant = images[`../assets/tutorial/generated/${file}`];
+          if (!variant) throw new Error(`Missing tutorial capture variant: ${file}`);
+          return variant;
+        })
+        .sort((a, b) => a.width - b.width)
+    : [source];
 const optimized = await Promise.all(
   sources.map(async (variant) => ({
     width: variant.width,
     ...(await getImage({ src: variant, format: 'webp', quality: 'max' })),
   })),
 );
-const fullSize = optimized.find((variant) => variant.width === source.width);
-if (!fullSize) throw new Error(`Missing full-size tutorial image: ${name}`);
+const fullSize = source ? optimized.find((variant) => variant.width === source.width) : undefined;
+if (source && !fullSize) throw new Error(`Missing full-size tutorial image: ${name}`);
 const srcset = capture
   ? optimized.map((variant) => `${variant.src} ${variant.width}w`).join(', ')
   : undefined;
 ---
 
-<figure data-tutorial-image={name}>
-  <a href={fullSize.src} title={fullSizeLabel}>
-    <Image
-      src={source}
-      alt={alt}
-      format="webp"
-      quality="max"
-      loading="lazy"
-      srcset={srcset}
-      sizes={capture ? 'auto, (min-width: 50rem) 45rem, calc(100vw - 2rem)' : undefined}
-    />
-  </a>
-  {caption && <figcaption>{caption}</figcaption>}
-</figure>
+{source && fullSize && (
+  <figure data-tutorial-image={name}>
+    <a href={fullSize.src} title={fullSizeLabel}>
+      <Image
+        src={source}
+        alt={alt}
+        format="webp"
+        quality="max"
+        loading="lazy"
+        srcset={srcset}
+        sizes={capture ? 'auto, (min-width: 50rem) 45rem, calc(100vw - 2rem)' : undefined}
+      />
+    </a>
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+)}
+{showPendingBox && (
+  <figure data-pending-image={name} class="pending">
+    <p>
+      <strong>Capture to add</strong> (this box is shown only while the site runs in development)
+    </p>
+    <p>
+      File: <code>website/src/assets/tutorial/{name}.png</code>
+    </p>
+    <p>It shows: {alt}</p>
+    {caption && <p>Caption: {caption}</p>}
+  </figure>
+)}
 
 <style>
   figure {
@@ -81,6 +104,16 @@ const srcset = capture
     width: 100%;
     height: auto;
     margin: 0;
+  }
+  .pending {
+    padding: 1rem;
+    border: 2px dashed var(--sl-color-orange, orange);
+    border-radius: var(--sl-border-radius, 0.5rem);
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+  }
+  .pending p {
+    margin: 0.25rem 0;
   }
   figcaption {
     margin-block-start: 0.5rem;
