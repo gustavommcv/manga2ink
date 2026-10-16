@@ -8,6 +8,8 @@ import {
   suggestVolumesCommandSchema,
 } from '@/shared/workflow-contract';
 
+import { english } from './support/say';
+
 describe('metadata provider registry', () => {
   const providers = createMetadataProviders();
 
@@ -25,7 +27,7 @@ describe('metadata provider registry', () => {
 
     it('names the service, and says what it is, for the person choosing a source', () => {
       expect(descriptor.displayName.trim()).not.toBe('');
-      expect(descriptor.description.trim()).not.toBe('');
+      expect(english(descriptor.description).trim()).not.toBe('');
     });
 
     it('gives the service’s own site over https, which is what the credit opens', () => {

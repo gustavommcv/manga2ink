@@ -1,7 +1,7 @@
 import type { IpcMainInvokeEvent } from 'electron';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { message } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 import { registerTroubleshootingHandlers } from '@/main/ipc/troubleshooting';
 import { appFolders, openAppFolderCommandSchema } from '@/shared/app-folders-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
@@ -38,8 +38,8 @@ function register(overrides: Record<string, unknown> = {}): void {
     processing: { chosen: () => null },
     toolchainStatus: {
       state: 'ready',
-      message: 'Ready.',
-      tools: [{ name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' }],
+      message: raw('Ready.'),
+      tools: [{ name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') }],
     },
     ...overrides,
   } as never);

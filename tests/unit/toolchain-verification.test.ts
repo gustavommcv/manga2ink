@@ -12,6 +12,7 @@ import { createNodeProcessRunner } from '@/adapters/process/node-process-runner'
 import { loadToolchainManifest } from '@/adapters/toolchain/manifest';
 import { resolveToolchainTarget, verifyBundledToolchain } from '@/adapters/toolchain/verification';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const manifest = loadToolchainManifest();
@@ -180,7 +181,10 @@ describe('bundled toolchain verification', () => {
 
     expect(status.state).toBe('blocked');
     expect(status.tools.every((tool) => tool.state === 'failed')).toBe(true);
-    expect(status.tools.every((tool) => /Reinstall Mangabound/u.test(tool.message))).toBe(true);
+    expect(status.tools.map((tool) => tool.message)).toEqual([
+      message('toolchain.toolFailed', { tool: 'mangabind' }),
+      message('toolchain.toolFailed', { tool: 'mangapress' }),
+    ]);
   });
 
   describe('does not let a tool that fails any one check run, however well the other does', () => {
@@ -381,7 +385,7 @@ describe('bundled toolchain verification', () => {
     expect(status).toEqual({
       state: 'blocked',
       tools: [],
-      message: 'Mangabound does not bundle tools for linux-arm64.',
+      message: message('toolchain.noTarget', { platform: 'linux', arch: 'arm64' }),
     });
   });
 

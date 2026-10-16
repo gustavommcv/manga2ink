@@ -7,6 +7,7 @@ export interface DialogMessages {
   readonly chooseFolders: { readonly title: string };
   readonly chooseFiles: { readonly title: string; readonly archive: string };
   readonly chooseLibrary: { readonly title: string; readonly button: string };
+  readonly chooseProcessingFolder: { readonly title: string; readonly button: string };
   readonly saveBook: { readonly title: string };
   readonly saveAll: { readonly title: string };
 }
@@ -19,6 +20,10 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     chooseFolders: { title: 'Choose manga folders' },
     chooseFiles: { title: 'Choose comic files', archive: 'Comic book archive' },
     chooseLibrary: { title: 'Choose a library to share', button: 'Use this folder' },
+    chooseProcessingFolder: {
+      title: 'Choose the folder Mangabound works in',
+      button: 'Use this folder',
+    },
     saveBook: { title: 'Save book as' },
     saveAll: { title: 'Save all books to a folder' },
   },
@@ -29,6 +34,10 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     chooseFiles: { title: 'Escolher arquivos de quadrinhos', archive: 'Arquivo de quadrinhos' },
     chooseLibrary: {
       title: 'Escolher uma biblioteca para compartilhar',
+      button: 'Usar esta pasta',
+    },
+    chooseProcessingFolder: {
+      title: 'Escolher a pasta em que o Mangabound trabalha',
       button: 'Usar esta pasta',
     },
     saveBook: { title: 'Salvar livro como' },

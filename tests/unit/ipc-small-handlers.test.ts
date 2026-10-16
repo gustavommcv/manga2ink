@@ -10,6 +10,7 @@ import { registerArtifactHandlers } from '@/main/ipc/artifacts';
 import { registerMetadataHandlers } from '@/main/ipc/metadata';
 import { registerSettingsHandlers } from '@/main/ipc/settings';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { raw } from '@/domain/message';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const electron = vi.hoisted(() => ({
@@ -99,7 +100,7 @@ describe('opening a saved book', () => {
 
 describe('the online sources', () => {
   const provider = (homepage: string) => ({
-    descriptor: { id: 'source', displayName: 'Source', homepage, description: 'A source' },
+    descriptor: { id: 'source', displayName: 'Source', homepage, description: raw('A source') },
     search: vi.fn().mockResolvedValue([{ id: 'work', provider: 'source', title: 'Work' }]),
     suggestVolumes: vi.fn().mockResolvedValue({ volumes: [] }),
   });

@@ -9,6 +9,7 @@ import type { WorkflowResult } from '@/shared/workflow-contract';
 
 import type { MainContext } from '../context';
 import { processingStatus } from '../processing-status';
+import { dialogWords } from './dialog-words';
 import { handle, ignoredPayloadSchema } from './handle';
 import { failed, ok } from './result';
 
@@ -56,9 +57,10 @@ export function registerProcessingFolderHandlers(context: ProcessingContext): vo
       }
       if (isWorking(context)) return busy();
       const chosen = processing.chosen();
+      const words = dialogWords(context);
       const result = await dialog.showOpenDialog({
-        title: 'Choose the folder Mangabound works in',
-        buttonLabel: 'Use this folder',
+        title: words.chooseProcessingFolder.title,
+        buttonLabel: words.chooseProcessingFolder.button,
         properties: ['openDirectory', 'createDirectory'],
         ...(chosen === null ? {} : { defaultPath: chosen }),
       });

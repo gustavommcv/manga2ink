@@ -7,6 +7,14 @@ export interface SharedMessages {
     readonly label: string;
     readonly dismiss: string;
   };
+  /** The banner that says the bundled tools need attention. */
+  readonly toolchain: { readonly label: string; readonly title: string };
+  /** What the window says when the app could not start at all, which it says without having read the settings. */
+  readonly startup: {
+    readonly label: string;
+    readonly title: string;
+    readonly text: string;
+  };
   /** What a screen says of a step that could not be done. */
   readonly failure: {
     /** The name of the box that tells it. */
@@ -22,6 +30,12 @@ export interface SharedMessages {
 export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
   en: {
     notices: { label: 'Notices', dismiss: 'Dismiss these notices' },
+    toolchain: { label: 'Bundled tool status', title: 'Conversion tools need attention' },
+    startup: {
+      label: 'Startup error',
+      title: 'Mangabound could not start correctly.',
+      text: 'Restart the app. If the problem persists, reinstall Mangabound.',
+    },
     failure: {
       label: 'Workflow error',
       title: 'Couldn’t complete this step',
@@ -31,6 +45,15 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
   },
   'pt-BR': {
     notices: { label: 'Avisos', dismiss: 'Dispensar estes avisos' },
+    toolchain: {
+      label: 'Estado das ferramentas incluídas',
+      title: 'As ferramentas de conversão precisam de atenção',
+    },
+    startup: {
+      label: 'Erro na inicialização',
+      title: 'O Mangabound não conseguiu iniciar corretamente.',
+      text: 'Reinicie o app. Se o problema continuar, reinstale o Mangabound.',
+    },
     failure: {
       label: 'Erro no fluxo',
       title: 'Não foi possível concluir esta etapa',

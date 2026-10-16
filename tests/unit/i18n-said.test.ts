@@ -14,6 +14,7 @@ import { mappingRows } from './support/said-mapping-rows';
 import { optionsRows } from './support/said-options-rows';
 import { runRows } from './support/said-run-rows';
 import type { Rows } from './support/said-table';
+import { toolchainRows } from './support/said-toolchain-rows';
 import { warningRows } from './support/said-warning-rows';
 
 /**
@@ -242,6 +243,7 @@ const table = {
   ...optionsRows,
   ...runRows,
   ...warningRows,
+  ...toolchainRows,
 };
 
 const entries = Object.entries(table) as readonly (readonly [

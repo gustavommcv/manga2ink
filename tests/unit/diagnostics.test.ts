@@ -2,14 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { type DiagnosticsInput, diagnosticsText } from '@/main/diagnostics';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
+import { message, raw } from '@/domain/message';
 
 const tools: ToolchainStatus = {
   state: 'ready',
   target: 'linux-x64',
-  message: 'Bundled conversion tools are verified and ready.',
+  message: message('toolchain.ready', {}),
   tools: [
-    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
-    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: 'Ready.' },
+    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
+    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
   ],
 };
 
@@ -65,7 +66,7 @@ describe('the diagnostics a person copies for a report', () => {
       ...input,
       tools: {
         ...tools,
-        tools: [{ name: 'mangabind', releaseTag: '0.7.2', state: 'ready', message: 'Ready.' }],
+        tools: [{ name: 'mangabind', releaseTag: '0.7.2', state: 'ready', message: raw('Ready.') }],
       },
     });
 
@@ -78,13 +79,13 @@ describe('the diagnostics a person copies for a report', () => {
       ...input,
       tools: {
         state: 'blocked',
-        message: 'No.',
+        message: raw('No.'),
         tools: [
           {
             name: 'mangapress',
             releaseTag: 'v0.8.0',
             state: 'failed',
-            message: 'The hash of /opt/mangabound/toolchain/mangapress is wrong.',
+            message: raw('The hash of /opt/mangabound/toolchain/mangapress is wrong.'),
           },
         ],
       },
