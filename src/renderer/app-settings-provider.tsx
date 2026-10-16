@@ -7,8 +7,25 @@ import {
   useAppSettingsState,
 } from '@/renderer/hooks/use-app-settings';
 import { type AppInfo, AppInfoContext } from '@/renderer/hooks/use-app-info';
+import {
+  type ProcessingFolderApi,
+  ProcessingFolderContext,
+} from '@/renderer/hooks/use-processing-folder';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
+import type { WorkflowResult } from '@/shared/workflow-contract';
+
+/** A call to the main process whose failure to arrive is told as one that was answered with a failure. */
+async function reaching<T>(call: () => Promise<WorkflowResult<T>>): Promise<WorkflowResult<T>> {
+  try {
+    return await call();
+  } catch {
+    return {
+      ok: false,
+      error: { code: 'bridge_unreachable', message: 'The main process did not answer.' },
+    };
+  }
+}
 
 /**
  * Reads what a person decided about the app (ADR 0052) and gives everything under it the language
@@ -40,6 +57,15 @@ export function AppSettingsProvider({
     [bridge, language],
   );
 
+  const processing = useMemo<ProcessingFolderApi>(
+    () => ({
+      get: () => reaching(bridge.getProcessingFolder),
+      choose: () => reaching(bridge.chooseProcessingFolder),
+      useDefault: () => reaching(bridge.useDefaultProcessingFolder),
+    }),
+    [bridge],
+  );
+
   // The page says which language it is in, for the readers that speak it.
   useEffect(() => {
     document.documentElement.lang = language;
@@ -49,7 +75,9 @@ export function AppSettingsProvider({
   return (
     <AppSettingsContext.Provider value={state}>
       <AppInfoContext.Provider value={info}>
-        <I18nContext.Provider value={i18n}>{children}</I18nContext.Provider>
+        <ProcessingFolderContext.Provider value={processing}>
+          <I18nContext.Provider value={i18n}>{children}</I18nContext.Provider>
+        </ProcessingFolderContext.Provider>
       </AppInfoContext.Provider>
     </AppSettingsContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
+import { ProcessingTab } from '@/renderer/components/settings/processing-tab';
 import type { Messages } from '@/i18n/messages';
 
 /**
@@ -16,10 +17,15 @@ export interface AppSettingsTab {
 }
 
 /**
- * What the dialog holds, in the order of its tabs: what a person decides first, what the app says
- * about itself last. The first is the one that opens (ADR 0054).
+ * What the dialog holds, in the order of its tabs: what a person decides first, how the app works
+ * next, what it says about itself last. The first is the one that opens (ADR 0054, ADR 0055).
  */
 export const appSettingsTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
   { id: 'interface', label: (messages) => messages.appSettings.interface, Panel: InterfaceTab },
+  {
+    id: 'processing',
+    label: (messages) => messages.appSettings.processing,
+    Panel: ProcessingTab,
+  },
   { id: 'about', label: (messages) => messages.appSettings.about, Panel: AboutTab },
 ];

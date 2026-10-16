@@ -141,7 +141,7 @@ describe('the tabs of the dialog', () => {
     expect(within(dialog).queryByRole('tabpanel')).not.toBeInTheDocument();
   });
 
-  it('opens on Interface, with the language, and has About beside it', async () => {
+  it('opens on Interface, with the language, and has Processing and About beside it', async () => {
     const user = userEvent.setup();
     await renderMenu();
 
@@ -153,7 +153,7 @@ describe('the tabs of the dialog', () => {
       within(tabs)
         .getAllByRole('tab')
         .map((tab) => tab.textContent),
-    ).toEqual(['Interface', 'About']);
+    ).toEqual(['Interface', 'Processing', 'About']);
     expect(within(tabs).getByRole('tab', { name: 'Interface' })).toHaveAttribute(
       'aria-selected',
       'true',
@@ -241,8 +241,8 @@ describe('the tabs of the dialog', () => {
 });
 
 describe('the list of tabs of the app', () => {
-  it('starts with Interface and ends with About', () => {
-    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'about']);
+  it('starts with Interface, ends with About, and has Processing between them', () => {
+    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'processing', 'about']);
   });
 
   it('has a different id for each tab, since the id is what names a tab and its panel', () => {
@@ -257,6 +257,7 @@ describe('the list of tabs of the app', () => {
     }
     expect(appSettingsTabs.map((tab) => tab.label(messagesFor('pt-BR')))).toEqual([
       'Interface',
+      'Processamento',
       'Sobre',
     ]);
   });

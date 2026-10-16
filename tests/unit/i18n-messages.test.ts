@@ -38,6 +38,7 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.pending.deleteFrom': [['Vol.01']],
   'queue.pending.confirmDeletion': [['Vol.01']],
   'queue.pending.question': [[1], [2]],
+  'processing.earlier.books': [[1], [2]],
   'settings.field.restoreDefault': [['Device']],
   'settings.field.useQueueValue': [['Device']],
 };

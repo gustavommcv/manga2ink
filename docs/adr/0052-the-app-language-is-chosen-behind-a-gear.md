@@ -1,6 +1,6 @@
 # ADR 0052: The app's language is an app setting, chosen in a dialog behind a gear
 
-- Status: Accepted (amended by [ADR 0054](0054-the-about-tab-and-links-that-open-by-name.md): the first tab is Interface)
+- Status: Accepted (amended by [ADR 0054](0054-the-about-tab-and-links-that-open-by-name.md): the first tab is Interface; [ADR 0055](0055-the-app-works-in-a-folder-a-person-can-choose.md): the file keeps where the app works)
 - Date: 2026-10-16
 - Relates to: [ADR 0002](0002-shadcn-radix-tailwind-design-system.md) (the dialog is a Radix primitive), [ADR 0014](0014-persisted-settings-and-reset.md) (what is kept between sessions, and what a reset leaves alone), [ADR 0016](0016-one-share-panel-fixed-title-bar-clickable-drop-area.md) (the title bar and its one panel), [ADR 0051](0051-a-language-of-the-guide-may-leave-pages-in-english.md) (the guide has Portuguese and Japanese)
 

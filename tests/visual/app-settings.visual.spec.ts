@@ -25,4 +25,14 @@ test.describe('at the size the window opens at', () => {
       .toBe(true);
     await expect(page).toHaveScreenshot('app-settings-about.png');
   });
+
+  test('the Processing tab of the app settings remains visually consistent', async ({ page }) => {
+    await page.goto(
+      '/iframe.html?id=settings-app-settings-dialog--processing-in-a-chosen-folder&viewMode=story',
+    );
+    const dialog = page.getByRole('dialog', { name: 'App settings' });
+    await expect(dialog.getByText('/mnt/books/Pending')).toBeVisible();
+    await page.evaluate(async () => document.fonts.ready);
+    await expect(page).toHaveScreenshot('app-settings-processing.png');
+  });
 });

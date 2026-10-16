@@ -3,6 +3,7 @@ import type { Language } from '@/domain/app-settings';
 import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
 import { modeSaid } from './mode-said';
+import { type ProcessingMessages, processingMessages } from './processing-messages';
 import { type QueueMessages, queueMessages } from './queue-messages';
 import { queueSaid } from './queue-said';
 import type { Said } from './say';
@@ -18,6 +19,7 @@ import { textSaid } from './text-said';
 export interface Messages {
   readonly about: AboutMessages;
   readonly appSettings: AppSettingsMessages;
+  readonly processing: ProcessingMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
@@ -29,6 +31,7 @@ function build(language: Language): Messages {
   return {
     about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
+    processing: processingMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],

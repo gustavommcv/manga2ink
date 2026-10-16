@@ -198,6 +198,23 @@ describe('what a share serves', () => {
     expect(sharingTarget(root, root).readyBooks).toBe(false);
   });
 
+  it('is the ready books, of that conversion alone, when it was left in a folder the app worked in before', () => {
+    const before = path.join(path.sep, 'old', 'Pending');
+    const run = path.join(before, 'run-9');
+
+    expect(sharingTarget(run, root, [before])).toEqual({
+      path: run,
+      title: 'Mangabound ready books',
+      readyBooks: false,
+    });
+    // The folder in use still stands for all its conversions, however many earlier ones there are.
+    expect(sharingTarget(path.join(root, 'run-1'), root, [before]).readyBooks).toBe(true);
+    // A folder that is not one of those is a library like any other.
+    expect(sharingTarget(path.join(path.sep, 'elsewhere', 'run-9'), root, [before]).title).toBe(
+      'run-9',
+    );
+  });
+
   it('is a folder as it is when the pending folder is not known', () => {
     const library = path.join(root, 'run-1');
 

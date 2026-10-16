@@ -1,6 +1,6 @@
 # ADR 0026: Process first, then save pending books
 
-- Status: Accepted
+- Status: Accepted (amended by [ADR 0055](0055-the-app-works-in-a-folder-a-person-can-choose.md): where the pending folder is can be chosen)
 - Date: 2026-09-28
 - Amends: [ADR 0007](0007-library-indexing-and-opds-delivery.md), [ADR 0010](0010-input-queue.md), [ADR 0014](0014-persisted-settings-and-reset.md), [ADR 0016](0016-one-share-panel-fixed-title-bar-clickable-drop-area.md)
 

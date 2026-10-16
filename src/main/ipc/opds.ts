@@ -24,6 +24,7 @@ type OpdsContext = Pick<
   | 'opdsServer'
   | 'networkInterfaces'
   | 'pendingRuns'
+  | 'processing'
 >;
 function toSharingStatus(handle: OpdsServerHandle | undefined): OpdsSharingStatus {
   if (handle === undefined) return { active: false };
@@ -57,7 +58,11 @@ export function registerOpdsHandlers(context: OpdsContext): void {
             'That network address is not available on this device. Choose one from the list.',
         });
       }
-      const target = sharingTarget(libraryPath, context.pendingRuns?.root);
+      const target = sharingTarget(
+        libraryPath,
+        context.pendingRuns?.root,
+        context.processing?.pendingRoots() ?? [],
+      );
       // Every ready book is shared, so a deletion of any pending conversion is in the way.
       const deleting = target.readyBooks
         ? context.pendingRunActivity.isDeletingAny()

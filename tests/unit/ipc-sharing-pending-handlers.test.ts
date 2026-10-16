@@ -121,6 +121,24 @@ describe('sharing the books on the network', () => {
     expect(context.activeSharingTarget).toMatchObject({ readyBooks: true });
   });
 
+  it('shares one conversion on its own, as ready books, when it was left in an earlier folder', async () => {
+    const earlier = path.join('/earlier', 'Pending');
+    const context = register({
+      selectedLibraries: new Map([['lib', path.join(earlier, 'run-9')]]),
+      processing: { pendingRoots: () => ['/pending', '/default', earlier] },
+    });
+
+    await call('opds:start-sharing', start);
+
+    expect(context.opdsServer.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        libraryPath: path.join(earlier, 'run-9'),
+        libraryTitle: 'Mangabound ready books',
+      }),
+    );
+    expect(context.activeSharingTarget).toMatchObject({ readyBooks: false });
+  });
+
   it('refuses an address that is not on the device, and a library that is not known', async () => {
     const context = register();
     context.networkInterfaces.canShareOn.mockReturnValue(false);
