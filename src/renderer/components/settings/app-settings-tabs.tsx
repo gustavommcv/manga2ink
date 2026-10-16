@@ -1,5 +1,6 @@
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
+import { UpdatesTab } from '@/renderer/components/settings/updates-tab';
 import type { Messages } from '@/i18n/messages';
 
 /**
@@ -21,5 +22,6 @@ export interface AppSettingsTab {
  */
 export const appSettingsTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
   { id: 'interface', label: (messages) => messages.appSettings.interface, Panel: InterfaceTab },
+  { id: 'updates', label: (messages) => messages.appSettings.updates, Panel: UpdatesTab },
   { id: 'about', label: (messages) => messages.appSettings.about, Panel: AboutTab },
 ];

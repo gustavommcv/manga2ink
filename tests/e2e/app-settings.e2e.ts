@@ -127,4 +127,32 @@ describe('packaged app settings', () => {
     });
     await browser.keys('Escape');
   });
+
+  it('keeps its size from one tab to the next, and stays under the title bar', async () => {
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="App settings"]').click();
+    await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
+
+    const sizes: { width: number; height: number; top: number }[] = [];
+    for (const tab of ['Interface', 'Updates', 'About']) {
+      await $(`[role="tab"]=${tab}`).click();
+      await $('[role="tabpanel"]').waitForDisplayed({ timeout: 30_000 });
+      sizes.push(
+        await browser.execute(() => {
+          const box = document.querySelector('[role="dialog"]')?.getBoundingClientRect();
+          return {
+            width: Math.round(box?.width ?? 0),
+            height: Math.round(box?.height ?? 0),
+            top: Math.round(box?.top ?? 0),
+          };
+        }),
+      );
+    }
+
+    // The box does not change with what is in it, and the title bar (48px) is left alone.
+    assert.deepEqual(sizes[1], sizes[0]);
+    assert.deepEqual(sizes[2], sizes[0]);
+    assert.ok(sizes[0] !== undefined && sizes[0].width > 0 && sizes[0].top >= 48);
+    await browser.keys('Escape');
+  });
 });

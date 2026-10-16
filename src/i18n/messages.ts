@@ -15,6 +15,7 @@ import type { Said } from './say';
 import { type SettingsMessages, settingsMessages } from './settings-messages';
 import { type SharedMessages, sharedMessages } from './shared-messages';
 import { textSaid } from './text-said';
+import { type UpdatesMessages, updatesMessages } from './updates-messages';
 import { workflowSaid } from './workflow-said';
 
 /**
@@ -30,6 +31,7 @@ export interface Messages {
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
+  readonly updates: UpdatesMessages;
   /** What the domain, the workflows and the main process say by code (ADR 0053). */
   readonly said: Said;
 }
@@ -42,6 +44,7 @@ function build(language: Language): Messages {
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
+    updates: updatesMessages[language],
     said: {
       ...queueSaid[language],
       ...modeSaid[language],
