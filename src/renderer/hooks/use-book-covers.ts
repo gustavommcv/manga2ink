@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
+import { useSayLater } from '@/renderer/hooks/use-messages';
 import type { BookCoverControls } from '@/renderer/components/details/book-covers';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { CoversChange, CoverTarget, WorkflowResult } from '@/shared/workflow-contract';
@@ -27,6 +28,7 @@ export function useBookCovers(
   slots: readonly CoverSlot[],
   notify: (message: string) => void,
 ): BookCoverControls | undefined {
+  const say = useSayLater();
   const key = target === undefined ? undefined : keyOf(target);
   const [state, setState] = useState<CoverState>();
   // The target is a new object on every render: what names the item is these two values.
@@ -41,18 +43,18 @@ export function useBookCovers(
     void bridge.listCovers(item).then((result) => {
       if (!current) return;
       if (result.ok) setState({ key: itemKey, attached: result.value });
-      else notify(result.error.message);
+      else notify(say(result.error.said));
     });
     return () => {
       current = false;
     };
-  }, [bridge, sessionId, title, notify]);
+  }, [bridge, sessionId, title, notify, say]);
 
   if (target === undefined || key === undefined) return undefined;
 
   const apply = (result: WorkflowResult<CoversChange | null>): void => {
     if (!result.ok) {
-      notify(result.error.message);
+      notify(say(result.error.said));
       return;
     }
     // Nothing was picked in the dialog: the covers are as they were.

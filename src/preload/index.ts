@@ -3,6 +3,7 @@ import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import type { AttachedCover } from '../domain/book-covers';
 import { droppedPaths } from './dropped-paths';
 import type { MappingDraft } from '../domain/mapping';
+import type { AnyMessage } from '../domain/message';
 import type {
   NetworkInterfaceOption,
   OpdsAuthConfig,
@@ -91,7 +92,7 @@ const bridge: MangaboundBridge = Object.freeze({
   listPendingRuns: () => invoke<readonly PendingRunSummary[]>('pending:list'),
   discardPendingRun: (libraryId: string) => invoke<undefined>('pending:discard', libraryId),
   saveArtifactAs: (artifactId: string) =>
-    invoke<{ saved: boolean; warning?: string }>('pending:save-as', artifactId),
+    invoke<{ saved: boolean; warning?: AnyMessage }>('pending:save-as', artifactId),
   saveAllArtifacts: (artifactIds: readonly string[]) =>
     invoke<SaveAllResult | null>('pending:save-all', artifactIds),
   cancelConversion: (jobId: string) => invoke<undefined>('workflow:cancel', jobId),

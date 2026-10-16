@@ -1,3 +1,5 @@
+import type { AnyMessage } from '@/domain/message';
+
 import type {
   RestoredAppSettings,
   SaveAppSettingsCommand,
@@ -66,7 +68,7 @@ export interface MangaboundBridge {
   readonly discardPendingRun: (libraryId: string) => Promise<WorkflowResult<undefined>>;
   readonly saveArtifactAs: (
     artifactId: string,
-  ) => Promise<WorkflowResult<{ saved: boolean; warning?: string }>>;
+  ) => Promise<WorkflowResult<{ saved: boolean; warning?: AnyMessage }>>;
   readonly saveAllArtifacts: (
     artifactIds: readonly string[],
   ) => Promise<WorkflowResult<SaveAllResult | null>>;

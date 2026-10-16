@@ -2,13 +2,20 @@ import type { Language } from '@/domain/app-settings';
 
 import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
+import { type DialogMessages, dialogMessages } from './dialog-messages';
+import { failureSaid } from './failure-said';
+import { inputSaid } from './input-said';
 import { modeSaid } from './mode-said';
+import { noticeSaid } from './notice-said';
+import { providerSaid } from './provider-said';
 import { type QueueMessages, queueMessages } from './queue-messages';
 import { queueSaid } from './queue-said';
+import { saveSaid } from './save-said';
 import type { Said } from './say';
 import { type SettingsMessages, settingsMessages } from './settings-messages';
 import { type SharedMessages, sharedMessages } from './shared-messages';
 import { textSaid } from './text-said';
+import { workflowSaid } from './workflow-said';
 
 /**
  * Everything the window says, grouped by the part of the app it belongs to (ADR 0052). A part is
@@ -18,6 +25,8 @@ import { textSaid } from './text-said';
 export interface Messages {
   readonly about: AboutMessages;
   readonly appSettings: AppSettingsMessages;
+  /** What the main process gives the native dialogs to say. */
+  readonly dialogs: DialogMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
@@ -29,10 +38,21 @@ function build(language: Language): Messages {
   return {
     about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
+    dialogs: dialogMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
-    said: { ...queueSaid[language], ...modeSaid[language], ...textSaid[language] },
+    said: {
+      ...queueSaid[language],
+      ...modeSaid[language],
+      ...inputSaid[language],
+      ...failureSaid[language],
+      ...noticeSaid[language],
+      ...workflowSaid[language],
+      ...saveSaid[language],
+      ...providerSaid[language],
+      ...textSaid[language],
+    },
   };
 }
 

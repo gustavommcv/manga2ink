@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { IssueCallout } from './workflow-app';
 import { RunningScreen } from './screens/running-screen';
+import { raw } from '@/domain/message';
 
 const meta = {
   title: 'Workflows/Run and errors',
@@ -41,7 +42,7 @@ export const Error: Story = {
     <IssueCallout
       failure={{
         code: 'page_processing_failed',
-        message: "Couldn't process page 17 in chapter 'Chapter 4'.",
+        said: raw("Couldn't process page 17 in chapter 'Chapter 4'."),
         issue: {
           tool: 'mangapress',
           severity: 'error',

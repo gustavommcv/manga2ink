@@ -16,6 +16,7 @@ import {
   writeTitleMappingCommandSchema,
   type WorkflowResult,
 } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import type { MainContext } from '../context';
 import { requireWorkflow } from '../context';
@@ -77,7 +78,10 @@ export function registerConversionHandlers(context: ConversionContext): void {
       const libraryPath = await context.pendingRuns?.prepare();
       if (libraryPath === undefined) throw new Error('Pending storage is unavailable.');
       if (context.activeJobs.has(command.jobId)) {
-        return failed({ code: 'job_exists', message: 'That validation is already running.' });
+        return failed({
+          code: 'job_exists',
+          said: message('failure.alreadyRunning', { what: 'validation' }),
+        });
       }
       const controller = new AbortController();
       context.activeJobs.set(command.jobId, controller);
@@ -137,7 +141,10 @@ export function registerConversionHandlers(context: ConversionContext): void {
     planLibraryCommandSchema,
     async (_event, command): Promise<WorkflowResult<LibraryPlanSummary>> => {
       if (context.activeJobs.has(command.jobId)) {
-        return failed({ code: 'job_exists', message: 'That discovery is already running.' });
+        return failed({
+          code: 'job_exists',
+          said: message('failure.alreadyRunning', { what: 'discovery' }),
+        });
       }
       const controller = new AbortController();
       context.activeJobs.set(command.jobId, controller);
@@ -207,7 +214,10 @@ export function registerConversionHandlers(context: ConversionContext): void {
   handle('workflow:cancel', identifierSchema, (_event, jobId): WorkflowResult<undefined> => {
     const controller = context.activeJobs.get(jobId);
     if (controller === undefined) {
-      return failed({ code: 'job_not_found', message: 'That conversion is no longer running.' });
+      return failed({
+        code: 'job_not_found',
+        said: message('failure.conversionNotRunning', {}),
+      });
     }
     controller.abort();
     return ok(undefined);

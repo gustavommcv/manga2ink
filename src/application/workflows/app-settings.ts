@@ -1,5 +1,10 @@
 import type { AppSettingsStorePort } from '@/application/ports/app-settings-store';
-import { type AppSettings, type Language, resolveLanguage } from '@/domain/app-settings';
+import {
+  type AppSettings,
+  defaultLanguage,
+  type Language,
+  resolveLanguage,
+} from '@/domain/app-settings';
 
 export interface RestoredAppSettings {
   readonly settings: AppSettings;
@@ -13,6 +18,8 @@ export interface RestoredAppSettings {
  * file cannot: the languages the system prefers, which a choice of "the system's" comes to.
  */
 export class AppSettingsWorkflow {
+  private current: Language = defaultLanguage;
+
   constructor(
     private readonly store: AppSettingsStorePort,
     private readonly systemLanguages: () => readonly string[],
@@ -20,17 +27,23 @@ export class AppSettingsWorkflow {
 
   async restore(): Promise<RestoredAppSettings> {
     const { settings, unreadable } = await this.store.load();
-    return {
-      settings,
-      language: resolveLanguage(settings.language, this.systemLanguages()),
-      unreadable,
-    };
+    this.current = resolveLanguage(settings.language, this.systemLanguages());
+    return { settings, language: this.current, unreadable };
   }
 
   /** The language the kept settings come to, said only once they are kept. */
   async save(settings: AppSettings): Promise<{ readonly language: Language }> {
     await this.store.save(settings);
-    return { language: resolveLanguage(settings.language, this.systemLanguages()) };
+    this.current = resolveLanguage(settings.language, this.systemLanguages());
+    return { language: this.current };
+  }
+
+  /**
+   * The language the window is in, for what the main process says itself (the titles of the native
+   * dialogs): the one the settings last came to. English until they have been read.
+   */
+  language(): Language {
+    return this.current;
   }
 
   /** Resolves once every save asked for has finished. */

@@ -6,6 +6,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { PendingRunSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
+import { raw, message } from '@/domain/message';
 
 const artifact = (id: string, saved = false) => ({
   id,
@@ -22,11 +23,11 @@ const runB: PendingRunSummary = {
 };
 const unreadable: WorkflowFailure = {
   code: 'pending_unreadable',
-  message: 'Pending books could not be loaded.',
+  said: raw('Pending books could not be loaded.'),
 };
 const inUse: WorkflowFailure = {
   code: 'pending_in_use',
-  message: 'Stop sharing these books before deleting their pending copies.',
+  said: raw('Stop sharing these books before deleting their pending copies.'),
 };
 
 type ListResult = Awaited<ReturnType<MangaboundBridge['listPendingRuns']>>;
@@ -188,7 +189,7 @@ describe('usePendingRuns', () => {
     expect(discarded).toBe(false);
     expect(onFailure).toHaveBeenCalledExactlyOnceWith({
       code: 'pending_delete_failed',
-      message: 'Mangabound could not delete these pending books. Please try again.',
+      said: message('failure.pendingNotDeleted', {}),
     });
     expect(result.current.pendingRuns).toEqual([runA]);
   });

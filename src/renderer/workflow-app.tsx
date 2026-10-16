@@ -60,7 +60,8 @@ import type { CoverSlot } from '@/domain/book-covers';
 import { useBookCovers } from '@/renderer/hooks/use-book-covers';
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { SaidError } from '@/renderer/lib/said-error';
 import { useSharing } from '@/renderer/hooks/use-sharing';
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
@@ -85,6 +86,7 @@ import type {
   PlanSummary,
   PlanConversionCommand,
   RegisteredInputs,
+  RejectedInput,
   SelectedInput,
   VolumeSuggestion,
   WorkflowFailure,
@@ -140,15 +142,15 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   const [rows, dispatch] = useReducer(queueReducer, emptyQueue);
   // A screen about an item that is no longer in the queue is not shown (see resolveNavigation).
   const navigation = resolveNavigation(requestedNavigation, rows);
-  const [rejected, setRejected] = useState<
-    readonly { readonly name: string; readonly reason: string }[]
-  >([]);
+  const [rejected, setRejected] = useState<readonly RejectedInput[]>([]);
   const [activeRunId, setActiveRunId] = useState<string>();
   const [savedIds, setSavedIds] = useState<ReadonlySet<string>>(new Set());
   // The app settings were read before anything was drawn (ADR 0052); if the file could not be used
   // the person is told, in the language that is in use, from the first screen.
   const { unreadable: appSettingsUnreadable } = useAppSettings();
-  const appSettingsUnreadableNotice = useMessages().appSettings.unreadable;
+  const messages = useMessages();
+  const { say } = useSay();
+  const appSettingsUnreadableNotice = messages.appSettings.unreadable;
   const [notices, setNotices] = useState<readonly string[]>(() =>
     appSettingsUnreadable ? [appSettingsUnreadableNotice] : [],
   );
@@ -241,7 +243,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
       for (const row of fresh) {
         const result = await bridge.inspectInput(row.id);
         if (!result.ok) {
-          dispatch({ type: 'inspect-failed', id: row.id, message: result.error.message });
+          dispatch({ type: 'inspect-failed', id: row.id, message: result.error.said });
           continue;
         }
         if (!rowsRef.current.some((candidate) => candidate.id === row.id)) {
@@ -571,7 +573,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
         details: kept,
       })
       .then((result) => {
-        if (!result.ok) notify(result.error.message);
+        if (!result.ok) notify(say(result.error.said));
       });
   };
 
@@ -636,7 +638,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
       void bridge.cancelConversion(searchJobId);
     });
     const result = await bridge.searchMetadata(searchJobId, providerId, title);
-    if (!result.ok) throw new Error(result.error.message);
+    if (!result.ok) throw new SaidError(result.error.said);
     return result.value;
   };
 
@@ -646,7 +648,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     language?: string,
   ): Promise<{ readonly volumes: readonly VolumeSuggestion[] }> => {
     const result = await bridge.suggestVolumes(crypto.randomUUID(), providerId, workId, language);
-    if (!result.ok) throw new Error(result.error.message);
+    if (!result.ok) throw new SaidError(result.error.said);
     return result.value;
   };
 
@@ -692,7 +694,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     }
     if (!result.value.saved) return;
     setSavedIds((current) => new Set([...current, artifactId]));
-    if (result.value.warning !== undefined) notify(result.value.warning);
+    if (result.value.warning !== undefined) notify(say(result.value.warning));
     await refreshPendingRuns();
   };
 
@@ -709,8 +711,8 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     for (const item of saved.failures) {
       const name =
         outcomes.flatMap((outcome) => outcome.artifacts).find((artifact) => artifact.id === item.id)
-          ?.name ?? 'A book';
-      notify(`${name}: ${item.message}`);
+          ?.name ?? messages.shared.failure.aBook;
+      notify(`${name}: ${say(item.said)}`);
     }
     await refreshPendingRuns();
   };
@@ -1272,21 +1274,23 @@ export function IssueCallout({
 }: {
   readonly failure: WorkflowFailure;
 }): React.JSX.Element {
+  const { failure: words } = useMessages().shared;
+  const { say } = useSay();
   return (
     <section
       className="border-status-failed/50 bg-status-failed/10 mb-6 rounded-lg border p-4"
-      aria-label="Workflow error"
+      aria-label={words.label}
       role="alert"
     >
       <div className="flex items-start gap-3">
         <CircleAlert aria-hidden="true" className="text-status-failed mt-0.5 size-5 shrink-0" />
         <div>
-          <h2 className="text-sm font-semibold">Couldn’t complete this step</h2>
-          <p className="text-muted-foreground mt-1 text-sm leading-6">{failure.message}</p>
+          <h2 className="text-sm font-semibold">{words.title}</h2>
+          <p className="text-muted-foreground mt-1 text-sm leading-6">{say(failure.said)}</p>
           {failure.issue?.diagnostic !== undefined && (
             <details className="mt-3">
               <summary className="text-muted-foreground cursor-pointer text-xs">
-                Technical details
+                {words.technicalDetails}
               </summary>
               <pre className="bg-background mt-2 overflow-auto rounded-md p-3 text-xs whitespace-pre-wrap">
                 {failure.issue.diagnostic}

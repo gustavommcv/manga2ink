@@ -7,6 +7,7 @@ import { hasItemOptions } from '@/domain/item-options';
 import { skippedLinksNotice } from '@/domain/library-links';
 import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
+import { useSay } from '@/renderer/hooks/use-messages';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { cn } from '@/renderer/lib/utils';
 
@@ -111,6 +112,7 @@ function TitleRow({
   readonly onEditOptions?: (title: string) => void;
   readonly title: LibraryTitle;
 }): React.JSX.Element {
+  const { say } = useSay();
   const saved = title.outcome?.status === 'done';
   const failed = title.outcome?.status === 'failed';
   const unassigned = unassignedChapterCount(title.draft);
@@ -141,7 +143,7 @@ function TitleRow({
             : ''}
         </p>
         {title.outcome?.status === 'failed' && (
-          <p className="text-muted-foreground mt-0.5 text-xs">{title.outcome.message}</p>
+          <p className="text-muted-foreground mt-0.5 text-xs">{say(title.outcome.message)}</p>
         )}
       </div>
       <span

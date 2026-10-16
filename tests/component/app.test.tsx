@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/renderer/app';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { WorkflowApp } from '@/renderer/workflow-app';
+import { raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
 
@@ -51,7 +52,7 @@ describe('application startup', () => {
       const message = 'The selected files could not be opened.';
       const chooseInputs = vi.fn().mockResolvedValue({
         ok: false,
-        error: { code: 'file_access_denied', message },
+        error: { code: 'file_access_denied', said: raw(message) },
       });
       const unsubscribe = vi.fn();
       const supplied = inertBridge({

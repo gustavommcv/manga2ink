@@ -1,30 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
 import { languages } from '@/domain/app-settings';
-import {
-  type AnyMessage,
-  type MessageId,
-  type MessageValues,
-  message,
-  raw,
-} from '@/domain/message';
+import { type AnyMessage, type MessageId, message, raw } from '@/domain/message';
+import type { ModeMessageValues } from '@/domain/messages/mode';
+import type { QueueMessageValues } from '@/domain/messages/queue';
+import type { TextMessageValues } from '@/domain/messages/text';
 import { messagesFor } from '@/i18n/messages';
 import { namesOf, say, sayAll } from '@/i18n/say';
+
+import { failureRows } from './support/said-failure-rows';
+import type { Rows } from './support/said-table';
 
 /**
  * Every message the domain, the workflows and the main process say by code, in each of the forms it has,
  * with what it says in English (which is what the app has always said, character for character) and
  * in Portuguese. The compiler fails for a code that has no row here.
  */
-type Table = {
-  readonly [Id in MessageId]: readonly (readonly [
-    values: MessageValues[Id],
-    english: string,
-    portuguese: string,
-  ])[];
-};
+type Table = Rows<QueueMessageValues & ModeMessageValues & TextMessageValues>;
 
-const table: Table = {
+const queueTable: Table = {
   'queue.chip.checking': [[{}, 'Checking…', 'Verificando…']],
   'queue.chip.unreadable': [[{}, 'Could not read', 'Não foi possível ler']],
   'queue.chip.nothingToJoin': [[{}, 'Nothing to join', 'Nada para juntar']],
@@ -233,6 +227,9 @@ const table: Table = {
     ],
   ],
 };
+
+/** The queue's, and what is said when something cannot be done (its own table, in `support/`). */
+const table = { ...queueTable, ...failureRows };
 
 const entries = Object.entries(table) as readonly (readonly [
   MessageId,

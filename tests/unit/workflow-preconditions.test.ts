@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionRequest } from '@/domain/conversion';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 
 import { dependencies, cbz, openLibrary } from './support/conversion-workflow';
 
@@ -30,7 +31,9 @@ describe('run precondition ordering', () => {
         ),
       ).rejects.toMatchObject({
         code: 'invalid_settings',
-        message: `Review the output settings before ${action === 'plan' ? 'validating the plan' : 'converting'}.`,
+        said: message('workflow.reviewSettings', {
+          before: action === 'plan' ? 'validating' : 'converting',
+        }),
       });
       expect(ports.bind).not.toHaveBeenCalled();
       expect(ports.bindingPlan).not.toHaveBeenCalled();
@@ -56,7 +59,7 @@ describe('run precondition ordering', () => {
         ),
       ).rejects.toMatchObject({
         code: 'session_not_found',
-        message: 'This input is no longer available. Choose it again.',
+        said: message('workflow.inputGone', {}),
       });
     },
   );
@@ -73,7 +76,7 @@ describe('run precondition ordering', () => {
         ),
       ).rejects.toMatchObject({
         code: 'unsupported_mode',
-        message: 'A library is converted title by title, not as one input.',
+        said: message('workflow.libraryByTitle', {}),
       });
       expect(ports.bindBatch).not.toHaveBeenCalled();
     },
@@ -125,19 +128,19 @@ describe('run precondition ordering', () => {
       ),
     ).rejects.toMatchObject({
       code: 'invalid_settings',
-      message: 'Review the output settings before converting.',
+      said: message('workflow.reviewSettings', { before: 'converting' }),
     });
     await expect(
       workflow.convertLibrary({ ...libraryRequest, mode: 'bind-only' }, { onProgress: vi.fn() }),
     ).rejects.toMatchObject({
       code: 'invalid_settings',
-      message: 'Single book mode requires both binding and converting.',
+      said: message('workflow.singleBookNeedsBoth', {}),
     });
     await expect(
       workflow.convertLibrary(libraryRequest, { onProgress: vi.fn() }),
     ).rejects.toMatchObject({
       code: 'invalid_settings',
-      message: 'Binding the whole series as one volume is only available for EPUB right now.',
+      said: message('workflow.combineNeedsEpub', {}),
     });
     expect(ports.bindBatch).not.toHaveBeenCalled();
   });

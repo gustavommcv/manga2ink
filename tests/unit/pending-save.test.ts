@@ -5,7 +5,8 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { PendingSaveError, pendingSaveMessage, saveWithUniqueName } from '@/library/pending-save';
+import { message } from '@/domain/message';
+import { PendingSaveError, pendingSaveSaid, saveWithUniqueName } from '@/library/pending-save';
 
 const directories: string[] = [];
 afterEach(async () => {
@@ -66,7 +67,7 @@ describe('pending save names', () => {
     const save = vi.fn<(name: string) => Promise<void>>().mockRejectedValue(collision());
     await expect(saveWithUniqueName('Volume.epub', save)).rejects.toMatchObject({
       code: 'name_unavailable',
-      message: 'No available file name was found.',
+      said: message('save.nameUnavailable', {}),
     });
     expect(save).toHaveBeenCalledTimes(998);
     expect(save).toHaveBeenLastCalledWith('Volume (998).epub');
@@ -75,34 +76,24 @@ describe('pending save names', () => {
 
 describe('pending save errors', () => {
   it.each(['book_unavailable', 'run_deleting', 'wrong_extension', 'name_unavailable'] as const)(
-    'keeps the actionable message for typed %s, regardless of its prefix',
+    'keeps what is said for typed %s, whatever the error’s own text is',
     (code) => {
-      const error = new PendingSaveError(code, 'Reworded explanation.');
+      const said = message('save.bookGone', {});
+      const error = new PendingSaveError(code, said);
       expect(error.name).toBe('PendingSaveError');
       expect(error.code).toBe(code);
-      expect(pendingSaveMessage(error)).toBe('Reworded explanation.');
+      expect(pendingSaveSaid(error)).toBe(said);
     },
   );
 
   it.each([
-    ['ENOSPC', 'The destination is full. Free some space and try again; the pending book is safe.'],
-    [
-      'EACCES',
-      'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.',
-    ],
-    [
-      'EPERM',
-      'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.',
-    ],
-    [
-      'EROFS',
-      'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.',
-    ],
-    ['ENOENT', 'The chosen destination folder is no longer available. Choose another folder.'],
-  ])('maps %s without leaking operating-system details', (code, message) => {
-    expect(pendingSaveMessage(Object.assign(new Error('secret destination'), { code }))).toBe(
-      message,
-    );
+    ['ENOSPC', message('save.destinationFull', {})],
+    ['EACCES', message('save.cannotWrite', {})],
+    ['EPERM', message('save.cannotWrite', {})],
+    ['EROFS', message('save.cannotWrite', {})],
+    ['ENOENT', message('save.folderGone', {})],
+  ])('maps %s without leaking operating-system details', (code, said) => {
+    expect(pendingSaveSaid(Object.assign(new Error('secret destination'), { code }))).toEqual(said);
   });
 
   it.each([
@@ -113,8 +104,6 @@ describe('pending save errors', () => {
     undefined,
     'boom',
   ])('uses the safe fallback for unclassified errors (%s)', (error) => {
-    expect(pendingSaveMessage(error)).toBe(
-      'The book could not be saved. Its pending copy is still available; try another destination.',
-    );
+    expect(pendingSaveSaid(error)).toEqual(message('save.failed', {}));
   });
 });

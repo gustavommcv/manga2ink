@@ -10,6 +10,7 @@ import {
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
+import { raw, message } from '@/domain/message';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
 import { type MangaboundBridge } from '@/shared/runtime-info';
@@ -46,7 +47,10 @@ describe('queue application workflow', () => {
     const saveArtifactAs = vi.fn<MangaboundBridge['saveArtifactAs']>(() =>
       Promise.resolve({
         ok: true,
-        value: { saved: true, warning: 'The destination catalog could not be updated.' },
+        value: {
+          saved: true,
+          warning: raw('The destination catalog could not be updated.'),
+        },
       }),
     );
     const convert = vi.fn<MangaboundBridge['convert']>();
@@ -214,7 +218,7 @@ describe('queue application workflow', () => {
             ok: false,
             error: {
               code: 'pending_in_use',
-              message: 'Stop sharing these books before deleting their pending copies.',
+              said: raw('Stop sharing these books before deleting their pending copies.'),
             },
           }),
       }),
@@ -237,7 +241,7 @@ describe('queue application workflow', () => {
         ok: true,
         value: {
           savedIds: ['first-book', 'second-book'],
-          failures: [{ id: 'first-book', message: 'The catalog could not be updated.' }],
+          failures: [{ id: 'first-book', said: raw('The catalog could not be updated.') }],
         },
       }),
     );
@@ -355,7 +359,7 @@ describe('queue application workflow', () => {
     const openArtifact = vi.fn<MangaboundBridge['openArtifact']>(() =>
       Promise.resolve({
         ok: false,
-        error: { code: 'artifact_not_found', message: 'The saved book is no longer available.' },
+        error: { code: 'artifact_not_found', said: message('failure.savedBookGone', {}) },
       }),
     );
     installBridge(bridge({ convert, openArtifact }));
@@ -511,7 +515,7 @@ describe('queue application workflow', () => {
         planConversion: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'plan_failed', message: 'mangabind could not plan this.' },
+            error: { code: 'plan_failed', said: raw('mangabind could not plan this.') },
           }),
       }),
     );
@@ -664,7 +668,7 @@ describe('queue application workflow', () => {
         openProviderHomepage: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'provider_not_found', message: 'That source is not available.' },
+            error: { code: 'provider_not_found', said: message('failure.sourceUnavailable', {}) },
           }),
       }),
     );
@@ -684,7 +688,10 @@ describe('queue application workflow', () => {
     const suggestVolumes = vi.fn<MangaboundBridge['suggestVolumes']>(() =>
       Promise.resolve({
         ok: false,
-        error: { code: 'network_error', message: 'Could not reach MangaDex.' },
+        error: {
+          code: 'network_error',
+          said: message('provider.unreachable', { service: 'MangaDex' }),
+        },
       }),
     );
     installBridge(
@@ -731,7 +738,7 @@ describe('queue application workflow', () => {
         searchMetadata: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'rate_limited', message: 'MangaDex is rate-limiting requests.' },
+            error: { code: 'rate_limited', said: raw('MangaDex is rate-limiting requests.') },
           }),
       }),
     );
@@ -753,7 +760,10 @@ describe('queue application workflow', () => {
       () =>
         Promise.resolve({
           ok: false as const,
-          error: { code: 'internal_error', message: 'Mangabound could not complete that action.' },
+          error: {
+            code: 'internal_error',
+            said: message('failure.internal', {}),
+          },
         }),
     ],
     ['the source list call fails', () => Promise.reject(new Error('IPC down'))],
@@ -821,7 +831,7 @@ describe('queue application workflow', () => {
             ok: false,
             error: {
               code: 'input_read_failed',
-              message: 'Couldn’t read the selected folder.',
+              said: raw('Couldn’t read the selected folder.'),
               issue: {
                 tool: 'mangabind',
                 severity: 'error',
@@ -929,9 +939,7 @@ describe('queue application workflow', () => {
             ok: true,
             value: {
               inputs: [],
-              rejected: [
-                { name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' },
-              ],
+              rejected: [{ name: 'notes.txt', reason: message('input.onlyFoldersAndCbz', {}) }],
             },
           }),
       }),
@@ -953,7 +961,7 @@ describe('queue application workflow', () => {
         inspectInput: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'input_read_failed', message: 'The folder could not be read.' },
+            error: { code: 'input_read_failed', said: raw('The folder could not be read.') },
           }),
       }),
     );
@@ -1098,7 +1106,7 @@ describe('queue application workflow', () => {
         registerDroppedFiles: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'invalid_request', message: 'That drop could not be read.' },
+            error: { code: 'invalid_request', said: raw('That drop could not be read.') },
           }),
       }),
     );

@@ -1,12 +1,14 @@
+import { type AnyMessage, message } from '@/domain/message';
+
 import { uniqueFileName } from './unique-name';
 
-/** Internal save reasons are independent of their user-facing wording. */
+/** Internal save reasons are independent of their user-facing wording, which is a code (ADR 0053). */
 export class PendingSaveError extends Error {
   constructor(
     readonly code: 'book_unavailable' | 'run_deleting' | 'wrong_extension' | 'name_unavailable',
-    message: string,
+    readonly said: AnyMessage,
   ) {
-    super(message);
+    super(said.id);
     this.name = 'PendingSaveError';
   }
 }
@@ -33,18 +35,16 @@ export async function saveWithUniqueName<Value>(
       taken.add(candidate);
     }
   }
-  throw new PendingSaveError('name_unavailable', 'No available file name was found.');
+  throw new PendingSaveError('name_unavailable', message('save.nameUnavailable', {}));
 }
 
 /** Safe save messages; no paths, raw operating-system errors or message-prefix matching. */
-export function pendingSaveMessage(error: unknown): string {
-  if (error instanceof PendingSaveError) return error.message;
+export function pendingSaveSaid(error: unknown): AnyMessage {
+  if (error instanceof PendingSaveError) return error.said;
   const code = systemCode(error);
-  if (code === 'ENOSPC')
-    return 'The destination is full. Free some space and try again; the pending book is safe.';
+  if (code === 'ENOSPC') return message('save.destinationFull', {});
   if (code === 'EACCES' || code === 'EPERM' || code === 'EROFS')
-    return 'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.';
-  if (code === 'ENOENT')
-    return 'The chosen destination folder is no longer available. Choose another folder.';
-  return 'The book could not be saved. Its pending copy is still available; try another destination.';
+    return message('save.cannotWrite', {});
+  if (code === 'ENOENT') return message('save.folderGone', {});
+  return message('save.failed', {});
 }

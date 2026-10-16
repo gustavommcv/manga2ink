@@ -7,6 +7,7 @@ import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { projectLinks } from '@/shared/project-links-contract';
 import type { MangaboundBridge } from '@/shared/runtime-info';
+import { raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
 
@@ -116,7 +117,7 @@ describe('the About tab', () => {
   it.each([
     [
       'refuses it',
-      () => Promise.resolve({ ok: false as const, error: { code: 'x', message: 'No.' } }),
+      () => Promise.resolve({ ok: false as const, error: { code: 'x', said: raw('No.') } }),
     ],
     ['fails', () => Promise.reject(new Error('The bridge is gone.'))],
   ])('says so, and does not throw, when the main process %s', async (_, answer) => {
@@ -132,7 +133,7 @@ describe('the About tab', () => {
     const user = userEvent.setup();
     const openProjectLink = vi
       .fn<MangaboundBridge['openProjectLink']>()
-      .mockResolvedValueOnce({ ok: false, error: { code: 'x', message: 'No.' } })
+      .mockResolvedValueOnce({ ok: false, error: { code: 'x', said: raw('No.') } })
       .mockResolvedValueOnce({ ok: true, value: undefined });
     await renderAbout({ openProjectLink });
 

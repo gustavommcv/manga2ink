@@ -22,6 +22,7 @@ import {
   libraryFolder,
   looseTitle,
 } from './support/library';
+import { raw, message } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -136,7 +137,7 @@ describe('libraries in the queue', () => {
             title: 'Broken Manga',
             status: 'failed',
             artifacts: [],
-            failure: { code: 'process_failed', message: 'mangapress crashed.' },
+            failure: { code: 'process_failed', said: raw('mangapress crashed.') },
           },
         ],
       })
@@ -210,7 +211,7 @@ describe('libraries in the queue', () => {
         convertLibrary: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'not_a_library', message: 'This input is not a library.' },
+            error: { code: 'not_a_library', said: message('workflow.notALibrary', {}) },
           }),
       }),
     );
@@ -261,7 +262,7 @@ describe('libraries in the queue', () => {
                 title: 'Good Manga',
                 status: 'failed',
                 artifacts: [],
-                failure: { code: 'cancelled', message: 'Cancelled.' },
+                failure: { code: 'cancelled', said: message('failure.cancelled', {}) },
               },
             ],
           }),
@@ -496,7 +497,7 @@ describe('libraries in the queue', () => {
         planLibrary: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'process_failed', message: 'mangabind could not read this library.' },
+            error: { code: 'process_failed', said: raw('mangabind could not read this library.') },
           }),
       }),
     );
@@ -522,7 +523,7 @@ describe('libraries in the queue', () => {
         writeTitleMapping: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'mapping_save_failed', message: 'The folder is read-only.' },
+            error: { code: 'mapping_save_failed', said: raw('The folder is read-only.') },
           }),
       }),
     );
@@ -547,7 +548,7 @@ describe('libraries in the queue', () => {
         planLibrary: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'process_failed', message: 'mangabind could not read this library.' },
+            error: { code: 'process_failed', said: raw('mangabind could not read this library.') },
           }),
       }),
     );

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
+import { raw, message } from '@/domain/message';
 import { type MangaboundBridge } from '@/shared/runtime-info';
 
 import {
@@ -332,7 +333,7 @@ describe('the options kept between sessions', () => {
   it.each([
     [
       'answers with a failure',
-      () => Promise.resolve({ ok: false as const, error: { code: 'x', message: 'no' } }),
+      () => Promise.resolve({ ok: false as const, error: { code: 'x', said: raw('no') } }),
     ],
     ['is rejected', () => Promise.reject(new Error('the bridge is gone'))],
   ])('saves nothing, and says so, when reading what was kept %s', async (_name, loadSettings) => {
@@ -352,8 +353,8 @@ describe('the options kept between sessions', () => {
       bridge({
         loadSettings: keptSettings({
           notices: [
-            'The saved settings could not be read, so the defaults are in use.',
-            'The output folder D:\\Gone is not available. Choose another to save to.',
+            message('notice.settingsUnreadable', {}),
+            raw('The output folder D:\\Gone is not available. Choose another to save to.'),
           ],
         }),
       }),
@@ -402,7 +403,7 @@ describe('the options kept between sessions', () => {
       .fn<MangaboundBridge['saveSettings']>()
       .mockResolvedValueOnce({
         ok: false,
-        error: { code: 'settings_save_failed', message: 'Your settings could not be saved.' },
+        error: { code: 'settings_save_failed', said: message('failure.settingsNotSaved', {}) },
       })
       .mockResolvedValue({ ok: true, value: undefined });
     installBridge(bridge({ saveSettings }));
@@ -425,14 +426,17 @@ describe('the options kept between sessions', () => {
       () =>
         Promise.resolve({
           ok: false as const,
-          error: { code: 'settings_save_failed', message: 'Your settings could not be saved.' },
+          error: {
+            code: 'settings_save_failed',
+            said: message('failure.settingsNotSaved', {}),
+          },
         }),
       'Your settings could not be saved.',
     ],
     [
       'is rejected',
       () => Promise.reject(new Error('the bridge is gone')),
-      'The settings could not be saved.',
+      'Your settings could not be saved.',
     ],
   ])('says so when saving %s', async (_name, saveSettings, message) => {
     const user = userEvent.setup();

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { message } from '@/domain/message';
+import { useSayLater } from '@/renderer/hooks/use-messages';
+import { SaidError } from '@/renderer/lib/said-error';
 import type { MetadataSearchResult } from '@/shared/workflow-contract';
 
 /** What a search of an online source needs: the source, the title, and a way to stop it. */
@@ -25,6 +28,7 @@ export function useMetadataSearch(onSearch: SearchMetadata): {
   readonly searching: boolean;
   readonly setError: (message: string | undefined) => void;
 } {
+  const say = useSayLater();
   const [results, setResults] = useState<readonly MetadataSearchResult[]>([]);
   const [searched, setSearched] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -64,14 +68,18 @@ export function useMetadataSearch(onSearch: SearchMetadata): {
         .catch((failure: unknown) => {
           if (current.signal.aborted) return;
           setError(
-            failure instanceof Error ? failure.message : 'The search could not be completed.',
+            say(
+              failure instanceof SaidError
+                ? failure.said
+                : message('failure.searchNotCompleted', {}),
+            ),
           );
         })
         .finally(() => {
           if (!current.signal.aborted) setSearching(false);
         });
     },
-    [onSearch],
+    [onSearch, say],
   );
 
   return { error, forget, lastTitle, results, search, searched, searching, setError };

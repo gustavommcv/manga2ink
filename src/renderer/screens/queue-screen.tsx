@@ -29,6 +29,7 @@ import type {
   DeviceProfileSummary,
   PlanSummary,
   PendingRunSummary,
+  RejectedInput,
 } from '@/shared/workflow-contract';
 
 export interface RowPlan {
@@ -66,7 +67,7 @@ export interface QueueScreenProps {
   readonly plans?: readonly RowPlan[];
   readonly profiles: readonly DeviceProfileSummary[];
   /** Items the last add could not use, with the reason for each. */
-  readonly rejected: readonly { readonly name: string; readonly reason: string }[];
+  readonly rejected: readonly RejectedInput[];
   readonly rows: readonly QueueRow[];
   readonly settings: MangapressSettings;
   readonly singleBook: boolean;
@@ -213,9 +214,14 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           >
             <ul className="min-w-0 flex-1 space-y-1 text-xs">
               {rejected.map((item, index) => (
-                <li key={`${item.name}-${String(index)}`}>
-                  <span className="font-medium">{item.name}</span> {words.rejected.wasNotAdded}{' '}
-                  {item.reason}
+                <li key={`${item.name ?? ''}-${String(index)}`}>
+                  {item.name !== undefined && (
+                    <>
+                      <span className="font-medium">{item.name}</span>{' '}
+                      {words.rejected.wasNotAdded}{' '}
+                    </>
+                  )}
+                  {say(item.reason)}
                 </li>
               ))}
             </ul>

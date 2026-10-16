@@ -18,6 +18,7 @@ import {
   titleFits,
 } from '@/domain/book-details';
 import type { MappingDraft } from '@/domain/mapping';
+import type { AnyMessage } from '@/domain/message';
 import { type MangapressSettings, settingBounds } from '@/domain/output-profile';
 import {
   batchProcessModes,
@@ -319,10 +320,19 @@ export interface SelectedInput {
   readonly kind: InputKind;
 }
 
+/**
+ * Something given to the queue that was not added, and why, as a code the window writes in its
+ * language (ADR 0053). It names the item unless it is about no one item.
+ */
+export interface RejectedInput {
+  readonly name?: string;
+  readonly reason: AnyMessage;
+}
+
 /** What one add (a dialog, or files dropped on the window) turned into. */
 export interface RegisteredInputs {
   readonly inputs: readonly SelectedInput[];
-  readonly rejected: readonly { readonly name: string; readonly reason: string }[];
+  readonly rejected: readonly RejectedInput[];
 }
 
 export interface SelectedLibrary {
@@ -391,7 +401,7 @@ export interface PendingRunSummary {
 
 export interface SaveAllResult {
   readonly savedIds: readonly string[];
-  readonly failures: readonly { readonly id: string; readonly message: string }[];
+  readonly failures: readonly { readonly id: string; readonly said: AnyMessage }[];
 }
 
 export interface PlanSummary {
@@ -478,9 +488,13 @@ export interface VolumeSuggestion {
   readonly chapterNumbers: readonly number[];
 }
 
+/**
+ * A request that could not be done. `said` is what to tell the person, as a code the window writes
+ * in its language (ADR 0053): what a tool or the system said is carried as raw text in it.
+ */
 export interface WorkflowFailure {
   readonly code: string;
-  readonly message: string;
+  readonly said: AnyMessage;
   readonly issue?: PipelineIssue;
 }
 

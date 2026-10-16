@@ -18,6 +18,7 @@ import {
 } from '@/domain/input-queue';
 import { describeRowText as describeRow } from './support/say';
 import { createMappingDraft } from '@/domain/mapping';
+import { raw } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 2, chapter: 1 },
@@ -136,7 +137,9 @@ describe('input queue reducer', () => {
     const done = queueReducer(rows, { type: 'inspected', id: 'a', sessionId: 's1' });
 
     expect(queueReducer(done, { type: 'inspected', id: 'a', sessionId: 's2' })).toEqual(done);
-    expect(queueReducer(done, { type: 'inspect-failed', id: 'a', message: 'late' })).toEqual(done);
+    expect(queueReducer(done, { type: 'inspect-failed', id: 'a', message: raw('late') })).toEqual(
+      done,
+    );
     expect(queueReducer(rows, { type: 'inspected', id: 'gone', sessionId: 's3' })).toEqual(rows);
   });
 
@@ -144,10 +147,13 @@ describe('input queue reducer', () => {
     const rows = queueReducer(queueReducer(emptyQueue, { type: 'add', inputs: [cbzInput] }), {
       type: 'inspect-failed',
       id: 'b',
-      message: 'The file is unreadable.',
+      message: raw('The file is unreadable.'),
     });
 
-    expect(rows[0]).toMatchObject({ state: 'unreadable', message: 'The file is unreadable.' });
+    expect(rows[0]).toMatchObject({
+      state: 'unreadable',
+      message: raw('The file is unreadable.'),
+    });
     expect(describeRow(rows[0] as QueueRow, 'bind-and-convert')).toMatchObject({
       chip: 'Could not read',
       tone: 'danger',
@@ -193,7 +199,7 @@ describe('input queue reducer', () => {
       { ...folderInput, state: 'inspecting' as const },
       inspectedFolder(grouped),
       inspectedCbz(),
-      { ...cbzInput, id: 'c', state: 'unreadable' as const, message: 'x' },
+      { ...cbzInput, id: 'c', state: 'unreadable' as const, message: raw('x') },
     ];
 
     expect(sessionIds(rows)).toEqual(['session-a', 'session-b']);
@@ -233,7 +239,7 @@ describe('describing a row', () => {
   it('says why a folder could not be read', () => {
     expect(
       describeRow(
-        { ...folderInput, state: 'unreadable', message: 'Access denied.' },
+        { ...folderInput, state: 'unreadable', message: raw('Access denied.') },
         'bind-and-convert',
       ),
     ).toMatchObject({ detail: 'Folder', note: 'Access denied.' });
@@ -362,7 +368,7 @@ describe('summarizing a queue and picking what to run', () => {
       confirmed: false,
     },
     { ...folderInput, id: 'wait', displayPath: 'wait', state: 'inspecting' as const },
-    { ...cbzInput, id: 'bad', displayPath: 'bad', state: 'unreadable' as const, message: 'x' },
+    { ...cbzInput, id: 'bad', displayPath: 'bad', state: 'unreadable' as const, message: raw('x') },
   ];
 
   it('counts what would run, what would be left out, and what is still being read', () => {
@@ -428,7 +434,7 @@ function libraryRow(...titles: ReadTitle[]): InspectedRow {
 }
 
 const saved = { status: 'done' } as const;
-const crashed = { status: 'failed', message: 'mangapress crashed.' } as const;
+const crashed = { status: 'failed', message: raw('mangapress crashed.') } as const;
 
 describe('a library in the queue', () => {
   it('is what a folder becomes when it is read as one, with the titles it holds', () => {
@@ -913,7 +919,7 @@ describe('what an item is converted with differently from the queue', () => {
     const rows: readonly QueueRow[] = [
       inspectedFolder(grouped),
       libraryRow(readTitle('Good', 1)),
-      { ...folderInput, state: 'unreadable', message: 'It is gone.' },
+      { ...folderInput, state: 'unreadable', message: raw('It is gone.') },
     ];
 
     const cleared = queueReducer(rows, { type: 'clear-options' });

@@ -8,6 +8,7 @@ import type { AppSettingsBridge } from '@/renderer/hooks/use-app-settings';
 
 import { AppSettingsMenu } from './app-settings-menu';
 import type { AppSettingsTab } from './app-settings-tabs';
+import { raw } from '@/domain/message';
 
 /** What the app settings were kept as, and what keeping a choice answers. */
 function bridgeFor(
@@ -121,7 +122,7 @@ export const ChangingTheLanguage: Story = {
 export const WhenTheLanguageCannotBeKept: Story = {
   parameters: {
     bridge: bridgeFor('en', 'en', () =>
-      Promise.resolve({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } }),
+      Promise.resolve({ ok: false, error: { code: 'settings_save_failed', said: raw('No.') } }),
     ),
   },
   play: async ({ canvas, canvasElement }) => {
@@ -199,7 +200,7 @@ export const AboutInPortuguese: Story = {
 export const WhenAPageCannotBeOpened: Story = {
   parameters: {
     bridge: bridgeFor('en', 'en', keepsIt, () =>
-      Promise.resolve({ ok: false, error: { code: 'unexpected_failure', message: 'No.' } }),
+      Promise.resolve({ ok: false, error: { code: 'unexpected_failure', said: raw('No.') } }),
     ),
   },
   play: async ({ canvas, canvasElement }) => {

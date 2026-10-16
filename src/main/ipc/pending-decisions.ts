@@ -3,6 +3,7 @@ import path from 'node:path';
 import type { BookFormat } from '@/domain/conversion';
 import { PendingSaveError } from '@/library/pending-save';
 import type { WorkflowFailure } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 /** Which book of which pending run an id the page holds stands for. */
 export interface PendingReference {
@@ -43,17 +44,10 @@ export function discardRefusal(state: {
   readonly activeJobs: number;
 }): WorkflowFailure | undefined {
   if (state.sharingReadyBooks) {
-    return {
-      code: 'pending_in_use',
-      message:
-        'The ready books are being shared. Stop sharing before deleting their pending copies.',
-    };
+    return { code: 'pending_in_use', said: message('failure.readyBooksShared', {}) };
   }
   if (state.activeJobs > 0) {
-    return {
-      code: 'pending_in_use',
-      message: 'Wait for the current conversion to finish before deleting pending books.',
-    };
+    return { code: 'pending_in_use', said: message('failure.waitForConversion', {}) };
   }
   return undefined;
 }
@@ -65,5 +59,8 @@ export function wrongExtension(
 ): PendingSaveError | undefined {
   return path.extname(destination).toLowerCase() === extension[format]
     ? undefined
-    : new PendingSaveError('wrong_extension', `Choose a ${extension[format]} file for this book.`);
+    : new PendingSaveError(
+        'wrong_extension',
+        message('save.wrongExtension', { extension: extension[format] }),
+      );
 }

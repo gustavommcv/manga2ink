@@ -27,6 +27,9 @@ import {
   ToolExecutionError,
 } from '@/domain/conversion';
 import { mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
+import { message } from '@/domain/message';
+import { messagesFor } from '@/i18n/messages';
+import { say } from '@/i18n/say';
 
 interface Workspace {
   readonly rootPath: string;
@@ -133,7 +136,7 @@ export class MangabindBindingAdapter implements BindingPort {
       } catch (error) {
         throw new ConversionWorkflowError(
           'mapping_save_failed',
-          "Couldn't save mangabind.json in the source folder. Check that the folder is writable and that its mangabind.json is valid JSON.",
+          message('workflow.mappingNotSaved', {}),
           { cause: error },
         );
       }
@@ -347,7 +350,7 @@ export class MangabindBindingAdapter implements BindingPort {
     } catch (error) {
       throw new ConversionWorkflowError(
         'mapping_save_failed',
-        "Couldn't save mangabind.json in the source folder. Check that the folder is writable and that its mangabind.json is valid JSON.",
+        message('workflow.mappingNotSaved', {}),
         { cause: error },
       );
     }
@@ -373,7 +376,7 @@ export class MangabindBindingAdapter implements BindingPort {
     } catch (error) {
       throw new ConversionWorkflowError(
         'details_save_failed',
-        "Couldn't keep the author and language with the source folder. Check that the folder is writable and that its mangabind.json is valid.",
+        message('workflow.detailsNotSaved', {}),
         { cause: error },
       );
     }
@@ -484,16 +487,23 @@ function boundTitle(
 
 function assertSuccessful(result: MangabindRunResult): void {
   if (result.exitCode === 0 && result.report.status !== 'failed') return;
-  const issue = collectIssues(result).find((candidate) => candidate.severity === 'error') ?? {
-    tool: 'mangabind',
-    severity: 'error',
-    code: 'process_failed',
-    stage: result.report.mode,
-    recoverable: true,
-    message: 'Mangabind could not build the selected volumes.',
-    ...(result.stderr === '' ? {} : { diagnostic: result.stderr }),
-  };
-  throw new ToolExecutionError(issue, result.exitCode);
+  const reported = collectIssues(result).find((candidate) => candidate.severity === 'error');
+  if (reported !== undefined) throw new ToolExecutionError(reported, result.exitCode);
+  // The tool said nothing the person can use, so the app says it; the English is the record.
+  const said = message('failure.bindingFailed', {});
+  throw new ToolExecutionError(
+    {
+      tool: 'mangabind',
+      severity: 'error',
+      code: 'process_failed',
+      stage: result.report.mode,
+      recoverable: true,
+      message: say(messagesFor('en').said, said),
+      ...(result.stderr === '' ? {} : { diagnostic: result.stderr }),
+    },
+    result.exitCode,
+    { said },
+  );
 }
 
 function checkedChildPath(parentPath: string, childPath: string): string {

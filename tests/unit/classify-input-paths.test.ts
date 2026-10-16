@@ -5,6 +5,7 @@ import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { classifyInputPaths, maxInputsPerAdd } from '@/adapters/input/classify-input-paths';
+import { message } from '@/domain/message';
 
 const temporaryDirectories: string[] = [];
 
@@ -43,8 +44,8 @@ describe('classifying input paths', () => {
       { path: cbz, kind: 'cbz' },
     ]);
     expect(result.rejected).toEqual([
-      { name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' },
-      { name: 'gone.cbz', reason: 'That item could not be read.' },
+      { name: 'notes.txt', reason: message('input.onlyFoldersAndCbz', {}) },
+      { name: 'gone.cbz', reason: message('input.unreadable', {}) },
     ]);
   });
 
@@ -59,17 +60,20 @@ describe('classifying input paths', () => {
     // A folder is a folder whatever it is called; a file without the extension is not a book.
     expect(result.accepted).toEqual([{ path: '/a/Series.cbz', kind: 'folder' }]);
     expect(result.rejected).toEqual([
-      { name: 'plain', reason: 'Only folders and .cbz files can be added.' },
+      { name: 'plain', reason: message('input.onlyFoldersAndCbz', {}) },
     ]);
   });
 
-  it('names an item that has no name at all', async () => {
+  it('names an item that has no last step by its path, and one that has no path by nothing', async () => {
     const result = await classifyInputPaths(
-      [''],
+      [path.parse(process.cwd()).root, ''],
       fakeStat(() => Promise.reject(new Error('unreadable'))),
     );
 
-    expect(result.rejected).toEqual([{ name: 'Item', reason: 'That item could not be read.' }]);
+    expect(result.rejected).toEqual([
+      { name: path.parse(process.cwd()).root, reason: message('input.unreadable', {}) },
+      { reason: message('input.unreadable', {}) },
+    ]);
   });
 
   it('adds only the first hundred at once and says how many were left out', async () => {
@@ -81,11 +85,9 @@ describe('classifying input paths', () => {
     );
 
     expect(result.accepted).toHaveLength(maxInputsPerAdd);
+    // What was past the limit names no item.
     expect(result.rejected).toEqual([
-      {
-        name: '3 more',
-        reason: `Only the first ${String(maxInputsPerAdd)} items are added at once.`,
-      },
+      { reason: message('input.overLimit', { left: 3, limit: maxInputsPerAdd }) },
     ]);
   });
 });
