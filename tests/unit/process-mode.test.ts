@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { message } from '@/domain/message';
 import {
   batchProcessModes,
   blockedModeReason,
@@ -38,8 +39,10 @@ describe('process modes', () => {
   });
 
   it('explains why a mode cannot run on a CBZ or on a library, and allows everything else', () => {
-    expect(unsupportedModeReason('cbz', 'bind-only')).toMatch(/already one volume/u);
-    expect(unsupportedModeReason('library', 'convert-only')).toMatch(/title by title/u);
+    expect(unsupportedModeReason('cbz', 'bind-only')).toEqual(message('mode.cbzIsOneVolume', {}));
+    expect(unsupportedModeReason('library', 'convert-only')).toEqual(
+      message('mode.libraryGroupsFirst', {}),
+    );
 
     expect(unsupportedModeReason('folder', 'bind-only')).toBeUndefined();
     expect(unsupportedModeReason('folder', 'convert-only')).toBeUndefined();
@@ -55,9 +58,13 @@ describe('process modes', () => {
       expect(blockedModeReason('folder', mode)).toBeUndefined();
     }
     expect(blockedModeReason('cbz', 'convert-only')).toBeUndefined();
-    expect(blockedModeReason('cbz', 'bind-only')).toMatch(/already one volume/u);
-    expect(blockedModeReason('cbz', 'bind-and-convert')).toMatch(/already one volume/u);
-    expect(blockedModeReason('library', 'convert-only')).toMatch(/title by title/u);
+    expect(blockedModeReason('cbz', 'bind-only')).toEqual(message('mode.cbzIsOneVolume', {}));
+    expect(blockedModeReason('cbz', 'bind-and-convert')).toEqual(
+      message('mode.cbzIsOneVolume', {}),
+    );
+    expect(blockedModeReason('library', 'convert-only')).toEqual(
+      message('mode.libraryGroupsFirst', {}),
+    );
     expect(blockedModeReason('library', 'bind-only')).toBeUndefined();
     expect(blockedModeReason('library', 'bind-and-convert')).toBeUndefined();
   });

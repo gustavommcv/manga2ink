@@ -4,12 +4,25 @@ import type { InspectedRow, LibraryTitle, QueueRow } from '@/domain/input-queue'
 import { createMappingDraft } from '@/domain/mapping';
 import type { ProcessMode } from '@/domain/process-mode';
 import {
-  describeRun,
-  finishRunReport,
-  reportInputRun,
-  reportLibraryRun,
+  describeRun as describeRunOf,
+  finishRunReport as finishRunReportOf,
+  reportInputRun as reportInputRunOf,
+  reportLibraryRun as reportLibraryRunOf,
   type RunOutcome,
 } from '@/domain/run-report';
+
+import { inEnglish } from './support/say';
+
+// The report carries messages, written when they are shown; what a person reads is what these tests
+// look at, so each result is said in English as it comes back.
+const describeRun = ((...given: Parameters<typeof describeRunOf>) =>
+  inEnglish(describeRunOf(...given))) as typeof describeRunOf;
+const finishRunReport = ((...given: Parameters<typeof finishRunReportOf>) =>
+  inEnglish(finishRunReportOf(...given))) as typeof finishRunReportOf;
+const reportInputRun = ((...given: Parameters<typeof reportInputRunOf>) =>
+  inEnglish(reportInputRunOf(...given))) as typeof reportInputRunOf;
+const reportLibraryRun = ((...given: Parameters<typeof reportLibraryRunOf>) =>
+  inEnglish(reportLibraryRunOf(...given))) as typeof reportLibraryRunOf;
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 2, chapter: 1 },

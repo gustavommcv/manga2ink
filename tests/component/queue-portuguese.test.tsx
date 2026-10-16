@@ -297,6 +297,126 @@ describe('the queue screen in Portuguese', () => {
   });
 });
 
+describe('what the queue says about each row, in Portuguese', () => {
+  const cbzRow: QueueRow = {
+    id: 'c',
+    kind: 'cbz',
+    displayName: 'Vagabond Vol.03.cbz',
+    displayPath: '/manga/Vagabond Vol.03.cbz',
+    state: 'inspected',
+    sessionId: 'session-c',
+    confirmed: false,
+  };
+  const unreadableRow: QueueRow = {
+    id: 'u',
+    kind: 'cbz',
+    displayName: 'Broken.cbz',
+    displayPath: '/manga/Broken.cbz',
+    state: 'unreadable',
+    message: 'The file could not be read.',
+  };
+  const needsVolumes: QueueRow = {
+    ...folderRow,
+    id: 'n',
+    displayName: 'Random scans',
+    mapping: createMappingDraft({ mangaTitle: 'Random scans', chapters }),
+  };
+
+  function rowOf(name: string): HTMLElement {
+    const item = screen.getByText(name).closest('li');
+    expect(item).not.toBeNull();
+    return item as HTMLElement;
+  }
+
+  it('writes the status and the line under the name of a folder that is grouped', () => {
+    render(inPortuguese(<QueueScreen {...props({ rows: [folderRow] })} />));
+
+    const row = rowOf('Chainsaw Man');
+    expect(within(row).getByText('1 volume')).toBeVisible();
+    expect(within(row).getByText('Pasta · 2 capítulos')).toBeVisible();
+  });
+
+  it('writes what to do about a folder that has no volumes yet', () => {
+    render(inPortuguese(<QueueScreen {...props({ rows: [needsVolumes] })} />));
+
+    const row = rowOf('Random scans');
+    expect(within(row).getByText('Precisa de volumes')).toBeVisible();
+    expect(
+      within(row).getByText('Ainda não há volumes. Abra Editar volumes para agrupar os capítulos.'),
+    ).toBeVisible();
+  });
+
+  it('writes a CBZ that goes straight to the e-reader step, and one that has nothing to join', () => {
+    const { rerender } = render(inPortuguese(<QueueScreen {...props({ rows: [cbzRow] })} />));
+    expect(
+      within(rowOf('Vagabond Vol.03.cbz')).getByText('CBZ · vai direto para a etapa do e-reader'),
+    ).toBeVisible();
+    expect(within(rowOf('Vagabond Vol.03.cbz')).getByText('Pronto')).toBeVisible();
+
+    rerender(inPortuguese(<QueueScreen {...props({ rows: [cbzRow], mode: 'bind-only' })} />));
+
+    const row = rowOf('Vagabond Vol.03.cbz');
+    expect(within(row).getByText('Nada para juntar')).toBeVisible();
+    expect(
+      within(row).getByText('Um CBZ já é um volume só, então não há o que juntar.'),
+    ).toBeVisible();
+  });
+
+  it('says why a row could not be read in the words of whoever said it, which are not translated', () => {
+    render(inPortuguese(<QueueScreen {...props({ rows: [unreadableRow] })} />));
+
+    const row = rowOf('Broken.cbz');
+    expect(within(row).getByText('Não foi possível ler')).toBeVisible();
+    expect(within(row).getByText('The file could not be read.')).toBeVisible();
+  });
+
+  it('writes what a library says when it is not grouped', () => {
+    const library: QueueRow = {
+      ...libraryRow,
+      titles: [
+        {
+          title: 'Good Manga',
+          draft: createMappingDraft({
+            mangaTitle: 'Good Manga',
+            chapters,
+            volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2'] }],
+          }),
+          volumes: [{ name: 'Good Manga - Vol.01.cbz', pageCount: 4 }],
+        },
+      ],
+    };
+    render(inPortuguese(<QueueScreen {...props({ rows: [library], mode: 'convert-only' })} />));
+
+    const row = rowOf('Manga Library');
+    expect(within(row).getByText('Precisa agrupar')).toBeVisible();
+    expect(
+      within(row).getByText(
+        'Uma biblioteca é agrupada título por título primeiro, então não dá para pular a junção dos volumes.',
+      ),
+    ).toBeVisible();
+  });
+
+  it('writes the reason a step cannot be turned off, quoting the control by its Portuguese name', () => {
+    render(
+      inPortuguese(
+        <QueueScreen {...props({ rows: [folderRow], format: 'epub', singleBook: true })} />,
+      ),
+    );
+
+    expect(
+      screen.getAllByText('Desligue “Criar um livro para a série” para mudar isto.'),
+    ).not.toHaveLength(0);
+  });
+
+  it('writes the reason of a step that a CBZ does not allow', () => {
+    render(inPortuguese(<QueueScreen {...props({ rows: [cbzRow] })} />));
+
+    expect(
+      screen.getAllByText('Um CBZ já é um volume só, então não há o que juntar.').length,
+    ).toBeGreaterThan(0);
+  });
+});
+
 describe('the controls the conversion options share, in Portuguese', () => {
   it('writes what a reset asks, and says it is done', async () => {
     const user = userEvent.setup();

@@ -6,8 +6,8 @@ import { countOf } from './count';
  * The words of the queue screen and what it holds: the drop area, a row's buttons, the steps, the
  * panel of conversion options, the books waiting to be saved and the plan that was validated.
  *
- * What the domain, the main process and the tools say about a row (its chip, its detail line, its
- * note) is not here: those sentences become codes the window writes in a later stage (ADR 0052).
+ * What the domain says about a row (its status, its detail line, its notes) is not here: it is said
+ * by code, and the sentences are in `queue-said.ts` (ADR 0053).
  */
 export interface QueueMessages {
   readonly title: string;

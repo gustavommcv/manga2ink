@@ -339,8 +339,9 @@ export const EmptyInPortuguese: Story = {
 /**
  * The screen in Brazilian Portuguese with items, a message about what was not added, books that are
  * ready and a plan that was validated: the longer words of the language still fit where the English
- * ones did. What the domain says about each row (its chip and its detail) is still English: those
- * sentences are written by the window in a later stage (ADR 0052).
+ * ones did. What the queue says about each row (its status, its line and its notes) is a message the
+ * window writes in the language too (ADR 0053); what a tool or the main process said (why an item
+ * was not added, what a plan says) is still English until those sentences are messages as well.
  */
 export const InPortuguese: Story = {
   decorators: [inPortuguese],

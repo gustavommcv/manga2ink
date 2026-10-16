@@ -1,4 +1,4 @@
-import type { AnyMessage, MessageId, MessageValues } from '@/domain/message';
+import type { AnyMessage, MessageValues } from '@/domain/message';
 
 /**
  * What a language says for a set of codes: one function for each, from the values the code is about
@@ -14,7 +14,7 @@ export type Said = SaidFor<MessageValues>;
 export function say(said: Said, message: AnyMessage): string {
   // The code picks the function whose values are the message's own; the type cannot follow the
   // pairing through the union, and `message()` is the only way to make one that does not match.
-  const write = said[message.id as MessageId] as (values: unknown) => string;
+  const write = said[message.id] as (values: unknown) => string;
   return write(message.values);
 }
 

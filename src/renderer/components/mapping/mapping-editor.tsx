@@ -36,6 +36,7 @@ import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { useSay } from '@/renderer/hooks/use-messages';
 import { Button } from '@/renderer/components/ui/button';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { Input } from '@/renderer/components/ui/input';
@@ -121,6 +122,8 @@ export function MappingEditor({
   onSuggestVolumes,
   selectedProviderId,
 }: MappingEditorProps): React.JSX.Element {
+  const { say } = useSay();
+  const leftOut = unrecognizedChaptersNote(unrecognized, inLibrary ? 'library' : 'folder');
   const [history, setHistory] = useState<MappingEditorHistory>(() =>
     createMappingHistory(initialDraft),
   );
@@ -321,12 +324,7 @@ export function MappingEditor({
           </div>
         </div>
       </header>
-      {unrecognized.length > 0 && (
-        <InfoBanner
-          message={unrecognizedChaptersNote(unrecognized, inLibrary ? 'library' : 'folder')}
-          title="Folders left out"
-        />
-      )}
+      {leftOut !== undefined && <InfoBanner message={say(leftOut)} title="Folders left out" />}
       {singleBook && (
         <InfoBanner
           message="Mapped volumes will form top-level entries in the table of contents of the unified EPUB, with chapters nested under them."

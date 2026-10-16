@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { raw } from '@/domain/message';
 import type { LibraryTitle } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
@@ -295,10 +296,16 @@ describe('ResultsScreen', () => {
             name: 'Loose',
             status: 'skipped',
             artifacts: [],
-            message: 'No volumes yet.',
+            message: [raw('No volumes yet.')],
             fixable: true,
           },
-          { rowId: 'y', name: 'Broken', status: 'failed', artifacts: [], message: 'It crashed.' },
+          {
+            rowId: 'y',
+            name: 'Broken',
+            status: 'failed',
+            artifacts: [],
+            message: [raw('It crashed.')],
+          },
           { rowId: 'z', name: 'Silent', status: 'skipped', artifacts: [] },
         ]}
       />,
