@@ -6,11 +6,10 @@ import type { Language } from '@/domain/app-settings';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { projectLinks } from '@/shared/project-links-contract';
-import { type AnyMessage, message } from '@/domain/message';
+import { message, raw, type AnyMessage } from '@/domain/message';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
-import { raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
 import { deferred } from './support/workflow';
@@ -43,10 +42,10 @@ const refused = (said: AnyMessage): WorkflowResult<undefined> => ({
 const checked: ToolchainStatus = {
   state: 'ready',
   target: 'linux-x64',
-  message: 'Ready.',
+  message: raw('Ready.'),
   tools: [
-    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
-    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: 'Ready.' },
+    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
+    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
   ],
 };
 
@@ -65,7 +64,9 @@ describe('the tools the About tab names', () => {
       getToolchainStatus: () =>
         Promise.resolve({
           ...checked,
-          tools: [{ name: 'mangabind', releaseTag: '0.7.2', state: 'ready', message: 'Ready.' }],
+          tools: [
+            { name: 'mangabind', releaseTag: '0.7.2', state: 'ready', message: raw('Ready.') },
+          ],
         }),
     });
 
@@ -78,10 +79,15 @@ describe('the tools the About tab names', () => {
       getToolchainStatus: () =>
         Promise.resolve({
           state: 'blocked',
-          message: 'No.',
+          message: raw('No.'),
           tools: [
-            { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
-            { name: 'mangapress', releaseTag: 'v0.8.0', state: 'failed', message: 'Wrong hash.' },
+            { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
+            {
+              name: 'mangapress',
+              releaseTag: 'v0.8.0',
+              state: 'failed',
+              message: raw('Wrong hash.'),
+            },
           ],
         }),
     });
@@ -98,7 +104,7 @@ describe('the tools the About tab names', () => {
         Promise.resolve({
           state: 'blocked',
           tools: [],
-          message: 'The manifest could not be read.',
+          message: raw('The manifest could not be read.'),
         }),
     });
 

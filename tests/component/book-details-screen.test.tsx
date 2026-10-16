@@ -264,13 +264,13 @@ describe('looking up the author of a work', () => {
     id: 'mangadex',
     displayName: 'MangaDex',
     homepage: 'https://mangadex.org',
-    description: 'Community catalogue of manga',
+    description: raw('Community catalogue of manga'),
   };
   const otherSource = {
     id: 'other',
     displayName: 'Other Catalogue',
     homepage: 'https://other.example',
-    description: 'Another catalogue',
+    description: raw('Another catalogue'),
   };
   const work = {
     id: 'w1',

@@ -186,7 +186,7 @@ describe('looking up the author from the details of an item', () => {
     id: 'mangadex',
     displayName: 'MangaDex',
     homepage: 'https://mangadex.org',
-    description: 'Community catalogue of manga, with volume and chapter data',
+    description: raw('Community catalogue of manga, with volume and chapter data'),
   };
   const found = {
     id: 'work-1',

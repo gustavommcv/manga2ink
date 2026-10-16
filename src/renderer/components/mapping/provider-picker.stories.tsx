@@ -4,13 +4,14 @@ import { expect, userEvent, within } from 'storybook/test';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
 import { ProviderPicker } from './provider-picker';
+import { raw } from '@/domain/message';
 
 const providers: readonly MetadataProviderDescriptor[] = [
   {
     id: 'mangadex',
     displayName: 'MangaDex',
     homepage: 'https://mangadex.org',
-    description: 'Community catalogue of manga, with volume and chapter data',
+    description: raw('Community catalogue of manga, with volume and chapter data'),
   },
 ];
 

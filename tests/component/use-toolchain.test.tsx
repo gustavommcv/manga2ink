@@ -7,18 +7,20 @@ import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 const ready: ToolchainStatus = {
   state: 'ready',
   target: 'win32-x64',
   tools: [],
-  message: 'Bundled conversion tools are verified and ready.',
+  message: message('toolchain.ready', {}),
 };
 const blocked: ToolchainStatus = {
   state: 'blocked',
   tools: [],
-  message: 'A bundled conversion tool failed verification. Reinstall Mangabound to restore it.',
+  message: raw(
+    'A bundled conversion tool failed verification. Reinstall Mangabound to restore it.',
+  ),
 };
 const paperwhite: DeviceProfileSummary = {
   code: 'KPW6',
@@ -87,7 +89,7 @@ describe('useToolchain', () => {
       expect(result.current.toolchain).toEqual({
         state: 'blocked',
         tools: [],
-        message: 'The bundled conversion tools could not be checked.',
+        message: message('toolchain.checkFailed', {}),
       });
     });
   });
@@ -118,9 +120,7 @@ describe('useToolchain', () => {
     const { result } = renderHook(() => useToolchain(bridge, onFailure));
 
     await waitFor(() => {
-      expect(result.current.toolchain?.message).toBe(
-        'The bundled conversion tools could not be checked.',
-      );
+      expect(result.current.toolchain?.message).toEqual(message('toolchain.checkFailed', {}));
     });
   });
 

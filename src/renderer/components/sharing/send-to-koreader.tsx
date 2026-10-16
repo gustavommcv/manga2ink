@@ -1,6 +1,7 @@
 import { RadioTower } from 'lucide-react';
 
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import type { OpdsSharingStatus } from '@/shared/opds-contract';
 
 export interface SendToKoreaderProps {
@@ -15,6 +16,7 @@ export interface SendToKoreaderProps {
  * person there with the pending run already chosen, even before exporting any file.
  */
 export function SendToKoreader({ onOpen, status }: SendToKoreaderProps): React.JSX.Element {
+  const words = useMessages().sharing.send;
   return (
     <section
       aria-labelledby="koreader-title"
@@ -23,20 +25,18 @@ export function SendToKoreader({ onOpen, status }: SendToKoreaderProps): React.J
       <div className="flex items-center gap-2">
         <RadioTower aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <h2 className="text-sm font-medium" id="koreader-title">
-          Send to KOReader
+          {words.title}
         </h2>
         <span className="flex-1" />
         {status.active && (
           <span className="bg-accent/15 text-accent rounded-full px-2.5 py-0.5 text-xs">
-            Sharing
+            {words.sharing}
           </span>
         )}
       </div>
-      <p className="text-muted-foreground text-sm">
-        KOReader downloads the books from this computer over your Wi-Fi.
-      </p>
+      <p className="text-muted-foreground text-sm">{words.text}</p>
       <Button onClick={onOpen} variant="outline">
-        {status.active ? 'Show sharing' : 'Share these books'}
+        {status.active ? words.show : words.share}
       </Button>
     </section>
   );

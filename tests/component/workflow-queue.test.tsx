@@ -581,7 +581,7 @@ describe('queue application workflow', () => {
     id: 'mangadex',
     displayName: 'MangaDex',
     homepage: 'https://mangadex.org',
-    description: 'Community catalogue of manga, with volume and chapter data',
+    description: raw('Community catalogue of manga, with volume and chapter data'),
   };
 
   /** Opens the editor of the folder in the queue and picks MangaDex from the list of sources. */
@@ -1089,7 +1089,11 @@ describe('queue application workflow', () => {
       bridge({
         registerDroppedFiles,
         getToolchainStatus: () =>
-          Promise.resolve({ state: 'blocked', tools: [], message: 'A tool failed verification.' }),
+          Promise.resolve({
+            state: 'blocked',
+            tools: [],
+            message: raw('A tool failed verification.'),
+          }),
       }),
     );
     render(<App />);

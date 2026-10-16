@@ -12,7 +12,7 @@ const mangaDex: MetadataProviderDescriptor = {
   id: 'mangadex',
   displayName: 'MangaDex',
   homepage: 'https://mangadex.org',
-  description: 'Community catalogue of manga, with volume and chapter data',
+  description: raw('Community catalogue of manga, with volume and chapter data'),
 };
 
 const search = () =>

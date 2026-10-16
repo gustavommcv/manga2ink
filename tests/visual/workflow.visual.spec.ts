@@ -473,3 +473,14 @@ test('a running conversion in Portuguese remains visually consistent', async ({ 
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('running-portuguese.png');
 });
+
+test('the share panel in Portuguese remains visually consistent', async ({ page }) => {
+  await page.goto(
+    '/iframe.html?id=workflows-share-panel--ready-to-start-in-portuguese&viewMode=story',
+  );
+  await expect(
+    page.getByRole('heading', { name: 'Compartilhar com o seu e-reader' }),
+  ).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('share-panel-portuguese.png');
+});

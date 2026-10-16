@@ -1212,7 +1212,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                     onOpen={() => {
                       sharing.shareBooks({
                         libraryId: activeRunId,
-                        displayPath: 'Books ready to share',
+                        displayPath: messages.sharing.booksReady,
                       });
                     }}
                     status={sharing.status}
@@ -1262,16 +1262,18 @@ function ToolchainBanner({
 }: {
   readonly toolchain?: ToolchainStatus;
 }): React.JSX.Element | null {
+  const words = useMessages().shared.toolchain;
+  const { say } = useSay();
   if (toolchain === undefined || toolchain.state === 'ready') return null;
   return (
     <section
-      aria-label="Bundled tool status"
+      aria-label={words.label}
       className="border-border bg-surface mb-8 flex items-start gap-3 rounded-lg border px-4 py-3"
     >
       <CircleAlert aria-hidden="true" className="text-status-warning mt-0.5 size-4" />
       <div>
-        <h2 className="text-sm font-semibold">Conversion tools need attention</h2>
-        <p className="text-muted-foreground mt-0.5 text-xs">{toolchain.message}</p>
+        <h2 className="text-sm font-semibold">{words.title}</h2>
+        <p className="text-muted-foreground mt-0.5 text-xs">{say(toolchain.message)}</p>
       </div>
     </section>
   );

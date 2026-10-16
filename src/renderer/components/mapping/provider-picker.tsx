@@ -2,7 +2,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { useId, useState } from 'react';
 
 import { useClickOutside } from '@/renderer/hooks/use-click-outside';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
@@ -42,6 +42,7 @@ export function ProviderPicker({
   readonly selectedId: string | undefined;
 }): React.JSX.Element {
   const words = useMessages().mapping.providers;
+  const { say } = useSay();
   const base = useId();
   const listId = `${base}-list`;
   const labelId = `${base}-label`;
@@ -51,7 +52,7 @@ export function ProviderPicker({
     ...providers.map((provider) => ({
       value: provider.id,
       title: provider.displayName,
-      detail: `${hostOf(provider.homepage)} · ${provider.description}`,
+      detail: `${hostOf(provider.homepage)} · ${say(provider.description)}`,
     })),
   ];
   const selectedIndex = Math.max(

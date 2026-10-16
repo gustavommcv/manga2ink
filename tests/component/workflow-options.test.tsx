@@ -238,7 +238,7 @@ describe('the options kept between sessions', () => {
       id: 'mangadex',
       displayName: 'MangaDex',
       homepage: 'https://mangadex.org',
-      description: 'Community catalogue of manga, with volume and chapter data',
+      description: raw('Community catalogue of manga, with volume and chapter data'),
     };
     installBridge(
       bridge({
@@ -270,7 +270,7 @@ describe('the options kept between sessions', () => {
       id: 'mangadex',
       displayName: 'MangaDex',
       homepage: 'https://mangadex.org',
-      description: 'Community catalogue of manga, with volume and chapter data',
+      description: raw('Community catalogue of manga, with volume and chapter data'),
     };
     installBridge(
       bridge({

@@ -5,19 +5,20 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ProviderPicker } from '@/renderer/components/mapping/provider-picker';
 import { TabList } from '@/renderer/components/ui/tabs';
+import { raw } from '@/domain/message';
 
 const providers = [
   {
     id: 'first',
     displayName: 'First Source',
     homepage: 'https://first.example',
-    description: 'The first catalogue',
+    description: raw('The first catalogue'),
   },
   {
     id: 'second',
     displayName: 'Second Source',
     homepage: 'https://second.example',
-    description: 'The second catalogue',
+    description: raw('The second catalogue'),
   },
 ] as const;
 
@@ -193,7 +194,7 @@ describe('ProviderPicker', () => {
       <ProviderPicker
         onSelect={vi.fn()}
         providers={[
-          { id: 'odd', displayName: 'Odd', homepage: 'not a url', description: 'Odd one' },
+          { id: 'odd', displayName: 'Odd', homepage: 'not a url', description: raw('Odd one') },
         ]}
         selectedId={undefined}
       />,

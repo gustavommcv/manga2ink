@@ -5,6 +5,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { catalogAddress } from '@/renderer/lib/sharing';
 import type {
   NetworkInterfaceOption,
@@ -38,6 +39,7 @@ export function SharePanel({
   onStart,
   onStop,
 }: SharePanelProps): React.JSX.Element {
+  const words = useMessages().sharing.panel;
   const [localInterfaceAddress, setLocalInterfaceAddress] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -76,22 +78,19 @@ export function SharePanel({
       <div className="flex items-center gap-2 pr-10">
         <RadioTower aria-hidden="true" className="text-accent size-4 shrink-0" />
         <h2 className="text-sm font-semibold" id="share-title">
-          Share to your e-reader
+          {words.title}
         </h2>
       </div>
-      <p className="text-muted-foreground mt-1 text-xs">
-        Serves a newest-first catalog on your network, so KOReader or any OPDS reader can browse and
-        download what you&apos;ve converted.
-      </p>
+      <p className="text-muted-foreground mt-1 text-xs">{words.intro}</p>
 
       {status.active ? (
         <div className="mt-4 space-y-3">
           <div>
-            <Label htmlFor="share-url">Catalog address</Label>
+            <Label htmlFor="share-url">{words.addressLabel}</Label>
             <div className="mt-1.5 flex gap-2">
               <Input id="share-url" readOnly ref={shareUrlRef} value={address} />
               <Button
-                aria-label="Copy the address"
+                aria-label={words.copyAddress}
                 onClick={() => {
                   void navigator.clipboard.writeText(address).then(
                     () => {
@@ -105,23 +104,20 @@ export function SharePanel({
                 size="sm"
                 variant="outline"
               >
-                <Copy /> {copied ? 'Copied' : 'Copy'}
+                <Copy /> {copied ? words.copied : words.copy}
               </Button>
             </div>
           </div>
-          <p className="text-subtle-foreground text-xs">
-            In KOReader: Search, then OPDS catalog, then add this address. Keep Mangabound open
-            while it syncs.
-          </p>
+          <p className="text-subtle-foreground text-xs">{words.inKoreader}</p>
           <Button onClick={onStop} size="sm" variant="outline">
-            Stop sharing
+            {words.stop}
           </Button>
         </div>
       ) : (
         <div className="mt-4 space-y-4">
           <div className="flex items-center gap-3">
             <Button onClick={onChooseLibrary} ref={libraryButtonRef} size="sm" variant="outline">
-              {library === undefined ? 'Choose a library to share' : 'Change shared library'}
+              {library === undefined ? words.chooseLibrary : words.changeLibrary}
             </Button>
             {library !== undefined && (
               <span className="text-muted-foreground truncate text-xs">{library.displayPath}</span>
@@ -129,10 +125,10 @@ export function SharePanel({
           </div>
 
           {interfaces.length === 0 ? (
-            <p className="text-muted-foreground text-xs">No network interfaces were detected.</p>
+            <p className="text-muted-foreground text-xs">{words.noInterfaces}</p>
           ) : (
             <div>
-              <Label htmlFor="share-interface">Network interface</Label>
+              <Label htmlFor="share-interface">{words.networkInterface}</Label>
               <NativeSelect
                 id="share-interface"
                 onChange={(event) => {
@@ -157,32 +153,30 @@ export function SharePanel({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor="share-username">Username</Label>
+              <Label htmlFor="share-username">{words.username}</Label>
               <Input
                 id="share-username"
                 onChange={(event) => {
                   setUsername(event.target.value);
                 }}
-                placeholder="No username"
+                placeholder={words.noUsername}
                 value={username}
               />
             </div>
             <div>
-              <Label htmlFor="share-password">Password</Label>
+              <Label htmlFor="share-password">{words.password}</Label>
               <Input
                 id="share-password"
                 onChange={(event) => {
                   setPassword(event.target.value);
                 }}
-                placeholder="No password"
+                placeholder={words.noPassword}
                 type="password"
                 value={password}
               />
             </div>
           </div>
-          <p className="text-subtle-foreground text-xs">
-            Leave both blank to share with no password.
-          </p>
+          <p className="text-subtle-foreground text-xs">{words.blankHint}</p>
 
           <Button
             disabled={!canStart}
@@ -191,7 +185,7 @@ export function SharePanel({
             }}
             size="sm"
           >
-            Start sharing
+            {words.start}
           </Button>
         </div>
       )}
