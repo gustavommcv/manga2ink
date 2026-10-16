@@ -21,6 +21,8 @@ export const googleSiteVerification = '';
 /**
  * Where the heart in the header of every page leads: the page on which a person can support the project.
  * A plain link, with no script of the service on the site (see SEO.md: nothing tracks a visitor). It is
- * also the `buy_me_a_coffee` of `.github/FUNDING.yml`; to change service, change both.
+ * also the `buy_me_a_coffee` of `.github/FUNDING.yml` and the `supportAddress` of the app's About tab
+ * (`src/main/project-links.ts`); to change service, change all of them (a test of the app says when
+ * these three differ).
  */
 export const supportUrl = 'https://buymeacoffee.com/gusmonnerat';
