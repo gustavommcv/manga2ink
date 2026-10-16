@@ -75,6 +75,12 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
       `Port ${String(port)} is already used by another program on this device. Close it and try again.`,
     'failure.sharingAddressRefused': () =>
       'The sharing server could not be started on that network address.',
+    'failure.processingFolderUnavailable': ({ folder }) =>
+      `The processing folder ${folder} is not available. Connect its drive again, or choose another folder in the app settings.`,
+    'failure.processingFolderUnusable': ({ folder }) =>
+      `Mangabound cannot work in ${folder}. Choose a folder it can write in.`,
+    'failure.processingBusy': () =>
+      'A conversion or a share is running. Finish or stop it, then try again.',
   },
   'pt-BR': {
     'failure.cancelled': () => 'Cancelado.',
@@ -130,5 +136,11 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
       `A porta ${String(port)} já está em uso por outro programa neste dispositivo. Feche-o e tente de novo.`,
     'failure.sharingAddressRefused': () =>
       'Não foi possível iniciar o servidor de compartilhamento nesse endereço de rede.',
+    'failure.processingFolderUnavailable': ({ folder }) =>
+      `A pasta de trabalho ${folder} não está disponível. Conecte o disco dela de novo ou escolha outra pasta nas configurações do app.`,
+    'failure.processingFolderUnusable': ({ folder }) =>
+      `O Mangabound não consegue trabalhar em ${folder}. Escolha uma pasta em que ele possa gravar.`,
+    'failure.processingBusy': () =>
+      'Há uma conversão ou um compartilhamento em andamento. Termine ou interrompa, e tente de novo.',
   },
 };

@@ -14,6 +14,7 @@ import type {
   SaveAppSettingsCommand,
   SavedAppSettings,
 } from '../shared/app-settings-contract';
+import type { ProcessingFolderStatus } from '../shared/processing-folder-contract';
 import type { OpenProjectLinkCommand } from '../shared/project-links-contract';
 import type { MangaboundBridge } from '../shared/runtime-info';
 import type { RestoredSettings, SaveSettingsCommand } from '../shared/settings-contract';
@@ -159,6 +160,11 @@ const bridge: MangaboundBridge = Object.freeze({
   saveAppSettings: (command: SaveAppSettingsCommand) =>
     invoke<SavedAppSettings>('app:save-settings', command),
   openProjectLink: (command: OpenProjectLinkCommand) => invoke<undefined>('app:open-link', command),
+  getProcessingFolder: () => invoke<ProcessingFolderStatus>('app:get-processing-folder'),
+  chooseProcessingFolder: () =>
+    invoke<ProcessingFolderStatus | null>('app:choose-processing-folder'),
+  useDefaultProcessingFolder: () =>
+    invoke<ProcessingFolderStatus>('app:use-default-processing-folder'),
   runtime: Object.freeze({
     electron: process.versions.electron,
     platform: process.platform,

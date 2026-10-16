@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 
 import { CliProtocolError } from '@/adapters/cli-protocol-error';
+import { ProcessingFolderError } from '@/adapters/library/processing-folders';
 import { MetadataProviderError } from '@/adapters/metadata-providers/errors';
 import { ProcessCancelledError } from '@/application/ports/process-runner';
 import { SettingsSaveError } from '@/application/ports/settings-store';
@@ -53,6 +54,9 @@ export function toFailure(error: unknown): WorkflowFailure {
   if (error instanceof MetadataProviderError) {
     const failure = { code: error.code, said: error.said };
     return error.cause === undefined ? failure : logged(failure, error);
+  }
+  if (error instanceof ProcessingFolderError) {
+    return logged({ code: `processing_folder_${error.reason}`, said: error.said }, error);
   }
   if (error instanceof LibraryIndexError) {
     return logged({ code: error.code, said: message('failure.catalogUnreadable', {}) }, error);

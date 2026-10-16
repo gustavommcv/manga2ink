@@ -7,7 +7,7 @@ import { parseStoredAppSettings, serializeStoredAppSettings } from './stored-app
 import { writeFileAtomically, type AtomicWriteDeps } from '@/adapters/fs/write-file-atomically';
 import type { AppSettingsLoad, AppSettingsStorePort } from '@/application/ports/app-settings-store';
 import { SettingsSaveError } from '@/application/ports/settings-store';
-import { type AppSettings, defaultAppSettings } from '@/domain/app-settings';
+import { defaultKeptAppSettings, type KeptAppSettings } from '@/domain/app-settings';
 
 export interface FsAppSettingsStoreDeps extends AtomicWriteDeps {
   readonly readFile: (filePath: string, encoding: 'utf8') => Promise<string>;
@@ -51,15 +51,15 @@ export class FsAppSettingsStore implements AppSettingsStorePort {
       raw = await this.io.readFile(this.filePath, 'utf8');
     } catch (error) {
       // No file is how a first launch looks; any other failure is a file that is there and unusable.
-      return { settings: defaultAppSettings, unreadable: !isEnoent(error) };
+      return { settings: defaultKeptAppSettings, unreadable: !isEnoent(error) };
     }
     const settings = parseStoredAppSettings(raw);
     return settings === undefined
-      ? { settings: defaultAppSettings, unreadable: true }
+      ? { settings: defaultKeptAppSettings, unreadable: true }
       : { settings, unreadable: false };
   }
 
-  save(settings: AppSettings): Promise<void> {
+  save(settings: KeptAppSettings): Promise<void> {
     const written = this.tail.then(() => this.write(settings));
     this.tail = written.catch(() => undefined);
     return written;
@@ -70,7 +70,7 @@ export class FsAppSettingsStore implements AppSettingsStorePort {
   }
 
   /** Writes beside the file and renames over it, so the file is either the old one or the new one. */
-  private async write(settings: AppSettings): Promise<void> {
+  private async write(settings: KeptAppSettings): Promise<void> {
     try {
       await this.io.mkdir(path.dirname(this.filePath), { recursive: true });
       await writeFileAtomically(this.filePath, serializeStoredAppSettings(settings), this.io);

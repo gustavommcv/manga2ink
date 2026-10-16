@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
+import fc from 'fast-check';
+
 import {
+  choosingFolder,
   defaultAppSettings,
+  defaultKeptAppSettings,
+  defaultProcessingChoice,
+  forgettingFolders,
+  type ProcessingChoice,
   defaultLanguage,
   isLanguagePreference,
   languagePreferences,
@@ -74,5 +81,82 @@ describe('resolveLanguage', () => {
   it('ignores what is not a language tag', () => {
     expect(resolveLanguage('system', ['', '*', '  '])).toBe(defaultLanguage);
     expect(resolveLanguage('system', ['', 'pt-BR'])).toBe('pt-BR');
+  });
+});
+
+describe('where the app works', () => {
+  it('starts in the places the app picks itself, with nothing earlier', () => {
+    expect(defaultProcessingChoice).toEqual({ folder: null, earlier: [] });
+    expect(defaultKeptAppSettings).toEqual({
+      ...defaultAppSettings,
+      processing: defaultProcessingChoice,
+    });
+  });
+
+  it('is left as it is by choosing the folder that is already chosen', () => {
+    const choice: ProcessingChoice = { folder: '/big', earlier: ['/old'] };
+
+    expect(choosingFolder(choice, '/big')).toBe(choice);
+    expect(choosingFolder(defaultProcessingChoice, null)).toBe(defaultProcessingChoice);
+  });
+
+  it('makes the folder it replaces an earlier one, the latest first', () => {
+    expect(choosingFolder({ folder: '/one', earlier: ['/zero'] }, '/two')).toEqual({
+      folder: '/two',
+      earlier: ['/one', '/zero'],
+    });
+  });
+
+  it('has nothing earlier to add when the app was in its own places', () => {
+    expect(choosingFolder(defaultProcessingChoice, '/big')).toEqual({
+      folder: '/big',
+      earlier: [],
+    });
+  });
+
+  it('puts the app back in its own places, and keeps the folder it leaves', () => {
+    expect(choosingFolder({ folder: '/big', earlier: [] }, null)).toEqual({
+      folder: null,
+      earlier: ['/big'],
+    });
+  });
+
+  it('takes a folder that comes back out of the earlier ones', () => {
+    expect(choosingFolder({ folder: '/two', earlier: ['/one', '/zero'] }, '/one')).toEqual({
+      folder: '/one',
+      earlier: ['/two', '/zero'],
+    });
+  });
+
+  it('never has the chosen folder among the earlier ones, nor one of them twice', () => {
+    const folders = fc.constantFrom('/a', '/b', '/c', '/d', null);
+    fc.assert(
+      fc.property(fc.array(folders, { maxLength: 30 }), (choices) => {
+        const choice = choices.reduce(choosingFolder, defaultProcessingChoice);
+        expect(choice.folder === null ? true : !choice.earlier.includes(choice.folder)).toBe(true);
+        expect(new Set(choice.earlier).size).toBe(choice.earlier.length);
+        expect(choice.earlier).not.toContain(null);
+      }),
+    );
+  });
+
+  it('remembers every folder it has left, until they are forgotten', () => {
+    const folders = fc.constantFrom('/a', '/b', '/c', '/d');
+    fc.assert(
+      fc.property(fc.array(folders, { minLength: 1, maxLength: 30 }), (choices) => {
+        const choice = choices.reduce(choosingFolder, defaultProcessingChoice);
+        for (const used of new Set(choices)) {
+          expect(used === choice.folder || choice.earlier.includes(used)).toBe(true);
+        }
+      }),
+    );
+  });
+
+  it('forgets earlier folders, and is the same choice when it forgets none', () => {
+    const choice: ProcessingChoice = { folder: '/now', earlier: ['/a', '/b', '/c'] };
+
+    expect(forgettingFolders(choice, ['/b', '/c'])).toEqual({ folder: '/now', earlier: ['/a'] });
+    expect(forgettingFolders(choice, ['/elsewhere', '/now'])).toBe(choice);
+    expect(forgettingFolders(choice, [])).toBe(choice);
   });
 });

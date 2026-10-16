@@ -52,7 +52,7 @@ If a newer mangapress sends a kind of warning that this version does not know, i
 
 ## What survives a restart?
 
-Pending books are kept in Mangabound's own app data on your computer, not in a temporary folder. A conversion that is unsaved, partly saved or has warnings stays under **Ready books** in the queue. **View books** opens its results.
+Pending books are kept in Mangabound's own app data on your computer, or in the working folder you chose (see [Where does Mangabound work?](#where-does-mangabound-work)), not in a temporary folder. A conversion that is unsaved, partly saved or has warnings stays under **Ready books** in the queue. **View books** opens its results.
 
 When every book of a finished conversion has been saved and recorded, Mangabound can clean up its pending copies when you close the app. The copies you saved stay where you saved them. Keep your own backups: the pending books are not a permanent library.
 
@@ -60,6 +60,17 @@ When every book of a finished conversion has been saved and recorded, Mangabound
   name="generated/ready-books"
   alt="Ready books with actions to reopen or delete the pending conversion."
 />
+
+## Where does Mangabound work?
+
+By default, Mangabound builds volumes in your system's temporary folder while it converts, and keeps finished books in its own app data folder until you save them. On a computer whose temporary folder is small, or whose disk is nearly full, a long series can run out of room.
+
+To use a drive with more space, open **App settings** (the gear in the title bar), choose **Processing** and select **Choose a folder…**. Mangabound makes two folders inside the one you choose: **Pending** for the finished books and **Scratch** for the volumes it builds while converting. The tab shows both paths and how much space is free.
+
+- The change applies to the next conversion. Books that were already waiting stay where they are and stay under **Ready books**: you can still save or delete them, and share them from their results. The tab lists the folders that still hold books, and Mangabound stops looking in one once it is empty.
+- You cannot change the folder while a conversion or a share is running.
+- If the folder's drive is not connected, Mangabound says so and does not convert until it is, rather than quietly working somewhere else. **Use the default folder** puts everything back the way it was.
+- Books you saved to another folder are not affected.
 
 ## Delete pending books
 

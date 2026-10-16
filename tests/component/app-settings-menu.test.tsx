@@ -141,7 +141,7 @@ describe('the tabs of the dialog', () => {
     expect(within(dialog).queryByRole('tabpanel')).not.toBeInTheDocument();
   });
 
-  it('opens on Interface, with the language, and has Updates and About beside it', async () => {
+  it('opens on Interface, with the language, and has Processing, Updates and About beside it', async () => {
     const user = userEvent.setup();
     await renderMenu();
 
@@ -153,7 +153,7 @@ describe('the tabs of the dialog', () => {
       within(tabs)
         .getAllByRole('tab')
         .map((tab) => tab.textContent),
-    ).toEqual(['Interface', 'Updates', 'About']);
+    ).toEqual(['Interface', 'Processing', 'Updates', 'About']);
     expect(within(tabs).getByRole('tab', { name: 'Interface' })).toHaveAttribute(
       'aria-selected',
       'true',
@@ -246,6 +246,8 @@ describe('the tabs of the dialog', () => {
     interfaceTab.focus();
 
     await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('tab', { name: 'Processing' })).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('tab', { name: 'Updates' })).toHaveFocus();
     await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('tab', { name: 'About' })).toHaveFocus();
@@ -293,8 +295,13 @@ describe('the tabs of the dialog', () => {
 });
 
 describe('the list of tabs of the app', () => {
-  it('starts with Interface, ends with About and has Updates between them', () => {
-    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'updates', 'about']);
+  it('starts with Interface, ends with About and has Processing and Updates between them', () => {
+    expect(appSettingsTabs.map((tab) => tab.id)).toEqual([
+      'interface',
+      'processing',
+      'updates',
+      'about',
+    ]);
   });
 
   it('has a different id for each tab, since the id is what names a tab and its panel', () => {
@@ -309,6 +316,7 @@ describe('the list of tabs of the app', () => {
     }
     expect(appSettingsTabs.map((tab) => tab.label(messagesFor('pt-BR')))).toEqual([
       'Interface',
+      'Processamento',
       'Atualizações',
       'Sobre',
     ]);

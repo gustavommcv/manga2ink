@@ -91,6 +91,7 @@ const emptyContext = (): Parameters<typeof bootstrapToolchain>[0] => ({
   workflow: undefined,
   mangapressCli: undefined,
   coverStore: undefined,
+  processing: undefined,
 });
 const madeOf = (name: string): Made[] => fake.made.filter((entry) => entry.name === name);
 
@@ -156,7 +157,7 @@ describe('a toolchain that verified', () => {
     // One runner for both tools, and the workflow is made of the adapters of those two.
     const [binding] = madeOf('binding');
     const [conversion] = madeOf('conversion');
-    expect(binding?.args).toEqual([mangabindCli?.instance]);
+    expect(binding?.args).toEqual([mangabindCli?.instance, undefined, undefined]);
     expect(conversion?.args).toEqual([mangapressCli?.instance]);
     const [workflow] = madeOf('workflow');
     expect(context.workflow).toBe(workflow?.instance);
@@ -168,6 +169,25 @@ describe('a toolchain that verified', () => {
       2,
       coverStore,
     ]);
+  });
+
+  it('builds volumes where the app works now, getting the place ready each time it is asked', async () => {
+    fake.verify.mockResolvedValue(ready('linux-x64'));
+    const context = emptyContext();
+    const prepare = vi.fn(() =>
+      Promise.resolve({ pending: '/books/Pending', scratch: '/books/Scratch' }),
+    );
+    context.processing = { prepare } as never;
+
+    await bootstrapToolchain(context);
+
+    const [binding] = madeOf('binding');
+    const where = binding?.args[2] as () => Promise<string>;
+    expect(binding?.args[1]).toBeUndefined();
+    expect(prepare).not.toHaveBeenCalled();
+    expect(await where()).toBe('/books/Scratch');
+    expect(await where()).toBe('/books/Scratch');
+    expect(prepare).toHaveBeenCalledTimes(2);
   });
 
   it('names the executables of Windows with their extension', async () => {

@@ -1,7 +1,7 @@
-import type { AppSettings } from '@/domain/app-settings';
+import type { KeptAppSettings } from '@/domain/app-settings';
 
 export interface AppSettingsLoad {
-  readonly settings: AppSettings;
+  readonly settings: KeptAppSettings;
   /** True when a file was there but could not be used, so `settings` are the defaults. */
   readonly unreadable: boolean;
 }
@@ -14,7 +14,7 @@ export interface AppSettingsStorePort {
   /** Never fails: a missing or unusable file gives the defaults. */
   load(): Promise<AppSettingsLoad>;
   /** Saves after every save asked for before it, so the last one asked for is the one kept. */
-  save(settings: AppSettings): Promise<void>;
+  save(settings: KeptAppSettings): Promise<void>;
   /** Resolves once every save asked for so far has finished, whether or not it worked. */
   settled(): Promise<void>;
 }

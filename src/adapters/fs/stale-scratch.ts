@@ -1,3 +1,4 @@
+import type { Dirent } from 'node:fs';
 import { readdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -22,7 +23,16 @@ export async function removeStaleScratch(
   now = Date.now(),
 ): Promise<readonly string[]> {
   const removed: string[] = [];
-  for (const child of await readdir(root, { withFileTypes: true })) {
+  let children: Dirent[];
+  try {
+    children = await readdir(root, { withFileTypes: true });
+  } catch (error) {
+    // A folder that was chosen for the app to work in and is not there now has nothing to clear.
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT' || code === 'ENOTDIR') return removed;
+    throw error;
+  }
+  for (const child of children) {
     if (!child.isDirectory() || !workspaceName.test(child.name)) continue;
     const scratch = path.join(root, child.name);
     if (now - (await newestChange(scratch)) <= olderThanMs) continue;

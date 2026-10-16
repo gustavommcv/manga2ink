@@ -10,6 +10,7 @@ import { type MappingMessages, mappingMessages } from './mapping-messages';
 import { modeSaid } from './mode-said';
 import { noticeSaid } from './notice-said';
 import { providerSaid } from './provider-said';
+import { type ProcessingMessages, processingMessages } from './processing-messages';
 import { type QueueMessages, queueMessages } from './queue-messages';
 import { queueSaid } from './queue-said';
 import { saveSaid } from './save-said';
@@ -30,6 +31,7 @@ export interface Messages {
   readonly appSettings: AppSettingsMessages;
   /** What the main process gives the native dialogs to say. */
   readonly dialogs: DialogMessages;
+  readonly processing: ProcessingMessages;
   readonly mapping: MappingMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
@@ -44,6 +46,7 @@ function build(language: Language): Messages {
     about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
     dialogs: dialogMessages[language],
+    processing: processingMessages[language],
     mapping: mappingMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
