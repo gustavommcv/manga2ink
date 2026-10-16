@@ -138,7 +138,7 @@ describe('parseStoredSettings', () => {
 
       const parsed = parseStoredSettings(raw);
 
-      expect(parsed?.reset).toEqual(['cropping minimum']);
+      expect(parsed?.reset).toEqual(['croppingMinimum']);
       expect(parsed?.settings.mode).toBe('bind-only');
       expect(parsed?.settings.format).toBe('pdf');
       expect(parsed?.settings.outputFolder).toBe('/books');
@@ -149,17 +149,17 @@ describe('parseStoredSettings', () => {
     });
 
     it.each([
-      ['a gamma a typo made huge', { gamma: 18 }, 'gamma', 'gamma'],
-      ['a cropping power out of range', { croppingPower: 50 }, 'cropping power', 'croppingPower'],
-      ['a size no screen has', { customWidth: 1e21 }, 'custom width', 'customWidth'],
-      ['an option of the wrong kind', { quiet: 'yes' }, 'quiet', 'quiet'],
-      ['a JPEG quality of 0', { jpegQuality: 0 }, 'jpeg quality', 'jpegQuality'],
-    ])('resets %s alone', (_name, bad, spoken, field) => {
+      ['a gamma a typo made huge', { gamma: 18 }, 'gamma'],
+      ['a cropping power out of range', { croppingPower: 50 }, 'croppingPower'],
+      ['a size no screen has', { customWidth: 1e21 }, 'customWidth'],
+      ['an option of the wrong kind', { quiet: 'yes' }, 'quiet'],
+      ['a JPEG quality of 0', { jpegQuality: 0 }, 'jpegQuality'],
+    ])('resets %s alone', (_name, bad, field) => {
       const parsed = parseStoredSettings(
         file({ settings: { ...defaultMangapressSettings, deviceProfile: 'KS', ...bad } }),
       );
 
-      expect(parsed?.reset).toEqual([spoken]);
+      expect(parsed?.reset).toEqual([field]);
       expect(parsed?.settings.settings.deviceProfile).toBe('KS');
       expect(parsed?.settings.settings).not.toHaveProperty(
         field,
@@ -174,7 +174,7 @@ describe('parseStoredSettings', () => {
         }),
       );
 
-      expect(parsed?.reset).toEqual(['quiet', 'cropping minimum', 'gamma']);
+      expect(parsed?.reset).toEqual(['quiet', 'croppingMinimum', 'gamma']);
     });
 
     it('takes an option that is missing for its default, without calling it reset', () => {
@@ -213,10 +213,10 @@ describe('parseStoredSettings', () => {
       );
 
       expect(parsed?.reset).toEqual([
-        'online source',
-        'save folder',
-        'last folder',
-        'sharing network',
+        'providerId',
+        'outputFolder',
+        'lastPickerFolder',
+        'preferredNetworkInterface',
       ]);
       expect(parsed?.settings.mode).toBe('bind-only');
       expect(parsed?.settings).not.toHaveProperty('providerId');
@@ -231,7 +231,7 @@ describe('parseStoredSettings', () => {
         }),
       );
 
-      expect(parsed?.reset).toEqual(['custom device size']);
+      expect(parsed?.reset).toEqual(['customDeviceSize']);
       expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangapressSettings.deviceProfile);
       expect(parsed?.settings.settings.upscale).toBe(true);
       expect(parsed?.settings.mode).toBe('bind-only');
@@ -249,7 +249,7 @@ describe('parseStoredSettings', () => {
         }),
       );
 
-      expect(parsed?.reset).toEqual(['custom height', 'custom device size']);
+      expect(parsed?.reset).toEqual(['customHeight', 'customDeviceSize']);
       expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangapressSettings.deviceProfile);
       expect(parsed?.settings.settings).not.toHaveProperty('customWidth');
     });

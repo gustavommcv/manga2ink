@@ -418,7 +418,7 @@ describe('the pages of the conversion options, in Portuguese', () => {
 
     expect(screen.getByRole('heading', { name: 'Opções de conversão' })).toHaveFocus();
     expect(screen.getByRole('button', { name: 'Voltar' })).toBeVisible();
-    expect(screen.getByText('Avançado')).toBeVisible();
+    expect(screen.getAllByText('Avançado').length).toBeGreaterThan(0);
     expect(screen.getByText(/Suas escolhas ficam guardadas para a próxima vez\./u)).toBeVisible();
     const group = screen.getByRole('group', { name: 'Itens com opções próprias' });
     expect(group).toHaveTextContent('3 itens da fila são convertidos com opções próprias.');

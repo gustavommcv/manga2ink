@@ -27,6 +27,7 @@ import {
   withDeviceProfile,
   withPageSize,
 } from '@/domain/output-profile';
+import { english, inEnglish } from './support/say';
 
 describe('mangapress default settings', () => {
   it.each([
@@ -74,7 +75,7 @@ describe('mangapress default settings', () => {
     // Left to the device profile, as in KCC.
     expect(defaultMangapressSettings.gamma).toBeUndefined();
     expect(defaultMangapressSettings.jpegQuality).toBeUndefined();
-    expect(validateMangapressSettings(defaultMangapressSettings, 'epub')).toEqual([]);
+    expect(inEnglish(validateMangapressSettings(defaultMangapressSettings, 'epub'))).toEqual([]);
   });
 
   it('start on the Kindle Paperwhite KCC opens on, with the upscaling that device starts with', () => {
@@ -287,64 +288,71 @@ describe('the page-layout controls another choice leaves without effect', () => 
   const settings = defaultMangapressSettings;
 
   it('locks nothing for an EPUB with both spread versions, which is where the options start', () => {
-    expect(pageLayoutLocks(settings, 'epub')).toEqual({});
+    expect(inEnglish(pageLayoutLocks(settings, 'epub'))).toEqual({});
   });
 
   it('offers the two-page view only where it is written: an EPUB', () => {
-    expect(pageLayoutLocks(settings, 'cbz')).toEqual({
+    expect(inEnglish(pageLayoutLocks(settings, 'cbz'))).toEqual({
       twoPageView: 'Only an EPUB carries these.',
     });
-    expect(pageLayoutLocks(settings, 'pdf').twoPageView).toBe('Only an EPUB carries these.');
+    expect(inEnglish(pageLayoutLocks(settings, 'pdf')).twoPageView).toBe(
+      'Only an EPUB carries these.',
+    );
   });
 
   it('has a whole spread to place and turn only when one is kept', () => {
-    expect(pageLayoutLocks({ ...settings, splitter: 'split' }, 'epub')).toEqual({
+    expect(inEnglish(pageLayoutLocks({ ...settings, splitter: 'split' }, 'epub'))).toEqual({
       rotateFirst: 'Only when both versions are made.',
       noRotate: 'Only when the whole spread is kept.',
       rotateRight: 'Only when the whole spread is kept.',
     });
-    expect(pageLayoutLocks({ ...settings, splitter: 'rotate' }, 'epub')).toEqual({
+    expect(inEnglish(pageLayoutLocks({ ...settings, splitter: 'rotate' }, 'epub'))).toEqual({
       rotateFirst: 'Only when both versions are made.',
     });
   });
 
   it('has nothing to rotate once the whole spread stays upright', () => {
-    expect(pageLayoutLocks({ ...settings, noRotate: true }, 'epub')).toEqual({
+    expect(inEnglish(pageLayoutLocks({ ...settings, noRotate: true }, 'epub'))).toEqual({
       rotateRight: 'Nothing is rotated while the whole spread stays upright.',
     });
-    expect(pageLayoutLocks({ ...settings, splitter: 'rotate', noRotate: true }, 'epub')).toEqual({
+    expect(
+      inEnglish(pageLayoutLocks({ ...settings, splitter: 'rotate', noRotate: true }, 'epub')),
+    ).toEqual({
       rotateFirst: 'Only when both versions are made.',
       rotateRight: 'Nothing is rotated while the whole spread stays upright.',
     });
     // Splitting keeps no whole spread, so staying upright is itself without effect.
     expect(
-      pageLayoutLocks({ ...settings, splitter: 'split', noRotate: true }, 'epub').rotateRight,
+      inEnglish(pageLayoutLocks({ ...settings, splitter: 'split', noRotate: true }, 'epub'))
+        .rotateRight,
     ).toBe('Only when the whole spread is kept.');
   });
 
   it('replaces everything about wide pages when strips are restacked', () => {
     expect(
-      pageLayoutLocks({ ...settings, maximizeStrips: true, splitter: 'split' }, 'epub'),
+      inEnglish(pageLayoutLocks({ ...settings, maximizeStrips: true, splitter: 'split' }, 'epub')),
     ).toEqual({
-      splitter: stripsLockReason,
-      rotateFirst: stripsLockReason,
-      noRotate: stripsLockReason,
-      rotateRight: stripsLockReason,
+      splitter: english(stripsLockReason),
+      rotateFirst: english(stripsLockReason),
+      noRotate: english(stripsLockReason),
+      rotateRight: english(stripsLockReason),
     });
   });
 
   it('locks for webtoon strips all that mangapress never does to them, strips restacking included', () => {
-    const locks = pageLayoutLocks({ ...settings, webtoon: true, maximizeStrips: true }, 'cbz');
+    const locks = inEnglish(
+      pageLayoutLocks({ ...settings, webtoon: true, maximizeStrips: true }, 'cbz'),
+    );
     expect(locks).toEqual({
       twoPageView: 'Only an EPUB carries these.',
-      mangaStyle: webtoonLockReason,
-      splitter: webtoonLockReason,
-      rotateFirst: webtoonLockReason,
-      noRotate: webtoonLockReason,
-      rotateRight: webtoonLockReason,
-      maximizeStrips: webtoonLockReason,
-      marginCropping: webtoonLockReason,
-      autoContrast: webtoonLockReason,
+      mangaStyle: english(webtoonLockReason),
+      splitter: english(webtoonLockReason),
+      rotateFirst: english(webtoonLockReason),
+      noRotate: english(webtoonLockReason),
+      rotateRight: english(webtoonLockReason),
+      maximizeStrips: english(webtoonLockReason),
+      marginCropping: english(webtoonLockReason),
+      autoContrast: english(webtoonLockReason),
       borders: 'Always white for webtoon strips.',
     });
   });
@@ -354,52 +362,56 @@ describe('images left as they are', () => {
   const untouched = { ...defaultMangapressSettings, noProcessing: true };
 
   it('locks every page-layout control that would change an image', () => {
-    expect(pageLayoutLocks(untouched, 'epub')).toEqual({
-      splitter: untouchedLockReason,
-      rotateFirst: untouchedLockReason,
-      noRotate: untouchedLockReason,
-      rotateRight: untouchedLockReason,
-      maximizeStrips: untouchedLockReason,
-      pageSize: untouchedLockReason,
-      borders: untouchedLockReason,
-      marginCropping: untouchedLockReason,
-      interPanelCropping: untouchedLockReason,
-      autoContrast: untouchedLockReason,
+    expect(inEnglish(pageLayoutLocks(untouched, 'epub'))).toEqual({
+      splitter: english(untouchedLockReason),
+      rotateFirst: english(untouchedLockReason),
+      noRotate: english(untouchedLockReason),
+      rotateRight: english(untouchedLockReason),
+      maximizeStrips: english(untouchedLockReason),
+      pageSize: english(untouchedLockReason),
+      borders: english(untouchedLockReason),
+      marginCropping: english(untouchedLockReason),
+      interPanelCropping: english(untouchedLockReason),
+      autoContrast: english(untouchedLockReason),
     });
   });
 
   it('still takes the reading order and the two-page view, which are written into the book', () => {
-    const locks = pageLayoutLocks(untouched, 'epub');
+    const locks = inEnglish(pageLayoutLocks(untouched, 'epub'));
     expect(locks.mangaStyle).toBeUndefined();
     expect(locks.twoPageView).toBeUndefined();
-    expect(pageLayoutLocks(untouched, 'cbz').twoPageView).toBe('Only an EPUB carries these.');
+    expect(inEnglish(pageLayoutLocks(untouched, 'cbz')).twoPageView).toBe(
+      'Only an EPUB carries these.',
+    );
   });
 
   it('still cuts webtoon strips, which are never read right to left', () => {
-    const locks = pageLayoutLocks({ ...untouched, webtoon: true }, 'epub');
-    expect(locks.mangaStyle).toBe(webtoonLockReason);
-    expect(locks.borders).toBe(untouchedLockReason);
-    expect(locks.splitter).toBe(untouchedLockReason);
+    const locks = inEnglish(pageLayoutLocks({ ...untouched, webtoon: true }, 'epub'));
+    expect(locks.mangaStyle).toBe(english(webtoonLockReason));
+    expect(locks.borders).toBe(english(untouchedLockReason));
+    expect(locks.splitter).toBe(english(untouchedLockReason));
   });
 
   it('locks the image controls, except the two an EPUB’s cover still follows', () => {
-    expect(imageLocks(untouched, 'epub')).toEqual({
-      gamma: untouchedLockReason,
-      eraseRainbow: untouchedLockReason,
-      pageFormat: untouchedLockReason,
-      noQuantize: untouchedLockReason,
-      pngLegacy: untouchedLockReason,
-      forcePngRgb: untouchedLockReason,
+    expect(inEnglish(imageLocks(untouched, 'epub'))).toEqual({
+      gamma: english(untouchedLockReason),
+      eraseRainbow: english(untouchedLockReason),
+      pageFormat: english(untouchedLockReason),
+      noQuantize: english(untouchedLockReason),
+      pngLegacy: english(untouchedLockReason),
+      forcePngRgb: english(untouchedLockReason),
     });
   });
 
   it.each(['cbz', 'pdf'] as const)(
     'locks color and JPEG quality too in a %s, which has no cover',
     (format) => {
-      const locks = imageLocks({ ...untouched, forcePng: true, forceColor: true }, format);
-      expect(locks.colorPages).toBe(untouchedLockReason);
-      expect(locks.jpegQuality).toBe(untouchedLockReason);
-      expect(locks.pageFormat).toBe(untouchedLockReason);
+      const locks = inEnglish(
+        imageLocks({ ...untouched, forcePng: true, forceColor: true }, format),
+      );
+      expect(locks.colorPages).toBe(english(untouchedLockReason));
+      expect(locks.jpegQuality).toBe(english(untouchedLockReason));
+      expect(locks.pageFormat).toBe(english(untouchedLockReason));
     },
   );
 });
@@ -409,41 +421,41 @@ describe('the image controls another choice leaves without effect', () => {
   const png = { ...settings, forcePng: true };
 
   it('offers the PNG variants only for PNG pages', () => {
-    expect(imageLocks(settings, 'epub')).toEqual({
-      noQuantize: pngOnlyLockReason,
-      pngLegacy: pngOnlyLockReason,
-      forcePngRgb: pngOnlyLockReason,
+    expect(inEnglish(imageLocks(settings, 'epub'))).toEqual({
+      noQuantize: english(pngOnlyLockReason),
+      pngLegacy: english(pngOnlyLockReason),
+      forcePngRgb: english(pngOnlyLockReason),
     });
-    expect(imageLocks(settings, 'pdf')).toEqual(imageLocks(settings, 'epub'));
+    expect(inEnglish(imageLocks(settings, 'pdf'))).toEqual(inEnglish(imageLocks(settings, 'epub')));
   });
 
   it('saves color PNG only for pages kept in color', () => {
-    expect(imageLocks(png, 'epub')).toEqual({
+    expect(inEnglish(imageLocks(png, 'epub'))).toEqual({
       forcePngRgb: 'Only when color pages are kept in color.',
     });
-    expect(imageLocks({ ...png, forceColor: true }, 'epub')).toEqual({});
+    expect(inEnglish(imageLocks({ ...png, forceColor: true }, 'epub'))).toEqual({});
   });
 
   it('has nothing to make 8-bit when the page already is', () => {
-    expect(imageLocks({ ...png, forceColor: true, noQuantize: true }, 'epub')).toEqual({
+    expect(inEnglish(imageLocks({ ...png, forceColor: true, noQuantize: true }, 'epub'))).toEqual({
       pngLegacy: 'Already 8-bit while all 256 grays are kept.',
     });
-    expect(imageLocks({ ...png, forceColor: true }, 'pdf').pngLegacy).toBe(
+    expect(inEnglish(imageLocks({ ...png, forceColor: true }, 'pdf')).pngLegacy).toBe(
       'Always 8-bit in a PDF.',
     );
-    expect(imageLocks({ ...png, forceColor: true, noQuantize: true }, 'pdf').pngLegacy).toBe(
-      'Already 8-bit while all 256 grays are kept.',
-    );
-    expect(imageLocks({ ...png, forceColor: true }, 'cbz').pngLegacy).toBeUndefined();
+    expect(
+      inEnglish(imageLocks({ ...png, forceColor: true, noQuantize: true }, 'pdf')).pngLegacy,
+    ).toBe('Already 8-bit while all 256 grays are kept.');
+    expect(inEnglish(imageLocks({ ...png, forceColor: true }, 'cbz')).pngLegacy).toBeUndefined();
   });
 
   it('locks the JPEG quality only when nothing at all is saved as JPEG', () => {
-    expect(imageLocks(png, 'epub').jpegQuality).toBeUndefined();
-    expect(imageLocks(png, 'cbz').jpegQuality).toBe('Nothing is saved as JPEG.');
-    expect(imageLocks({ ...png, forceColor: true }, 'cbz').jpegQuality).toBeUndefined();
-    expect(imageLocks({ ...png, forceColor: true, forcePngRgb: true }, 'pdf').jpegQuality).toBe(
-      'Nothing is saved as JPEG.',
-    );
+    expect(inEnglish(imageLocks(png, 'epub')).jpegQuality).toBeUndefined();
+    expect(inEnglish(imageLocks(png, 'cbz')).jpegQuality).toBe('Nothing is saved as JPEG.');
+    expect(inEnglish(imageLocks({ ...png, forceColor: true }, 'cbz')).jpegQuality).toBeUndefined();
+    expect(
+      inEnglish(imageLocks({ ...png, forceColor: true, forcePngRgb: true }, 'pdf')).jpegQuality,
+    ).toBe('Nothing is saved as JPEG.');
   });
 });
 
@@ -452,44 +464,51 @@ describe('the cover and file-name controls another choice leaves without effect'
   const koboOnly = 'Only for a Kobo’s EPUB.';
 
   it('locks nothing for a Kobo’s EPUB at the device’s own size', () => {
-    expect(coverAndNameLocks(settings, 'epub', 'kobo')).toEqual({});
+    expect(inEnglish(coverAndNameLocks(settings, 'epub', 'kobo'))).toEqual({});
   });
 
   it('offers the plain .epub name only where mangapress names a book .kepub.epub', () => {
-    expect(coverAndNameLocks(settings, 'epub', 'kindle')).toEqual({ noKepub: koboOnly });
+    expect(inEnglish(coverAndNameLocks(settings, 'epub', 'kindle'))).toEqual({ noKepub: koboOnly });
     // The family is what mangapress reports; until the profiles load there is none.
-    expect(coverAndNameLocks(settings, 'epub', undefined)).toEqual({ noKepub: koboOnly });
-    expect(coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'cbz', 'kobo')).toEqual({
+    expect(inEnglish(coverAndNameLocks(settings, 'epub', undefined))).toEqual({
+      noKepub: koboOnly,
+    });
+    expect(
+      inEnglish(coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'cbz', 'kobo')),
+    ).toEqual({
       noKepub: koboOnly,
     });
   });
 
   it('has no name to change once a custom size makes the book a plain EPUB', () => {
     const reason = 'A custom size already names the book .epub.';
-    expect(coverAndNameLocks({ ...settings, customWidth: 1000 }, 'epub', 'kobo').noKepub).toBe(
-      reason,
-    );
-    expect(coverAndNameLocks({ ...settings, customHeight: 1400 }, 'epub', 'kobo').noKepub).toBe(
-      reason,
-    );
+    expect(
+      inEnglish(coverAndNameLocks({ ...settings, customWidth: 1000 }, 'epub', 'kobo')).noKepub,
+    ).toBe(reason);
+    expect(
+      inEnglish(coverAndNameLocks({ ...settings, customHeight: 1400 }, 'epub', 'kobo')).noKepub,
+    ).toBe(reason);
     // Not a Kobo's EPUB in the first place: that is the reason shown.
-    expect(coverAndNameLocks({ ...settings, customWidth: 1000 }, 'epub', 'kindle').noKepub).toBe(
-      koboOnly,
-    );
+    expect(
+      inEnglish(coverAndNameLocks({ ...settings, customWidth: 1000 }, 'epub', 'kindle')).noKepub,
+    ).toBe(koboOnly);
   });
 
   it('makes a cover for a CBZ only when the front is cut out of a wide image', () => {
-    expect(coverAndNameLocks(settings, 'cbz', 'kindle')).toEqual({
+    expect(inEnglish(coverAndNameLocks(settings, 'cbz', 'kindle'))).toEqual({
       coverFill: 'A CBZ has a cover only when one is cut from a wide image.',
       noKepub: koboOnly,
     });
     expect(
-      coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'cbz', 'kindle').coverFill,
+      inEnglish(coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'cbz', 'kindle'))
+        .coverFill,
     ).toBeUndefined();
   });
 
   it('makes no cover for a PDF', () => {
-    expect(coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'pdf', 'kobo')).toEqual({
+    expect(
+      inEnglish(coverAndNameLocks({ ...settings, smartCoverCrop: true }, 'pdf', 'kobo')),
+    ).toEqual({
       smartCoverCrop: 'A PDF has no cover.',
       coverFill: 'A PDF has no cover.',
       noKepub: koboOnly,
@@ -568,27 +587,29 @@ describe('resolving a device profile fallback', () => {
 
 describe('mangapress output settings', () => {
   it('accepts the defaults and complete custom-device overrides', () => {
-    expect(validateMangapressSettings(defaultMangapressSettings, 'epub')).toEqual([]);
+    expect(inEnglish(validateMangapressSettings(defaultMangapressSettings, 'epub'))).toEqual([]);
     expect(
-      validateMangapressSettings(
-        {
-          ...defaultMangapressSettings,
-          deviceProfile: 'OTHER',
-          customWidth: 1200,
-          customHeight: 1600,
-          croppingMinimum: 100,
-          preserveMargin: 100,
-          jpegQuality: 100,
-          gamma: 1,
-        },
-        'epub',
+      inEnglish(
+        validateMangapressSettings(
+          {
+            ...defaultMangapressSettings,
+            deviceProfile: 'OTHER',
+            customWidth: 1200,
+            customHeight: 1600,
+            croppingMinimum: 100,
+            preserveMargin: 100,
+            jpegQuality: 100,
+            gamma: 1,
+          },
+          'epub',
+        ),
       ),
     ).toEqual([]);
   });
 
   it('refuses a gamma, a cropping power and a screen size a slip of a key made, naming the range', () => {
     const issuesFor = (overrides: Partial<typeof defaultMangapressSettings>) =>
-      validateMangapressSettings({ ...defaultMangapressSettings, ...overrides }, 'epub');
+      inEnglish(validateMangapressSettings({ ...defaultMangapressSettings, ...overrides }, 'epub'));
 
     expect(issuesFor({ gamma: 18 })).toEqual([
       { field: 'gamma', message: 'Gamma must be a number from 0.1 to 4.' },
@@ -614,20 +635,22 @@ describe('mangapress output settings', () => {
   });
 
   it('reports empty, non-finite, and out-of-range values by field', () => {
-    const issues = validateMangapressSettings(
-      {
-        ...defaultMangapressSettings,
-        deviceProfile: ' ',
-        croppingPower: Number.NaN,
-        croppingMinimum: -1,
-        preserveMargin: 101,
-        jpegQuality: 0,
-        gamma: Number.POSITIVE_INFINITY,
-        customWidth: 0,
-        customHeight: 1.5,
-        language: ' ',
-      },
-      'epub',
+    const issues = inEnglish(
+      validateMangapressSettings(
+        {
+          ...defaultMangapressSettings,
+          deviceProfile: ' ',
+          croppingPower: Number.NaN,
+          croppingMinimum: -1,
+          preserveMargin: 101,
+          jpegQuality: 0,
+          gamma: Number.POSITIVE_INFINITY,
+          customWidth: 0,
+          customHeight: 1.5,
+          language: ' ',
+        },
+        'epub',
+      ),
     );
 
     expect(issues.map((issue) => issue.field)).toEqual([
@@ -653,27 +676,33 @@ describe('mangapress output settings', () => {
       ['customHeight', 0],
     ] as const) {
       expect(
-        validateMangapressSettings({ ...defaultMangapressSettings, [field]: value }, 'epub'),
+        inEnglish(
+          validateMangapressSettings({ ...defaultMangapressSettings, [field]: value }, 'epub'),
+        ),
       ).toEqual(expect.arrayContaining([expect.objectContaining({ field })]));
     }
 
     expect(
-      validateMangapressSettings(
-        {
-          ...defaultMangapressSettings,
-          deviceProfile: 'OTHER',
-        },
-        'epub',
+      inEnglish(
+        validateMangapressSettings(
+          {
+            ...defaultMangapressSettings,
+            deviceProfile: 'OTHER',
+          },
+          'epub',
+        ),
       ),
     ).toContainEqual(expect.objectContaining({ field: 'customWidth' }));
     expect(
-      validateMangapressSettings(
-        {
-          ...defaultMangapressSettings,
-          deviceProfile: 'OTHER',
-          customWidth: 1200,
-        },
-        'epub',
+      inEnglish(
+        validateMangapressSettings(
+          {
+            ...defaultMangapressSettings,
+            deviceProfile: 'OTHER',
+            customWidth: 1200,
+          },
+          'epub',
+        ),
       ),
     ).toContainEqual(expect.objectContaining({ field: 'customHeight' }));
   });
@@ -684,18 +713,20 @@ describe('mangapress output settings', () => {
 
   it('rejects combining into one volume for a format that does not support it yet', () => {
     const combined = { ...defaultMangapressSettings, combineIntoOneVolume: true };
-    expect(validateMangapressSettings(combined, 'epub')).toEqual([]);
-    expect(validateMangapressSettings(combined, 'cbz')).toContainEqual(
+    expect(inEnglish(validateMangapressSettings(combined, 'epub'))).toEqual([]);
+    expect(inEnglish(validateMangapressSettings(combined, 'cbz'))).toContainEqual(
       expect.objectContaining({ field: 'combineIntoOneVolume' }),
     );
-    expect(validateMangapressSettings(combined, 'pdf')).toContainEqual(
+    expect(inEnglish(validateMangapressSettings(combined, 'pdf'))).toContainEqual(
       expect.objectContaining({ field: 'combineIntoOneVolume' }),
     );
     // Off, the format doesn't matter - nothing to reject.
     expect(
-      validateMangapressSettings(
-        { ...defaultMangapressSettings, combineIntoOneVolume: false },
-        'cbz',
+      inEnglish(
+        validateMangapressSettings(
+          { ...defaultMangapressSettings, combineIntoOneVolume: false },
+          'cbz',
+        ),
       ),
     ).toEqual([]);
   });

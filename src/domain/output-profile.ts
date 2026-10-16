@@ -1,3 +1,5 @@
+import { type AnyMessage, message } from './message';
+import type { CheckedOption } from './messages/options';
 import type { BookFormat } from './conversion';
 
 export type CroppingMode = 'disabled' | 'margins' | 'margins-and-page-numbers';
@@ -95,7 +97,8 @@ export type MangapressSettingField = keyof MangapressSettings;
 
 export interface MangapressSettingIssue {
   readonly field: MangapressSettingField;
-  readonly message: string;
+  /** What to tell the person, as a code the window writes in its language (ADR 0053). */
+  readonly message: AnyMessage;
 }
 
 /**
@@ -334,10 +337,10 @@ export type ImageControl =
   | 'pngLegacy'
   | 'forcePngRgb';
 
-export const webtoonLockReason = 'Not used for webtoon strips.';
-export const stripsLockReason = 'Replaced by restacking strips.';
-export const untouchedLockReason = 'Not used while the images are left as they are.';
-export const pngOnlyLockReason = 'Only for PNG pages.';
+export const webtoonLockReason: AnyMessage = message('options.lock.webtoon', {});
+export const stripsLockReason: AnyMessage = message('options.lock.strips', {});
+export const untouchedLockReason: AnyMessage = message('options.lock.untouched', {});
+export const pngOnlyLockReason: AnyMessage = message('options.lock.pngOnly', {});
 
 /**
  * Why each page-layout control has no effect with the current choices; a control that is not
@@ -355,9 +358,9 @@ export const pngOnlyLockReason = 'Only for PNG pages.';
 export function pageLayoutLocks(
   settings: MangapressSettings,
   format: BookFormat,
-): Partial<Record<PageLayoutControl, string>> {
-  const locks: Partial<Record<PageLayoutControl, string>> = {};
-  if (format !== 'epub') locks.twoPageView = 'Only an EPUB carries these.';
+): Partial<Record<PageLayoutControl, AnyMessage>> {
+  const locks: Partial<Record<PageLayoutControl, AnyMessage>> = {};
+  if (format !== 'epub') locks.twoPageView = message('options.lock.epubOnly', {});
   if (settings.noProcessing) {
     for (const control of [
       'splitter',
@@ -389,7 +392,7 @@ export function pageLayoutLocks(
     ] as const) {
       locks[control] = webtoonLockReason;
     }
-    locks.borders = 'Always white for webtoon strips.';
+    locks.borders = message('options.lock.bordersWebtoon', {});
     return locks;
   }
   if (settings.maximizeStrips) {
@@ -398,12 +401,12 @@ export function pageLayoutLocks(
     }
     return locks;
   }
-  if (settings.splitter !== 'both') locks.rotateFirst = 'Only when both versions are made.';
+  if (settings.splitter !== 'both') locks.rotateFirst = message('options.lock.bothVersions', {});
   if (settings.splitter === 'split') {
-    locks.noRotate = 'Only when the whole spread is kept.';
-    locks.rotateRight = 'Only when the whole spread is kept.';
+    locks.noRotate = message('options.lock.wholeSpreadKept', {});
+    locks.rotateRight = message('options.lock.wholeSpreadKept', {});
   } else if (settings.noRotate) {
-    locks.rotateRight = 'Nothing is rotated while the whole spread stays upright.';
+    locks.rotateRight = message('options.lock.spreadUpright', {});
   }
   return locks;
 }
@@ -422,8 +425,8 @@ export function pageLayoutLocks(
 export function imageLocks(
   settings: MangapressSettings,
   format: BookFormat,
-): Partial<Record<ImageControl, string>> {
-  const locks: Partial<Record<ImageControl, string>> = {};
+): Partial<Record<ImageControl, AnyMessage>> {
+  const locks: Partial<Record<ImageControl, AnyMessage>> = {};
   if (settings.noProcessing) {
     for (const control of [
       'gamma',
@@ -442,7 +445,7 @@ export function imageLocks(
     return locks;
   }
   if (jpegUseOf(settings, format) === 'nothing') {
-    locks.jpegQuality = 'Nothing is saved as JPEG.';
+    locks.jpegQuality = message('options.lock.noJpeg', {});
   }
   if (!settings.forcePng) {
     for (const control of ['noQuantize', 'pngLegacy', 'forcePngRgb'] as const) {
@@ -451,11 +454,11 @@ export function imageLocks(
     return locks;
   }
   if (settings.noQuantize) {
-    locks.pngLegacy = 'Already 8-bit while all 256 grays are kept.';
+    locks.pngLegacy = message('options.lock.alreadyEightBit', {});
   } else if (format === 'pdf') {
-    locks.pngLegacy = 'Always 8-bit in a PDF.';
+    locks.pngLegacy = message('options.lock.alwaysEightBitPdf', {});
   }
-  if (!settings.forceColor) locks.forcePngRgb = 'Only when color pages are kept in color.';
+  if (!settings.forceColor) locks.forcePngRgb = message('options.lock.colorKept', {});
   return locks;
 }
 
@@ -478,18 +481,18 @@ export function coverAndNameLocks(
   settings: Pick<MangapressSettings, 'smartCoverCrop' | 'customWidth' | 'customHeight'>,
   format: BookFormat,
   deviceFamily: string | undefined,
-): Partial<Record<CoverAndNameControl, string>> {
-  const locks: Partial<Record<CoverAndNameControl, string>> = {};
+): Partial<Record<CoverAndNameControl, AnyMessage>> {
+  const locks: Partial<Record<CoverAndNameControl, AnyMessage>> = {};
   if (format === 'pdf') {
-    locks.smartCoverCrop = 'A PDF has no cover.';
-    locks.coverFill = 'A PDF has no cover.';
+    locks.smartCoverCrop = message('options.lock.pdfNoCover', {});
+    locks.coverFill = message('options.lock.pdfNoCover', {});
   } else if (format === 'cbz' && !settings.smartCoverCrop) {
-    locks.coverFill = 'A CBZ has a cover only when one is cut from a wide image.';
+    locks.coverFill = message('options.lock.cbzCoverCut', {});
   }
   if (format !== 'epub' || deviceFamily !== 'kobo') {
-    locks.noKepub = 'Only for a Kobo’s EPUB.';
+    locks.noKepub = message('options.lock.koboEpub', {});
   } else if (settings.customWidth !== undefined || settings.customHeight !== undefined) {
-    locks.noKepub = 'A custom size already names the book .epub.';
+    locks.noKepub = message('options.lock.customNamesEpub', {});
   }
   return locks;
 }
@@ -536,7 +539,7 @@ export function validateMangapressSettings(
 ): readonly MangapressSettingIssue[] {
   const issues: MangapressSettingIssue[] = [];
   if (settings.deviceProfile.trim() === '') {
-    issues.push({ field: 'deviceProfile', message: 'Choose a device profile.' });
+    issues.push({ field: 'deviceProfile', message: message('options.issue.chooseDevice', {}) });
   }
   // Belt and suspenders: the settings UI is expected to keep this combination from happening at
   // all (switching to EPUB, or disabling the other formats, the moment the box is checked - see
@@ -544,23 +547,17 @@ export function validateMangapressSettings(
   if (settings.combineIntoOneVolume && !FORMATS_SUPPORTING_COMBINED_VOLUME.has(format)) {
     issues.push({
       field: 'combineIntoOneVolume',
-      message: 'Binding the whole series as one volume is only available for EPUB right now.',
+      message: message('workflow.combineNeedsEpub', {}),
     });
   }
-  numberInRange(
-    issues,
-    'croppingPower',
-    settings.croppingPower,
-    settingBounds.croppingPower,
-    'Cropping power',
-  );
-  percentage(issues, 'croppingMinimum', settings.croppingMinimum, 'Minimum retained area');
-  percentage(issues, 'preserveMargin', settings.preserveMargin, 'Preserved margin');
+  numberInRange(issues, 'croppingPower', settings.croppingPower, settingBounds.croppingPower);
+  percentage(issues, 'croppingMinimum', settings.croppingMinimum);
+  percentage(issues, 'preserveMargin', settings.preserveMargin);
   if (settings.jpegQuality !== undefined) {
-    integerRange(issues, 'jpegQuality', settings.jpegQuality, 1, 100, 'JPEG quality');
+    integerRange(issues, 'jpegQuality', settings.jpegQuality, 1, 100);
   }
   if (settings.gamma !== undefined) {
-    numberInRange(issues, 'gamma', settings.gamma, settingBounds.gamma, 'Gamma');
+    numberInRange(issues, 'gamma', settings.gamma, settingBounds.gamma);
   }
   if (settings.customWidth !== undefined) {
     integerRange(
@@ -569,7 +566,6 @@ export function validateMangapressSettings(
       settings.customWidth,
       settingBounds.customSize.minimum,
       settingBounds.customSize.maximum,
-      'Custom width',
     );
   }
   if (settings.customHeight !== undefined) {
@@ -579,7 +575,6 @@ export function validateMangapressSettings(
       settings.customHeight,
       settingBounds.customSize.minimum,
       settingBounds.customSize.maximum,
-      'Custom height',
     );
   }
   if (
@@ -588,53 +583,53 @@ export function validateMangapressSettings(
   ) {
     issues.push({
       field: settings.customWidth === undefined ? 'customWidth' : 'customHeight',
-      message: 'The custom device profile needs both a width and height.',
+      message: message('options.issue.customSizeBoth', {}),
     });
   }
   if (settings.language.trim() === '') {
-    issues.push({ field: 'language', message: 'Enter an EPUB language code.' });
+    issues.push({ field: 'language', message: message('options.issue.languageCode', {}) });
   }
   return issues;
 }
 
+/** The options whose typed value is checked: the ones a sentence about a value names. */
+type Checked = MangapressSettingField & CheckedOption;
+
 function numberInRange(
   issues: MangapressSettingIssue[],
-  field: MangapressSettingField,
+  field: Checked,
   value: number,
   bounds: { readonly minimum: number; readonly maximum: number },
-  label: string,
 ): void {
   if (!Number.isFinite(value) || value < bounds.minimum || value > bounds.maximum) {
     issues.push({
       field,
-      message: `${label} must be a number from ${String(bounds.minimum)} to ${String(bounds.maximum)}.`,
+      message: message('options.issue.number', {
+        option: field,
+        minimum: bounds.minimum,
+        maximum: bounds.maximum,
+      }),
     });
   }
 }
 
-function percentage(
-  issues: MangapressSettingIssue[],
-  field: MangapressSettingField,
-  value: number,
-  label: string,
-): void {
+function percentage(issues: MangapressSettingIssue[], field: Checked, value: number): void {
   if (!Number.isFinite(value) || value < 0 || value > 100) {
-    issues.push({ field, message: `${label} must be between 0 and 100.` });
+    issues.push({ field, message: message('options.issue.percent', { option: field }) });
   }
 }
 
 function integerRange(
   issues: MangapressSettingIssue[],
-  field: MangapressSettingField,
+  field: Checked,
   value: number,
   minimum: number,
   maximum: number,
-  label: string,
 ): void {
   if (!Number.isInteger(value) || value < minimum || value > maximum) {
     issues.push({
       field,
-      message: `${label} must be a whole number from ${minimum} to ${maximum}.`,
+      message: message('options.issue.whole', { option: field, minimum, maximum }),
     });
   }
 }

@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from 'react';
 
 import type { BookFormat } from '@/domain/conversion';
+import type { AnyMessage } from '@/domain/message';
 import {
   type AutoContrastMode,
   autoContrastOf,
@@ -11,7 +12,6 @@ import {
   defaultPageSizeFor,
   defaultValueForSetting,
   imageLocks,
-  type JpegUse,
   jpegUseOf,
   type MangapressSettingField,
   type MangapressSettings,
@@ -32,51 +32,10 @@ import { SettingFieldHeader } from '@/renderer/components/settings/setting-field
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
-import { useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { Input } from '@/renderer/components/ui/input';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
-
-const splitterDescriptions: Readonly<Record<MangapressSettings['splitter'], string>> = {
-  split: 'Each half becomes a page of its own.',
-  rotate: 'The spread is turned on its side to fill the screen.',
-  both: 'The two halves, then the whole spread again.',
-};
-
-const pageSizeDescriptions: Readonly<Record<PageSizeMode, string>> = {
-  fit: 'Larger pages are shrunk to fit; smaller ones are left as they are.',
-  enlarge: 'Every page is fitted to the screen, smaller ones enlarged.',
-  stretch: 'Pages fill the screen exactly, without keeping their proportions.',
-  fill: 'Pages are cropped until they fill the whole screen.',
-};
-
-/** What the border choice does depends on the format: an EPUB has a page background, the others padding. */
-const borderDescriptions: Readonly<
-  Record<'epub' | 'padded', Readonly<Record<BorderMode, string>>>
-> = {
-  epub: {
-    automatic: 'Each page gets the background its own edges have.',
-    white: 'A white background behind every page, dark ones included.',
-    black: 'A black background behind every page.',
-  },
-  padded: {
-    automatic: 'Pages are padded to the screen with their own background color.',
-    white: 'Pages are not padded with their background color.',
-    black: 'Pages are padded to the screen with black.',
-  },
-};
-
-const autoContrastDescriptions: Readonly<Record<AutoContrastMode, string>> = {
-  monochrome: 'Tones are stretched to full black and white; color pages are left alone.',
-  off: 'Tones are left as they are.',
-  all: 'Color pages have their tones stretched as well.',
-};
-
-/** What the JPEG quality is for, where it is not for every page. */
-const jpegUseDescriptions: Readonly<Record<Exclude<JpegUse, 'pages' | 'nothing'>, string>> = {
-  'color-pages': 'For the color pages, which stay JPEG.',
-  cover: 'Only the cover is a JPEG now.',
-};
 
 interface MangapressSettingsProps {
   readonly format: BookFormat;
@@ -104,10 +63,14 @@ export function MangapressSettingsEditor({
   singleBook,
 }: MangapressSettingsProps): React.JSX.Element {
   const { say } = useSay();
+  const words = useMessages().fields;
+  /** Why a control has no effect, or what is wrong with a value, said in the language of the window. */
+  const said = (reason: AnyMessage | undefined): string | undefined =>
+    reason === undefined ? undefined : say(reason);
   const singleBookActive = Boolean(singleBook);
   const issues = validateMangapressSettings(settings, format);
   const errorFor = (field: MangapressSettingField): string | undefined =>
-    issues.find((issue) => issue.field === field)?.message;
+    said(issues.find((issue) => issue.field === field)?.message);
   const selectedProfile = profiles.find((candidate) => candidate.code === settings.deviceProfile);
   const jpegQualityDefault = defaultJpegQualityFor(settings.deviceProfile);
   const update = <K extends keyof MangapressSettings>(
@@ -155,47 +118,48 @@ export function MangapressSettingsEditor({
   const jpegUse = jpegUseOf(settings, format);
   // The three numbers tune margin cropping, so they follow it: off by choice, or off for webtoons.
   const croppingReason =
-    locks.marginCropping ??
-    (settings.cropping === 'disabled' ? 'Enable page cropping to adjust this.' : undefined);
+    said(locks.marginCropping) ??
+    (settings.cropping === 'disabled' ? words.cropping.enableFirst : undefined);
   const croppingDisabled = croppingReason !== undefined;
   const autolevelReason =
-    locks.autoContrast ??
-    (autoContrast === 'off' ? 'Turn autocontrast on to use black-point leveling.' : undefined);
+    said(locks.autoContrast) ??
+    (autoContrast === 'off' ? words.color.autoContrast.turnOnFirst : undefined);
   const colorDescription = settings.noProcessing
-    ? 'The pages stay as they are; only the cover follows this.'
+    ? words.color.pages.helpUntouched
     : settings.forceColor
-      ? 'Pages with real color stay in color; the others still become grayscale.'
-      : 'Every page becomes grayscale.';
+      ? words.color.pages.helpColor
+      : words.color.pages.helpGray;
   const pageFormatDescription = !settings.forcePng
-    ? 'Smooth tones in small files. The usual choice.'
+    ? words.images.format.helpJpeg
     : settings.noQuantize
-      ? 'All 256 grays, saved without loss.'
-      : 'Dithered to the grays the screen can show, saved without loss.';
-  const jpegQualityHint = `Leave empty for the device profile default (${String(jpegQualityDefault)}%).`;
+      ? words.images.format.helpAllGrays
+      : words.images.format.helpDithered;
+  const jpegQualityHint = words.images.jpegQuality.hint(jpegQualityDefault);
 
   return (
     <div className="space-y-5">
       {singleBookActive && (
-        <InfoBanner
-          message="Active from the queue: the series will be produced as a single EPUB with volumes and chapters in the table of contents. Book format and process steps are locked."
-          title="Single book for the series"
-        />
+        <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />
       )}
       <SettingsSection
-        description="Choose the reader target, book format, and optional resolution overrides."
-        eyebrow="Basic"
-        title="Device & output"
+        description={words.device.description}
+        eyebrow={words.eyebrow.basic}
+        title={words.device.title}
       >
         <SelectField
           {...resetProps('deviceProfile')}
           description={
             selectedProfile === undefined
               ? undefined
-              : `${String(selectedProfile.width)} × ${String(selectedProfile.height)} · ${String(selectedProfile.grayLevels)} gray levels`
+              : words.device.profile.detail(
+                  selectedProfile.width,
+                  selectedProfile.height,
+                  selectedProfile.grayLevels,
+                )
           }
           error={errorFor('deviceProfile')}
           id="device-profile"
-          label="Device profile"
+          label={words.device.profile.label}
         >
           <NativeSelect
             aria-describedby="device-profile-message"
@@ -207,7 +171,7 @@ export function MangapressSettingsEditor({
             }}
             value={settings.deviceProfile}
           >
-            {profiles.length === 0 && <option value="">Profiles unavailable</option>}
+            {profiles.length === 0 && <option value="">{words.device.profile.unavailable}</option>}
             {profiles.map((candidate) => (
               <option key={candidate.code} value={candidate.code}>
                 {candidate.name} ({candidate.code})
@@ -220,7 +184,7 @@ export function MangapressSettingsEditor({
           description={singleBookActive ? say(singleBookLockReason) : undefined}
           disabled={singleBookActive}
           id="output-format"
-          label="Book format"
+          label={words.device.format.label}
           onReset={() => {
             if (!singleBookActive) {
               onFormat(formatBaseline);
@@ -247,15 +211,15 @@ export function MangapressSettingsEditor({
         </SelectField>
         <NumberField
           {...resetProps('customWidth')}
-          description="Overrides the profile width. Required with height for the OTHER profile."
+          description={words.device.customWidth.description}
           error={errorFor('customWidth')}
           id="custom-width"
-          label="Custom width"
+          label={words.device.customWidth.label}
           min={1}
           placeholder={
             selectedProfile !== undefined && selectedProfile.width > 0
               ? String(selectedProfile.width)
-              : 'Enter width'
+              : words.device.customWidth.placeholder
           }
           onValue={(value) => {
             update('customWidth', value);
@@ -265,15 +229,15 @@ export function MangapressSettingsEditor({
         />
         <NumberField
           {...resetProps('customHeight')}
-          description="Overrides the profile height. Required with width for the OTHER profile."
+          description={words.device.customHeight.description}
           error={errorFor('customHeight')}
           id="custom-height"
-          label="Custom height"
+          label={words.device.customHeight.label}
           min={1}
           placeholder={
             selectedProfile !== undefined && selectedProfile.height > 0
               ? String(selectedProfile.height)
-              : 'Enter height'
+              : words.device.customHeight.placeholder
           }
           onValue={(value) => {
             update('customHeight', value);
@@ -284,9 +248,9 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('noProcessing')}
           checked={settings.noProcessing}
-          description="Package the pages untouched: no cropping, resizing, grayscale or recoding."
+          description={words.device.noProcessing.description}
           id="no-processing"
-          label="Use the images as they are"
+          label={words.device.noProcessing.label}
           onChecked={(checked) => {
             update('noProcessing', checked);
           }}
@@ -294,12 +258,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('noKepub')}
           checked={settings.noKepub}
-          description={
-            bookLock.noKepub ?? 'Instead of .kepub.epub, the name Kobo’s own reader looks for.'
-          }
+          description={said(bookLock.noKepub) ?? words.device.noKepub.description}
           disabled={bookLock.noKepub !== undefined}
           id="no-kepub"
-          label="Name the book .epub"
+          label={words.device.noKepub.label}
           onChecked={(checked) => {
             update('noKepub', checked);
           }}
@@ -307,19 +269,17 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="What the images are and which way they are read."
-        eyebrow="Basic"
-        title="Reading"
+        description={words.reading.description}
+        eyebrow={words.eyebrow.basic}
+        title={words.reading.title}
       >
         <SelectField
           {...resetProps('webtoon')}
           description={
-            settings.webtoon
-              ? 'Each chapter is joined into one strip and cut into pages between panels.'
-              : 'Each image is one page.'
+            settings.webtoon ? words.reading.content.webtoonHelp : words.reading.content.pagesHelp
           }
           id="content"
-          label="Content"
+          label={words.reading.content.label}
         >
           <NativeSelect
             aria-describedby="content-message"
@@ -329,17 +289,17 @@ export function MangapressSettingsEditor({
             }}
             value={settings.webtoon ? 'webtoon' : 'pages'}
           >
-            <option value="pages">Manga or comic pages</option>
-            <option value="webtoon">Webtoon strips</option>
+            <option value="pages">{words.reading.content.pages}</option>
+            <option value="webtoon">{words.reading.content.webtoon}</option>
           </NativeSelect>
         </SelectField>
         <ToggleField
           {...resetProps('mangaStyle')}
           checked={settings.mangaStyle}
-          description={locks.mangaStyle ?? 'Use right-to-left reading and spread-split order.'}
+          description={said(locks.mangaStyle) ?? words.reading.mangaStyle.description}
           disabled={locks.mangaStyle !== undefined}
           id="manga-style"
-          label="Manga reading order"
+          label={words.reading.mangaStyle.label}
           onChecked={(checked) => {
             update('mangaStyle', checked);
           }}
@@ -347,16 +307,16 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="What becomes of a page that is two pages wide."
-        eyebrow="Advanced"
-        title="Double-page spreads"
+        description={words.spreads.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.spreads.title}
       >
         <SelectField
           {...resetProps('splitter')}
-          description={locks.splitter ?? splitterDescriptions[settings.splitter]}
+          description={said(locks.splitter) ?? words.spreads.wide.help[settings.splitter]}
           disabled={locks.splitter !== undefined}
           id="splitter"
-          label="Wide pages"
+          label={words.spreads.wide.label}
         >
           <NativeSelect
             aria-describedby="splitter-message"
@@ -367,18 +327,18 @@ export function MangapressSettingsEditor({
             }}
             value={settings.splitter}
           >
-            <option value="split">Split into two pages</option>
-            <option value="rotate">Keep whole, as one page</option>
-            <option value="both">Both: the halves, then the whole</option>
+            <option value="split">{words.spreads.wide.names.split}</option>
+            <option value="rotate">{words.spreads.wide.names.rotate}</option>
+            <option value="both">{words.spreads.wide.names.both}</option>
           </NativeSelect>
         </SelectField>
         <ToggleField
           {...resetProps('rotateFirst')}
           checked={settings.rotateFirst}
-          description={locks.rotateFirst ?? 'Put the whole spread before its two halves.'}
+          description={said(locks.rotateFirst) ?? words.spreads.rotateFirst.description}
           disabled={locks.rotateFirst !== undefined}
           id="rotate-first"
-          label="Whole spread first"
+          label={words.spreads.rotateFirst.label}
           onChecked={(checked) => {
             update('rotateFirst', checked);
           }}
@@ -386,12 +346,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('noRotate')}
           checked={settings.noRotate}
-          description={
-            locks.noRotate ?? 'Not turned on its side: read it with the device in landscape.'
-          }
+          description={said(locks.noRotate) ?? words.spreads.noRotate.description}
           disabled={locks.noRotate !== undefined}
           id="no-rotate"
-          label="Keep the whole spread upright"
+          label={words.spreads.noRotate.label}
           onChecked={(checked) => {
             update('noRotate', checked);
           }}
@@ -399,12 +357,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('rotateRight')}
           checked={settings.rotateRight}
-          description={
-            locks.rotateRight ?? 'Rotate spreads clockwise instead of counter-clockwise.'
-          }
+          description={said(locks.rotateRight) ?? words.spreads.rotateRight.description}
           disabled={locks.rotateRight !== undefined}
           id="rotate-right"
-          label="Rotate clockwise"
+          label={words.spreads.rotateRight.label}
           onChecked={(checked) => {
             update('rotateRight', checked);
           }}
@@ -412,13 +368,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('maximizeStrips')}
           checked={settings.maximizeStrips}
-          description={
-            locks.maximizeStrips ??
-            'Stack the two halves of every page, for pages made of two tall strips. Replaces the handling of wide pages.'
-          }
+          description={said(locks.maximizeStrips) ?? words.spreads.maximizeStrips.description}
           disabled={locks.maximizeStrips !== undefined}
           id="maximize-strips"
-          label="Restack 4-panel strips as 2×2"
+          label={words.spreads.maximizeStrips.label}
           onChecked={(checked) => {
             update('maximizeStrips', checked);
           }}
@@ -426,21 +379,21 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="How a page fills the screen and what surrounds it."
-        eyebrow="Advanced"
-        title="Size and borders"
+        description={words.size.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.size.title}
       >
         <SelectField
           changed={pageSize !== pageSizeBaseline}
           description={
-            locks.pageSize ??
+            said(locks.pageSize) ??
             (settings.webtoon && pageSize === 'enlarge'
-              ? 'Webtoon strips are never enlarged.'
-              : pageSizeDescriptions[pageSize])
+              ? words.size.pageSize.webtoonEnlarge
+              : words.size.pageSize.help[pageSize])
           }
           disabled={locks.pageSize !== undefined}
           id="page-size"
-          label="Page size"
+          label={words.size.pageSize.label}
           onReset={() => {
             onSettings(withPageSize(settings, pageSizeBaseline));
           }}
@@ -455,20 +408,21 @@ export function MangapressSettingsEditor({
             }}
             value={pageSize}
           >
-            <option value="fit">Fit, never enlarge</option>
-            <option value="enlarge">Fit, enlarging small pages</option>
-            <option value="stretch">Stretch to the screen</option>
-            <option value="fill">Crop to fill the screen</option>
+            <option value="fit">{words.size.pageSize.names.fit}</option>
+            <option value="enlarge">{words.size.pageSize.names.enlarge}</option>
+            <option value="stretch">{words.size.pageSize.names.stretch}</option>
+            <option value="fill">{words.size.pageSize.names.fill}</option>
           </NativeSelect>
         </SelectField>
         <SelectField
           changed={borders !== bordersBaseline}
           description={
-            locks.borders ?? borderDescriptions[format === 'epub' ? 'epub' : 'padded'][borders]
+            said(locks.borders) ??
+            words.size.borders[format === 'epub' ? 'epub' : 'padded'][borders]
           }
           disabled={locks.borders !== undefined}
           id="borders"
-          label="Borders"
+          label={words.size.borders.label}
           onReset={() => {
             onSettings(withBorderMode(settings, bordersBaseline));
           }}
@@ -483,24 +437,24 @@ export function MangapressSettingsEditor({
             }}
             value={borders}
           >
-            <option value="automatic">Automatic</option>
-            <option value="white">White</option>
-            <option value="black">Black</option>
+            <option value="automatic">{words.size.borders.names.automatic}</option>
+            <option value="white">{words.size.borders.names.white}</option>
+            <option value="black">{words.size.borders.names.black}</option>
           </NativeSelect>
         </SelectField>
       </SettingsSection>
 
       <SettingsSection
-        description="Remove the margins around a page and the empty space between its panels."
-        eyebrow="Advanced"
-        title="Cropping"
+        description={words.cropping.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.cropping.title}
       >
         <SelectField
           {...resetProps('cropping')}
-          description={locks.marginCropping}
+          description={said(locks.marginCropping)}
           disabled={locks.marginCropping !== undefined}
           id="cropping"
-          label="Page cropping"
+          label={words.cropping.pages.label}
         >
           <NativeSelect
             aria-describedby="cropping-message"
@@ -511,18 +465,20 @@ export function MangapressSettingsEditor({
             }}
             value={settings.cropping}
           >
-            <option value="disabled">Disabled</option>
-            <option value="margins">Margins</option>
-            <option value="margins-and-page-numbers">Margins and page numbers</option>
+            <option value="disabled">{words.cropping.pages.names.disabled}</option>
+            <option value="margins">{words.cropping.pages.names.margins}</option>
+            <option value="margins-and-page-numbers">
+              {words.cropping.pages.names['margins-and-page-numbers']}
+            </option>
           </NativeSelect>
         </SelectField>
         <NumberField
           {...resetProps('croppingPower')}
-          description={croppingReason ?? 'Higher values crop through more.'}
+          description={croppingReason ?? words.cropping.power.description}
           disabled={croppingDisabled}
           error={errorFor('croppingPower')}
           id="cropping-power"
-          label="Cropping power"
+          label={words.cropping.power.label}
           onValue={(value) => {
             if (value !== undefined) update('croppingPower', value);
           }}
@@ -531,11 +487,11 @@ export function MangapressSettingsEditor({
         />
         <NumberField
           {...resetProps('croppingMinimum')}
-          description={croppingReason ?? 'Only crop when this percentage of the page remains.'}
+          description={croppingReason ?? words.cropping.minimum.description}
           disabled={croppingDisabled}
           error={errorFor('croppingMinimum')}
           id="cropping-minimum"
-          label="Minimum retained area (%)"
+          label={words.cropping.minimum.label}
           max={100}
           min={0}
           onValue={(value) => {
@@ -546,11 +502,11 @@ export function MangapressSettingsEditor({
         />
         <NumberField
           {...resetProps('preserveMargin')}
-          description={croppingReason ?? 'Back off the computed crop to retain some margin.'}
+          description={croppingReason ?? words.cropping.preserve.description}
           disabled={croppingDisabled}
           error={errorFor('preserveMargin')}
           id="preserve-margin"
-          label="Preserved margin (%)"
+          label={words.cropping.preserve.label}
           max={100}
           min={0}
           onValue={(value) => {
@@ -561,12 +517,10 @@ export function MangapressSettingsEditor({
         />
         <SelectField
           {...resetProps('interPanelCrop')}
-          description={
-            locks.interPanelCropping ?? 'Removes empty gutters inside webtoon-style pages.'
-          }
+          description={said(locks.interPanelCropping) ?? words.cropping.interPanel.description}
           disabled={locks.interPanelCropping !== undefined}
           id="inter-panel-crop"
-          label="Inter-panel cropping"
+          label={words.cropping.interPanel.label}
         >
           <NativeSelect
             aria-describedby="inter-panel-crop-message"
@@ -577,27 +531,25 @@ export function MangapressSettingsEditor({
             }}
             value={settings.interPanelCrop}
           >
-            <option value="disabled">Disabled</option>
-            <option value="horizontal">Horizontal gaps</option>
-            <option value="both">Horizontal and vertical gaps</option>
+            <option value="disabled">{words.cropping.interPanel.names.disabled}</option>
+            <option value="horizontal">{words.cropping.interPanel.names.horizontal}</option>
+            <option value="both">{words.cropping.interPanel.names.both}</option>
           </NativeSelect>
         </SelectField>
       </SettingsSection>
 
       <SettingsSection
-        description="For readers that show two pages side by side, such as Kobo's and Kindle's own. KOReader ignores these."
-        eyebrow="Advanced"
-        title="Two-page view"
+        description={words.twoPage.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.twoPage.title}
       >
         <ToggleField
           {...resetProps('spreadShift')}
           checked={settings.spreadShift}
-          description={
-            locks.twoPageView ?? 'Start the book on the other side, to line double-page spreads up.'
-          }
+          description={said(locks.twoPageView) ?? words.twoPage.spreadShift.description}
           disabled={locks.twoPageView !== undefined}
           id="spread-shift"
-          label="Start on the other side"
+          label={words.twoPage.spreadShift.label}
           onChecked={(checked) => {
             update('spreadShift', checked);
           }}
@@ -605,10 +557,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('onePageLandscape')}
           checked={settings.onePageLandscape}
-          description={locks.twoPageView ?? 'Show a single centered page instead of two.'}
+          description={said(locks.twoPageView) ?? words.twoPage.onePage.description}
           disabled={locks.twoPageView !== undefined}
           id="one-page-landscape"
-          label="One page in landscape"
+          label={words.twoPage.onePage.label}
           onChecked={(checked) => {
             update('onePageLandscape', checked);
           }}
@@ -616,10 +568,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('invertDirection')}
           checked={settings.invertDirection}
-          description={locks.twoPageView ?? 'Turn pages against the reading order.'}
+          description={said(locks.twoPageView) ?? words.twoPage.invert.description}
           disabled={locks.twoPageView !== undefined}
           id="invert-direction"
-          label="Invert page turns"
+          label={words.twoPage.invert.label}
           onChecked={(checked) => {
             update('invertDirection', checked);
           }}
@@ -627,16 +579,16 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="Whether color is kept, and how the tones of a page are corrected."
-        eyebrow="Advanced"
-        title="Color and tone"
+        description={words.color.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.color.title}
       >
         <SelectField
           {...resetProps('forceColor')}
-          description={imageLock.colorPages ?? colorDescription}
+          description={said(imageLock.colorPages) ?? colorDescription}
           disabled={imageLock.colorPages !== undefined}
           id="color-pages"
-          label="Color pages"
+          label={words.color.pages.label}
         >
           <NativeSelect
             aria-describedby="color-pages-message"
@@ -647,16 +599,16 @@ export function MangapressSettingsEditor({
             }}
             value={settings.forceColor ? 'color' : 'grayscale'}
           >
-            <option value="grayscale">Convert to grayscale</option>
-            <option value="color">Keep in color</option>
+            <option value="grayscale">{words.color.pages.grayscale}</option>
+            <option value="color">{words.color.pages.color}</option>
           </NativeSelect>
         </SelectField>
         <SelectField
           changed={autoContrast !== autoContrastBaseline}
-          description={locks.autoContrast ?? autoContrastDescriptions[autoContrast]}
+          description={said(locks.autoContrast) ?? words.color.autoContrast.help[autoContrast]}
           disabled={locks.autoContrast !== undefined}
           id="auto-contrast"
-          label="Autocontrast"
+          label={words.color.autoContrast.label}
           onReset={() => {
             onSettings(withAutoContrast(settings, autoContrastBaseline));
           }}
@@ -671,20 +623,18 @@ export function MangapressSettingsEditor({
             }}
             value={autoContrast}
           >
-            <option value="monochrome">Black-and-white pages only</option>
-            <option value="off">Off</option>
-            <option value="all">Color pages too</option>
+            <option value="monochrome">{words.color.autoContrast.names.monochrome}</option>
+            <option value="off">{words.color.autoContrast.names.off}</option>
+            <option value="all">{words.color.autoContrast.names.all}</option>
           </NativeSelect>
         </SelectField>
         <ToggleField
           {...resetProps('eraseRainbow')}
           checked={settings.eraseRainbow}
-          description={
-            imageLock.eraseRainbow ?? 'Attenuate rainbow interference on color e-ink displays.'
-          }
+          description={said(imageLock.eraseRainbow) ?? words.color.rainbow.description}
           disabled={imageLock.eraseRainbow !== undefined}
           id="erase-rainbow"
-          label="Reduce rainbow effect"
+          label={words.color.rainbow.label}
           onChecked={(checked) => {
             update('eraseRainbow', checked);
           }}
@@ -692,26 +642,22 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('autoLevel')}
           checked={settings.autoLevel}
-          description={
-            autolevelReason ?? 'Set the most common dark pixel as the black point first.'
-          }
+          description={autolevelReason ?? words.color.autoLevel.description}
           disabled={autolevelReason !== undefined}
           id="auto-level"
-          label="Auto-level black point"
+          label={words.color.autoLevel.label}
           onChecked={(checked) => {
             update('autoLevel', checked);
           }}
         />
         <NumberField
           {...resetProps('gamma')}
-          description={
-            imageLock.gamma ?? 'Leave empty for profile gamma; 1.0 leaves tones unchanged.'
-          }
+          description={said(imageLock.gamma) ?? words.color.gamma.description}
           disabled={imageLock.gamma !== undefined}
           error={errorFor('gamma')}
           id="gamma"
-          label="Gamma"
-          placeholder="1.0"
+          label={words.color.gamma.label}
+          placeholder={words.color.gamma.placeholder}
           onValue={(value) => {
             update('gamma', value);
           }}
@@ -722,16 +668,16 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="The kind of file each page is saved as."
-        eyebrow="Advanced"
-        title="Page images"
+        description={words.images.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.images.title}
       >
         <SelectField
           {...resetProps('forcePng')}
-          description={imageLock.pageFormat ?? pageFormatDescription}
+          description={said(imageLock.pageFormat) ?? pageFormatDescription}
           disabled={imageLock.pageFormat !== undefined}
           id="page-format"
-          label="Page format"
+          label={words.images.format.label}
         >
           <NativeSelect
             aria-describedby="page-format-message"
@@ -742,22 +688,24 @@ export function MangapressSettingsEditor({
             }}
             value={settings.forcePng ? 'png' : 'jpeg'}
           >
-            <option value="jpeg">JPEG, full tone</option>
-            <option value="png">PNG, reduced to the screen’s grays</option>
+            <option value="jpeg">{words.images.format.jpeg}</option>
+            <option value="png">{words.images.format.png}</option>
           </NativeSelect>
         </SelectField>
         <NumberField
           {...resetProps('jpegQuality')}
           description={
-            imageLock.jpegQuality ??
-            (jpegUse === 'color-pages' || jpegUse === 'cover'
-              ? `${jpegUseDescriptions[jpegUse]} ${jpegQualityHint}`
-              : jpegQualityHint)
+            said(imageLock.jpegQuality) ??
+            (jpegUse === 'color-pages'
+              ? `${words.images.jpegQuality.forColorPages} ${jpegQualityHint}`
+              : jpegUse === 'cover'
+                ? `${words.images.jpegQuality.coverOnly} ${jpegQualityHint}`
+                : jpegQualityHint)
           }
           disabled={imageLock.jpegQuality !== undefined}
           error={errorFor('jpegQuality')}
           id="jpeg-quality"
-          label="JPEG quality"
+          label={words.images.jpegQuality.label}
           max={100}
           min={1}
           placeholder={`${String(jpegQualityDefault)}%`}
@@ -770,12 +718,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('noQuantize')}
           checked={settings.noQuantize}
-          description={
-            imageLock.noQuantize ?? 'Skip the reduction to the screen’s grays. Larger files.'
-          }
+          description={said(imageLock.noQuantize) ?? words.images.noQuantize.description}
           disabled={imageLock.noQuantize !== undefined}
           id="no-quantize"
-          label="Keep all 256 grays"
+          label={words.images.noQuantize.label}
           onChecked={(checked) => {
             update('noQuantize', checked);
           }}
@@ -783,13 +729,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('pngLegacy')}
           checked={settings.pngLegacy}
-          description={
-            imageLock.pngLegacy ??
-            'For readers that cannot open the more compact kind of PNG. Larger files.'
-          }
+          description={said(imageLock.pngLegacy) ?? words.images.pngLegacy.description}
           disabled={imageLock.pngLegacy !== undefined}
           id="png-legacy"
-          label="8-bit PNG"
+          label={words.images.pngLegacy.label}
           onChecked={(checked) => {
             update('pngLegacy', checked);
           }}
@@ -797,13 +740,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('forcePngRgb')}
           checked={settings.forcePngRgb}
-          description={
-            imageLock.forcePngRgb ??
-            'Pages kept in color are saved without loss as well. Much larger files.'
-          }
+          description={said(imageLock.forcePngRgb) ?? words.images.forcePngRgb.description}
           disabled={imageLock.forcePngRgb !== undefined}
           id="force-png-rgb"
-          label="Color pages as PNG too"
+          label={words.images.forcePngRgb.label}
           onChecked={(checked) => {
             update('forcePngRgb', checked);
           }}
@@ -811,20 +751,17 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="The cover a reader shows in its library, made from the first image of each book."
-        eyebrow="Advanced"
-        title="Cover"
+        description={words.cover.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.cover.title}
       >
         <ToggleField
           {...resetProps('smartCoverCrop')}
           checked={settings.smartCoverCrop}
-          description={
-            bookLock.smartCoverCrop ??
-            'When the first image is a whole jacket or a spread, use only its front.'
-          }
+          description={said(bookLock.smartCoverCrop) ?? words.cover.smartCrop.description}
           disabled={bookLock.smartCoverCrop !== undefined}
           id="smart-cover-crop"
-          label="Cut the front cover from a wide image"
+          label={words.cover.smartCrop.label}
           onChecked={(checked) => {
             update('smartCoverCrop', checked);
           }}
@@ -832,12 +769,10 @@ export function MangapressSettingsEditor({
         <ToggleField
           {...resetProps('coverFill')}
           checked={settings.coverFill}
-          description={
-            bookLock.coverFill ?? 'Instead of fitting inside it. Small covers are enlarged.'
-          }
+          description={said(bookLock.coverFill) ?? words.cover.fill.description}
           disabled={bookLock.coverFill !== undefined}
           id="cover-fill"
-          label="Crop the cover to fill the screen"
+          label={words.cover.fill.label}
           onChecked={(checked) => {
             update('coverFill', checked);
           }}
@@ -845,15 +780,15 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="How source metadata is applied, and the language books are made in. A book's own title, author and language are set from its item in the queue."
-        eyebrow="Advanced"
-        title="Book metadata"
+        description={words.metadata.description}
+        eyebrow={words.eyebrow.advanced}
+        title={words.metadata.title}
       >
         <SelectField
           {...resetProps('metadataTitle')}
-          description="Controls how ComicInfo.xml's Title field is applied."
+          description={words.metadata.comicInfoTitle.description}
           id="metadata-title"
-          label="ComicInfo title"
+          label={words.metadata.comicInfoTitle.label}
         >
           <NativeSelect
             aria-describedby="metadata-title-message"
@@ -863,21 +798,21 @@ export function MangapressSettingsEditor({
             }}
             value={settings.metadataTitle}
           >
-            <option value="series-only">Use series, volume, and number</option>
-            <option value="combine">Append the ComicInfo title</option>
-            <option value="title-only">Use the ComicInfo title only</option>
+            <option value="series-only">
+              {words.metadata.comicInfoTitle.names['series-only']}
+            </option>
+            <option value="combine">{words.metadata.comicInfoTitle.names.combine}</option>
+            <option value="title-only">{words.metadata.comicInfoTitle.names['title-only']}</option>
           </NativeSelect>
         </SelectField>
         <TextField
           {...resetProps('language')}
           description={
-            format === 'epub'
-              ? "Used for EPUB output, unless a book's own details name another language."
-              : 'Stored for this profile and applied when EPUB is selected.'
+            format === 'epub' ? words.metadata.language.forEpub : words.metadata.language.stored
           }
           error={errorFor('language')}
           id="language"
-          label="EPUB language"
+          label={words.metadata.language.label}
           onValue={(value) => {
             update('language', value);
           }}
@@ -888,12 +823,12 @@ export function MangapressSettingsEditor({
           checked={settings.keepComicInfo}
           description={
             format === 'cbz'
-              ? 'Copy the original ComicInfo.xml into the converted CBZ.'
-              : 'Available only for CBZ output.'
+              ? words.metadata.keepComicInfo.cbz
+              : words.metadata.keepComicInfo.onlyCbz
           }
           disabled={format !== 'cbz'}
           id="keep-comic-info"
-          label="Keep ComicInfo.xml"
+          label={words.metadata.keepComicInfo.label}
           onChecked={(checked) => {
             update('keepComicInfo', checked);
           }}
@@ -901,16 +836,16 @@ export function MangapressSettingsEditor({
       </SettingsSection>
 
       <SettingsSection
-        description="Controls intended for troubleshooting and repeatable profile parity."
-        eyebrow="Diagnostics"
-        title="Tool behavior"
+        description={words.tool.description}
+        eyebrow={words.eyebrow.diagnostics}
+        title={words.tool.title}
       >
         <ToggleField
           {...resetProps('quiet')}
           checked={settings.quiet}
-          description="The GUI already uses structured events, which suppress routine console chatter; this setting preserves exact --quiet parity in saved profiles."
+          description={words.tool.quiet.description}
           id="quiet"
-          label="Quiet mode"
+          label={words.tool.quiet.label}
           onChecked={(checked) => {
             update('quiet', checked);
           }}
