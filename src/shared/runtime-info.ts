@@ -4,6 +4,7 @@ import type {
   SavedAppSettings,
 } from './app-settings-contract';
 import type { NetworkInterfaceOption, OpdsAuthConfig, OpdsSharingStatus } from './opds-contract';
+import type { ProcessingFolderStatus } from './processing-folder-contract';
 import type { OpenProjectLinkCommand } from './project-links-contract';
 import type { RestoredSettings, SaveSettingsCommand } from './settings-contract';
 import type { ToolchainStatus } from './toolchain-status';
@@ -147,4 +148,10 @@ export interface MangaboundBridge {
    * its own language; it never gives an address (ADR 0054).
    */
   readonly openProjectLink: (command: OpenProjectLinkCommand) => Promise<WorkflowResult<undefined>>;
+  /** Where the app builds volumes and keeps finished books, and what is waiting elsewhere (ADR 0055). */
+  readonly getProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
+  /** Opens a dialog to choose the folder the app works in; resolves to null when it is cancelled. */
+  readonly chooseProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus | null>>;
+  /** Puts the app back to the places it picks itself. */
+  readonly useDefaultProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
 }

@@ -59,3 +59,57 @@ export function resolveLanguage(
   }
   return defaultLanguage;
 }
+
+/**
+ * Where the app works, as a person decided it (ADR 0055): the folder it builds volumes in while it
+ * converts, and keeps finished books in until they are saved. `folder` is one a person chose, or
+ * `null` while the app picks the places itself (the system's temporary folder, and its own data).
+ */
+export interface ProcessingChoice {
+  readonly folder: string | null;
+  /**
+   * Folders that were chosen before, in the order they stopped being: books may still be waiting in
+   * them, so they are looked in until nothing is left there. Never holds `folder`.
+   */
+  readonly earlier: readonly string[];
+}
+
+export const defaultProcessingChoice: ProcessingChoice = Object.freeze({
+  folder: null,
+  earlier: Object.freeze([]),
+});
+
+/**
+ * Everything the file of the app settings keeps. The window reads and changes `AppSettings` (the
+ * language); where the app works is changed through its own commands, which the main process checks.
+ */
+export interface KeptAppSettings extends AppSettings {
+  readonly processing: ProcessingChoice;
+}
+
+export const defaultKeptAppSettings: KeptAppSettings = Object.freeze({
+  ...defaultAppSettings,
+  processing: defaultProcessingChoice,
+});
+
+/**
+ * The choice once `folder` is the one chosen (`null` for the app's own places). The one it replaces
+ * goes among the earlier folders, since books may be waiting in it, and a folder that comes back
+ * is no longer an earlier one.
+ */
+export function choosingFolder(choice: ProcessingChoice, folder: string | null): ProcessingChoice {
+  if (folder === choice.folder) return choice;
+  const earlier = [...(choice.folder === null ? [] : [choice.folder]), ...choice.earlier].filter(
+    (kept, index, all) => kept !== folder && all.indexOf(kept) === index,
+  );
+  return { folder, earlier };
+}
+
+/** The choice without these earlier folders: nothing is waiting in them any more. */
+export function forgettingFolders(
+  choice: ProcessingChoice,
+  folders: readonly string[],
+): ProcessingChoice {
+  const earlier = choice.earlier.filter((kept) => !folders.includes(kept));
+  return earlier.length === choice.earlier.length ? choice : { ...choice, earlier };
+}

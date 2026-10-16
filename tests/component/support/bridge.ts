@@ -2,6 +2,8 @@ import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
+import { defaultProcessingStatus } from './processing';
+
 const nothing = Promise.resolve({ ok: true as const, value: undefined });
 
 /**
@@ -70,6 +72,9 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
       }),
     saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
     openProjectLink: () => nothing,
+    getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
+    chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
+    useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     ...overrides,
   };
 }

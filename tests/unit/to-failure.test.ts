@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } fr
 import { z } from 'zod';
 
 import { CliProtocolError } from '@/adapters/cli-protocol-error';
+import { ProcessingFolderError } from '@/adapters/library/processing-folders';
 import { MetadataProviderError } from '@/adapters/metadata-providers/errors';
 import { ProcessCancelledError } from '@/application/ports/process-runner';
 import { SettingsSaveError } from '@/application/ports/settings-store';
@@ -102,6 +103,25 @@ describe('toFailure', () => {
       failure: {
         code: 'invalid_manifest',
         message: 'The output library catalog could not be read.',
+      },
+    },
+    {
+      name: 'a folder the app works in that is not there',
+      error: new ProcessingFolderError(
+        'unavailable',
+        'The processing folder /mnt/books is not available.',
+      ),
+      failure: {
+        code: 'processing_folder_unavailable',
+        message: 'The processing folder /mnt/books is not available.',
+      },
+    },
+    {
+      name: 'a folder that cannot be worked in',
+      error: new ProcessingFolderError('unusable', 'The app cannot write in /mnt/books.'),
+      failure: {
+        code: 'processing_folder_unusable',
+        message: 'The app cannot write in /mnt/books.',
       },
     },
     {

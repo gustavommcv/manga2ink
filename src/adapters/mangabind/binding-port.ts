@@ -30,6 +30,8 @@ import { mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
 
 interface Workspace {
   readonly rootPath: string;
+  /** The folder `rootPath` was made in, which is not where the app works now if a person has changed it since. */
+  readonly temporaryRoot: string;
   readonly inputPath: string;
   readonly metadataPath: string;
   readonly volumesPath: string;
@@ -75,17 +77,33 @@ export class MangabindBindingAdapter implements BindingPort {
   constructor(
     private readonly cli: Pick<MangabindCliAdapter, 'run'>,
     private readonly files: WorkspaceFileSystem = workspaceFileSystem,
-    private readonly temporaryRoot = os.tmpdir(),
+    /**
+     * Where a workspace is made: a folder, or something that makes ready the folder the app works
+     * in now and says which (ADR 0055), asked each time since a person can change it.
+     */
+    private readonly temporaryRoot: string | (() => Promise<string>) = os.tmpdir(),
     private readonly createId: () => string = randomUUID,
   ) {}
 
-  async inspect(inputPath: string, signal?: AbortSignal): Promise<BindingInspection> {
+  /** Makes the folder a workspace lives in, in the folder the app works in now. */
+  private async makeWorkspaceFolder(): Promise<{
+    readonly rootPath: string;
+    readonly temporaryRoot: string;
+  }> {
+    const temporaryRoot =
+      typeof this.temporaryRoot === 'string' ? this.temporaryRoot : await this.temporaryRoot();
     const rootPath = await this.files.createTemporaryDirectory(
-      path.join(this.temporaryRoot, 'mangabound-'),
+      path.join(temporaryRoot, 'mangabound-'),
     );
+    return { rootPath, temporaryRoot };
+  }
+
+  async inspect(inputPath: string, signal?: AbortSignal): Promise<BindingInspection> {
+    const { rootPath, temporaryRoot } = await this.makeWorkspaceFolder();
     const workspaceId = this.createId();
     const workspace: Workspace = {
       rootPath,
+      temporaryRoot,
       inputPath,
       metadataPath: path.join(rootPath, 'mangabind.json'),
       volumesPath: path.join(rootPath, 'volumes'),
@@ -215,13 +233,12 @@ export class MangabindBindingAdapter implements BindingPort {
   }
 
   async planBatch(parentPath: string, signal?: AbortSignal): Promise<BindingBatchPlan> {
-    const rootPath = await this.files.createTemporaryDirectory(
-      path.join(this.temporaryRoot, 'mangabound-'),
-    );
+    const { rootPath, temporaryRoot } = await this.makeWorkspaceFolder();
     const scratchId = this.createId();
     const volumesPath = path.join(rootPath, 'volumes');
     this.workspaces.set(scratchId, {
       rootPath,
+      temporaryRoot,
       inputPath: parentPath,
       metadataPath: path.join(rootPath, 'mangabind.json'),
       volumesPath,
@@ -249,13 +266,12 @@ export class MangabindBindingAdapter implements BindingPort {
     combine?: boolean,
     onProgress?: (progress: BindingProgress) => void,
   ): Promise<BindingBatchResult> {
-    const rootPath = await this.files.createTemporaryDirectory(
-      path.join(this.temporaryRoot, 'mangabound-'),
-    );
+    const { rootPath, temporaryRoot } = await this.makeWorkspaceFolder();
     const workspaceId = this.createId();
     const volumesPath = path.join(rootPath, 'volumes');
     this.workspaces.set(workspaceId, {
       rootPath,
+      temporaryRoot,
       inputPath: parentPath,
       metadataPath: path.join(rootPath, 'mangabind.json'),
       volumesPath,
@@ -293,13 +309,12 @@ export class MangabindBindingAdapter implements BindingPort {
     combine?: boolean,
     onProgress?: (progress: BindingProgress) => void,
   ): Promise<BindingBatchResult> {
-    const rootPath = await this.files.createTemporaryDirectory(
-      path.join(this.temporaryRoot, 'mangabound-'),
-    );
+    const { rootPath, temporaryRoot } = await this.makeWorkspaceFolder();
     const workspaceId = this.createId();
     const volumesPath = path.join(rootPath, 'volumes');
     this.workspaces.set(workspaceId, {
       rootPath,
+      temporaryRoot,
       inputPath: parentPath,
       metadataPath: path.join(rootPath, 'mangabind.json'),
       volumesPath,
@@ -383,7 +398,7 @@ export class MangabindBindingAdapter implements BindingPort {
     const workspace = this.workspaces.get(workspaceId);
     this.workspaces.delete(workspaceId);
     if (workspace === undefined) return;
-    const expectedPrefix = path.resolve(this.temporaryRoot) + path.sep;
+    const expectedPrefix = path.resolve(workspace.temporaryRoot) + path.sep;
     const resolved = path.resolve(workspace.rootPath);
     if (
       !resolved.startsWith(expectedPrefix) ||

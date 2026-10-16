@@ -1,3 +1,4 @@
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -65,7 +66,7 @@ vi.mock('@/adapters/covers/fs-cover-store', () => ({
 }));
 vi.mock('@/adapters/fs/stale-scratch', () => ({
   removeStaleScratch: (...args: unknown[]) => {
-    fake.calls.push(`stale-scratch:${String(args[1])}`);
+    fake.calls.push(`stale-scratch:${String(args[0])}:${String(args[1])}`);
     return fake.context['scratchFails'] === true
       ? Promise.reject(new Error('scratch'))
       : Promise.resolve();
@@ -88,6 +89,26 @@ vi.mock('@/adapters/library/fs-pending-runs', () => ({
       return fake.context['abandonedFails'] === true
         ? Promise.reject(new Error('abandoned'))
         : Promise.resolve();
+    }
+  },
+}));
+vi.mock('@/adapters/library/processing-folders', () => ({
+  ProcessingFolders: class {
+    constructor(
+      readonly defaults: { pending: string; scratch: string },
+      readonly choice: () => unknown,
+    ) {
+      fake.calls.push(`processing-folders:${defaults.pending},${defaults.scratch}`);
+      fake.context['processingChoice'] = choice;
+    }
+    pendingRoot(): string {
+      return '/where/books/wait';
+    }
+    asPendingRoots(): string {
+      return 'pending-roots';
+    }
+    scratchRoots(): readonly string[] {
+      return ['/scratch/now', '/scratch/before'];
     }
   },
 }));
@@ -120,6 +141,11 @@ vi.mock('@/adapters/settings/fs-app-settings-store', () => ({
 vi.mock('@/application/workflows/app-settings', () => ({
   AppSettingsWorkflow: class {
     settled = (): Promise<void> => Promise.resolve();
+    restore = (): Promise<void> => {
+      fake.calls.push('restore');
+      return Promise.resolve();
+    };
+    processing = (): unknown => ({ folder: '/chosen', earlier: [] });
     constructor(
       _store: unknown,
       readonly systemLanguages: () => readonly string[],
@@ -164,6 +190,17 @@ vi.mock('@/main/ipc/opds', () => ({ registerOpdsHandlers: step('handlers:opds') 
 vi.mock('@/main/ipc/pending', () => ({ registerPendingHandlers: step('handlers:pending') }));
 vi.mock('@/main/ipc/app-settings', () => ({
   registerAppSettingsHandlers: step('handlers:app-settings'),
+}));
+vi.mock('@/main/ipc/processing-folder', () => ({
+  registerProcessingFolderHandlers: step('handlers:processing-folder'),
+}));
+vi.mock('@/main/processing-status', () => ({
+  settleEarlierFolders: () => {
+    fake.calls.push('settle-earlier');
+    return fake.context['settleFails'] === true
+      ? Promise.reject(new Error('settle'))
+      : Promise.resolve();
+  },
 }));
 vi.mock('@/main/ipc/settings', () => ({ registerSettingsHandlers: step('handlers:settings') }));
 vi.mock('@/main/toolchain-bootstrap', () => ({
@@ -211,6 +248,7 @@ beforeEach(() => {
     activeSharing: undefined,
     preferences: undefined,
     appSettings: undefined,
+    processing: undefined,
     pendingRuns: undefined,
   };
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -235,18 +273,24 @@ describe('starting the app', () => {
     expect(fake.calls).toEqual([
       'register-scheme',
       'cover-store:/covers',
+      // Where the app works depends on what a person chose, so the settings are read before the rest.
+      `app-settings-store:${path.join('/home/userData', 'app-settings.json')}`,
+      'app-settings',
+      'restore',
+      'processing-folders:/pending-root,' + tmpdir(),
       'bootstrap',
       `settings-store:${path.join('/home/userData', 'settings.json')}`,
       'preferences',
-      `app-settings-store:${path.join('/home/userData', 'app-settings.json')}`,
-      'app-settings',
-      'pending-runs:/pending-root',
+      'pending-runs:pending-roots',
       'use-root',
       'prune-completed',
       `prune-abandoned:${String(24 * 60 * 60 * 1000)}`,
-      `stale-scratch:${String(24 * 60 * 60 * 1000)}`,
+      `stale-scratch:/scratch/now:${String(24 * 60 * 60 * 1000)}`,
+      `stale-scratch:/scratch/before:${String(24 * 60 * 60 * 1000)}`,
+      'settle-earlier',
       'handlers:settings',
       'handlers:app-settings',
+      'handlers:processing-folder',
       'handlers:inputs',
       'handlers:conversion',
       'handlers:covers',
@@ -267,7 +311,30 @@ describe('starting the app', () => {
     expect(fake.context['coverStore']).toBeDefined();
     expect(fake.context['preferences']).toBeDefined();
     expect(fake.context['appSettings']).toBeDefined();
+    expect(fake.context['processing']).toBeDefined();
     expect(fake.context['pendingRuns']).toBeDefined();
+  });
+
+  it('lets the sharing of ready books follow the folder the books are in now', async () => {
+    const useRoot = vi.fn();
+    (fake.context['pendingCatalog'] as { useRoot: unknown }).useRoot = useRoot;
+    const ready = await start();
+
+    await ready();
+
+    const root = useRoot.mock.calls[0]?.[0] as () => string;
+    expect(root()).toBe('/where/books/wait');
+  });
+
+  it('works where the app settings say, and asks them each time', async () => {
+    const ready = await start();
+
+    await ready();
+
+    expect((fake.context['processingChoice'] as () => unknown)()).toEqual({
+      folder: '/chosen',
+      earlier: [],
+    });
   });
 
   it('lets the app settings read the languages the system prefers, when they are asked for', async () => {
@@ -326,6 +393,11 @@ describe('starting the app', () => {
       'the scratch folders it left',
       { scratchFails: true },
       'Could not clear scratch folders an earlier run left behind.',
+    ],
+    [
+      'the list of earlier folders',
+      { settleFails: true },
+      'Could not tell which earlier folders still hold books.',
     ],
   ])('reports, and goes on, when clearing %s fails', async (_what, failure, message) => {
     Object.assign(fake.context, failure);

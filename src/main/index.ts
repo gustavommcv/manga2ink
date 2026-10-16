@@ -8,6 +8,7 @@ import { directoryExists } from '@/adapters/library/directory-exists';
 import { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
+import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
 import { FsAppSettingsStore } from '@/adapters/settings/fs-app-settings-store';
@@ -17,6 +18,7 @@ import { PreferencesWorkflow } from '@/application/workflows/preferences';
 
 import { registerRendererScheme, serveRenderer } from './app-protocol';
 import { createMainContext } from './context';
+import { settleEarlierFolders } from './processing-status';
 import { cleanUpBeforeQuit } from './quit-cleanup';
 import { registerArtifactHandlers } from './ipc/artifacts';
 import { registerConversionHandlers } from './ipc/conversion';
@@ -25,6 +27,7 @@ import { registerInputHandlers } from './ipc/inputs';
 import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { registerPendingHandlers } from './ipc/pending';
+import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerProjectLinkHandlers } from './ipc/project-links';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
@@ -68,6 +71,20 @@ void app.whenReady().then(async () => {
   context.coverStore = new FsCoverStore(
     coversRoot(process.platform, process.env, app.getPath('home')),
   );
+  // Where the app works depends on what a person chose, so the app settings come first (ADR 0055).
+  const appSettingsWorkflow = new AppSettingsWorkflow(
+    new FsAppSettingsStore(path.join(app.getPath('userData'), 'app-settings.json')),
+    () => app.getPreferredSystemLanguages(),
+  );
+  context.appSettings = appSettingsWorkflow;
+  await appSettingsWorkflow.restore();
+  context.processing = new ProcessingFolders(
+    {
+      pending: pendingRoot(process.platform, process.env, app.getPath('home')),
+      scratch: tmpdir(),
+    },
+    () => appSettingsWorkflow.processing(),
+  );
   const toolchainStatus = await bootstrapToolchain(context);
   ipcMain.handle('toolchain:get-status', () => toolchainStatus);
 
@@ -76,32 +93,34 @@ void app.whenReady().then(async () => {
     directoryExists,
   );
   context.preferences = preferencesWorkflow;
-  const appSettingsWorkflow = new AppSettingsWorkflow(
-    new FsAppSettingsStore(path.join(app.getPath('userData'), 'app-settings.json')),
-    () => app.getPreferredSystemLanguages(),
-  );
-  context.appSettings = appSettingsWorkflow;
   context.pendingRuns = new FsPendingRuns(
-    pendingRoot(process.platform, process.env, app.getPath('home')),
+    context.processing.asPendingRoots(),
     context.libraryStore,
   );
-  // Sharing the ready books serves this folder, every conversion in it.
-  context.pendingCatalog.useRoot(context.pendingRuns.root);
+  // Sharing the ready books serves the folder they are in now, every conversion in it.
+  const processing = context.processing;
+  context.pendingCatalog.useRoot(() => processing.pendingRoot());
   await context.pendingRuns.pruneCompleted().catch((error: unknown) => {
     console.error('Could not clear previously exported pending books.', error);
   });
-  // What a run that was killed left behind: a half-made first book in the pending folder, and the
-  // scratch copies of its volumes in the temporary folder. Anything newer than a day may belong to
+  // What a run that was killed left behind: a half-made first book in a pending folder, and the
+  // scratch copies of its volumes in a scratch one. Anything newer than a day may belong to
   // another copy of the app that is still working.
   await context.pendingRuns.pruneAbandoned(oneDay).catch((error: unknown) => {
     console.error('Could not clear a run that was interrupted before its first book.', error);
   });
-  await removeStaleScratch(tmpdir(), oneDay).catch((error: unknown) => {
-    console.error('Could not clear scratch folders an earlier run left behind.', error);
+  for (const scratchRoot of processing.scratchRoots()) {
+    await removeStaleScratch(scratchRoot, oneDay).catch((error: unknown) => {
+      console.error('Could not clear scratch folders an earlier run left behind.', error);
+    });
+  }
+  await settleEarlierFolders(context).catch((error: unknown) => {
+    console.error('Could not tell which earlier folders still hold books.', error);
   });
 
   registerSettingsHandlers(context, preferencesWorkflow);
   registerAppSettingsHandlers(appSettingsWorkflow);
+  registerProcessingFolderHandlers(context);
   registerProjectLinkHandlers();
   registerInputHandlers(context);
   registerConversionHandlers(context);

@@ -2,6 +2,7 @@ import type { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import { FsLibraryStore } from '@/adapters/library/fs-library-store';
 import { PendingCatalogStore } from '@/adapters/library/pending-catalog-store';
 import type { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
+import type { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { createMetadataProviders } from '@/adapters/metadata-providers/registry';
 import { type MangapressCliAdapter } from '@/adapters/mangapress/cli';
 import { OsNetworkInterfaces } from '@/adapters/network/os-network-interfaces';
@@ -45,6 +46,8 @@ export interface MainContext {
   preferences: PreferencesWorkflow | undefined;
   /** What a person decided about the app itself (ADR 0052); built with `preferences`. */
   appSettings: AppSettingsWorkflow | undefined;
+  /** Where the app builds volumes and keeps finished books (ADR 0055); built with `appSettings`. */
+  processing: ProcessingFolders | undefined;
   activeSharing: OpdsServerHandle | undefined;
   /** What is being shared, or about to be: set before the server is up, so a second start is refused. */
   activeSharingTarget: SharingTarget | undefined;
@@ -83,6 +86,7 @@ export function createMainContext(): MainContext {
     networkInterfaces: new OsNetworkInterfaces(),
     preferences: undefined,
     appSettings: undefined,
+    processing: undefined,
     activeSharing: undefined,
     activeSharingTarget: undefined,
     lastPickerFolder: undefined,

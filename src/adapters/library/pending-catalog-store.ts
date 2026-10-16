@@ -20,13 +20,16 @@ import { isPendingRunFolder } from './fs-pending-runs';
  * is. Asked about any other folder it is the store it wraps.
  */
 export class PendingCatalogStore implements LibraryStorePort {
-  private pendingRoot: string | undefined;
+  private pendingRoot: (() => string) | undefined;
 
   constructor(private readonly folders: LibraryStorePort) {}
 
-  /** Where the pending conversions are, once the app knows. Until then nothing is the pending root. */
-  useRoot(root: string): void {
-    this.pendingRoot = root;
+  /**
+   * Where the pending conversions are, once the app knows. Until then nothing is the pending root.
+   * A function, since a person can choose another folder for them while the app runs (ADR 0055).
+   */
+  useRoot(root: string | (() => string)): void {
+    this.pendingRoot = typeof root === 'string' ? () => root : root;
   }
 
   async read(libraryPath: string): Promise<LibraryManifest> {
@@ -77,7 +80,8 @@ export class PendingCatalogStore implements LibraryStorePort {
 
   private isPendingRoot(libraryPath: string): boolean {
     return (
-      this.pendingRoot !== undefined && path.resolve(libraryPath) === path.resolve(this.pendingRoot)
+      this.pendingRoot !== undefined &&
+      path.resolve(libraryPath) === path.resolve(this.pendingRoot())
     );
   }
 

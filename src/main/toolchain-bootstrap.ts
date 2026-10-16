@@ -31,7 +31,7 @@ function executablePath(
  * workflow onto the context so every IPC handler can reach it. Runs once, during app.whenReady().
  */
 export async function bootstrapToolchain(
-  context: Pick<MainContext, 'workflow' | 'mangapressCli' | 'coverStore'>,
+  context: Pick<MainContext, 'workflow' | 'mangapressCli' | 'coverStore' | 'processing'>,
 ): Promise<ToolchainStatus> {
   const toolchainRoot = app.isPackaged
     ? path.join(process.resourcesPath, 'toolchain')
@@ -64,7 +64,14 @@ export async function bootstrapToolchain(
       runner,
     );
     context.workflow = new ConversionWorkflow(
-      new MangabindBindingAdapter(mangabindCli),
+      // The volumes are built where the app works now, asked each time (ADR 0055).
+      new MangabindBindingAdapter(
+        mangabindCli,
+        undefined,
+        context.processing === undefined
+          ? undefined
+          : async () => (await context.processing!.prepare()).scratch,
+      ),
       new MangapressConversionAdapter(context.mangapressCli),
       randomUUID,
       new FsBookFileStore(),

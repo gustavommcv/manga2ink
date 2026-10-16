@@ -640,6 +640,37 @@ describe('mangabind binding port', () => {
     await expect(outside.release('outside')).rejects.toThrow(/Refusing/u);
   });
 
+  it('asks where to make a workspace each time, and takes one away where it was made', async () => {
+    let current = path.join(os.tmpdir(), 'first-place');
+    const files = fakeFiles('unused');
+    files.createTemporaryDirectory.mockImplementation((prefix) =>
+      Promise.resolve(`${prefix}abc123`),
+    );
+    const ids = ['early', 'late'];
+    const adapter = new MangabindBindingAdapter(
+      { run: () => Promise.resolve(result()) },
+      files,
+      () => Promise.resolve(current),
+      () => ids.shift() ?? 'extra',
+    );
+
+    await adapter.inspect('/input');
+    current = path.join(os.tmpdir(), 'second-place');
+    await adapter.inspect('/input');
+
+    expect(files.createTemporaryDirectory.mock.calls.map(([prefix]) => prefix)).toEqual([
+      path.join(os.tmpdir(), 'first-place', 'mangabound-'),
+      path.join(os.tmpdir(), 'second-place', 'mangabound-'),
+    ]);
+    // The one made in the first place is still the first place's, though the app works in the second now.
+    await adapter.release('early');
+    await adapter.release('late');
+    expect(files.removeDirectory.mock.calls.map(([folder]) => folder)).toEqual([
+      path.join(os.tmpdir(), 'first-place', 'mangabound-abc123'),
+      path.join(os.tmpdir(), 'second-place', 'mangabound-abc123'),
+    ]);
+  });
+
   it('uses the real filesystem adapter for an isolated workspace', async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-port-test-'));
     temporaryDirectories.push(root);

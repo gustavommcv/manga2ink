@@ -115,6 +115,26 @@ describe('the catalog of the pending folder', () => {
     expect(opened).toEqual([path.join(root, firstRun)]);
   });
 
+  it('follows the folder the pending conversions are in when that is a function', async () => {
+    const { root, inner, addBook } = await pendingFolder();
+    await addBook(firstRun, entry('Chainsaw Man - Vol.01', '2026-10-04T10:00:00.000Z'));
+    const other = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-other-'));
+    folders.push(other);
+    let current = root;
+    const store = new PendingCatalogStore(inner);
+    store.useRoot(() => current);
+
+    // In use, the folder is the catalog of its conversions, each book named by its conversion.
+    expect((await store.read(root)).books.map((book) => book.relativePath)).toEqual([
+      `${firstRun}/Chainsaw Man - Vol.01.epub`,
+    ]);
+
+    // Once another folder is in use the old one is any other folder, and the new one is the catalog.
+    current = other;
+    expect((await store.read(root)).books).toEqual([]);
+    expect(await store.read(other)).toEqual({ schemaVersion: 1, books: [] });
+  });
+
   it('is empty before any conversion, and when the folder is not there yet', async () => {
     const { root, catalog } = await pendingFolder();
     expect((await catalog.read(root)).books).toEqual([]);

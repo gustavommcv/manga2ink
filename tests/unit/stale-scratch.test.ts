@@ -174,6 +174,21 @@ describe('removeStaleScratch', () => {
     expect(await removeStaleScratch(await scratch(), day, now)).toEqual([]);
   });
 
+  it('has nothing to clear in a folder that is not there, such as a drive that was taken out', async () => {
+    const root = await scratch();
+
+    expect(await removeStaleScratch(path.join(root, 'not-made'), day, now)).toEqual([]);
+    const file = path.join(root, 'a-file');
+    await writeFile(file, 'x');
+    expect(await removeStaleScratch(file, day, now)).toEqual([]);
+  });
+
+  it('does not take a folder it cannot read for one that is not there', async () => {
+    await expect(removeStaleScratch(path.join('bad\0name'), day, now)).rejects.toMatchObject({
+      code: 'ERR_INVALID_ARG_VALUE',
+    });
+  });
+
   it('uses the time of the call when it is not given one', async () => {
     const root = await scratch();
     await mkdir(path.join(root, 'mangabound-aB3dE9'));

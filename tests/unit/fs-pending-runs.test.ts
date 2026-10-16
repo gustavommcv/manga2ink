@@ -16,7 +16,11 @@ import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { FsLibraryStore } from '@/adapters/library/fs-library-store';
-import { FsPendingRuns, type FsPendingRunsDeps } from '@/adapters/library/fs-pending-runs';
+import {
+  FsPendingRuns,
+  type FsPendingRunsDeps,
+  type PendingRoots,
+} from '@/adapters/library/fs-pending-runs';
 import type { LibraryBookEntry } from '@/library/manifest';
 
 const roots: string[] = [];
@@ -481,5 +485,176 @@ describe('FsPendingRuns.pruneAbandoned', () => {
 
     await store.pruneAbandoned(-60_000);
     expect(await readdir(store.root)).not.toContain(run.id);
+  });
+});
+
+describe('FsPendingRuns in more than one folder (ADR 0055)', () => {
+  const library = new FsLibraryStore();
+
+  /** Folders a person has had the app work in, with a way to change which one is current. */
+  async function folders(names: readonly string[]): Promise<{
+    readonly paths: readonly string[];
+    readonly roots: PendingRoots;
+    readonly use: (name: string) => void;
+    readonly prepared: string[];
+  }> {
+    const base = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-roots-'));
+    roots.push(base);
+    const paths = names.map((name) => path.join(base, name));
+    let current = paths[0] ?? '';
+    const prepared: string[] = [];
+    return {
+      paths,
+      prepared,
+      use: (name) => {
+        current = path.join(base, name);
+      },
+      roots: {
+        current: () => current,
+        all: () => [current, ...paths.filter((candidate) => candidate !== current)],
+        prepare: async () => {
+          prepared.push(current);
+          await mkdir(current, { recursive: true });
+        },
+      },
+    };
+  }
+
+  async function withBook(
+    store: FsPendingRuns,
+    name: string,
+  ): Promise<{ id: string; path: string }> {
+    const run = await store.create();
+    await writeFile(path.join(run.path, name), name);
+    await library.publish(run.path, {
+      relativePath: name,
+      title: name,
+      author: 'Author',
+      format: 'epub',
+      bytes: name.length,
+      convertedAt: '2026-09-28T00:00:00.000Z',
+    });
+    return run;
+  }
+
+  it('makes a run in the folder that is current, after getting it ready', async () => {
+    const { roots: where, paths, prepared } = await folders(['now', 'before']);
+    const store = new FsPendingRuns(where, library);
+
+    const run = await store.create();
+
+    expect(prepared).toEqual([paths[0]]);
+    expect(path.dirname(run.path)).toBe(paths[0]);
+    expect(store.root).toBe(paths[0]);
+    expect(await store.prepare()).toBe(paths[0]);
+  });
+
+  it('makes no run when the folder cannot be got ready, and says why', async () => {
+    const { roots: where, paths } = await folders(['now']);
+    const store = new FsPendingRuns(
+      { ...where, prepare: () => Promise.reject(new Error('The processing folder is gone.')) },
+      library,
+    );
+
+    await expect(store.create()).rejects.toThrow('The processing folder is gone.');
+    await expect(readdir(paths[0] ?? '')).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('lists the books waiting in every folder, the newest first, whichever folder is current', async () => {
+    const { roots: where, use } = await folders(['before', 'now']);
+    const store = new FsPendingRuns(where, library);
+    const old = await withBook(store, 'Old.epub');
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    use('now');
+    const fresh = await withBook(store, 'Fresh.epub');
+
+    const listed = await store.list();
+
+    expect(listed.map((run) => run.id)).toEqual([fresh.id, old.id]);
+    expect(path.dirname(listed[1]?.path ?? '')).not.toBe(path.dirname(listed[0]?.path ?? ''));
+  });
+
+  it('does not make a folder it only looks in, and passes over one that is not there', async () => {
+    const { roots: where, paths } = await folders(['now', 'gone']);
+    const store = new FsPendingRuns(where, library);
+    await store.prepare();
+
+    expect(await store.list()).toEqual([]);
+    await store.pruneCompleted();
+    await store.pruneAbandoned(1);
+
+    await expect(readdir(paths[1] ?? '')).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('passes over a place in the list that is a file and not a folder', async () => {
+    const { roots: where, paths } = await folders(['now', 'file']);
+    const store = new FsPendingRuns(where, library);
+    await store.prepare();
+    await writeFile(paths[1] ?? '', 'not a folder');
+
+    expect(await store.list()).toEqual([]);
+  });
+
+  it('does not hide a folder it cannot read as one that is not there', async () => {
+    const { roots: where } = await folders(['now']);
+    const store = new FsPendingRuns(
+      // A path with a NUL in it is refused by every system in the same way, and it is not a missing one.
+      { ...where, all: () => [path.join(os.tmpdir(), 'bad\0name')] },
+      library,
+    );
+
+    await expect(store.list()).rejects.toMatchObject({ code: 'ERR_INVALID_ARG_VALUE' });
+  });
+
+  it('discards a run that is waiting in an earlier folder', async () => {
+    const { roots: where, use, paths } = await folders(['before', 'now']);
+    const store = new FsPendingRuns(where, library);
+    const old = await withBook(store, 'Old.epub');
+    use('now');
+
+    expect(await store.discard(old.id)).toBe(true);
+
+    expect(await readdir(paths[0] ?? '')).toEqual([]);
+  });
+
+  it('removes what was saved from every folder, and the runs that never made a book', async () => {
+    const { roots: where, use, paths } = await folders(['before', 'now']);
+    const store = new FsPendingRuns(where, library);
+    const old = await withBook(store, 'Old.epub');
+    const empty = await store.create();
+    use('now');
+    const keep = await withBook(store, 'Keep.epub');
+    const oldBook = (await store.list()).find((run) => run.id === old.id)?.books[0];
+    const oldRun = (await store.list()).find((run) => run.id === old.id);
+    if (oldBook === undefined || oldRun === undefined) throw new Error('Fixture missing');
+    await store.markSaved(oldRun, oldBook, '/somewhere/Old.epub');
+
+    await store.pruneCompleted();
+
+    expect(await readdir(paths[0] ?? '')).toEqual([]);
+    expect(empty.path).toContain(paths[0]);
+    expect((await store.list()).map((run) => run.id)).toEqual([keep.id]);
+  });
+
+  it('removes an abandoned run from an earlier folder too, and leaves a recent one', async () => {
+    const { roots: where, use, paths } = await folders(['before', 'now']);
+    const store = new FsPendingRuns(where, library);
+    const abandoned = await store.create();
+    const staging = path.join(abandoned.path, '.mangabound', 'incoming', 's');
+    await mkdir(staging, { recursive: true });
+    await writeFile(path.join(staging, 'Half.epub'), 'half');
+    const longAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+    await utimes(path.join(staging, 'Half.epub'), longAgo, longAgo);
+    await utimes(staging, longAgo, longAgo);
+    await utimes(path.join(abandoned.path, '.mangabound', 'incoming'), longAgo, longAgo);
+    await utimes(path.join(abandoned.path, '.mangabound'), longAgo, longAgo);
+    await utimes(abandoned.path, longAgo, longAgo);
+    use('now');
+    const recent = await store.create();
+
+    await store.pruneAbandoned(24 * 60 * 60 * 1000);
+
+    expect(await readdir(paths[0] ?? '')).toEqual([]);
+    expect(await readdir(paths[1] ?? '')).toEqual([path.basename(recent.path)]);
   });
 });
