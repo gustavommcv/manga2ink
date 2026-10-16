@@ -26,7 +26,7 @@ Run individual checks while working. The full local checks prepare the change fo
 
 ### Language and documentation
 
-Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English and Portuguese versions; write each naturally and retain the application's actual English control labels in both.
+Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English, Portuguese and Japanese versions (Japanese leaves pages in English until they are translated; see [website/README.md](website/README.md)); write each naturally and retain the application's actual English control labels in all of them.
 
 Check changed documentation against current behavior and scripts. Keep pending work in [current priorities](docs/milestones.md#current-priorities). Preserve audit findings and accepted ADRs as historical records; append dated outcomes to audits rather than rewriting their original evidence.
 
@@ -34,7 +34,7 @@ Check changed documentation against current behavior and scripts. Keep pending w
 
 The user guide is the independent Astro/Starlight package under `website/`; `docs/` holds contributor documents. For website changes, also run `npm --prefix website ci` and `npm run site:check`. Application and website checks remain separate requirements.
 
-`npm run site:dev` generates the tutorial images and starts the guide. The guide and automatic app captures follow `main`, which may be ahead of the latest release; KOReader captures are supplied manually. Update both languages together, and never use images as the only instructions. See [website/README.md](website/README.md) for development and checks, and [MEDIA.md](website/MEDIA.md) for illustrations.
+`npm run site:dev` generates the tutorial images and starts the guide. The guide and automatic app captures follow `main`, which may be ahead of the latest release; KOReader captures are supplied manually. Update every language together (a page that a language has not translated yet is on its list in `website/i18n-gaps.json`), and never use images as the only instructions. See [website/README.md](website/README.md) for development and checks, and [MEDIA.md](website/MEDIA.md) for illustrations.
 
 The pictures and measured tables of the advanced-options pages are made from open-licensed comic pages with the mangapress that Mangabound ships, by `npm run site:options`, and committed ([ADR 0048](docs/adr/0048-option-examples-from-open-pages.md)). The pictures keep the licences of the pages they come from, listed in `website/src/assets/options/LICENSES.md`, and are not under the repository's MIT licence.
 
