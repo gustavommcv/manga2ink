@@ -1,5 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
+
+import { message, raw } from '@/domain/message';
+import { messagesFor } from '@/i18n/messages';
+import { I18nContext } from '@/renderer/hooks/use-messages';
 
 import { RunningScreen } from './running-screen';
 
@@ -31,7 +35,7 @@ export const SingleItemInProgress: Story = {
     position: { name: 'Chainsaw Man', index: 1, total: 1 },
     progress: {
       stage: 'processing',
-      message: 'Converting Chapter 4 of 8',
+      message: raw('Converting Chapter 4 of 8'),
       completed: 4,
       total: 8,
     },
@@ -44,7 +48,7 @@ export const BindingVolumeFiles: Story = {
     position: { name: 'Chainsaw Man', index: 1, total: 1 },
     progress: {
       stage: 'binding',
-      message: 'Building volume 3 of 11…',
+      message: message('progress.buildingVolume', { volume: 3, volumes: 11 }),
       bindingState: 'advanced',
       completed: 414,
       total: 1976,
@@ -58,7 +62,7 @@ export const MultipleVolumes: Story = {
     position: { name: 'Chainsaw Man', index: 1, total: 1 },
     progress: {
       stage: 'processing',
-      message: '4 of 11 volumes converted.',
+      message: message('progress.volumesConverted', { done: 4, total: 11 }),
       completed: 5.4,
       total: 11,
       volumes: [
@@ -79,13 +83,30 @@ export const MultipleVolumes: Story = {
   },
 };
 
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/** The same run in Brazilian Portuguese, with the details of each volume open (ADR 0053). */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: MultipleVolumes.args ?? {},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Mostrar detalhes' }));
+    await expect(canvas.getByRole('region', { name: 'Detalhes dos volumes' })).toBeVisible();
+  },
+};
+
 /** A batch: which item and how many in total, alongside the same progress. */
 export const BatchInProgress: Story = {
   args: {
     position: { name: 'Vagabond', index: 2, total: 5 },
     progress: {
       stage: 'binding',
-      message: 'Grouping chapters into volumes',
+      message: raw('Grouping chapters into volumes'),
     },
   },
 };
@@ -96,7 +117,7 @@ export const NearlyDone: Story = {
     position: { name: 'Monster', index: 5, total: 5 },
     progress: {
       stage: 'saving',
-      message: 'Writing the finished book to the library',
+      message: raw('Writing the finished book to the library'),
       completed: 19,
       total: 20,
     },

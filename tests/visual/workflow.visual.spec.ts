@@ -458,3 +458,18 @@ test('the conversion options page in Portuguese remains visually consistent', as
   await page.evaluate(async () => document.fonts.ready);
   await expect(page).toHaveScreenshot('conversion-options-portuguese.png');
 });
+
+test('the books of a run in Portuguese remain visually consistent', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-results--in-portuguese&viewMode=story');
+  await expect(page.getByRole('heading', { name: '3 livros prontos' })).toBeFocused();
+  await expect(page.getByRole('list', { name: 'Avisos sobre os livros' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('results-portuguese.png');
+});
+
+test('a running conversion in Portuguese remains visually consistent', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-running--in-portuguese&viewMode=story');
+  await expect(page.getByRole('region', { name: 'Detalhes dos volumes' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('running-portuguese.png');
+});

@@ -8,10 +8,12 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
+import type { Language } from '@/domain/app-settings';
 import { warningNotices } from '@/domain/book-warnings';
+import type { AnyMessage } from '@/domain/message';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
 import { Button } from '@/renderer/components/ui/button';
-import { useSay } from '@/renderer/hooks/use-messages';
+import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import type { ArtifactSummary } from '@/shared/workflow-contract';
 
 /** What became of one queue item in a run. */
@@ -27,17 +29,23 @@ export interface ResultsScreenProps {
   readonly savedIds?: ReadonlySet<string>;
   readonly outcomes: readonly RunOutcome[];
   /** A short description of how the books were made, shown under the heading. */
-  readonly summary?: string;
+  readonly summary?: AnyMessage;
   /** The card that lets a reader pull ready books; rendered beside the list. */
   readonly aside?: React.ReactNode;
 }
 
-export function formatBytes(bytes: number): string {
+/** The size of a book as a file manager writes it: "1.5 MB" and, in Portuguese, "1,5 MB". */
+export function formatBytes(bytes: number, language: Language = 'en'): string {
   if (bytes < 1024) return `${String(bytes)} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  const oneDecimal = new Intl.NumberFormat(language, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+    useGrouping: false,
+  });
+  if (bytes < 1024 * 1024) return `${oneDecimal.format(bytes / 1024)} KB`;
   // A whole series in one file can pass a gigabyte, which "1536.0 MB" does not say well.
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  if (bytes < 1024 * 1024 * 1024) return `${oneDecimal.format(bytes / (1024 * 1024))} MB`;
+  return `${oneDecimal.format(bytes / (1024 * 1024 * 1024))} GB`;
 }
 
 export function ResultsScreen({
@@ -52,7 +60,9 @@ export function ResultsScreen({
   outcomes,
   summary,
 }: ResultsScreenProps): React.JSX.Element {
-  const { sayAll } = useSay();
+  const words = useMessages().results;
+  const language = useLanguage();
+  const { say, sayAll } = useSay();
   const artifacts = outcomes.flatMap((outcome) => outcome.artifacts);
   const problems = outcomes.filter((outcome) => outcome.status !== 'done');
   const notices = warningNotices(artifacts);
@@ -78,16 +88,14 @@ export function ResultsScreen({
               ref={titleRef}
               tabIndex={-1}
             >
-              {artifacts.length === 0
-                ? 'No books were produced'
-                : `${String(artifacts.length)} book${artifacts.length === 1 ? '' : 's'} ready`}
+              {artifacts.length === 0 ? words.none : words.ready(artifacts.length)}
             </h1>
             {summary !== undefined && (
-              <p className="text-subtle-foreground mt-1 text-sm break-all">{summary}</p>
+              <p className="text-subtle-foreground mt-1 text-sm break-all">{say(summary)}</p>
             )}
           </div>
           <Button onClick={onBack} variant="outline">
-            Convert more
+            {words.convertMore}
           </Button>
         </div>
 
@@ -96,14 +104,14 @@ export function ResultsScreen({
             onClick={() => {
               onSaveAll(artifacts.map((artifact) => artifact.id));
             }}
-            title="Existing files are not replaced; a repeated save may add numbered copies."
+            title={words.saveAll.hint}
             variant="outline"
           >
-            <Download /> Save all to folder…
+            <Download /> {words.saveAll.label}
           </Button>
         )}
         {artifacts.length > 0 && (
-          <ul aria-label="Ready books" className="space-y-1">
+          <ul aria-label={words.books} className="space-y-1">
             {artifacts.map((artifact) => (
               <li
                 className="hover:bg-muted/40 flex items-center gap-3 rounded-xl px-3 py-2.5"
@@ -118,25 +126,25 @@ export function ResultsScreen({
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{artifact.name}</p>
                   <p className="text-subtle-foreground text-xs">
-                    {formatBytes(artifact.bytes)} ·{' '}
-                    {savedIds?.has(artifact.id) === true ? 'Saved' : 'Not saved yet'}
+                    {formatBytes(artifact.bytes, language)} ·{' '}
+                    {savedIds?.has(artifact.id) === true ? words.saved : words.notSaved}
                   </p>
                 </div>
                 {onSaveAs !== undefined && (
                   <Button
-                    aria-label={`Save ${artifact.name} as`}
+                    aria-label={words.saveBookAs(artifact.name)}
                     onClick={() => {
                       onSaveAs(artifact.id);
                     }}
                     size="sm"
                     variant="outline"
                   >
-                    Save as…
+                    {words.saveAs}
                   </Button>
                 )}
                 {savedIds?.has(artifact.id) === true && (
                   <Button
-                    aria-label={`Show ${artifact.name} in its folder`}
+                    aria-label={words.showInFolder(artifact.name)}
                     onClick={() => {
                       onShow(artifact.id);
                     }}
@@ -147,7 +155,7 @@ export function ResultsScreen({
                   </Button>
                 )}
                 <Button
-                  aria-label={`Open ${artifact.name}`}
+                  aria-label={words.open(artifact.name)}
                   onClick={() => {
                     onOpen(artifact.id);
                   }}
@@ -184,8 +192,9 @@ export function ResultsScreen({
             )}
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium">
-                {outcome.name}{' '}
-                {outcome.status === 'failed' ? 'could not be converted' : 'was skipped'}
+                {outcome.status === 'failed'
+                  ? words.failed(outcome.name)
+                  : words.skipped(outcome.name)}
               </p>
               {outcome.message !== undefined && (
                 <p className="text-muted-foreground mt-0.5 text-sm">{sayAll(outcome.message)}</p>
@@ -193,35 +202,35 @@ export function ResultsScreen({
             </div>
             {outcome.fixable === true && (
               <Button
-                aria-label={`Fix ${outcome.name}`}
+                aria-label={words.fixBook(outcome.name)}
                 onClick={() => {
                   onFix(outcome.rowId);
                 }}
                 variant="outline"
               >
-                Fix
+                {words.fix}
               </Button>
             )}
           </div>
         ))}
 
         {notices.length > 0 && (
-          <ul aria-label="Warnings about the books" className="space-y-5">
+          <ul aria-label={words.warnings} className="space-y-5">
             {notices.map((notice) => (
               <li
                 className="border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-xl border p-4"
-                key={`${notice.code}:${notice.message}`}
+                key={`${notice.code}:${say(notice.message)}`}
               >
                 <TriangleAlert
                   aria-hidden="true"
                   className="text-status-warning mt-0.5 size-5 shrink-0"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">{notice.title}</p>
+                  <p className="text-sm font-medium">{say(notice.title)}</p>
                   <p className="text-muted-foreground mt-0.5 text-sm">
                     {notice.where === undefined
-                      ? notice.message
-                      : `${notice.where} ${notice.message}`}
+                      ? say(notice.message)
+                      : `${say(notice.where)} ${say(notice.message)}`}
                   </p>
                 </div>
               </li>

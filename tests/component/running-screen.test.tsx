@@ -4,10 +4,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { ConversionProgress } from '@/domain/conversion';
 import { RunningScreen } from '@/renderer/screens/running-screen';
+import { message, raw } from '@/domain/message';
 
 const progress: ConversionProgress = {
   stage: 'processing',
-  message: '1 of 3 volumes converted.',
+  message: raw('1 of 3 volumes converted.'),
   completed: 1.5,
   total: 3,
   volumes: [
@@ -89,7 +90,7 @@ describe('RunningScreen', () => {
     rerender(
       <RunningScreen
         onCancel={vi.fn()}
-        progress={{ stage: 'processing', message: 'Converting the book…', volumes: [] }}
+        progress={{ stage: 'processing', message: raw('Converting the book…'), volumes: [] }}
       />,
     );
     expect(screen.queryByRole('button', { name: 'Show details' })).not.toBeInTheDocument();
@@ -98,7 +99,7 @@ describe('RunningScreen', () => {
   it('shows actual binding pages without claiming the archive is complete before it closes', () => {
     const base: ConversionProgress = {
       stage: 'binding',
-      message: 'Building volume 1 of 1…',
+      message: raw('Building volume 1 of 1…'),
       bindingState: 'advanced',
       completed: 4,
       total: 4,
@@ -132,7 +133,7 @@ describe('RunningScreen', () => {
     it('is told about a stage or a volume as it comes, and not about each page', () => {
       const pages = (done: number): ConversionProgress => ({
         stage: 'processing',
-        message: `Processed page ${String(done)} of 50.`,
+        message: message('progress.pageProcessed', { completed: done, total: 50 }),
         page: done,
         completed: done,
         total: 50,

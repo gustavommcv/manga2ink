@@ -21,7 +21,7 @@ import {
   mapping,
   runButton,
 } from './support/workflow';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -72,7 +72,12 @@ describe('process control in the queue', () => {
         value: {
           tool: 'mangapress',
           title: 'Offline Work',
-          message: 'mangapress validated KV',
+          message: message('plan.mangapress', {
+            profile: 'KV',
+            width: 1072,
+            height: 1448,
+            chaptersNotGrouped: true,
+          }),
           books: [{ name: 'Offline Work.epub', pageCount: 4 }],
           issues: [],
         },

@@ -211,7 +211,7 @@ describe('the queue screen in Portuguese', () => {
                 plan: {
                   tool: 'mangabind',
                   title: 'Chainsaw Man',
-                  message: 'mangabind validated 1 volume',
+                  message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
                   books: [
                     { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
                     { name: 'One shot.cbz', pageCount: 1 },
@@ -227,8 +227,42 @@ describe('the queue screen in Portuguese', () => {
 
     expect(screen.getByRole('heading', { name: 'Plano validado' })).toBeVisible();
     expect(screen.getByText('Nenhum arquivo da biblioteca foi gravado.')).toBeVisible();
+    expect(
+      screen.getByText('mangabind validou 2 volumes · nenhum arquivo da biblioteca gravado'),
+    ).toBeVisible();
     expect(screen.getByText('46 páginas')).toBeVisible();
     expect(screen.getByText('1 página')).toBeVisible();
+  });
+
+  it('names the one book a whole series is bound into, for the series', () => {
+    render(
+      inPortuguese(
+        <QueueScreen
+          {...props({
+            plans: [
+              {
+                name: 'Chainsaw Man',
+                plan: {
+                  tool: 'mangabind',
+                  title: 'Chainsaw Man',
+                  message: message('plan.mangabind', { volumes: 11, shape: 'series' }),
+                  books: [{ name: 'Chainsaw Man', pageCount: 1976, wholeSeries: true }],
+                  issues: [],
+                },
+              },
+            ],
+          })}
+        />,
+      ),
+    );
+
+    expect(
+      screen.getByText(
+        'mangabind validou 11 volumes · um só livro para a série · nenhum arquivo da biblioteca gravado',
+      ),
+    ).toBeVisible();
+    expect(screen.getByText('Um EPUB para Chainsaw Man')).toBeVisible();
+    expect(screen.getByText('1976 páginas')).toBeVisible();
   });
 
   describe('the books that are ready', () => {

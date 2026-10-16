@@ -297,7 +297,7 @@ export const PlanValidated: Story = {
         plan: {
           tool: 'mangabind',
           title: 'Chainsaw Man',
-          message: 'mangabind validated 2 volumes · no library files written',
+          message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
           books: [
             { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
             { name: 'Chainsaw Man - Vol.02.cbz', pageCount: 26 },
@@ -367,7 +367,7 @@ export const InPortuguese: Story = {
         plan: {
           tool: 'mangabind',
           title: 'Chainsaw Man',
-          message: 'mangabind validated 2 volumes · no library files written',
+          message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
           books: [
             { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
             { name: 'Chainsaw Man - Vol.02.cbz', pageCount: 26 },

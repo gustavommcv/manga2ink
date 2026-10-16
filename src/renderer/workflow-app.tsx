@@ -91,7 +91,7 @@ import type {
   VolumeSuggestion,
   WorkflowFailure,
 } from '@/shared/workflow-contract';
-import { message } from '@/domain/message';
+import { type AnyMessage, message } from '@/domain/message';
 
 /** The volumes of a mapping, numbered, in order: what a series of books is made of. */
 const volumeNumbers = (mapping: MappingDraft | undefined): readonly number[] =>
@@ -99,9 +99,6 @@ const volumeNumbers = (mapping: MappingDraft | undefined): readonly number[] =>
     .map((volume) => Number(volume.number))
     .filter((number) => Number.isFinite(number))
     .sort((left, right) => left - right);
-
-const plural = (count: number, word: string): string =>
-  `${String(count)} ${word}${count === 1 ? '' : 's'}`;
 
 const withNotice = (current: readonly string[], message: string): readonly string[] =>
   current.includes(message) ? current : [...current, message];
@@ -122,7 +119,12 @@ function libraryPlanSummary(
   return {
     tool: 'mangabind',
     title: row.displayName,
-    message: `mangabind validated ${plural(titles.length, 'title')} · ${plural(volumes.length, 'volume')}${singleBook ? ` · ${plural(books.length, 'EPUB')} (one per series)` : process === 'bind-only' ? ' · saved as CBZ files, mangapress not run' : ''} · no library files written`,
+    message: message('plan.library', {
+      titles: titles.length,
+      volumes: volumes.length,
+      books: books.length,
+      shape: singleBook ? 'series' : process === 'bind-only' ? 'joined' : 'books',
+    }),
     books,
     issues: planned.issues,
   };
@@ -185,7 +187,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     readonly total: number;
   }>();
   const [outcomes, setOutcomes] = useState<readonly RunOutcome[]>([]);
-  const [resultSummary, setResultSummary] = useState<string>();
+  const [resultSummary, setResultSummary] = useState<AnyMessage>();
   const [validated, setValidated] = useState<{
     readonly key: string;
     readonly plans: readonly RowPlan[];
@@ -446,7 +448,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
       const nextJobId = crypto.randomUUID();
       runningJob.current = nextJobId;
       setRunPosition({ name: row.displayName, index: index + 1, total: items.length });
-      setProgress({ stage: 'processing', message: 'Preparing…' });
+      setProgress({ stage: 'processing', message: message('progress.preparing', {}) });
       if (row.kind === 'library') {
         const libraryProcess = resolveMode('library', rowProcess);
         const pendingTitles = (row.titles ?? []).filter(isPendingTitle);
@@ -669,12 +671,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     setOutcomes([
       {
         rowId: libraryId,
-        name: 'Earlier conversion',
+        name: messages.queue.pending.earlierConversion,
         status: 'done',
         artifacts: run.artifacts,
       },
     ]);
-    setResultSummary('Ready to save or share');
+    setResultSummary(message('summary.earlier', {}));
     setNavigation({ screen: 'results' });
   };
 
