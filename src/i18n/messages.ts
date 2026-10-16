@@ -5,6 +5,8 @@ import { type AppSettingsMessages, appSettingsMessages } from './app-settings-me
 import { type DialogMessages, dialogMessages } from './dialog-messages';
 import { failureSaid } from './failure-said';
 import { inputSaid } from './input-said';
+import { mappingSaid } from './mapping-said';
+import { type MappingMessages, mappingMessages } from './mapping-messages';
 import { modeSaid } from './mode-said';
 import { noticeSaid } from './notice-said';
 import { providerSaid } from './provider-said';
@@ -27,6 +29,7 @@ export interface Messages {
   readonly appSettings: AppSettingsMessages;
   /** What the main process gives the native dialogs to say. */
   readonly dialogs: DialogMessages;
+  readonly mapping: MappingMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
@@ -39,6 +42,7 @@ function build(language: Language): Messages {
     about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
     dialogs: dialogMessages[language],
+    mapping: mappingMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
@@ -47,6 +51,7 @@ function build(language: Language): Messages {
       ...modeSaid[language],
       ...inputSaid[language],
       ...failureSaid[language],
+      ...mappingSaid[language],
       ...noticeSaid[language],
       ...workflowSaid[language],
       ...saveSaid[language],

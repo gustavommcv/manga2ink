@@ -9,6 +9,7 @@ import { messagesFor } from '@/i18n/messages';
 import { namesOf, say, sayAll } from '@/i18n/say';
 
 import { failureRows } from './support/said-failure-rows';
+import { mappingRows } from './support/said-mapping-rows';
 import type { Rows } from './support/said-table';
 
 /**
@@ -229,7 +230,7 @@ const queueTable: Table = {
 };
 
 /** The queue's, and what is said when something cannot be done (its own table, in `support/`). */
-const table = { ...queueTable, ...failureRows };
+const table = { ...queueTable, ...failureRows, ...mappingRows };
 
 const entries = Object.entries(table) as readonly (readonly [
   MessageId,
