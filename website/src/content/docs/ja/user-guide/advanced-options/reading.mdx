@@ -1,0 +1,77 @@
+---
+title: '読み方（Reading）'
+description: 'Content と Manga reading order の働き。ウェブトゥーンの形をした 1 話を、ページとして変換した場合とストリップとして変換した場合の違いと、各本の形式が記録する読む方向を説明します。'
+---
+
+import OptionBook from '../../../../../components/OptionBook.astro';
+import OptionExample from '../../../../../components/OptionExample.astro';
+
+**Reading** のセクションは、[Advanced conversion options](../../output-profiles/#advanced-conversion-options) の中で、画像が何であるかと、どちら向きに読むかを決めます。コントロールは 2 つあります。各画像が 1 ページなのか、長いストリップの一部なのかを mangapress に伝える **Content** と、**Manga reading order** です。
+
+## Content
+
+**Manga or comic pages** が最初の選択で、各画像が 1 ページです。**Webtoon strips** はウェブトゥーン用です。ウェブトゥーンは、1 本の長い縦のストリップとして描かれますが、配布されるときは、ファイルが終わるところで切られた画像になっています。画像を 1 枚ずつ読むと、1 つのコマが 2 ページにまたがって分かれてしまうことがあります。**Webtoon strips** では、mangapress が各話の画像を 1 本のストリップにつなぎ、コマとコマの間で、もう一度ページに切り分けます。`--webtoon` でオンになり、短縮形は `-w` です。
+
+_Pepper&Carrot_ はウェブトゥーンではありませんが、そのページを 3 枚、縦に重ねると、同じ形のストリップになります。992 × 4119 ピクセルで、コマの間に白い隙間があります。1500 ピクセルごとに 3 枚の画像へ切ると、ウェブトゥーンのサイトが配る画像のようになり、各切れ目は、コマの間ではなく、画像が終わるところに落ちます。1 行目は、この 3 枚の画像をページとして変換したものです。2 行目は、同じ 3 枚をストリップとして変換したものです。
+
+<OptionExample
+  id="reading-webtoon"
+  alt={{
+    pages:
+      '3 つのページが並んでいます。1 つ目は、灰色のコマの上の縁で終わっています。2 つ目は、そのコマの下の縁から始まり、4 人の肖像の上の部分が切れたところで終わり、3 つ目は、その肖像の残りから始まります。',
+    webtoon:
+      '同じ 3 枚の画像を、コマとコマの間で切り直したもの。1 つ目は灰色のコマが丸ごと入ったところで終わり、2 つ目は 3 つのコマが丸ごと入り、3 つ目は、4 人の肖像が、キャプションごと丸ごと入ったところから始まります。',
+  }}
+/>
+
+ページとして変換すると、3 枚の画像は、画面と同じ 1272 × 1696 ピクセルの 3 ページになり、切れ目は画像が終わっていた位置のままです。ストリップとして変換すると、画像はつながれて、コマとコマの間で切り直されるので、分かれるコマはありません。ページの幅は元と同じ 992 ピクセルで、高さは 1494、1092、1347 ピクセルです。各切れ目が、コマとコマの間の隙間に置かれるためです。
+
+<span id="what-else-changes-with-it"></span>
+
+### それに伴って変わること
+
+表は、同じ 3 枚の画像について mangapress が書き出した、すべてのページのサイズを示します。すべての行は、小さいページを拡大する設定とマンガの読む順序を含む、Mangabound の初期設定で変換されていて、挙げているフラグは、その行が付け加えるものです。
+
+<OptionBook
+  id="reading-webtoon-pages"
+  labels={{
+    pages: 'Content: Manga or comic pages',
+    webtoon: 'Content: Webtoon strips',
+    fill: 'Webtoon strips、Page size: Crop to fill the screen',
+    stretch: 'Webtoon strips、Page size: Stretch to the screen',
+    gutters: 'Webtoon strips、Inter-panel cropping: Horizontal gaps',
+    borders: 'Webtoon strips、Borders: Black',
+    cropping: 'Webtoon strips、Page cropping: Disabled',
+    untouched: 'Webtoon strips、Use the images as they are',
+  }}
+/>
+
+- **ページは拡大されません。** 2 行目は、小さいページを拡大する設定で変換しましたが、ページの幅は 992 ピクセルのままです。**Page size** の下で、アプリは「Webtoon strips are never enlarged.」と表示します。
+- **引き伸ばしと、画面を埋めるクロップは引き続き使えます。** 3 行目と 4 行目では、切ったページのそれぞれが画面のサイズになります。[Size and borders](../size-and-borders/) と同じです。
+- **Inter-panel cropping も引き続き使えます。** 5 行目は、コマの間の隙間を詰めるので、2 ページ目と 3 ページ目が短くなります。[Cropping](../cropping/) と同じです。
+- **Borders と余白のクロップは使われません。** 6 行目と 7 行目は 2 行目と同じで、サイズも同じです。mangapress 自身のこのモードの説明は、白い枠を伴い、余白のクロップは行わないとしているため、**Webtoon strips** がオンの間は、**Borders**、**Page cropping**、その 3 つの数値が薄く表示されます。
+- **ウェブトゥーンは、分割も回転もされません。** **Wide pages**、全体の見開きに関する 3 つのオプション、**Restack 4-panel strips as 2×2** は薄く表示され、**Autocontrast** と、後述の **Manga reading order** も同様です。
+- **画像をそのままにしても、切り分けは行われます。** 最後の行は **Use the images as they are** をオンにしたもので、ページは再エンコードされませんが、ストリップは同じページに切り分けられます。
+
+これらはそれぞれ、アプリで理由とともに薄く表示され、**Manga or comic pages** に戻ると、選んでいた内容が戻ります。
+
+## Manga reading order
+
+**Manga reading order** は、初期設定でオンです。本が右から左へ読まれるようになり、広いページを分割するときは、右半分が先に来ます。その画像は [Double-page spreads](../double-page-spreads/#manga-reading-order) にあります。`--manga-style` でオンになり、短縮形は `-m` です。
+
+本そのものが、どちらにめくるかを示すかどうかは、形式によって決まります。次の表は、同じ 3 ページから変換した本から読み戻したものです:
+
+<OptionBook
+  id="reading-direction"
+  labels={{
+    'epub-on': 'EPUB, Manga reading order: On',
+    'epub-off': 'EPUB, Manga reading order: Off',
+    'epub-webtoon': 'EPUB、Webtoon strips、Manga reading order はオン',
+    'pdf-on': 'PDF, Manga reading order: On',
+    'cbz-on': 'CBZ, Manga reading order: On',
+  }}
+/>
+
+- **EPUB** は、方向をパッケージファイルに `page-progression-direction` として記録します。オンなら `rtl`、オフなら `ltr` です。ただし、[two-page view](../double-page-spreads/#two-page-view) の **Invert page turns** が、それを逆にします。本の方向に従うリーダーは、その向きにページをめくります。
+- **Webtoon strips** では、**Manga reading order** がオンでも、EPUB は左から右になります。mangapress のこのモードの説明は、左から右の順序を伴うとしています。そのため、このコントロールは薄く表示されます。
+- mangapress が作る **PDF** と **CBZ** は、方向を記録しないので、どうめくるかは、リーダー自身の設定で決まります。[KOReader の設定](../../../koreader/recommended-settings/)のページに、右から左に読むために、タップの領域とスワイプを入れ替える例があります。
