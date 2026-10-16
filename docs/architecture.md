@@ -8,16 +8,17 @@ Mangabound orchestrates two bundled, version-pinned tools: **mangabind** groups 
 
 ## Layers
 
-| Folder                    | Responsibility                                                         | May import                                 |
-| ------------------------- | ---------------------------------------------------------------------- | ------------------------------------------ |
-| `src/domain`              | Pure mapping, queue, settings, and run-result rules                    | nothing                                    |
-| `src/application`         | Workflows and the ports they require                                   | domain, library, opds                      |
-| `src/adapters`            | CLI, process, filesystem, provider, and network implementations        | application, domain, shared, library, opds |
-| `src/library`, `src/opds` | Pure catalog and feed logic                                            | domain, library, opds                      |
-| `src/shared`              | Validated IPC contracts and shared bridge types                        | domain                                     |
-| `src/main`                | Electron wiring, windows, trusted paths, ids, and command registration | all layers below it                        |
-| `src/preload`             | The typed `window.mangabound` bridge                                   | domain, shared                             |
-| `src/renderer`            | React screens, state, components, and UI helpers                       | domain, `shared`                           |
+| Folder                    | Responsibility                                                         | May import                                       |
+| ------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
+| `src/domain`              | Pure mapping, queue, settings, and run-result rules                    | nothing                                          |
+| `src/application`         | Workflows and the ports they require                                   | domain, library, opds, i18n                      |
+| `src/adapters`            | CLI, process, filesystem, provider, and network implementations        | application, domain, shared, library, opds, i18n |
+| `src/library`, `src/opds` | Pure catalog and feed logic                                            | domain, library, opds                            |
+| `src/shared`              | Validated IPC contracts and shared bridge types                        | domain                                           |
+| `src/i18n`                | What the app says, in each of its languages (typed catalogs)           | domain                                           |
+| `src/main`                | Electron wiring, windows, trusted paths, ids, and command registration | all layers below it                              |
+| `src/preload`             | The typed `window.mangabound` bridge                                   | domain, shared                                   |
+| `src/renderer`            | React screens, state, components, and UI helpers                       | domain, `shared`, `i18n`                         |
 
 The table lists allowed project layers; imports within a layer are always allowed. The renderer has no Node, filesystem, or process access. Domain code imports no React, Electron, Node, or adapters. ESLint enforces these boundaries; [CONTRIBUTING](../CONTRIBUTING.md#module-boundaries) explains the checks.
 

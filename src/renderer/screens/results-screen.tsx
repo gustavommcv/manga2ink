@@ -11,6 +11,7 @@ import { useEffect, useRef } from 'react';
 import { warningNotices } from '@/domain/book-warnings';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
 import { Button } from '@/renderer/components/ui/button';
+import { useSay } from '@/renderer/hooks/use-messages';
 import type { ArtifactSummary } from '@/shared/workflow-contract';
 
 /** What became of one queue item in a run. */
@@ -51,6 +52,7 @@ export function ResultsScreen({
   outcomes,
   summary,
 }: ResultsScreenProps): React.JSX.Element {
+  const { sayAll } = useSay();
   const artifacts = outcomes.flatMap((outcome) => outcome.artifacts);
   const problems = outcomes.filter((outcome) => outcome.status !== 'done');
   const notices = warningNotices(artifacts);
@@ -186,7 +188,7 @@ export function ResultsScreen({
                 {outcome.status === 'failed' ? 'could not be converted' : 'was skipped'}
               </p>
               {outcome.message !== undefined && (
-                <p className="text-muted-foreground mt-0.5 text-sm">{outcome.message}</p>
+                <p className="text-muted-foreground mt-0.5 text-sm">{sayAll(outcome.message)}</p>
               )}
             </div>
             {outcome.fixable === true && (

@@ -2,6 +2,7 @@ import { type BookDetails, hasBookDetails, normalizeBookDetails } from './book-d
 import { hasItemOptions, type ItemOptions } from './item-options';
 import { onlyLinksNote } from './library-links';
 import { type MappingDraft, mappingSignature } from './mapping';
+import { type AnyMessage, message, raw } from './message';
 import { libraryReason, type ProcessMode, resolveMode } from './process-mode';
 import { unrecognizedChaptersNote, unrecognizedInLibraryNote } from './unrecognized-chapters';
 
@@ -343,29 +344,24 @@ export type RowTone = 'neutral' | 'accent' | 'warning' | 'danger';
 
 export interface RowView {
   /** The short status shown on the row. */
-  readonly chip: string;
+  readonly chip: AnyMessage;
   readonly tone: RowTone;
   /** The line under the name. */
-  readonly detail: string;
+  readonly detail: AnyMessage;
   /** Whether a run would process this row (otherwise it is left out and reported). */
   readonly runnable: boolean;
-  /** Why the row is left out, or something worth knowing about it. */
-  readonly note?: string;
+  /** Why the row is left out, or something worth knowing about it: sentences that follow one another. */
+  readonly notes: readonly AnyMessage[];
 }
-
-const plural = (count: number, word: string): string =>
-  `${String(count)} ${word}${count === 1 ? '' : 's'}`;
 
 export function describeRow(row: QueueRow, mode: ProcessMode): RowView {
   const view = describeRowBase(row, mode);
   // Folders the tool could not read as chapters are in no book, whatever else the row says.
-  const told = row.state === 'inspected' ? leftOutNote(row) : '';
-  return told === ''
-    ? view
-    : { ...view, note: view.note === undefined ? told : `${view.note} ${told}` };
+  const told = row.state === 'inspected' ? leftOutNote(row) : undefined;
+  return told === undefined ? view : { ...view, notes: [...view.notes, told] };
 }
 
-function leftOutNote(row: InspectedRow): string {
+function leftOutNote(row: InspectedRow): AnyMessage | undefined {
   return row.kind === 'library'
     ? unrecognizedInLibraryNote(
         (row.titles ?? []).map((title) => ({
@@ -379,35 +375,44 @@ function leftOutNote(row: InspectedRow): string {
 function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
   if (row.state === 'inspecting') {
     return {
-      chip: 'Checking…',
+      chip: message('queue.chip.checking', {}),
       tone: 'neutral',
-      detail: row.kind === 'folder' ? 'Folder · reading it' : 'CBZ · checking it',
+      detail:
+        row.kind === 'folder'
+          ? message('queue.detail.folderReading', {})
+          : message('queue.detail.cbzChecking', {}),
       runnable: false,
+      notes: [],
     };
   }
   if (row.state === 'unreadable') {
     return {
-      chip: 'Could not read',
+      chip: message('queue.chip.unreadable', {}),
       tone: 'danger',
-      detail: row.kind === 'folder' ? 'Folder' : 'CBZ',
+      detail:
+        row.kind === 'folder'
+          ? message('queue.detail.folder', {})
+          : message('queue.detail.cbz', {}),
       runnable: false,
-      note: row.message,
+      // Why it could not be read is what the tool or the system said, in their own words.
+      notes: [raw(row.message)],
     };
   }
   if (row.kind === 'cbz') {
     return rowMode('cbz', mode) === 'skip'
       ? {
-          chip: 'Nothing to join',
+          chip: message('queue.chip.nothingToJoin', {}),
           tone: 'neutral',
-          detail: 'CBZ · already one volume',
+          detail: message('queue.detail.cbzOneVolume', {}),
           runnable: false,
-          note: 'A CBZ is already one volume, so there is nothing to join.',
+          notes: [message('mode.cbzIsOneVolume', {})],
         }
       : {
-          chip: 'Ready',
+          chip: message('queue.chip.ready', {}),
           tone: 'neutral',
-          detail: 'CBZ · goes straight to the e-reader step',
+          detail: message('queue.detail.cbzStraight', {}),
           runnable: true,
+          notes: [],
         };
   }
 
@@ -416,100 +421,112 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
   const chapters = row.mapping?.chapters.length ?? 0;
   const volumes = row.mapping?.volumes.length ?? 0;
   const unassigned = row.mapping === undefined ? 0 : unassignedChapterCount(row.mapping);
-  const folder = `Folder · ${plural(chapters, 'chapter')}`;
   if (mode === 'convert-only') {
-    return { chip: 'One book', tone: 'neutral', detail: `${folder} · not grouped`, runnable: true };
+    return {
+      chip: message('queue.chip.oneBook', {}),
+      tone: 'neutral',
+      detail: message('queue.detail.folderChapters', { chapters, grouping: 'not-grouped' }),
+      runnable: true,
+      notes: [],
+    };
   }
   if (chapters === 0) {
     return {
-      chip: 'Not recognized',
+      chip: message('queue.chip.notRecognized', {}),
       tone: 'danger',
-      detail: 'Folder · no chapters found',
+      detail: message('queue.detail.folderNoChapters', {}),
       runnable: false,
       // A folder of links holds manga that were not read, and grouping is not why none was found.
-      note:
+      notes: [
         row.skippedLinks === undefined
-          ? 'mangabind found no chapters here. Turn off "Group chapters into volumes" to convert the folder as one book.'
+          ? message('queue.note.noChapters', {})
           : onlyLinksNote(row.skippedLinks),
+      ],
     };
   }
-  const fromNames =
+  const grouping =
     row.mapping !== undefined &&
     row.proposedSignature !== undefined &&
     mappingSignature(row.mapping) === row.proposedSignature
-      ? ' · grouped from names'
-      : '';
+      ? 'from-names'
+      : 'plain';
+  const detail = message('queue.detail.folderChapters', { chapters, grouping });
   if (volumes === 0 || (unassigned > 0 && !row.confirmed)) {
     return {
-      chip: 'Needs volumes',
+      chip: message('queue.chip.needsVolumes', {}),
       tone: 'warning',
-      detail: `${folder}${fromNames}`,
+      detail,
       runnable: false,
-      note:
+      notes: [
         volumes === 0
-          ? 'No volumes yet. Open Edit volumes to group the chapters.'
-          : `${plural(unassigned, 'chapter')} still ${unassigned === 1 ? 'has' : 'have'} no volume. Open Edit volumes to place ${unassigned === 1 ? 'it' : 'them'}, or accept the gaps there.`,
+          ? message('queue.note.noVolumesYet', {})
+          : message('queue.note.unassigned', { count: unassigned }),
+      ],
     };
   }
   return {
-    chip: plural(volumes, 'volume'),
+    chip: message('queue.chip.volumes', { count: volumes }),
     tone: 'accent',
-    detail: `${folder}${fromNames}`,
+    detail,
     runnable: true,
-    ...(unassigned > 0 ? { note: `${plural(unassigned, 'chapter')} left out.` } : {}),
+    notes: unassigned > 0 ? [message('queue.note.chaptersLeftOut', { count: unassigned })] : [],
   };
 }
 
 function describeLibrary(row: InspectedRow, mode: ProcessMode): RowView {
   const titles = row.titles ?? [];
-  const detail = `Library · ${plural(titles.length, 'title')}`;
+  const detail = message('queue.detail.library', { titles: titles.length });
   if (titles.length === 0) {
     return {
-      chip: 'Not recognized',
+      chip: message('queue.chip.notRecognized', {}),
       tone: 'danger',
       detail,
       runnable: false,
-      note: 'mangabind found no manga in this folder.',
+      notes: [message('queue.note.libraryEmpty', {})],
     };
   }
   if (rowMode('library', mode) === 'skip') {
     return {
-      chip: 'Needs grouping',
+      chip: message('queue.chip.needsGrouping', {}),
       tone: 'neutral',
       detail,
       runnable: false,
-      note: libraryReason,
+      notes: [libraryReason],
     };
   }
   const pending = titles.filter(isPendingTitle);
   const waiting = titles.filter(isWaitingTitle);
   if (pending.length === 0) {
     return waiting.length === 0
-      ? { chip: 'Saved', tone: 'neutral', detail, runnable: false }
+      ? {
+          chip: message('queue.chip.saved', {}),
+          tone: 'neutral',
+          detail,
+          runnable: false,
+          notes: [],
+        }
       : {
-          chip: 'Needs volumes',
+          chip: message('queue.chip.needsVolumes', {}),
           tone: 'warning',
           detail,
           runnable: false,
-          note: `${plural(waiting.length, 'title')} ${waiting.length === 1 ? 'has' : 'have'} no volumes yet. Use the pencil on this row to group ${waiting.length === 1 ? 'it' : 'them'}.`,
+          notes: [message('queue.note.titlesNeedVolumes', { count: waiting.length })],
         };
   }
   const failed = titles.filter((title) => title.outcome?.status === 'failed');
   const notes = [
     ...(waiting.length === 0
       ? []
-      : [`${plural(waiting.length, 'title')} left out until they have volumes.`]),
-    ...(failed.length === 0
-      ? []
-      : [`${plural(failed.length, 'title')} failed last time and will run again.`]),
+      : [message('queue.note.titlesLeftOut', { count: waiting.length })]),
+    ...(failed.length === 0 ? [] : [message('queue.note.titlesFailed', { count: failed.length })]),
   ];
   const volumes = pending.reduce((count, title) => count + title.volumes.length, 0);
   return {
-    chip: plural(pending.length, 'title'),
+    chip: message('queue.chip.titles', { count: pending.length }),
     tone: 'accent',
-    detail: `${detail} · ${plural(volumes, 'volume')}`,
+    detail: message('queue.detail.libraryVolumes', { titles: titles.length, volumes }),
     runnable: true,
-    ...(notes.length === 0 ? {} : { note: notes.join(' ') }),
+    notes,
   };
 }
 

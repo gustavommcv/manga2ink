@@ -21,7 +21,7 @@ import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
-import { useLanguage, useMessages } from '@/renderer/hooks/use-messages';
+import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
@@ -121,6 +121,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     validating,
   } = props;
   const words = useMessages().queue;
+  const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     titleRef.current?.focus();
@@ -351,7 +352,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             value={format}
           />
           {singleBookActive && (
-            <p className="text-muted-foreground text-xs leading-relaxed">{singleBookLockReason}</p>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              {say(singleBookLockReason)}
+            </p>
           )}
         </div>
 

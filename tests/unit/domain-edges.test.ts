@@ -4,7 +4,6 @@ import { canonicalLanguageTag } from '@/domain/book-details';
 import { warningNotices } from '@/domain/book-warnings';
 import { plannedVolumeBookName } from '@/domain/conversion';
 import {
-  describeRow,
   emptyQueue,
   type InspectedRow,
   type QueueInput,
@@ -12,6 +11,7 @@ import {
   queueReducer,
   type ReadTitle,
 } from '@/domain/input-queue';
+import { describeRowText as describeRow } from './support/say';
 import { createMappingDraft } from '@/domain/mapping';
 import {
   createMappingHistory,

@@ -1,7 +1,9 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 import { defaultLanguage, type Language } from '@/domain/app-settings';
-import { type Messages, messagesFor } from '@/renderer/i18n/messages';
+import type { AnyMessage } from '@/domain/message';
+import { type Messages, messagesFor } from '@/i18n/messages';
+import { say, sayAll } from '@/i18n/say';
 
 /** The language the window is in, and everything it says in it (ADR 0052). */
 export interface I18n {
@@ -26,4 +28,21 @@ export function useMessages(): Messages {
 /** The language the window is in. */
 export function useLanguage(): Language {
   return useContext(I18nContext).language;
+}
+
+/** Writes what the domain, the workflows and the main process say by code (ADR 0053), in the language of the window. */
+export function useSay(): {
+  /** One message as a sentence. */
+  readonly say: (message: AnyMessage) => string;
+  /** Messages that follow one another as the sentences of one note. */
+  readonly sayAll: (messages: readonly AnyMessage[]) => string;
+} {
+  const { said } = useMessages();
+  return useMemo(
+    () => ({
+      say: (message) => say(said, message),
+      sayAll: (messages) => sayAll(said, messages),
+    }),
+    [said],
+  );
 }

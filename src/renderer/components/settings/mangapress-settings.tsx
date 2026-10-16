@@ -32,6 +32,7 @@ import { SettingFieldHeader } from '@/renderer/components/settings/setting-field
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
+import { useSay } from '@/renderer/hooks/use-messages';
 import { Input } from '@/renderer/components/ui/input';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
@@ -102,6 +103,7 @@ export function MangapressSettingsEditor({
   settings,
   singleBook,
 }: MangapressSettingsProps): React.JSX.Element {
+  const { say } = useSay();
   const singleBookActive = Boolean(singleBook);
   const issues = validateMangapressSettings(settings, format);
   const errorFor = (field: MangapressSettingField): string | undefined =>
@@ -215,7 +217,7 @@ export function MangapressSettingsEditor({
         </SelectField>
         <SelectField
           changed={format !== formatBaseline}
-          description={singleBookActive ? singleBookLockReason : undefined}
+          description={singleBookActive ? say(singleBookLockReason) : undefined}
           disabled={singleBookActive}
           id="output-format"
           label="Book format"

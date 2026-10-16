@@ -1,5 +1,5 @@
 import { GeneralTab } from '@/renderer/components/settings/general-tab';
-import type { Messages } from '@/renderer/i18n/messages';
+import type { Messages } from '@/i18n/messages';
 
 /**
  * One thing a person decides about the app (ADR 0052): a name for the tab, and what it holds. The

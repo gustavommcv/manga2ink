@@ -1,3 +1,5 @@
+import { type AnyMessage, message } from './message';
+
 /**
  * Which of the two tools a run uses. A closed set on purpose: it is a choice between three fixed
  * processes, not a pipeline anyone assembles step by step (ADR 0005).
@@ -35,13 +37,12 @@ export function usesMangapress(mode: ProcessMode): boolean {
   return mode !== 'bind-only';
 }
 
-const cbzReason = 'A CBZ is already one volume, so there is nothing to join.';
-export const libraryReason =
-  'A library is grouped title by title first, so it cannot skip joining volumes.';
-export const singleBookLockReason = 'Turn off “Create one book for the series” to change this.';
+const cbzReason = message('mode.cbzIsOneVolume', {});
+export const libraryReason = message('mode.libraryGroupsFirst', {});
+export const singleBookLockReason = message('mode.singleBookLocked', {});
 
 /** Why a run must refuse this mode for this kind of input, or undefined when it can run. */
-export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): string | undefined {
+export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): AnyMessage | undefined {
   if (input === 'cbz' && mode === 'bind-only') return cbzReason;
   if (input === 'library' && mode === 'convert-only') return libraryReason;
   return undefined;
@@ -52,7 +53,7 @@ export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): stri
  * Stricter than what a run refuses: a CBZ has only one meaningful process, going straight to
  * mangapress, though asking it to "bind and convert" still just does that.
  */
-export function blockedModeReason(input: ModeInput, mode: ProcessMode): string | undefined {
+export function blockedModeReason(input: ModeInput, mode: ProcessMode): AnyMessage | undefined {
   if (input === 'cbz' && mode !== 'convert-only') return cbzReason;
   return unsupportedModeReason(input, mode);
 }

@@ -14,7 +14,7 @@ import { describeRow, type QueueRow, type RowTone, rowMode } from '@/domain/inpu
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangapress } from '@/domain/process-mode';
 import { Button } from '@/renderer/components/ui/button';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 const chipTone: Record<RowTone, string> = {
@@ -43,6 +43,7 @@ export function QueueRowItem({
   readonly row: QueueRow;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
+  const { say, sayAll } = useSay();
   const view = describeRow(row, mode);
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
   // A folder or a library has volumes to edit, and only while volumes are in play.
@@ -76,9 +77,9 @@ export function QueueRowItem({
         <p className="truncate text-sm font-medium" title={row.displayPath}>
           {row.displayName}
         </p>
-        <p className="text-subtle-foreground truncate text-xs">{view.detail}</p>
-        {view.note !== undefined && (
-          <p className="text-muted-foreground mt-0.5 text-xs">{view.note}</p>
+        <p className="text-subtle-foreground truncate text-xs">{say(view.detail)}</p>
+        {view.notes.length > 0 && (
+          <p className="text-muted-foreground mt-0.5 text-xs">{sayAll(view.notes)}</p>
         )}
       </div>
       <div className="ml-auto flex items-center gap-3">
@@ -88,7 +89,7 @@ export function QueueRowItem({
             chipTone[view.tone],
           )}
         >
-          {view.chip}
+          {say(view.chip)}
         </span>
         {editable && (
           <Button

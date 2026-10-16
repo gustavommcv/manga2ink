@@ -29,7 +29,7 @@ export default defineConfig({
         'src/main/**/*.ts',
         'src/opds/**/*.ts',
         'src/preload/**/*.ts',
-        'src/renderer/i18n/**/*.ts',
+        'src/i18n/**/*.ts',
         'src/renderer/lib/**/*.ts',
       ],
       provider: 'v8',

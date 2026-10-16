@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import type { PipelineIssue } from '@/domain/conversion';
 import { onlyLinksNote, skippedLinkNames, skippedLinksNotice } from '@/domain/library-links';
 
+import { english } from './support/say';
+
 const issue = (code: string, extra: Partial<PipelineIssue> = {}): PipelineIssue => ({
   tool: 'mangabind',
   severity: 'warning',
@@ -70,13 +72,13 @@ describe('skippedLinksNotice', () => {
 
 describe('onlyLinksNote', () => {
   it('tells a folder whose only manga is a link why it holds none', () => {
-    expect(onlyLinksNote(['Berserk'])).toBe(
+    expect(english(onlyLinksNote(['Berserk']))).toBe(
       'A folder in it is a link, and mangabind does not follow links to a series, so it was not read: Berserk. Put the real folder in the library and add it again.',
     );
   });
 
   it('tells it for several, naming the first few', () => {
-    expect(onlyLinksNote(['A', 'B', 'C', 'D'])).toBe(
+    expect(english(onlyLinksNote(['A', 'B', 'C', 'D']))).toBe(
       '4 folders in it are links, and mangabind does not follow links to a series, so they were not read: A, B, C and 1 more. Put the real folders in the library and add it again.',
     );
   });

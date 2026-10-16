@@ -18,13 +18,14 @@ const srcRoot = path.join(repoRoot, 'src');
 // here.
 const allowedLayers = {
   domain: [],
-  application: ['domain', 'library', 'opds'],
-  adapters: ['domain', 'application', 'shared', 'library', 'opds'],
+  application: ['domain', 'library', 'opds', 'i18n'],
+  adapters: ['domain', 'application', 'shared', 'library', 'opds', 'i18n'],
   library: ['domain', 'library', 'opds'],
   opds: ['domain', 'library', 'opds'],
   shared: ['domain'],
+  i18n: ['domain'],
   preload: ['domain', 'shared'],
-  renderer: ['domain', 'shared'],
+  renderer: ['domain', 'shared', 'i18n'],
   main: undefined,
 };
 
@@ -33,8 +34,16 @@ const allowedLayers = {
 // bridge. library/opds forbid electron (never needed) but not Node builtins: that line names
 // domain specifically, and both already use `node:path` for plain joining. adapters, main and
 // preload legitimately use both and are left alone.
-const forbidsElectron = new Set(['domain', 'application', 'library', 'opds', 'shared', 'renderer']);
-const forbidsNodeBuiltins = new Set(['domain', 'application', 'shared', 'renderer']);
+const forbidsElectron = new Set([
+  'domain',
+  'application',
+  'library',
+  'opds',
+  'shared',
+  'i18n',
+  'renderer',
+]);
+const forbidsNodeBuiltins = new Set(['domain', 'application', 'shared', 'i18n', 'renderer']);
 
 /** The top-level `src/<layer>` a real path falls under, or undefined outside `src` entirely. */
 function layerOf(absolutePath) {
