@@ -35,6 +35,21 @@ describe('Titlebar', () => {
     expect(action.parentElement).toHaveClass('window-titlebar-actions');
   });
 
+  it('lays its actions out in a row, so there can be more than one', () => {
+    render(
+      <Titlebar>
+        <button type="button">One</button>
+        <button type="button">Another</button>
+      </Titlebar>,
+    );
+
+    expect(screen.getByRole('button', { name: 'One' }).parentElement).toHaveClass(
+      'flex',
+      'items-center',
+      'gap-2',
+    );
+  });
+
   it('has no actions block when it has no actions', () => {
     const { container } = render(<Titlebar />);
 

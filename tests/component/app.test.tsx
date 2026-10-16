@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '@/renderer/app';
+import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { WorkflowApp } from '@/renderer/workflow-app';
 
 import { inertBridge } from './support/bridge';
@@ -31,6 +32,7 @@ describe('application startup', () => {
     ).toBeVisible();
     expect(screen.queryByRole('heading', { name: 'Queue' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Share' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'App settings' })).not.toBeInTheDocument();
     expect(screen.queryByText(/Architecture checkpoint|Foundation/u)).not.toBeInTheDocument();
     expect(screen.queryByRole('region', { name: 'Bundled tool status' })).not.toBeInTheDocument();
   });
@@ -57,7 +59,11 @@ describe('application startup', () => {
         onConversionProgress: () => unsubscribe,
       });
 
-      const { unmount } = render(<WorkflowApp bridge={supplied} />);
+      const { unmount } = render(
+        <AppSettingsProvider bridge={supplied}>
+          <WorkflowApp bridge={supplied} />
+        </AppSettingsProvider>,
+      );
 
       await waitFor(() => {
         expect(screen.getByRole('button', { name: 'Files' })).toBeEnabled();
@@ -148,5 +154,91 @@ describe('application startup', () => {
     expect(await screen.findByText('Conversion tools need attention')).toBeVisible();
     expect(screen.getByText(message)).toBeVisible();
     expect(screen.queryByText('Conversion tools ready')).not.toBeInTheDocument();
+  });
+
+  describe('the app settings', () => {
+    it('has a gear on the title bar, beside Share, that opens the app settings', async () => {
+      const user = userEvent.setup();
+      installBridge({});
+
+      render(<App />);
+
+      const gear = await screen.findByRole('button', { name: 'App settings' });
+      expect(screen.getByRole('button', { name: 'Share' }).parentElement?.parentElement).toBe(
+        gear.parentElement,
+      );
+      await user.click(gear);
+      expect(await screen.findByRole('dialog', { name: 'App settings' })).toBeVisible();
+    });
+
+    it('draws nothing until they have been read, so nothing is drawn in a language that changes', async () => {
+      installBridge({
+        loadAppSettings: () =>
+          new Promise(() => {
+            // Never answers.
+          }),
+      });
+
+      const { container } = render(<App />);
+
+      await new Promise((done) => setTimeout(done, 20));
+      expect(container).toBeEmptyDOMElement();
+    });
+
+    it('is in the language that was kept, and the page says so', async () => {
+      installBridge({
+        loadAppSettings: () =>
+          Promise.resolve({
+            ok: true,
+            value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+          }),
+      });
+
+      render(<App />);
+
+      expect(await screen.findByRole('button', { name: 'Configurações do app' })).toBeVisible();
+      expect(document.documentElement.lang).toBe('pt-BR');
+    });
+
+    it('says, in the notices, that what was kept could not be read', async () => {
+      installBridge({
+        loadAppSettings: () =>
+          Promise.resolve({
+            ok: true,
+            value: { settings: { language: 'system' }, language: 'en', unreadable: true },
+          }),
+      });
+
+      render(<App />);
+
+      expect(
+        await screen.findByText(
+          'The saved app settings could not be read, so the defaults are in use.',
+        ),
+      ).toBeVisible();
+    });
+
+    it('says nothing when they were read without trouble', async () => {
+      installBridge({});
+
+      render(<App />);
+
+      await screen.findByRole('button', { name: 'App settings' });
+      expect(screen.queryByText(/could not be read/u)).not.toBeInTheDocument();
+    });
+
+    it('changes the language of the window from the dialog, and keeps it', async () => {
+      const user = userEvent.setup();
+      const saveAppSettings = vi.fn().mockResolvedValue({ ok: true, value: { language: 'pt-BR' } });
+      installBridge({ saveAppSettings });
+      render(<App />);
+
+      await user.click(await screen.findByRole('button', { name: 'App settings' }));
+      await user.selectOptions(await screen.findByRole('combobox', { name: 'Language' }), 'pt-BR');
+
+      expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ language: 'pt-BR' });
+      expect(await screen.findByRole('dialog', { name: 'Configurações do app' })).toBeVisible();
+      expect(document.documentElement.lang).toBe('pt-BR');
+    });
   });
 });

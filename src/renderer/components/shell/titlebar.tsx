@@ -30,15 +30,17 @@ export function Titlebar({ children, platform, version }: TitlebarProps): React.
         <span aria-hidden="true" className="bg-accent size-2 rounded-full" />
         <span className="text-sm font-semibold tracking-tight">Mangabound</span>
         {/* The first to go when the window is narrow: its buttons take the space from the bar. The
-            name, the version and the Share button need about 350px, and the buttons take up to
-            140px of the width, so 560px is where all of them still fit. */}
+            name, the version, the Share button and the gear need about 390px, and the window's own
+            buttons take up to 140px of the width, so 600px is where all of them still fit. */}
         {version !== undefined && (
-          <span className="text-subtle-foreground hidden text-xs min-[560px]:inline">
+          <span className="text-subtle-foreground hidden text-xs min-[600px]:inline">
             v{version}
           </span>
         )}
         <span className="flex-1" />
-        {children !== undefined && <div className="window-titlebar-actions">{children}</div>}
+        {children !== undefined && (
+          <div className="window-titlebar-actions flex items-center gap-2">{children}</div>
+        )}
       </div>
     </header>
   );
