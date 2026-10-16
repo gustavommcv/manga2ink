@@ -1,11 +1,6 @@
 {
   "pt-br": [],
   "ja": [
-    "cli/machine-protocol.mdx",
-    "cli/mangabind.mdx",
-    "cli/mangapress.mdx",
-    "development/architecture.mdx",
-    "development/metadata-providers.mdx",
     "user-guide/advanced-options/book-metadata.mdx",
     "user-guide/advanced-options/color-and-tone.mdx",
     "user-guide/advanced-options/cover.mdx",

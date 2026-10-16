@@ -1,0 +1,74 @@
+---
+title: 'mangapress CLI'
+description: 'mangapress コマンドラインツールを使って、ターミナルから、マンガの巻を電子書籍リーダーのプロファイル向けに EPUB・CBZ・PDF へ変換します。右から左へ読む順序にも対応します。'
+---
+
+ターミナルから使うには、[GitHub Releases](https://github.com/gustavommcv/mangapress/releases) から mangapress をダウンロードしてください。
+
+## 試してみる
+
+```sh
+mangapress --help
+mangapress --list-profiles
+mangapress "Volume.cbz" --profile KV --manga-style --format epub
+```
+
+`--list-profiles` で、お使いの端末のコードと解像度を調べられます。たとえば、Kobo Libra 2 は **KoL**、reMarkable Paper Pro は **RmkPP** です。
+
+右から左に読む順序には `--manga-style` を、対応する ComicInfo のデータを残すには `--keepcomicinfo` を付けます。CLI の既定値は、端末（後述）をはじめとして、Mangabound のものとは異なります。ターミナルでの変換をアプリと比べるときは、同じオプションを使ってください。
+
+<span id="choosing-the-device-and-the-format"></span>
+
+## 端末と形式を選ぶ
+
+`--profile CODE`（短縮形は `-p`）は、コードで端末を選びます。`--list-profiles` は、端末の名前と画面サイズとともに、すべてのコードを表示します。最初の行は `K1  Kindle 1  600x670`、`K2  Kindle 2  600x670`、`KDX  Kindle DX/DXG  824x1000` です。これを指定しない場合、CLI は Kindle Voyage の **KV**（1072 × 1448）を使います。Mangabound は Kindle Paperwhite 6 の **KPW6**（1272 × 1696）から始まります。知らないコードは、候補の提案とともに拒否されます:
+
+```text
+Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profiles)
+```
+
+`--customwidth` と `--customheight` は、画面サイズをピクセルで置き換えます。名前付きのプロファイルでは、それぞれが対応する寸法だけを置き換え、もう一方はプロファイルのままです。`--profile KPW6 --customwidth 1000` は、1000 × 1696 向けに変換します。プロファイル **OTHER** には独自のサイズがないため、両方が必要で、得られない場合はそう伝えます:
+
+```text
+Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
+```
+
+カスタムサイズは、Kobo の EPUB の名前も変えます。[Book metadata](../../user-guide/advanced-options/book-metadata/#name-the-book-epub) を参照してください。
+
+`--format FORMAT`（短縮形は `-f`）は、`epub`、`cbz`、`pdf`、または既定値の `auto` です。`auto` は、Kindle には CBZ、reMarkable には PDF、そのほかの端末には EPUB を選びます。`-p KPW6` と `-p K11` は CBZ、`-p KoLC` は EPUB、`-p Rmk2` は PDF になります。本は、入力の名前に形式の拡張子を付けた名前になり、すでにあるファイルは上書きされません。本には別の名前が付けられ、どの名前かはレポートに出ます。
+
+Mangabound では、これらは[変換の設定](../../user-guide/output-profiles/)の **Device**、**Book format**、**Custom width**、**Custom height** です。アプリは、常に形式を指定し、`auto` は使いません。
+
+<span id="previewing-a-conversion"></span>
+
+## 変換のプレビュー
+
+`--dry-run`（短縮形は `-n`）は、入力を読み、ページを処理したりファイルを書いたりせずに、何が作られるかを報告します。次は、4 ページの CBZ に対して表示された内容です（パスは短縮しています）:
+
+```text
+mangapress: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
+warning: 4 of 4 pages are smaller than the device's 1072x1448 screen. Consider --upscale (or --stretch) to make them easier to read.
+found 1 chapter(s), 4 page(s) total
+warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangapress).cbz
+dry run -- no pages will be processed, nothing will be written
+title: Pepper and Carrot - Episode 01
+author: Unknown
+format: cbz
+device: Kindle Voyage (1072x1448)
+chapters: 1, pages: 4
+would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
+```
+
+警告は、実際の実行で表示されるものと同じなので、ドライランは、それらを先に確認する手軽な方法です。サイズの警告は、[Size and borders](../../user-guide/advanced-options/size-and-borders/) に関するものです。
+
+<span id="quieter-output"></span>
+
+## 出力を静かにする
+
+`--quiet`（短縮形は `-q`）は、進み具合の行を省きます。何を変換しているかを示す行、各話とページの数、完了した各話、書き出した本のパスです。警告とエラーは引き続き表示されます。同じ変換は、既定では 6 行を表示し、`--quiet` を付けると、小さいページについての警告だけを表示します。Mangabound では、これは **Tool behavior** の下の **Quiet mode** です。アプリは mangapress 自身のイベントを読むので、この設定は、アプリで見えるものを変えません。
+
+## そのほかのオプション
+
+アプリに表示されるすべてのオプションには、それぞれ専用のページがあり、そのオプションあり・なしで同じページを変換して見せています。[Advanced conversion options](../../user-guide/advanced-options/) を参照してください。このツールの [README](https://github.com/gustavommcv/mangapress#readme) には、メタデータ、入れ子の目次、そのほかのコマンドラインの説明があります。
+
+連携については、[マシンプロトコル](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md)を参照してください。お使いのバージョンに合った参照先を選んでください。

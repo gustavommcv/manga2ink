@@ -1,0 +1,12 @@
+---
+title: 'メタデータの入力元を追加する'
+description: 'MetadataProviderPort という境界を通して、Mangabound にオンラインのメタデータの入力元を追加する方法と、リポジトリのプロバイダーガイドおよびそのルールを説明します。'
+---
+
+リポジトリの[正式なプロバイダーガイド](https://github.com/gustavommcv/mangabound/blob/main/docs/adding-a-metadata-provider.md)に従ってください。API の適合性、利用規約、帰属表示、プライバシー、実装、実際のレスポンスのフィクスチャについて、保守されているチェックリストです。
+
+境界は **MetadataProviderPort** で、[src/application/ports/metadata-provider.ts](https://github.com/gustavommcv/mangabound/blob/main/src/application/ports/metadata-provider.ts) にあります。プロバイダーは **src/adapters/metadata-providers/** の下に置き、そこにある既存のレジストリを使います。
+
+共通の HTTP とエラーのヘルパーを再利用し、記録されたサービスのレスポンスに対してテストしてください。
+
+入力元が提供するのはメタデータであり、マンガのページ、ダウンロード、リーダーへのリンクではありません。API が必要な巻のデータを提供できない場合や、受け入れルールを満たさない場合は、アダプターを実装する前に相談してください。
