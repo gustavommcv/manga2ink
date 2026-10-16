@@ -1,0 +1,138 @@
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+
+import type { LanguagePreference } from '@/domain/app-settings';
+import { AppSettingsProvider } from '@/renderer/app-settings-provider';
+import { GeneralTab } from '@/renderer/components/settings/general-tab';
+import type { MangaboundBridge } from '@/shared/runtime-info';
+
+import { inertBridge } from './support/bridge';
+
+const kept =
+  (
+    preference: LanguagePreference,
+    language: 'en' | 'pt-BR' = 'en',
+  ): MangaboundBridge['loadAppSettings'] =>
+  () =>
+    Promise.resolve({
+      ok: true,
+      value: { settings: { language: preference }, language, unreadable: false },
+    });
+
+async function renderGeneral(
+  overrides: Partial<MangaboundBridge> = {},
+): Promise<HTMLSelectElement> {
+  render(
+    <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
+      <GeneralTab />
+    </AppSettingsProvider>,
+  );
+  return await screen.findByRole<HTMLSelectElement>('combobox', { name: 'Language' });
+}
+
+describe('the language in the general tab', () => {
+  it('is chosen from the languages the app has, each written in itself, and from the system', async () => {
+    const select = await renderGeneral();
+
+    expect(
+      within(select)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['Automatic (system language)', 'English', 'Português (Brasil)']);
+  });
+
+  it.each([
+    ['system', 'Automatic (system language)'],
+    ['en', 'English'],
+    ['pt-BR', 'Português (Brasil)'],
+  ] as const)('shows the choice that was kept: %s', async (preference, shown) => {
+    const select = await renderGeneral({ loadAppSettings: kept(preference) });
+
+    expect(select).toHaveDisplayValue(shown);
+  });
+
+  it('says what it does, and that a choice is described by it', async () => {
+    const select = await renderGeneral();
+
+    expect(select).toHaveAccessibleDescription(
+      'Applies right away. Books, titles and the tools’ own messages are not translated.',
+    );
+  });
+
+  it('keeps the choice, and the whole window is in the language at once', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      Promise.resolve({ ok: true, value: { language: 'pt-BR' } }),
+    );
+    const select = await renderGeneral({ saveAppSettings });
+
+    await user.selectOptions(select, 'Português (Brasil)');
+
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ language: 'pt-BR' });
+    const changed = await screen.findByRole('combobox', { name: 'Idioma' });
+    expect(changed).toHaveDisplayValue('Português (Brasil)');
+    expect(
+      within(changed).getByRole('option', { name: 'Automático (idioma do sistema)' }),
+    ).toBeVisible();
+    expect(changed).toHaveFocus();
+  });
+
+  it('follows the system when that is chosen, in the language it comes to', async () => {
+    const user = userEvent.setup();
+    const select = await renderGeneral({
+      loadAppSettings: kept('en'),
+      saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'pt-BR' } }),
+    });
+
+    await user.selectOptions(select, 'Automatic (system language)');
+
+    expect(await screen.findByRole('combobox', { name: 'Idioma' })).toHaveDisplayValue(
+      'Automático (idioma do sistema)',
+    );
+  });
+
+  it('says it could not be kept, and stays as it was, when keeping it fails', async () => {
+    const user = userEvent.setup();
+    const select = await renderGeneral({
+      saveAppSettings: () =>
+        Promise.resolve({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } }),
+    });
+
+    await user.selectOptions(select, 'Português (Brasil)');
+
+    expect(await screen.findByText('The language could not be saved. Try again.')).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Language' })).toHaveDisplayValue('English');
+  });
+
+  it('stops saying so once a choice is kept', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi
+      .fn<MangaboundBridge['saveAppSettings']>()
+      .mockResolvedValueOnce({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } })
+      .mockResolvedValueOnce({ ok: true, value: { language: 'pt-BR' } });
+    const select = await renderGeneral({ saveAppSettings });
+    await user.selectOptions(select, 'Português (Brasil)');
+    await screen.findByText('The language could not be saved. Try again.');
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Language' }),
+      'Português (Brasil)',
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText('The language could not be saved. Try again.'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it('keeps nothing for a choice it does not offer', async () => {
+    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>();
+    const select = await renderGeneral({ saveAppSettings });
+
+    fireEvent.change(select, { target: { value: 'klingon' } });
+
+    expect(saveAppSettings).not.toHaveBeenCalled();
+  });
+});
