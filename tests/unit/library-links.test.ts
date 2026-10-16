@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { PipelineIssue } from '@/domain/conversion';
 import { onlyLinksNote, skippedLinkNames, skippedLinksNotice } from '@/domain/library-links';
 
-import { english } from './support/say';
+import { english, inEnglish } from './support/say';
 
 const issue = (code: string, extra: Partial<PipelineIssue> = {}): PipelineIssue => ({
   tool: 'mangabind',
@@ -51,7 +51,7 @@ describe('skippedLinkNames', () => {
 
 describe('skippedLinksNotice', () => {
   it('says that one folder was not read, why, and what to do', () => {
-    expect(skippedLinksNotice(['Berserk'])).toEqual({
+    expect(inEnglish(skippedLinksNotice(['Berserk']))).toEqual({
       title: '1 folder in this library was not read',
       advice:
         'It is a link, and mangabind does not follow links to a series. Put the real folder in the library, or add it on its own:',
@@ -60,13 +60,13 @@ describe('skippedLinksNotice', () => {
   });
 
   it('counts the folders, and names only the first few of many', () => {
-    expect(skippedLinksNotice(['A', 'B'])).toMatchObject({
+    expect(inEnglish(skippedLinksNotice(['A', 'B']))).toMatchObject({
       title: '2 folders in this library were not read',
       advice:
         'They are links, and mangabind does not follow links to a series. Put the real folders in the library, or add each on its own:',
       names: 'A, B',
     });
-    expect(skippedLinksNotice(['A', 'B', 'C', 'D', 'E']).names).toBe('A, B, C and 2 more');
+    expect(english(skippedLinksNotice(['A', 'B', 'C', 'D', 'E']).names)).toBe('A, B, C and 2 more');
   });
 });
 

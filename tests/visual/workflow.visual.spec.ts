@@ -434,3 +434,19 @@ test('the process steps remain visually consistent', async ({ page }) => {
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('process-steps.png');
 });
+
+test('a library in Portuguese remains visually consistent', async ({ page }) => {
+  await page.goto('/iframe.html?id=workflows-library-titles--in-portuguese&viewMode=story');
+  await expect(page.getByRole('heading', { name: 'Manga Library' })).toBeVisible();
+  await expect(page.getByRole('status', { name: 'Modo de livro único' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('library-titles-portuguese.png');
+});
+
+test('the details of a book in Portuguese remain visually consistent', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1100 });
+  await page.goto('/iframe.html?id=workflows-book-details--in-portuguese&viewMode=story');
+  await expect(page.getByRole('heading', { name: 'Capas' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('book-details-portuguese.png');
+});

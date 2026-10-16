@@ -9,6 +9,10 @@ const said = messagesFor('en').said;
 /** A message as the English the app has always said. */
 export const english = (message: AnyMessage): string => say(said, message);
 
+/** A note of sentences that follow one another, in English; nothing when there is none. */
+export const englishNote = (messages: readonly AnyMessage[] | undefined): string | undefined =>
+  messages === undefined ? undefined : sayAll(said, messages);
+
 /** Messages that follow one another as the sentences of one note, in English. */
 export const englishAll = (messages: readonly AnyMessage[]): string => sayAll(said, messages);
 

@@ -864,7 +864,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
           ? undefined
           : {
               name: editingRow.displayName,
-              backLabel: 'Queue',
+              backLabel: messages.queue.title,
               own: editingRow.options,
               back: { screen: 'queue' } as const,
               change: (options: ItemOptions | undefined) => {
@@ -1125,7 +1125,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             editingRow?.state === 'inspected' &&
             editingRow.kind !== 'library' && (
               <BookDetailsScreen
-                backLabel="Queue"
+                backLabel={messages.queue.title}
                 declaredLanguage={dominantLanguage(editingRow.mapping?.chapters ?? [])}
                 defaultLanguage={settings.language}
                 defaultTitle={editingRow.displayName.replace(/\.cbz$/iu, '')}

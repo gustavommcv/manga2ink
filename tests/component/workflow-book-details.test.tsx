@@ -15,7 +15,7 @@ import {
   runButton,
 } from './support/workflow';
 import { converted, goodTitle, libraryBridge, looseTitle } from './support/library';
-import { raw, message } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -530,7 +530,7 @@ describe('the covers a person gives the books of an item', () => {
         ok: true,
         value: {
           covers: [{ slot: 1, name: '01.jpg', origin: 'folder' }],
-          note: '2 images were not used: there is 1 book.',
+          note: [message('covers.unused', { count: 2, books: 1 })],
         },
       }),
     );

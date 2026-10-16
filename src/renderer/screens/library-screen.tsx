@@ -7,7 +7,7 @@ import { hasItemOptions } from '@/domain/item-options';
 import { skippedLinksNotice } from '@/domain/library-links';
 import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
-import { useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { cn } from '@/renderer/lib/utils';
 
@@ -25,9 +25,6 @@ export interface LibraryScreenProps {
   readonly titles: readonly LibraryTitle[];
 }
 
-const plural = (count: number, word: string): string =>
-  `${String(count)} ${word}${count === 1 ? '' : 's'}`;
-
 /** The manga a library holds, and which of them still need their volumes grouped. */
 export function LibraryScreen({
   name,
@@ -39,6 +36,8 @@ export function LibraryScreen({
   skippedLinks = [],
   titles,
 }: LibraryScreenProps): React.JSX.Element {
+  const messages = useMessages();
+  const words = messages.library;
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     titleRef.current?.focus();
@@ -46,7 +45,7 @@ export function LibraryScreen({
   return (
     <section aria-labelledby="library-title" className="mx-auto max-w-3xl space-y-5">
       <Button onClick={onBack} variant="ghost">
-        <ChevronLeft /> Queue
+        <ChevronLeft /> {messages.queue.title}
       </Button>
       <div>
         <h1
@@ -57,20 +56,17 @@ export function LibraryScreen({
         >
           {name}
         </h1>
-        <p className="text-subtle-foreground mt-1 text-sm">
-          {plural(titles.length, 'title')}. A title with no volumes is left out of a run until you
-          group it.
-        </p>
+        <p className="text-subtle-foreground mt-1 text-sm">{words.summary(titles.length)}</p>
         {skippedLinks.length > 0 && <SkippedLinks names={skippedLinks} />}
         {singleBook && (
           <InfoBanner
             className="mt-3"
-            message="Each title in the library will be produced as its own single-series EPUB."
-            title="Single book mode"
+            message={words.singleBook.text}
+            title={words.singleBook.title}
           />
         )}
       </div>
-      <ul aria-label="Titles" className="space-y-0.5">
+      <ul aria-label={words.titles} className="space-y-0.5">
         {titles.map((title) => (
           <TitleRow
             key={title.title}
@@ -87,16 +83,17 @@ export function LibraryScreen({
 
 /** Series kept as links are not in the list below, and nothing else says so. */
 function SkippedLinks({ names }: { readonly names: readonly string[] }): React.JSX.Element {
+  const { say } = useSay();
   const notice = skippedLinksNotice(names);
   return (
     <InfoBanner
       className="mt-3"
       message={
         <>
-          {notice.advice} <strong className="text-foreground">{notice.names}</strong>.
+          {say(notice.advice)} <strong className="text-foreground">{say(notice.names)}</strong>.
         </>
       }
-      title={notice.title}
+      title={say(notice.title)}
     />
   );
 }
@@ -113,17 +110,20 @@ function TitleRow({
   readonly title: LibraryTitle;
 }): React.JSX.Element {
   const { say } = useSay();
+  const messages = useMessages();
+  const words = messages.library;
+  const row = messages.queue.row;
   const saved = title.outcome?.status === 'done';
   const failed = title.outcome?.status === 'failed';
   const unassigned = unassignedChapterCount(title.draft);
   const chip = saved
-    ? { label: 'Saved', tone: 'bg-muted text-muted-foreground' }
+    ? { label: words.chips.saved, tone: 'bg-muted text-muted-foreground' }
     : failed
-      ? { label: 'Failed', tone: 'bg-status-failed/15 text-status-failed' }
+      ? { label: words.chips.failed, tone: 'bg-status-failed/15 text-status-failed' }
       : isWaitingTitle(title)
-        ? { label: 'Needs volumes', tone: 'bg-status-warning/15 text-status-warning' }
+        ? { label: words.chips.needsVolumes, tone: 'bg-status-warning/15 text-status-warning' }
         : {
-            label: plural(title.volumes.length, 'volume'),
+            label: words.chips.volumes(title.volumes.length),
             tone: 'bg-accent/15 text-accent',
           };
   return (
@@ -137,10 +137,10 @@ function TitleRow({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{title.title}</p>
         <p className="text-subtle-foreground truncate text-xs">
-          {plural(title.draft.chapters.length, 'chapter')}
-          {unassigned > 0 && isPendingTitle(title)
-            ? ` · ${plural(unassigned, 'chapter')} left out`
-            : ''}
+          {words.chapters(
+            title.draft.chapters.length,
+            unassigned > 0 && isPendingTitle(title) ? unassigned : 0,
+          )}
         </p>
         {title.outcome?.status === 'failed' && (
           <p className="text-muted-foreground mt-0.5 text-xs">{say(title.outcome.message)}</p>
@@ -162,29 +162,25 @@ function TitleRow({
       ) : (
         <>
           <Button
-            aria-label={`Edit volumes for ${title.title}`}
+            aria-label={row.editVolumesFor(title.title)}
             onClick={() => {
               onEdit(title.title);
             }}
             size="icon"
-            title="Edit volumes"
+            title={row.editVolumes}
             variant="ghost"
           >
             <Layers />
           </Button>
           {onEditDetails !== undefined && (
             <Button
-              aria-label={`Edit details of ${title.title}`}
+              aria-label={row.editDetailsOf(title.title)}
               className={cn(hasBookDetails(title.details) && 'text-accent')}
               onClick={() => {
                 onEditDetails(title.title);
               }}
               size="icon"
-              title={
-                hasBookDetails(title.details)
-                  ? 'Edit title, author and language (set)'
-                  : 'Edit title, author and language'
-              }
+              title={row.editDetails(hasBookDetails(title.details))}
               variant="ghost"
             >
               <UserPen />
@@ -192,17 +188,13 @@ function TitleRow({
           )}
           {onEditOptions !== undefined && (
             <Button
-              aria-label={`Edit conversion options of ${title.title}`}
+              aria-label={row.editOptionsOf(title.title)}
               className={cn(hasItemOptions(title.options) && 'text-override')}
               onClick={() => {
                 onEditOptions(title.title);
               }}
               size="icon"
-              title={
-                hasItemOptions(title.options)
-                  ? 'Edit conversion options for this title (set)'
-                  : 'Edit conversion options for this title'
-              }
+              title={words.editOptions(hasItemOptions(title.options))}
               variant="ghost"
             >
               <SlidersHorizontal />

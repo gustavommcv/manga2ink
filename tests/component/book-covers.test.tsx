@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { BookCovers } from '@/renderer/components/details/book-covers';
+import { message } from '@/domain/message';
 
 const books = [
   { slot: 1, title: 'Chainsaw Man - Vol.01' },
@@ -119,7 +120,7 @@ describe('the covers of the books an item makes', () => {
         {...actions()}
         attached={[]}
         books={books}
-        note="2 images were not used: there are 3 books."
+        note={[message('covers.unused', { count: 2, books: 3 })]}
       />,
     );
 

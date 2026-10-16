@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
+import type { AnyMessage } from '@/domain/message';
 import { useSayLater } from '@/renderer/hooks/use-messages';
 import type { BookCoverControls } from '@/renderer/components/details/book-covers';
 import type { MangaboundBridge } from '@/shared/runtime-info';
@@ -9,7 +10,7 @@ import type { CoversChange, CoverTarget, WorkflowResult } from '@/shared/workflo
 interface CoverState {
   readonly key: string;
   readonly attached: readonly AttachedCover[];
-  readonly note?: string;
+  readonly note?: readonly AnyMessage[];
 }
 
 const keyOf = (target: CoverTarget): string => `${target.sessionId}\n${target.title ?? ''}`;

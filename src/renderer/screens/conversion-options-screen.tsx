@@ -8,6 +8,7 @@ import { ItemsWithOptionsNotice } from '@/renderer/components/settings/items-wit
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
 
 export interface ConversionOptionsScreenProps {
@@ -41,6 +42,7 @@ export function ConversionOptionsScreen({
   settings,
   singleBook,
 }: ConversionOptionsScreenProps): React.JSX.Element {
+  const words = useMessages().options;
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     titleRef.current?.focus();
@@ -49,23 +51,20 @@ export function ConversionOptionsScreen({
   return (
     <section className="mx-auto max-w-5xl space-y-6" aria-labelledby="options-title">
       <Button onClick={onBack} variant="ghost">
-        <ArrowLeft /> Back
+        <ArrowLeft /> {words.back}
       </Button>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-muted-foreground text-xs font-medium">Advanced</p>
+          <p className="text-muted-foreground text-xs font-medium">{words.advanced}</p>
           <h1
             className="focus-visible:ring-ring focus-visible:ring-offset-background mt-2 rounded-md text-3xl font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             id="options-title"
             ref={titleRef}
             tabIndex={-1}
           >
-            Conversion options
+            {words.page.title}
           </h1>
-          <p className="text-muted-foreground mt-3 text-sm">
-            Fine-tune page layout, images, metadata, and output for everything in the queue. Your
-            choices are saved for next time.
-          </p>
+          <p className="text-muted-foreground mt-3 text-sm">{words.page.description}</p>
         </div>
         <div className="w-72 shrink-0">
           <ResetOptions

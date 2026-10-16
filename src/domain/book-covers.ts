@@ -1,3 +1,5 @@
+import { type AnyMessage, message } from './message';
+
 /**
  * Which book of an item a cover is for: a volume, by its number, or the one book of an item that
  * makes a single book (a loose CBZ, a folder that is not grouped, a series bound as one).
@@ -17,10 +19,14 @@ export interface AttachedCover {
 /** The image types mangapress reads. A cover of another type would stop the book it is for. */
 const coverExtensions: ReadonlySet<string> = new Set(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']);
 
-export const coverTypesSentence = 'A cover has to be a JPEG, PNG, WebP, GIF or BMP image.';
+/** What a person is told when a file with an image's name is not one a cover can be made of. */
+export const coverTypesNote: readonly AnyMessage[] = [message('covers.typesSentence', {})];
 
 /** What a person is told when a file with an image's name is not one that can be read. */
-export const unreadableCoverSentence = `That file could not be read as an image, so it was not used. ${coverTypesSentence}`;
+export const unreadableCoverNote: readonly AnyMessage[] = [
+  message('covers.unreadableFile', {}),
+  message('covers.typesSentence', {}),
+];
 
 /** How many bytes at the start of a file say which kind of image it is. */
 export const coverHeadLength = 12;
@@ -110,34 +116,31 @@ export function planFolderImport<
   };
 }
 
-const count = (amount: number, word: string): string =>
-  `${String(amount)} ${word}${amount === 1 ? '' : 's'}`;
-
-/** What a person is told after a folder was taken, when it did not simply fill every book. */
-export function describeFolderImport(plan: FolderImportPlan<unknown>): string | undefined {
-  if (plan.images === 0) return `No image was found there. ${coverTypesSentence}`;
-  const parts: string[] = [];
-  if (plan.kept.length > 0) {
-    parts.push(
-      `${count(plan.kept.length, 'book')} ${plan.kept.length === 1 ? 'keeps' : 'keep'} the cover chosen for ${plan.kept.length === 1 ? 'it' : 'them'}.`,
-    );
+/**
+ * What a person is told after a folder was taken, when it did not simply fill every book: the
+ * sentences that follow one another as one note, or none.
+ */
+export function describeFolderImport(
+  plan: FolderImportPlan<unknown>,
+): readonly AnyMessage[] | undefined {
+  if (plan.images === 0) {
+    return [message('covers.noImageFound', {}), message('covers.typesSentence', {})];
   }
+  const parts: AnyMessage[] = [];
+  if (plan.kept.length > 0) parts.push(message('covers.kept', { count: plan.kept.length }));
   if (plan.unreadable.length > 0) {
-    const [first, second, third, ...rest] = plan.unreadable;
-    const named = [first, second, third].filter((name) => name !== undefined);
-    const more = rest.length > 0 ? ` and ${String(rest.length)} more` : '';
     parts.push(
-      `${count(plan.unreadable.length, 'image')} could not be read (${named.join(', ')}${more}), so ${plan.unreadable.length === 1 ? 'the book it falls on keeps its first page' : 'the books they fall on keep their first pages'}.`,
+      message('covers.imagesUnreadable', {
+        count: plan.unreadable.length,
+        names: plan.unreadable.slice(0, 3),
+        more: Math.max(0, plan.unreadable.length - 3),
+      }),
     );
   }
   if (plan.unused > 0) {
-    parts.push(
-      `${count(plan.unused, 'image')} ${plan.unused === 1 ? 'was' : 'were'} not used: there ${plan.books === 1 ? 'is' : 'are'} ${count(plan.books, 'book')}.`,
-    );
+    parts.push(message('covers.unused', { count: plan.unused, books: plan.books }));
   } else if (plan.images < plan.books) {
-    parts.push(
-      `There ${plan.images === 1 ? 'was' : 'were'} ${count(plan.images, 'image')} for ${count(plan.books, 'book')}; the other books are unchanged.`,
-    );
+    parts.push(message('covers.fewImages', { images: plan.images, books: plan.books }));
   }
-  return parts.length === 0 ? undefined : parts.join(' ');
+  return parts.length === 0 ? undefined : parts;
 }
