@@ -13,18 +13,36 @@ interface KeptAppSettings {
 const readKept = async (file: string): Promise<KeptAppSettings> =>
   JSON.parse(await readFile(file, 'utf8')) as KeptAppSettings;
 
-/** What the language select announced since a choice was made through `chooseLanguage`. */
+/** What the page announced as changed since a choice was made through `chooseLanguage`. */
 const announced = 'announcedLanguages';
 
-/** Picks a language in the dialog, and keeps what the select announces, to tell a lost choice from one never heard. */
+/**
+ * Picks a language in the dialog. On CI the click on the option now and then does not reach the page
+ * as a change at all (the select announces nothing and keeps its value), so the click is made again
+ * until the page announces it, and says so when it had to be. What was announced is kept for the
+ * message of a choice that still did not take.
+ */
 async function chooseLanguage(value: string): Promise<void> {
   await browser.execute((key: string) => {
     const heard: string[] = [];
     Reflect.set(window, key, heard);
-    const select = document.querySelector('[role="dialog"] select') as HTMLSelectElement;
-    select.addEventListener('change', () => heard.push(select.value));
+    document.addEventListener(
+      'change',
+      (event) => heard.push((event.target as HTMLSelectElement).value),
+      true,
+    );
   }, announced);
-  await $('[role="dialog"] select').selectByAttribute('value', value);
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await $('[role="dialog"] select').selectByAttribute('value', value);
+    const heard = await browser.execute(
+      (key: string) => Reflect.get(window, key) as string[],
+      announced,
+    );
+    if (heard.length > 0) return;
+    console.warn(
+      `the language select announced nothing after attempt ${attempt} of choosing ${value}`,
+    );
+  }
 }
 
 /**
