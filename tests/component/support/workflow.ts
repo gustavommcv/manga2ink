@@ -159,6 +159,8 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
       }),
     saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
     openProjectLink: () => Promise.resolve({ ok: true, value: undefined }),
+    copyDiagnostics: () => Promise.resolve({ ok: true, value: undefined }),
+    openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),

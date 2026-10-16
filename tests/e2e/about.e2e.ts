@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 
 import { $, browser } from '@wdio/globals';
@@ -73,6 +74,35 @@ describe('packaged About tab', () => {
     assert.deepEqual(openExternal.mock.calls[2], [
       `https://github.com/gustavommcv/mangabound/releases/tag/v${version}`,
     ]);
+
+    // The diagnostics are put on the clipboard, in English, with the versions and no path.
+    await browser.electron.execute((electron) => electron.clipboard.writeText(''));
+    await panel.$('button*=Copy diagnostics').click();
+    await panel.$('p=Copied. Paste it into your report.').waitForDisplayed({ timeout: 30_000 });
+    const diagnostics = await browser.electron.execute((electron) => electron.clipboard.readText());
+    assert.match(
+      diagnostics,
+      new RegExp(`^Mangabound ${version.replaceAll('.', '\\.')} \\(packaged\\)`, 'u'),
+    );
+    assert.match(diagnostics, /^Working folder: the default$/mu);
+    assert.match(diagnostics, /^ {2}mangabind v\d+\.\d+\.\d+: verified$/mu);
+    assert.match(diagnostics, /^ {2}mangapress v\d+\.\d+\.\d+: verified$/mu);
+    const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
+    assert.ok(!diagnostics.includes(userData), 'the diagnostics should not say where the data is');
+    assert.ok(
+      !diagnostics.includes(os.homedir()),
+      'the diagnostics should not name the home folder',
+    );
+
+    // The data folder is opened by the system, by its name and not by a path of the page.
+    const openPath = await browser.electron.mock('shell', 'openPath');
+    await openPath.mockResolvedValue('');
+    await panel.$('button*=Open the data folder').click();
+    await browser.waitUntil(() => openPath.mock.calls.length === 1, {
+      timeout: 30_000,
+      timeoutMsg: 'The data folder button did not open a folder.',
+    });
+    assert.deepEqual(openPath.mock.calls[0], [userData]);
 
     await browser.keys('Escape');
   });

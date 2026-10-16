@@ -26,6 +26,15 @@ export interface AboutMessages {
     /** Said when the main process does not say what the tools are. */
     readonly unknown: string;
   };
+  readonly troubleshooting: {
+    readonly title: string;
+    /** What to do with the diagnostics, and what is in them. */
+    readonly text: string;
+    readonly copy: string;
+    /** Said once the diagnostics are on the clipboard. */
+    readonly copied: string;
+    readonly openData: string;
+  };
   readonly support: {
     readonly title: string;
     readonly text: string;
@@ -69,6 +78,13 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       reading: 'Reading…',
       unknown: 'The tools were not reported.',
     },
+    troubleshooting: {
+      title: 'Troubleshooting',
+      text: 'When you report a problem, include the diagnostics: the versions and the system, with no paths and no names.',
+      copy: 'Copy diagnostics',
+      copied: 'Copied. Paste it into your report.',
+      openData: 'Open the data folder',
+    },
     support: {
       title: 'Support',
       text: 'Mangabound is free and has no ads. If it helped you, you can support its development.',
@@ -104,6 +120,13 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       blocked: 'Não foi possível verificar as ferramentas incluídas.',
       reading: 'Lendo…',
       unknown: 'As ferramentas não foram informadas.',
+    },
+    troubleshooting: {
+      title: 'Solução de problemas',
+      text: 'Ao relatar um problema, inclua o diagnóstico: as versões e o sistema, sem caminhos nem nomes.',
+      copy: 'Copiar diagnóstico',
+      copied: 'Copiado. Cole no seu relato.',
+      openData: 'Abrir a pasta de dados',
     },
     support: {
       title: 'Apoio',

@@ -57,4 +57,8 @@ export interface FailureMessageValues {
   readonly 'failure.processingFolderUnusable': { readonly folder: string };
   /** Where the app works cannot change while something is being made or shared. */
   readonly 'failure.processingBusy': NoValues;
+  /** The diagnostics could not be put on the clipboard. */
+  readonly 'failure.diagnosticsNotCopied': NoValues;
+  /** A folder of the app could not be opened in the file manager. */
+  readonly 'failure.folderNotOpened': NoValues;
 }

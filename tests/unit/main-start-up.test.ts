@@ -191,6 +191,9 @@ vi.mock('@/main/ipc/pending', () => ({ registerPendingHandlers: step('handlers:p
 vi.mock('@/main/ipc/app-settings', () => ({
   registerAppSettingsHandlers: step('handlers:app-settings'),
 }));
+vi.mock('@/main/ipc/troubleshooting', () => ({
+  registerTroubleshootingHandlers: step('handlers:troubleshooting'),
+}));
 vi.mock('@/main/ipc/processing-folder', () => ({
   registerProcessingFolderHandlers: step('handlers:processing-folder'),
 }));
@@ -291,6 +294,7 @@ describe('starting the app', () => {
       'handlers:settings',
       'handlers:app-settings',
       'handlers:processing-folder',
+      'handlers:troubleshooting',
       'handlers:inputs',
       'handlers:conversion',
       'handlers:covers',
@@ -312,6 +316,12 @@ describe('starting the app', () => {
     expect(fake.context['preferences']).toBeDefined();
     expect(fake.context['appSettings']).toBeDefined();
     expect(fake.context['processing']).toBeDefined();
+    // What the tools were found to be, for the diagnostics.
+    expect(fake.context['toolchainStatus']).toEqual({
+      state: 'blocked',
+      tools: [],
+      message: 'Not ready.',
+    });
     expect(fake.context['pendingRuns']).toBeDefined();
   });
 

@@ -28,6 +28,7 @@ import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { registerPendingHandlers } from './ipc/pending';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
+import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
@@ -86,6 +87,7 @@ void app.whenReady().then(async () => {
     () => appSettingsWorkflow.processing(),
   );
   const toolchainStatus = await bootstrapToolchain(context);
+  context.toolchainStatus = toolchainStatus;
   ipcMain.handle('toolchain:get-status', () => toolchainStatus);
 
   const preferencesWorkflow = new PreferencesWorkflow(
@@ -122,6 +124,7 @@ void app.whenReady().then(async () => {
   registerAppSettingsHandlers(appSettingsWorkflow);
   registerProcessingFolderHandlers(context);
   registerProjectLinkHandlers();
+  registerTroubleshootingHandlers(context);
   registerInputHandlers(context);
   registerConversionHandlers(context);
   registerCoverHandlers(context);

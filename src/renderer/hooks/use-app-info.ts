@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react';
 
+import type { AnyMessage } from '@/domain/message';
+import type { AppFolder } from '@/shared/app-folders-contract';
 import type { ProjectLink } from '@/shared/project-links-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 
@@ -12,6 +14,10 @@ export interface AppInfo {
    * named, never given as an address.
    */
   readonly openLink: (link: ProjectLink) => Promise<boolean>;
+  /** Puts the diagnostics for a report on the clipboard; what to say if that failed, or nothing. */
+  readonly copyDiagnostics: () => Promise<AnyMessage | undefined>;
+  /** Opens a folder of the app in the file manager, by name; what to say if that failed, or nothing. */
+  readonly openFolder: (folder: AppFolder) => Promise<AnyMessage | undefined>;
   /**
    * What the bundled conversion tools are and whether they passed the check made at launch, or
    * `undefined` when the main process does not say.

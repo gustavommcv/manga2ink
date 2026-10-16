@@ -1,18 +1,22 @@
-import { ExternalLink, Heart } from 'lucide-react';
+import { ClipboardCopy, ExternalLink, FolderOpen, Heart } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 
 import mark from '@/renderer/assets/mark-192.webp';
 import { Button } from '@/renderer/components/ui/button';
 import { useAppInfo } from '@/renderer/hooks/use-app-info';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import type { AnyMessage } from '@/domain/message';
 import type { ProjectLink } from '@/shared/project-links-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 
 /** What the app says about itself (ADR 0054): what it is, who it is by, and where to go from here. */
 export function AboutTab(): React.JSX.Element {
   const { about: words } = useMessages();
-  const { openLink, tools, version } = useAppInfo();
+  const { copyDiagnostics, openFolder, openLink, tools, version } = useAppInfo();
+  const { say } = useSay();
   const [failed, setFailed] = useState(false);
+  // What happened to the last thing asked for a report: it was copied, or what to say it was not.
+  const [report, setReport] = useState<'copied' | AnyMessage>();
   // `null` while the main process is asked, `undefined` when it does not say.
   const [toolchain, setToolchain] = useState<ToolchainStatus | null | undefined>(null);
 
@@ -29,6 +33,13 @@ export function AboutTab(): React.JSX.Element {
   const open = (link: ProjectLink): void => {
     void openLink(link).then((opened) => {
       setFailed(!opened);
+    });
+  };
+
+  /** Asks the main process for something that helps a report, and says what came of it. */
+  const help = (ask: () => Promise<AnyMessage | undefined>, done?: 'copied'): void => {
+    void ask().then((problem) => {
+      setReport(problem ?? done);
     });
   };
 
@@ -64,6 +75,42 @@ export function AboutTab(): React.JSX.Element {
 
       <Section title={words.tools.title}>
         <ToolVersions status={toolchain} />
+      </Section>
+
+      <Section title={words.troubleshooting.title}>
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          {words.troubleshooting.text}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={() => {
+              help(copyDiagnostics, 'copied');
+            }}
+            size="sm"
+            variant="outline"
+          >
+            {words.troubleshooting.copy}
+            <ClipboardCopy aria-hidden="true" />
+          </Button>
+          <Button
+            onClick={() => {
+              help(() => openFolder('data'));
+            }}
+            size="sm"
+            variant="outline"
+          >
+            {words.troubleshooting.openData}
+            <FolderOpen aria-hidden="true" />
+          </Button>
+        </div>
+        <div aria-live="polite">
+          {report !== undefined &&
+            (report === 'copied' ? (
+              <p className="text-muted-foreground text-xs">{words.troubleshooting.copied}</p>
+            ) : (
+              <p className="text-status-failed text-xs">{say(report)}</p>
+            ))}
+        </div>
       </Section>
 
       <Section title={words.support.title}>

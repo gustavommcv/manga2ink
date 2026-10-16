@@ -6,7 +6,9 @@ import type { Language } from '@/domain/app-settings';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { projectLinks } from '@/shared/project-links-contract';
+import { type AnyMessage, message } from '@/domain/message';
 import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { WorkflowResult } from '@/shared/workflow-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import { raw } from '@/domain/message';
 
@@ -31,6 +33,12 @@ async function renderAbout(
   );
   await screen.findByText('Mangabound');
 }
+
+/** What the main process answers when it could not do what was asked: a code the window writes. */
+const refused = (said: AnyMessage): WorkflowResult<undefined> => ({
+  ok: false,
+  error: { code: 'refused', said },
+});
 
 const checked: ToolchainStatus = {
   state: 'ready',
@@ -136,6 +144,104 @@ describe('the tools the About tab names', () => {
 
     await Promise.resolve();
     expect(screen.queryByText('mangabind')).not.toBeInTheDocument();
+  });
+});
+
+describe('what the About tab gives for a report of a problem', () => {
+  it('copies the diagnostics, and says so', async () => {
+    const user = userEvent.setup();
+    const copyDiagnostics = vi.fn<MangaboundBridge['copyDiagnostics']>(() =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    await renderAbout({ copyDiagnostics });
+
+    await user.click(screen.getByRole('button', { name: /Copy diagnostics/u }));
+
+    expect(await screen.findByText('Copied. Paste it into your report.')).toBeVisible();
+    expect(copyDiagnostics).toHaveBeenCalledOnce();
+  });
+
+  it('opens the data folder by its name, and says nothing when it opens', async () => {
+    const user = userEvent.setup();
+    const openAppFolder = vi.fn<MangaboundBridge['openAppFolder']>(() =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    await renderAbout({ openAppFolder });
+
+    await user.click(screen.getByRole('button', { name: /Open the data folder/u }));
+
+    await waitFor(() => {
+      expect(openAppFolder).toHaveBeenCalledExactlyOnceWith({ folder: 'data' });
+    });
+    expect(screen.queryByText(/could not be (copied|opened)|^Copied/u)).not.toBeInTheDocument();
+  });
+
+  it.each([
+    [
+      'the diagnostics cannot be put on the clipboard',
+      /Copy diagnostics/u,
+      {
+        copyDiagnostics: () =>
+          Promise.resolve(refused(message('failure.diagnosticsNotCopied', {}))),
+      },
+      'The diagnostics could not be copied.',
+    ],
+    [
+      'the folder cannot be opened',
+      /Open the data folder/u,
+      { openAppFolder: () => Promise.resolve(refused(message('failure.folderNotOpened', {}))) },
+      'The folder could not be opened. Open it from your file manager instead.',
+    ],
+  ])('says so, in the words of the window, when %s', async (_name, button, bridge, sentence) => {
+    const user = userEvent.setup();
+    await renderAbout(bridge);
+
+    await user.click(screen.getByRole('button', { name: button }));
+
+    expect(await screen.findByText(sentence)).toBeVisible();
+    expect(screen.queryByText('Copied. Paste it into your report.')).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['copying', /Copy diagnostics/u, 'copyDiagnostics'],
+    ['opening', /Open the data folder/u, 'openAppFolder'],
+  ] as const)(
+    'says the same when the main process does not answer to %s',
+    async (_name, button, call) => {
+      const user = userEvent.setup();
+      await renderAbout({ [call]: () => Promise.reject(new Error('The bridge is gone.')) });
+
+      await user.click(screen.getByRole('button', { name: button }));
+
+      expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+    },
+  );
+
+  it('takes the failure away once a later try works', async () => {
+    const user = userEvent.setup();
+    const copyDiagnostics = vi
+      .fn<MangaboundBridge['copyDiagnostics']>()
+      .mockResolvedValueOnce(refused(message('failure.diagnosticsNotCopied', {})))
+      .mockResolvedValueOnce({ ok: true, value: undefined });
+    await renderAbout({ copyDiagnostics });
+
+    await user.click(screen.getByRole('button', { name: /Copy diagnostics/u }));
+    await screen.findByText('The diagnostics could not be copied.');
+    await user.click(screen.getByRole('button', { name: /Copy diagnostics/u }));
+
+    expect(await screen.findByText('Copied. Paste it into your report.')).toBeVisible();
+    expect(screen.queryByText('The diagnostics could not be copied.')).not.toBeInTheDocument();
+  });
+
+  it('is in Portuguese when the window is', async () => {
+    const user = userEvent.setup();
+    await renderAbout({}, 'pt-BR');
+
+    expect(screen.getByText('Solução de problemas')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: /Copiar diagnóstico/u }));
+
+    expect(await screen.findByText('Copiado. Cole no seu relato.')).toBeVisible();
+    expect(screen.getByRole('button', { name: /Abrir a pasta de dados/u })).toBeVisible();
   });
 });
 
@@ -265,6 +371,7 @@ describe('the About tab', () => {
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Learn more',
       'Conversion tools',
+      'Troubleshooting',
       'Support',
       'Credits',
       'License',

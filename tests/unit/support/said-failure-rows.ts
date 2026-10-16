@@ -247,6 +247,16 @@ export const failureRows: Rows<
       'O Mangabound não consegue trabalhar em /mnt/books. Escolha uma pasta em que ele possa gravar.',
     ],
   ],
+  'failure.diagnosticsNotCopied': [
+    [{}, 'The diagnostics could not be copied.', 'Não foi possível copiar o diagnóstico.'],
+  ],
+  'failure.folderNotOpened': [
+    [
+      {},
+      'The folder could not be opened. Open it from your file manager instead.',
+      'Não foi possível abrir a pasta. Abra-a pelo gerenciador de arquivos.',
+    ],
+  ],
   'failure.processingBusy': [
     [
       {},
