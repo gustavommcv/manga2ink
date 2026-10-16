@@ -71,7 +71,7 @@ export function ConversionOptionsScreen({
           <ResetOptions
             changed={!isDefaultMangapress(format, settings)}
             onReset={onReset}
-            scope="the device, format and every mangapress option"
+            scope="options"
           />
         </div>
       </div>

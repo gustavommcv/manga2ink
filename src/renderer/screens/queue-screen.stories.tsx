@@ -1,9 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/renderer/i18n/messages';
 
 import { QueueScreen, type QueueScreenProps } from './queue-screen';
 
@@ -316,5 +318,65 @@ export const SingleBookActive: Story = {
     // The whole series as one book needs an EPUB, and turning the mode on selects it.
     format: 'epub',
     singleBook: true,
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/** The screen in Brazilian Portuguese, while the queue is empty. */
+export const EmptyInPortuguese: Story = {
+  decorators: [inPortuguese],
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('heading', { name: 'Fila' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Processar' })).toBeDisabled();
+  },
+};
+
+/**
+ * The screen in Brazilian Portuguese with items, a message about what was not added, books that are
+ * ready and a plan that was validated: the longer words of the language still fit where the English
+ * ones did. What the domain says about each row (its chip and its detail) is still English: those
+ * sentences are written by the window in a later stage (ADR 0052).
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: {
+    rows: rows.slice(0, 3),
+    rejected: [{ name: 'notes.txt', reason: 'Only folders and .cbz files can be added.' }],
+    pendingRuns: [
+      {
+        libraryId: 'run-one',
+        createdAt: Date.UTC(2026, 8, 28, 18, 30),
+        artifacts: [
+          { id: 'book-one', name: 'Vol.01.epub', bytes: 18_400_000, format: 'epub', saved: false },
+          { id: 'book-two', name: 'Vol.02.epub', bytes: 17_900_000, format: 'epub', saved: false },
+        ],
+      },
+    ],
+    onOpenPending: () => undefined,
+    onDeletePending: () => Promise.resolve(true),
+    plans: [
+      {
+        name: 'Chainsaw Man',
+        plan: {
+          tool: 'mangabind',
+          title: 'Chainsaw Man',
+          message: 'mangabind validated 2 volumes · no library files written',
+          books: [
+            { name: 'Chainsaw Man - Vol.01.cbz', pageCount: 46 },
+            { name: 'Chainsaw Man - Vol.02.cbz', pageCount: 26 },
+          ],
+          issues: [],
+        },
+      },
+    ],
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('heading', { name: 'Plano validado' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Processar 2 itens' })).toBeVisible();
   },
 };

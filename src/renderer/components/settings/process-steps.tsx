@@ -11,6 +11,7 @@ import {
 } from '@/domain/process-mode';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { useMessages } from '@/renderer/hooks/use-messages';
 
 interface ProcessStepsProps {
   /** What is being run, since a CBZ and a whole library allow different processes. */
@@ -29,6 +30,7 @@ export function ProcessSteps({
   onMode,
   singleBook = false,
 }: ProcessStepsProps): React.JSX.Element {
+  const words = useMessages().queue.steps;
   const resolvedMode = resolveMode(input, mode);
   const steps = stepsFromMode(resolvedMode);
   // A CBZ or library can force a different effective mode. That is not a user change to the
@@ -39,7 +41,7 @@ export function ProcessSteps({
   const reasonFor = (toggled: Steps): string | undefined => {
     if (singleBook) return singleBookLockReason;
     return !toggled.group && !toggled.convert
-      ? 'Keep at least one step on.'
+      ? words.keepOne
       : blockedModeReason(input, modeFromSteps(toggled));
   };
   const groupReason = reasonFor({ group: !steps.group, convert: steps.convert });
@@ -47,12 +49,12 @@ export function ProcessSteps({
 
   return (
     <fieldset className="mx-0 min-w-0 space-y-3 border-0 p-0" disabled={disabled}>
-      <legend className="text-muted-foreground mb-2 text-xs font-medium">Steps</legend>
+      <legend className="text-muted-foreground mb-2 text-xs font-medium">{words.legend}</legend>
       <Step
         changed={canRestoreStep && !steps.group}
         checked={steps.group}
         id="step-group"
-        label="Group chapters into volumes"
+        label={words.group}
         onChange={() => {
           onMode(modeFromSteps({ group: !steps.group, convert: steps.convert }));
         }}
@@ -66,7 +68,7 @@ export function ProcessSteps({
         changed={canRestoreStep && !steps.convert}
         checked={steps.convert}
         id="step-convert"
-        label="Convert for e-reader"
+        label={words.convert}
         onChange={() => {
           onMode(modeFromSteps({ group: steps.group, convert: !steps.convert }));
         }}

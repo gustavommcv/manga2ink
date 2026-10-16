@@ -1,6 +1,7 @@
 import { X } from 'lucide-react';
 
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 
 /**
  * Things worth telling the person that are not errors: a saved setting that could not be used and
@@ -13,10 +14,11 @@ export function Notices({
   readonly notices: readonly string[];
   readonly onDismiss: () => void;
 }): React.JSX.Element | null {
+  const words = useMessages().shared.notices;
   if (notices.length === 0) return null;
   return (
     <div
-      aria-label="Notices"
+      aria-label={words.label}
       className="border-status-warning/40 bg-status-warning/10 mb-6 flex items-start gap-3 rounded-lg border px-4 py-3"
       role="status"
     >
@@ -25,7 +27,7 @@ export function Notices({
           <li key={notice}>{notice}</li>
         ))}
       </ul>
-      <Button aria-label="Dismiss these notices" onClick={onDismiss} size="icon" variant="ghost">
+      <Button aria-label={words.dismiss} onClick={onDismiss} size="icon" variant="ghost">
         <X />
       </Button>
     </div>

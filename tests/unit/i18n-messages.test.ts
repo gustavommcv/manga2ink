@@ -13,19 +13,67 @@ function messagePaths(value: unknown, path = ''): readonly (readonly [string, un
   return [[path, value]];
 }
 
+/**
+ * What each message that is a function is called with, in every form it has: a count of one and of
+ * several, a thing that is set and one that is not. A message with no sample here fails below, so a
+ * new one cannot be added without being said once in every language.
+ */
+const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
+  'queue.row.editTitlesOf': [['Library']],
+  'queue.row.editVolumesFor': [['Series']],
+  'queue.row.editDetailsOf': [['Series']],
+  'queue.row.editDetails': [[false], [true]],
+  'queue.row.editOptionsOf': [['Series']],
+  'queue.row.editOptions': [[false], [true]],
+  'queue.row.remove': [['Series']],
+  'queue.run.process': [[0], [1], [3]],
+  'queue.run.reading': [[1], [2]],
+  'queue.run.leftOut': [[1], [2]],
+  'queue.plans.pages': [[1], [2]],
+  'queue.pending.andMore': [
+    ['Vol.01', 1],
+    ['Vol.01', 2],
+  ],
+  'queue.pending.viewBooksFrom': [['Vol.01']],
+  'queue.pending.deleteFrom': [['Vol.01']],
+  'queue.pending.confirmDeletion': [['Vol.01']],
+  'queue.pending.question': [[1], [2]],
+  'settings.field.restoreDefault': [['Device']],
+  'settings.field.useQueueValue': [['Device']],
+};
+
 describe('the messages of the app', () => {
   it.each(languages)('are all there in %s, and none of them is empty', (language) => {
     for (const [path, message] of messagePaths(messagesFor(language))) {
-      expect(typeof message, path).toBe('string');
-      expect((message as string).trim(), path).not.toBe('');
+      // A message is a text, or a function that makes one from its values (the tests of each part
+      // of the app call those with values, since what they say depends on them).
+      expect(['string', 'function'], path).toContain(typeof message);
+      if (typeof message === 'string') expect(message.trim(), path).not.toBe('');
     }
   });
 
-  it.each(languages)('say the same things in %s as in English', (language) => {
-    expect(messagePaths(messagesFor(language)).map(([path]) => path)).toEqual(
-      messagePaths(messagesFor('en')).map(([path]) => path),
-    );
+  it.each(languages)('say the same things in %s as in English, in the same way', (language) => {
+    const shape = (messages: unknown): readonly string[] =>
+      messagePaths(messages).map(([path, message]) => `${path}: ${typeof message}`);
+
+    expect(shape(messagesFor(language))).toEqual(shape(messagesFor('en')));
   });
+
+  it.each(languages)(
+    'say something, in %s, from each of the forms of every function',
+    (language) => {
+      for (const [path, message] of messagePaths(messagesFor(language))) {
+        if (typeof message !== 'function') continue;
+        const calls = samples[path];
+        expect(calls, `a sample for ${path}`).toBeDefined();
+        for (const values of calls ?? []) {
+          const said = (message as (...given: unknown[]) => unknown)(...values);
+          expect(typeof said, path).toBe('string');
+          expect((said as string).trim(), path).not.toBe('');
+        }
+      }
+    },
+  );
 
   it('are one object for a language, so the same one is the same language', () => {
     expect(messagesFor('en')).toBe(messagesFor('en'));

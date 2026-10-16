@@ -14,6 +14,7 @@ import { describeRow, type QueueRow, type RowTone, rowMode } from '@/domain/inpu
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangapress } from '@/domain/process-mode';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 const chipTone: Record<RowTone, string> = {
@@ -41,6 +42,7 @@ export function QueueRowItem({
   readonly onRemove: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
+  const words = useMessages().queue.row;
   const view = describeRow(row, mode);
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
   // A folder or a library has volumes to edit, and only while volumes are in play.
@@ -92,12 +94,12 @@ export function QueueRowItem({
           <Button
             aria-label={
               row.kind === 'library'
-                ? `Edit titles of ${row.displayName}`
-                : `Edit volumes for ${row.displayName}`
+                ? words.editTitlesOf(row.displayName)
+                : words.editVolumesFor(row.displayName)
             }
             onClick={onEdit}
             size="icon"
-            title={row.kind === 'library' ? 'Edit titles' : 'Edit volumes'}
+            title={row.kind === 'library' ? words.editTitles : words.editVolumes}
             variant="ghost"
           >
             <Layers />
@@ -105,15 +107,11 @@ export function QueueRowItem({
         )}
         {detailsEditable && (
           <Button
-            aria-label={`Edit details of ${row.displayName}`}
+            aria-label={words.editDetailsOf(row.displayName)}
             className={cn(detailsSet && 'text-accent')}
             onClick={onEditDetails}
             size="icon"
-            title={
-              detailsSet
-                ? 'Edit title, author and language (set)'
-                : 'Edit title, author and language'
-            }
+            title={words.editDetails(detailsSet)}
             variant="ghost"
           >
             <UserPen />
@@ -121,22 +119,18 @@ export function QueueRowItem({
         )}
         {detailsEditable && (
           <Button
-            aria-label={`Edit conversion options of ${row.displayName}`}
+            aria-label={words.editOptionsOf(row.displayName)}
             className={cn(optionsSet && 'text-override')}
             onClick={onEditOptions}
             size="icon"
-            title={
-              optionsSet
-                ? 'Edit conversion options for this item (set)'
-                : 'Edit conversion options for this item'
-            }
+            title={words.editOptions(optionsSet)}
             variant="ghost"
           >
             <SlidersHorizontal />
           </Button>
         )}
         <Button
-          aria-label={`Remove ${row.displayName}`}
+          aria-label={words.remove(row.displayName)}
           onClick={onRemove}
           size="icon"
           variant="ghost"

@@ -19,7 +19,7 @@ const meta = {
   args: {
     changed: true,
     onReset: () => undefined,
-    scope: 'the steps, device, format and every mangapress option',
+    scope: 'queue',
   },
 } satisfies Meta<typeof ResetOptions>;
 

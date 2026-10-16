@@ -71,6 +71,13 @@ test.describe('at the size the window opens at', () => {
     await expect(page).toHaveScreenshot('queue-empty-choosing.png');
   });
 
+  test('the queue in Portuguese remains visually consistent', async ({ page }) => {
+    await page.goto('/iframe.html?id=workflows-queue--in-portuguese&viewMode=story');
+    await expect(page.getByRole('heading', { name: 'Fila' })).toBeVisible();
+    await page.evaluate(async () => document.fonts.ready);
+    await expect(page.locator('#storybook-root')).toHaveScreenshot('queue-portuguese.png');
+  });
+
   test('a queue with items in every state remains visually consistent', async ({ page }) => {
     await page.goto('/iframe.html?id=workflows-queue--with-items&viewMode=story');
     await expect(page.getByRole('heading', { name: 'Queue' })).toBeVisible();
