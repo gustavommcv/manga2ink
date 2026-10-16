@@ -8,7 +8,7 @@ import {
 } from '@/renderer/hooks/use-app-settings';
 import { type AppInfo, AppInfoContext } from '@/renderer/hooks/use-app-info';
 import { I18nContext } from '@/renderer/hooks/use-messages';
-import { messagesFor } from '@/renderer/i18n/messages';
+import { messagesFor } from '@/i18n/messages';
 
 /**
  * Reads what a person decided about the app (ADR 0052) and gives everything under it the language

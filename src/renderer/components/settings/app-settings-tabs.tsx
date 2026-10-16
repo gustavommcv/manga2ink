@@ -1,6 +1,6 @@
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
-import type { Messages } from '@/renderer/i18n/messages';
+import type { Messages } from '@/i18n/messages';
 
 /**
  * One thing a person decides about the app (ADR 0052): a name for the tab, and what it holds. The

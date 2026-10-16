@@ -3,9 +3,21 @@ import { describe, expect, it } from 'vitest';
 import type { PipelineIssue } from '@/domain/conversion';
 import {
   unrecognizedChapterNames,
-  unrecognizedChaptersNote,
-  unrecognizedInLibraryNote,
+  unrecognizedChaptersNote as chaptersNoteOf,
+  unrecognizedInLibraryNote as libraryNoteOf,
 } from '@/domain/unrecognized-chapters';
+
+import { english } from './support/say';
+
+// What a person is told is what these tests look at: the note in English, or nothing when there is none.
+const unrecognizedChaptersNote = (...given: Parameters<typeof chaptersNoteOf>): string => {
+  const note = chaptersNoteOf(...given);
+  return note === undefined ? '' : english(note);
+};
+const unrecognizedInLibraryNote = (...given: Parameters<typeof libraryNoteOf>): string => {
+  const note = libraryNoteOf(...given);
+  return note === undefined ? '' : english(note);
+};
 
 const issue = (code: string, extra: Partial<PipelineIssue> = {}): PipelineIssue => ({
   tool: 'mangabind',
@@ -46,6 +58,12 @@ describe('unrecognizedChapterNames', () => {
 });
 
 describe('unrecognizedChaptersNote', () => {
+  it('is nothing, and not an empty sentence, when there are no folders to tell about', () => {
+    expect(chaptersNoteOf([])).toBeUndefined();
+    expect(libraryNoteOf([])).toBeUndefined();
+    expect(libraryNoteOf([{ title: 'Good', names: [] }])).toBeUndefined();
+  });
+
   it('says nothing when every folder was read', () => {
     expect(unrecognizedChaptersNote([])).toBe('');
   });

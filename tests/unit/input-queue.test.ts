@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  describeRow,
   emptyQueue,
   type InspectedRow,
   isPendingTitle,
@@ -17,6 +16,7 @@ import {
   summarizeQueue,
   unassignedChapterCount,
 } from '@/domain/input-queue';
+import { describeRowText as describeRow } from './support/say';
 import { createMappingDraft } from '@/domain/mapping';
 
 const chapters = [

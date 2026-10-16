@@ -11,7 +11,7 @@ import {
 } from '@/domain/process-mode';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 
 interface ProcessStepsProps {
   /** What is being run, since a CBZ and a whole library allow different processes. */
@@ -31,6 +31,7 @@ export function ProcessSteps({
   singleBook = false,
 }: ProcessStepsProps): React.JSX.Element {
   const words = useMessages().queue.steps;
+  const { say } = useSay();
   const resolvedMode = resolveMode(input, mode);
   const steps = stepsFromMode(resolvedMode);
   // A CBZ or library can force a different effective mode. That is not a user change to the
@@ -39,10 +40,10 @@ export function ProcessSteps({
   // A step is off-limits when turning it off would leave nothing to run, or would ask this kind of
   // input for a process it cannot have, or when single-book mode is active.
   const reasonFor = (toggled: Steps): string | undefined => {
-    if (singleBook) return singleBookLockReason;
-    return !toggled.group && !toggled.convert
-      ? words.keepOne
-      : blockedModeReason(input, modeFromSteps(toggled));
+    if (singleBook) return say(singleBookLockReason);
+    if (!toggled.group && !toggled.convert) return words.keepOne;
+    const blocked = blockedModeReason(input, modeFromSteps(toggled));
+    return blocked === undefined ? undefined : say(blocked);
   };
   const groupReason = reasonFor({ group: !steps.group, convert: steps.convert });
   const convertReason = reasonFor({ group: steps.group, convert: !steps.convert });

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { message, raw } from '@/domain/message';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
 
 import { ResultsScreen, type ResultsScreenProps } from './results-screen';
@@ -27,7 +28,7 @@ const skipped: ResultsScreenProps['outcomes'][number] = {
   name: 'Random scans',
   status: 'skipped',
   artifacts: [],
-  message: 'No volumes yet. Open Edit volumes to group the chapters.',
+  message: [message('queue.note.noVolumesYet', {})],
   fixable: true,
 };
 
@@ -150,7 +151,7 @@ export const NothingSaved: Story = {
         name: 'Late Bloomer',
         status: 'failed',
         artifacts: [],
-        message: 'mangapress crashed while processing pages.',
+        message: [raw('mangapress crashed while processing pages.')],
       },
     ],
   },

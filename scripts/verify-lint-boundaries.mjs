@@ -77,6 +77,25 @@ const cases = [
     "import { FsLibraryStore } from '@/adapters/library/fs-library-store';",
   ),
 
+  // i18n: domain only, and none of Electron, Node or the layers above it: the words of the app are
+  // plain data that the window, the main process and the workflows can all write.
+  valid('i18n', 'ts', 'domain', "import type { Language } from '@/domain/app-settings';"),
+  invalid('i18n', 'ts', 'electron', "import { app } from 'electron';"),
+  invalid('i18n', 'ts', 'node-fs', "import fs from 'node:fs';"),
+  invalid(
+    'i18n',
+    'ts',
+    'application',
+    "import { AppSettingsWorkflow } from '@/application/workflows/app-settings';",
+  ),
+  invalid('i18n', 'ts', 'renderer', "import { App } from '@/renderer/app';"),
+  valid('renderer', 'ts', 'i18n', "import { messagesFor } from '@/i18n/messages';"),
+  valid('application', 'ts', 'i18n', "import { messagesFor } from '@/i18n/messages';"),
+  valid('adapters', 'ts', 'i18n', "import { messagesFor } from '@/i18n/messages';"),
+  invalid('domain', 'ts', 'i18n', "import { messagesFor } from '@/i18n/messages';"),
+  invalid('shared', 'ts', 'i18n', "import { messagesFor } from '@/i18n/messages';"),
+  invalid('preload', 'ts', 'i18n', "import { messagesFor } from '../i18n/messages';"),
+
   // adapters: everything but main, preload, renderer - proven at a nested depth too, since a real
   // adapter (e.g. mangabind/, mangapress/) is never at the top level of src/adapters.
   valid(

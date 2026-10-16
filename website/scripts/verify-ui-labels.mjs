@@ -48,7 +48,9 @@ const allowed = new Map([
 ]);
 
 const root = path.resolve(import.meta.dirname, '..', '..');
-const sourceFolders = ['src/renderer', 'src/domain', 'src/opds', 'src/shared'];
+// What the interface says is in the components, and in the catalogs of `src/i18n` (the names of the
+// controls are in its English); the domain and the others write what the window shows by code.
+const sourceFolders = ['src/renderer', 'src/i18n', 'src/domain', 'src/opds', 'src/shared'];
 
 function filesIn(directory) {
   return readdirSync(directory, { recursive: true, withFileTypes: true })

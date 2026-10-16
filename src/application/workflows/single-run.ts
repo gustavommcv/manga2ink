@@ -30,6 +30,8 @@ import {
   type WorkflowPlan,
 } from '@/domain/conversion';
 import { type ProcessMode, unsupportedModeReason, usesMangapress } from '@/domain/process-mode';
+import { messagesFor } from '@/i18n/messages';
+import { say } from '@/i18n/say';
 
 /** Plan or convert one folder or CBZ; successful conversions spend their inspected session. */
 export class SingleInputRun {
@@ -213,7 +215,10 @@ export class SingleInputRun {
     rejectLibrary(session);
     const unsupported = unsupportedModeReason(session.selection.kind, mode);
     if (unsupported !== undefined)
-      throw new ConversionWorkflowError('unsupported_mode', unsupported);
+      throw new ConversionWorkflowError(
+        'unsupported_mode',
+        say(messagesFor('en').said, unsupported),
+      );
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);
     if (singleBook) assertSingleBook(mode, request.format);
     return { session, mode, singleBook };

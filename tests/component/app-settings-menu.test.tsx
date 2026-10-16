@@ -9,7 +9,7 @@ import {
   appSettingsTabs,
 } from '@/renderer/components/settings/app-settings-tabs';
 import { languages } from '@/domain/app-settings';
-import { messagesFor } from '@/renderer/i18n/messages';
+import { messagesFor } from '@/i18n/messages';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';

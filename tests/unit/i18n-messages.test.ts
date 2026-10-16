@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { languages } from '@/domain/app-settings';
-import { languageNames, messagesFor } from '@/renderer/i18n/messages';
+import { languageNames, messagesFor } from '@/i18n/messages';
 
 /** Every message of a catalog with the path that names it, so one that is wrong can be found. */
 function messagePaths(value: unknown, path = ''): readonly (readonly [string, unknown])[] {
@@ -63,7 +63,8 @@ describe('the messages of the app', () => {
     'say something, in %s, from each of the forms of every function',
     (language) => {
       for (const [path, message] of messagePaths(messagesFor(language))) {
-        if (typeof message !== 'function') continue;
+        // What is said by code has a table of its own, typed by the codes (i18n-said.test.ts).
+        if (typeof message !== 'function' || path.startsWith('said.')) continue;
         const calls = samples[path];
         expect(calls, `a sample for ${path}`).toBeDefined();
         for (const values of calls ?? []) {

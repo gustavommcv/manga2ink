@@ -1,5 +1,6 @@
 import type { BookFormat } from './conversion';
 import { describeRow, isWaitingTitle, type QueueAction, type QueueRow } from './input-queue';
+import { type AnyMessage, message, raw } from './message';
 import type { ProcessMode } from './process-mode';
 
 /** The report does not inspect artifacts or depend on a transport's book representation. */
@@ -8,8 +9,8 @@ export interface RunOutcome<Artifact> {
   readonly name: string;
   readonly status: 'done' | 'failed' | 'skipped';
   readonly artifacts: readonly Artifact[];
-  /** Why it failed or was left out. */
-  readonly message?: string;
+  /** Why it failed or was left out: sentences that follow one another, written when they are shown. */
+  readonly message?: readonly AnyMessage[];
   /** Whether the item's grouping can be fixed from the queue. */
   readonly fixable?: boolean;
 }
@@ -60,7 +61,7 @@ export function reportInputRun<Artifact>(
             name: row.displayName,
             status: 'failed',
             artifacts: [],
-            message: result.error.message,
+            message: [raw(result.error.message)],
           },
         ],
         cancelled: result.error.code === 'cancelled',
@@ -79,7 +80,7 @@ export function reportLibraryRun<Artifact>(
       name: `${row.displayName} · ${title.title}`,
       status: title.status,
       artifacts: title.artifacts,
-      ...(title.failure === undefined ? {} : { message: title.failure.message }),
+      ...(title.failure === undefined ? {} : { message: [raw(title.failure.message)] }),
     })),
     cancelled: result.value.some((title) => title.failure?.code === 'cancelled'),
     completedTitles: new Set(
@@ -133,7 +134,7 @@ export function finishRunReport<Artifact>({
           name: row.displayName,
           status: 'skipped',
           artifacts: [],
-          message: `${String(waiting)} title${waiting === 1 ? '' : 's'} left out until they have volumes.`,
+          message: [message('queue.note.titlesLeftOut', { count: waiting })],
           fixable: true,
         });
       }
@@ -147,7 +148,7 @@ export function finishRunReport<Artifact>({
       name: row.displayName,
       status: 'skipped',
       artifacts: [],
-      message: view.note ?? view.chip,
+      message: view.notes.length > 0 ? view.notes : [view.chip],
       fixable: row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only',
     });
   }

@@ -1,6 +1,6 @@
 import type { Language } from '@/domain/app-settings';
 import { I18nContext } from '@/renderer/hooks/use-messages';
-import { messagesFor } from '@/renderer/i18n/messages';
+import { messagesFor } from '@/i18n/messages';
 
 /** Draws something in a language of the app, as the provider would, without reading anything. */
 export function inLanguage(language: Language, ui: React.ReactNode): React.JSX.Element {

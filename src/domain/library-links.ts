@@ -1,5 +1,6 @@
 import type { PipelineIssue } from './conversion';
 import { lastPathPart, listNames } from './folder-names';
+import { type AnyMessage, message } from './message';
 
 /**
  * The names of the links in a library folder that `mangabind` did not follow. It says so once for
@@ -42,7 +43,6 @@ export function skippedLinksNotice(names: readonly string[]): {
  * What the queue says about a folder in which every manga was a link, so that it holds none:
  * `mangabind` found no chapters, and "turn off grouping" would not change that.
  */
-export function onlyLinksNote(names: readonly string[]): string {
-  const one = names.length === 1;
-  return `${one ? 'A folder in it is a link' : `${String(names.length)} folders in it are links`}, and mangabind does not follow links to a series, so ${one ? 'it was' : 'they were'} not read: ${listNames(names)}. Put the real ${one ? 'folder' : 'folders'} in the library and add it again.`;
+export function onlyLinksNote(names: readonly string[]): AnyMessage {
+  return message('queue.note.onlyLinks', { names });
 }
