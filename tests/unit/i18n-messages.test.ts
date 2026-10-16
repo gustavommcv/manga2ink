@@ -100,6 +100,8 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'options.item.title': [['Series']],
   'options.overrides.some': [[1], [3]],
   'options.overrides.cleared': [[1], [3]],
+  'fields.device.profile.detail': [[1272, 1696, 16]],
+  'fields.images.jpegQuality.hint': [[85]],
   'settings.field.restoreDefault': [['Device']],
   'settings.field.useQueueValue': [['Device']],
 };
