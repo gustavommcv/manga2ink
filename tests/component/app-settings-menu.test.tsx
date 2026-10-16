@@ -141,7 +141,7 @@ describe('the tabs of the dialog', () => {
     expect(within(dialog).queryByRole('tabpanel')).not.toBeInTheDocument();
   });
 
-  it('opens on Interface, with the language, and has About beside it', async () => {
+  it('opens on Interface, with the language, and has Updates and About beside it', async () => {
     const user = userEvent.setup();
     await renderMenu();
 
@@ -153,7 +153,7 @@ describe('the tabs of the dialog', () => {
       within(tabs)
         .getAllByRole('tab')
         .map((tab) => tab.textContent),
-    ).toEqual(['Interface', 'About']);
+    ).toEqual(['Interface', 'Updates', 'About']);
     expect(within(tabs).getByRole('tab', { name: 'Interface' })).toHaveAttribute(
       'aria-selected',
       'true',
@@ -224,6 +224,58 @@ describe('the tabs of the dialog', () => {
     expect(screen.getByRole('tabpanel')).toHaveTextContent('What the second tab holds');
   });
 
+  it('names the tab above its panel, as the heading of what is shown', async () => {
+    const user = userEvent.setup();
+    await renderMenu({ tabs: twoTabs });
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+    const dialog = await screen.findByRole('dialog');
+
+    expect(within(dialog).getByRole('heading', { name: 'First tab', level: 3 })).toBeVisible();
+
+    await user.click(within(dialog).getByRole('tab', { name: 'Second tab' }));
+
+    expect(within(dialog).getByRole('heading', { name: 'Second tab', level: 3 })).toBeVisible();
+    expect(within(dialog).queryByRole('heading', { name: 'First tab' })).not.toBeInTheDocument();
+  });
+
+  it('is moved along in both directions, round the ends and to the ends, by the keys of a list', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+    const interfaceTab = await screen.findByRole('tab', { name: 'Interface' });
+    interfaceTab.focus();
+
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('tab', { name: 'Updates' })).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(screen.getByRole('tab', { name: 'About' })).toHaveFocus();
+    await user.keyboard('{ArrowDown}');
+    expect(interfaceTab).toHaveFocus();
+    await user.keyboard('{ArrowUp}');
+    expect(screen.getByRole('tab', { name: 'About' })).toHaveFocus();
+    await user.keyboard('{Home}');
+    expect(interfaceTab).toHaveFocus();
+    await user.keyboard('{End}');
+    expect(screen.getByRole('tab', { name: 'About' })).toHaveFocus();
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('tab', { name: 'Updates' })).toHaveFocus();
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Not available yet');
+  });
+
+  it('leaves the other keys alone, and keeps one tab in the order of Tab', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+    const interfaceTab = await screen.findByRole('tab', { name: 'Interface' });
+    interfaceTab.focus();
+
+    await user.keyboard('a');
+
+    expect(interfaceTab).toHaveFocus();
+    expect(screen.getByRole('tab', { name: 'Updates' })).toHaveAttribute('tabindex', '-1');
+    expect(interfaceTab).toHaveAttribute('tabindex', '0');
+  });
+
   it('starts from the first tab again each time it is opened', async () => {
     const user = userEvent.setup();
     await renderMenu({ tabs: twoTabs });
@@ -241,8 +293,8 @@ describe('the tabs of the dialog', () => {
 });
 
 describe('the list of tabs of the app', () => {
-  it('starts with Interface and ends with About', () => {
-    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'about']);
+  it('starts with Interface, ends with About and has Updates between them', () => {
+    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'updates', 'about']);
   });
 
   it('has a different id for each tab, since the id is what names a tab and its panel', () => {
@@ -257,6 +309,7 @@ describe('the list of tabs of the app', () => {
     }
     expect(appSettingsTabs.map((tab) => tab.label(messagesFor('pt-BR')))).toEqual([
       'Interface',
+      'Atualizações',
       'Sobre',
     ]);
   });

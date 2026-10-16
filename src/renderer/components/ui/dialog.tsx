@@ -25,7 +25,7 @@ function DialogContent({
       />
       <DialogPrimitive.Content
         className={cn(
-          'border-border bg-surface text-foreground fixed top-1/2 left-1/2 z-50 max-h-[calc(100vh-env(titlebar-area-height,3rem)-2rem)] w-[30rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border outline-none',
+          'border-border bg-surface text-foreground fixed top-[calc(50%+env(titlebar-area-height,3rem)/2)] left-1/2 z-50 max-h-[calc(100vh-env(titlebar-area-height,3rem)-2rem)] w-[30rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border outline-none',
           className,
         )}
         data-slot="dialog-content"
