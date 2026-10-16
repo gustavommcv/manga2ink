@@ -1,4 +1,5 @@
-import { GeneralTab } from '@/renderer/components/settings/general-tab';
+import { AboutTab } from '@/renderer/components/settings/about-tab';
+import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
 import type { Messages } from '@/renderer/i18n/messages';
 
 /**
@@ -14,7 +15,11 @@ export interface AppSettingsTab {
   readonly Panel: React.ComponentType;
 }
 
-/** What the dialog holds, in the order of its tabs. The first is the one that opens. */
+/**
+ * What the dialog holds, in the order of its tabs: what a person decides first, what the app says
+ * about itself last. The first is the one that opens (ADR 0053).
+ */
 export const appSettingsTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
-  { id: 'general', label: (messages) => messages.appSettings.general, Panel: GeneralTab },
+  { id: 'interface', label: (messages) => messages.appSettings.interface, Panel: InterfaceTab },
+  { id: 'about', label: (messages) => messages.appSettings.about, Panel: AboutTab },
 ];

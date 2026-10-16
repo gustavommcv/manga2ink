@@ -1,5 +1,6 @@
 import type { Language } from '@/domain/app-settings';
 
+import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
 
 /**
@@ -8,11 +9,12 @@ import { type AppSettingsMessages, appSettingsMessages } from './app-settings-me
  * is a compile error, and adding a part is a module and a line here.
  */
 export interface Messages {
+  readonly about: AboutMessages;
   readonly appSettings: AppSettingsMessages;
 }
 
 function build(language: Language): Messages {
-  return { appSettings: appSettingsMessages[language] };
+  return { about: aboutMessages[language], appSettings: appSettingsMessages[language] };
 }
 
 const catalogs: Readonly<Record<Language, Messages>> = {

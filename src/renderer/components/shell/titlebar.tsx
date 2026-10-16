@@ -1,3 +1,4 @@
+import mark from '@/renderer/assets/mark-48.webp';
 import { cn } from '@/renderer/lib/utils';
 
 export interface TitlebarProps {
@@ -27,7 +28,15 @@ export function Titlebar({ children, platform, version }: TitlebarProps): React.
           platform === 'darwin' ? 'pl-20' : 'pl-4',
         )}
       >
-        <span aria-hidden="true" className="bg-accent size-2 rounded-full" />
+        {/* The name is written beside it. The picture is not one to drag: the bar is dragged by. */}
+        <img
+          alt=""
+          className="size-5 shrink-0 select-none"
+          draggable={false}
+          height={20}
+          src={mark}
+          width={20}
+        />
         <span className="text-sm font-semibold tracking-tight">Mangabound</span>
         {/* The first to go when the window is narrow: its buttons take the space from the bar. The
             name, the version, the Share button and the gear need about 390px, and the window's own

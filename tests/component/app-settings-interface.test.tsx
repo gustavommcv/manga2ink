@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { LanguagePreference } from '@/domain/app-settings';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
-import { GeneralTab } from '@/renderer/components/settings/general-tab';
+import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
@@ -25,7 +25,7 @@ async function renderGeneral(
 ): Promise<HTMLSelectElement> {
   render(
     <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
-      <GeneralTab />
+      <InterfaceTab />
     </AppSettingsProvider>,
   );
   return await screen.findByRole<HTMLSelectElement>('combobox', { name: 'Language' });

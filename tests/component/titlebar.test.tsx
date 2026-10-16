@@ -12,6 +12,21 @@ describe('Titlebar', () => {
     expect(screen.queryByText('Foundation')).not.toBeInTheDocument();
   });
 
+  it('draws the logo before the name, as a picture that is not one to drag', () => {
+    const { container } = render(<Titlebar />);
+
+    const logo = container.querySelector('img');
+    expect(logo).toHaveAttribute('alt', '');
+    expect(logo).toHaveAttribute('draggable', 'false');
+    expect(logo).toHaveAttribute('width', '20');
+    expect(logo).toHaveAttribute('height', '20');
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
+    expect(
+      logo!.compareDocumentPosition(screen.getByText('Mangabound')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it('shows the running app version when it is known', () => {
     render(<Titlebar version="0.1.0-alpha.1" />);
 
