@@ -81,6 +81,11 @@ jobs:
       - name: Check that the package can be used by someone who is not root
         # A gate, unlike the diagnostic below: see make.yml's step of the same purpose.
         run: .github/scripts/check-package-permissions.sh packaging/arch/*.pkg.tar.zst
+      - name: Check that the bundled tools are the pinned ones
+        # A gate: the app refuses to convert when mangabind or mangapress is not byte for byte the
+        # file in toolchain.lock.json, and a package builder that strips or edits them would not
+        # say so. See make.yml's step of the same purpose.
+        run: .github/scripts/check-package-tools.sh packaging/arch/*.pkg.tar.zst
       - name: Check that the package ships the icon its desktop entry names
         # A gate: an Icon= that names nothing the package installs gives every launcher (rofi,
         # GNOME, KDE) a blank in place of an icon, and nothing else would notice.

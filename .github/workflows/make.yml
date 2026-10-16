@@ -57,9 +57,10 @@ jobs:
         if: runner.os == 'Linux'
         # MakerRpm needs the `rpmbuild` binary (apt's `rpm` package provides it on
         # Debian/Ubuntu - there is no separate "rpmbuild" package there); MakerDeb needs
-        # `dpkg` (already present on any Debian-family runner) and `fakeroot`.
+        # `dpkg` (already present on any Debian-family runner) and `fakeroot`. `cpio` goes with
+        # `rpm2cpio`, which unpacks the .rpm for check-package-tools.sh.
         timeout-minutes: 10
-        run: sudo apt-get update && sudo apt-get install --yes rpm fakeroot
+        run: sudo apt-get update && sudo apt-get install --yes rpm fakeroot cpio
       - run: npm run make
       - name: Upload installer artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -81,6 +82,20 @@ jobs:
             exit 1
           fi
           .github/scripts/check-package-permissions.sh "${packages[@]}"
+      - name: Check that the bundled tools in the Linux packages are the pinned ones
+        # A gate: the app hashes mangabind and mangapress on every start and refuses to convert
+        # when either is not byte for byte the file in toolchain.lock.json. rpmbuild strips and
+        # edits ELF files unless told not to (packaging/rpm/spec.ejs), and an edited tool installs
+        # without a word. Unpacks each finished package, so it checks what would be installed.
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          mapfile -t packages < <(find out/make -type f \( -name '*.deb' -o -name '*.rpm' \))
+          if [[ ${#packages[@]} -eq 0 ]]; then
+            echo "::error::No .deb or .rpm found under out/make to check."
+            exit 1
+          fi
+          .github/scripts/check-package-tools.sh "${packages[@]}"
       - name: 'Diagnostic: launch the real .deb with the sandbox enabled'
         if: inputs.run-sandbox-diagnostic && runner.os == 'Linux'
         # Not a release gate (always exits 0) - purely to observe and record real behavior before

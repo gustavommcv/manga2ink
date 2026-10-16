@@ -20,6 +20,15 @@ const appIconBase = path.join(import.meta.dirname, 'assets', 'icons', 'mangaboun
 
 const buildForPackagedE2e = process.env.MANGABOUND_E2E === '1';
 
+// electron-installer-redhat reads `specTemplate`, but Forge's MakerRpmConfigOptions does not list
+// it, so the options are built apart: only an object written inline is checked for extra keys.
+// rpmbuild's default steps rewrite the bundled tools, and the app then refuses them at startup
+// because their SHA-256 no longer matches toolchain.lock.json. The template turns those steps off.
+const rpmOptions = {
+  icon: `${appIconBase}.png`,
+  specTemplate: path.join(import.meta.dirname, 'packaging', 'rpm', 'spec.ejs'),
+};
+
 const { version } = JSON.parse(
   readFileSync(path.join(import.meta.dirname, 'package.json'), 'utf8'),
 ) as { version: string };
@@ -98,9 +107,7 @@ const config: ForgeConfig = {
     // the same reason AppImage was: a real, structural defect in the dependency itself, not a
     // fragile hack away from working. See RELEASING.md.
     new MakerZIP({}, ['darwin', 'win32']),
-    new MakerRpm({
-      options: { icon: `${appIconBase}.png` },
-    }),
+    new MakerRpm({ options: rpmOptions }),
     new MakerDeb({
       options: { icon: `${appIconBase}.png` },
     }),
