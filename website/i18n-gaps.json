@@ -1,10 +1,8 @@
 {
   "pt-br": [],
   "ja": [
-    "user-guide/advanced-options/cover.mdx",
     "user-guide/advanced-options/double-page-spreads.mdx",
     "user-guide/advanced-options/index.mdx",
-    "user-guide/advanced-options/page-images.mdx",
     "user-guide/advanced-options/size-and-borders.mdx"
   ]
 }
