@@ -81,6 +81,9 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
       `Mangabound cannot work in ${folder}. Choose a folder it can write in.`,
     'failure.processingBusy': () =>
       'A conversion or a share is running. Finish or stop it, then try again.',
+    'failure.diagnosticsNotCopied': () => 'The diagnostics could not be copied.',
+    'failure.folderNotOpened': () =>
+      'The folder could not be opened. Open it from your file manager instead.',
   },
   'pt-BR': {
     'failure.cancelled': () => 'Cancelado.',
@@ -142,5 +145,8 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
       `O Mangabound não consegue trabalhar em ${folder}. Escolha uma pasta em que ele possa gravar.`,
     'failure.processingBusy': () =>
       'Há uma conversão ou um compartilhamento em andamento. Termine ou interrompa, e tente de novo.',
+    'failure.diagnosticsNotCopied': () => 'Não foi possível copiar o diagnóstico.',
+    'failure.folderNotOpened': () =>
+      'Não foi possível abrir a pasta. Abra-a pelo gerenciador de arquivos.',
   },
 };

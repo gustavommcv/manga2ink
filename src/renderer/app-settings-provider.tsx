@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { defaultLanguage } from '@/domain/app-settings';
-import { message } from '@/domain/message';
+import { type AnyMessage, message } from '@/domain/message';
 import {
   type AppSettingsBridge,
   AppSettingsContext,
@@ -25,6 +25,21 @@ async function reaching<T>(call: () => Promise<WorkflowResult<T>>): Promise<Work
       ok: false,
       error: { code: 'bridge_unreachable', said: message('failure.internal', {}) },
     };
+  }
+}
+
+/**
+ * What to tell a person when a call to the main process did not do what it was asked: the failure
+ * it answered with, or a failure of the call itself. Nothing when it did.
+ */
+async function saying(
+  call: () => Promise<WorkflowResult<undefined>>,
+): Promise<AnyMessage | undefined> {
+  try {
+    const answer = await call();
+    return answer.ok ? undefined : answer.error.said;
+  } catch {
+    return message('failure.internal', {});
   }
 }
 
@@ -54,6 +69,8 @@ export function AppSettingsProvider({
           return false;
         }
       },
+      copyDiagnostics: async () => saying(() => bridge.copyDiagnostics()),
+      openFolder: async (folder) => saying(() => bridge.openAppFolder({ folder })),
       tools: async () => {
         try {
           return await bridge.getToolchainStatus();

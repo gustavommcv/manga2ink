@@ -17,6 +17,8 @@ import { type ConversionWorkflow } from '@/application/workflows/conversion-work
 import type { InputSelection } from '@/domain/conversion';
 import { defaultPreferences, type Preferences } from '@/domain/preferences';
 
+import type { ToolchainStatus } from '@/shared/toolchain-status';
+
 import type { SharingTarget } from './ipc/sharing-target';
 import { PendingRunActivity } from './pending-run-activity';
 
@@ -61,6 +63,8 @@ export interface MainContext {
   currentPreferences: Preferences;
   lastSaveFolder: string | undefined;
   workflow: ConversionWorkflow | undefined;
+  /** What the bundled tools were found to be at launch; undefined until they have been checked. */
+  toolchainStatus: ToolchainStatus | undefined;
   mangapressCli: MangapressCliAdapter | undefined;
 }
 
@@ -87,6 +91,7 @@ export function createMainContext(): MainContext {
     preferences: undefined,
     appSettings: undefined,
     processing: undefined,
+    toolchainStatus: undefined,
     activeSharing: undefined,
     activeSharingTarget: undefined,
     lastPickerFolder: undefined,

@@ -60,6 +60,8 @@ function bridgeFor(
     openProjectLink: opens,
     runtime: { electron: '44.3.0', platform: 'win32', version: '0.1.0-alpha.15' },
     getToolchainStatus: () => Promise.resolve(bundledTools),
+    copyDiagnostics: () => Promise.resolve({ ok: true, value: undefined }),
+    openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),

@@ -17,9 +17,11 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 export type AppSettingsBridge = Pick<
   MangaboundBridge,
   | 'chooseProcessingFolder'
+  | 'copyDiagnostics'
   | 'getProcessingFolder'
   | 'getToolchainStatus'
   | 'loadAppSettings'
+  | 'openAppFolder'
   | 'openProjectLink'
   | 'runtime'
   | 'saveAppSettings'
