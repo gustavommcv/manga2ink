@@ -7,6 +7,8 @@ export interface Strings {
   /** The language the numbers are written in, for `Intl`. */
   numberLocale: string;
   brandLogo: { openFullSize: string };
+  /** The heart in the header that leads to the page where the project can be supported. */
+  support: { label: string };
   tutorialImage: { openFullSize: string };
   releaseDownloads: {
     latest: string;
@@ -78,6 +80,7 @@ export interface Strings {
 const english: Strings = {
   numberLocale: 'en',
   brandLogo: { openFullSize: 'Open full-size logo' },
+  support: { label: 'Support the project' },
   tutorialImage: { openFullSize: 'Open full-size image' },
   releaseDownloads: {
     latest: 'Latest available version:',
@@ -154,6 +157,7 @@ const english: Strings = {
 const portuguese: Strings = {
   numberLocale: 'pt-BR',
   brandLogo: { openFullSize: 'Abrir logo em tamanho original' },
+  support: { label: 'Apoie o projeto' },
   tutorialImage: { openFullSize: 'Abrir imagem em tamanho original' },
   releaseDownloads: {
     latest: 'Última versão disponível:',
@@ -230,6 +234,7 @@ const portuguese: Strings = {
 const japanese: Strings = {
   numberLocale: 'ja',
   brandLogo: { openFullSize: 'ロゴを元のサイズで開く' },
+  support: { label: 'プロジェクトを支援する' },
   tutorialImage: { openFullSize: '画像を元のサイズで開く' },
   releaseDownloads: {
     latest: '公開されている最新バージョン:',
