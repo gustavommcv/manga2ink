@@ -1,0 +1,66 @@
+---
+title: '変換の設定'
+description: 'マンガの変換に使う、電子書籍リーダーのプロファイル、EPUB・CBZ・PDF の形式、カスタムのページ寸法、レイアウトと画像のオプションを、Mangabound で選びます。'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+<span id="device-and-format"></span>
+
+## 端末と形式
+
+**Device** でお使いのモデルを選びます。ページサイズを自分で決めるには、**Advanced conversion options** を開き、**Custom width** と **Custom height** をピクセルで入力します。**Other** の端末では、両方が必須です。コマンドラインでは、これらの設定は `--profile`、`--format`、`--customwidth`、`--customheight` です。それぞれの働きは、[mangapress CLI](../../cli/mangapress/) のページで確認できます。
+
+| 形式 | 選ぶ場面                                                                                                                                |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| CBZ  | Mangabound が最初に選ぶ形式です。処理した画像を ZIP アーカイブにまとめたもの。KOReader 自身のガイドも、マンガにはこの形式を勧めています |
+| EPUB | 各話のナビゲーションと著者の情報を持つ本。シリーズを 1 冊にまとめるモードにはこれが必要です                                             |
+| PDF  | PDF に対応するリーダーやタブレット向けの、固定ページ                                                                                    |
+
+何が使えるかは、端末だけでなく、読むアプリにも左右されます。Kindle 自身のリーダーは、EPUB を直接は開きません。Amazon の Send to Kindle のように変換してくれるサービスでファイルを送るか、KOReader のように、自分でインストールしたアプリで読んでください。KOReader は、EPUB を CBZ や PDF とは違うやり方で扱います。EPUB をテキストのようにレイアウトし、各ページの周りに独自の余白とステータスバーを付けるため、ページが画面より小さくなることがあります。[リーダーの設定](../../koreader/recommended-settings/)を参照してください。
+
+<TutorialImage
+  name="generated/device-settings"
+  alt="端末のプロファイルと本の形式。カスタムの幅は 1440、高さは 1920。"
+/>
+
+これらの寸法は例です。お使いの画面に合ったサイズを使ってください。
+
+## Advanced conversion options
+
+**Advanced conversion options** には、mangapress の設定が、目的ごとにまとめられています。**Reading**、**Double-page spreads**、**Size and borders**、**Cropping**、**Two-page view**、**Color and tone**、**Page images**、**Cover**、**Book metadata** です。まず端末の既定値から始め、設定を 1 つずつ変更して、できあがった本を確認してください。絵が切れる場合は、クロップを弱めるか、オフにしてください。
+
+どのグループにも、[概要](../advanced-options/)に専用のページがあります。そこでは、同じページを各オプションあり・なしで変換して見せ、すべてのオプションを、それを設定するコマンドラインのフラグとともに一覧にしています。
+
+<TutorialImage
+  name="generated/page-layout"
+  alt="Reading で Webtoon strips を選んだところ。Manga reading order と見開きページの操作が無効になり、その理由が表示されています。"
+  caption="Webtoon strips では、Manga reading order と、幅の広いページの操作は使われません。通常のマンガのページには、Manga or comic pages のままにしてください。"
+/>
+
+あるオプションは、別のオプションがあって初めて意味を持ちます。たとえば、**Page format** が PNG でも、**Color pages as PNG too** をオンにするまでは、カラーのまま残るページは JPEG のままです。下の操作画面がこれを示し、[Page images](../advanced-options/page-images/) のページが、各選択のコストを測定しています。
+
+<TutorialImage
+  name="generated/page-images"
+  alt="カラー端末向けの Color and tone と Page images の操作。グレースケールのページは PNG、カラーのまま残すページは JPEG の品質を選べます。"
+  caption="この例では、カラーのページは JPEG のままです。Color pages as PNG too をオンにすると、代わりに PNG で保存されます。"
+/>
+
+端末のそばに、2 つのオプションがあります。**Use the images as they are** は、ページをそのままパッケージ化します（[Page images](../advanced-options/page-images/#use-the-images-as-they-are)）。**Name the book .epub** は、Kobo の EPUB に `.kepub.epub` という名前が付くのを防ぎます（[Book metadata](../advanced-options/book-metadata/#name-the-book-epub)）。
+
+別の選択のために意味のなくなったオプションは、薄く表示されたまま残り、その理由が表示されます。たとえば、**Webtoon strips** は、ウェブトゥーンでは使われないオプションをロックします（一覧は [Reading](../advanced-options/reading/#what-else-changes-with-it) にあります）。ページに戻すと、選んでいた内容も戻ります。
+
+変更した項目を個別にリセットすることも、**Reset to defaults** ですべてをリセットすることもできます。設定は、起動をまたいで保持されます。
+
+## シリーズを 1 冊にまとめる
+
+キューで **Create one book for the series** をオンにすると、その各話と各巻を 1 冊の本にまとめます。目次では、各話が各巻の下に並びます。
+
+このモードは EPUB を使い、2 つの処理ステップをオンのままにします。形式やステップを変えるには、オフにしてください。大きくまとめた本は、電子書籍リーダーで開くのに時間がかかることがあります。
+
+<TutorialImage
+  name="generated/single-book"
+  alt="Create one book for the series が有効で、処理ステップと EPUB 形式がロックされています。"
+/>
+
+コマンドラインのツールには独自の既定値があり、アプリのものとは異なります。ターミナルで使う場合は、[mangapress](../../cli/mangapress/) を参照してください。
