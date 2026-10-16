@@ -27,8 +27,9 @@ const allowed = new Map([
   ['240 − 64 × power', 'a formula'],
   ['all the pending books of that group', 'emphasis on what Delete removes'],
   ['A PDF is never given a cover', 'emphasis on a sentence of the cover page'],
-  // The same emphasis, in the Portuguese guide.
+  // The same emphasis, in the Portuguese and the Japanese guides.
   ['todos os livros pendentes daquele grupo', 'emphasis on what Delete removes'],
+  ['そのグループのすべての保留中の本', 'emphasis on what Delete removes'],
   ['todas', 'emphasis on a word of the mapping editor page'],
   ['Uma capa sua é guardada num CBZ', 'emphasis on a sentence of the cover page'],
   ['Um PDF nunca recebe capa', 'emphasis on a sentence of the cover page'],
