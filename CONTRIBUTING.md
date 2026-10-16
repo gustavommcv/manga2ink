@@ -26,7 +26,7 @@ Run individual checks while working. The full local checks prepare the change fo
 
 ### Language and documentation
 
-Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English, Portuguese and Japanese versions (a language shows a page in English until it is translated; see [website/README.md](website/README.md)); write each naturally and retain the application's actual English control labels in all of them.
+Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English, Portuguese and Japanese versions (a language shows a page in English until it is translated; see [website/README.md](website/README.md)); write each naturally and retain the application's actual English control labels in all of them. Text the app window shows goes in the catalogs of `src/renderer/i18n/` for every language the app has ([ADR 0052](docs/adr/0052-the-app-language-is-chosen-behind-a-gear.md)); only the dialog of the app settings is there so far, and the rest moves over screen by screen.
 
 Check changed documentation against current behavior and scripts. Keep pending work in [current priorities](docs/milestones.md#current-priorities). Preserve audit findings and accepted ADRs as historical records; append dated outcomes to audits rather than rewriting their original evidence.
 

@@ -406,9 +406,12 @@ describe('process control in the queue', () => {
       name: 'Create one book for the series',
     });
     expect(singleBookCheckbox).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    // The controls are enabled once the tools have been read, which is a moment after the heading.
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
+      expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
+      expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    });
 
     await user.click(singleBookCheckbox);
 
