@@ -1,6 +1,9 @@
 import type { Language } from '@/domain/app-settings';
 
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
+import { type QueueMessages, queueMessages } from './queue-messages';
+import { type SettingsMessages, settingsMessages } from './settings-messages';
+import { type SharedMessages, sharedMessages } from './shared-messages';
 
 /**
  * Everything the window says, grouped by the part of the app it belongs to (ADR 0052). A part is
@@ -9,10 +12,18 @@ import { type AppSettingsMessages, appSettingsMessages } from './app-settings-me
  */
 export interface Messages {
   readonly appSettings: AppSettingsMessages;
+  readonly queue: QueueMessages;
+  readonly settings: SettingsMessages;
+  readonly shared: SharedMessages;
 }
 
 function build(language: Language): Messages {
-  return { appSettings: appSettingsMessages[language] };
+  return {
+    appSettings: appSettingsMessages[language],
+    queue: queueMessages[language],
+    settings: settingsMessages[language],
+    shared: sharedMessages[language],
+  };
 }
 
 const catalogs: Readonly<Record<Language, Messages>> = {
