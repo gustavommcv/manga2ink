@@ -124,6 +124,8 @@ const forwarded: readonly (readonly [
   ['getSharingStatus', [], 'opds:get-status', undefined],
   ['loadSettings', [], 'settings:load', undefined],
   ['saveSettings', [{ saved: true }], 'settings:save', { saved: true }],
+  ['loadAppSettings', [], 'app:load-settings', undefined],
+  ['saveAppSettings', [{ language: 'pt-BR' }], 'app:save-settings', { language: 'pt-BR' }],
 ];
 
 describe('what the page is handed', () => {

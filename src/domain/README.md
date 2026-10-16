@@ -13,3 +13,4 @@ Pure manga, chapter, volume, mapping, profile, queue and preference rules. This 
 | `preferences.ts`    | What is kept between sessions.                                                                                                                                                 |
 | `book-details.ts`   | The title, author and language typed for one item, and how they become the title of each book (ADR 0030).                                                                      |
 | `conversion.ts`     | The shapes of a conversion request, its progress, its results and its errors.                                                                                                  |
+| `app-settings.ts`   | The languages the app is written in, what a person decided about the app itself, and the language a choice of "the system's" comes to (ADR 0052).                              |

@@ -36,6 +36,7 @@ vi.mock('electron', () => ({
       },
     }),
     getPath: (name: string) => `/home/${name}`,
+    getPreferredSystemLanguages: () => ['pt-BR', 'en-US'],
   },
   BrowserWindow: { getAllWindows: () => fake.windows },
   ipcMain: {
@@ -109,6 +110,25 @@ vi.mock('@/adapters/settings/fs-settings-store', () => ({
     }
   },
 }));
+vi.mock('@/adapters/settings/fs-app-settings-store', () => ({
+  FsAppSettingsStore: class {
+    constructor(readonly file: string) {
+      fake.calls.push(`app-settings-store:${file}`);
+    }
+  },
+}));
+vi.mock('@/application/workflows/app-settings', () => ({
+  AppSettingsWorkflow: class {
+    settled = (): Promise<void> => Promise.resolve();
+    constructor(
+      _store: unknown,
+      readonly systemLanguages: () => readonly string[],
+    ) {
+      fake.calls.push('app-settings');
+      fake.context['systemLanguages'] = systemLanguages;
+    }
+  },
+}));
 vi.mock('@/application/workflows/preferences', () => ({
   PreferencesWorkflow: class {
     settled = (): Promise<void> => Promise.resolve();
@@ -142,6 +162,9 @@ vi.mock('@/main/ipc/inputs', () => ({ registerInputHandlers: step('handlers:inpu
 vi.mock('@/main/ipc/metadata', () => ({ registerMetadataHandlers: step('handlers:metadata') }));
 vi.mock('@/main/ipc/opds', () => ({ registerOpdsHandlers: step('handlers:opds') }));
 vi.mock('@/main/ipc/pending', () => ({ registerPendingHandlers: step('handlers:pending') }));
+vi.mock('@/main/ipc/app-settings', () => ({
+  registerAppSettingsHandlers: step('handlers:app-settings'),
+}));
 vi.mock('@/main/ipc/settings', () => ({ registerSettingsHandlers: step('handlers:settings') }));
 vi.mock('@/main/toolchain-bootstrap', () => ({
   bootstrapToolchain: () => {
@@ -187,6 +210,7 @@ beforeEach(() => {
     workflow: undefined,
     activeSharing: undefined,
     preferences: undefined,
+    appSettings: undefined,
     pendingRuns: undefined,
   };
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -214,12 +238,15 @@ describe('starting the app', () => {
       'bootstrap',
       `settings-store:${path.join('/home/userData', 'settings.json')}`,
       'preferences',
+      `app-settings-store:${path.join('/home/userData', 'app-settings.json')}`,
+      'app-settings',
       'pending-runs:/pending-root',
       'use-root',
       'prune-completed',
       `prune-abandoned:${String(24 * 60 * 60 * 1000)}`,
       `stale-scratch:${String(24 * 60 * 60 * 1000)}`,
       'handlers:settings',
+      'handlers:app-settings',
       'handlers:inputs',
       'handlers:conversion',
       'handlers:covers',
@@ -239,7 +266,16 @@ describe('starting the app', () => {
 
     expect(fake.context['coverStore']).toBeDefined();
     expect(fake.context['preferences']).toBeDefined();
+    expect(fake.context['appSettings']).toBeDefined();
     expect(fake.context['pendingRuns']).toBeDefined();
+  });
+
+  it('lets the app settings read the languages the system prefers, when they are asked for', async () => {
+    const ready = await start();
+
+    await ready();
+
+    expect((fake.context['systemLanguages'] as () => unknown)()).toEqual(['pt-BR', 'en-US']);
   });
 
   it('answers the toolchain status question with what the bootstrap found', async () => {
@@ -379,6 +415,7 @@ describe('quitting', () => {
     expect(steps['releaseAll']).toBeUndefined();
     expect(steps['stopSharing']).toBeUndefined();
     expect(steps['settlePreferences']).toBeUndefined();
+    expect(steps['settleAppSettings']).toBeUndefined();
     expect(steps['pruneCompleted']).toBeUndefined();
   });
 
@@ -386,11 +423,13 @@ describe('quitting', () => {
     const workflow = { releaseAll: vi.fn(() => 'released') };
     const sharing = { stop: vi.fn(() => 'stopped') };
     const preferences = { settled: vi.fn(() => 'settled') };
+    const appSettings = { settled: vi.fn(() => 'app settled') };
     const pendingRuns = { pruneCompleted: vi.fn(() => 'pruned') };
     Object.assign(fake.context, {
       workflow,
       activeSharing: sharing,
       preferences,
+      appSettings,
       pendingRuns,
     });
     await start();
@@ -401,6 +440,7 @@ describe('quitting', () => {
     expect((steps['releaseAll'] as () => unknown)()).toBe('released');
     expect((steps['stopSharing'] as () => unknown)()).toBe('stopped');
     expect((steps['settlePreferences'] as () => unknown)()).toBe('settled');
+    expect((steps['settleAppSettings'] as () => unknown)()).toBe('app settled');
     expect((steps['pruneCompleted'] as () => unknown)()).toBe('pruned');
     fake.calls.length = 0;
     quit();

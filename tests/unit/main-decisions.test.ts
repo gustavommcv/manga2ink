@@ -434,6 +434,7 @@ describe('what the app lets go of when it quits', () => {
         releaseAll: step('release'),
         stopSharing: step('stop sharing'),
         settlePreferences: step('settle preferences'),
+        settleAppSettings: step('settle app settings'),
         pruneCompleted: step('prune'),
         ...overrides,
       } satisfies QuitCleanup,
@@ -464,6 +465,7 @@ describe('what the app lets go of when it quits', () => {
       'release',
       'stop sharing',
       'settle preferences',
+      'settle app settings',
       'prune',
       'quit',
     ]);
@@ -521,6 +523,7 @@ describe('what the app lets go of when it quits', () => {
         releaseAll: undefined,
         stopSharing: undefined,
         settlePreferences: undefined,
+        settleAppSettings: undefined,
         pruneCompleted: undefined,
       },
       quit,

@@ -8,6 +8,11 @@ import type {
   OpdsAuthConfig,
   OpdsSharingStatus,
 } from '../shared/opds-contract';
+import type {
+  RestoredAppSettings,
+  SaveAppSettingsCommand,
+  SavedAppSettings,
+} from '../shared/app-settings-contract';
 import type { MangaboundBridge } from '../shared/runtime-info';
 import type { RestoredSettings, SaveSettingsCommand } from '../shared/settings-contract';
 import type { ToolchainStatus } from '../shared/toolchain-status';
@@ -148,6 +153,9 @@ const bridge: MangaboundBridge = Object.freeze({
   getSharingStatus: () => invoke<OpdsSharingStatus>('opds:get-status'),
   loadSettings: () => invoke<RestoredSettings>('settings:load'),
   saveSettings: (command: SaveSettingsCommand) => invoke<undefined>('settings:save', command),
+  loadAppSettings: () => invoke<RestoredAppSettings>('app:load-settings'),
+  saveAppSettings: (command: SaveAppSettingsCommand) =>
+    invoke<SavedAppSettings>('app:save-settings', command),
   runtime: Object.freeze({
     electron: process.versions.electron,
     platform: process.platform,
