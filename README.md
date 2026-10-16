@@ -6,7 +6,7 @@
 
 Mangabound is a desktop app for organizing manga chapters into volumes and converting them into books for your e-reader. Choose how chapters are grouped and fine-tune page size, margins, and image quality for your device. Once processed, save your books locally or share them directly with KOReader over your local network.
 
-[Download](https://github.com/gustavommcv/mangabound/releases) · [User guide](https://gustavommcv.github.io/mangabound/) · [Guia em português](https://gustavommcv.github.io/mangabound/pt-br/) · [Contribute](CONTRIBUTING.md)
+[Download](https://github.com/gustavommcv/mangabound/releases) · [User guide](https://gustavommcv.github.io/mangabound/) · [Guia em português](https://gustavommcv.github.io/mangabound/pt-br/) · [日本語ガイド](https://gustavommcv.github.io/mangabound/ja/) · [Contribute](CONTRIBUTING.md)
 
 ![Mangabound's queue with a validated volume plan, device settings, and EPUB, CBZ, and PDF format choices](tests/visual/__screenshots__/queue-plan-validated.png)
 
