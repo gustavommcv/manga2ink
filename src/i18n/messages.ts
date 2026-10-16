@@ -1,9 +1,13 @@
 import type { Language } from '@/domain/app-settings';
 
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
+import { modeSaid } from './mode-said';
 import { type QueueMessages, queueMessages } from './queue-messages';
+import { queueSaid } from './queue-said';
+import type { Said } from './say';
 import { type SettingsMessages, settingsMessages } from './settings-messages';
 import { type SharedMessages, sharedMessages } from './shared-messages';
+import { textSaid } from './text-said';
 
 /**
  * Everything the window says, grouped by the part of the app it belongs to (ADR 0052). A part is
@@ -15,6 +19,8 @@ export interface Messages {
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
+  /** What the domain, the workflows and the main process say by code (ADR 0053). */
+  readonly said: Said;
 }
 
 function build(language: Language): Messages {
@@ -23,6 +29,7 @@ function build(language: Language): Messages {
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
+    said: { ...queueSaid[language], ...modeSaid[language], ...textSaid[language] },
   };
 }
 
