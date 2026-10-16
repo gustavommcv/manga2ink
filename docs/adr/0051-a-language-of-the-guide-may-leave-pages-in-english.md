@@ -25,3 +25,7 @@ Starlight already has the mechanism: a page that a language does not have is bui
 - The labels of the application's controls stay in English in every language of the guide, as they are in the application. When the application gets translations, the guides of those languages will use the translated labels, and the check of the labels will read each language's own text of the application; that is a separate decision.
 - A page that is translated gets headings with other anchors, and the pages still in English link to it by the English ones. The translated page keeps the English anchors that the link check reports missing, as an empty `<span id>` before the heading; the check names them.
 - Review by someone who reads Japanese is welcome on every page, and nothing makes it a condition of merging: the pages say they were translated with AI help.
+
+## Update 2026-10-16
+
+Japanese now has every page of the guide, and its list in `i18n-gaps.json` is empty, as Portuguese's is. The mechanism stays for what comes next: a page added to the guide in English first is on the list of each language that has not translated it, and the Japanese home page says so.

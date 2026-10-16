@@ -41,6 +41,10 @@ const allowed = new Map([
   ['A conversão', 'emphasis on a part of the options page'],
   ['As legendas', 'emphasis on a part of the options page'],
   ['As tabelas de valores', 'emphasis on a part of the options page'],
+  ['例のページ', 'emphasis on a part of the options page'],
+  ['変換', 'emphasis on a part of the options page'],
+  ['キャプション', 'emphasis on a part of the options page'],
+  ['値の表', 'emphasis on a part of the options page'],
 ]);
 
 const root = path.resolve(import.meta.dirname, '..', '..');
