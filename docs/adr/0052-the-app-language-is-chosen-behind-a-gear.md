@@ -1,0 +1,34 @@
+# ADR 0052: The app's language is an app setting, chosen in a dialog behind a gear
+
+- Status: Accepted
+- Date: 2026-10-16
+- Relates to: [ADR 0002](0002-shadcn-radix-tailwind-design-system.md) (the dialog is a Radix primitive), [ADR 0014](0014-persisted-settings-and-reset.md) (what is kept between sessions, and what a reset leaves alone), [ADR 0016](0016-one-share-panel-fixed-title-bar-clickable-drop-area.md) (the title bar and its one panel), [ADR 0051](0051-a-language-of-the-guide-may-leave-pages-in-english.md) (the guide has Portuguese and Japanese)
+
+## Context
+
+The app is in English only, and the guide has been in Brazilian Portuguese and Japanese since 2026-10-16. The next step is the app itself: Brazilian Portuguese first, with a way to choose the language, and Japanese able to come later without reworking anything.
+
+There is nowhere to put such a choice. Everything the window keeps today is a conversion choice (ADR 0014), edited in the panel on the queue and reset by its "Reset to defaults". A language is not one: it is about the person and the app, not about a run, and a reset that put it back would be wrong. Other app-wide choices are already in view (a folder to process in, what the tools are and which version), so the place has to take more than a language.
+
+Two things about the text had to be settled as well: how the app is translated (a library or catalogs of its own), and what text is the window's to translate at all, since the main process, the application layer and the domain also write sentences the window shows.
+
+## Decision
+
+- **A gear button on the title bar, next to Share, opens a dialog, "App settings".** The dialog is modal, centered, and is not a screen: it adds nothing to the navigation, so it can be opened from any screen, a running conversion included, and closing it leaves the person where they were. It is a Radix dialog (`@radix-ui/react-dialog`): the focus stays in it, Escape and the close button put it away, and the focus goes back to the gear.
+- **The dialog is a list of tabs, one for each thing a person decides about the app, and a tab is one entry in a list.** Adding a tab is adding an entry (its id, its name, its content); the dialog, the tablist and the tests of the structure do not change. A tab that has one section does not need a second one to exist. The first tab is General, with the language. Folders and Tools come as they are built, each with its own decision.
+- **There is no Save button.** A change is made as it is chosen and kept, as the other choices are (ADR 0014).
+- **The language is kept in its own file, `app-settings.json`, in the per-user data folder, not in `settings.json`.** The two have different owners: the conversion options are saved whole every time one changes and are put back by a reset, and the app's settings are neither. A damaged file loses one and not the other. The file is `{ "version": 1, "language": "system" }`. It is written the way `settings.json` is (a temporary file, then a rename; writes one after another; the app waits for them before it quits), and what it holds and what the window sends are checked against the same list of languages.
+- **The values are `system` and the languages the app has** (`en`, `pt-BR`; Japanese is one more entry when its catalog exists). `system` is where it starts: the language is the first of the system's preferred languages that the app has, matching the whole tag first and then the language alone (`pt-PT` gets `pt-BR`), and English when none matches. This is worked out once, in the main process, which tells the window the resolved language with the choice, so later text of the main process's own (a native dialog) reads the same answer. A value in the file that the app does not have, such as a language a newer version added, is read as `system`; a file that cannot be read at all gives the defaults and the window is told, in the words of the language in use.
+- **A language is named in itself**, in the list that is chosen from (English, Português (Brasil), 日本語), so a person who is in the wrong language can still find their own. The list shows only languages whose catalogs are complete.
+- **The window's text is in typed catalogs, not in a library.** One type describes every message, grouped by the part of the app it belongs to; a catalog is one object of that type for each language, so a missing message is a compile error and not a hole found by a person. A message with a value in it, or with a plural, is a function of its values that uses `Intl` (`PluralRules`, `ListFormat`, `NumberFormat`). A React context holds the language and a hook gives a component its catalog; the site already works this way (`website/src/i18n/strings.ts`). Once the text is extracted, a lint rule refuses literal text in the window's components. A library (i18next, FormatJS) would add a dependency and a runtime, string keys the compiler does not check, and message syntax and loading we do not need for three languages that ship inside the app; revisit if the languages pass five or translations come from people who do not edit code.
+- **What is the window's to translate comes in stages.** First the text the window writes itself (screens, buttons, labels, its own notices). Then the sentences that come from the main process, the application layer and the domain (notices, warnings, errors): they become a code with its values, which the window writes in the language in use. Until then they stay in English in every language, and the dialog says that books, titles and the tools' own messages are not translated. What a tool prints is always its own.
+- **The labels of controls are translated in the app.** The guide in Portuguese and Japanese names the controls in English because the app does; when the app has translations, the guides follow it, which is a separate decision (ADR 0051).
+
+## Consequences
+
+- A person can choose the language from anywhere, and a conversion in progress is not touched by it.
+- The place has room: a tab for the folder to process in, one for the tools, and so on, each with its own ADR where it changes what is guaranteed (ADR 0003 and ADR 0017 say that nothing is downloaded or updated at runtime, so a tool update from the app would amend them).
+- Two files of settings exist, and a new app-wide choice goes in `app-settings.json` and its schema, not in the conversion options.
+- Adding a language is a catalog, an entry in the list of languages, and its name in itself; the compiler and the tests of the catalogs say what is missing.
+- Until the sentences of the main process are coded, the app in Portuguese has some English in it, in notices and errors. That is said, and it is the order in which the work is done, not a place it stays.
+- The dialog adds one dependency, a Radix primitive that the design system already uses elsewhere.
