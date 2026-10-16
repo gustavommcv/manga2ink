@@ -198,6 +198,10 @@ describe('application startup', () => {
 
       expect(await screen.findByRole('button', { name: 'Configurações do app' })).toBeVisible();
       expect(document.documentElement.lang).toBe('pt-BR');
+      // The queue is in the language too, and so are the controls beside it.
+      expect(await screen.findByRole('heading', { name: 'Fila' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Arquivos' })).toBeVisible();
+      expect(screen.getByRole('combobox', { name: 'Dispositivo' })).toBeVisible();
     });
 
     it('says, in the notices, that what was kept could not be read', async () => {

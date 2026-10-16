@@ -36,6 +36,8 @@ describe('packaged app settings', () => {
     );
     assert.equal((await readKept(file)).version, 1);
     assert.equal(await $('html').getAttribute('lang'), 'pt-BR');
+    // The queue behind the dialog is in Portuguese too.
+    await $('h1=Fila').waitForDisplayed({ timeout: 15_000 });
 
     // Escape puts the dialog away, and the gear has the focus again.
     await browser.keys('Escape');
@@ -47,7 +49,7 @@ describe('packaged app settings', () => {
 
     // Opened again, as a launch does, the window is read in the kept language.
     await browser.refresh();
-    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    await $('h1=Fila').waitForDisplayed({ timeout: 30_000 });
     await $('button[aria-label="Configurações do app"]').waitForDisplayed({ timeout: 15_000 });
     assert.equal(await $('html').getAttribute('lang'), 'pt-BR');
 
@@ -56,6 +58,7 @@ describe('packaged app settings', () => {
     await $('[role="dialog"]').waitForDisplayed({ timeout: 15_000 });
     await $('[role="dialog"] select').selectByAttribute('value', 'system');
     await $('[role="dialog"]').$('h2=App settings').waitForDisplayed({ timeout: 15_000 });
+    await $('h1=Queue').waitForDisplayed({ timeout: 15_000 });
     await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
       timeout: 15_000,
       timeoutMsg: 'the app settings file did not go back to following the system',

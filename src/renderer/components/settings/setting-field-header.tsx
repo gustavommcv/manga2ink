@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import { Button } from '@/renderer/components/ui/button';
 import { Label } from '@/renderer/components/ui/label';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 /** A changed setting is recognizable by color and by its labeled, keyboard-accessible action. */
@@ -25,8 +26,9 @@ export function SettingFieldHeader({
   readonly resetsTo?: 'default' | 'queue';
 }): React.JSX.Element {
   const header = useRef<HTMLDivElement>(null);
+  const words = useMessages().settings.field;
   const resetLabel =
-    resetsTo === 'queue' ? `Use the queue’s value for ${label}` : `Restore default for ${label}`;
+    resetsTo === 'queue' ? words.useQueueValue(label) : words.restoreDefault(label);
   const labelClass = cn(
     'text-sm font-medium',
     disabled && 'text-muted-foreground',
@@ -47,7 +49,7 @@ export function SettingFieldHeader({
           {optional && (
             <>
               {' '}
-              <span className="text-subtle-foreground font-normal">(optional)</span>
+              <span className="text-subtle-foreground font-normal">{words.optional}</span>
             </>
           )}
         </Label>

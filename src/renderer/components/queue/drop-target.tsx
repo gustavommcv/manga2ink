@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/renderer/components/ui/dropdown-menu';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 export interface DropTargetProps {
@@ -36,6 +37,7 @@ export function DropTarget({
   onAddFolders,
   onDropFiles,
 }: DropTargetProps): React.JSX.Element {
+  const words = useMessages().queue.drop;
   // A counter, not a flag: dragging across the target's children fires enter and leave repeatedly.
   const [depth, setDepth] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -109,26 +111,21 @@ export function DropTarget({
             type="button"
           >
             <Upload aria-hidden="true" className="size-4 shrink-0" />
-            {over
-              ? 'Release to add them'
-              : empty
-                ? 'Drop manga folders, libraries or .cbz files here, or click to choose.'
-                : 'Drop files or folders here, or click to choose.'}
+            {over ? words.release : empty ? words.invitation : words.more}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="center">
           <DropdownMenuItem onSelect={onAddFiles}>
-            <FilePlus2 /> Choose files
+            <FilePlus2 /> {words.chooseFiles}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={onAddFolders}>
-            <FolderPlus /> Choose a folder
+            <FolderPlus /> {words.chooseFolder}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       {empty && !over && (
         <p className="text-subtle-foreground mt-1 max-w-sm text-center text-xs text-balance">
-          Folders group chapters into volumes automatically. A single CBZ becomes one volume; for
-          separate chapter CBZs, add their folder.
+          {words.note}
         </p>
       )}
     </div>

@@ -21,6 +21,7 @@ import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
+import { useLanguage, useMessages } from '@/renderer/hooks/use-messages';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
@@ -78,9 +79,6 @@ const formatOptions = [
   { value: 'pdf', label: 'PDF' },
 ] as const;
 
-const plural = (count: number, word: string): string =>
-  `${String(count)} ${word}${count === 1 ? '' : 's'}`;
-
 /** A queue of one kind only limits the steps to what that kind allows; a mixed one does not. */
 function stepsInput(rows: readonly QueueRow[]): 'folder' | 'cbz' | 'library' {
   const kind = rows[0]?.kind;
@@ -122,6 +120,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     singleBook,
     validating,
   } = props;
+  const words = useMessages().queue;
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     titleRef.current?.focus();
@@ -131,13 +130,13 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const canRun = !disabled && summary.inspecting === 0 && summary.runnable > 0;
   const hint =
     summary.inspecting > 0
-      ? `Reading ${plural(summary.inspecting, 'item')}…`
+      ? words.run.reading(summary.inspecting)
       : summary.total === 0
         ? undefined
         : summary.runnable === 0
-          ? 'Nothing here can run yet.'
+          ? words.run.nothingRuns
           : summary.skipped > 0
-            ? `${plural(summary.skipped, 'item')} will be left out. Use the pencil on a row to fix it.`
+            ? words.run.leftOut(summary.skipped)
             : undefined;
   const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
   const singleBookActive = singleBook && !onlyCbz;
@@ -155,21 +154,21 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             ref={titleRef}
             tabIndex={-1}
           >
-            Queue
+            {words.title}
           </h1>
           <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs">
             {String(rows.length)}
           </span>
           <span className="flex-1" />
           <Button disabled={disabled} onClick={onAddFiles} size="sm" variant="outline">
-            <FilePlus2 /> Files
+            <FilePlus2 /> {words.files}
           </Button>
           <Button disabled={disabled} onClick={onAddFolders} size="sm" variant="outline">
-            <FolderPlus /> Folder
+            <FolderPlus /> {words.folder}
           </Button>
           {rows.length > 0 && (
             <Button onClick={onClear} size="sm" variant="ghost">
-              Clear
+              {words.clear}
             </Button>
           )}
         </div>
@@ -182,7 +181,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           onDropFiles={onDropFiles}
         >
           {rows.length > 0 && (
-            <ul aria-label="Queued items" className="space-y-0.5">
+            <ul aria-label={words.items} className="space-y-0.5">
               {rows.map((row) => (
                 <QueueRowItem
                   key={row.id}
@@ -214,12 +213,13 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             <ul className="min-w-0 flex-1 space-y-1 text-xs">
               {rejected.map((item, index) => (
                 <li key={`${item.name}-${String(index)}`}>
-                  <span className="font-medium">{item.name}</span> was not added. {item.reason}
+                  <span className="font-medium">{item.name}</span> {words.rejected.wasNotAdded}{' '}
+                  {item.reason}
                 </li>
               ))}
             </ul>
             <Button
-              aria-label="Dismiss this message"
+              aria-label={words.rejected.dismiss}
               onClick={onDismissRejected}
               size="icon"
               variant="ghost"
@@ -232,10 +232,10 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         {plans !== undefined && plans.length > 0 && <PlansPanel plans={plans} />}
         {pendingRuns !== undefined && pendingRuns.length > 0 && onOpenPending !== undefined && (
           <section
-            aria-label="Earlier books"
+            aria-label={words.pending.earlierBooks}
             className="border-border bg-surface rounded-xl border p-4"
           >
-            <h2 className="text-sm font-medium">Ready books</h2>
+            <h2 className="text-sm font-medium">{words.pending.readyBooks}</h2>
             <ul className="mt-2 space-y-1">
               {pendingRuns.map((run) => {
                 return (
@@ -261,7 +261,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
       </div>
 
       <aside
-        aria-label="Conversion options"
+        aria-label={words.panel.label}
         className="border-border bg-surface h-fit space-y-5 rounded-xl border p-5"
       >
         <ProcessSteps
@@ -288,7 +288,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
               changed={singleBook}
               disabled={disabled || (onlyCbz && !singleBook)}
               id="combine-into-one-volume"
-              label="Create one book for the series"
+              label={words.panel.singleBook.label}
               onReset={() => {
                 onSingleBook(false);
               }}
@@ -299,9 +299,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             >
               {onlyCbz
                 ? singleBook
-                  ? 'Saved for manga folders. A standalone CBZ is already one book.'
-                  : 'Not available for standalone .cbz files.'
-                : 'Produces a single EPUB with volumes and chapters in the table of contents.'}
+                  ? words.panel.singleBook.saved
+                  : words.panel.singleBook.unavailable
+                : words.panel.singleBook.produces}
             </p>
           </div>
         </div>
@@ -311,7 +311,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
             disabled={!mangapressRuns || profiles.length === 0}
             id="queue-device"
-            label="Device"
+            label={words.panel.device}
             onReset={() => {
               onDeviceProfile(defaultMangapressSettings.deviceProfile);
             }}
@@ -336,7 +336,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           <SettingFieldHeader
             changed={format !== defaultFormat}
             disabled={!mangapressRuns || singleBookActive}
-            label="Format"
+            label={words.panel.format}
             onReset={() => {
               if (!singleBookActive) {
                 onFormat(defaultFormat);
@@ -345,7 +345,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           />
           <SegmentedControl
             disabled={!mangapressRuns || singleBookActive}
-            label="Format"
+            label={words.panel.format}
             onChange={onFormat}
             options={formatOptions}
             value={format}
@@ -361,7 +361,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             onClick={onOpenOptions}
             type="button"
           >
-            Advanced conversion options
+            {words.panel.advanced}
             <ChevronRight aria-hidden="true" className="size-4" />
           </button>
         )}
@@ -372,13 +372,13 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
               mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
             }
             onReset={onReset}
-            scope="the steps, device, format and every mangapress option"
+            scope="queue"
           />
         </div>
 
         <div className="space-y-2">
           <Button className="w-full" disabled={!canRun} onClick={onConvert} size="lg">
-            {summary.runnable === 0 ? 'Process' : `Process ${plural(summary.runnable, 'item')}`}
+            {words.run.process(summary.runnable)}
           </Button>
           <Button
             className="w-full"
@@ -391,7 +391,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             ) : (
               <CheckCircle2 />
             )}
-            {validating ? 'Validating…' : 'Validate plan'}
+            {validating ? words.run.validating : words.run.validate}
           </Button>
           {hint !== undefined && (
             <p aria-live="polite" className="text-muted-foreground text-xs">
@@ -413,14 +413,15 @@ function PendingRunItem({
   readonly onOpen: (libraryId: string) => void;
   readonly run: PendingRunSummary;
 }): React.JSX.Element {
+  const words = useMessages().queue.pending;
+  const language = useLanguage();
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const deleteTrigger = useRef<HTMLButtonElement>(null);
   const question = useFocusOnOpen<HTMLDivElement>(confirming && onDelete !== undefined);
-  const firstBook = run.artifacts[0]?.name ?? 'Earlier conversion';
+  const firstBook = run.artifacts[0]?.name ?? words.earlierConversion;
   const remaining = run.artifacts.length - 1;
-  const description =
-    remaining > 0 ? `${firstBook} and ${plural(remaining, 'more book')}` : firstBook;
+  const description = remaining > 0 ? words.andMore(firstBook, remaining) : firstBook;
   const close = (): void => {
     setConfirming(false);
     deleteTrigger.current?.focus();
@@ -434,24 +435,24 @@ function PendingRunItem({
             {description}
           </p>
           <p className="text-muted-foreground text-xs">
-            {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(
+            {new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(
               run.createdAt,
             )}
           </p>
         </div>
         <Button
-          aria-label={`View books from ${firstBook}`}
+          aria-label={words.viewBooksFrom(firstBook)}
           onClick={() => {
             onOpen(run.libraryId);
           }}
           size="sm"
           variant="outline"
         >
-          View books
+          {words.viewBooks}
         </Button>
         {onDelete !== undefined && (
           <Button
-            aria-label={`Delete pending books from ${firstBook}`}
+            aria-label={words.deleteFrom(firstBook)}
             aria-expanded={confirming}
             className="hover:text-destructive"
             onClick={() => {
@@ -461,13 +462,13 @@ function PendingRunItem({
             size="sm"
             variant="ghost"
           >
-            <Trash2 aria-hidden="true" /> Delete
+            <Trash2 aria-hidden="true" /> {words.delete}
           </Button>
         )}
       </div>
       {confirming && onDelete !== undefined && (
         <div
-          aria-label={`Confirm deletion of ${firstBook}`}
+          aria-label={words.confirmDeletion(firstBook)}
           className="border-border bg-background focus-visible:ring-ring focus-visible:ring-offset-background space-y-2 rounded-lg border p-3 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           onKeyDown={(event) => {
             if (event.key === 'Escape' && !deleting) close();
@@ -477,8 +478,7 @@ function PendingRunItem({
           tabIndex={-1}
         >
           <p className="text-muted-foreground text-xs leading-relaxed">
-            Permanently delete this conversion's {plural(run.artifacts.length, 'pending book')}?
-            Books saved elsewhere will stay untouched.
+            {words.question(run.artifacts.length)}
           </p>
           <div className="flex gap-2">
             <Button
@@ -496,10 +496,10 @@ function PendingRunItem({
               size="sm"
               variant="destructive"
             >
-              {deleting ? 'Deleting…' : 'Delete books'}
+              {deleting ? words.deleting : words.deleteBooks}
             </Button>
             <Button disabled={deleting} onClick={close} size="sm" variant="outline">
-              Cancel
+              {words.cancel}
             </Button>
           </div>
         </div>
@@ -509,6 +509,7 @@ function PendingRunItem({
 }
 
 function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JSX.Element {
+  const words = useMessages().queue.plans;
   return (
     <section
       aria-labelledby="plans-title"
@@ -517,10 +518,10 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
       <div className="flex items-center gap-2">
         <CheckCircle2 aria-hidden="true" className="text-accent size-5" />
         <h2 className="font-semibold" id="plans-title">
-          Plan validated
+          {words.validated}
         </h2>
       </div>
-      <p className="text-muted-foreground text-xs">No library files were written.</p>
+      <p className="text-muted-foreground text-xs">{words.nothingWritten}</p>
       {plans.map(({ name, plan }) => (
         <div key={name}>
           <h3 className="text-sm font-medium">{name}</h3>
@@ -530,7 +531,7 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
               <li className="flex justify-between gap-4" key={book.name}>
                 <span className="truncate">{book.name}</span>
                 <span className="text-muted-foreground shrink-0">
-                  {plural(book.pageCount, 'page')}
+                  {words.pages(book.pageCount)}
                 </span>
               </li>
             ))}

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Notices } from '@/renderer/components/shared/notices';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 
-const scope = 'the device and every option';
+const scope = 'options';
 
 describe('ResetOptions', () => {
   it('stays in place, dimmed and explained, when nothing differs from the defaults', async () => {
@@ -37,7 +37,9 @@ describe('ResetOptions', () => {
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     const confirm = screen.getByRole('group', { name: 'Confirm reset' });
     expect(trigger).toHaveAttribute('aria-controls', confirm.id);
-    expect(confirm).toHaveTextContent(`Put ${scope} back to their defaults?`);
+    expect(confirm).toHaveTextContent(
+      'Put the device, format and every mangapress option back to their defaults?',
+    );
   });
 
   it('takes keyboard focus when the question opens, so it is read out and its buttons are next', async () => {
