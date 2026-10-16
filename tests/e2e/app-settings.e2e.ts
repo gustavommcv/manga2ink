@@ -40,10 +40,9 @@ describe('packaged app settings', () => {
     // Escape puts the dialog away, and the gear has the focus again.
     await browser.keys('Escape');
     await dialog.waitForExist({ reverse: true, timeout: 15_000 });
-    assert.equal(
-      await $('button[aria-label="Configurações do app"]').isFocused(),
-      true,
-      'the gear should get the focus back',
+    await browser.waitUntil(
+      async () => await $('button[aria-label="Configurações do app"]').isFocused(),
+      { timeout: 15_000, timeoutMsg: 'the gear should get the focus back' },
     );
 
     // Opened again, as a launch does, the window is read in the kept language.
