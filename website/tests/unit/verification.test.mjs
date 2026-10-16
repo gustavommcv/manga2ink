@@ -338,6 +338,23 @@ test('a page whose social preview card is missing, or is another file, fails', (
   ]);
 });
 
+test('a box for a capture still to be taken cannot reach a published page', () => {
+  const result = auditSearchData(
+    [
+      page(
+        'index.html',
+        indexed('', {
+          body: '<h1>T</h1><figure data-pending-image="koreader/crop-none"></figure>',
+        }),
+      ),
+    ],
+    options,
+  );
+  assert.deepEqual(result.errors, [
+    { source: 'index.html', reason: 'A box for a missing capture is in the page' },
+  ]);
+});
+
 test('descriptions are required but have no arbitrary character-count gate', () => {
   for (const text of ['Short summary.', 'A complete summary. '.repeat(20)]) {
     assert.deepEqual(

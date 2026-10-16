@@ -166,6 +166,9 @@ export function auditSearchData(pages, { site, base, languages = siteLanguages }
     if ($('meta[property="og:image"]').attr('content') !== card)
       fail(`Social preview image is not ${card}`);
 
+    // A box that stands for a capture still to be taken belongs to the development server alone.
+    if ($('[data-pending-image]').length > 0) fail('A box for a missing capture is in the page');
+
     const headings = $('h1').length;
     if (headings !== 1) fail(`Expected one h1, found ${headings}`);
 
