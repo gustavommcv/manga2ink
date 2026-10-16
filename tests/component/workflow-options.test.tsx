@@ -488,7 +488,10 @@ describe('the options kept between sessions', () => {
     const singleBookCheckbox = screen.getByRole('checkbox', {
       name: 'Create one book for the series',
     });
-    expect(singleBookCheckbox).toBeChecked();
+    // What was kept arrives a moment after the page does, so the page is first drawn with the defaults.
+    await waitFor(() => {
+      expect(singleBookCheckbox).toBeChecked();
+    });
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
     expect(screen.getByRole('radio', { name: 'EPUB' })).toBeDisabled();

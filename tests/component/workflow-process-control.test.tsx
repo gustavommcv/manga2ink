@@ -12,6 +12,7 @@ import {
   bridge,
   cbz,
   chapters,
+  chooseToAdd,
   deferred,
   expectNoOutputFolderPicker,
   folder,
@@ -141,7 +142,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Folder' }));
+    await chooseToAdd(user, 'Folder');
     await waitFor(() => {
       expect(screen.queryByText('Checking…')).not.toBeInTheDocument();
     });
@@ -384,7 +385,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
@@ -448,7 +449,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
@@ -509,7 +510,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });

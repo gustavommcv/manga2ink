@@ -24,8 +24,10 @@ import {
   bridge,
   cbz,
   chapters,
+  chooseToAdd,
   deferred,
   expectNoOutputFolderPicker,
+  findReadyDropTarget,
   folder,
   inspection,
   installBridge,
@@ -784,7 +786,7 @@ describe('queue application workflow', () => {
     );
     render(<App />);
 
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
@@ -835,7 +837,7 @@ describe('queue application workflow', () => {
     );
     render(<App />);
 
-    await user.click(await screen.findByRole('button', { name: 'Folder' }));
+    await chooseToAdd(user, 'Folder');
 
     expect(screen.getByRole('alert', { name: 'Workflow error' })).toHaveTextContent(
       'Couldn’t read the selected folder.',
@@ -936,7 +938,7 @@ describe('queue application workflow', () => {
     );
     render(<App />);
 
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
 
     expect(await screen.findByText(/was not added\. Only folders and \.cbz files/u)).toBeVisible();
     expect(screen.getByText('notes.txt')).toBeVisible();
@@ -977,7 +979,7 @@ describe('queue application workflow', () => {
     installBridge(bridge({ inspectInput: () => reading.promise, releaseInput }));
     render(<App />);
 
-    await user.click(await screen.findByRole('button', { name: 'Folder' }));
+    await chooseToAdd(user, 'Folder');
     expect(await screen.findByText('Checking…')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Remove Offline Work' }));
     expect(releaseInput).not.toHaveBeenCalled();
@@ -1031,7 +1033,7 @@ describe('queue application workflow', () => {
     );
     installBridge(bridge({ registerDroppedFiles }));
     render(<App />);
-    const target = await screen.findByTestId('drop-target');
+    const target = await findReadyDropTarget();
     const dropped = new File(['x'], 'Dropped Work');
 
     // Dragging text or anything that is not a file does not light the target up.
@@ -1102,7 +1104,7 @@ describe('queue application workflow', () => {
     );
     render(<App />);
 
-    fireEvent.drop(await screen.findByTestId('drop-target'), {
+    fireEvent.drop(await findReadyDropTarget(), {
       dataTransfer: { types: ['Files'], files: [new File(['x'], 'Work')] },
     });
 
