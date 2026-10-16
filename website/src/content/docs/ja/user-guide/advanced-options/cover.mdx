@@ -1,0 +1,99 @@
+---
+title: '表紙（Cover）'
+description: 'Cut the front cover from a wide image と Crop the cover to fill the screen が本の表紙に何をするかを、ページと幅の広い画像で示し、どの形式に表紙があるかを説明します。'
+---
+
+import OptionBook from '../../../../../components/OptionBook.astro';
+import OptionExample from '../../../../../components/OptionExample.astro';
+
+[Advanced conversion options](../../output-profiles/#advanced-conversion-options) の **Cover** セクションは、リーダーがライブラリに表示する表紙についてのものです。既定では、各本の最初の画像から作られます。コントロールは 2 つあり、**Cut the front cover from a wide image** と **Crop the cover to fill the screen** です。本に独自の表紙を与えることもできます。[マンガを追加する](../../adding-manga/#a-cover-of-your-own)を参照してください。
+
+## 表紙の作られ方
+
+表紙はページではありません。mangapress は、ページとは別に、本の最初の画像を、届いたままの状態から表紙にします。最初のページに何が起きても、たとえば余白がクロップされても、幅の広いページが 2 つに分割されても、ページが回転しても、表紙は画像全体で、向きは正しいままです。表紙は、**Color pages** が色を保つ場合を除いてグレーで、拡大されることはなく、画面に収まるように縮小されるだけで、ページと同じ品質の JPEG として保存されます。
+
+画像は、_Pepper&Carrot_ の第 6 話の最初のページ（992 × 1373 ピクセル）から作った EPUB の表紙を、1272 × 1696 の Kindle Paperwhite 6 の画面に表示したものです。グレーは、表紙のまわりの画面です。
+
+<OptionExample
+  id="cover-fit-fill"
+  alt={{
+    fit: 'この話の最初のページがグレーで、画面の中央にあり、四方にグレーが見えています。',
+    fill: '同じページが、画面全体を覆うように拡大してクロップされていて、まわりにグレーはありません。',
+    color: '同じページがカラーで、1 枚目と同じ小ささのまま、画面の中央にあります。',
+  }}
+/>
+
+1 枚目は、作られたままの表紙です。画像はすでに画面に収まるので、画像のサイズのままで、そのまわりに画面があります。同じ本の最初のページは、画面に合わせて拡大された 1225 × 1696 です。表紙はそのページではありません。
+
+## 表紙がある形式
+
+EPUB には必ずあります。CBZ にあるのは、幅の広い画像から表表紙を切り出したときか、自分で表紙を選んだときだけで、その場合は、ページの前に `##cover.jpg` というファイルとして保存されます。PDF にはありません。表は、Kindle Paperwhite 6 向けに変換した本から読み戻したものです。幅の広い画像の行は、_Go Go! Encyclopedia Girls_ の 2 ページを横に並べた 2160 × 1440 ピクセルを使い、独自の表紙の行は、_Pepper&Carrot_ の第 1 話の最初のページを使っています。
+
+<OptionBook
+  id="cover-formats"
+  labels={{
+    epub: 'EPUB',
+    'epub-fill': 'EPUB, Crop the cover to fill the screen: On',
+    'epub-color': 'EPUB, Color pages: Keep in color',
+    cbz: 'CBZ',
+    'cbz-fill': 'CBZ, Crop the cover to fill the screen: On',
+    'cbz-smart-page': 'CBZ, Cut the front cover from a wide image: On、ページに対して',
+    'cbz-smart-wide': 'CBZ, Cut the front cover from a wide image: On、幅の広い画像に対して',
+    'cbz-smart-fill':
+      'CBZ, Cut the front cover from a wide image: On, Crop the cover to fill the screen: On',
+    'cbz-own': 'CBZ、独自の表紙',
+    'cbz-own-fill': 'CBZ、独自の表紙、Crop the cover to fill the screen: On',
+    'pdf-own': 'PDF、独自の表紙',
+    'pdf-smart-wide': 'PDF, Cut the front cover from a wide image: On、幅の広い画像に対して',
+  }}
+/>
+
+- **CBZ は、自分では表紙を作りません。** 何もオンにしていないとき、**Crop the cover to fill the screen** のとき、幅の広くない画像に **Cut the front cover from a wide image** を使ったときは、CBZ に表紙はなく、見せられるのは最初のページだけです。
+- **独自の表紙は、オプションにかかわらず CBZ に保存されます。** そして、2 つのオプションはどちらもそれに適用されます。`--cover` のある行は、ほかの行と同じサイズです。アプリは、本の表紙を選んだときに `--cover` を渡します。
+- **PDF に表紙が付くことはありません。** どのオプションでも、独自の表紙でも同じです。PDF は 1 ページに 1 枚の画像を持つだけで、それ以外は持ちません。
+
+## Crop the cover to fill the screen
+
+既定では、表紙は画面の内側に収まるように調整され、形が違うときは、まわりに画面が見えます。小さい表紙は拡大されません。これをオンにすると、代わりに画面とまったく同じサイズにクロップされ、小さい表紙は、そのサイズまで拡大されます。この話の最初のページ（992 × 1373）は、上の 2 枚目の画像で 1272 × 1696 の表紙になり、収まらない縁は切り落とされます。`--coverfill` でオンになります。
+
+これが意味を持つのは、表紙のある本だけです。EPUB、独自の表紙のある CBZ、または幅の広い画像から切り出した表紙のある CBZ です。アプリは、PDF では薄く表示し、CBZ では、表表紙を幅の広い画像から切り出す場合を除いて薄く表示します。アプリが見るのは設定だけで、本に選んだ表紙は見ません。そのため、独自の表紙のある CBZ では、mangapress は適用するのに、オプションは薄く表示されます。独自の表紙の行が示すとおりです。
+
+## Cut the front cover from a wide image
+
+最初の画像が、カバー全体や見開きになっている場合、表表紙はその一部にあります。このオプションは、画像全体を使う代わりに、その部分を表紙として切り出します。`--smartcovercrop` でオンになります。
+
+例にはカバーがないので、見開きで代用します。_Go Go! Encyclopedia Girls_ の 2 ページを横に並べ、あとのページが左にあります。右から左へ読む本の表は、そこにあるからです。1 枚目は、届いたままの画像で、2160 × 1440 ピクセルです。ほかは、そこから作った表紙です。
+
+<OptionExample
+  id="cover-smart-crop"
+  alt={{
+    source: '2 つのマンガのページが横に並んでいて、あとのページが左にあります。',
+    whole: '画像全体が画面の幅に縮小されていて、上下にグレーのある、背の低い表紙になっています。',
+    smart: '左のページだけが、縦長の表紙として画面の中央にあり、左右にグレーがあります。',
+    'other-side': '右のページだけが、縦長の表紙として画面の中央にあり、左右にグレーがあります。',
+    fill: '左のページが、画面全体を覆うように拡大してクロップされています。',
+  }}
+/>
+
+- **Off** では、画像全体が表紙です。幅が高さより大きいので、画面の幅に縮小され、1272 × 848 ピクセルになります。
+- **On** にすると、表紙は左のページで、1015 × 1440 ピクセルです。画像の幅の 47% と、高さのすべてです。
+- **On** で **Manga reading order** がオフなら、右のページです。読む順序は、表が背のどちら側にあるかを決めます。オンなら、右から左へ読む本では、表は左にあります。
+- **On** で **Crop the cover to fill the screen** もオンなら、同じページが拡大され、画面に合わせてクロップされて、1272 × 1696 になります。
+
+### 画像のどれだけが使われるか
+
+mangapress は、画像の形から、ただの見開きから、そで付きのカバーまでの帯に分けて決めます。これらは Kindle Comic Converter の帯で、mangapress はそれに従っています。幅が高さ以下の画像は、すでに表紙なので、そのまま残ります。表は、同じ 3 ページから、各帯の画像を 1 枚ずつ、Manga reading order をオンにして切り出したものです。表紙の幅は、画像のうち使われた割合です。
+
+<OptionBook
+  id="cover-smart-bands"
+  labels={{
+    'ratio-0.75': '幅が高さの 0.75 倍の画像',
+    'ratio-1.2': '幅が高さの 1.2 倍の画像',
+    'ratio-1.5': '幅が高さの 1.5 倍の画像',
+    'ratio-1.75': '幅が高さの 1.75 倍の画像',
+    'ratio-1.9': '幅が高さの 1.9 倍の画像',
+    'ratio-2.2': '幅が高さの 2.2 倍の画像',
+  }}
+/>
+
+帯は、画像の幅を高さで割った値で決まります。1 まではその画像全体、1 を超えて 1.34 までは 64%、1.34 を超えて 1.7 までは 47%、1.7 を超えて 1.83 までは 38%、1.83 を超えて 2 までは 38.5%、2 を超えると 31% です。上の行は、各帯の画像を 1 枚ずつ示し、その割合を表しています。1728 ピクセル中の 1106、2160 中の 1015、2520 中の 965、2736 中の 1053、3168 中の 993 です。
