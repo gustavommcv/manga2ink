@@ -11,6 +11,7 @@ export const projectLinks = [
   'guide',
   'repository',
   'issues',
+  'release-notes',
   'license',
   'third-party-notices',
   'support',

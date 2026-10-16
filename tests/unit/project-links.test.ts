@@ -8,12 +8,13 @@ import { projectLinkAddress, supportAddress } from '@/main/project-links';
 import { projectLinks } from '@/shared/project-links-contract';
 
 const root = path.resolve(import.meta.dirname, '../..');
+const version = '0.1.0-alpha.15';
 
 describe('the addresses the About tab can open', () => {
   it.each(languages.flatMap((language) => projectLinks.map((link) => [link, language] as const)))(
     '%s in %s is a plain https address',
     (link, language) => {
-      const address = new URL(projectLinkAddress(link, language));
+      const address = new URL(projectLinkAddress(link, language, version));
 
       expect(address.protocol).toBe('https:');
       expect(address.username).toBe('');
@@ -22,32 +23,54 @@ describe('the addresses the About tab can open', () => {
   );
 
   it('are the ones a person expects', () => {
-    expect(projectLinkAddress('repository', 'en')).toBe(
+    expect(projectLinkAddress('repository', 'en', version)).toBe(
       'https://github.com/gustavommcv/mangabound',
     );
-    expect(projectLinkAddress('issues', 'en')).toBe(
+    expect(projectLinkAddress('issues', 'en', version)).toBe(
       'https://github.com/gustavommcv/mangabound/issues',
     );
-    expect(projectLinkAddress('license', 'en')).toBe(
+    expect(projectLinkAddress('license', 'en', version)).toBe(
       'https://github.com/gustavommcv/mangabound/blob/main/LICENSE',
     );
-    expect(projectLinkAddress('third-party-notices', 'en')).toBe(
+    expect(projectLinkAddress('third-party-notices', 'en', version)).toBe(
       'https://github.com/gustavommcv/mangabound/blob/main/THIRD-PARTY-NOTICES.md',
     );
-    expect(projectLinkAddress('mangadex', 'en')).toBe('https://mangadex.org/');
-    expect(projectLinkAddress('support', 'en')).toBe(supportAddress);
+    expect(projectLinkAddress('mangadex', 'en', version)).toBe('https://mangadex.org/');
+    expect(projectLinkAddress('support', 'en', version)).toBe(supportAddress);
+  });
+
+  it('send the release notes to the page of the version that is running, whatever the language', () => {
+    expect(projectLinkAddress('release-notes', 'en', '0.1.0-alpha.15')).toBe(
+      'https://github.com/gustavommcv/mangabound/releases/tag/v0.1.0-alpha.15',
+    );
+    expect(projectLinkAddress('release-notes', 'pt-BR', '1.2.3')).toBe(
+      'https://github.com/gustavommcv/mangabound/releases/tag/v1.2.3',
+    );
+  });
+
+  it('keeps a version that is not plain from changing where the address goes', () => {
+    const address = new URL(projectLinkAddress('release-notes', 'en', '1.0/../../issues?x=1#y'));
+
+    expect(address.origin).toBe('https://github.com');
+    expect(address.pathname.startsWith('/gustavommcv/mangabound/releases/tag/v')).toBe(true);
+    expect(address.search).toBe('');
+    expect(address.hash).toBe('');
   });
 
   it('send the guide to the site in the language of the window', () => {
-    expect(projectLinkAddress('guide', 'en')).toBe('https://gustavommcv.github.io/mangabound/');
-    expect(projectLinkAddress('guide', 'pt-BR')).toBe(
+    expect(projectLinkAddress('guide', 'en', version)).toBe(
+      'https://gustavommcv.github.io/mangabound/',
+    );
+    expect(projectLinkAddress('guide', 'pt-BR', version)).toBe(
       'https://gustavommcv.github.io/mangabound/pt-br/',
     );
   });
 
   it('leave everything else the same whatever the language of the window', () => {
     for (const link of projectLinks.filter((name) => name !== 'guide')) {
-      expect(projectLinkAddress(link, 'pt-BR'), link).toBe(projectLinkAddress(link, 'en'));
+      expect(projectLinkAddress(link, 'pt-BR', version), link).toBe(
+        projectLinkAddress(link, 'en', version),
+      );
     }
   });
 });

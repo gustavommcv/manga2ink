@@ -10,6 +10,18 @@ import { AppSettingsMenu } from './app-settings-menu';
 import type { AppSettingsTab } from './app-settings-tabs';
 import { message, raw } from '@/domain/message';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
+import type { ToolchainStatus } from '@/shared/toolchain-status';
+
+/** The tools the app ships, as they were checked at launch. */
+const bundledTools: ToolchainStatus = {
+  state: 'ready',
+  target: 'linux-x64',
+  message: 'Bundled conversion tools are verified and ready.',
+  tools: [
+    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
+    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: 'Ready.' },
+  ],
+};
 
 /** Where the app works when nobody has chosen a folder, and when one has been. */
 const ownPlaces: ProcessingFolderStatus = {
@@ -47,6 +59,7 @@ function bridgeFor(
     saveAppSettings: keeps,
     openProjectLink: opens,
     runtime: { electron: '44.3.0', platform: 'win32', version: '0.1.0-alpha.15' },
+    getToolchainStatus: () => Promise.resolve(bundledTools),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
@@ -201,6 +214,9 @@ export const About: Story = {
 
     const panel = within(dialog).getByRole('tabpanel', { name: 'About' });
     await expect(panel).toHaveTextContent('Version 0.1.0-alpha.15');
+    await expect(await within(panel).findByText('mangabind')).toBeVisible();
+    await expect(within(panel).getByText(/v0\.8\.0/u)).toBeVisible();
+    await expect(within(panel).getByRole('button', { name: 'Release notes' })).toBeVisible();
     await expect(within(panel).getByRole('button', { name: 'Support the project' })).toBeVisible();
     await expect(within(panel).getByRole('button', { name: 'User guide' })).toBeVisible();
   },

@@ -1,17 +1,30 @@
 import { ExternalLink, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import mark from '@/renderer/assets/mark-192.webp';
 import { Button } from '@/renderer/components/ui/button';
 import { useAppInfo } from '@/renderer/hooks/use-app-info';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { ProjectLink } from '@/shared/project-links-contract';
+import type { ToolchainStatus } from '@/shared/toolchain-status';
 
 /** What the app says about itself (ADR 0054): what it is, who it is by, and where to go from here. */
 export function AboutTab(): React.JSX.Element {
   const { about: words } = useMessages();
-  const { openLink, version } = useAppInfo();
+  const { openLink, tools, version } = useAppInfo();
   const [failed, setFailed] = useState(false);
+  // `null` while the main process is asked, `undefined` when it does not say.
+  const [toolchain, setToolchain] = useState<ToolchainStatus | null | undefined>(null);
+
+  useEffect(() => {
+    let reading = true;
+    void tools().then((status) => {
+      if (reading) setToolchain(status);
+    });
+    return () => {
+      reading = false;
+    };
+  }, [tools]);
 
   const open = (link: ProjectLink): void => {
     void openLink(link).then((opened) => {
@@ -44,8 +57,13 @@ export function AboutTab(): React.JSX.Element {
         <div className="flex flex-wrap gap-2">
           <LinkButton label={words.learnMore.guide} link="guide" open={open} />
           <LinkButton label={words.learnMore.repository} link="repository" open={open} />
+          <LinkButton label={words.learnMore.releaseNotes} link="release-notes" open={open} />
           <LinkButton label={words.learnMore.issues} link="issues" open={open} />
         </div>
+      </Section>
+
+      <Section title={words.tools.title}>
+        <ToolVersions status={toolchain} />
       </Section>
 
       <Section title={words.support.title}>
@@ -86,6 +104,38 @@ export function AboutTab(): React.JSX.Element {
         {failed && <p className="text-status-failed text-xs">{words.openFailed}</p>}
       </div>
     </div>
+  );
+}
+
+/** What the bundled tools are and whether they passed the check made at launch. */
+function ToolVersions({
+  status,
+}: {
+  readonly status: ToolchainStatus | null | undefined;
+}): React.JSX.Element {
+  const { about: words } = useMessages();
+  if (status === null)
+    return <p className="text-muted-foreground text-xs">{words.tools.reading}</p>;
+  if (status === undefined) {
+    return <p className="text-muted-foreground text-xs">{words.tools.unknown}</p>;
+  }
+  if (status.tools.length === 0) {
+    return <p className="text-status-failed text-xs">{words.tools.blocked}</p>;
+  }
+  return (
+    <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 gap-y-1.5 text-sm">
+      {status.tools.map((tool) => (
+        <Fragment key={tool.name}>
+          <dt className="font-mono text-xs">{tool.name}</dt>
+          <dd className={tool.state === 'ready' ? '' : 'text-status-failed'}>
+            v{tool.releaseTag.replace(/^v/u, '')}{' '}
+            <span className="text-muted-foreground text-xs">
+              · {tool.state === 'ready' ? words.tools.verified : words.tools.failed}
+            </span>
+          </dd>
+        </Fragment>
+      ))}
+    </dl>
   );
 }
 

@@ -18,6 +18,7 @@ vi.mock('electron', () => ({
     },
   },
   shell: { openExternal: electron.openExternal },
+  app: { getVersion: () => '0.1.0-alpha.15' },
 }));
 
 const mainFrame = {};
@@ -82,6 +83,14 @@ describe('opening a place', () => {
 
     expect(electron.openExternal).toHaveBeenCalledExactlyOnceWith(
       'https://gustavommcv.github.io/mangabound/pt-br/',
+    );
+  });
+
+  it('opens the release notes of the version that is running', async () => {
+    await call({ link: 'release-notes', language: 'pt-BR' });
+
+    expect(electron.openExternal).toHaveBeenCalledExactlyOnceWith(
+      'https://github.com/gustavommcv/mangabound/releases/tag/v0.1.0-alpha.15',
     );
   });
 

@@ -54,6 +54,13 @@ export function AppSettingsProvider({
           return false;
         }
       },
+      tools: async () => {
+        try {
+          return await bridge.getToolchainStatus();
+        } catch {
+          return undefined;
+        }
+      },
     }),
     [bridge, language],
   );

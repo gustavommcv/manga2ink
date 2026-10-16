@@ -11,6 +11,20 @@ export interface AboutMessages {
     readonly guide: string;
     readonly repository: string;
     readonly issues: string;
+    /** The notes of the release that is running. */
+    readonly releaseNotes: string;
+  };
+  readonly tools: {
+    readonly title: string;
+    /** Said after the version of a tool that passed the check made at launch. */
+    readonly verified: string;
+    /** Said after the version of a tool that did not. */
+    readonly failed: string;
+    /** Said when none of the tools could be checked. */
+    readonly blocked: string;
+    readonly reading: string;
+    /** Said when the main process does not say what the tools are. */
+    readonly unknown: string;
   };
   readonly support: {
     readonly title: string;
@@ -45,6 +59,15 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       guide: 'User guide',
       repository: 'GitHub',
       issues: 'Report a problem',
+      releaseNotes: 'Release notes',
+    },
+    tools: {
+      title: 'Conversion tools',
+      verified: 'verified',
+      failed: 'did not pass the check',
+      blocked: 'The bundled tools could not be checked.',
+      reading: 'Reading…',
+      unknown: 'The tools were not reported.',
     },
     support: {
       title: 'Support',
@@ -72,6 +95,15 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       guide: 'Guia do usuário',
       repository: 'GitHub',
       issues: 'Relatar um problema',
+      releaseNotes: 'Notas da versão',
+    },
+    tools: {
+      title: 'Ferramentas de conversão',
+      verified: 'verificada',
+      failed: 'não passou na verificação',
+      blocked: 'Não foi possível verificar as ferramentas incluídas.',
+      reading: 'Lendo…',
+      unknown: 'As ferramentas não foram informadas.',
     },
     support: {
       title: 'Apoio',
