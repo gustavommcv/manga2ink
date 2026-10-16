@@ -8,7 +8,7 @@
 
 ## Documentation and visuals
 
-<!-- Link any updated documentation or new ADR. For UI changes, include screenshots and describe the Storybook/visual-regression coverage. For website changes, keep both languages together. Remove this section if it does not apply. -->
+<!-- Link any updated documentation or new ADR. For UI changes, include screenshots and describe the Storybook/visual-regression coverage. For website changes, keep every language together. Remove this section if it does not apply. -->
 
 ## Before review
 
