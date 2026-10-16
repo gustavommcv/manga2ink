@@ -13,7 +13,13 @@ const notice = 'このコンテンツはまだ日本語訳がありません。'
 const gaps = JSON.parse(readFileSync(new URL('../../i18n-gaps.json', import.meta.url), 'utf8')).ja;
 const routeOf = (file) => `${file.replace(/\.mdx$/, '')}/`;
 const untranslated = gaps.find((file) => file !== 'index.mdx');
-const inEnglish = (file) => gaps.includes(file);
+/** A page left in English that uses the component, to see that it keeps the words of the English text. */
+const pageUsing = (component) =>
+  gaps.find((file) =>
+    readFileSync(new URL(`../../src/content/docs/${file}`, import.meta.url), 'utf8').includes(
+      `<${component}`,
+    ),
+  );
 
 /** The button that opens the navigation on a narrow screen is named in the language of the page. */
 async function openNavigation(page, name = 'メニュー') {
@@ -58,13 +64,20 @@ test('a page that is not translated yet shows the English text with a notice', a
 test('the components of a page that is not translated yet keep the words of its text', async ({
   page,
 }) => {
-  test.skip(!inEnglish('user-guide/advanced-options/cropping.mdx'), 'the page is translated');
-  await page.goto(`${root}ja/user-guide/advanced-options/cropping/`);
-  await expect(page.locator('[data-option-sizes] th').first()).toHaveText('Setting');
-  await expect(page.locator('[data-option-example] figure a').first()).toHaveAttribute(
-    'title',
-    'Open the larger image',
-  );
+  const sizes = pageUsing('OptionSizes');
+  const example = pageUsing('OptionExample');
+  test.skip(!sizes && !example, 'no page left in English has these components');
+  if (sizes) {
+    await page.goto(`${root}ja/${routeOf(sizes)}`);
+    await expect(page.locator('[data-option-sizes] th').first()).toHaveText('Setting');
+  }
+  if (example) {
+    await page.goto(`${root}ja/${routeOf(example)}`);
+    await expect(page.locator('[data-option-example] figure a').first()).toHaveAttribute(
+      'title',
+      'Open the larger image',
+    );
+  }
 });
 
 test('a reader of the English guide can switch to Japanese and stays on the page', async ({

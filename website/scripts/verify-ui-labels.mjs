@@ -30,6 +30,7 @@ const allowed = new Map([
   // The same emphasis, in the Portuguese and the Japanese guides.
   ['todos os livros pendentes daquele grupo', 'emphasis on what Delete removes'],
   ['そのグループのすべての保留中の本', 'emphasis on what Delete removes'],
+  ['240 − 64 × 値', 'a formula'],
   ['todas', 'emphasis on a word of the mapping editor page'],
   ['Uma capa sua é guardada num CBZ', 'emphasis on a sentence of the cover page'],
   ['Um PDF nunca recebe capa', 'emphasis on a sentence of the cover page'],
