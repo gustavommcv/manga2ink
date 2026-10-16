@@ -1,7 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { createMappingDraft } from '@/domain/mapping';
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/i18n/messages';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
 import { MappingEditor } from './mapping-editor';
@@ -206,5 +208,30 @@ export const NeedsAttention: Story = {
       ],
       volumes: [{ id: 'volume-1', number: '1', chapterIds: ['chapter-1'] }],
     }),
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/**
+ * The editor in Brazilian Portuguese, with a volume that conflicts with the name of its chapter:
+ * the chapters, the volumes, the check that says what to fix and the plural of the language are
+ * all in the words of the language (ADR 0053 for what the domain says of the conflict).
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: NeedsAttention.args,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('heading', { name: 'Organizar Filename Conflict em volumes' }),
+    ).toBeVisible();
+    await expect(canvas.getByRole('alert', { name: 'Erros do mapeamento' })).toHaveTextContent(
+      'indica o volume 2, que o mangabind vai manter no lugar do volume 1',
+    );
   },
 };

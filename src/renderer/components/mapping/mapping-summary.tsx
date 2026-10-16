@@ -1,5 +1,6 @@
 import type { MappingDraft } from '@/domain/mapping';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 
 export function MappingSummary({
   draft,
@@ -10,6 +11,7 @@ export function MappingSummary({
   readonly onConfirm: () => void;
   readonly onEdit: () => void;
 }): React.JSX.Element {
+  const words = useMessages().mapping;
   const volumes = [...draft.volumes].sort(
     (left, right) => Number(left.number) - Number(right.number),
   );
@@ -23,15 +25,14 @@ export function MappingSummary({
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold" id="mapping-summary-title">
-            Proposed chapter mapping
+            {words.summary.title}
           </h2>
           <p className="text-muted-foreground mt-1 text-xs">
-            {String(volumes.length)} volume{volumes.length === 1 ? '' : 's'} ·{' '}
-            {String(assignedCount)} of {String(draft.chapters.length)} chapters assigned
+            {words.summary.counts(volumes.length, assignedCount, draft.chapters.length)}
           </p>
         </div>
         <Button onClick={onEdit} size="sm" variant="outline">
-          Edit chapter mapping
+          {words.summary.edit}
         </Button>
       </div>
       <ol className="border-border mt-4 divide-y border-y">
@@ -44,20 +45,21 @@ export function MappingSummary({
               className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 text-sm"
               key={volume.id}
             >
-              <span className="font-medium">Volume {volume.number}</span>
+              <span className="font-medium">{words.editor.chapters.volume(volume.number)}</span>
               <span className="text-muted-foreground min-w-0 truncate text-xs">
-                {String(chapterNames.length)} chapter{chapterNames.length === 1 ? '' : 's'}
-                {chapterNames.length === 1 && ` · ${chapterNames[0]}`}
-                {chapterNames.length > 1 &&
-                  ` · first: ${chapterNames[0]} · last: ${chapterNames.at(-1)}`}
+                {words.summary.volumeLine(
+                  chapterNames.length,
+                  chapterNames[0] ?? '',
+                  chapterNames.at(-1) ?? '',
+                )}
               </span>
             </li>
           );
         })}
       </ol>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">Review this proposal before continuing.</p>
-        <Button onClick={onConfirm}>Confirm mapping</Button>
+        <p className="text-muted-foreground text-xs">{words.summary.review}</p>
+        <Button onClick={onConfirm}>{words.summary.confirm}</Button>
       </div>
     </section>
   );

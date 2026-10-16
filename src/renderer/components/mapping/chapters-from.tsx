@@ -11,7 +11,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { panelId, TabList, tabId } from '@/renderer/components/ui/tabs';
-import { useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useMetadataSearch } from '@/renderer/hooks/use-metadata-search';
 import { SaidError } from '@/renderer/lib/said-error';
 import type { MetadataProviderDescriptor, MetadataSearchResult } from '@/shared/workflow-contract';
@@ -19,9 +19,6 @@ import type { MetadataProviderDescriptor, MetadataSearchResult } from '@/shared/
 type Source = 'names' | 'online' | 'manual';
 
 const group = 'chapters-from';
-
-const plural = (count: number, word: string): string =>
-  `${String(count)} ${word}${count === 1 ? '' : 's'}`;
 
 /** What the names of the folders gave, and how to go back to it. */
 export interface NamesSource {
@@ -75,11 +72,12 @@ export function ChaptersFrom({
   readonly online?: OnlineSource | undefined;
   readonly onManualSelect?: () => void;
 }): React.JSX.Element {
+  const words = useMessages().mapping.chaptersFrom;
   const [source, setSource] = useState<Source>(initialSource);
   const tabs = [
-    { id: 'names', label: 'File names' },
-    ...(online === undefined ? [] : [{ id: 'online' as const, label: 'Online source' }]),
-    { id: 'manual', label: 'Manual' },
+    { id: 'names', label: words.tabs.names },
+    ...(online === undefined ? [] : [{ id: 'online' as const, label: words.tabs.online }]),
+    { id: 'manual', label: words.tabs.manual },
   ] as const;
   const shown: Source = source === 'online' && online === undefined ? 'names' : source;
 
@@ -90,11 +88,11 @@ export function ChaptersFrom({
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-semibold" id="chapters-from-title">
-          Chapters from
+          {words.title}
         </h2>
         <TabList
           group={group}
-          label="Chapters from"
+          label={words.title}
           onChange={(next) => {
             setSource(next);
             if (next === 'manual') onManualSelect?.();
@@ -117,16 +115,13 @@ export function ChaptersFrom({
               <InfoBanner
                 message={
                   online === undefined
-                    ? 'Build the volumes here; no online source is required.'
-                    : 'Build them here, or try Online source for a suggestion. Nothing is searched automatically.'
+                    ? words.manual.buildHere
+                    : words.manual.buildOrTry(words.tabs.online)
                 }
-                title="No volumes found in file names"
+                title={words.manual.noVolumesTitle}
               />
             )}
-            <p className="text-muted-foreground text-sm">
-              Select chapters or a range to assign to volumes. You can move them later. Manual edits
-              stay on this computer.
-            </p>
+            <p className="text-muted-foreground text-sm">{words.manual.text}</p>
           </div>
         )}
       </div>
@@ -141,15 +136,14 @@ function NamesPanel({
   onlineAvailable,
   volumes,
 }: NamesSource & { readonly onlineAvailable: boolean }): React.JSX.Element {
+  const words = useMessages().mapping.chaptersFrom.names;
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-muted-foreground max-w-xl text-sm">
-        {volumes === 0
-          ? `No file-name grouping is available here. ${onlineAvailable ? 'Use an online source, or group the chapters yourself.' : 'Group the chapters yourself.'}`
-          : `${plural(volumes, 'volume')} ${volumes === 1 ? 'was' : 'were'} read from the names of ${plural(chapters, 'chapter')}, without going online.`}
+        {volumes === 0 ? words.none(onlineAvailable) : words.read(volumes, chapters)}
       </p>
       <Button disabled={!changed} onClick={onStartOver} size="sm" variant="outline">
-        <RotateCcw /> Start over from the names
+        <RotateCcw /> {words.startOver}
       </Button>
     </div>
   );
@@ -167,6 +161,7 @@ function OnlinePanel({
   selectedId,
 }: OnlineSource): React.JSX.Element {
   const { say } = useSay();
+  const words = useMessages().mapping.chaptersFrom.online;
   const provider = providers.find((candidate) => candidate.id === selectedId);
   const [query, setQuery] = useState(mangaTitle);
   const [applyingId, setApplyingId] = useState<string>();
@@ -223,16 +218,13 @@ function OnlinePanel({
       </div>
 
       {provider === undefined ? (
-        <p className="text-muted-foreground text-sm">
-          Pick a source to look up which chapters belong in each volume. Nothing is sent anywhere
-          until you search.
-        </p>
+        <p className="text-muted-foreground text-sm">{words.pick}</p>
       ) : (
         <>
           <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
-            Volume data by
+            {words.dataBy}
             <button
-              aria-label={`Open ${provider.displayName} in your browser`}
+              aria-label={words.open(provider.displayName)}
               className="text-accent focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-2"
               onClick={() => {
                 onOpenHomepage(provider.id);
@@ -252,7 +244,7 @@ function OnlinePanel({
           >
             <Search aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
             <Label className="sr-only" htmlFor="metadata-search">
-              Search {provider.displayName}
+              {words.search(provider.displayName)}
             </Label>
             <Input
               className="min-w-48 flex-1"
@@ -260,20 +252,18 @@ function OnlinePanel({
               onChange={(event) => {
                 setQuery(event.target.value);
               }}
-              placeholder="Manga title"
+              placeholder={words.placeholder}
               value={query}
             />
             <Button disabled={query.trim() === ''} size="sm" type="submit" variant="outline">
-              Search
+              {words.searchButton}
             </Button>
           </form>
           <p className="text-muted-foreground text-xs">
-            Searching sends the title to {provider.displayName}. Only volume and chapter numbers are
-            used, and nothing is downloaded from there.
-            {language !== undefined &&
-              ` Volumes are looked up in ${language}, the language of your folders.`}
+            {words.privacy(provider.displayName)}
+            {language !== undefined && words.language(language)}
           </p>
-          {searching && <p className="text-muted-foreground text-xs">Searching…</p>}
+          {searching && <p className="text-muted-foreground text-xs">{words.searching}</p>}
           {panelError !== undefined && (
             <p className="text-status-failed text-xs" role="alert">
               {panelError}
@@ -283,7 +273,7 @@ function OnlinePanel({
             <NoMatchesNotice fix="search" query={lastTitle ?? query} />
           )}
           {!searching && results.length > 0 && (
-            <ul aria-label="Matches" className="space-y-2">
+            <ul aria-label={words.matches} className="space-y-2">
               {results.map((result) => (
                 <li
                   className="border-border flex items-center justify-between gap-3 rounded-lg border px-3 py-2"
@@ -298,7 +288,7 @@ function OnlinePanel({
                     size="sm"
                     variant="outline"
                   >
-                    {applyingId === result.id ? 'Applying…' : 'Use these volumes'}
+                    {applyingId === result.id ? words.applying : words.use}
                   </Button>
                 </li>
               ))}

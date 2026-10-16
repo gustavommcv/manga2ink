@@ -1,5 +1,6 @@
 import type { FailureMessageValues } from './messages/failure';
 import type { InputMessageValues } from './messages/input';
+import type { MappingMessageValues } from './messages/mapping';
 import type { ModeMessageValues } from './messages/mode';
 import type { NoticeMessageValues } from './messages/notice';
 import type { ProviderMessageValues } from './messages/provider';
@@ -22,6 +23,7 @@ export interface MessageValues
     QueueMessageValues,
     ModeMessageValues,
     InputMessageValues,
+    MappingMessageValues,
     FailureMessageValues,
     NoticeMessageValues,
     WorkflowMessageValues,

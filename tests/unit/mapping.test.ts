@@ -23,6 +23,8 @@ import {
   validateMapping,
   type MappingChapter,
 } from '@/domain/mapping';
+import { message } from '@/domain/message';
+import { english } from './support/say';
 
 const chapters: readonly MappingChapter[] = [
   { id: 'c3', name: 'Chapter 3', path: '/manga/Chapter 3', pageCount: 3, chapter: 3 },
@@ -321,7 +323,9 @@ describe('mapping validation and serialization', () => {
   it('uses singular wording for one intentionally unassigned chapter', () => {
     const draft = assignChapters(addVolume(manualDraft(), 'v1', '1'), 'v1', ['c1', 'c2', 'c2x1']);
 
-    expect(validateMapping(draft).at(-1)?.message).toBe('1 chapter is not assigned to a volume.');
+    expect(english(validateMapping(draft).at(-1)!.message)).toBe(
+      '1 chapter is not assigned to a volume.',
+    );
   });
 
   it('serializes a provider-backed draft deterministically with source as an object', () => {
@@ -392,14 +396,14 @@ describe('two copies of one chapter in the folder', () => {
       severity: 'error',
       chapterIds: ['c2-g2', 'c2-g1'],
     });
-    expect(errors[0]?.message).toContain('Chapter 2 is in the folder more than once');
+    expect(english(errors[0]!.message)).toContain('Chapter 2 is in the folder more than once');
     expect(() => toMangabindMetadata(draft)).toThrowError(MappingValidationError);
   });
 
   it('says to remove the copies from the folder, which is the one thing that fixes it', () => {
     const [issue] = errorsOf(place(copies(), ['c1', 'c2-g1', 'c3']));
 
-    expect(issue?.message).toContain('remove all but one from the folder');
+    expect(english(issue!.message)).toContain('remove all but one from the folder');
   });
 
   it('is no error while neither copy is placed, only a note that the chapter is not in a volume', () => {
@@ -419,7 +423,7 @@ describe('two copies of one chapter in the folder', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toMatchObject({
       code: 'duplicate_chapter',
-      message: 'More than one source represents chapter 2; mangabind cannot choose between them.',
+      message: message('mapping.issue.duplicateSources', { token: '2' }),
       chapterIds: ['c2-g1', 'c2-g2', 'c2-g3'],
     });
   });
