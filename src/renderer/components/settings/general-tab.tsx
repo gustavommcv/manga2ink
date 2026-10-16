@@ -5,7 +5,7 @@ import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages } from '@/renderer/hooks/use-messages';
-import { languageNames } from '@/renderer/i18n/messages';
+import { languageNames } from '@/i18n/messages';
 
 /** What is decided about the app as a whole: today, the language. */
 export function GeneralTab(): React.JSX.Element {

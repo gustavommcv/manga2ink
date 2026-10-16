@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { countOf } from '@/renderer/i18n/count';
-import { messagesFor } from '@/renderer/i18n/messages';
+import { countOf } from '@/i18n/count';
+import { messagesFor } from '@/i18n/messages';
 
 const en = messagesFor('en');
 const pt = messagesFor('pt-BR');

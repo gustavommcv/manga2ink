@@ -5,7 +5,7 @@ import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { I18nContext } from '@/renderer/hooks/use-messages';
-import { messagesFor } from '@/renderer/i18n/messages';
+import { messagesFor } from '@/i18n/messages';
 
 import { QueueScreen, type QueueScreenProps } from './queue-screen';
 

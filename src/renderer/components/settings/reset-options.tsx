@@ -4,7 +4,7 @@ import { useId, useRef, useState } from 'react';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useMessages } from '@/renderer/hooks/use-messages';
-import type { ResetScope } from '@/renderer/i18n/settings-messages';
+import type { ResetScope } from '@/i18n/settings-messages';
 
 /**
  * Puts options back to their defaults, after a second click: what it discards is also what was

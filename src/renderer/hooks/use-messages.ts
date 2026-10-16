@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import { defaultLanguage, type Language } from '@/domain/app-settings';
-import { type Messages, messagesFor } from '@/renderer/i18n/messages';
+import { type Messages, messagesFor } from '@/i18n/messages';
 
 /** The language the window is in, and everything it says in it (ADR 0052). */
 export interface I18n {

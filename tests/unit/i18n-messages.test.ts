@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { languages } from '@/domain/app-settings';
-import { languageNames, messagesFor } from '@/renderer/i18n/messages';
+import { languageNames, messagesFor } from '@/i18n/messages';
 
 /** Every message of a catalog with the path that names it, so one that is wrong can be found. */
 function messagePaths(value: unknown, path = ''): readonly (readonly [string, unknown])[] {
