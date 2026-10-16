@@ -2,6 +2,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { useId, useState } from 'react';
 
 import { useClickOutside } from '@/renderer/hooks/use-click-outside';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
@@ -26,25 +27,27 @@ function hostOf(homepage: string): string {
  * "select-only combobox": focus stays on the field, and the arrow keys move through the options.
  */
 export function ProviderPicker({
-  label = 'Source',
-  noneDetail = 'Only the folder names and your edits',
+  label,
+  noneDetail,
   onSelect,
   providers,
   selectedId,
 }: {
+  /** The name of the field; the one of the editor when it is left out. */
   readonly label?: string;
-  /** What the first entry, for using no source, says about itself. */
+  /** What the first entry, for using no source, says about itself; the editor's when left out. */
   readonly noneDetail?: string;
   readonly onSelect: (providerId: string | undefined) => void;
   readonly providers: readonly MetadataProviderDescriptor[];
   readonly selectedId: string | undefined;
 }): React.JSX.Element {
+  const words = useMessages().mapping.providers;
   const base = useId();
   const listId = `${base}-list`;
   const labelId = `${base}-label`;
   const optionId = (index: number): string => `${base}-option-${String(index)}`;
   const options: readonly Option[] = [
-    { value: undefined, title: 'No online source', detail: noneDetail },
+    { value: undefined, title: words.none, detail: noneDetail ?? words.noneDetail },
     ...providers.map((provider) => ({
       value: provider.id,
       title: provider.displayName,
@@ -77,7 +80,7 @@ export function ProviderPicker({
   return (
     <div className="space-y-1.5">
       <p className="text-sm leading-none font-medium" id={labelId}>
-        {label}
+        {label ?? words.label}
       </p>
       <div className="relative" ref={root}>
         <button
@@ -130,7 +133,7 @@ export function ProviderPicker({
           type="button"
         >
           <span className={chosen === undefined ? 'text-muted-foreground' : 'font-medium'}>
-            {chosen?.title ?? 'Select a source'}
+            {chosen?.title ?? words.select}
           </span>
           <ChevronDown
             aria-hidden="true"

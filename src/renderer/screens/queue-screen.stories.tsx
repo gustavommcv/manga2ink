@@ -8,8 +8,7 @@ import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 
 import { QueueScreen, type QueueScreenProps } from './queue-screen';
-import { raw } from '@/domain/message';
-import { message } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 24, chapter: 1 },
@@ -341,9 +340,9 @@ export const EmptyInPortuguese: Story = {
 /**
  * The screen in Brazilian Portuguese with items, a message about what was not added, books that are
  * ready and a plan that was validated: the longer words of the language still fit where the English
- * ones did. What the queue says about each row (its status, its line and its notes) is a message the
- * window writes in the language too (ADR 0053); what a tool or the main process said (why an item
- * was not added, what a plan says) is still English until those sentences are messages as well.
+ * ones did. What the queue says about each row (its status, its line and its notes) and why an item
+ * was not added are messages the window writes in the language too (ADR 0053); what a plan says is
+ * still English until it is a message as well.
  */
 export const InPortuguese: Story = {
   decorators: [inPortuguese],

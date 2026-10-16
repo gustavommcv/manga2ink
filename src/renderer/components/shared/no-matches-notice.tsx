@@ -1,4 +1,5 @@
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { useMessages } from '@/renderer/hooks/use-messages';
 
 /**
  * What a search that found nothing says. The likely reason is in the text that was searched: a
@@ -14,12 +15,6 @@ export function NoMatchesNotice({
   readonly fix: 'search' | 'title';
   readonly query: string;
 }): React.JSX.Element {
-  return (
-    <InfoBanner
-      aria-label="No matches"
-      message={`No matches for “${query}”. Extra characters in the ${fix} can keep a work from being found. ${
-        fix === 'title' ? 'Try a simpler title above' : 'Try simpler words above'
-      } and search again.`}
-    />
-  );
+  const words = useMessages().mapping.noMatches;
+  return <InfoBanner aria-label={words.label} message={words.text(query, fix)} />;
 }

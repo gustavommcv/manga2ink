@@ -37,3 +37,14 @@ test('manual mapping starts with a visible first-volume action and online altern
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('mapping-editor-manual.png');
 });
+
+test('the mapping editor in Portuguese remains visually consistent', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 960 });
+  await page.goto('/iframe.html?id=workflows-mapping-editor--in-portuguese&viewMode=story');
+  await expect(
+    page.getByRole('heading', { name: 'Organizar Filename Conflict em volumes' }),
+  ).toBeVisible();
+  await expect(page.getByRole('alert', { name: 'Erros do mapeamento' })).toBeVisible();
+  await page.evaluate(async () => document.fonts.ready);
+  await expect(page.locator('#storybook-root')).toHaveScreenshot('mapping-editor-portuguese.png');
+});

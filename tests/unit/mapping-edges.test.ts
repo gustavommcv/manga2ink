@@ -17,6 +17,7 @@ import {
   splitVolume,
   validateMapping,
 } from '@/domain/mapping';
+import { english } from './support/say';
 
 // The cases the mutation run found nothing noticing: each is a way the mapping could be wrong
 // while every test that existed still passed.
@@ -213,10 +214,10 @@ describe('what is wrong with a mapping, and where', () => {
     );
     const many = validateMapping(createMappingDraft({ chapters: five, mangaTitle: 'M' }));
 
-    expect(one.find((issue) => issue.code === 'unassigned_chapters')?.message).toBe(
+    expect(english(one.find((issue) => issue.code === 'unassigned_chapters')!.message)).toBe(
       '1 chapter is not assigned to a volume.',
     );
-    expect(many.find((issue) => issue.code === 'unassigned_chapters')?.message).toBe(
+    expect(english(many.find((issue) => issue.code === 'unassigned_chapters')!.message)).toBe(
       '5 chapters are not assigned to a volume.',
     );
   });

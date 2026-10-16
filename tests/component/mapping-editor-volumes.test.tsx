@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createMappingDraft, type MappingDraft } from '@/domain/mapping';
 import { MappingEditor } from '@/renderer/components/mapping/mapping-editor';
+import { raw } from '@/domain/message';
+import { SaidError } from '@/renderer/lib/said-error';
 
 const chapters = [1, 2, 3, 4].map((number) => ({
   id: `chapter-${String(number)}`,
@@ -188,7 +190,7 @@ describe('confirming the mapping', () => {
   it('says it could not be saved with the reason, when the caller throws', async () => {
     const user = userEvent.setup();
     const onConfirm = vi.fn(() => {
-      throw new Error('The folder is read-only.');
+      throw new SaidError(raw('The folder is read-only.'));
     });
     render(confirmable(onConfirm));
 
