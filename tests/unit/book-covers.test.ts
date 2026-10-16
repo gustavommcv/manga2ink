@@ -7,6 +7,7 @@ import {
   looksLikeCoverImage,
   planFolderImport,
 } from '@/domain/book-covers';
+import { englishNote } from './support/say';
 
 const image = (name: string, readable = true) => ({ name, path: `/covers/${name}`, readable });
 const bytes = (...values: (number | string)[]): Uint8Array =>
@@ -69,7 +70,7 @@ describe('an image of a folder that cannot be read', () => {
       [3, '03.jpg'],
     ]);
     expect(plan.unreadable).toEqual(['02.jpg']);
-    expect(describeFolderImport(plan)).toBe(
+    expect(englishNote(describeFolderImport(plan))).toBe(
       '1 image could not be read (02.jpg), so the book it falls on keeps its first page.',
     );
   });
@@ -89,10 +90,12 @@ describe('an image of a folder that cannot be read', () => {
   it('names up to three, says how many more, and speaks of books in the plural', () => {
     const images = ['a', 'b', 'c', 'd', 'e'].map((name) => image(`${name}.jpg`, false));
 
-    expect(describeFolderImport(planFolderImport([1, 2, 3, 4, 5], [], images))).toBe(
+    expect(englishNote(describeFolderImport(planFolderImport([1, 2, 3, 4, 5], [], images)))).toBe(
       '5 images could not be read (a.jpg, b.jpg, c.jpg and 2 more), so the books they fall on keep their first pages.',
     );
-    expect(describeFolderImport(planFolderImport([1, 2], [], images.slice(0, 2)))).toBe(
+    expect(
+      englishNote(describeFolderImport(planFolderImport([1, 2], [], images.slice(0, 2)))),
+    ).toBe(
       '2 images could not be read (a.jpg, b.jpg), so the books they fall on keep their first pages.',
     );
   });
@@ -105,7 +108,7 @@ describe('an image of a folder that cannot be read', () => {
       image('c.jpg'),
     ]);
 
-    expect(describeFolderImport(plan)).toBe(
+    expect(englishNote(describeFolderImport(plan))).toBe(
       '1 book keeps the cover chosen for it. 1 image could not be read (b.jpg), so the book it falls on keeps its first page. 1 image was not used: there are 2 books.',
     );
   });
@@ -126,7 +129,7 @@ describe('handing the images of a folder to the books in order', () => {
       [3, 'b.jpg'],
     ]);
     expect(plan).toMatchObject({ kept: [], images: 3, unused: 0, books: 3 });
-    expect(describeFolderImport(plan)).toBeUndefined();
+    expect(englishNote(describeFolderImport(plan))).toBeUndefined();
   });
 
   it('never replaces a cover chosen by hand, and still lines the other images up', () => {
@@ -148,7 +151,7 @@ describe('handing the images of a folder to the books in order', () => {
       [3, '03.jpg'],
     ]);
     expect(plan.kept).toEqual([2]);
-    expect(describeFolderImport(plan)).toBe('1 book keeps the cover chosen for it.');
+    expect(englishNote(describeFolderImport(plan))).toBe('1 book keeps the cover chosen for it.');
   });
 
   it('says how many images lay beyond the last book', () => {
@@ -156,10 +159,14 @@ describe('handing the images of a folder to the books in order', () => {
 
     expect(plan.assignments).toEqual([{ slot: 'book', image: image('a.jpg') }]);
     expect(plan.unused).toBe(2);
-    expect(describeFolderImport(plan)).toBe('2 images were not used: there is 1 book.');
+    expect(englishNote(describeFolderImport(plan))).toBe(
+      '2 images were not used: there is 1 book.',
+    );
     expect(
-      describeFolderImport(
-        planFolderImport([1, 2], [], [image('a.jpg'), image('b.jpg'), image('c.jpg')]),
+      englishNote(
+        describeFolderImport(
+          planFolderImport([1, 2], [], [image('a.jpg'), image('b.jpg'), image('c.jpg')]),
+        ),
       ),
     ).toBe('1 image was not used: there are 2 books.');
   });
@@ -170,12 +177,14 @@ describe('handing the images of a folder to the books in order', () => {
       { slot: 2, name: 'mine too.png', origin: 'chosen' },
     ];
 
-    expect(describeFolderImport(planFolderImport([1, 2, 3], [], [image('a.jpg')]))).toBe(
-      'There was 1 image for 3 books; the other books are unchanged.',
-    );
     expect(
-      describeFolderImport(
-        planFolderImport([1, 2, 3, 4], chosen, [image('a.jpg'), image('b.jpg')]),
+      englishNote(describeFolderImport(planFolderImport([1, 2, 3], [], [image('a.jpg')]))),
+    ).toBe('There was 1 image for 3 books; the other books are unchanged.');
+    expect(
+      englishNote(
+        describeFolderImport(
+          planFolderImport([1, 2, 3, 4], chosen, [image('a.jpg'), image('b.jpg')]),
+        ),
       ),
     ).toBe(
       '2 books keep the cover chosen for them. There were 2 images for 4 books; the other books are unchanged.',
@@ -186,7 +195,7 @@ describe('handing the images of a folder to the books in order', () => {
     const plan = planFolderImport([1, 2], [], []);
 
     expect(plan.assignments).toEqual([]);
-    expect(describeFolderImport(plan)).toBe(
+    expect(englishNote(describeFolderImport(plan))).toBe(
       'No image was found there. A cover has to be a JPEG, PNG, WebP, GIF or BMP image.',
     );
   });

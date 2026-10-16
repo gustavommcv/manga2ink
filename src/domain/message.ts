@@ -1,5 +1,7 @@
 import type { FailureMessageValues } from './messages/failure';
+import type { CoversMessageValues } from './messages/covers';
 import type { InputMessageValues } from './messages/input';
+import type { LibraryMessageValues } from './messages/library';
 import type { MappingMessageValues } from './messages/mapping';
 import type { ModeMessageValues } from './messages/mode';
 import type { NoticeMessageValues } from './messages/notice';
@@ -23,6 +25,8 @@ export interface MessageValues
     QueueMessageValues,
     ModeMessageValues,
     InputMessageValues,
+    LibraryMessageValues,
+    CoversMessageValues,
     MappingMessageValues,
     FailureMessageValues,
     NoticeMessageValues,

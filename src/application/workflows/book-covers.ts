@@ -3,16 +3,17 @@ import type { InputSessions } from '@/application/workflows/input-sessions';
 import {
   type AttachedCover,
   type CoverSlot,
-  coverTypesSentence,
+  coverTypesNote,
   describeFolderImport,
   planFolderImport,
-  unreadableCoverSentence,
+  unreadableCoverNote,
 } from '@/domain/book-covers';
+import type { AnyMessage } from '@/domain/message';
 
 /** The covers of an item after something was done to them, and what there is to say about it. */
 export interface CoverChange {
   readonly covers: readonly AttachedCover[];
-  readonly note?: string;
+  readonly note?: readonly AnyMessage[];
 }
 
 /** Where the cover of each book of an item is, for a run to hand to mangapress. */
@@ -45,11 +46,11 @@ export class BookCovers implements CoverLookup {
     const itemPath = this.sessions.itemPath(target.sessionId, target.title);
     const [image] = await this.sources.imagesIn([sourcePath]);
     if (image === undefined) {
-      return { covers: await this.attached(itemPath), note: coverTypesSentence };
+      return { covers: await this.attached(itemPath), note: coverTypesNote };
     }
     // Named like an image and not one: it would stop the book, so it is not kept as its cover.
     if (!image.readable) {
-      return { covers: await this.attached(itemPath), note: unreadableCoverSentence };
+      return { covers: await this.attached(itemPath), note: unreadableCoverNote };
     }
     await this.store.attach(itemPath, { slot, origin: 'chosen', sourcePath: image.path });
     return { covers: await this.attached(itemPath) };

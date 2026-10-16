@@ -1,5 +1,5 @@
 import type { PipelineIssue } from './conversion';
-import { lastPathPart, listNames } from './folder-names';
+import { lastPathPart } from './folder-names';
 import { type AnyMessage, message } from './message';
 
 /**
@@ -23,19 +23,15 @@ export function skippedLinkNames(issues: readonly PipelineIssue[]): readonly str
 
 /** What the library's own screen says about those links: what happened, why, and what to do. */
 export function skippedLinksNotice(names: readonly string[]): {
-  readonly title: string;
-  readonly advice: string;
-  readonly names: string;
+  readonly title: AnyMessage;
+  readonly advice: AnyMessage;
+  readonly names: AnyMessage;
 } {
-  const one = names.length === 1;
+  const count = names.length;
   return {
-    title: one
-      ? '1 folder in this library was not read'
-      : `${String(names.length)} folders in this library were not read`,
-    advice: one
-      ? 'It is a link, and mangabind does not follow links to a series. Put the real folder in the library, or add it on its own:'
-      : 'They are links, and mangabind does not follow links to a series. Put the real folders in the library, or add each on its own:',
-    names: listNames(names),
+    title: message('library.links.title', { count }),
+    advice: message('library.links.advice', { count }),
+    names: message('library.links.names', { names }),
   };
 }
 

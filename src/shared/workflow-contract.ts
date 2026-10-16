@@ -284,7 +284,8 @@ export interface DropCoversCommand extends CoversFolderCommand {
 /** The covers of an item after a change, and anything there is to say about it. */
 export interface CoversChange {
   readonly covers: readonly AttachedCover[];
-  readonly note?: string;
+  /** Sentences that follow one another, as codes the window writes (ADR 0053). */
+  readonly note?: readonly AnyMessage[];
 }
 
 export const writeTitleMappingCommandSchema = z.object({

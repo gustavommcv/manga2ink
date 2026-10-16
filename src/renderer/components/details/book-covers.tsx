@@ -1,13 +1,15 @@
 import { FolderOpen, X } from 'lucide-react';
 
 import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
+import type { AnyMessage } from '@/domain/message';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 
 /** What the covers of an item can be told to do; the item itself is the page's. */
 export interface BookCoverControls {
   readonly attached: readonly AttachedCover[];
   /** What the last change left to say: images that were not used, covers that were kept. */
-  readonly note?: string;
+  readonly note?: readonly AnyMessage[];
   readonly onChoose: (slot: CoverSlot) => void;
   readonly onRemove: (slot: CoverSlot) => void;
   readonly onChooseFolder: () => void;
@@ -39,6 +41,8 @@ export function BookCovers({
   onRemove,
   unavailable,
 }: BookCoversProps): React.JSX.Element {
+  const words = useMessages().details.covers;
+  const { sayAll } = useSay();
   const coverOf = (slot: CoverSlot): AttachedCover | undefined =>
     attached.find((cover) => cover.slot === slot);
   const dropOn = (slot: CoverSlot | undefined) => (event: React.DragEvent) => {
@@ -63,25 +67,20 @@ export function BookCovers({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-56 flex-1">
           <h2 className="text-lg font-semibold" id="book-covers-title">
-            Covers
+            {words.title}
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            {unavailable ??
-              'A book without a cover of its own uses its first page. Drop an image on a book, or a folder on the list.'}
-          </p>
+          <p className="text-muted-foreground mt-1 text-sm">{unavailable ?? words.help}</p>
         </div>
         {books.length > 0 && (
           <Button onClick={onChooseFolder} variant="outline">
-            <FolderOpen /> Add covers from a folder…
+            <FolderOpen /> {words.addFolder}
           </Button>
         )}
       </div>
       {books.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
-          Once the volumes are set, each one can take a cover.
-        </p>
+        <p className="text-muted-foreground text-sm">{words.onceSet}</p>
       ) : (
-        <ul aria-label="Books and their covers">
+        <ul aria-label={words.list}>
           {books.map((book) => {
             const cover = coverOf(book.slot);
             return (
@@ -95,25 +94,27 @@ export function BookCovers({
                   <p className="truncate text-sm font-medium">{book.title}</p>
                   <p className="text-subtle-foreground truncate text-xs">
                     {cover === undefined
-                      ? 'First page'
+                      ? words.firstPage
                       : cover.origin === 'folder'
-                        ? `${cover.name} · from a folder`
+                        ? words.fromFolder(cover.name)
                         : cover.name}
                   </p>
                 </div>
                 <Button
-                  aria-label={`${cover === undefined ? 'Choose a cover for' : 'Change the cover of'} ${book.title}`}
+                  aria-label={
+                    cover === undefined ? words.choose(book.title) : words.change(book.title)
+                  }
                   onClick={() => {
                     onChoose(book.slot);
                   }}
                   size="sm"
                   variant="outline"
                 >
-                  {cover === undefined ? 'Choose cover…' : 'Change…'}
+                  {cover === undefined ? words.chooseButton : words.changeButton}
                 </Button>
                 {cover !== undefined && (
                   <Button
-                    aria-label={`Remove the cover of ${book.title}`}
+                    aria-label={words.remove(book.title)}
                     onClick={() => {
                       onRemove(book.slot);
                     }}
@@ -130,7 +131,7 @@ export function BookCovers({
       )}
       {note !== undefined && (
         <p className="text-muted-foreground text-xs" role="status">
-          {note}
+          {sayAll(note)}
         </p>
       )}
     </section>

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -7,7 +7,9 @@ import type { BookDetails } from '@/domain/book-details';
 import { BookDetailsScreen, type BookDetailsScreenProps } from './book-details-screen';
 
 import type { AuthorLookup } from '@/renderer/components/details/author-lookup';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/i18n/messages';
 import { SaidError } from '@/renderer/lib/said-error';
 
 /** Keeps what is typed and the source chosen, the way the app does, so the stories work as used. */
@@ -122,7 +124,10 @@ export const WithCovers: Story = {
         { slot: 2, name: 'IMG_2041.jpg', origin: 'chosen' },
         { slot: 3, name: '03.jpg', origin: 'folder' },
       ],
-      note: '1 book keeps the cover chosen for it. There were 3 images for 5 books; the other books are unchanged.',
+      note: [
+        message('covers.kept', { count: 1 }),
+        message('covers.fewImages', { images: 3, books: 5 }),
+      ],
     },
   },
   play: async ({ canvasElement }) => {
@@ -276,5 +281,41 @@ export const AuthorSearchFailed: Story = {
     await userEvent.click(await canvas.findByRole('option', { name: /MangaDex/u }));
     await userEvent.click(await canvas.findByRole('button', { name: 'Search' }));
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Could not reach MangaDex.');
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/**
+ * The details of a series in Brazilian Portuguese, with the covers of some books: the fields, what
+ * each is for, the titles the books will have and the covers, with what the last change left to say.
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: {
+    backLabel: 'Fila',
+    declaredLanguage: 'ja',
+    volumes: [1, 2, 3, 4, 5],
+    covers: {
+      ...coverActions,
+      attached: [
+        { slot: 1, name: '01.jpg', origin: 'folder' },
+        { slot: 2, name: 'IMG_2041.jpg', origin: 'chosen' },
+      ],
+      note: [
+        message('covers.kept', { count: 1 }),
+        message('covers.fewImages', { images: 2, books: 5 }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Detalhes do livro')).toBeVisible();
+    await expect(canvas.getByLabelText('Título da série')).toBeVisible();
+    await expect(canvas.getByRole('heading', { name: 'Capas' })).toBeVisible();
   },
 };

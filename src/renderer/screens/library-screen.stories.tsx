@@ -1,7 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 
 import type { LibraryTitle } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
+
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/i18n/messages';
 
 import { LibraryScreen } from './library-screen';
 import { raw } from '@/domain/message';
@@ -99,4 +102,28 @@ export const WithLinksNotRead: Story = {
 
 export const AllReady: Story = {
   args: { titles: titles.slice(0, 2) },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/**
+ * A library in Brazilian Portuguese, with the buttons of a title set, the single book mode and the
+ * links that were not read: what each title needs, what became of it and the plural of the language
+ * (ADR 0053 for what the domain says of the links).
+ */
+export const InPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: {
+    onEditDetails: () => undefined,
+    onEditOptions: () => undefined,
+    singleBook: true,
+    skippedLinks: ['Vinland Saga', 'Berserk', 'Monster', 'Pluto'],
+    titles: titles.map((title, index) =>
+      index === 0 ? { ...title, details: { author: 'Fujimoto Tatsuki' } } : title,
+    ),
+  },
 };

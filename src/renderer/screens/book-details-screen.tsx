@@ -20,6 +20,7 @@ import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
+import { useMessages } from '@/renderer/hooks/use-messages';
 
 export interface BookDetailsScreenProps {
   /** Where Back goes: the queue, or the library the title belongs to. */
@@ -72,6 +73,7 @@ export function BookDetailsScreen({
   onChange,
   volumes,
 }: BookDetailsScreenProps): React.JSX.Element {
+  const words = useMessages().details;
   const titleRef = useRef<HTMLHeadingElement>(null);
   const authorRef = useRef<HTMLInputElement>(null);
   const languageRef = useRef<HTMLInputElement>(null);
@@ -87,9 +89,7 @@ export function BookDetailsScreen({
   });
   const languageText = text.language.trim();
   const languageError =
-    languageText === '' || isLanguageTag(languageText)
-      ? undefined
-      : 'Use a language tag such as en-US or pt-BR. It is not used until it is valid.';
+    languageText === '' || isLanguageTag(languageText) ? undefined : words.language.invalid;
 
   const update = (field: keyof typeof text, value: string): void => {
     const next = { ...text, [field]: value };
@@ -133,7 +133,7 @@ export function BookDetailsScreen({
         <ChevronLeft /> {backLabel}
       </Button>
       <div>
-        <p className="text-muted-foreground text-xs font-medium">Book details</p>
+        <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
         <h1
           className="focus-visible:ring-ring focus-visible:ring-offset-background mt-1 rounded-md text-2xl font-semibold tracking-tight break-all outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           id="book-details-title"
@@ -142,15 +142,13 @@ export function BookDetailsScreen({
         >
           {name}
         </h1>
-        <p className="text-subtle-foreground mt-1 text-sm">
-          Every field is optional. What you leave empty uses its default.
-        </p>
+        <p className="text-subtle-foreground mt-1 text-sm">{words.intro}</p>
       </div>
 
       <div className="border-border bg-surface space-y-5 rounded-xl border p-6">
         <div className="space-y-2">
           <Label className="text-sm font-medium" htmlFor="details-title">
-            {series ? 'Series title' : 'Book title'}
+            {series ? words.titleField.series : words.titleField.book}
           </Label>
           <Input
             aria-describedby="details-title-message"
@@ -169,10 +167,10 @@ export function BookDetailsScreen({
           <FieldMessage
             description={
               titleIsFull
-                ? 'This is as long as the title of a book can be: its file is named after it.'
+                ? words.titleField.full
                 : series
-                  ? 'Each volume is titled with this and its number.'
-                  : 'The title the book has in your reader.'
+                  ? words.titleField.forSeries
+                  : words.titleField.forBook
             }
             id="details-title-message"
           />
@@ -180,7 +178,7 @@ export function BookDetailsScreen({
 
         <div className="space-y-2">
           <Label className="text-sm font-medium" htmlFor="details-author">
-            Author
+            {words.author.label}
           </Label>
           <div className="flex gap-2">
             <Input
@@ -191,7 +189,7 @@ export function BookDetailsScreen({
               onChange={(event) => {
                 update('author', event.target.value);
               }}
-              placeholder="Leave blank if unknown"
+              placeholder={words.author.placeholder}
               ref={authorRef}
               value={text.author}
             />
@@ -204,15 +202,14 @@ export function BookDetailsScreen({
                 }}
                 variant="outline"
               >
-                <Search aria-hidden="true" /> Find author
+                <Search aria-hidden="true" /> {words.author.find}
               </Button>
             )}
           </div>
           <FieldMessage
             {...(format === 'cbz'
               ? {
-                  description:
-                    'CBZ files do not store an author. It is only kept in the catalog Mangabound shows.',
+                  description: words.author.cbzNote,
                 }
               : {})}
             id="details-author-message"
@@ -233,7 +230,7 @@ export function BookDetailsScreen({
 
         <div className="space-y-2">
           <Label className="text-sm font-medium" htmlFor="details-language">
-            Language
+            {words.language.label}
           </Label>
           <div className="flex gap-2">
             <Input
@@ -258,7 +255,7 @@ export function BookDetailsScreen({
                 }}
                 variant="outline"
               >
-                Use {languageToOffer}
+                {words.language.use(languageToOffer)}
               </Button>
             )}
           </div>
@@ -266,10 +263,10 @@ export function BookDetailsScreen({
             {...(languageError === undefined
               ? {
                   description: declaredElsewhere
-                    ? `The folder names say ${declaredLanguage}.`
+                    ? words.language.foldersSay(declaredLanguage)
                     : format === 'epub'
-                      ? 'Used for EPUB output.'
-                      : 'Only EPUB files carry a language.',
+                      ? words.language.forEpub
+                      : words.language.onlyEpub,
                 }
               : { error: languageError })}
             id="details-language-message"
@@ -278,21 +275,17 @@ export function BookDetailsScreen({
       </div>
 
       <div className="text-muted-foreground text-xs leading-relaxed">
-        <p className="font-medium">{series ? 'Books will be titled' : 'The book will be titled'}</p>
+        <p className="font-medium">{series ? words.titled.series : words.titled.book}</p>
         {series && volumes.length === 0 ? (
-          <p className="mt-1">
-            Once the volumes are set, each one is titled with this and its number.
-          </p>
+          <p className="mt-1">{words.titled.onceSet}</p>
         ) : (
-          <ul aria-label="Book titles" className="mt-1 space-y-0.5">
+          <ul aria-label={words.titled.list} className="mt-1 space-y-0.5">
             {titles.map((bookTitle) => (
               <li className="break-all" key={bookTitle}>
                 {bookTitle}
               </li>
             ))}
-            {moreVolumes > 0 && (
-              <li>…and {String(moreVolumes)} more, one for each remaining volume.</li>
-            )}
+            {moreVolumes > 0 && <li>{words.titled.more(moreVolumes)}</li>}
           </ul>
         )}
       </div>
@@ -305,9 +298,7 @@ export function BookDetailsScreen({
               ? volumes.map((volume) => ({ slot: volume, title: volumeBookTitle(title, volume) }))
               : [{ slot: 'book', title }]
           }
-          {...(format === 'pdf'
-            ? { unavailable: 'A PDF has no cover. What is set here is kept for the other formats.' }
-            : {})}
+          {...(format === 'pdf' ? { unavailable: words.covers.pdf } : {})}
         />
       )}
     </section>

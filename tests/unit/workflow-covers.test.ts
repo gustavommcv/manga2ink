@@ -12,6 +12,8 @@ import {
   memoryCovers,
   openLibrary,
 } from './support/conversion-workflow';
+import { message } from '@/domain/message';
+import { englishNote } from './support/say';
 
 function workflowWith(
   ports: ReturnType<typeof dependencies>,
@@ -60,7 +62,7 @@ describe('the covers a person gives the books of an item', () => {
 
     await expect(workflow.covers.choose({ sessionId }, 1, '/pictures/notes.txt')).resolves.toEqual({
       covers: [],
-      note: 'A cover has to be a JPEG, PNG, WebP, GIF or BMP image.',
+      note: [message('covers.typesSentence', {})],
     });
     expect(covers.kept.size).toBe(0);
   });
@@ -74,13 +76,13 @@ describe('the covers a person gives the books of an item', () => {
     await expect(workflow.covers.choose({ sessionId }, 1, '/pictures/broken.png')).resolves.toEqual(
       {
         covers: [],
-        note: 'That file could not be read as an image, so it was not used. A cover has to be a JPEG, PNG, WebP, GIF or BMP image.',
+        note: [message('covers.unreadableFile', {}), message('covers.typesSentence', {})],
       },
     );
     // The same when it is dropped on a book.
     const dropped = await workflow.covers.drop({ sessionId }, [1, 2], 1, ['/pictures/broken.png']);
     expect(dropped.covers).toEqual([]);
-    expect(dropped.note).toContain('could not be read as an image');
+    expect(englishNote(dropped.note)).toContain('could not be read as an image');
     expect(covers.kept.size).toBe(0);
   });
 
@@ -97,7 +99,7 @@ describe('the covers a person gives the books of an item', () => {
       { slot: 1, name: '1.jpg', origin: 'folder' },
       { slot: 3, name: '3.jpg', origin: 'folder' },
     ]);
-    expect(change.note).toBe(
+    expect(englishNote(change.note)).toBe(
       '1 image could not be read (2 broken.jpg), so the book it falls on keeps its first page.',
     );
   });
@@ -118,7 +120,7 @@ describe('the covers a person gives the books of an item', () => {
       { slot: 1, name: '01.jpg', origin: 'folder' },
       { slot: 3, name: '03.jpg', origin: 'folder' },
     ]);
-    expect(first.note).toBe('1 book keeps the cover chosen for it.');
+    expect(englishNote(first.note)).toBe('1 book keeps the cover chosen for it.');
 
     const second = await workflow.covers.takeInOrder({ sessionId }, [1, 2, 3], ['/second']);
     expect(second.covers).toEqual(
@@ -128,7 +130,7 @@ describe('the covers a person gives the books of an item', () => {
         { slot: 3, name: '03.jpg', origin: 'folder' },
       ]),
     );
-    expect(second.note).toBe(
+    expect(englishNote(second.note)).toBe(
       '1 book keeps the cover chosen for it. There were 2 images for 3 books; the other books are unchanged.',
     );
   });
@@ -186,7 +188,7 @@ describe('the covers a person gives the books of an item', () => {
     expect(onTheList.covers).toContainEqual({ slot: 1, name: 'only.jpg', origin: 'folder' });
     // Something that is no image, dropped on a book, changes nothing and says why.
     const nothing = await workflow.covers.drop({ sessionId }, slots, 1, ['/pictures/readme.md']);
-    expect(nothing.note).toContain('No image was found there.');
+    expect(englishNote(nothing.note)).toContain('No image was found there.');
     expect(nothing.covers).toEqual(onTheList.covers);
   });
 
@@ -234,7 +236,7 @@ describe('the covers a person gives the books of an item', () => {
 
     await expect(workflow.covers.choose({ sessionId }, 1, '/pictures/a.jpg')).resolves.toEqual({
       covers: [],
-      note: 'A cover has to be a JPEG, PNG, WebP, GIF or BMP image.',
+      note: [message('covers.typesSentence', {})],
     });
     await expect(workflow.covers.remove({ sessionId }, 1)).resolves.toEqual({ covers: [] });
     // Handed an image all the same, such a store takes it and has nothing to show for it.

@@ -3,6 +3,7 @@ import { ExternalLink, Search } from 'lucide-react';
 import { ProviderPicker } from '@/renderer/components/mapping/provider-picker';
 import { NoMatchesNotice } from '@/renderer/components/shared/no-matches-notice';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { type SearchMetadata, useMetadataSearch } from '@/renderer/hooks/use-metadata-search';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
@@ -34,6 +35,9 @@ export function AuthorLookupPanel({
   /** The title that would be searched: the one typed, or the item's own name. */
   readonly title: string;
 }): React.JSX.Element {
+  const messages = useMessages();
+  const words = messages.details.lookup;
+  const online = messages.mapping.chaptersFrom.online;
   const provider = lookup.providers.find((candidate) => candidate.id === lookup.selectedId);
   const { error, forget, lastTitle, results, search, searched, searching } = useMetadataSearch(
     lookup.onSearch,
@@ -43,7 +47,7 @@ export function AuthorLookupPanel({
     <div className="border-border bg-background space-y-3 rounded-lg border p-4" id={id}>
       <div className="max-w-md">
         <ProviderPicker
-          noneDetail="Type the author yourself"
+          noneDetail={words.noneDetail}
           onSelect={(providerId) => {
             forget();
             lookup.onSelect(providerId);
@@ -54,15 +58,13 @@ export function AuthorLookupPanel({
       </div>
 
       {provider === undefined ? (
-        <p className="text-muted-foreground text-xs">
-          Pick a source to look up who wrote it. Nothing is sent anywhere until you search.
-        </p>
+        <p className="text-muted-foreground text-xs">{words.pick}</p>
       ) : (
         <>
           <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
-            Author data by
+            {words.dataBy}
             <button
-              aria-label={`Open ${provider.displayName} in your browser`}
+              aria-label={online.open(provider.displayName)}
               className="text-accent focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-2"
               onClick={() => {
                 lookup.onOpenHomepage(provider.id);
@@ -75,8 +77,7 @@ export function AuthorLookupPanel({
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-muted-foreground min-w-0 flex-1 text-xs leading-relaxed">
-              Will search {provider.displayName} for “{title}”. Only author names and years are
-              used, and nothing is downloaded from there.
+              {words.willSearch(provider.displayName, title)}
             </p>
             <Button
               disabled={title === ''}
@@ -86,10 +87,10 @@ export function AuthorLookupPanel({
               size="sm"
               variant="outline"
             >
-              <Search aria-hidden="true" /> Search
+              <Search aria-hidden="true" /> {online.searchButton}
             </Button>
           </div>
-          {searching && <p className="text-muted-foreground text-xs">Searching…</p>}
+          {searching && <p className="text-muted-foreground text-xs">{online.searching}</p>}
           {error !== undefined && (
             <p className="text-status-failed text-xs" role="alert">
               {error}
@@ -99,7 +100,7 @@ export function AuthorLookupPanel({
             <NoMatchesNotice fix="title" query={lastTitle ?? title} />
           )}
           {!searching && results.length > 0 && (
-            <ul aria-label="Matches" className="space-y-2">
+            <ul aria-label={online.matches} className="space-y-2">
               {results.map((result) => {
                 const authors = result.authors ?? [];
                 return (
@@ -110,20 +111,20 @@ export function AuthorLookupPanel({
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm">{result.title}</p>
                       <p className="text-muted-foreground truncate text-xs">
-                        {authors.length === 0 ? 'No author listed' : authors.join(', ')}
+                        {authors.length === 0 ? words.noAuthor : authors.join(', ')}
                         {result.year === undefined ? '' : ` · ${String(result.year)}`}
                       </p>
                     </div>
                     {authors.length > 0 && (
                       <Button
-                        aria-label={`Use ${authors.join(', ')} from ${result.title}`}
+                        aria-label={words.useLabel(authors.join(', '), result.title)}
                         onClick={() => {
                           onUse(authors.join(', '));
                         }}
                         size="sm"
                         variant="outline"
                       >
-                        Use author
+                        {words.use}
                       </Button>
                     )}
                   </li>

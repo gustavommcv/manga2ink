@@ -6,6 +6,7 @@ import type { RunOptions } from '@/domain/item-options';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
 import { Button } from '@/renderer/components/ui/button';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
 
 export interface ItemOptionsScreenProps {
@@ -50,6 +51,7 @@ export function ItemOptionsScreen({
   settings,
   singleBook,
 }: ItemOptionsScreenProps): React.JSX.Element {
+  const words = useMessages().options.item;
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     titleRef.current?.focus();
@@ -62,20 +64,16 @@ export function ItemOptionsScreen({
       </Button>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-xs font-medium">Advanced · this item only</p>
+          <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
           <h1
             className="focus-visible:ring-ring focus-visible:ring-offset-background mt-2 rounded-md text-3xl font-semibold tracking-tight break-all outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             id="item-options-title"
             ref={titleRef}
             tabIndex={-1}
           >
-            Options for {name}
+            {words.title(name)}
           </h1>
-          <p className="text-muted-foreground mt-3 text-sm">
-            What you change here is used for this item only, and is shown in color. Everything else
-            follows the conversion options of the queue, including what you change there later; the
-            arrow beside a changed option puts the queue’s value back.
-          </p>
+          <p className="text-muted-foreground mt-3 text-sm">{words.description}</p>
         </div>
         <div className="w-72 shrink-0">
           <Button
@@ -87,12 +85,10 @@ export function ItemOptionsScreen({
             size="sm"
             variant="ghost"
           >
-            <RotateCcw /> Use the queue’s options
+            <RotateCcw /> {words.useQueue}
           </Button>
           <p aria-live="polite" className="text-subtle-foreground mt-1 text-xs">
-            {hasOwnOptions
-              ? 'This item has options of its own.'
-              : 'This item uses the options of the queue.'}
+            {hasOwnOptions ? words.hasOwn : words.followsQueue}
           </p>
         </div>
       </div>
