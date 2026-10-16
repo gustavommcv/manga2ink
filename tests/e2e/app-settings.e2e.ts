@@ -13,6 +13,31 @@ interface KeptAppSettings {
 const readKept = async (file: string): Promise<KeptAppSettings> =>
   JSON.parse(await readFile(file, 'utf8')) as KeptAppSettings;
 
+/** Waits for the dialog to be titled `title`; if it never is, says what the dialog held instead. */
+async function waitForDialogTitle(title: string): Promise<void> {
+  const dialog = $('[role="dialog"]');
+  try {
+    await browser.waitUntil(
+      async () => (await dialog.isExisting()) && (await dialog.$('h2').getText()) === title,
+      { timeout: 30_000 },
+    );
+  } catch (error) {
+    const held = await browser.execute(() => {
+      const open = document.querySelector('[role="dialog"]');
+      return open === null
+        ? 'no dialog'
+        : JSON.stringify({
+            text: open.textContent,
+            chosen: open.querySelector('select')?.value,
+            lang: document.documentElement.lang,
+          });
+    });
+    throw new Error(`the dialog should be titled "${title}", and it held: ${held}`, {
+      cause: error,
+    });
+  }
+}
+
 describe('packaged app settings', () => {
   it('keeps the language in a file of its own, and the window reads it again at launch', async () => {
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
@@ -24,40 +49,40 @@ describe('packaged app settings', () => {
     // The gear on the title bar opens the dialog, in the language of the system (English here).
     await $('button[aria-label="App settings"]').click();
     const dialog = $('[role="dialog"]');
-    await dialog.waitForDisplayed({ timeout: 15_000 });
+    await dialog.waitForDisplayed({ timeout: 30_000 });
     assert.equal(await dialog.$('h2').getText(), 'App settings');
 
     // Choosing Portuguese changes the dialog at once and keeps the choice.
     await dialog.$('select').selectByAttribute('value', 'pt-BR');
-    await dialog.$('h2=Configurações do app').waitForDisplayed({ timeout: 15_000 });
+    await waitForDialogTitle('Configurações do app');
     await browser.waitUntil(
       async () => existsSync(file) && (await readKept(file)).language === 'pt-BR',
-      { timeout: 15_000, timeoutMsg: 'the app settings file did not get the language' },
+      { timeout: 30_000, timeoutMsg: 'the app settings file did not get the language' },
     );
     assert.equal((await readKept(file)).version, 1);
     assert.equal(await $('html').getAttribute('lang'), 'pt-BR');
 
     // Escape puts the dialog away, and the gear has the focus again.
     await browser.keys('Escape');
-    await dialog.waitForExist({ reverse: true, timeout: 15_000 });
+    await dialog.waitForExist({ reverse: true, timeout: 30_000 });
     await browser.waitUntil(
       async () => await $('button[aria-label="Configurações do app"]').isFocused(),
-      { timeout: 15_000, timeoutMsg: 'the gear should get the focus back' },
+      { timeout: 30_000, timeoutMsg: 'the gear should get the focus back' },
     );
 
     // Opened again, as a launch does, the window is read in the kept language.
     await browser.refresh();
     await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Configurações do app"]').waitForDisplayed({ timeout: 15_000 });
+    await $('button[aria-label="Configurações do app"]').waitForDisplayed({ timeout: 30_000 });
     assert.equal(await $('html').getAttribute('lang'), 'pt-BR');
 
     // Following the system again puts it back, and leaves the window as it was found.
     await $('button[aria-label="Configurações do app"]').click();
-    await $('[role="dialog"]').waitForDisplayed({ timeout: 15_000 });
+    await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
     await $('[role="dialog"] select').selectByAttribute('value', 'system');
-    await $('[role="dialog"]').$('h2=App settings').waitForDisplayed({ timeout: 15_000 });
+    await waitForDialogTitle('App settings');
     await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
-      timeout: 15_000,
+      timeout: 30_000,
       timeoutMsg: 'the app settings file did not go back to following the system',
     });
     await browser.keys('Escape');

@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { type UserEvent } from '@testing-library/user-event';
 import { expect } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
@@ -174,9 +174,34 @@ export function installBridge(value: MangaboundBridge): void {
   Object.defineProperty(window, 'mangabound', { configurable: true, value });
 }
 
+/**
+ * The area that takes a drop is disabled until the answer about the conversion tools arrives, a
+ * moment after the page is first drawn, and a drop before that does nothing. This waits for the
+ * answer instead of hoping it came.
+ */
+export async function findReadyDropTarget(): Promise<HTMLElement> {
+  const target = await screen.findByTestId('drop-target');
+  await waitFor(() => {
+    expect(within(target).getByRole('button')).toBeEnabled();
+  });
+  return target;
+}
+
+/**
+ * Clicks the button that adds files or a folder. It is disabled until the answer about the tools
+ * arrives, and a click before that does nothing, so it waits for the button to be enabled.
+ */
+export async function chooseToAdd(user: UserEvent, what: 'Files' | 'Folder'): Promise<void> {
+  const button = await screen.findByRole('button', { name: what });
+  await waitFor(() => {
+    expect(button).toBeEnabled();
+  });
+  await user.click(button);
+}
+
 /** Adds what the bridge's dialog returns and waits until the tools have read every row. */
 export async function addFolder(user: UserEvent): Promise<void> {
-  await user.click(await screen.findByRole('button', { name: 'Folder' }));
+  await chooseToAdd(user, 'Folder');
   await waitFor(() => {
     expect(screen.queryByText('Checking…')).not.toBeInTheDocument();
   });
