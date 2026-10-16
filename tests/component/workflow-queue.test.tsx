@@ -1032,6 +1032,10 @@ describe('queue application workflow', () => {
     installBridge(bridge({ registerDroppedFiles }));
     render(<App />);
     const target = await screen.findByTestId('drop-target');
+    // A drop is taken only once the tools have been read, a moment after the area appears.
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Files' })).toBeEnabled();
+    });
     const dropped = new File(['x'], 'Dropped Work');
 
     // Dragging text or anything that is not a file does not light the target up.
@@ -1101,8 +1105,12 @@ describe('queue application workflow', () => {
       }),
     );
     render(<App />);
+    const target = await screen.findByTestId('drop-target');
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Files' })).toBeEnabled();
+    });
 
-    fireEvent.drop(await screen.findByTestId('drop-target'), {
+    fireEvent.drop(target, {
       dataTransfer: { types: ['Files'], files: [new File(['x'], 'Work')] },
     });
 

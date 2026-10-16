@@ -57,7 +57,18 @@ describe('packaged app settings', () => {
     await $('button[aria-label="Configurações do app"]').click();
     await $('[role="dialog"]').waitForDisplayed({ timeout: 15_000 });
     await $('[role="dialog"] select').selectByAttribute('value', 'system');
-    await $('[role="dialog"]').$('h2=App settings').waitForDisplayed({ timeout: 15_000 });
+    try {
+      await browser.waitUntil(
+        async () => (await $('[role="dialog"] h2').getText()) === 'App settings',
+        { timeout: 15_000 },
+      );
+    } catch (error) {
+      // Says what the dialog shows instead, so that a failure can be read from the log.
+      const shown = await $('[role="dialog"]').getText();
+      throw new Error(`The dialog did not come back to English. It says: ${shown}`, {
+        cause: error,
+      });
+    }
     await $('h1=Queue').waitForDisplayed({ timeout: 15_000 });
     await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
       timeout: 15_000,
