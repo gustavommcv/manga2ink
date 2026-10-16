@@ -1,0 +1,18 @@
+---
+title: 'アーキテクチャと貢献'
+description: 'Mangabound のアーキテクチャの概要、貢献ガイド、アーキテクチャ決定記録の在りかと、このドキュメントサイトへの貢献のしかたを説明します。'
+---
+
+まず、リポジトリにある実装ガイドから始めてください:
+
+- [アーキテクチャの概要](https://github.com/gustavommcv/mangabound/blob/main/docs/architecture.md): 層、許される依存関係、変換の流れ、永続化、拡張点。
+- [CONTRIBUTING](https://github.com/gustavommcv/mangabound/blob/main/CONTRIBUTING.md): セットアップ、フォーマット、リント、型チェック、フィクスチャを使ったテスト、Storybook、パッケージ化した E2E、そして特定のコミットに対するリモート CI の関門。
+- [アーキテクチャ決定記録](https://github.com/gustavommcv/mangabound/tree/main/docs/adr): 採用された決定の理由とトレードオフ。
+
+ドメインのルールは Electron にも React にも依存しません。アダプターはアプリケーションのポートを実装し、サンドボックス化されたレンダラーは、ファイルやプロセスに直接アクセスせず、検証済みの preload ブリッジを使います。
+
+## このサイトへの貢献
+
+ドキュメントの独立した検証と、公開のポリシーについては、[website/README.md](https://github.com/gustavommcv/mangabound/blob/main/website/README.md) を参照してください。GIF とスクリーンショットは、[メディアガイド](https://github.com/gustavommcv/mangabound/blob/main/website/MEDIA.md)に従います。
+
+ユーザーの作業を変更するときは、サイトのすべての言語を更新してください。まだ翻訳していないページがある言語は、`website/i18n-gaps.json` にそのページを載せ、サイトはそこで英語のページを表示します。ボタンのラベルと動作は、公開されたアプリで確認してください。画像や動画は、手順の説明の助けにはなりますが、説明の代わりにはなりません。

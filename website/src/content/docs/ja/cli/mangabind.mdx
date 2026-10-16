@@ -1,0 +1,24 @@
+---
+title: 'mangabind CLI'
+description: 'mangabind コマンドラインツールを使って、ターミナルから、マンガの各話を CBZ の巻にまとめます。ドライラン、ライブラリの一括処理、独自の各話の割り当てを扱います。'
+---
+
+ターミナルから mangabind を使うには、[GitHub Releases](https://github.com/gustavommcv/mangabind/releases) からダウンロードし、そのフォルダーを PATH に追加します。
+
+## 試してみる
+
+```sh
+mangabind --help
+mangabind --input "./Manga" --dry-run --json
+mangabind --input "./Library" --output "./Volumes" --batch
+```
+
+ドライランは、巻を書き出さずに、計画だけを表示します。マンガフォルダーのライブラリを処理するには、`--batch` を使います。
+
+独自の各話の割り当てを使うには、`--metadata-file` を使います。一括処理では、各マンガフォルダーに、それぞれの `mangabind.json` を置いてください。
+
+## そのほかのオプション
+
+このツールの [README](https://github.com/gustavommcv/mangabind#readme) に、`--combine` でシリーズを 1 冊にまとめる方法や、`--progress-json` で進み具合を報告する方法など、オプションの説明があります。
+
+連携については、[メタデータ形式](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md)と[マシンプロトコル](https://github.com/gustavommcv/mangabind/blob/main/docs/machine-protocol-v1.md)を参照してください。お使いのバージョンに合った参照先を選んでください。
