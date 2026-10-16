@@ -3,12 +3,16 @@ import type { Language } from '@/domain/app-settings';
 import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
 import { type DialogMessages, dialogMessages } from './dialog-messages';
+import { type DetailsMessages, detailsMessages } from './details-messages';
 import { failureSaid } from './failure-said';
 import { inputSaid } from './input-said';
+import { type LibraryMessages, libraryMessages } from './library-messages';
+import { libraryCoversSaid } from './library-said';
 import { mappingSaid } from './mapping-said';
 import { type MappingMessages, mappingMessages } from './mapping-messages';
 import { modeSaid } from './mode-said';
 import { noticeSaid } from './notice-said';
+import { type OptionsMessages, optionsMessages } from './options-messages';
 import { providerSaid } from './provider-said';
 import { type QueueMessages, queueMessages } from './queue-messages';
 import { queueSaid } from './queue-said';
@@ -31,6 +35,9 @@ export interface Messages {
   /** What the main process gives the native dialogs to say. */
   readonly dialogs: DialogMessages;
   readonly mapping: MappingMessages;
+  readonly library: LibraryMessages;
+  readonly details: DetailsMessages;
+  readonly options: OptionsMessages;
   readonly queue: QueueMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
@@ -45,6 +52,9 @@ function build(language: Language): Messages {
     appSettings: appSettingsMessages[language],
     dialogs: dialogMessages[language],
     mapping: mappingMessages[language],
+    library: libraryMessages[language],
+    details: detailsMessages[language],
+    options: optionsMessages[language],
     queue: queueMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
@@ -55,6 +65,7 @@ function build(language: Language): Messages {
       ...inputSaid[language],
       ...failureSaid[language],
       ...mappingSaid[language],
+      ...libraryCoversSaid[language],
       ...noticeSaid[language],
       ...workflowSaid[language],
       ...saveSaid[language],
