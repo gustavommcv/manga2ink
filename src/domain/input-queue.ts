@@ -2,7 +2,7 @@ import { type BookDetails, hasBookDetails, normalizeBookDetails } from './book-d
 import { hasItemOptions, type ItemOptions } from './item-options';
 import { onlyLinksNote } from './library-links';
 import { type MappingDraft, mappingSignature } from './mapping';
-import { type AnyMessage, message, raw } from './message';
+import { type AnyMessage, message } from './message';
 import { libraryReason, type ProcessMode, resolveMode } from './process-mode';
 import { unrecognizedChaptersNote, unrecognizedInLibraryNote } from './unrecognized-chapters';
 
@@ -17,7 +17,7 @@ export type QueueRowKind = QueueInputKind | 'library';
 
 /** What a run did with one manga of a library. */
 export type TitleOutcome =
-  { readonly status: 'done' } | { readonly status: 'failed'; readonly message: string };
+  { readonly status: 'done' } | { readonly status: 'failed'; readonly message: AnyMessage };
 
 /** One manga folder of a library: the grouping mangabind proposed for it, and how it went. */
 export interface LibraryTitle {
@@ -50,7 +50,7 @@ interface QueueRowBase {
 export type QueueRow = QueueRowBase &
   (
     | { readonly state: 'inspecting' }
-    | { readonly state: 'unreadable'; readonly message: string }
+    | { readonly state: 'unreadable'; readonly message: AnyMessage }
     | {
         readonly state: 'inspected';
         readonly sessionId: string;
@@ -98,7 +98,7 @@ export type QueueAction =
       /** Links in the folder that were not followed. */
       readonly skippedLinks?: readonly string[];
     }
-  | { readonly type: 'inspect-failed'; readonly id: string; readonly message: string }
+  | { readonly type: 'inspect-failed'; readonly id: string; readonly message: AnyMessage }
   /** The library was read again, after a title had its volumes saved. Saved titles stay saved. */
   | {
       readonly type: 'library-planned';
@@ -395,7 +395,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
           : message('queue.detail.cbz', {}),
       runnable: false,
       // Why it could not be read is what the tool or the system said, in their own words.
-      notes: [raw(row.message)],
+      notes: [row.message],
     };
   }
   if (row.kind === 'cbz') {

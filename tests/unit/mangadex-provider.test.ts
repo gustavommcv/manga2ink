@@ -9,6 +9,7 @@ import {
   MangaDexProvider,
   mangaDexDescriptor,
 } from '@/adapters/metadata-providers/mangadex/provider';
+import { message } from '@/domain/message';
 
 const fixture = (name: string): string =>
   readFileSync(path.resolve('tests', 'fixtures', 'metadata', 'mangadex', name), 'utf8');
@@ -321,27 +322,27 @@ describe('MangaDex provider', () => {
         'cannot be reached',
         () => Promise.reject(new TypeError('fetch failed')),
         'network_error',
-        'Could not reach MangaDex.',
+        message('provider.unreachable', { service: 'MangaDex' }),
       ],
       [
         'is rate-limiting',
         () => Promise.resolve(respond(429, '')),
         'rate_limited',
-        'MangaDex is rate-limiting requests. Try again shortly.',
+        message('provider.rateLimited', { service: 'MangaDex' }),
       ],
       [
         'answers with an error',
         () => Promise.resolve(respond(503, '')),
         'http_error',
-        'MangaDex returned an unexpected status (503).',
+        message('provider.unexpectedStatus', { service: 'MangaDex', status: 503 }),
       ],
       [
         'answers with something that is not JSON',
         () => Promise.resolve(respond(200, '<html>')),
         'malformed_json',
-        'MangaDex returned malformed JSON.',
+        message('provider.malformedJson', { service: 'MangaDex' }),
       ],
-    ])('says so, naming the service, when it %s', async (_name, respondWith, code, message) => {
+    ])('says so, naming the service, when it %s', async (_name, respondWith, code, said) => {
       for (const ask of [
         () => provider(respondWith).search('x'),
         () => provider(respondWith).suggestVolumes(work),
@@ -349,7 +350,7 @@ describe('MangaDex provider', () => {
         await expect(ask()).rejects.toMatchObject({
           name: 'MetadataProviderError',
           code,
-          message,
+          said,
           recoverable: true,
         });
       }
@@ -360,13 +361,13 @@ describe('MangaDex provider', () => {
         provider(() => Promise.resolve(respond(200, '{"data":[{"id":1}]}'))).search('x'),
       ).rejects.toMatchObject({
         code: 'invalid_payload',
-        message: 'MangaDex returned an unexpected search response.',
+        said: message('provider.unexpectedSearch', { service: 'MangaDex' }),
       });
       await expect(
         provider(() => Promise.resolve(respond(200, '{"volumes":7}'))).suggestVolumes(work),
       ).rejects.toMatchObject({
         code: 'invalid_payload',
-        message: 'MangaDex returned an unexpected volumes response.',
+        said: message('provider.unexpectedVolumes', { service: 'MangaDex' }),
       });
     });
 

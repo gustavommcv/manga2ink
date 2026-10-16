@@ -26,7 +26,7 @@ export class PendingCatalogStore implements LibraryStorePort {
 
   /**
    * Where the pending conversions are, once the app knows. Until then nothing is the pending root.
-   * A function, since a person can choose another folder for them while the app runs (ADR 0055).
+   * A function, since a person can choose another folder for them while the app runs (ADR 0056).
    */
   useRoot(root: string | (() => string)): void {
     this.pendingRoot = typeof root === 'string' ? () => root : root;

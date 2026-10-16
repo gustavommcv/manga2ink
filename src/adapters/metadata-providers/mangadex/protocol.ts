@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
+import { message } from '@/domain/message';
+
 import { MetadataProviderError } from '../errors';
+
+/** The name the service is called by in what the person reads. */
+const service = 'MangaDex';
 
 // Some endpoints represent an empty keyed collection as `[]` instead of `{}`.
 function mapOrEmpty<T extends z.ZodTypeAny>(valueSchema: T) {
@@ -60,9 +65,12 @@ function parseJson(input: string): unknown {
   try {
     return JSON.parse(input);
   } catch (error) {
-    throw new MetadataProviderError('malformed_json', 'MangaDex returned malformed JSON.', true, {
-      cause: error,
-    });
+    throw new MetadataProviderError(
+      'malformed_json',
+      message('provider.malformedJson', { service }),
+      true,
+      { cause: error },
+    );
   }
 }
 
@@ -71,7 +79,7 @@ export function parseSearchResponse(input: string): SearchResponse {
   if (!result.success) {
     throw new MetadataProviderError(
       'invalid_payload',
-      'MangaDex returned an unexpected search response.',
+      message('provider.unexpectedSearch', { service }),
       true,
       { cause: result.error },
     );
@@ -84,7 +92,7 @@ export function parseAggregateResponse(input: string): AggregateResponse {
   if (!result.success) {
     throw new MetadataProviderError(
       'invalid_payload',
-      'MangaDex returned an unexpected volumes response.',
+      message('provider.unexpectedVolumes', { service }),
       true,
       { cause: result.error },
     );

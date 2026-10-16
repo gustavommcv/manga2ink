@@ -25,6 +25,7 @@ import {
   validateMangapressSettings,
 } from '@/domain/output-profile';
 import { finishRunReport } from '@/domain/run-report';
+import { raw } from '@/domain/message';
 
 // More of what the mutation run found no test noticing, for the domain layer.
 
@@ -63,7 +64,11 @@ describe('a failed read', () => {
   it('is only for the row that failed, among others being read', () => {
     const rows = queueReducer(emptyQueue, { type: 'add', inputs: [input('a'), input('b')] });
 
-    const after = queueReducer(rows, { type: 'inspect-failed', id: 'a', message: 'Not readable.' });
+    const after = queueReducer(rows, {
+      type: 'inspect-failed',
+      id: 'a',
+      message: raw('Not readable.'),
+    });
 
     expect(after.map((row) => row.state)).toEqual(['unreadable', 'inspecting']);
   });
@@ -71,13 +76,13 @@ describe('a failed read', () => {
   it('says CBZ for a file and Folder for a folder', () => {
     const rows = queueReducer(
       queueReducer(emptyQueue, { type: 'add', inputs: [input('a', 'cbz'), input('b')] }),
-      { type: 'inspect-failed', id: 'a', message: 'Not readable.' },
+      { type: 'inspect-failed', id: 'a', message: raw('Not readable.') },
     );
 
     expect(describeRow(rows[0]!, 'bind-and-convert').detail).toBe('CBZ');
     expect(
       describeRow(
-        queueReducer(rows, { type: 'inspect-failed', id: 'b', message: 'x' })[1]!,
+        queueReducer(rows, { type: 'inspect-failed', id: 'b', message: raw('x') })[1]!,
         'bind-and-convert',
       ).detail,
     ).toBe('Folder');

@@ -13,6 +13,7 @@ import { MangapressEventDecoder, parseMangapressEventLine } from '@/adapters/man
 import { isLibraryRelativePath } from '@/library/manifest';
 import { fromTheMainFrame } from '@/main/ipc/handle';
 import { isOwnHost } from '@/opds/host';
+import { message } from '@/domain/message';
 
 type StatFunction = typeof nodeStat;
 // The handler module takes `ipcMain` from Electron; this test only reads a function of it, and must
@@ -237,10 +238,7 @@ describe('how many things are taken in at once', () => {
 
     expect(result.accepted).toHaveLength(maxInputsPerAdd);
     expect(result.rejected).toEqual([
-      {
-        name: '1 more',
-        reason: `Only the first ${String(maxInputsPerAdd)} items are added at once.`,
-      },
+      { reason: message('input.overLimit', { left: 1, limit: maxInputsPerAdd }) },
     ]);
   });
 });

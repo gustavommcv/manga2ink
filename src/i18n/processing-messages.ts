@@ -2,7 +2,7 @@ import type { Language } from '@/domain/app-settings';
 
 import { countOf } from './count';
 
-/** The words of the Processing tab of the app settings (ADR 0055). */
+/** The words of the Processing tab of the app settings (ADR 0056). */
 export interface ProcessingMessages {
   /** What the folder is for, under the name of the tab. */
   readonly description: string;
@@ -27,13 +27,6 @@ export interface ProcessingMessages {
     readonly help: string;
     readonly books: (count: number) => string;
   };
-  /** What a failed choice says, by the kind of failure. */
-  readonly errors: {
-    readonly busy: string;
-    readonly unusable: string;
-    readonly load: string;
-    readonly generic: string;
-  };
 }
 
 /** A language is added by one entry here, and the compiler says where the others are missing. */
@@ -57,12 +50,6 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       help: 'Save or delete these books from the list on the queue page. Once none is left in a folder, Mangabound stops looking there.',
       books: (count) => `${String(count)} ${countOf(count, 'book', 'books')}`,
     },
-    errors: {
-      busy: 'A conversion or a share is running. Finish or stop it, then try again.',
-      unusable: 'Mangabound cannot work in that folder. Choose one it can write in.',
-      load: 'Where Mangabound works could not be read. Close this window and open it again.',
-      generic: 'The folder could not be changed. Try again.',
-    },
   },
   'pt-BR': {
     description:
@@ -82,13 +69,6 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       title: 'Ainda esperando em pastas anteriores',
       help: 'Salve ou apague esses livros pela lista da página da fila. Quando não sobrar nenhum em uma pasta, o Mangabound deixa de procurar nela.',
       books: (count) => `${String(count)} ${countOf(count, 'livro', 'livros')}`,
-    },
-    errors: {
-      busy: 'Há uma conversão ou um compartilhamento em andamento. Termine ou interrompa, e tente de novo.',
-      unusable:
-        'O Mangabound não consegue trabalhar nessa pasta. Escolha uma em que ele possa gravar.',
-      load: 'Não foi possível ler onde o Mangabound trabalha. Feche esta janela e abra de novo.',
-      generic: 'Não foi possível mudar a pasta. Tente de novo.',
     },
   },
 };

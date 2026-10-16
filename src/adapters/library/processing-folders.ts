@@ -3,6 +3,7 @@ import { mkdir, rm, stat, statfs, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import type { ProcessingChoice } from '@/domain/app-settings';
+import { type AnyMessage, message } from '@/domain/message';
 
 import type { PendingRoots } from './fs-pending-runs';
 
@@ -18,18 +19,24 @@ export interface ProcessingDefaults {
 }
 
 /**
- * Why a folder cannot be worked in. `unavailable` is a folder that was chosen and is not there now (a
- * drive that was taken out); `unusable` is one that cannot be chosen: not a folder, not an absolute
- * path, or one the app cannot write in.
+ * Why a folder cannot be worked in, and what to tell the person (ADR 0053). `unavailable` is a
+ * folder that was chosen and is not there now (a drive that was taken out); `unusable` is one that
+ * cannot be chosen: not a folder, not an absolute path, or one the app cannot write in.
  */
 export class ProcessingFolderError extends Error {
+  readonly said: AnyMessage;
+
   constructor(
     readonly reason: 'unavailable' | 'unusable',
-    message: string,
+    readonly folder: string,
     options?: { readonly cause: unknown },
   ) {
-    super(message, options);
+    super(`The processing folder ${folder} is ${reason}.`, options);
     this.name = 'ProcessingFolderError';
+    this.said =
+      reason === 'unavailable'
+        ? message('failure.processingFolderUnavailable', { folder })
+        : message('failure.processingFolderUnusable', { folder });
   }
 }
 
@@ -95,7 +102,7 @@ export function diskIoOver(disk: DiskCalls): ProcessingFoldersIo {
 const diskIo = diskIoOver(realDisk);
 
 /**
- * Where the app works (ADR 0055). With no folder chosen it is where it always was: finished books
+ * Where the app works (ADR 0056). With no folder chosen it is where it always was: finished books
  * wait in its own data folder and volumes are built in the system's temporary folder. With a folder
  * chosen both are inside it, in `Pending` and `Scratch`, so that a person can point the app at a
  * drive with room. The choice is read each time, so a change is the next thing the app does.
@@ -164,10 +171,7 @@ export class ProcessingFolders {
   async prepare(): Promise<{ readonly pending: string; readonly scratch: string }> {
     const { folder } = this.choice();
     if (folder !== null && !(await this.io.isDirectory(folder))) {
-      throw new ProcessingFolderError(
-        'unavailable',
-        `The processing folder ${folder} is not available. Connect it again, or choose another one in the app settings.`,
-      );
+      throw new ProcessingFolderError('unavailable', folder);
     }
     const places = { pending: this.pendingRoot(), scratch: this.scratchRoot() };
     await this.io.makeDirectory(places.pending);
@@ -181,14 +185,14 @@ export class ProcessingFolders {
    */
   async check(folder: string): Promise<void> {
     if (!path.isAbsolute(folder) || !(await this.io.isDirectory(folder))) {
-      throw new ProcessingFolderError('unusable', `${folder} is not a folder the app can work in.`);
+      throw new ProcessingFolderError('unusable', folder);
     }
     try {
       await this.io.makeDirectory(path.join(folder, pendingFolderName));
       await this.io.makeDirectory(path.join(folder, scratchFolderName));
       await this.io.probeWrite(path.join(folder, pendingFolderName));
     } catch (cause) {
-      throw new ProcessingFolderError('unusable', `The app cannot write in ${folder}.`, { cause });
+      throw new ProcessingFolderError('unusable', folder, { cause });
     }
   }
 

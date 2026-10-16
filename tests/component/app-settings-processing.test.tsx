@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { Language } from '@/domain/app-settings';
+import { type AnyMessage, message } from '@/domain/message';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { ProcessingTab } from '@/renderer/components/settings/processing-tab';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
@@ -23,10 +24,16 @@ const answering =
   () =>
     Promise.resolve({ ok: true, value: status });
 
-const refusing = (code: string): WorkflowResult<never> => ({
+/** What the main process answers when it cannot do what was asked, as a code the window writes. */
+const refusing = (code: string, said: AnyMessage): WorkflowResult<never> => ({
   ok: false,
-  error: { code, message: 'English from the main process.' },
+  error: { code, said },
 });
+const busy = refusing('processing_busy', message('failure.processingBusy', {}));
+const unusable = refusing(
+  'processing_folder_unusable',
+  message('failure.processingFolderUnusable', { folder: '/read-only' }),
+);
 
 async function renderTab(
   overrides: Partial<MangaboundBridge> = {},
@@ -186,25 +193,34 @@ describe('choosing a folder', () => {
   });
 
   it.each([
-    [
-      'a conversion or a share is running',
-      'processing_busy',
-      /A conversion or a share is running/u,
-    ],
-    ['the folder cannot be used', 'processing_folder_unusable', /cannot work in that folder/u],
-    ['something else went wrong', 'settings_save_failed', /could not be changed/u],
-  ])('says so when %s, in the words of the window', async (_name, code, message) => {
+    ['a conversion or a share is running', busy, /A conversion or a share is running/u],
+    ['the folder cannot be used', unusable, /Mangabound cannot work in \/read-only/u],
+  ])('says so when %s, in the words of the window', async (_name, answer, sentence) => {
     const user = userEvent.setup();
     await renderTab({
       getProcessingFolder: answering(defaultProcessingStatus),
-      chooseProcessingFolder: () => Promise.resolve(refusing(code)),
+      chooseProcessingFolder: () => Promise.resolve(answer),
     });
 
     await user.click(await screen.findByRole('button', { name: 'Choose a folder…' }));
 
-    expect(await screen.findByText(message)).toBeVisible();
-    expect(screen.queryByText('English from the main process.')).not.toBeInTheDocument();
+    expect(await screen.findByText(sentence)).toBeVisible();
     expect(screen.getByText('Chosen by Mangabound')).toBeVisible();
+  });
+
+  it('says the same, in Portuguese, when the window is in Portuguese', async () => {
+    const user = userEvent.setup();
+    await renderTab(
+      {
+        getProcessingFolder: answering(defaultProcessingStatus),
+        chooseProcessingFolder: () => Promise.resolve(busy),
+      },
+      'pt-BR',
+    );
+
+    await user.click(await screen.findByRole('button', { name: 'Escolher uma pasta…' }));
+
+    expect(await screen.findByText(/Há uma conversão ou um compartilhamento/u)).toBeVisible();
   });
 
   it('says the same when the main process does not answer at all', async () => {
@@ -216,14 +232,14 @@ describe('choosing a folder', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Choose a folder…' }));
 
-    expect(await screen.findByText(/could not be changed/u)).toBeVisible();
+    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
   });
 
   it('takes the message away when the next try is made', async () => {
     const user = userEvent.setup();
     const chooseProcessingFolder = vi
       .fn<MangaboundBridge['chooseProcessingFolder']>()
-      .mockResolvedValueOnce(refusing('processing_busy'))
+      .mockResolvedValueOnce(busy)
       .mockResolvedValueOnce({ ok: true, value: chosenProcessingStatus });
     await renderTab({
       getProcessingFolder: answering(defaultProcessingStatus),
@@ -269,7 +285,7 @@ describe('going back to the folder Mangabound picks', () => {
     const user = userEvent.setup();
     await renderTab({
       getProcessingFolder: answering(chosenProcessingStatus),
-      useDefaultProcessingFolder: () => Promise.resolve(refusing('processing_busy')),
+      useDefaultProcessingFolder: () => Promise.resolve(busy),
     });
 
     await user.click(await screen.findByRole('button', { name: 'Use the default folder' }));
@@ -295,9 +311,12 @@ describe('reading where the app works', () => {
   });
 
   it('says it could not, and offers nothing to change, when the main process refuses', async () => {
-    await renderTab({ getProcessingFolder: () => Promise.resolve(refusing('x')) });
+    await renderTab({
+      getProcessingFolder: () =>
+        Promise.resolve(refusing('settings_load_failed', message('failure.settingsNotLoaded', {}))),
+    });
 
-    expect(await screen.findByText(/could not be read/u)).toBeVisible();
+    expect(await screen.findByText('The saved settings could not be loaded.')).toBeVisible();
     expect(screen.queryByText('Reading where Mangabound works…')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Choose a folder…' })).not.toBeInTheDocument();
   });
@@ -305,7 +324,7 @@ describe('reading where the app works', () => {
   it('says it could not when the main process does not answer', async () => {
     await renderTab({ getProcessingFolder: () => Promise.reject(new Error('gone')) });
 
-    expect(await screen.findByText(/could not be read/u)).toBeVisible();
+    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
   });
 
   it('takes no answer into account once the tab is gone', async () => {

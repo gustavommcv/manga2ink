@@ -13,6 +13,7 @@ import {
 import type { MangabindCliAdapter, MangabindRunResult } from '@/adapters/mangabind/cli';
 import { parseMangabindReport } from '@/adapters/mangabind/protocol';
 import { createMappingDraft, unassignChapters } from '@/domain/mapping';
+import { message } from '@/domain/message';
 
 const fixture = parseMangabindReport(
   fs.readFileSync(
@@ -555,8 +556,7 @@ describe('mangabind binding port', () => {
     await adapter.inspect('/input');
     await expect(adapter.bind('save-failure', completeMapping())).rejects.toMatchObject({
       code: 'mapping_save_failed',
-      message:
-        "Couldn't save mangabind.json in the source folder. Check that the folder is writable and that its mangabind.json is valid JSON.",
+      said: message('workflow.mappingNotSaved', {}),
     });
   });
 
@@ -1055,8 +1055,7 @@ describe('mangabind binding port', () => {
       adapter.writeTitleMapping('/library/Good Manga', completeMapping()),
     ).rejects.toMatchObject({
       code: 'mapping_save_failed',
-      message:
-        "Couldn't save mangabind.json in the source folder. Check that the folder is writable and that its mangabind.json is valid JSON.",
+      said: message('workflow.mappingNotSaved', {}),
     });
   });
 });
@@ -1181,7 +1180,7 @@ describe('the author and language kept with a folder', () => {
         adapterWith(files).writeDetails(folder, { author: 'Someone' }),
       ).rejects.toMatchObject({
         code: 'details_save_failed',
-        message: expect.stringContaining('Check that the folder is writable') as string,
+        said: message('workflow.detailsNotSaved', {}),
       });
     });
 

@@ -45,7 +45,7 @@ describe('what a row says, by code', () => {
       displayName: 'Broken.cbz',
       displayPath: '/m/Broken.cbz',
       state: 'unreadable',
-      message: 'The file could not be read.',
+      message: raw('The file could not be read.'),
     };
 
     expect(describeRow(row, 'bind-and-convert').notes).toEqual([

@@ -8,6 +8,7 @@ import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
+import { raw } from '@/domain/message';
 
 const kept =
   (
@@ -96,7 +97,7 @@ describe('the language in the general tab', () => {
     const user = userEvent.setup();
     const select = await renderGeneral({
       saveAppSettings: () =>
-        Promise.resolve({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } }),
+        Promise.resolve({ ok: false, error: { code: 'settings_save_failed', said: raw('No.') } }),
     });
 
     await user.selectOptions(select, 'Português (Brasil)');
@@ -109,7 +110,10 @@ describe('the language in the general tab', () => {
     const user = userEvent.setup();
     const saveAppSettings = vi
       .fn<MangaboundBridge['saveAppSettings']>()
-      .mockResolvedValueOnce({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } })
+      .mockResolvedValueOnce({
+        ok: false,
+        error: { code: 'settings_save_failed', said: raw('No.') },
+      })
       .mockResolvedValueOnce({ ok: true, value: { language: 'pt-BR' } });
     const select = await renderGeneral({ saveAppSettings });
     await user.selectOptions(select, 'Português (Brasil)');

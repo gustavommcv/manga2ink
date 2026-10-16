@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 
 import { defaultLanguage, type Language } from '@/domain/app-settings';
 import type { AnyMessage } from '@/domain/message';
@@ -45,4 +45,18 @@ export function useSay(): {
     }),
     [said],
   );
+}
+
+/**
+ * Writes a message in the language the window is in when it is written, not when the effect that
+ * says it began. The function never changes, so an effect that depends on it does not start again
+ * because the language did.
+ */
+export function useSayLater(): (message: AnyMessage) => string {
+  const { say: sayNow } = useSay();
+  const latest = useRef(sayNow);
+  useEffect(() => {
+    latest.current = sayNow;
+  }, [sayNow]);
+  return useCallback((one) => latest.current(one), []);
 }

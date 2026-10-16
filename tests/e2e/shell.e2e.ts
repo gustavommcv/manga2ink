@@ -173,7 +173,7 @@ describe('packaged application shell', () => {
     ) as {
       before: unknown;
       after: unknown;
-      failures: { ok: boolean; error: { code: string; message: string } }[];
+      failures: { ok: boolean; error: { code: string; said: unknown } }[];
     };
     assert.deepEqual(results.after, results.before);
     assert.equal(results.failures.length, 6);
@@ -190,7 +190,7 @@ describe('packaged application shell', () => {
       ],
     );
     for (const result of results.failures) {
-      assert.doesNotMatch(result.error.message, /ZodError|stack|TypeError/u);
+      assert.doesNotMatch(JSON.stringify(result.error.said), /ZodError|stack|TypeError/u);
     }
   });
 

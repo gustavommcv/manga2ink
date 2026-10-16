@@ -77,7 +77,7 @@ describe('packaged conversion pipeline', () => {
       const bridge = window.mangabound;
       if (bridge === undefined) throw new Error('The app bridge is unavailable.');
       const listed = await bridge.listPendingRuns();
-      if (!listed.ok) throw new Error(listed.error.message);
+      if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
       const run = listed.value.find((candidate) =>
         candidate.artifacts.some((artifact) => artifact.name === 'Mangabound E2E - Vol.01.epub'),
       );
@@ -87,7 +87,7 @@ describe('packaged conversion pipeline', () => {
         username: '',
         password: '',
       });
-      if (!started.ok) throw new Error(started.error.message);
+      if (!started.ok) throw new Error(JSON.stringify(started.error.said));
       return started.value;
     });
     try {
@@ -323,14 +323,14 @@ describe('packaged conversion pipeline', () => {
       const bridge = window.mangabound;
       if (bridge === undefined) throw new Error('The app bridge is unavailable.');
       const listed = await bridge.listPendingRuns();
-      if (!listed.ok) throw new Error(listed.error.message);
+      if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
       const run = listed.value[0];
       if (run === undefined) throw new Error('The converted book was not registered as pending.');
       const started = await bridge.startSharing(run.libraryId, '127.0.0.1', {
         username: '',
         password: '',
       });
-      if (!started.ok) throw new Error(started.error.message);
+      if (!started.ok) throw new Error(JSON.stringify(started.error.said));
       return { runId: run.libraryId, url: started.value.url };
     });
     try {
@@ -408,7 +408,7 @@ describe('packaged conversion pipeline', () => {
         const bridge = window.mangabound;
         if (bridge === undefined) throw new Error('The app bridge is unavailable.');
         const listed = await bridge.listPendingRuns();
-        if (!listed.ok) throw new Error(listed.error.message);
+        if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
         const artifact = listed.value
           .flatMap((run) => run.artifacts)
           .find((book) => book.name === 'Mangabound Direct.epub' && !book.saved);
@@ -420,7 +420,7 @@ describe('packaged conversion pipeline', () => {
       ok: false,
       error: {
         code: 'save_failed',
-        message: 'Choose a .epub file for this book.',
+        said: { id: 'save.wrongExtension', values: { extension: '.epub' } },
       },
     });
     await assert.rejects(readFile(wrongExtension));

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import type { AnyMessage } from '@/domain/message';
 import type { Preferences } from '@/domain/preferences';
 import { processModes } from '@/domain/process-mode';
 import type { NetworkInterfaceOption } from '@/shared/opds-contract';
@@ -36,5 +37,5 @@ export interface SaveSettingsCommand {
 export interface RestoredSettings {
   readonly preferences: Preferences;
   readonly preferredNetworkInterface?: NetworkInterfaceOption;
-  readonly notices: readonly string[];
+  readonly notices: readonly AnyMessage[];
 }

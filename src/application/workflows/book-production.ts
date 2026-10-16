@@ -15,6 +15,7 @@ import {
 } from '@/domain/conversion';
 import type { MangapressSettings } from '@/domain/output-profile';
 import type { ProcessMode } from '@/domain/process-mode';
+import { message } from '@/domain/message';
 
 /** A file to make a book of: one volume of a series, or a book that is not a volume. */
 export interface BookInput {
@@ -192,9 +193,7 @@ export class BookProduction {
 /** A finished book that could not be put in pending storage; a cancellation stays a cancellation. */
 function publishFailure(error: unknown, signal: AbortSignal | undefined): unknown {
   if (signal?.aborted === true) return error;
-  return new ConversionWorkflowError(
-    'publish_failed',
-    "Couldn't write a finished book to Mangabound's pending storage. Check available space and storage permissions.",
-    { cause: error },
-  );
+  return new ConversionWorkflowError('publish_failed', message('workflow.publishFailed', {}), {
+    cause: error,
+  });
 }

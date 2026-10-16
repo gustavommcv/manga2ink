@@ -11,6 +11,7 @@ import { PendingRunActivity } from '@/main/pending-run-activity';
 import { sortNewestFirst } from '@/library/publish';
 import type { LibraryBookEntry } from '@/library/manifest';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { raw } from '@/domain/message';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const electron = vi.hoisted(() => ({
@@ -179,9 +180,9 @@ describe('the books of the catalog, newest first', () => {
 describe('the answers every handler is written in', () => {
   it('is a value for a success and an error for a failure, nothing more', () => {
     expect(ok(3)).toEqual({ ok: true, value: 3 });
-    expect(failed({ code: 'x', message: 'y' })).toEqual({
+    expect(failed({ code: 'x', said: raw('y') })).toEqual({
       ok: false,
-      error: { code: 'x', message: 'y' },
+      error: { code: 'x', said: raw('y') },
     });
   });
 });
@@ -319,7 +320,7 @@ describe('starting to share', () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(typeof result.error.code).toBe('string');
-      expect(result.error.message).not.toBe('');
+      expect(result.error.said.id).not.toBe('');
     }
     expect(context.activeSharingTarget).toBeUndefined();
   });

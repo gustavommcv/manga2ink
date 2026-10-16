@@ -18,7 +18,7 @@ export interface AppSettingsTab {
 
 /**
  * What the dialog holds, in the order of its tabs: what a person decides first, how the app works
- * next, what it says about itself last. The first is the one that opens (ADR 0054, ADR 0055).
+ * next, what it says about itself last. The first is the one that opens (ADR 0054, ADR 0056).
  */
 export const appSettingsTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
   { id: 'interface', label: (messages) => messages.appSettings.interface, Panel: InterfaceTab },

@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { defaultLanguage } from '@/domain/app-settings';
+import { message } from '@/domain/message';
 import {
   type AppSettingsBridge,
   AppSettingsContext,
@@ -22,7 +23,7 @@ async function reaching<T>(call: () => Promise<WorkflowResult<T>>): Promise<Work
   } catch {
     return {
       ok: false,
-      error: { code: 'bridge_unreachable', message: 'The main process did not answer.' },
+      error: { code: 'bridge_unreachable', said: message('failure.internal', {}) },
     };
   }
 }

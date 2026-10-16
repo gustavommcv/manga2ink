@@ -4,6 +4,7 @@ import type { LibraryTitle } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 
 import { LibraryScreen } from './library-screen';
+import { raw } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 24, chapter: 1 },
@@ -45,7 +46,7 @@ const titles: readonly LibraryTitle[] = [
     title: 'Monster',
     draft: grouped,
     volumes: [{ name: 'Monster - Vol.01.cbz', pageCount: 72 }],
-    outcome: { status: 'failed', message: 'mangapress crashed while processing pages.' },
+    outcome: { status: 'failed', message: raw('mangapress crashed while processing pages.') },
   },
 ];
 

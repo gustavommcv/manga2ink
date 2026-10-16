@@ -4,7 +4,7 @@ import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
 /**
- * What the Processing tab asks of the main process (ADR 0055). A call that fails to reach it is an
+ * What the Processing tab asks of the main process (ADR 0056). A call that fails to reach it is an
  * answer like any other that failed, so the tab has one kind of failure to say.
  */
 export interface ProcessingFolderApi {

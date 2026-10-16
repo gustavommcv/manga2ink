@@ -1,6 +1,7 @@
 import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
 import type { MangaboundBridge } from '@/shared/runtime-info';
+import { message } from '@/domain/message';
 
 import { defaultProcessingStatus } from './processing';
 
@@ -30,7 +31,7 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
     inspectInput: () =>
       Promise.resolve({
         ok: false,
-        error: { code: 'selection_not_found', message: 'Choose the input again.' },
+        error: { code: 'selection_not_found', said: message('failure.chooseInputAgain', {}) },
       }),
     releaseInput: () => nothing,
     chooseLibrary: () => Promise.resolve({ ok: true, value: null }),

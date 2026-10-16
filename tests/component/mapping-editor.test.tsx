@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createMappingDraft } from '@/domain/mapping';
 import { MappingEditor } from '@/renderer/components/mapping/mapping-editor';
+import { raw } from '@/domain/message';
+import { SaidError } from '@/renderer/lib/said-error';
 
 const chapters = [
   {
@@ -812,7 +814,7 @@ describe('mapping editor', () => {
       const user = userEvent.setup();
       render(
         ready({
-          onSearchMetadata: () => Promise.reject(new Error('MangaDex is unreachable.')),
+          onSearchMetadata: () => Promise.reject(new SaidError(raw('MangaDex is unreachable.'))),
         }),
       );
       await chooseSource(user);
@@ -848,7 +850,7 @@ describe('mapping editor', () => {
         ready({
           onSearchMetadata: () =>
             Promise.resolve([{ id: 'work-1', title: 'A Quiet Journey', provider: 'mangadex' }]),
-          onSuggestVolumes: () => Promise.reject(new Error('The lookup timed out.')),
+          onSuggestVolumes: () => Promise.reject(new SaidError(raw('The lookup timed out.'))),
         }),
       );
       await chooseSource(user);

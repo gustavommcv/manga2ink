@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultAppSettings } from '@/domain/app-settings';
 import { useAppSettingsState } from '@/renderer/hooks/use-app-settings';
 import type { RestoredAppSettings } from '@/shared/app-settings-contract';
+import { raw } from '@/domain/message';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
@@ -18,7 +19,7 @@ const restored =
       value: { settings: defaultAppSettings, language: 'en', unreadable: false, ...value },
     });
 
-const failing = { ok: false as const, error: { code: 'internal_error', message: 'No.' } };
+const failing = { ok: false as const, error: { code: 'internal_error', said: raw('No.') } };
 
 interface Deferred<T> {
   readonly promise: Promise<T>;

@@ -6,6 +6,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { SelectedLibrary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
+import { raw } from '@/domain/message';
 
 const wifi = { name: 'Wi-Fi', address: '192.168.1.20' };
 const ethernet = { name: 'Ethernet', address: '10.0.0.5' };
@@ -18,7 +19,7 @@ const running = {
   port: 48123,
 };
 const auth = { username: 'reader', password: 'secret' };
-const refused: WorkflowFailure = { code: 'sharing_failed', message: 'Port 48123 is in use.' };
+const refused: WorkflowFailure = { code: 'sharing_failed', said: raw('Port 48123 is in use.') };
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
   let resolve: (value: T) => void = () => undefined;

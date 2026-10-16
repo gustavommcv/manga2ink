@@ -1,6 +1,7 @@
 import { ipcMain, type IpcMainInvokeEvent } from 'electron';
 import { z } from 'zod';
 
+import { message } from '@/domain/message';
 import type { WorkflowFailure, WorkflowResult } from '@/shared/workflow-contract';
 
 import { failed, toFailure } from './result';
@@ -31,10 +32,7 @@ export function handle<Command, Value>(
   ipcMain.handle(channel, async (event, rawCommand: unknown): Promise<WorkflowResult<Value>> => {
     if (!fromTheMainFrame(event)) {
       console.error(`A request on ${channel} did not come from the window's own page.`);
-      return failed({
-        code: 'untrusted_sender',
-        message: 'Mangabound only takes requests from its own window.',
-      });
+      return failed({ code: 'untrusted_sender', said: message('failure.untrustedSender', {}) });
     }
     try {
       return await run(event, schema.parse(rawCommand));

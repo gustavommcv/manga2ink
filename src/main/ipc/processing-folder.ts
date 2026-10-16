@@ -3,6 +3,7 @@ import path from 'node:path';
 import { dialog } from 'electron';
 
 import { ProcessingFolderError } from '@/adapters/library/processing-folders';
+import { message } from '@/domain/message';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -31,13 +32,10 @@ function isWorking(context: ProcessingContext): boolean {
 }
 
 const busy = <T>(): WorkflowResult<T> =>
-  failed({
-    code: 'processing_busy',
-    message: 'Finish or stop the conversion or the sharing that is running, then try again.',
-  });
+  failed({ code: 'processing_busy', said: message('failure.processingBusy', {}) });
 
 /**
- * Where the app works, and changing it (ADR 0055). The window never gives a path: it asks for a
+ * Where the app works, and changing it (ADR 0056). The window never gives a path: it asks for a
  * dialog, and what is chosen in it is checked here, kept, and only then used. A change is refused
  * while something is being made or shared, so that nothing is moved from under it.
  */
@@ -74,7 +72,7 @@ export function registerProcessingFolderHandlers(context: ProcessingContext): vo
       } catch (error) {
         if (error instanceof ProcessingFolderError) {
           console.error('A folder was chosen to work in and could not be used.', error);
-          return failed({ code: 'processing_folder_unusable', message: error.message });
+          return failed({ code: 'processing_folder_unusable', said: error.said });
         }
         throw error;
       }

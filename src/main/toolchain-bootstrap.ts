@@ -64,7 +64,7 @@ export async function bootstrapToolchain(
       runner,
     );
     context.workflow = new ConversionWorkflow(
-      // The volumes are built where the app works now, asked each time (ADR 0055).
+      // The volumes are built where the app works now, asked each time (ADR 0056).
       new MangabindBindingAdapter(
         mangabindCli,
         undefined,

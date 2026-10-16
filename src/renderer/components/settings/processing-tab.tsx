@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 
+import type { AnyMessage } from '@/domain/message';
 import { sizeOf } from '@/i18n/size';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { Button } from '@/renderer/components/ui/button';
-import { useLanguage, useMessages } from '@/renderer/hooks/use-messages';
+import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
 /**
- * Where the app works (ADR 0055): the folder it builds volumes in while it converts and keeps
+ * Where the app works (ADR 0056): the folder it builds volumes in while it converts and keeps
  * finished books in until they are saved. The folder is chosen in a dialog the main process opens,
  * and nothing here ever sends a path; what is shown is what the main process says it is doing.
  */
@@ -17,8 +18,10 @@ export function ProcessingTab(): React.JSX.Element {
   const { processing: words } = useMessages();
   const language = useLanguage();
   const api = useProcessingFolder();
+  const { say } = useSay();
   const [status, setStatus] = useState<ProcessingFolderStatus>();
-  const [failure, setFailure] = useState<'load' | 'busy' | 'unusable' | 'generic'>();
+  // What the main process says went wrong, as it says it: the window writes it in its language.
+  const [failure, setFailure] = useState<AnyMessage>();
   const [working, setWorking] = useState(false);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export function ProcessingTab(): React.JSX.Element {
     void api.get().then((answer) => {
       if (!reading) return;
       if (answer.ok) setStatus(answer.value);
-      else setFailure('load');
+      else setFailure(answer.error.said);
     });
     return () => {
       reading = false;
@@ -40,13 +43,7 @@ export function ProcessingTab(): React.JSX.Element {
     void ask().then((answer) => {
       setWorking(false);
       if (!answer.ok) {
-        setFailure(
-          answer.error.code === 'processing_busy'
-            ? 'busy'
-            : answer.error.code === 'processing_folder_unusable'
-              ? 'unusable'
-              : 'generic',
-        );
+        setFailure(answer.error.said);
       } else if (answer.value !== null) setStatus(answer.value);
     });
   };
@@ -119,9 +116,7 @@ export function ProcessingTab(): React.JSX.Element {
         </>
       )}
 
-      <div aria-live="polite">
-        {failure !== undefined && <FieldMessage error={words.errors[failure]} />}
-      </div>
+      <div aria-live="polite">{failure !== undefined && <FieldMessage error={say(failure)} />}</div>
     </div>
   );
 }

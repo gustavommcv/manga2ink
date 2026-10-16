@@ -16,6 +16,7 @@ import {
 
 import type { MainContext } from '../context';
 import { requireWorkflow } from '../context';
+import { dialogWords } from './dialog-words';
 import { handle, ignoredPayloadSchema } from './handle';
 import { rememberPickerFolder } from './remembered-folders';
 import { ok } from './result';
@@ -31,6 +32,7 @@ type InputsContext = Pick<
   | 'lastSaveFolder'
   | 'preferredNetworkInterface'
   | 'workflow'
+  | 'appSettings'
 >;
 /**
  * Turns paths into inputs the renderer can refer to by id. The paths come from a native dialog or
@@ -60,14 +62,15 @@ export function registerInputHandlers(context: InputsContext): void {
     'workflow:choose-inputs',
     chooseInputsKindSchema,
     async (_event, kind): Promise<WorkflowResult<RegisteredInputs>> => {
+      const words = dialogWords(context);
       const result = await dialog.showOpenDialog({
-        title: kind === 'folders' ? 'Choose manga folders' : 'Choose comic files',
+        title: kind === 'folders' ? words.chooseFolders.title : words.chooseFiles.title,
         properties:
           kind === 'folders'
             ? ['openDirectory', 'multiSelections']
             : ['openFile', 'multiSelections'],
         ...(kind === 'files'
-          ? { filters: [{ name: 'Comic book archive', extensions: ['cbz'] }] }
+          ? { filters: [{ name: words.chooseFiles.archive, extensions: ['cbz'] }] }
           : {}),
         ...(context.lastPickerFolder === undefined
           ? {}
@@ -108,8 +111,8 @@ export function registerInputHandlers(context: InputsContext): void {
     ignoredPayloadSchema,
     async (): Promise<WorkflowResult<SelectedLibrary | null>> => {
       const result = await dialog.showOpenDialog({
-        title: 'Choose a library to share',
-        buttonLabel: 'Use this folder',
+        title: dialogWords(context).chooseLibrary.title,
+        buttonLabel: dialogWords(context).chooseLibrary.button,
         properties: ['openDirectory', 'createDirectory'],
         ...(context.lastPickerFolder === undefined
           ? {}

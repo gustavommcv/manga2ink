@@ -1,5 +1,5 @@
 /**
- * Where the app works, as the window is told of it (ADR 0055). The paths are for the person to read:
+ * Where the app works, as the window is told of it (ADR 0056). The paths are for the person to read:
  * the window never sends one back, it asks the main process to open a dialog and to use what is
  * chosen in it.
  */

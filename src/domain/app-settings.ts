@@ -61,7 +61,7 @@ export function resolveLanguage(
 }
 
 /**
- * Where the app works, as a person decided it (ADR 0055): the folder it builds volumes in while it
+ * Where the app works, as a person decided it (ADR 0056): the folder it builds volumes in while it
  * converts, and keeps finished books in until they are saved. `folder` is one a person chose, or
  * `null` while the app picks the places itself (the system's temporary folder, and its own data).
  */

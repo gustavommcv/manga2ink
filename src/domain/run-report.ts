@@ -1,6 +1,6 @@
 import type { BookFormat } from './conversion';
 import { describeRow, isWaitingTitle, type QueueAction, type QueueRow } from './input-queue';
-import { type AnyMessage, message, raw } from './message';
+import { type AnyMessage, message } from './message';
 import type { ProcessMode } from './process-mode';
 
 /** The report does not inspect artifacts or depend on a transport's book representation. */
@@ -17,7 +17,8 @@ export interface RunOutcome<Artifact> {
 
 interface RunFailure {
   readonly code: string;
-  readonly message: string;
+  /** What to tell the person, as a code the window writes in its language. */
+  readonly said: AnyMessage;
 }
 
 type RunResult<Value> =
@@ -61,7 +62,7 @@ export function reportInputRun<Artifact>(
             name: row.displayName,
             status: 'failed',
             artifacts: [],
-            message: [raw(result.error.message)],
+            message: [result.error.said],
           },
         ],
         cancelled: result.error.code === 'cancelled',
@@ -80,7 +81,7 @@ export function reportLibraryRun<Artifact>(
       name: `${row.displayName} · ${title.title}`,
       status: title.status,
       artifacts: title.artifacts,
-      ...(title.failure === undefined ? {} : { message: [raw(title.failure.message)] }),
+      ...(title.failure === undefined ? {} : { message: [title.failure.said] }),
     })),
     cancelled: result.value.some((title) => title.failure?.code === 'cancelled'),
     completedTitles: new Set(
@@ -94,7 +95,10 @@ export function reportLibraryRun<Artifact>(
         outcome:
           title.status === 'done'
             ? { status: 'done' }
-            : { status: 'failed', message: title.failure?.message ?? 'It could not be converted.' },
+            : {
+                status: 'failed',
+                message: title.failure?.said ?? message('failure.titleNotConverted', {}),
+              },
       })),
     },
   };

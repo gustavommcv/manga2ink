@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { createMappingDraft } from '@/domain/mapping';
 
 import { QueueRowItem } from './queue-row';
+import { raw } from '@/domain/message';
 
 const chapters = [
   { id: 'c1', name: 'Chapter 1', path: '/m/1', pageCount: 24, chapter: 1 },
@@ -170,7 +171,7 @@ export const Unreadable: Story = {
       displayName: 'Broken.cbz',
       displayPath: 'D:\\Manga\\Broken.cbz',
       state: 'unreadable',
-      message: 'The file could not be read.',
+      message: raw('The file could not be read.'),
     },
   },
 };

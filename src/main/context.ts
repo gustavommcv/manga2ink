@@ -46,7 +46,7 @@ export interface MainContext {
   preferences: PreferencesWorkflow | undefined;
   /** What a person decided about the app itself (ADR 0052); built with `preferences`. */
   appSettings: AppSettingsWorkflow | undefined;
-  /** Where the app builds volumes and keeps finished books (ADR 0055); built with `appSettings`. */
+  /** Where the app builds volumes and keeps finished books (ADR 0056); built with `appSettings`. */
   processing: ProcessingFolders | undefined;
   activeSharing: OpdsServerHandle | undefined;
   /** What is being shared, or about to be: set before the server is up, so a second start is refused. */

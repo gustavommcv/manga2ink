@@ -3,6 +3,7 @@ import {
   type AppSettings,
   choosingFolder,
   defaultKeptAppSettings,
+  defaultLanguage,
   forgettingFolders,
   type KeptAppSettings,
   type Language,
@@ -21,12 +22,13 @@ export interface RestoredAppSettings {
  * Brings the app settings back at launch and keeps them as they change (ADR 0052). It knows what the
  * file cannot: the languages the system prefers, which a choice of "the system's" comes to. It holds
  * what was kept, so a change to one thing is written with the rest as it is, whichever tab it came
- * from, and says where the app works for the parts of the main process that need it (ADR 0055).
+ * from, and says where the app works for the parts of the main process that need it (ADR 0056).
  */
 export class AppSettingsWorkflow {
   private kept: KeptAppSettings = defaultKeptAppSettings;
   private loaded = false;
   private unreadable = false;
+  private current: Language = defaultLanguage;
 
   constructor(
     private readonly store: AppSettingsStorePort,
@@ -44,9 +46,10 @@ export class AppSettingsWorkflow {
       this.unreadable = unreadable;
       this.loaded = true;
     }
+    this.current = resolveLanguage(this.kept.language, this.systemLanguages());
     return {
       settings: { language: this.kept.language },
-      language: resolveLanguage(this.kept.language, this.systemLanguages()),
+      language: this.current,
       unreadable: this.unreadable,
     };
   }
@@ -54,7 +57,16 @@ export class AppSettingsWorkflow {
   /** The language the kept settings come to, said only once they are kept. */
   async save(settings: AppSettings): Promise<{ readonly language: Language }> {
     await this.keep({ ...this.kept, language: settings.language });
-    return { language: resolveLanguage(settings.language, this.systemLanguages()) };
+    this.current = resolveLanguage(settings.language, this.systemLanguages());
+    return { language: this.current };
+  }
+
+  /**
+   * The language the window is in, for what the main process says itself (the titles of the native
+   * dialogs): the one the settings last came to. English until they have been read.
+   */
+  language(): Language {
+    return this.current;
   }
 
   /** Where the app works, as it was last kept. */

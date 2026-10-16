@@ -16,6 +16,7 @@ import {
   partialMapping,
   runButton,
 } from './support/workflow';
+import { raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -125,7 +126,7 @@ describe('workflow navigation targets', () => {
       .fn<MangaboundBridge['writeTitleMapping']>()
       .mockResolvedValueOnce({
         ok: false,
-        error: { code: 'mapping_save_failed', message: 'The folder is read-only.' },
+        error: { code: 'mapping_save_failed', said: raw('The folder is read-only.') },
       })
       .mockResolvedValueOnce({ ok: true, value: undefined });
     const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() =>

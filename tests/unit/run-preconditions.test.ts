@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { assertSingleBook, validateRunOptions } from '@/application/workflows/run-preconditions';
 import { ConversionWorkflowError } from '@/domain/conversion';
+import { message } from '@/domain/message';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 
 const options = { settings: defaultMangapressSettings, format: 'epub' } as const;
@@ -18,7 +19,7 @@ describe('shared run options', () => {
     },
   );
 
-  it.each(['converting', 'validating the plan'] as const)(
+  it.each(['converting', 'validating'] as const)(
     'does not validate unused mangapress settings before %s',
     (action) => {
       expect(
@@ -37,8 +38,8 @@ describe('shared run options', () => {
   it.each([
     { mode: 'bind-and-convert', action: 'converting' },
     { mode: 'convert-only', action: 'converting' },
-    { mode: 'bind-and-convert', action: 'validating the plan' },
-    { mode: 'convert-only', action: 'validating the plan' },
+    { mode: 'bind-and-convert', action: 'validating' },
+    { mode: 'convert-only', action: 'validating' },
   ] as const)('rejects invalid settings for $mode before $action', ({ mode, action }) => {
     const run = () =>
       validateRunOptions(
@@ -53,7 +54,7 @@ describe('shared run options', () => {
     expect(run).toThrowError(
       expect.objectContaining({
         code: 'invalid_settings',
-        message: `Review the output settings before ${action}.`,
+        said: message('workflow.reviewSettings', { before: action }),
       }),
     );
   });
@@ -74,7 +75,7 @@ describe('shared single-book requirements', () => {
       }).toThrowError(
         expect.objectContaining({
           code: 'invalid_settings',
-          message: 'Single book mode requires both binding and converting.',
+          said: message('workflow.singleBookNeedsBoth', {}),
         }),
       );
     },
@@ -88,7 +89,7 @@ describe('shared single-book requirements', () => {
       }).toThrowError(
         expect.objectContaining({
           code: 'invalid_settings',
-          message: 'Binding the whole series as one volume is only available for EPUB right now.',
+          said: message('workflow.combineNeedsEpub', {}),
         }),
       );
     },

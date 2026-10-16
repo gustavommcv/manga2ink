@@ -21,6 +21,7 @@ import {
   mapping,
   runButton,
 } from './support/workflow';
+import { raw } from '@/domain/message';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -178,7 +179,7 @@ describe('process control in the queue', () => {
       })
       .mockResolvedValueOnce({
         ok: false,
-        error: { code: 'process_failed', message: 'mangapress crashed.' },
+        error: { code: 'process_failed', said: raw('mangapress crashed.') },
       });
     installBridge(
       bridge({
@@ -218,7 +219,7 @@ describe('process control in the queue', () => {
     const convert = vi.fn<MangaboundBridge['convert']>(() =>
       Promise.resolve({
         ok: false,
-        error: { code: 'cancelled', message: 'The conversion was cancelled.' },
+        error: { code: 'cancelled', said: raw('The conversion was cancelled.') },
       }),
     );
     installBridge(

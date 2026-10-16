@@ -9,7 +9,7 @@ type StatusContext = Pick<MainContext, 'appSettings' | 'pendingRuns' | 'processi
 
 /**
  * What the window is told of where the app works: the places in use, how much room the drive has,
- * and the other folders books are still waiting in, which stay listed (ADR 0055). It lets go of an
+ * and the other folders books are still waiting in, which stay listed (ADR 0056). It lets go of an
  * earlier folder once nothing is waiting in it, since there is nothing to look for there.
  */
 export async function processingStatus(context: StatusContext): Promise<ProcessingFolderStatus> {

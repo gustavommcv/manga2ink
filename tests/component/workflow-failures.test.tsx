@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '@/renderer/app';
 import { type MangaboundBridge } from '@/shared/runtime-info';
+import { raw } from '@/domain/message';
 import { type PendingRunSummary, type WorkflowResult } from '@/shared/workflow-contract';
 
 import { addFolder, bridge, installBridge, runButton } from './support/workflow';
@@ -14,7 +15,7 @@ afterEach(() => {
 
 const refusal = (code: string, message: string): WorkflowResult<never> => ({
   ok: false,
-  error: { code, message },
+  error: { code, said: raw(message) },
 });
 
 const recovered: readonly PendingRunSummary[] = [

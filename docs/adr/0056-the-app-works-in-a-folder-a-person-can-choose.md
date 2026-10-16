@@ -1,4 +1,4 @@
-# ADR 0055: The app works in a folder a person can choose
+# ADR 0056: The app works in a folder a person can choose
 
 - Status: Accepted
 - Date: 2026-10-16

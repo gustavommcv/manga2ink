@@ -71,7 +71,7 @@ void app.whenReady().then(async () => {
   context.coverStore = new FsCoverStore(
     coversRoot(process.platform, process.env, app.getPath('home')),
   );
-  // Where the app works depends on what a person chose, so the app settings come first (ADR 0055).
+  // Where the app works depends on what a person chose, so the app settings come first (ADR 0056).
   const appSettingsWorkflow = new AppSettingsWorkflow(
     new FsAppSettingsStore(path.join(app.getPath('userData'), 'app-settings.json')),
     () => app.getPreferredSystemLanguages(),

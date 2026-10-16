@@ -1,6 +1,12 @@
+import type { FailureMessageValues } from './messages/failure';
+import type { InputMessageValues } from './messages/input';
 import type { ModeMessageValues } from './messages/mode';
+import type { NoticeMessageValues } from './messages/notice';
+import type { ProviderMessageValues } from './messages/provider';
 import type { QueueMessageValues } from './messages/queue';
+import type { SaveMessageValues } from './messages/save';
 import type { TextMessageValues } from './messages/text';
+import type { WorkflowMessageValues } from './messages/workflow';
 
 export type { NoValues } from './messages/values';
 
@@ -11,7 +17,17 @@ export type { NoValues } from './messages/values';
  * app adds its codes in a module of `messages/`, and the catalogs of `src/i18n` must say each one in
  * every language, which the compiler checks.
  */
-export interface MessageValues extends QueueMessageValues, ModeMessageValues, TextMessageValues {}
+export interface MessageValues
+  extends
+    QueueMessageValues,
+    ModeMessageValues,
+    InputMessageValues,
+    FailureMessageValues,
+    NoticeMessageValues,
+    WorkflowMessageValues,
+    SaveMessageValues,
+    ProviderMessageValues,
+    TextMessageValues {}
 
 export type MessageId = keyof MessageValues;
 

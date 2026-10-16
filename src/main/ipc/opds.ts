@@ -6,6 +6,7 @@ import {
   startSharingCommandSchema,
 } from '@/shared/opds-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import { opdsPort } from '../constants';
 import type { MainContext } from '../context';
@@ -47,15 +48,17 @@ export function registerOpdsHandlers(context: OpdsContext): void {
     async (_event, command): Promise<WorkflowResult<OpdsSharingStatus>> => {
       const libraryPath = context.selectedLibraries.get(command.libraryId);
       if (libraryPath === undefined) {
-        return failed({ code: 'library_not_found', message: 'Choose a library to share again.' });
+        return failed({
+          code: 'library_not_found',
+          said: message('failure.chooseLibraryAgain', {}),
+        });
       }
       // The address comes from the page, and only the page limits it to the list on screen: a
       // wildcard would put the books on every network this device is on.
       if (!context.networkInterfaces.canShareOn(command.interfaceAddress)) {
         return failed({
           code: 'sharing_address_unavailable',
-          message:
-            'That network address is not available on this device. Choose one from the list.',
+          said: message('failure.sharingAddressUnavailable', {}),
         });
       }
       const target = sharingTarget(
@@ -70,13 +73,13 @@ export function registerOpdsHandlers(context: OpdsContext): void {
       if (deleting) {
         return failed({
           code: 'pending_in_use',
-          message: 'These pending books are being deleted and can no longer be shared.',
+          said: message('failure.sharingPendingBeingDeleted', {}),
         });
       }
       if (context.activeSharing !== undefined || context.activeSharingTarget !== undefined) {
         return failed({
           code: 'sharing_already_active',
-          message: 'Sharing is already running.',
+          said: message('failure.sharingAlreadyRunning', {}),
         });
       }
       context.activeSharingTarget = target;
@@ -91,7 +94,7 @@ export function registerOpdsHandlers(context: OpdsContext): void {
         context.activeSharingTarget = undefined;
         return failed({
           code: error instanceof LibraryIndexError ? error.code : 'library_unreadable',
-          message: 'The output library catalog could not be read.',
+          said: message('failure.catalogUnreadable', {}),
         });
       }
       try {
@@ -123,7 +126,10 @@ export function registerOpdsHandlers(context: OpdsContext): void {
     ignoredPayloadSchema,
     async (): Promise<WorkflowResult<undefined>> => {
       if (context.activeSharing === undefined) {
-        return failed({ code: 'sharing_not_active', message: 'Sharing is not running.' });
+        return failed({
+          code: 'sharing_not_active',
+          said: message('failure.sharingNotRunning', {}),
+        });
       }
       await context.activeSharing.stop();
       context.activeSharing = undefined;

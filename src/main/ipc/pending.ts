@@ -5,15 +5,18 @@ import { app, dialog } from 'electron';
 import { z } from 'zod';
 
 import type { PendingBook, PendingRun } from '@/adapters/library/fs-pending-runs';
-import { PendingSaveError, pendingSaveMessage, saveWithUniqueName } from '@/library/pending-save';
+import { PendingSaveError, pendingSaveSaid, saveWithUniqueName } from '@/library/pending-save';
 import {
   identifierSchema,
   type PendingRunSummary,
   type SaveAllResult,
+  type WorkflowFailure,
   type WorkflowResult,
 } from '@/shared/workflow-contract';
+import { type AnyMessage, message } from '@/domain/message';
 
 import type { MainContext } from '../context';
+import { dialogWords } from './dialog-words';
 import { handle, ignoredPayloadSchema } from './handle';
 import { discardRefusal, runOfSelection, wrongExtension } from './pending-decisions';
 import { rememberSaveFolder } from './remembered-folders';
@@ -33,15 +36,13 @@ type PendingContext = Pick<
   | 'activeSharingTarget'
   | 'activeJobs'
   | 'pendingRunActivity'
+  | 'appSettings'
 >;
 const idsSchema = z.array(identifierSchema).min(1).max(1000);
-function saveFailure(error: unknown): {
-  code: string;
-  message: string;
-} {
+function saveFailure(error: unknown): WorkflowFailure {
   if (!(error instanceof PendingSaveError))
     console.error('A pending book could not be saved.', error);
-  return { code: 'save_failed', message: pendingSaveMessage(error) };
+  return { code: 'save_failed', said: pendingSaveSaid(error) };
 }
 async function findBook(
   context: PendingContext,
@@ -54,13 +55,13 @@ async function findBook(
   const reference = context.pendingArtifacts.get(id);
   const { pendingRuns } = context;
   if (reference === undefined || pendingRuns === undefined)
-    throw new PendingSaveError('book_unavailable', 'This pending book is no longer available.');
+    throw new PendingSaveError('book_unavailable', message('save.bookGone', {}));
   const run = (await pendingRuns.list()).find((candidate) => candidate.id === reference.runId);
   const book = run?.books.find(
     (candidate) => candidate.entry.relativePath === reference.relativePath,
   );
   if (run === undefined || book === undefined)
-    throw new PendingSaveError('book_unavailable', 'This pending book is no longer available.');
+    throw new PendingSaveError('book_unavailable', message('save.bookGone', {}));
   return { pendingRuns, run, book };
 }
 async function saveBook(
@@ -68,7 +69,7 @@ async function saveBook(
   id: string,
   destination: string,
   overwrite: boolean,
-): Promise<string | undefined> {
+): Promise<AnyMessage | undefined> {
   const { pendingRuns, run, book } = await findBook(context, id);
   const refusal = wrongExtension(book.entry.format, destination);
   if (refusal !== undefined) throw refusal;
@@ -77,9 +78,10 @@ async function saveBook(
   rememberSaveFolder(context, path.dirname(destination));
   if (outcome.status === 'saved') return undefined;
   console.error('Could not finish recording an exported pending book.', outcome.cause);
-  return outcome.status === 'catalog_failed'
-    ? 'The book was copied, but its destination catalog could not be updated. Choose another folder or check its permissions, then retry; the pending copy is safe.'
-    : 'The book was copied, but Mangabound could not remember that it was saved. Its pending copy remains available to retry.';
+  return message(
+    outcome.status === 'catalog_failed' ? 'save.copiedCatalogFailed' : 'save.copiedNotRecorded',
+    {},
+  );
 }
 /** Native save dialogs and persistent pending-book recovery. Paths never cross the preload bridge. */
 export function registerPendingHandlers(context: PendingContext): void {
@@ -128,11 +130,7 @@ export function registerPendingHandlers(context: PendingContext): void {
     },
     (error: unknown) => {
       console.error('Could not recover pending books.', error);
-      return {
-        code: 'pending_unreadable',
-        message:
-          'Pending books could not be loaded. Their files were not deleted; check storage permissions and try restarting Mangabound.',
-      };
+      return { code: 'pending_unreadable', said: message('failure.pendingUnreadable', {}) };
     },
   );
   handle(
@@ -149,15 +147,14 @@ export function registerPendingHandlers(context: PendingContext): void {
       if (release === undefined) {
         return failed({
           code: 'pending_in_use',
-          message: 'Wait for this pending run to finish saving before deleting it.',
+          said: message('failure.pendingStillSaving', {}),
         });
       }
       try {
         if (!(await context.pendingRuns.discard(id))) {
           return failed({
             code: 'pending_not_found',
-            message:
-              'These pending books are no longer available. Reopen Mangabound to refresh the list.',
+            said: message('failure.pendingNotFound', {}),
           });
         }
         context.selectedLibraries.delete(id);
@@ -173,10 +170,7 @@ export function registerPendingHandlers(context: PendingContext): void {
     },
     (error: unknown) => {
       console.error('Could not delete pending books.', error);
-      return {
-        code: 'pending_delete_failed',
-        message: 'The pending books could not be deleted. Check storage permissions and try again.',
-      };
+      return { code: 'pending_delete_failed', said: message('failure.pendingDeleteFailed', {}) };
     },
   );
   handle(
@@ -188,20 +182,20 @@ export function registerPendingHandlers(context: PendingContext): void {
     ): Promise<
       WorkflowResult<{
         saved: boolean;
-        warning?: string;
+        warning?: AnyMessage;
       }>
     > => {
       const reference = context.pendingArtifacts.get(id);
       if (reference === undefined)
-        throw new PendingSaveError('book_unavailable', 'This pending book is no longer available.');
+        throw new PendingSaveError('book_unavailable', message('save.bookGone', {}));
       const release = context.pendingRunActivity.beginExport(reference.runId);
       if (release === undefined)
-        throw new PendingSaveError('run_deleting', 'This pending book is being deleted.');
+        throw new PendingSaveError('run_deleting', message('save.bookBeingDeleted', {}));
       try {
         const { book } = await findBook(context, id);
         const defaultFolder = context.lastSaveFolder ?? app.getPath('documents');
         const result = await dialog.showSaveDialog({
-          title: 'Save book as',
+          title: dialogWords(context).saveBook.title,
           defaultPath: path.join(defaultFolder, path.basename(book.path)),
           filters: [{ name: book.entry.format.toUpperCase(), extensions: [book.entry.format] }],
         });
@@ -223,10 +217,10 @@ export function registerPendingHandlers(context: PendingContext): void {
         runOfSelection(ids, context.pendingArtifacts),
       );
       if (release === undefined)
-        throw new PendingSaveError('run_deleting', 'This pending book is being deleted.');
+        throw new PendingSaveError('run_deleting', message('save.bookBeingDeleted', {}));
       try {
         const result = await dialog.showOpenDialog({
-          title: 'Save all books to a folder',
+          title: dialogWords(context).saveAll.title,
           properties: ['openDirectory', 'createDirectory'],
           defaultPath: context.lastSaveFolder ?? app.getPath('documents'),
         });
@@ -234,10 +228,7 @@ export function registerPendingHandlers(context: PendingContext): void {
         if (result.canceled || folder === undefined) return ok(null);
         rememberSaveFolder(context, folder);
         const savedIds: string[] = [];
-        const failures: {
-          id: string;
-          message: string;
-        }[] = [];
+        const failures: { id: string; said: AnyMessage }[] = [];
         for (const id of ids) {
           try {
             const { book } = await findBook(context, id);
@@ -245,9 +236,9 @@ export function registerPendingHandlers(context: PendingContext): void {
               saveBook(context, id, path.join(folder, name), false),
             );
             savedIds.push(id);
-            if (warning !== undefined) failures.push({ id, message: warning });
+            if (warning !== undefined) failures.push({ id, said: warning });
           } catch (error) {
-            failures.push({ id, message: saveFailure(error).message });
+            failures.push({ id, said: saveFailure(error).said });
           }
         }
         return ok({ savedIds, failures });

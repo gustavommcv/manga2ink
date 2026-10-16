@@ -57,7 +57,7 @@ export function isPendingRunFolder(name: string): boolean {
 }
 
 /**
- * Where pending runs are, for the app that may keep them in more than one place (ADR 0055): a new run
+ * Where pending runs are, for the app that may keep them in more than one place (ADR 0056): a new run
  * is made in `current()`, and a person's books may still be waiting in any of `all()`.
  */
 export interface PendingRoots {

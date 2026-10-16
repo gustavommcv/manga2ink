@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
+import { raw } from '@/domain/message';
 
 const library: QueueRow = {
   id: 'library',
@@ -33,7 +34,7 @@ const unreadable: QueueRow = {
   ...folder,
   id: 'broken',
   state: 'unreadable',
-  message: 'No.',
+  message: raw('No.'),
 };
 const rows = [library, folder, reading, unreadable];
 

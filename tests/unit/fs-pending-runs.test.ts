@@ -488,7 +488,7 @@ describe('FsPendingRuns.pruneAbandoned', () => {
   });
 });
 
-describe('FsPendingRuns in more than one folder (ADR 0055)', () => {
+describe('FsPendingRuns in more than one folder (ADR 0056)', () => {
   const library = new FsLibraryStore();
 
   /** Folders a person has had the app work in, with a way to change which one is current. */

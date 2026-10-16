@@ -4,6 +4,7 @@ import type { IpcMainInvokeEvent } from 'electron';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProcessingFolderError } from '@/adapters/library/processing-folders';
+import { message } from '@/domain/message';
 import { registerProcessingFolderHandlers } from '@/main/ipc/processing-folder';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
@@ -131,15 +132,17 @@ describe('choosing the folder the app works in', () => {
     const { choose } = contextFor({
       processing: {
         chosen: () => null,
-        check: () =>
-          Promise.reject(new ProcessingFolderError('unusable', 'The app cannot write in it.')),
+        check: () => Promise.reject(new ProcessingFolderError('unusable', '/read-only')),
       },
     });
     electron.showOpenDialog.mockResolvedValue({ canceled: false, filePaths: ['/read-only'] });
 
     expect(await call('app:choose-processing-folder')).toEqual({
       ok: false,
-      error: { code: 'processing_folder_unusable', message: 'The app cannot write in it.' },
+      error: {
+        code: 'processing_folder_unusable',
+        said: message('failure.processingFolderUnusable', { folder: '/read-only' }),
+      },
     });
     expect(choose).not.toHaveBeenCalled();
     expect(console.error).toHaveBeenCalled();
@@ -166,7 +169,10 @@ describe('choosing the folder the app works in', () => {
 
     const answer = await call('app:choose-processing-folder');
 
-    expect(answer).toMatchObject({ ok: false, error: { code: 'processing_busy' } });
+    expect(answer).toEqual({
+      ok: false,
+      error: { code: 'processing_busy', said: message('failure.processingBusy', {}) },
+    });
     expect(electron.showOpenDialog).not.toHaveBeenCalled();
     expect(choose).not.toHaveBeenCalled();
   });
@@ -181,7 +187,10 @@ describe('choosing the folder the app works in', () => {
 
     const answer = await call('app:choose-processing-folder');
 
-    expect(answer).toMatchObject({ ok: false, error: { code: 'processing_busy' } });
+    expect(answer).toEqual({
+      ok: false,
+      error: { code: 'processing_busy', said: message('failure.processingBusy', {}) },
+    });
     expect(check).not.toHaveBeenCalled();
     expect(choose).not.toHaveBeenCalled();
   });

@@ -2,6 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import type { Language, LanguagePreference } from '@/domain/app-settings';
+import { message } from '@/domain/message';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import { Titlebar } from '@/renderer/components/shell/titlebar';
@@ -9,6 +10,7 @@ import type { AppSettingsBridge } from '@/renderer/hooks/use-app-settings';
 
 import { AppSettingsMenu } from './app-settings-menu';
 import type { AppSettingsTab } from './app-settings-tabs';
+import { raw } from '@/domain/message';
 
 /** Where the app works when nobody has chosen a folder, and when one has been. */
 const ownPlaces: ProcessingFolderStatus = {
@@ -145,7 +147,7 @@ export const ChangingTheLanguage: Story = {
 export const WhenTheLanguageCannotBeKept: Story = {
   parameters: {
     bridge: bridgeFor('en', 'en', () =>
-      Promise.resolve({ ok: false, error: { code: 'settings_save_failed', message: 'No.' } }),
+      Promise.resolve({ ok: false, error: { code: 'settings_save_failed', said: raw('No.') } }),
     ),
   },
   play: async ({ canvas, canvasElement }) => {
@@ -223,7 +225,7 @@ export const AboutInPortuguese: Story = {
 export const WhenAPageCannotBeOpened: Story = {
   parameters: {
     bridge: bridgeFor('en', 'en', keepsIt, () =>
-      Promise.resolve({ ok: false, error: { code: 'unexpected_failure', message: 'No.' } }),
+      Promise.resolve({ ok: false, error: { code: 'unexpected_failure', said: raw('No.') } }),
     ),
   },
   play: async ({ canvas, canvasElement }) => {
@@ -346,7 +348,10 @@ export const WhenAFolderCannotBeUsed: Story = {
       chooseProcessingFolder: () =>
         Promise.resolve({
           ok: false,
-          error: { code: 'processing_folder_unusable', message: 'No.' },
+          error: {
+            code: 'processing_folder_unusable',
+            said: message('failure.processingFolderUnusable', { folder: '/read-only' }),
+          },
         }),
     }),
   },
@@ -361,7 +366,7 @@ export const WhenAFolderCannotBeUsed: Story = {
 
     await expect(
       await within(dialog).findByText(
-        'Mangabound cannot work in that folder. Choose one it can write in.',
+        'Mangabound cannot work in /read-only. Choose a folder it can write in.',
       ),
     ).toBeVisible();
   },

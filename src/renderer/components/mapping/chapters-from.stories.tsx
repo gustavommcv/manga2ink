@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
+import { raw } from '@/domain/message';
+import { SaidError } from '@/renderer/lib/said-error';
 
 import { ChaptersFrom, type OnlineSource } from './chapters-from';
 
@@ -153,7 +155,7 @@ export const OnlineSearchFailed: Story = {
     online: {
       ...onlineArgs.online,
       selectedId: 'mangadex',
-      onSearch: () => Promise.reject(new Error('MangaDex could not be reached.')),
+      onSearch: () => Promise.reject(new SaidError(raw('MangaDex could not be reached.'))),
     },
   },
   play: async ({ canvasElement }) => {

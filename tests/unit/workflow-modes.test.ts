@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 
 import { mappedDraft, dependencies, folder, cbz, openLibrary } from './support/conversion-workflow';
 
@@ -231,9 +232,9 @@ describe('conversion workflow process modes', () => {
     await expect(workflow.convert(request, { onProgress: vi.fn() })).rejects.toMatchObject({
       code: 'unsupported_mode',
     });
-    await expect(workflow.convert(request, { onProgress: vi.fn() })).rejects.toThrow(
-      /already one volume/u,
-    );
+    await expect(workflow.convert(request, { onProgress: vi.fn() })).rejects.toMatchObject({
+      said: message('mode.cbzIsOneVolume', {}),
+    });
     await expect(workflow.plan(request)).rejects.toMatchObject({ code: 'unsupported_mode' });
     expect(ports.saveBook).not.toHaveBeenCalled();
   });

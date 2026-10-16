@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { PreferencesWorkflow, RestoredPreferences } from '@/application/workflows/preferences';
 import type { InputSelection } from '@/domain/conversion';
+import { message } from '@/domain/message';
 import { defaultPreferences, type Preferences } from '@/domain/preferences';
 import { PendingSaveError } from '@/library/pending-save';
 import { withSavedBook } from '@/main/ipc/artifact-access';
@@ -154,21 +155,20 @@ describe('when a pending run may be deleted', () => {
   it('may not while the ready books are shared, whichever run is asked for', () => {
     expect(discardRefusal({ sharingReadyBooks: true, activeJobs: 0 })).toEqual({
       code: 'pending_in_use',
-      message:
-        'The ready books are being shared. Stop sharing before deleting their pending copies.',
+      said: message('failure.readyBooksShared', {}),
     });
   });
 
   it('may not while a conversion runs, which could be making books in it', () => {
     expect(discardRefusal({ sharingReadyBooks: false, activeJobs: 1 })).toEqual({
       code: 'pending_in_use',
-      message: 'Wait for the current conversion to finish before deleting pending books.',
+      said: message('failure.waitForConversion', {}),
     });
   });
 
   it('says first that they are shared, when both are true', () => {
-    expect(discardRefusal({ sharingReadyBooks: true, activeJobs: 2 })?.message).toContain(
-      'Stop sharing',
+    expect(discardRefusal({ sharingReadyBooks: true, activeJobs: 2 })?.said).toEqual(
+      message('failure.readyBooksShared', {}),
     );
   });
 });
@@ -249,7 +249,7 @@ describe('where a book may be saved to', () => {
       expect(refusal).toBeInstanceOf(PendingSaveError);
       expect(refusal).toMatchObject({
         code: 'wrong_extension',
-        message: `Choose a ${wanted} file for this book.`,
+        said: message('save.wrongExtension', { extension: wanted }),
       });
     },
   );
@@ -278,7 +278,7 @@ describe('inspecting a selection', () => {
 
     expect(await inspectOnce(selections, 'id', inspect)).toEqual({
       ok: false,
-      error: { code: 'selection_not_found', message: 'Choose the input again.' },
+      error: { code: 'selection_not_found', said: message('failure.chooseInputAgain', {}) },
     });
     expect(inspect).toHaveBeenCalledTimes(1);
   });
@@ -304,7 +304,7 @@ describe('inspecting a selection', () => {
 describe('acting on a saved book', () => {
   const gone = {
     ok: false,
-    error: { code: 'artifact_not_found', message: 'The saved book is no longer available.' },
+    error: { code: 'artifact_not_found', said: message('failure.savedBookGone', {}) },
   };
   const paths = new Map([['id', '/books/Book.epub']]);
   const file = { isFile: () => true };

@@ -1,4 +1,5 @@
 import type { WorkflowFailure } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import { opdsPort } from '../constants';
 
@@ -12,14 +13,11 @@ export function sharingFailure(error: unknown): WorkflowFailure | undefined {
   if (code === 'EADDRINUSE') {
     return {
       code: 'sharing_failed',
-      message: `Port ${String(opdsPort)} is already used by another program on this device. Close it and try again.`,
+      said: message('failure.sharingPortInUse', { port: opdsPort }),
     };
   }
   if (code === 'EADDRNOTAVAIL' || code === 'EACCES') {
-    return {
-      code: 'sharing_failed',
-      message: 'The sharing server could not be started on that network address.',
-    };
+    return { code: 'sharing_failed', said: message('failure.sharingAddressRefused', {}) };
   }
   return undefined;
 }

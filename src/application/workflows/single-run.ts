@@ -30,8 +30,7 @@ import {
   type WorkflowPlan,
 } from '@/domain/conversion';
 import { type ProcessMode, unsupportedModeReason, usesMangapress } from '@/domain/process-mode';
-import { messagesFor } from '@/i18n/messages';
-import { say } from '@/i18n/say';
+import { message } from '@/domain/message';
 
 /** Plan or convert one folder or CBZ; successful conversions spend their inspected session. */
 export class SingleInputRun {
@@ -72,7 +71,7 @@ export class SingleInputRun {
       ) {
         throw new ConversionWorkflowError(
           'mapping_required',
-          'Confirm the chapter-to-volume mapping before converting.',
+          message('workflow.confirmMapping', { before: 'converting' }),
         );
       }
       const mapping = trustedMapping(session.trustedDraft, request.mapping);
@@ -151,7 +150,7 @@ export class SingleInputRun {
     request: ConversionRequest,
     { signal }: { readonly signal?: AbortSignal } = {},
   ): Promise<WorkflowPlan> {
-    const { session, mode, singleBook } = this.assertRunnable(request, 'validating the plan');
+    const { session, mode, singleBook } = this.assertRunnable(request, 'validating');
 
     if (session.selection.kind === 'cbz' || mode === 'convert-only') {
       const plan = await this.conversion.plan(
@@ -180,7 +179,7 @@ export class SingleInputRun {
     ) {
       throw new ConversionWorkflowError(
         'mapping_required',
-        'Confirm the chapter-to-volume mapping before validating the plan.',
+        message('workflow.confirmMapping', { before: 'validating' }),
       );
     }
     const mapping = trustedMapping(session.trustedDraft, request.mapping);
@@ -215,10 +214,7 @@ export class SingleInputRun {
     rejectLibrary(session);
     const unsupported = unsupportedModeReason(session.selection.kind, mode);
     if (unsupported !== undefined)
-      throw new ConversionWorkflowError(
-        'unsupported_mode',
-        say(messagesFor('en').said, unsupported),
-      );
+      throw new ConversionWorkflowError('unsupported_mode', unsupported);
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);
     if (singleBook) assertSingleBook(mode, request.format);
     return { session, mode, singleBook };
@@ -228,9 +224,6 @@ export class SingleInputRun {
 /** A library is converted through its own run, so the calls for one input refuse its session. */
 function rejectLibrary(session: ActiveSession): void {
   if (session.library !== undefined) {
-    throw new ConversionWorkflowError(
-      'unsupported_mode',
-      'A library is converted title by title, not as one input.',
-    );
+    throw new ConversionWorkflowError('unsupported_mode', message('workflow.libraryByTitle', {}));
   }
 }

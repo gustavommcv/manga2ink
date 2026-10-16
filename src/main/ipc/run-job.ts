@@ -1,6 +1,7 @@
 import type { ConversionArtifact } from '@/domain/conversion';
 import { toLibraryRelativePath } from '@/library/paths';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 import type { MainContext } from '../context';
 import { failed, ok } from './result';
@@ -28,14 +29,20 @@ export async function runJob<Value>(
   if (libraryPath === undefined) {
     return failed({
       code: 'library_not_found',
-      message: 'The pending conversion is no longer available.',
+      said: message('failure.pendingConversionGone', {}),
     });
   }
   if (context.pendingRunActivity.isDeleting(command.libraryId)) {
-    return failed({ code: 'pending_in_use', message: 'The pending conversion is being deleted.' });
+    return failed({
+      code: 'pending_in_use',
+      said: message('failure.pendingConversionBeingDeleted', {}),
+    });
   }
   if (context.activeJobs.has(command.jobId)) {
-    return failed({ code: 'job_exists', message: 'That conversion is already running.' });
+    return failed({
+      code: 'job_exists',
+      said: message('failure.alreadyRunning', { what: 'conversion' }),
+    });
   }
   const controller = new AbortController();
   context.activeJobs.set(command.jobId, controller);

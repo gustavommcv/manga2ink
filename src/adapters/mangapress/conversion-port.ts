@@ -17,6 +17,9 @@ import {
   ToolExecutionError,
 } from '@/domain/conversion';
 import type { MangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
+import { messagesFor } from '@/i18n/messages';
+import { say } from '@/i18n/say';
 
 export class MangapressConversionAdapter implements ConversionPort {
   constructor(
@@ -156,24 +159,28 @@ function requireSuccessfulResult(
 ): NonNullable<Awaited<ReturnType<MangapressCliAdapter['run']>>['result']> {
   if (run.exitCode === 0 && run.result !== undefined) return run.result;
   const error = run.errors[0];
-  const issue =
-    error === undefined
-      ? {
-          tool: 'mangapress' as const,
-          severity: 'error' as const,
-          code: 'process_failed',
-          stage: 'conversion',
-          recoverable: true,
-          message: 'Mangapress could not convert this volume.',
-          ...(run.stderr === '' ? {} : { diagnostic: run.stderr }),
-        }
-      : issueFromError(error);
-  throw new ToolExecutionError(
-    cover !== undefined && coverErrorCodes.has(issue.code)
-      ? aboutTheCover(issue, cover.book)
-      : issue,
-    run.exitCode,
-  );
+  if (error === undefined) {
+    // The tool said nothing the person can use, so the app says it; the English is the record.
+    const said = message('failure.conversionFailed', {});
+    throw new ToolExecutionError(
+      {
+        tool: 'mangapress',
+        severity: 'error',
+        code: 'process_failed',
+        stage: 'conversion',
+        recoverable: true,
+        message: say(messagesFor('en').said, said),
+        ...(run.stderr === '' ? {} : { diagnostic: run.stderr }),
+      },
+      run.exitCode,
+      { said },
+    );
+  }
+  const issue = issueFromError(error);
+  if (cover !== undefined && coverErrorCodes.has(issue.code)) {
+    throw aboutTheCover(issue, cover.book, run.exitCode);
+  }
+  throw new ToolExecutionError(issue, run.exitCode);
 }
 
 /**
@@ -181,12 +188,21 @@ function requireSuccessfulResult(
  * the person needs to know which book it is and where to change it, and the tool's own words and
  * diagnostic stay with the details.
  */
-function aboutTheCover(issue: PipelineIssue, book: string): PipelineIssue {
-  return {
-    ...issue,
-    message: `The cover chosen for ${book} could not be used. Remove it, or choose another image, on the book’s details page.`,
-    diagnostic: [issue.message, issue.diagnostic].filter((part) => part !== undefined).join(' '),
-  };
+function aboutTheCover(
+  issue: PipelineIssue,
+  book: string,
+  exitCode: number | null,
+): ToolExecutionError {
+  const said = message('failure.coverUnusable', { book });
+  return new ToolExecutionError(
+    {
+      ...issue,
+      message: say(messagesFor('en').said, said),
+      diagnostic: [issue.message, issue.diagnostic].filter((part) => part !== undefined).join(' '),
+    },
+    exitCode,
+    { said },
+  );
 }
 
 function issueFromError(error: MangapressErrorEvent): PipelineIssue {

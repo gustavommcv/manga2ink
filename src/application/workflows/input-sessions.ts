@@ -14,6 +14,7 @@ import {
 import { skippedLinkNames } from '@/domain/library-links';
 import { createMappingDraft, type MappingDraft, validateMapping } from '@/domain/mapping';
 import { unrecognizedChapterNames } from '@/domain/unrecognized-chapters';
+import { message } from '@/domain/message';
 
 /** The manga folders of a library as last planned. Their paths never leave the workflow. */
 interface LibraryState {
@@ -146,10 +147,7 @@ export class InputSessions {
     const { library } = this.librarySession(sessionId);
     const known = library.titles.find((candidate) => candidate.title === title);
     if (known === undefined) {
-      throw new ConversionWorkflowError(
-        'title_not_found',
-        'That title is no longer in the library. Choose the library again.',
-      );
+      throw new ConversionWorkflowError('title_not_found', message('workflow.titleGone', {}));
     }
     await this.binding.writeTitleMapping(known.inputPath, trustedMapping(known.draft, mapping));
   }
@@ -166,10 +164,7 @@ export class InputSessions {
         (candidate) => candidate.title === title,
       );
       if (known === undefined) {
-        throw new ConversionWorkflowError(
-          'title_not_found',
-          'That title is no longer in the library. Choose the library again.',
-        );
+        throw new ConversionWorkflowError('title_not_found', message('workflow.titleGone', {}));
       }
       await this.binding.writeDetails(known.inputPath, details);
       return;
@@ -177,7 +172,7 @@ export class InputSessions {
     if (session.selection.kind !== 'folder' || session.library !== undefined) {
       throw new ConversionWorkflowError(
         'unsupported_mode',
-        'The author and language are kept with a folder, and this input is not one.',
+        message('workflow.detailsNeedFolder', {}),
       );
     }
     await this.binding.writeDetails(session.selection.inputPath, details);
@@ -194,17 +189,14 @@ export class InputSessions {
         (candidate) => candidate.title === title,
       );
       if (known === undefined) {
-        throw new ConversionWorkflowError(
-          'title_not_found',
-          'That title is no longer in the library. Choose the library again.',
-        );
+        throw new ConversionWorkflowError('title_not_found', message('workflow.titleGone', {}));
       }
       return known.inputPath;
     }
     if (session.library !== undefined) {
       throw new ConversionWorkflowError(
         'unsupported_mode',
-        'A library is made of titles; choose one of them.',
+        message('workflow.libraryNeedsTitle', {}),
       );
     }
     return session.selection.inputPath;
@@ -213,10 +205,7 @@ export class InputSessions {
   requireSession(sessionId: string): ActiveSession {
     const session = this.sessions.get(sessionId);
     if (session === undefined) {
-      throw new ConversionWorkflowError(
-        'session_not_found',
-        'This input is no longer available. Choose it again.',
-      );
+      throw new ConversionWorkflowError('session_not_found', message('workflow.inputGone', {}));
     }
     return session;
   }
@@ -227,7 +216,7 @@ export class InputSessions {
   } {
     const session = this.requireSession(sessionId);
     if (session.library === undefined) {
-      throw new ConversionWorkflowError('not_a_library', 'This input is not a library.');
+      throw new ConversionWorkflowError('not_a_library', message('workflow.notALibrary', {}));
     }
     return { session, library: session.library };
   }
@@ -265,19 +254,15 @@ export function trustedMapping(trusted: MappingDraft, submitted: MappingDraft): 
       ...(submitted.source === undefined ? {} : { source: submitted.source }),
     });
   } catch (error) {
-    throw new ConversionWorkflowError(
-      'invalid_mapping',
-      'The chapter mapping contains unknown or invalid assignments.',
-      { cause: error },
-    );
+    throw new ConversionWorkflowError('invalid_mapping', message('workflow.mappingInvalid', {}), {
+      cause: error,
+    });
   }
   const errors = validateMapping(mapping).filter((issue) => issue.severity === 'error');
   if (errors.length > 0) {
-    throw new ConversionWorkflowError(
-      'invalid_mapping',
-      'Fix the chapter mapping errors before converting.',
-      { cause: errors },
-    );
+    throw new ConversionWorkflowError('invalid_mapping', message('workflow.mappingErrors', {}), {
+      cause: errors,
+    });
   }
   return mapping;
 }

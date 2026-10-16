@@ -9,6 +9,7 @@ import { registerOpdsHandlers } from '@/main/ipc/opds';
 import { registerPendingHandlers } from '@/main/ipc/pending';
 import { PendingRunActivity } from '@/main/pending-run-activity';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const electron = vi.hoisted(() => ({
@@ -200,7 +201,7 @@ describe('sharing the books on the network', () => {
       ok: false,
       error: {
         code: 'malformed_json',
-        message: 'The output library catalog could not be read.',
+        said: message('failure.catalogUnreadable', {}),
       },
     });
     expect(context.activeSharingTarget).toBeUndefined();
@@ -222,7 +223,9 @@ describe('sharing the books on the network', () => {
     const taken = await call('opds:start-sharing', start);
 
     expect(taken).toMatchObject({ ok: false, error: { code: 'sharing_failed' } });
-    expect((taken as { error: { message: string } }).error.message).toContain(String(opdsPort));
+    expect(taken).toMatchObject({
+      error: { said: message('failure.sharingPortInUse', { port: opdsPort }) },
+    });
     expect(context.activeSharingTarget).toBeUndefined();
 
     context.opdsServer.start.mockRejectedValueOnce(
@@ -336,7 +339,9 @@ describe('the books that are ready and not saved yet', () => {
     const result = await call('pending:list');
 
     expect(result).toMatchObject({ ok: false, error: { code: 'pending_unreadable' } });
-    expect((result as { error: { message: string } }).error.message).toContain('were not deleted');
+    expect(result).toMatchObject({
+      error: { said: message('failure.pendingUnreadable', {}) },
+    });
   });
 
   it('deletes a run and forgets its books, unless sharing or a conversion is in the way', async () => {
@@ -405,7 +410,7 @@ describe('the books that are ready and not saved yet', () => {
     electron.showSaveDialog.mockResolvedValueOnce({ canceled: false, filePath: '/books/One.pdf' });
     expect(await call('pending:save-as', id)).toMatchObject({
       ok: false,
-      error: { code: 'save_failed', message: 'Choose a .epub file for this book.' },
+      error: { code: 'save_failed', said: message('save.wrongExtension', { extension: '.epub' }) },
     });
     electron.showSaveDialog.mockResolvedValueOnce({ canceled: true, filePath: '' });
     expect(await call('pending:save-as', id)).toEqual({ ok: true, value: { saved: false } });
@@ -421,15 +426,15 @@ describe('the books that are ready and not saved yet', () => {
       status: 'catalog_failed',
       cause: new Error('catalog'),
     });
-    const catalog = (await call('pending:save-as', id)) as { value: { warning: string } };
-    expect(catalog.value.warning).toContain('destination catalog could not be updated');
+    const catalog = (await call('pending:save-as', id)) as { value: { warning: unknown } };
+    expect(catalog.value.warning).toEqual(message('save.copiedCatalogFailed', {}));
 
     context.pendingRuns.exportAndRecord.mockResolvedValueOnce({
       status: 'record_failed',
       cause: new Error('record'),
     });
-    const record = (await call('pending:save-as', id)) as { value: { warning: string } };
-    expect(record.value.warning).toContain('could not remember that it was saved');
+    const record = (await call('pending:save-as', id)) as { value: { warning: unknown } };
+    expect(record.value.warning).toEqual(message('save.copiedNotRecorded', {}));
   });
 
   it('keeps the books of other runs when one is deleted, and opens the dialog in Documents with no folder kept', async () => {
@@ -465,7 +470,7 @@ describe('the books that are ready and not saved yet', () => {
 
     expect(await call('pending:save-as', id)).toMatchObject({
       ok: false,
-      error: { code: 'save_failed', message: 'This pending book is no longer available.' },
+      error: { code: 'save_failed', said: message('save.bookGone', {}) },
     });
   });
 
@@ -480,14 +485,14 @@ describe('the books that are ready and not saved yet', () => {
     const release = context.pendingRunActivity.beginDelete('run-1');
     expect(await call('pending:save-as', idOf(context, 'One.epub'))).toMatchObject({
       ok: false,
-      error: { code: 'save_failed', message: 'This pending book is being deleted.' },
+      error: { code: 'save_failed', said: message('save.bookBeingDeleted', {}) },
     });
     release?.();
     // A book whose run is gone from storage is not there to save.
     context.pendingRuns.list.mockResolvedValue([]);
     expect(await call('pending:save-as', idOf(context, 'One.epub'))).toMatchObject({
       ok: false,
-      error: { message: 'This pending book is no longer available.' },
+      error: { said: message('save.bookGone', {}) },
     });
   });
 
@@ -513,14 +518,14 @@ describe('the books that are ready and not saved yet', () => {
     electron.showOpenDialog.mockResolvedValue({ canceled: false, filePaths: ['/books/Shelf'] });
 
     const result = (await call('pending:save-all', ids)) as {
-      value: { savedIds: string[]; failures: { id: string; message: string }[] };
+      value: { savedIds: string[]; failures: { id: string; said: unknown }[] };
     };
 
     // One.epub found its name taken and went on to "(2)"; Two.epub's disk was full; Three's copy
     // was made and its catalog was not, which is said and does not undo the save.
     expect(result.value.savedIds).toEqual([ids[0], ids[2]]);
     expect(result.value.failures.map((failure) => failure.id)).toEqual([ids[1], ids[2]]);
-    expect(result.value.failures[0]?.message).toContain('destination is full');
+    expect(result.value.failures[0]?.said).toEqual(message('save.destinationFull', {}));
     expect(context.lastSaveFolder).toBe(path.dirname(path.join('/books/Shelf', 'One.epub')));
     const destinations = (
       context.pendingRuns as unknown as {
@@ -546,7 +551,7 @@ describe('the books that are ready and not saved yet', () => {
     const release = context.pendingRunActivity.beginDelete('run-1');
     expect(await call('pending:save-all', ids)).toMatchObject({
       ok: false,
-      error: { message: 'This pending book is being deleted.' },
+      error: { said: message('save.bookBeingDeleted', {}) },
     });
     release?.();
   });

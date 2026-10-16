@@ -7,15 +7,14 @@ import {
   FORMATS_SUPPORTING_COMBINED_VOLUME,
   validateMangapressSettings,
 } from '@/domain/output-profile';
+import { type RunStep } from '@/domain/messages/workflow';
+import { message } from '@/domain/message';
 import { defaultProcessMode, type ProcessMode, usesMangapress } from '@/domain/process-mode';
 
-export type RunAction = 'converting' | 'validating the plan';
+export type RunAction = RunStep;
 
 export function emptyBindingError(code: 'no_volumes' | 'binding_failed'): ConversionWorkflowError {
-  return new ConversionWorkflowError(
-    code,
-    'No volume files were produced. Review the chapter mapping and try again.',
-  );
+  return new ConversionWorkflowError(code, message('workflow.noVolumes', {}));
 }
 
 /** Resolve the default mode and validate only the settings of a tool the run will use. */
@@ -30,7 +29,7 @@ export function validateRunOptions(
   ) {
     throw new ConversionWorkflowError(
       'invalid_settings',
-      `Review the output settings before ${action}.`,
+      message('workflow.reviewSettings', { before: action }),
     );
   }
   return mode;
@@ -41,13 +40,10 @@ export function assertSingleBook(mode: ProcessMode, format: BookFormat): void {
   if (mode !== 'bind-and-convert') {
     throw new ConversionWorkflowError(
       'invalid_settings',
-      'Single book mode requires both binding and converting.',
+      message('workflow.singleBookNeedsBoth', {}),
     );
   }
   if (!FORMATS_SUPPORTING_COMBINED_VOLUME.has(format)) {
-    throw new ConversionWorkflowError(
-      'invalid_settings',
-      'Binding the whole series as one volume is only available for EPUB right now.',
-    );
+    throw new ConversionWorkflowError('invalid_settings', message('workflow.combineNeedsEpub', {}));
   }
 }
