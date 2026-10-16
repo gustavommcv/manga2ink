@@ -26,7 +26,7 @@ Run individual checks while working. The full local checks prepare the change fo
 
 ### Language and documentation
 
-Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English, Portuguese and Japanese versions (Japanese leaves pages in English until they are translated; see [website/README.md](website/README.md)); write each naturally and retain the application's actual English control labels in all of them.
+Write application text, comments, contributor documents, commit subjects, and PR descriptions in English. The public guide has English, Portuguese and Japanese versions (a language shows a page in English until it is translated; see [website/README.md](website/README.md)); write each naturally and retain the application's actual English control labels in all of them.
 
 Check changed documentation against current behavior and scripts. Keep pending work in [current priorities](docs/milestones.md#current-priorities). Preserve audit findings and accepted ADRs as historical records; append dated outcomes to audits rather than rewriting their original evidence.
 
