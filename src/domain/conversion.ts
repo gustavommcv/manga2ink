@@ -1,6 +1,7 @@
 import { type BookDetails, volumeBookTitle } from './book-details';
 import type { MappingDraft } from './mapping';
 import type { AnyMessage } from './message';
+import type { VolumePosition } from './messages/run';
 import type { MangapressSettings } from './output-profile';
 import type { ProcessMode } from './process-mode';
 
@@ -85,6 +86,8 @@ export interface ConversionArtifact {
 export interface PlannedBook {
   readonly name: string;
   readonly pageCount: number;
+  /** The one book a whole series is bound into: `name` is the series, and the window says what it makes. */
+  readonly wholeSeries?: true;
 }
 
 /**
@@ -108,15 +111,17 @@ export function plannedVolumeBookName(
 /** A combined series is one planned EPUB; its volumes remain table-of-contents sections. */
 export function plannedSingleBook(title: string, volumes: readonly PlannedBook[]): PlannedBook {
   return {
-    name: `One EPUB for ${title}`,
+    name: title,
     pageCount: volumes.reduce((total, volume) => total + volume.pageCount, 0),
+    wholeSeries: true,
   };
 }
 
 export interface WorkflowPlan {
   readonly tool: 'mangabind' | 'mangapress';
   readonly title: string;
-  readonly message: string;
+  /** What validating found, said by the window in its language. */
+  readonly message: AnyMessage;
   readonly books: readonly PlannedBook[];
   readonly issues: readonly PipelineIssue[];
 }
@@ -138,11 +143,13 @@ export interface VolumeConversionProgress {
 
 export interface ConversionProgress {
   readonly stage: 'binding' | 'processing' | 'saving';
-  readonly message: string;
+  /** What the run is doing, said by the window in its language. */
+  readonly message: AnyMessage;
   /** The final page can be copied before the CBZ archive has closed successfully. */
   readonly bindingState?: 'started' | 'advanced' | 'completed';
   readonly title?: string;
-  readonly volume?: string;
+  /** Which volume of the title this is about, when it is about one. */
+  readonly volume?: VolumePosition;
   readonly chapter?: string;
   readonly page?: number;
   readonly completed?: number;

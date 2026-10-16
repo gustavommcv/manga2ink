@@ -1,5 +1,6 @@
 import type { BindingProgress } from '@/application/ports/conversion-tools';
 import type { ConversionProgress } from '@/domain/conversion';
+import { message } from '@/domain/message';
 
 /** Keep the main message stable while the measured page count advances. */
 export function presentBindingProgress(progress: BindingProgress): ConversionProgress {
@@ -9,14 +10,19 @@ export function presentBindingProgress(progress: BindingProgress): ConversionPro
       stage: 'binding',
       title,
       message:
-        progress.state === 'started' ? `Inspecting ${title}…` : `Organizing chapters for ${title}…`,
+        progress.state === 'started'
+          ? message('progress.inspecting', { title })
+          : message('progress.organizing', { title }),
     };
   }
   return {
     stage: 'binding',
     title,
     bindingState: progress.state,
-    message: `Building volume ${String(progress.volumeIndex)} of ${String(progress.volumeCount)}…`,
+    message: message('progress.buildingVolume', {
+      volume: progress.volumeIndex,
+      volumes: progress.volumeCount,
+    }),
     completed: progress.completedPages,
     total: progress.totalPages,
   };

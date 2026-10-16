@@ -19,12 +19,16 @@ import { providerSaid } from './provider-said';
 import { type ProcessingMessages, processingMessages } from './processing-messages';
 import { type QueueMessages, queueMessages } from './queue-messages';
 import { queueSaid } from './queue-said';
+import { type ResultsMessages, resultsMessages } from './results-messages';
+import { runSaid } from './run-said';
+import { type RunningMessages, runningMessages } from './running-messages';
 import { saveSaid } from './save-said';
 import type { Said } from './say';
 import { type SettingsMessages, settingsMessages } from './settings-messages';
 import { type SharedMessages, sharedMessages } from './shared-messages';
 import { textSaid } from './text-said';
 import { type UpdatesMessages, updatesMessages } from './updates-messages';
+import { warningSaid } from './warnings-said';
 import { workflowSaid } from './workflow-said';
 
 /**
@@ -44,6 +48,8 @@ export interface Messages {
   readonly options: OptionsMessages;
   readonly fields: OptionFieldsMessages;
   readonly queue: QueueMessages;
+  readonly running: RunningMessages;
+  readonly results: ResultsMessages;
   readonly settings: SettingsMessages;
   readonly shared: SharedMessages;
   readonly updates: UpdatesMessages;
@@ -63,6 +69,8 @@ function build(language: Language): Messages {
     options: optionsMessages[language],
     fields: optionFieldsMessages[language],
     queue: queueMessages[language],
+    running: runningMessages[language],
+    results: resultsMessages[language],
     settings: settingsMessages[language],
     shared: sharedMessages[language],
     updates: updatesMessages[language],
@@ -78,6 +86,8 @@ function build(language: Language): Messages {
       ...workflowSaid[language],
       ...saveSaid[language],
       ...providerSaid[language],
+      ...runSaid[language],
+      ...warningSaid[language],
       ...textSaid[language],
     },
   };

@@ -12,6 +12,7 @@ import {
   type SelectedInput,
   type WorkflowResult,
 } from '@/shared/workflow-contract';
+import { message } from '@/domain/message';
 
 export const readyToolchain = {
   state: 'ready' as const,
@@ -128,7 +129,7 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
         value: {
           tool: 'mangabind',
           title: 'Offline Work',
-          message: 'mangabind validated 1 volume · no library files written',
+          message: message('plan.mangabind', { volumes: 1, shape: 'books' }),
           books: [{ name: 'Offline Work - Vol.01.cbz', pageCount: 4 }],
           issues: [],
         },

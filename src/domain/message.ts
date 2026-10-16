@@ -8,8 +8,10 @@ import type { NoticeMessageValues } from './messages/notice';
 import type { OptionsMessageValues } from './messages/options';
 import type { ProviderMessageValues } from './messages/provider';
 import type { QueueMessageValues } from './messages/queue';
+import type { RunMessageValues } from './messages/run';
 import type { SaveMessageValues } from './messages/save';
 import type { TextMessageValues } from './messages/text';
+import type { WarningMessageValues } from './messages/warnings';
 import type { WorkflowMessageValues } from './messages/workflow';
 
 export type { NoValues } from './messages/values';
@@ -35,6 +37,8 @@ export interface MessageValues
     WorkflowMessageValues,
     SaveMessageValues,
     ProviderMessageValues,
+    RunMessageValues,
+    WarningMessageValues,
     TextMessageValues {}
 
 export type MessageId = keyof MessageValues;

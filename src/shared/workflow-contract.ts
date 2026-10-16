@@ -7,6 +7,7 @@ import type {
   InputKind,
   InspectedKind,
   PipelineIssue,
+  PlannedBook,
 } from '@/domain/conversion';
 import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
 import {
@@ -408,11 +409,9 @@ export interface SaveAllResult {
 export interface PlanSummary {
   readonly tool: 'mangabind' | 'mangapress';
   readonly title: string;
-  readonly message: string;
-  readonly books: readonly {
-    readonly name: string;
-    readonly pageCount: number;
-  }[];
+  /** What validating found, said by the window in its language. */
+  readonly message: AnyMessage;
+  readonly books: readonly PlannedBook[];
   readonly issues: readonly PipelineIssue[];
 }
 

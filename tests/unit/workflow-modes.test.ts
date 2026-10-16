@@ -69,10 +69,18 @@ describe('conversion workflow process modes', () => {
     ]);
     expect(landed).toEqual(artifacts);
     expect(progress).toEqual([
-      { stage: 'binding', message: 'Organizing 2 chapters into volume files…' },
-      { stage: 'saving', volume: '1 of 2', message: 'Saving volume 1 of 2…' },
-      { stage: 'saving', volume: '2 of 2', message: 'Saving volume 2 of 2…' },
-      { stage: 'saving', message: '2 books saved.' },
+      { stage: 'binding', message: message('progress.organizingChapters', { chapters: 2 }) },
+      {
+        stage: 'saving',
+        volume: { number: 1, count: 2 },
+        message: message('progress.savingVolume', { volume: { number: 1, count: 2 } }),
+      },
+      {
+        stage: 'saving',
+        volume: { number: 2, count: 2 },
+        message: message('progress.savingVolume', { volume: { number: 2, count: 2 } }),
+      },
+      { stage: 'saving', message: message('progress.booksSaved', { count: 2 }) },
     ]);
   });
 
@@ -376,8 +384,7 @@ describe('conversion workflow process modes', () => {
       }),
     ).resolves.toMatchObject({
       tool: 'mangabind',
-      message:
-        'mangabind validated 2 volumes · saved as CBZ files, mangapress not run · no library files written',
+      message: message('plan.mangabind', { volumes: 2, shape: 'joined' }),
     });
     expect(ports.conversionPlan).not.toHaveBeenCalled();
   });
@@ -398,8 +405,12 @@ describe('conversion workflow process modes', () => {
     ).resolves.toEqual({
       tool: 'mangapress',
       title: 'Standalone',
-      message:
-        'mangapress validated KV · 1072 × 1448 · one book, chapters not grouped · no library files written',
+      message: message('plan.mangapress', {
+        profile: 'KV',
+        width: 1072,
+        height: 1448,
+        chaptersNotGrouped: true,
+      }),
       books: [{ name: 'Standalone.epub', pageCount: 3 }],
       issues: [],
     });
@@ -458,18 +469,24 @@ describe('conversion workflow process modes', () => {
       ]);
       expect(landed).toEqual(['good-vol-1.cbz', 'good-vol-2.cbz']);
       expect(progress).toEqual([
-        { stage: 'binding', message: 'Building volume files for the library…' },
+        { stage: 'binding', message: message('progress.bindingLibrary', {}) },
         {
           stage: 'saving',
           title: 'Good Manga',
-          volume: '1 of 2',
-          message: 'Saving Good Manga · volume 1 of 2…',
+          volume: { number: 1, count: 2 },
+          message: message('progress.savingVolume', {
+            title: 'Good Manga',
+            volume: { number: 1, count: 2 },
+          }),
         },
         {
           stage: 'saving',
           title: 'Good Manga',
-          volume: '2 of 2',
-          message: 'Saving Good Manga · volume 2 of 2…',
+          volume: { number: 2, count: 2 },
+          message: message('progress.savingVolume', {
+            title: 'Good Manga',
+            volume: { number: 2, count: 2 },
+          }),
         },
       ]);
       expect(ports.release).toHaveBeenCalledWith('batch-workspace');
@@ -532,12 +549,12 @@ describe('conversion workflow process modes', () => {
       expect(progress).toContainEqual({
         stage: 'binding',
         title: 'Good Manga',
-        message: 'Inspecting Good Manga…',
+        message: message('progress.inspecting', { title: 'Good Manga' }),
       });
       expect(progress).toContainEqual(
         expect.objectContaining({
           title: 'Good Manga',
-          message: 'Good Manga · 2 of 2 volumes converted.',
+          message: message('progress.volumesConverted', { title: 'Good Manga', done: 2, total: 2 }),
           total: 2,
           completed: 2,
         }),

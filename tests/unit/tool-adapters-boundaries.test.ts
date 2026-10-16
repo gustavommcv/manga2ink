@@ -18,6 +18,7 @@ import { MangaDexProvider } from '@/adapters/metadata-providers/mangadex/provide
 import { requestText } from '@/adapters/metadata-providers/http';
 import type { ProcessRunner } from '@/application/ports/process-runner';
 import { defaultMangapressSettings } from '@/domain/output-profile';
+import { message } from '@/domain/message';
 
 // ---- what the tools say -------------------------------------------------------------------------
 
@@ -164,16 +165,16 @@ describe('what a conversion tells the person while it runs', () => {
     });
 
     expect(onProgress.mock.calls.map(([progress]) => progress)).toEqual([
-      { stage: 'processing', message: 'Starting inspect…' },
+      { stage: 'processing', message: message('progress.stageStarted', { stage: 'inspect' }) },
       {
         stage: 'processing',
-        message: 'Processed page 7 of 10.',
+        message: message('progress.pageProcessed', { completed: 7, total: 10 }),
         completed: 7,
         total: 10,
         chapter: 'Chapter 1',
         page: 7,
       },
-      { stage: 'saving', message: 'Saving the finished book…' },
+      { stage: 'saving', message: message('progress.savingBook', {}) },
     ]);
   });
 });

@@ -1,6 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { warningNotices } from '@/domain/book-warnings';
+import { warningNotices as warningNoticesOf } from '@/domain/book-warnings';
+
+import { inEnglish } from './support/say';
+
+/** The notices as a person reads them in English: what the app says is carried by codes. */
+interface EnglishNotice {
+  readonly code: string;
+  readonly title: string;
+  readonly message: string;
+  readonly where?: string;
+}
+
+const warningNotices = (books: Parameters<typeof warningNoticesOf>[0]): readonly EnglishNotice[] =>
+  inEnglish(warningNoticesOf(books)) as unknown as readonly EnglishNotice[];
 
 const small = {
   code: 'images_smaller_than_device',

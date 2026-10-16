@@ -1,3 +1,4 @@
+import { message } from '@/domain/message';
 import type {
   ConversionArtifact,
   ConversionProgress,
@@ -104,8 +105,12 @@ export async function produceVolumes(
       context.onProgress({
         stage: 'processing',
         ...(context.title === undefined ? {} : { title: context.title }),
-        volume: `${String(index + 1)} of ${String(volumeCount)}`,
-        message: `${context.title === undefined ? '' : `${context.title} · `}${String(done)} of ${String(volumeCount)} volumes converted.`,
+        volume: { number: index + 1, count: volumeCount },
+        message: message('progress.volumesConverted', {
+          ...(context.title === undefined ? {} : { title: context.title }),
+          done,
+          total: volumeCount,
+        }),
         completed: fractions.reduce((sum, fraction) => sum + fraction, 0),
         total: volumeCount,
         volumes: [...volumes],

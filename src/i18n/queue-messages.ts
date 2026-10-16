@@ -73,6 +73,8 @@ export interface QueueMessages {
     readonly validated: string;
     readonly nothingWritten: string;
     readonly pages: (count: number) => string;
+    /** The one book a whole series is bound into, named for the series. */
+    readonly oneBookFor: (series: string) => string;
   };
   readonly pending: {
     readonly earlierBooks: string;
@@ -155,6 +157,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       validated: 'Plan validated',
       nothingWritten: 'No library files were written.',
       pages: (count) => `${String(count)} ${countOf(count, 'page', 'pages')}`,
+      oneBookFor: (series) => `One EPUB for ${series}`,
     },
     pending: {
       earlierBooks: 'Earlier books',
@@ -237,6 +240,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       validated: 'Plano validado',
       nothingWritten: 'Nenhum arquivo da biblioteca foi gravado.',
       pages: (count) => `${String(count)} ${countOf(count, 'página', 'páginas')}`,
+      oneBookFor: (series) => `Um EPUB para ${series}`,
     },
     pending: {
       earlierBooks: 'Livros anteriores',

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { produceVolumes } from '@/application/workflows/volume-production';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
+import { message, raw } from '@/domain/message';
 
 type ProduceVolume = Parameters<typeof produceVolumes>[1];
 type PoolOptions = Parameters<typeof produceVolumes>[2];
@@ -37,7 +38,7 @@ describe('volume production', () => {
     const controller = new AbortController();
     const onProgress = vi.fn();
     const onArtifact = vi.fn<NonNullable<PoolOptions['onArtifact']>>();
-    const update: ConversionProgress = { stage: 'saving', message: 'Saving the book…' };
+    const update: ConversionProgress = { stage: 'saving', message: raw('Saving the book…') };
     const convertAt = vi.fn<ProduceVolume>((_index, _signal, report) => {
       report(update);
       return Promise.resolve(book(0));
@@ -242,9 +243,9 @@ describe('volume production', () => {
       convertAt,
       options({ title: 'Manga', onProgress: (update) => progress.push(update) }),
     );
-    reports[0]!({ stage: 'processing', message: 'Page', completed: 1, total: 2 });
-    reports[0]!({ stage: 'processing', message: 'Earlier page', completed: 0, total: 2 });
-    reports[0]!({ stage: 'saving', message: 'Writing book', completed: 2, total: 2 });
+    reports[0]!({ stage: 'processing', message: raw('Page'), completed: 1, total: 2 });
+    reports[0]!({ stage: 'processing', message: raw('Earlier page'), completed: 0, total: 2 });
+    reports[0]!({ stage: 'saving', message: raw('Writing book'), completed: 2, total: 2 });
     expect(progress.at(-1)).toMatchObject({
       completed: 0.99,
       total: 2,
@@ -253,9 +254,9 @@ describe('volume production', () => {
         { number: 2, status: 'waiting' },
       ],
     });
-    reports[1]!({ stage: 'processing', message: 'Unknown total', completed: 1, total: 0 });
-    reports[1]!({ stage: 'processing', message: 'No total', completed: 1 });
-    reports[1]!({ stage: 'processing', message: 'No count', total: 2 });
+    reports[1]!({ stage: 'processing', message: raw('Unknown total'), completed: 1, total: 0 });
+    reports[1]!({ stage: 'processing', message: raw('No total'), completed: 1 });
+    reports[1]!({ stage: 'processing', message: raw('No count'), total: 2 });
     jobs[0]!.resolve(book(0));
     jobs[1]!.resolve(book(1));
     expect((await run).status).toBe('done');
@@ -266,7 +267,7 @@ describe('volume production', () => {
     expect(progress.at(-1)).toMatchObject({
       completed: 2,
       total: 2,
-      message: 'Manga · 2 of 2 volumes converted.',
+      message: message('progress.volumesConverted', { title: 'Manga', done: 2, total: 2 }),
     });
     expect(progress.every((update) => update.title === 'Manga')).toBe(true);
   });

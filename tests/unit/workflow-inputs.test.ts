@@ -15,6 +15,9 @@ import {
   libraryRead,
   openLibrary,
 } from './support/conversion-workflow';
+import { message, raw } from '@/domain/message';
+
+import { english } from './support/say';
 
 describe('conversion workflow', () => {
   it('inspects folders for an offline mapping and keeps CBZ files direct', async () => {
@@ -119,7 +122,7 @@ describe('conversion workflow', () => {
       expect.objectContaining({
         stage: 'binding',
         bindingState: 'advanced',
-        message: 'Building volume 1 of 2…',
+        message: message('progress.buildingVolume', { volume: 1, volumes: 2 }),
         completed: 2,
         total: 5,
       }),
@@ -127,7 +130,7 @@ describe('conversion workflow', () => {
     expect(onProgress).toHaveBeenCalledWith(expect.objectContaining({ completed: 2, total: 2 }));
     expect(onProgress).toHaveBeenLastCalledWith({
       stage: 'saving',
-      message: '2 books saved.',
+      message: message('progress.booksSaved', { count: 2 }),
       completed: 2,
       total: 2,
       volumes: [
@@ -150,12 +153,12 @@ describe('conversion workflow', () => {
           peak = Math.max(peak, active.size);
           options.onProgress({
             stage: 'processing',
-            message: 'Processed page 1 of 2.',
+            message: raw('Processed page 1 of 2.'),
             completed: 1,
             total: 2,
           });
           if (request.inputPath === paths[1]) {
-            options.onProgress({ stage: 'saving', message: 'Saving the finished book…' });
+            options.onProgress({ stage: 'saving', message: raw('Saving the finished book…') });
           }
           pending.set(request.inputPath, (artifact) => {
             active.delete(request.inputPath);
@@ -237,9 +240,9 @@ describe('conversion workflow', () => {
       [...aggregate.map((update) => update.completed)].sort((a, b) => (a ?? 0) - (b ?? 0)),
     );
     expect(aggregate.at(-1)).toMatchObject({ completed: 4, total: 4 });
-    expect(aggregate.every((update) => /^\d of 4 volumes converted\.$/u.test(update.message))).toBe(
-      true,
-    );
+    expect(
+      aggregate.every((update) => /^\d of 4 volumes converted\.$/u.test(english(update.message))),
+    ).toBe(true);
     expect(
       aggregate.some(
         (update) => update.volumes?.[1]?.status === 'saving' && update.volumes[1].completed === 1,
@@ -543,8 +546,8 @@ describe('conversion workflow', () => {
       mapping: mappedDraft(),
     });
 
-    expect(plan.message).toContain('single book for the series');
-    expect(plan.books).toEqual([{ name: 'One EPUB for Trusted Manga', pageCount: 5 }]);
+    expect(plan.message).toEqual(message('plan.mangabind', { volumes: 2, shape: 'series' }));
+    expect(plan.books).toEqual([{ name: 'Trusted Manga', pageCount: 5, wholeSeries: true }]);
   });
 
   it('bypasses binding for a direct CBZ and propagates cancellation to conversion', async () => {
@@ -601,7 +604,7 @@ describe('conversion workflow', () => {
     ).resolves.toEqual({
       tool: 'mangabind',
       title: 'Trusted Manga',
-      message: 'mangabind validated 2 volumes · no library files written',
+      message: message('plan.mangabind', { volumes: 2, shape: 'books' }),
       // Named as the books the run makes, in the format chosen, not as the CBZ files mangabind joins.
       books: [
         { name: 'Trusted Manga - Vol.01.epub', pageCount: 2 },
@@ -628,7 +631,12 @@ describe('conversion workflow', () => {
     ).resolves.toEqual({
       tool: 'mangapress',
       title: 'Standalone',
-      message: 'mangapress validated KV · 1072 × 1448 · no library files written',
+      message: message('plan.mangapress', {
+        profile: 'KV',
+        width: 1072,
+        height: 1448,
+        chaptersNotGrouped: false,
+      }),
       books: [{ name: 'Standalone.epub', pageCount: 3 }],
       issues: [],
     });
@@ -661,7 +669,7 @@ describe('conversion workflow', () => {
         mapping: mappedDraft(),
       }),
     ).resolves.toMatchObject({
-      message: 'mangabind validated 1 volume · no library files written',
+      message: message('plan.mangabind', { volumes: 1, shape: 'books' }),
     });
   });
 
