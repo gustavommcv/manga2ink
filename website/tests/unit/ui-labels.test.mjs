@@ -28,6 +28,8 @@ test('what is not the name of something in the interface is left alone', () => {
     'Mangabound.app',
     'A sentence that is emphasized.',
     'Is it?',
+    '文が強調されています。',
+    'そうでしょうか？',
     'one two three four five six seven eight nine ten',
   ]) {
     assert.equal(isNotALabel(phrase), true, phrase);

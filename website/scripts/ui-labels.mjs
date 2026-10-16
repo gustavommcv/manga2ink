@@ -18,14 +18,14 @@ export function plain(text) {
 /**
  * Whether a phrase of a guide is not the name of something in the interface, and so is left alone:
  * a menu path of another program, an address or a file name, a sentence that is emphasized (it ends
- * with a full stop), or a link.
+ * with a full stop, as written in any of the languages of the guide), or a link.
  */
 export function isNotALabel(phrase) {
   return (
     phrase.includes('→') ||
     phrase.startsWith('[') ||
     /[/\\]|\.\w{1,4}$/u.test(phrase) ||
-    /[.!?]$/u.test(phrase) ||
+    /[.!?。！？]$/u.test(phrase) ||
     phrase.split(' ').length > 9
   );
 }
