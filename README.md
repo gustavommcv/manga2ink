@@ -76,16 +76,16 @@ Development setup acquires and verifies the pinned converters under the ignored 
 
 ## Documentation
 
-| Read this                                                          | To learn                                                                        |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| [Documentation Website](https://gustavommcv.github.io/mangabound/) | Official bilingual user guides, KOReader setup, and CLI reference (`website/`)  |
-| [Architecture overview](docs/architecture.md)                      | How the code is layered, how a conversion runs end to end, where to change what |
-| [Architecture decisions](docs/adr/README.md)                       | Why it is built this way, one short record per decision                         |
-| [Contributing](CONTRIBUTING.md)                                    | The gates, the kinds of tests, Storybook, and how to open a pull request        |
-| [Adding an online source](docs/adding-a-metadata-provider.md)      | The rules and the steps for offering another source of volume data              |
-| [Current priorities and milestones](docs/milestones.md)            | Concrete pending work and the implementation history                            |
-| [Release checklist](docs/release-checklist.md)                     | The basic release smoke test and checks for changed desktop integrations        |
-| [Releasing](RELEASING.md)                                          | How to cut and publish a release, step by step                                  |
+| Read this                                                          | To learn                                                                                                 |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| [Documentation Website](https://gustavommcv.github.io/mangabound/) | Official user guides in English, Portuguese and Japanese, KOReader setup, and CLI reference (`website/`) |
+| [Architecture overview](docs/architecture.md)                      | How the code is layered, how a conversion runs end to end, where to change what                          |
+| [Architecture decisions](docs/adr/README.md)                       | Why it is built this way, one short record per decision                                                  |
+| [Contributing](CONTRIBUTING.md)                                    | The gates, the kinds of tests, Storybook, and how to open a pull request                                 |
+| [Adding an online source](docs/adding-a-metadata-provider.md)      | The rules and the steps for offering another source of volume data                                       |
+| [Current priorities and milestones](docs/milestones.md)            | Concrete pending work and the implementation history                                                     |
+| [Release checklist](docs/release-checklist.md)                     | The basic release smoke test and checks for changed desktop integrations                                 |
+| [Releasing](RELEASING.md)                                          | How to cut and publish a release, step by step                                                           |
 
 Bundled converters are pinned in `toolchain.lock.json`. Updating a pin is a separate, reviewed change; see [Updating the bundled tools](CONTRIBUTING.md#updating-the-bundled-tools).
 

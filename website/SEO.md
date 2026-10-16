@@ -50,7 +50,7 @@ Registration belongs to the site owner's Google account. An empty verification s
 2. For **HTML tag** verification, copy only the tag's `content` value into `googleSiteVerification` in `site.config.mjs`, in a reviewed PR. That value is public verification metadata, not a password. Keep it empty until supplied; do not substitute a placeholder.
 3. After the authorized deployment, confirm that the homepage contains the verification tag, then select **Verify** in Search Console.
 4. Under **Sitemaps**, submit `sitemap-index.xml` and check its processing status.
-5. Optionally use **URL inspection → Request indexing** for the English and Portuguese homepages. [A request does not guarantee indexing](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl), immediately or at all. Monitor the reports rather than relying on a browser extension's score.
+5. Optionally use **URL inspection → Request indexing** for the homepage of each language. [A request does not guarantee indexing](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl), immediately or at all. Monitor the reports rather than relying on a browser extension's score.
 
 Search Console is a useful submission and diagnostic tool, not a requirement for a page to be discovered through ordinary links. See Google's [sitemap submission options](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap).
 
