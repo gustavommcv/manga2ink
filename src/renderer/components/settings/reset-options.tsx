@@ -3,6 +3,8 @@ import { useId, useRef, useState } from 'react';
 
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
+import { useMessages } from '@/renderer/hooks/use-messages';
+import type { ResetScope } from '@/renderer/i18n/settings-messages';
 
 /**
  * Puts options back to their defaults, after a second click: what it discards is also what was
@@ -17,9 +19,10 @@ export function ResetOptions({
   /** Whether anything differs from the defaults. */
   readonly changed: boolean;
   readonly onReset: () => void;
-  /** What goes back, as it reads in "Put ___ back to their defaults?". */
-  readonly scope: string;
+  /** What goes back: the options of the queue screen, or of the page of conversion options. */
+  readonly scope: ResetScope;
 }): React.JSX.Element {
+  const words = useMessages().settings.reset;
   const [confirming, setConfirming] = useState(false);
   const [done, setDone] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -49,16 +52,16 @@ export function ResetOptions({
         size="sm"
         variant="ghost"
       >
-        <RotateCcw /> Reset to defaults
+        <RotateCcw /> {words.button}
       </Button>
       {!changed && (
         <span className="sr-only" id={reasonId}>
-          Every option is already at its default.
+          {words.alreadyDefault}
         </span>
       )}
       {confirming && changed && (
         <div
-          aria-label="Confirm reset"
+          aria-label={words.confirmLabel}
           className="border-border bg-background focus-visible:ring-ring focus-visible:ring-offset-background space-y-3 rounded-lg border p-3 outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           id={panelId}
           onKeyDown={(event) => {
@@ -68,9 +71,7 @@ export function ResetOptions({
           role="group"
           tabIndex={-1}
         >
-          <p className="text-muted-foreground text-xs leading-relaxed">
-            Put {scope} back to their defaults?
-          </p>
+          <p className="text-muted-foreground text-xs leading-relaxed">{words.question[scope]}</p>
           <div className="flex gap-2">
             <Button
               onClick={() => {
@@ -80,16 +81,16 @@ export function ResetOptions({
               }}
               size="sm"
             >
-              Reset
+              {words.confirm}
             </Button>
             <Button onClick={close} size="sm" variant="outline">
-              Cancel
+              {words.cancel}
             </Button>
           </div>
         </div>
       )}
       <p className="sr-only" role="status">
-        {done ? 'Every option is back to its default.' : ''}
+        {done ? words.done : ''}
       </p>
     </div>
   );
