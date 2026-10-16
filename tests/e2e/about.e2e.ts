@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 import { $, browser } from '@wdio/globals';
 
@@ -33,6 +35,20 @@ describe('packaged About tab', () => {
     );
     assert.deepEqual(await loadedPictures(), { titlebar: 48, about: 192 });
 
+    // The tools are the ones the lock file pins, each said with its version and that it passed.
+    const lock = JSON.parse(await readFile(path.resolve('toolchain.lock.json'), 'utf8')) as {
+      tools: Record<string, { pin: { releaseTag: string } }>;
+    };
+    const tools = $('dl*=mangabind');
+    await tools.waitForDisplayed({ timeout: 30_000 });
+    for (const name of ['mangabind', 'mangapress']) {
+      const tag = lock.tools[name]?.pin.releaseTag.replace(/^v/u, '');
+      assert.match(
+        await tools.getText(),
+        new RegExp(`${name}\\s+v${tag?.replaceAll('.', '\\.') ?? ''} · verified`, 'u'),
+      );
+    }
+
     const openExternal = await browser.electron.mock('shell', 'openExternal');
     await openExternal.mockResolvedValue(undefined);
     await panel.$('button=Support the project').click();
@@ -48,6 +64,15 @@ describe('packaged About tab', () => {
       timeoutMsg: 'The guide button did not open a page.',
     });
     assert.deepEqual(openExternal.mock.calls[1], ['https://gustavommcv.github.io/mangabound/']);
+
+    await panel.$('button=Release notes').click();
+    await browser.waitUntil(() => openExternal.mock.calls.length === 3, {
+      timeout: 30_000,
+      timeoutMsg: 'The release notes button did not open a page.',
+    });
+    assert.deepEqual(openExternal.mock.calls[2], [
+      `https://github.com/gustavommcv/mangabound/releases/tag/v${version}`,
+    ]);
 
     await browser.keys('Escape');
   });

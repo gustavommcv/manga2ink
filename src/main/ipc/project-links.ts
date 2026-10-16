@@ -1,4 +1,4 @@
-import { shell } from 'electron';
+import { app, shell } from 'electron';
 
 import {
   type OpenProjectLinkCommand,
@@ -19,7 +19,9 @@ export function registerProjectLinkHandlers(): void {
     'app:open-link',
     openProjectLinkCommandSchema,
     async (_event, command: OpenProjectLinkCommand): Promise<WorkflowResult<undefined>> => {
-      await shell.openExternal(projectLinkAddress(command.link, command.language));
+      await shell.openExternal(
+        projectLinkAddress(command.link, command.language, app.getVersion()),
+      );
       return ok(undefined);
     },
   );

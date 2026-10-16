@@ -7,9 +7,11 @@ import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { projectLinks } from '@/shared/project-links-contract';
 import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { ToolchainStatus } from '@/shared/toolchain-status';
 import { raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
+import { deferred } from './support/workflow';
 
 const speaking =
   (language: Language): MangaboundBridge['loadAppSettings'] =>
@@ -29,6 +31,113 @@ async function renderAbout(
   );
   await screen.findByText('Mangabound');
 }
+
+const checked: ToolchainStatus = {
+  state: 'ready',
+  target: 'linux-x64',
+  message: 'Ready.',
+  tools: [
+    { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
+    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: 'Ready.' },
+  ],
+};
+
+describe('the tools the About tab names', () => {
+  it('says each one with its version, and that it passed the check', async () => {
+    await renderAbout({ getToolchainStatus: () => Promise.resolve(checked) });
+
+    expect(await screen.findByText('mangabind')).toBeVisible();
+    expect(screen.getByText('mangapress')).toBeVisible();
+    const rows = screen.getAllByText(/^v\d/u).map((row) => row.textContent);
+    expect(rows).toEqual(['v0.7.2 · verified', 'v0.8.0 · verified']);
+  });
+
+  it('writes the version the same whether the tag has a v or not', async () => {
+    await renderAbout({
+      getToolchainStatus: () =>
+        Promise.resolve({
+          ...checked,
+          tools: [{ name: 'mangabind', releaseTag: '0.7.2', state: 'ready', message: 'Ready.' }],
+        }),
+    });
+
+    expect(await screen.findByText(/^v0\.7\.2$/u)).toBeVisible();
+    expect(screen.queryByText(/vv0/u)).not.toBeInTheDocument();
+  });
+
+  it('says so, in the alert colour, for a tool that did not pass', async () => {
+    await renderAbout({
+      getToolchainStatus: () =>
+        Promise.resolve({
+          state: 'blocked',
+          message: 'No.',
+          tools: [
+            { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: 'Ready.' },
+            { name: 'mangapress', releaseTag: 'v0.8.0', state: 'failed', message: 'Wrong hash.' },
+          ],
+        }),
+    });
+
+    const failed = await screen.findByText(/v0\.8\.0/u);
+    expect(failed).toHaveTextContent('v0.8.0 · did not pass the check');
+    expect(failed).toHaveClass('text-status-failed');
+    expect(screen.getByText(/v0\.7\.2/u)).not.toHaveClass('text-status-failed');
+  });
+
+  it('says the tools could not be checked when none of them is named', async () => {
+    await renderAbout({
+      getToolchainStatus: () =>
+        Promise.resolve({
+          state: 'blocked',
+          tools: [],
+          message: 'The manifest could not be read.',
+        }),
+    });
+
+    expect(await screen.findByText('The bundled tools could not be checked.')).toBeVisible();
+  });
+
+  it('says it is reading until the main process answers', async () => {
+    const answer = deferred<ToolchainStatus>();
+    await renderAbout({ getToolchainStatus: () => answer.promise });
+
+    expect(screen.getByText('Reading…')).toBeVisible();
+    answer.resolve(checked);
+    expect(await screen.findByText('mangabind')).toBeVisible();
+    expect(screen.queryByText('Reading…')).not.toBeInTheDocument();
+  });
+
+  it('says they were not reported when the main process does not answer', async () => {
+    await renderAbout({
+      getToolchainStatus: () => Promise.reject(new Error('The bridge is gone.')),
+    });
+
+    expect(await screen.findByText('The tools were not reported.')).toBeVisible();
+  });
+
+  it('is in the language of the window', async () => {
+    await renderAbout({ getToolchainStatus: () => Promise.resolve(checked) }, 'pt-BR');
+
+    expect(await screen.findByText('Ferramentas de conversão')).toBeVisible();
+    expect(screen.getAllByText(/verificada/u)).toHaveLength(2);
+  });
+
+  it('takes no answer into account once the tab is gone', async () => {
+    const answer = deferred<ToolchainStatus>();
+    const view = render(
+      <AppSettingsProvider bridge={inertBridge({ getToolchainStatus: () => answer.promise })}>
+        <AboutTab />
+      </AppSettingsProvider>,
+    );
+    await screen.findByText('Reading…');
+
+    view.unmount();
+    answer.resolve(checked);
+
+    await Promise.resolve();
+    expect(screen.queryByText('mangabind')).not.toBeInTheDocument();
+  });
+});
 
 describe('the About tab', () => {
   it('names the app and the version that is running', async () => {
@@ -69,6 +178,7 @@ describe('the About tab', () => {
 
   it.each([
     ['User guide', 'guide'],
+    ['Release notes', 'release-notes'],
     ['GitHub', 'repository'],
     ['Report a problem', 'issues'],
     ['Support the project', 'support'],
@@ -154,6 +264,7 @@ describe('the About tab', () => {
     const headings = screen.getAllByRole('heading', { level: 3 });
     expect(headings.map((heading) => heading.textContent)).toEqual([
       'Learn more',
+      'Conversion tools',
       'Support',
       'Credits',
       'License',

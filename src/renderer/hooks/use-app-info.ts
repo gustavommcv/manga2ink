@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import type { ProjectLink } from '@/shared/project-links-contract';
+import type { ToolchainStatus } from '@/shared/toolchain-status';
 
 /** What the app says about itself in the About tab (ADR 0054). */
 export interface AppInfo {
@@ -11,6 +12,11 @@ export interface AppInfo {
    * named, never given as an address.
    */
   readonly openLink: (link: ProjectLink) => Promise<boolean>;
+  /**
+   * What the bundled conversion tools are and whether they passed the check made at launch, or
+   * `undefined` when the main process does not say.
+   */
+  readonly tools: () => Promise<ToolchainStatus | undefined>;
 }
 
 /** Where the provider puts what the app says about itself for everything under it. */

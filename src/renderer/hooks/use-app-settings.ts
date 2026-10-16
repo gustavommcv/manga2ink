@@ -18,6 +18,7 @@ export type AppSettingsBridge = Pick<
   MangaboundBridge,
   | 'chooseProcessingFolder'
   | 'getProcessingFolder'
+  | 'getToolchainStatus'
   | 'loadAppSettings'
   | 'openProjectLink'
   | 'runtime'
