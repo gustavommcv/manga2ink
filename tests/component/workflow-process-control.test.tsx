@@ -12,6 +12,7 @@ import {
   bridge,
   cbz,
   chapters,
+  chooseToAdd,
   deferred,
   expectNoOutputFolderPicker,
   folder,
@@ -141,7 +142,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Folder' }));
+    await chooseToAdd(user, 'Folder');
     await waitFor(() => {
       expect(screen.queryByText('Checking…')).not.toBeInTheDocument();
     });
@@ -384,7 +385,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
@@ -406,9 +407,12 @@ describe('process control in the queue', () => {
       name: 'Create one book for the series',
     });
     expect(singleBookCheckbox).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    // The controls are enabled once the tools have been read, which is a moment after the heading.
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
+      expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
+      expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    });
 
     await user.click(singleBookCheckbox);
 
@@ -445,7 +449,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
@@ -506,7 +510,7 @@ describe('process control in the queue', () => {
       }),
     );
     render(<App />);
-    await user.click(await screen.findByRole('button', { name: 'Files' }));
+    await chooseToAdd(user, 'Files');
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });

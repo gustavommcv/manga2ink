@@ -1,12 +1,19 @@
 import { CircleAlert } from 'lucide-react';
 
+import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { Titlebar } from '@/renderer/components/shell/titlebar';
 import { WorkflowApp } from '@/renderer/workflow-app';
 
 /** Only the desktop entry reads the preload object; the workflow receives its interface. */
 export function App(): React.JSX.Element {
   const bridge = window.mangabound;
-  if (bridge !== undefined) return <WorkflowApp bridge={bridge} />;
+  if (bridge !== undefined) {
+    return (
+      <AppSettingsProvider bridge={bridge}>
+        <WorkflowApp bridge={bridge} />
+      </AppSettingsProvider>
+    );
+  }
 
   return (
     <div className="bg-background text-foreground flex h-screen flex-col">

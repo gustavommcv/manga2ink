@@ -53,11 +53,14 @@ import {
 import { Notices } from '@/renderer/components/shared/notices';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
 import { SharePanel } from '@/renderer/components/sharing/share-panel';
+import { AppSettingsMenu } from '@/renderer/components/settings/app-settings-menu';
 import { ShareMenu } from '@/renderer/components/sharing/share-menu';
 import { useKeptSettings } from '@/renderer/hooks/use-kept-settings';
 import type { CoverSlot } from '@/domain/book-covers';
 import { useBookCovers } from '@/renderer/hooks/use-book-covers';
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
+import { useAppSettings } from '@/renderer/hooks/use-app-settings';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { useSharing } from '@/renderer/hooks/use-sharing';
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
@@ -142,7 +145,13 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   >([]);
   const [activeRunId, setActiveRunId] = useState<string>();
   const [savedIds, setSavedIds] = useState<ReadonlySet<string>>(new Set());
-  const [notices, setNotices] = useState<readonly string[]>([]);
+  // The app settings were read before anything was drawn (ADR 0052); if the file could not be used
+  // the person is told, in the language that is in use, from the first screen.
+  const { unreadable: appSettingsUnreadable } = useAppSettings();
+  const appSettingsUnreadableNotice = useMessages().appSettings.unreadable;
+  const [notices, setNotices] = useState<readonly string[]>(() =>
+    appSettingsUnreadable ? [appSettingsUnreadableNotice] : [],
+  );
   const notify = useCallback((message: string) => {
     setNotices((current) => withNotice(current, message));
   }, []);
@@ -901,6 +910,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             status={sharing.status}
           />
         </ShareMenu>
+        <AppSettingsMenu />
       </Titlebar>
       {/* The line under the bar is this area's top edge: see Titlebar for why it is not the bar's. */}
       <div className="border-border min-h-0 flex-1 overflow-y-auto border-t">
