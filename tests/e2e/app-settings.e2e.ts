@@ -63,11 +63,14 @@ describe('packaged app settings', () => {
         { timeout: 15_000 },
       );
     } catch (error) {
-      // Says what the dialog shows instead, so that a failure can be read from the log.
-      const shown = await $('[role="dialog"]').getText();
-      throw new Error(`The dialog did not come back to English. It says: ${shown}`, {
-        cause: error,
-      });
+      // Says what the window shows and what was kept instead, so that a failure can be read from the log.
+      const html = await $('[role="dialog"]').getHTML({ includeSelector: true });
+      const select = await $('[role="dialog"] select').getValue();
+      const kept = existsSync(file) ? await readFile(file, 'utf8') : '(no file)';
+      throw new Error(
+        `The dialog did not come back to English. Its select says ${select}, the file ${kept.replace(/\s+/gu, ' ')}, and its HTML is ${html.slice(0, 1800)}`,
+        { cause: error },
+      );
     }
     await $('h1=Queue').waitForDisplayed({ timeout: 15_000 });
     await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
