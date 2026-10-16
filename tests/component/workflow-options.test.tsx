@@ -515,7 +515,12 @@ describe('the options kept between sessions', () => {
 
   describe('putting the options back to their defaults', () => {
     async function changeEverything(user: UserEvent): Promise<void> {
-      await user.selectOptions(await screen.findByLabelText('Device'), 'KS');
+      const device = await screen.findByLabelText('Device');
+      // The list of devices arrives a moment after the page does: it is chosen from once it is there.
+      await waitFor(() => {
+        expect(device).toHaveValue('KPW6');
+      });
+      await user.selectOptions(device, 'KS');
       await user.click(screen.getByRole('radio', { name: 'PDF' }));
       await user.click(screen.getByRole('checkbox', { name: 'Group chapters into volumes' }));
     }
