@@ -11,8 +11,13 @@ const notice = 'このコンテンツはまだ日本語訳がありません。'
 // The pages Japanese leaves in English change as they are translated, so the tests of a page that is not
 // translated yet take one from the list; with the list empty, there is nothing for them to test.
 const gaps = JSON.parse(readFileSync(new URL('../../i18n-gaps.json', import.meta.url), 'utf8')).ja;
-const routeOf = (file) => `${file.replace(/\.mdx$/, '')}/`;
-const untranslated = gaps.find((file) => file !== 'index.mdx');
+// The route of a page of the guide: a folder's index.mdx is the folder itself.
+const routeOf = (file) => {
+  const route = file.replace(/\/?index\.mdx$|\.mdx$/, '');
+  return route ? `${route}/` : '';
+};
+const isIndex = (file) => /(^|\/)index\.mdx$/.test(file);
+const untranslated = gaps.find((file) => !isIndex(file)) ?? gaps[0];
 /** A page left in English that uses the component, to see that it keeps the words of the English text. */
 const pageUsing = (component) =>
   gaps.find((file) =>
