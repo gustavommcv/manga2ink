@@ -7,7 +7,7 @@ import { useAppInfo } from '@/renderer/hooks/use-app-info';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { ProjectLink } from '@/shared/project-links-contract';
 
-/** What the app says about itself (ADR 0053): what it is, who it is by, and where to go from here. */
+/** What the app says about itself (ADR 0054): what it is, who it is by, and where to go from here. */
 export function AboutTab(): React.JSX.Element {
   const { about: words } = useMessages();
   const { openLink, version } = useAppInfo();

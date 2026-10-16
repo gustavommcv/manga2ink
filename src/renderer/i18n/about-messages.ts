@@ -1,6 +1,6 @@
 import type { Language } from '@/domain/app-settings';
 
-/** The words of the About tab of the app settings (ADR 0053). */
+/** The words of the About tab of the app settings (ADR 0054). */
 export interface AboutMessages {
   /** What the app is, in a line, under its name. */
   readonly tagline: string;

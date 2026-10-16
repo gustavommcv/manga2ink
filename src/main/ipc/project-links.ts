@@ -11,7 +11,7 @@ import { handle } from './handle';
 import { ok } from './result';
 
 /**
- * Opening a place the About tab names, in the browser of the system (ADR 0053). The window sends
+ * Opening a place the About tab names, in the browser of the system (ADR 0054). The window sends
  * a name and its language; what is opened is the address the main process has for that name.
  */
 export function registerProjectLinkHandlers(): void {

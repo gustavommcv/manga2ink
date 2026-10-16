@@ -13,7 +13,7 @@ import { messagesFor } from '@/renderer/i18n/messages';
 /**
  * Reads what a person decided about the app (ADR 0052) and gives everything under it the language
  * and its messages, and the way to change them, and what the app says about itself (its version, and
- * the way to open a place in the browser of the system, ADR 0053). It draws nothing until the
+ * the way to open a place in the browser of the system, ADR 0054). It draws nothing until the
  * settings are read, which is a moment, so nothing is drawn in a language that is about to change.
  */
 export function AppSettingsProvider({

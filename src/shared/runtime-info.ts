@@ -144,7 +144,7 @@ export interface MangaboundBridge {
   ) => Promise<WorkflowResult<SavedAppSettings>>;
   /**
    * Opens a place the About tab names in the browser of the system. The window names the place and
-   * its own language; it never gives an address (ADR 0053).
+   * its own language; it never gives an address (ADR 0054).
    */
   readonly openProjectLink: (command: OpenProjectLinkCommand) => Promise<WorkflowResult<undefined>>;
 }

@@ -1,4 +1,4 @@
-# ADR 0053: The app settings have an Interface tab and an About tab, and a link opens by name
+# ADR 0054: The app settings have an Interface tab and an About tab, and a link opens by name
 
 - Status: Accepted
 - Date: 2026-10-16

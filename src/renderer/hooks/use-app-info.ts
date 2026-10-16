@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 import type { ProjectLink } from '@/shared/project-links-contract';
 
-/** What the app says about itself in the About tab (ADR 0053). */
+/** What the app says about itself in the About tab (ADR 0054). */
 export interface AppInfo {
   /** The running version, with any prerelease label (e.g. "0.1.0-alpha.15"). */
   readonly version: string;
