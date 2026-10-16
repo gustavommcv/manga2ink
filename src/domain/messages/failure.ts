@@ -51,4 +51,10 @@ export interface FailureMessageValues {
   readonly 'failure.sharingPendingBeingDeleted': NoValues;
   readonly 'failure.sharingPortInUse': { readonly port: number };
   readonly 'failure.sharingAddressRefused': NoValues;
+  /** The folder the app works in was chosen and is not there now (ADR 0056). */
+  readonly 'failure.processingFolderUnavailable': { readonly folder: string };
+  /** A folder that was offered as the one to work in cannot be worked in. */
+  readonly 'failure.processingFolderUnusable': { readonly folder: string };
+  /** Where the app works cannot change while something is being made or shared. */
+  readonly 'failure.processingBusy': NoValues;
 }

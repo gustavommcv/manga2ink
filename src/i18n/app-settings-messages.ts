@@ -12,6 +12,7 @@ export interface AppSettingsMessages {
   readonly sections: string;
   /** The names of the tabs: what a person decides about the window, and what the app says about itself. */
   readonly interface: string;
+  readonly processing: string;
   readonly updates: string;
   readonly about: string;
   readonly language: {
@@ -34,6 +35,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     close: 'Close app settings',
     sections: 'App settings sections',
     interface: 'Interface',
+    processing: 'Processing',
     updates: 'Updates',
     about: 'About',
     language: {
@@ -51,6 +53,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     close: 'Fechar as configurações do app',
     sections: 'Seções das configurações do app',
     interface: 'Interface',
+    processing: 'Processamento',
     updates: 'Atualizações',
     about: 'Sobre',
     language: {

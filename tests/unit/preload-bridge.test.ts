@@ -132,6 +132,9 @@ const forwarded: readonly (readonly [
     'app:open-link',
     { link: 'guide', language: 'pt-BR' },
   ],
+  ['getProcessingFolder', [], 'app:get-processing-folder', undefined],
+  ['chooseProcessingFolder', [], 'app:choose-processing-folder', undefined],
+  ['useDefaultProcessingFolder', [], 'app:use-default-processing-folder', undefined],
 ];
 
 describe('what the page is handed', () => {

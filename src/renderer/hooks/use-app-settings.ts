@@ -10,12 +10,19 @@ import {
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 /**
- * What the app settings and the About tab need of the bridge, and nothing else: reading and keeping
- * the settings, the version that is running, and opening a place in the browser of the system.
+ * What the app settings and the tabs of their dialog need of the bridge, and nothing else: reading
+ * and keeping the settings, the version that is running, opening a place in the browser of the
+ * system, and where the app works.
  */
 export type AppSettingsBridge = Pick<
   MangaboundBridge,
-  'loadAppSettings' | 'openProjectLink' | 'runtime' | 'saveAppSettings'
+  | 'chooseProcessingFolder'
+  | 'getProcessingFolder'
+  | 'loadAppSettings'
+  | 'openProjectLink'
+  | 'runtime'
+  | 'saveAppSettings'
+  | 'useDefaultProcessingFolder'
 >;
 
 /** What a person decided about the app itself, and the language it comes to (ADR 0052). */

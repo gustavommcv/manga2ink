@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } fr
 import { z } from 'zod';
 
 import { CliProtocolError } from '@/adapters/cli-protocol-error';
+import { ProcessingFolderError } from '@/adapters/library/processing-folders';
 import { MetadataProviderError } from '@/adapters/metadata-providers/errors';
 import { ProcessCancelledError } from '@/application/ports/process-runner';
 import { SettingsSaveError } from '@/application/ports/settings-store';
@@ -124,6 +125,25 @@ describe('toFailure', () => {
         said: message('failure.catalogUnreadable', {}),
       },
       english: 'The output library catalog could not be read.',
+    },
+    {
+      name: 'a folder the app works in that is not there',
+      error: new ProcessingFolderError('unavailable', '/mnt/books'),
+      failure: {
+        code: 'processing_folder_unavailable',
+        said: message('failure.processingFolderUnavailable', { folder: '/mnt/books' }),
+      },
+      english:
+        'The processing folder /mnt/books is not available. Connect its drive again, or choose another folder in the app settings.',
+    },
+    {
+      name: 'a folder that cannot be worked in',
+      error: new ProcessingFolderError('unusable', '/mnt/books'),
+      failure: {
+        code: 'processing_folder_unusable',
+        said: message('failure.processingFolderUnusable', { folder: '/mnt/books' }),
+      },
+      english: 'Mangabound cannot work in /mnt/books. Choose a folder it can write in.',
     },
     {
       name: 'settings that could not be saved',

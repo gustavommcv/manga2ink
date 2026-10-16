@@ -56,14 +56,54 @@ export function isPendingRunFolder(name: string): boolean {
   return /^[0-9a-f-]{36}$/iu.test(name);
 }
 
+/**
+ * Where pending runs are, for the app that may keep them in more than one place (ADR 0056): a new run
+ * is made in `current()`, and a person's books may still be waiting in any of `all()`.
+ */
+export interface PendingRoots {
+  /** The folder new runs are made in. */
+  current(): string;
+  /** Every folder runs may be in, `current()` first. A folder that is not there is skipped. */
+  all(): readonly string[];
+  /** Gets `current()` ready; throws when it cannot be used. */
+  prepare(): Promise<void>;
+}
+
+/** One folder, as it was before a person could choose where the app works. */
+function singleRoot(root: string): PendingRoots {
+  return {
+    current: () => root,
+    all: () => [root],
+    prepare: async () => {
+      await mkdir(root, { recursive: true });
+    },
+  };
+}
+
+/** The runs in a folder, or none when there is no such folder: an earlier one that was removed. */
+async function runFoldersIn(root: string): Promise<readonly string[]> {
+  try {
+    const children = await readdir(root, { withFileTypes: true });
+    return children
+      .filter((child) => child.isDirectory() && isPendingRunFolder(child.name))
+      .map((child) => child.name);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT' || code === 'ENOTDIR') return [];
+    throw error;
+  }
+}
+
 export class FsPendingRuns {
   private readonly io: FsPendingRunsDeps;
+  private readonly roots: PendingRoots;
 
   constructor(
-    readonly root: string,
+    roots: string | PendingRoots,
     private readonly libraries = new FsLibraryStore(),
     deps: Partial<FsPendingRunsDeps> = {},
   ) {
+    this.roots = typeof roots === 'string' ? singleRoot(roots) : roots;
     this.io = {
       readFile: deps.readFile ?? readFile,
       stat: deps.stat ?? stat,
@@ -76,12 +116,18 @@ export class FsPendingRuns {
     };
   }
 
+  /** The folder new runs are made in. */
+  get root(): string {
+    return this.roots.current();
+  }
+
   async prepare(): Promise<string> {
-    await mkdir(this.root, { recursive: true });
+    await this.roots.prepare();
     return this.root;
   }
 
   async create(): Promise<{ id: string; path: string }> {
+    await this.roots.prepare();
     const id = randomUUID();
     const runPath = path.join(this.root, id);
     await mkdir(runPath, { recursive: true });
@@ -89,39 +135,42 @@ export class FsPendingRuns {
   }
 
   async list(): Promise<readonly PendingRun[]> {
-    await mkdir(this.root, { recursive: true });
-    const children = await readdir(this.root, { withFileTypes: true });
     const runs: PendingRun[] = [];
-    for (const child of children) {
-      if (!child.isDirectory() || !isPendingRunFolder(child.name)) continue;
-      const runPath = path.join(this.root, child.name);
-      const manifest = await this.libraries.read(runPath);
-      const state = await this.readState(runPath);
-      const books: PendingBook[] = [];
-      const untracked = await this.libraries.scanUntracked(runPath, manifest);
-      for (const entry of [...manifest.books, ...untracked]) {
-        const bookPath = path.resolve(runPath, entry.relativePath);
-        toLibraryRelativePath(runPath, bookPath);
-        try {
-          if (!(await this.io.stat(bookPath)).isFile()) continue;
-        } catch (error) {
-          if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
-          throw error;
-        }
-        books.push({
-          entry,
-          path: bookPath,
-          ...(state.saved[entry.relativePath] === undefined
-            ? {}
-            : { savedPath: state.saved[entry.relativePath] }),
-        });
-      }
-      if (books.length > 0) {
-        const details = await this.io.stat(runPath);
-        runs.push({ id: child.name, path: runPath, createdAt: details.birthtimeMs, books });
+    for (const root of new Set(this.roots.all())) {
+      for (const name of await runFoldersIn(root)) {
+        const run = await this.read(path.join(root, name), name);
+        if (run !== undefined) runs.push(run);
       }
     }
     return runs.sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  /** What a run folder holds, or nothing when no finished book is in it. */
+  private async read(runPath: string, id: string): Promise<PendingRun | undefined> {
+    const manifest = await this.libraries.read(runPath);
+    const state = await this.readState(runPath);
+    const books: PendingBook[] = [];
+    const untracked = await this.libraries.scanUntracked(runPath, manifest);
+    for (const entry of [...manifest.books, ...untracked]) {
+      const bookPath = path.resolve(runPath, entry.relativePath);
+      toLibraryRelativePath(runPath, bookPath);
+      try {
+        if (!(await this.io.stat(bookPath)).isFile()) continue;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue;
+        throw error;
+      }
+      books.push({
+        entry,
+        path: bookPath,
+        ...(state.saved[entry.relativePath] === undefined
+          ? {}
+          : { savedPath: state.saved[entry.relativePath] }),
+      });
+    }
+    if (books.length === 0) return undefined;
+    const details = await this.io.stat(runPath);
+    return { id, path: runPath, createdAt: details.birthtimeMs, books };
   }
 
   async markSaved(run: PendingRun, book: PendingBook, savedPath: string): Promise<void> {
@@ -196,11 +245,12 @@ export class FsPendingRuns {
       }
     }
     // A cancelled or wholly failed run may never have produced a book or catalog.
-    for (const child of await readdir(this.root, { withFileTypes: true })) {
-      if (!child.isDirectory() || !isPendingRunFolder(child.name)) continue;
-      const runPath = path.join(this.root, child.name);
-      if ((await readdir(runPath)).length === 0)
-        await rm(runPath, { recursive: true, force: true });
+    for (const root of new Set(this.roots.all())) {
+      for (const name of await runFoldersIn(root)) {
+        const runPath = path.join(root, name);
+        if ((await readdir(runPath)).length === 0)
+          await rm(runPath, { recursive: true, force: true });
+      }
     }
   }
 
@@ -212,12 +262,13 @@ export class FsPendingRuns {
    */
   async pruneAbandoned(olderThanMs: number, now = Date.now()): Promise<void> {
     const listed = new Set((await this.list()).map((run) => run.id));
-    for (const child of await readdir(this.root, { withFileTypes: true })) {
-      if (!child.isDirectory() || !isPendingRunFolder(child.name)) continue;
-      if (listed.has(child.name)) continue;
-      const runPath = path.join(this.root, child.name);
-      if (now - (await newestChange(runPath)) > olderThanMs) {
-        await rm(runPath, { recursive: true, force: true });
+    for (const root of new Set(this.roots.all())) {
+      for (const name of await runFoldersIn(root)) {
+        if (listed.has(name)) continue;
+        const runPath = path.join(root, name);
+        if (now - (await newestChange(runPath)) > olderThanMs) {
+          await rm(runPath, { recursive: true, force: true });
+        }
       }
     }
   }

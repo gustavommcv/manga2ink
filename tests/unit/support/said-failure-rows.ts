@@ -233,6 +233,27 @@ export const failureRows: Rows<
       'Não foi possível iniciar o servidor de compartilhamento nesse endereço de rede.',
     ],
   ],
+  'failure.processingFolderUnavailable': [
+    [
+      { folder: '/mnt/books' },
+      'The processing folder /mnt/books is not available. Connect its drive again, or choose another folder in the app settings.',
+      'A pasta de trabalho /mnt/books não está disponível. Conecte o disco dela de novo ou escolha outra pasta nas configurações do app.',
+    ],
+  ],
+  'failure.processingFolderUnusable': [
+    [
+      { folder: '/mnt/books' },
+      'Mangabound cannot work in /mnt/books. Choose a folder it can write in.',
+      'O Mangabound não consegue trabalhar em /mnt/books. Escolha uma pasta em que ele possa gravar.',
+    ],
+  ],
+  'failure.processingBusy': [
+    [
+      {},
+      'A conversion or a share is running. Finish or stop it, then try again.',
+      'Há uma conversão ou um compartilhamento em andamento. Termine ou interrompa, e tente de novo.',
+    ],
+  ],
 
   'notice.settingsUnreadable': [
     [

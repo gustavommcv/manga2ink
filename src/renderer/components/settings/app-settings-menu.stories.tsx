@@ -8,7 +8,26 @@ import type { AppSettingsBridge } from '@/renderer/hooks/use-app-settings';
 
 import { AppSettingsMenu } from './app-settings-menu';
 import type { AppSettingsTab } from './app-settings-tabs';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
+import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
+
+/** Where the app works when nobody has chosen a folder, and when one has been. */
+const ownPlaces: ProcessingFolderStatus = {
+  chosen: null,
+  scratch: '/tmp',
+  pending: '/home/reader/.local/share/mangabound/pending',
+  available: true,
+  freeBytes: 38 * 1024 ** 3,
+  earlier: [],
+};
+const onABigDrive: ProcessingFolderStatus = {
+  chosen: '/mnt/books',
+  scratch: '/mnt/books/Scratch',
+  pending: '/mnt/books/Pending',
+  available: true,
+  freeBytes: 812 * 1024 ** 3,
+  earlier: [{ folder: '/home/reader/.local/share/mangabound/pending', books: 3 }],
+};
 
 /** What the app settings were kept as, and what keeping a choice answers. */
 function bridgeFor(
@@ -17,6 +36,7 @@ function bridgeFor(
   keeps: AppSettingsBridge['saveAppSettings'],
   opens: AppSettingsBridge['openProjectLink'] = () =>
     Promise.resolve({ ok: true, value: undefined }),
+  processing: Partial<AppSettingsBridge> = {},
 ): AppSettingsBridge {
   return {
     loadAppSettings: () =>
@@ -27,6 +47,10 @@ function bridgeFor(
     saveAppSettings: keeps,
     openProjectLink: opens,
     runtime: { electron: '44.3.0', platform: 'win32', version: '0.1.0-alpha.15' },
+    getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
+    chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
+    useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
+    ...processing,
   };
 }
 
@@ -228,5 +252,135 @@ export const Updates: Story = {
 
     await expect(within(dialog).getByRole('status', { name: 'Not available yet' })).toBeVisible();
     await expect(within(dialog).getByRole('button', { name: 'Check for updates' })).toBeDisabled();
+  },
+};
+
+/** The Processing tab, with the app in its own places. */
+export const Processing: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
+    await expect(await within(panel).findByText('Chosen by Mangabound')).toBeVisible();
+    await expect(
+      within(panel).getByRole('button', { name: 'Use the default folder' }),
+    ).toBeDisabled();
+  },
+};
+
+/** A folder is chosen, and books are still waiting in the place the app used before. */
+export const ProcessingInAChosenFolder: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      getProcessingFolder: () => Promise.resolve({ ok: true, value: onABigDrive }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
+    await expect(await within(panel).findByText('/mnt/books/Pending')).toBeVisible();
+    await expect(within(panel).getByText('3 books')).toBeVisible();
+    await expect(
+      within(panel).getByRole('button', { name: 'Use the default folder' }),
+    ).toBeEnabled();
+  },
+};
+
+export const ProcessingInPortuguese: Story = {
+  parameters: {
+    bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt, undefined, {
+      getProcessingFolder: () => Promise.resolve({ ok: true, value: onABigDrive }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Configurações do app' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Configurações do app',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processamento' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processamento' });
+    await expect(await within(panel).findByText('3 livros')).toBeVisible();
+    await expect(within(panel).getByText('Pasta de trabalho')).toBeVisible();
+  },
+};
+
+/** The drive of the folder is not connected: the tab says nothing can be converted until it is. */
+export const ProcessingFolderNotAvailable: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      getProcessingFolder: () =>
+        Promise.resolve({ ok: true, value: { ...onABigDrive, available: false, freeBytes: null } }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    await expect(await within(dialog).findByRole('alert')).toHaveTextContent(
+      'The working folder is not available.',
+    );
+  },
+};
+
+/** Choosing a folder shows what the main process answers; refusing says why. */
+export const ChoosingAFolder: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      chooseProcessingFolder: () => Promise.resolve({ ok: true, value: onABigDrive }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    await userEvent.click(await within(dialog).findByRole('button', { name: 'Choose a folder…' }));
+
+    await expect(await within(dialog).findByText('/mnt/books/Scratch')).toBeVisible();
+  },
+};
+
+export const WhenAFolderCannotBeUsed: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      chooseProcessingFolder: () =>
+        Promise.resolve({
+          ok: false,
+          error: {
+            code: 'processing_folder_unusable',
+            said: message('failure.processingFolderUnusable', { folder: '/read-only' }),
+          },
+        }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    await userEvent.click(await within(dialog).findByRole('button', { name: 'Choose a folder…' }));
+
+    await expect(
+      await within(dialog).findByText(
+        'Mangabound cannot work in /read-only. Choose a folder it can write in.',
+      ),
+    ).toBeVisible();
   },
 };

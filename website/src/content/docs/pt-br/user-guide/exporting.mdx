@@ -52,7 +52,7 @@ Se um mangapress mais novo enviar um tipo de aviso que esta versão não conhece
 
 ## O que permanece após reiniciar?
 
-Os livros pendentes ficam guardados nos dados do próprio Mangabound, no seu computador, e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Ready books**, na fila. **View books** abre os resultados dela.
+Os livros pendentes ficam guardados nos dados do próprio Mangabound, no seu computador, ou na pasta de trabalho que você escolheu (veja **Onde o Mangabound trabalha?** abaixo), e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Ready books**, na fila. **View books** abre os resultados dela.
 
 Quando todos os livros de uma conversão concluída foram salvos e registrados, o Mangabound pode limpar as cópias pendentes dela ao fechar o aplicativo. As cópias que você salvou continuam onde você as salvou. Faça os seus próprios backups: os livros pendentes não são uma biblioteca permanente.
 
@@ -60,6 +60,17 @@ Quando todos os livros de uma conversão concluída foram salvos e registrados, 
   name="generated/ready-books"
   alt="Ready books com ações para reabrir ou excluir a conversão pendente."
 />
+
+## Onde o Mangabound trabalha?
+
+Por padrão, o Mangabound monta os volumes na pasta temporária do sistema enquanto converte, e guarda os livros prontos na própria pasta de dados dele até você salvá-los. Em um computador cuja pasta temporária é pequena, ou cujo disco está quase cheio, uma série longa pode ficar sem espaço.
+
+Para usar um disco com mais espaço, abra **App settings** (a engrenagem na barra de título), escolha **Processing** e selecione **Choose a folder…**. O Mangabound cria duas pastas dentro da que você escolher: **Pending**, para os livros prontos, e **Scratch**, para os volumes que ele monta durante a conversão. A aba mostra os dois caminhos e quanto espaço está livre.
+
+- A mudança vale para a próxima conversão. Os livros que já estavam esperando ficam onde estão e continuam em **Ready books**: você ainda pode salvá-los ou apagá-los, e compartilhá-los pelos resultados deles. A aba lista as pastas que ainda guardam livros, e o Mangabound deixa de procurar em uma delas quando ela fica vazia.
+- Você não pode mudar a pasta enquanto uma conversão ou um compartilhamento está em andamento.
+- Se o disco da pasta não está conectado, o Mangabound avisa e não converte até que esteja, em vez de trabalhar em silêncio em outro lugar. **Use the default folder** deixa tudo como era.
+- Os livros que você salvou em outra pasta não são afetados.
 
 ## Exclua livros pendentes
 
