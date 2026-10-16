@@ -265,11 +265,19 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
       for (const name of ['status-overlap', 'refresh-every-page', 'tweak-menu']) {
         await expectReadableImage(page, `koreader/${name}`);
       }
-      const steps = page.locator('.sl-markdown-content details');
-      await expect(steps).toHaveCount(3);
-      for (const [index, details] of (await steps.all()).entries()) {
+      // The steps that repeat a capture of the maintainer's. The manga steps further down are written
+      // before their captures are taken (they may be pending, and then show no picture), so they are
+      // told apart by the picture they repeat, not counted among these.
+      const repeatedNames = ['status-overlap', 'refresh-every-page', 'tweak-menu'];
+      const steps = repeatedNames.map((name) =>
+        page.locator('.sl-markdown-content details', {
+          has: page.locator(`[data-tutorial-image="koreader/${name}"]`),
+        }),
+      );
+      for (const [index, details] of steps.entries()) {
+        await expect(details).toHaveCount(1);
         await expect(details).not.toHaveAttribute('open');
-        const repeated = ['status-overlap', 'refresh-every-page', 'tweak-menu'][index];
+        const repeated = repeatedNames[index];
         await expect(details.locator(`[data-tutorial-image="koreader/${repeated}"]`)).toHaveCount(
           1,
         );
@@ -291,14 +299,28 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze();
       expect(scan.violations).toEqual([]);
-      for (const summary of await steps.locator('summary').all()) await summary.click();
+      for (const details of steps) await details.locator('summary').click();
       await page
         .getByRole('heading', { name: 'Overlap status bar', exact: true })
         .scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath('koreader-main.png') });
-      await steps.nth(1).locator('summary').click();
-      await steps.nth(1).scrollIntoViewIfNeeded();
+      await steps[1].locator('summary').click();
+      await steps[1].scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath('koreader-steps.png') });
+    });
+
+    test(`KOReader manga steps are in the page, closed, and show no box for a missing capture: ${locale || 'en'} ${colorScheme}`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ colorScheme });
+      await page.goto(`${root}${locale}koreader/recommended-settings/`);
+      // Four lists of steps: the status bar, the refresh rate, the whole page at a time, the tweak.
+      const steps = page.locator('.sl-markdown-content details');
+      await expect(steps).toHaveCount(4);
+      for (const details of await steps.all()) await expect(details).not.toHaveAttribute('open');
+      // The boxes that stand for captures still to be taken are shown by the development server only.
+      await expect(page.locator('[data-pending-image]')).toHaveCount(0);
+      await expect(page.locator('.sl-markdown-content h3')).toHaveCount(4);
     });
 
     test(`KOReader OPDS instructions show readable, keyboard-accessible steps: ${locale || 'en'} ${colorScheme}`, async ({
