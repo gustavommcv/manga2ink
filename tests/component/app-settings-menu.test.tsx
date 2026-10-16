@@ -129,16 +129,49 @@ describe('the dialog of the app settings', () => {
 });
 
 describe('the tabs of the dialog', () => {
-  it('has General, with the language, and shows no row of tabs while it is the only one', async () => {
+  it('shows no row of tabs while there is only one', async () => {
+    const user = userEvent.setup();
+    await renderMenu({ tabs: [twoTabs[0]] });
+
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText('What the first tab holds')).toBeVisible();
+    expect(within(dialog).queryByRole('tablist')).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole('tabpanel')).not.toBeInTheDocument();
+  });
+
+  it('opens on Interface, with the language, and has About beside it', async () => {
     const user = userEvent.setup();
     await renderMenu();
 
     await user.click(screen.getByRole('button', { name: 'App settings' }));
 
     const dialog = await screen.findByRole('dialog');
+    const tabs = within(dialog).getByRole('tablist', { name: 'App settings sections' });
+    expect(
+      within(tabs)
+        .getAllByRole('tab')
+        .map((tab) => tab.textContent),
+    ).toEqual(['Interface', 'About']);
+    expect(within(tabs).getByRole('tab', { name: 'Interface' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     expect(within(dialog).getByRole('combobox', { name: 'Language' })).toBeVisible();
-    expect(within(dialog).queryByRole('tablist')).not.toBeInTheDocument();
-    expect(within(dialog).queryByRole('tabpanel')).not.toBeInTheDocument();
+    expect(within(dialog).queryByText('Support the project')).not.toBeInTheDocument();
+  });
+
+  it('shows About when it is chosen, and the language no longer', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+
+    await user.click(await screen.findByRole('tab', { name: 'About' }));
+
+    const panel = screen.getByRole('tabpanel', { name: 'About' });
+    expect(within(panel).getByRole('button', { name: 'Support the project' })).toBeVisible();
+    expect(screen.queryByRole('combobox', { name: 'Language' })).not.toBeInTheDocument();
   });
 
   it('shows a row of tabs, named, once there is more than one, with the first open', async () => {
@@ -208,8 +241,8 @@ describe('the tabs of the dialog', () => {
 });
 
 describe('the list of tabs of the app', () => {
-  it('starts with General', () => {
-    expect(appSettingsTabs[0].id).toBe('general');
+  it('starts with Interface and ends with About', () => {
+    expect(appSettingsTabs.map((tab) => tab.id)).toEqual(['interface', 'about']);
   });
 
   it('has a different id for each tab, since the id is what names a tab and its panel', () => {
@@ -222,6 +255,9 @@ describe('the list of tabs of the app', () => {
     for (const tab of appSettingsTabs) {
       expect(tab.label(messagesFor(language)).trim()).not.toBe('');
     }
-    expect(appSettingsTabs[0].label(messagesFor('pt-BR'))).toBe('Geral');
+    expect(appSettingsTabs.map((tab) => tab.label(messagesFor('pt-BR')))).toEqual([
+      'Interface',
+      'Sobre',
+    ]);
   });
 });

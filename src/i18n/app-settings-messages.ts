@@ -10,7 +10,9 @@ export interface AppSettingsMessages {
   readonly close: string;
   /** The name of the row of tabs, which is shown only when there is more than one. */
   readonly sections: string;
-  readonly general: string;
+  /** The names of the tabs: what a person decides about the window, and what the app says about itself. */
+  readonly interface: string;
+  readonly about: string;
   readonly language: {
     readonly label: string;
     readonly help: string;
@@ -30,7 +32,8 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     description: 'Choices about the app itself. Each change is kept as you make it.',
     close: 'Close app settings',
     sections: 'App settings sections',
-    general: 'General',
+    interface: 'Interface',
+    about: 'About',
     language: {
       label: 'Language',
       help: 'Applies right away. Books, titles and the tools’ own messages are not translated.',
@@ -45,7 +48,8 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     description: 'Escolhas sobre o próprio app. Cada mudança é guardada assim que você a faz.',
     close: 'Fechar as configurações do app',
     sections: 'Seções das configurações do app',
-    general: 'Geral',
+    interface: 'Interface',
+    about: 'Sobre',
     language: {
       label: 'Idioma',
       help: 'Vale na hora. Livros, títulos e as mensagens das próprias ferramentas não são traduzidos.',

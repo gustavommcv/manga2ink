@@ -15,6 +15,8 @@ function bridgeFor(
   kept: LanguagePreference,
   language: Language,
   keeps: AppSettingsBridge['saveAppSettings'],
+  opens: AppSettingsBridge['openProjectLink'] = () =>
+    Promise.resolve({ ok: true, value: undefined }),
 ): AppSettingsBridge {
   return {
     loadAppSettings: () =>
@@ -23,6 +25,8 @@ function bridgeFor(
         value: { settings: { language: kept }, language, unreadable: false },
       }),
     saveAppSettings: keeps,
+    openProjectLink: opens,
+    runtime: { electron: '44.3.0', platform: 'win32', version: '0.1.0-alpha.15' },
   };
 }
 
@@ -140,9 +144,9 @@ export const WhenTheLanguageCannotBeKept: Story = {
 
 const twoTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
   {
-    id: 'general',
-    label: (messages) => messages.appSettings.general,
-    Panel: () => <p>General settings.</p>,
+    id: 'interface',
+    label: (messages) => messages.appSettings.interface,
+    Panel: () => <p>Interface settings.</p>,
   },
   { id: 'folders', label: () => 'Folders', Panel: () => <p>Folder settings.</p> },
 ];
@@ -159,5 +163,56 @@ export const WithSeveralTabs: Story = {
     await expect(within(dialog).getByRole('tabpanel', { name: 'Folders' })).toHaveTextContent(
       'Folder settings.',
     );
+  },
+};
+
+/** The About tab: the logo, the version, and where to go from here. */
+export const About: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'About' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'About' });
+    await expect(panel).toHaveTextContent('Version 0.1.0-alpha.15');
+    await expect(within(panel).getByRole('button', { name: 'Support the project' })).toBeVisible();
+    await expect(within(panel).getByRole('button', { name: 'User guide' })).toBeVisible();
+  },
+};
+
+export const AboutInPortuguese: Story = {
+  parameters: { bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Configurações do app' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Configurações do app',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Sobre' }));
+
+    await expect(within(dialog).getByRole('tabpanel', { name: 'Sobre' })).toHaveTextContent(
+      'Versão 0.1.0-alpha.15',
+    );
+  },
+};
+
+export const WhenAPageCannotBeOpened: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, () =>
+      Promise.resolve({ ok: false, error: { code: 'unexpected_failure', said: raw('No.') } }),
+    ),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'About' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Support the project' }));
+
+    await expect(
+      await within(dialog).findByText('That page could not be opened. Try again.'),
+    ).toBeVisible();
   },
 };

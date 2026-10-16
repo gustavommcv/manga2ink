@@ -1,5 +1,6 @@
 import type { Language } from '@/domain/app-settings';
 
+import { type AboutMessages, aboutMessages } from './about-messages';
 import { type AppSettingsMessages, appSettingsMessages } from './app-settings-messages';
 import { type DialogMessages, dialogMessages } from './dialog-messages';
 import { failureSaid } from './failure-said';
@@ -22,6 +23,7 @@ import { workflowSaid } from './workflow-said';
  * is a compile error, and adding a part is a module and a line here.
  */
 export interface Messages {
+  readonly about: AboutMessages;
   readonly appSettings: AppSettingsMessages;
   /** What the main process gives the native dialogs to say. */
   readonly dialogs: DialogMessages;
@@ -34,6 +36,7 @@ export interface Messages {
 
 function build(language: Language): Messages {
   return {
+    about: aboutMessages[language],
     appSettings: appSettingsMessages[language],
     dialogs: dialogMessages[language],
     queue: queueMessages[language],

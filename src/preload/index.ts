@@ -14,6 +14,7 @@ import type {
   SaveAppSettingsCommand,
   SavedAppSettings,
 } from '../shared/app-settings-contract';
+import type { OpenProjectLinkCommand } from '../shared/project-links-contract';
 import type { MangaboundBridge } from '../shared/runtime-info';
 import type { RestoredSettings, SaveSettingsCommand } from '../shared/settings-contract';
 import type { ToolchainStatus } from '../shared/toolchain-status';
@@ -157,6 +158,7 @@ const bridge: MangaboundBridge = Object.freeze({
   loadAppSettings: () => invoke<RestoredAppSettings>('app:load-settings'),
   saveAppSettings: (command: SaveAppSettingsCommand) =>
     invoke<SavedAppSettings>('app:save-settings', command),
+  openProjectLink: (command: OpenProjectLinkCommand) => invoke<undefined>('app:open-link', command),
   runtime: Object.freeze({
     electron: process.versions.electron,
     platform: process.platform,

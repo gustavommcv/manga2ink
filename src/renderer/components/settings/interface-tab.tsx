@@ -7,8 +7,8 @@ import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import { languageNames } from '@/i18n/messages';
 
-/** What is decided about the app as a whole: today, the language. */
-export function GeneralTab(): React.JSX.Element {
+/** What is decided about how the window speaks and looks: today, the language. */
+export function InterfaceTab(): React.JSX.Element {
   const { appSettings: words } = useMessages();
   const { settings, setLanguage } = useAppSettings();
   const [failed, setFailed] = useState(false);

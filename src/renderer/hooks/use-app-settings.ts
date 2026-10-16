@@ -9,8 +9,14 @@ import {
 } from '@/domain/app-settings';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
-/** What reading and keeping the app settings needs of the bridge, and nothing else. */
-export type AppSettingsBridge = Pick<MangaboundBridge, 'loadAppSettings' | 'saveAppSettings'>;
+/**
+ * What the app settings and the About tab need of the bridge, and nothing else: reading and keeping
+ * the settings, the version that is running, and opening a place in the browser of the system.
+ */
+export type AppSettingsBridge = Pick<
+  MangaboundBridge,
+  'loadAppSettings' | 'openProjectLink' | 'runtime' | 'saveAppSettings'
+>;
 
 /** What a person decided about the app itself, and the language it comes to (ADR 0052). */
 export interface AppSettingsState {

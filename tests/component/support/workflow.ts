@@ -157,6 +157,7 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
         value: { settings: defaultAppSettings, language: 'en', unreadable: false },
       }),
     saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
+    openProjectLink: () => Promise.resolve({ ok: true, value: undefined }),
     ...overrides,
   };
 }

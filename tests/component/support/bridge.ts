@@ -70,6 +70,7 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
         value: { settings: defaultAppSettings, language: 'en', unreadable: false },
       }),
     saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
+    openProjectLink: () => nothing,
     ...overrides,
   };
 }
