@@ -13,8 +13,25 @@ interface KeptAppSettings {
 const readKept = async (file: string): Promise<KeptAppSettings> =>
   JSON.parse(await readFile(file, 'utf8')) as KeptAppSettings;
 
-/** Waits for the dialog to be titled `title`; if it never is, says what the dialog held instead. */
-async function waitForDialogTitle(title: string): Promise<void> {
+/** What the language select announced since a choice was made through `chooseLanguage`. */
+const announced = 'announcedLanguages';
+
+/** Picks a language in the dialog, and keeps what the select announces, to tell a lost choice from one never heard. */
+async function chooseLanguage(value: string): Promise<void> {
+  await browser.execute((key: string) => {
+    const heard: string[] = [];
+    Reflect.set(window, key, heard);
+    const select = document.querySelector('[role="dialog"] select') as HTMLSelectElement;
+    select.addEventListener('change', () => heard.push(select.value));
+  }, announced);
+  await $('[role="dialog"] select').selectByAttribute('value', value);
+}
+
+/**
+ * Waits for the dialog to be titled `title`; if it never is, says what the dialog held, what the
+ * select announced, and what the file holds, which tells where a choice was lost.
+ */
+async function waitForDialogTitle(title: string, file: string): Promise<void> {
   const dialog = $('[role="dialog"]');
   try {
     await browser.waitUntil(
@@ -22,19 +39,22 @@ async function waitForDialogTitle(title: string): Promise<void> {
       { timeout: 30_000 },
     );
   } catch (error) {
-    const held = await browser.execute(() => {
+    const held = await browser.execute((key: string) => {
       const open = document.querySelector('[role="dialog"]');
       return open === null
         ? 'no dialog'
         : JSON.stringify({
             text: open.textContent,
             chosen: open.querySelector('select')?.value,
+            announced: Reflect.get(window, key) as unknown,
             lang: document.documentElement.lang,
           });
-    });
-    throw new Error(`the dialog should be titled "${title}", and it held: ${held}`, {
-      cause: error,
-    });
+    }, announced);
+    const kept = existsSync(file) ? await readFile(file, 'utf8') : 'no file';
+    throw new Error(
+      `the dialog should be titled "${title}", and it held: ${held}; the file holds: ${kept}`,
+      { cause: error },
+    );
   }
 }
 
@@ -53,8 +73,8 @@ describe('packaged app settings', () => {
     assert.equal(await dialog.$('h2').getText(), 'App settings');
 
     // Choosing Portuguese changes the dialog at once and keeps the choice.
-    await dialog.$('select').selectByAttribute('value', 'pt-BR');
-    await waitForDialogTitle('Configurações do app');
+    await chooseLanguage('pt-BR');
+    await waitForDialogTitle('Configurações do app', file);
     await browser.waitUntil(
       async () => existsSync(file) && (await readKept(file)).language === 'pt-BR',
       { timeout: 30_000, timeoutMsg: 'the app settings file did not get the language' },
@@ -79,8 +99,8 @@ describe('packaged app settings', () => {
     // Following the system again puts it back, and leaves the window as it was found.
     await $('button[aria-label="Configurações do app"]').click();
     await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
-    await $('[role="dialog"] select').selectByAttribute('value', 'system');
-    await waitForDialogTitle('App settings');
+    await chooseLanguage('system');
+    await waitForDialogTitle('App settings', file);
     await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
       timeout: 30_000,
       timeoutMsg: 'the app settings file did not go back to following the system',
