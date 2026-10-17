@@ -9,6 +9,7 @@ const fake = vi.hoisted(() => {
   const state = {
     calls,
     started: false,
+    packaged: true,
     lock: true,
     windows: [] as { isMinimized: () => boolean; restore: () => void; focus: () => void }[],
     listeners: new Map<string, (...args: never[]) => unknown>(),
@@ -37,6 +38,10 @@ vi.mock('electron', () => ({
       },
     }),
     getPath: (name: string) => `/home/${name}`,
+    getVersion: () => '0.1.0-alpha.15',
+    get isPackaged() {
+      return fake.packaged;
+    },
     getPreferredSystemLanguages: () => ['pt-BR', 'en-US'],
   },
   BrowserWindow: { getAllWindows: () => fake.windows },
@@ -57,6 +62,25 @@ const step = (name: string) => (): void => {
 };
 
 vi.mock('@/adapters/library/directory-exists', () => ({ directoryExists: () => true }));
+vi.mock('@/adapters/log/file-log', () => ({
+  FileLog: class {
+    constructor(
+      readonly options: { directory: string; onFailure: (message: string, cause: unknown) => void },
+    ) {
+      fake.calls.push(`log:${options.directory}`);
+      fake.context['logOptions'] = options;
+    }
+    settled = (): string => 'log settled';
+  },
+}));
+vi.mock('@/main/log', () => ({
+  logFolder: (userData: string) => `${userData}/logs`,
+  installLog: (_log: unknown, targets: unknown, started: string) => {
+    fake.calls.push('install-log');
+    fake.context['logTargets'] = targets;
+    fake.context['logStarted'] = started;
+  },
+}));
 vi.mock('@/adapters/covers/fs-cover-store', () => ({
   FsCoverStore: class {
     constructor(readonly root: string) {
@@ -238,6 +262,7 @@ const dispatch = (event: string, ...args: unknown[]): unknown =>
 beforeEach(() => {
   fake.calls.length = 0;
   fake.started = false;
+  fake.packaged = true;
   fake.lock = true;
   fake.windows = [];
   fake.listeners.clear();
@@ -253,6 +278,7 @@ beforeEach(() => {
     appSettings: undefined,
     processing: undefined,
     pendingRuns: undefined,
+    log: undefined,
   };
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 });
@@ -275,6 +301,9 @@ describe('starting the app', () => {
 
     expect(fake.calls).toEqual([
       'register-scheme',
+      // The log comes first, so that what goes wrong from here on is in it.
+      'log:/home/userData/logs',
+      'install-log',
       'cover-store:/covers',
       // Where the app works depends on what a person chose, so the settings are read before the rest.
       `app-settings-store:${path.join('/home/userData', 'app-settings.json')}`,
@@ -323,6 +352,40 @@ describe('starting the app', () => {
       message: 'Not ready.',
     });
     expect(fake.context['pendingRuns']).toBeDefined();
+  });
+
+  it('puts the log in a folder of its own in the folder of the data, and says how the app started', async () => {
+    const ready = await start();
+
+    await ready();
+
+    expect(fake.context['log']).toBeDefined();
+    expect(String(fake.context['logStarted'])).toMatch(
+      /^Mangabound \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
+    );
+    expect(fake.context['logTargets']).toMatchObject({ console, process });
+  });
+
+  it('says a build that is not packaged is a development build', async () => {
+    fake.packaged = false;
+    const ready = await start();
+
+    await ready();
+
+    expect(String(fake.context['logStarted'])).toContain('(development build,');
+  });
+
+  it('tells the terminal, which the log has not yet taken over, when the log cannot be written', async () => {
+    // The terminal as it is when the log is made: its own `warn`, and not the log's.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const ready = await start();
+    await ready();
+
+    (
+      fake.context['logOptions'] as { onFailure: (message: string, cause: unknown) => void }
+    ).onFailure('The log could not be written.', new Error('disk'));
+
+    expect(warn).toHaveBeenCalledWith('The log could not be written.', expect.any(Error));
   });
 
   it('lets the sharing of ready books follow the folder the books are in now', async () => {
@@ -499,6 +562,7 @@ describe('quitting', () => {
     expect(steps['settlePreferences']).toBeUndefined();
     expect(steps['settleAppSettings']).toBeUndefined();
     expect(steps['pruneCompleted']).toBeUndefined();
+    expect(steps['settleLog']).toBeUndefined();
   });
 
   it('releases the books, stops the share and writes the last change when they exist', async () => {
@@ -507,12 +571,14 @@ describe('quitting', () => {
     const preferences = { settled: vi.fn(() => 'settled') };
     const appSettings = { settled: vi.fn(() => 'app settled') };
     const pendingRuns = { pruneCompleted: vi.fn(() => 'pruned') };
+    const log = { settled: vi.fn(() => 'log settled') };
     Object.assign(fake.context, {
       workflow,
       activeSharing: sharing,
       preferences,
       appSettings,
       pendingRuns,
+      log,
     });
     await start();
 
@@ -524,6 +590,7 @@ describe('quitting', () => {
     expect((steps['settlePreferences'] as () => unknown)()).toBe('settled');
     expect((steps['settleAppSettings'] as () => unknown)()).toBe('app settled');
     expect((steps['pruneCompleted'] as () => unknown)()).toBe('pruned');
+    expect((steps['settleLog'] as () => unknown)()).toBe('log settled');
     fake.calls.length = 0;
     quit();
     expect(fake.calls).toEqual(['quit']);

@@ -6,6 +6,8 @@ export interface QuitCleanup {
   readonly settlePreferences: (() => Promise<unknown>) | undefined;
   readonly settleAppSettings: (() => Promise<unknown>) | undefined;
   readonly pruneCompleted: (() => Promise<unknown>) | undefined;
+  /** The last lines of the log, which are written after everything above has had its say. */
+  readonly settleLog: (() => Promise<unknown>) | undefined;
 }
 
 /**
@@ -13,7 +15,8 @@ export interface QuitCleanup {
  * conversions are told to stop; the scratch copies, the sharing server and a setting changed an
  * instant ago (of the conversion options or of the app) are let go of, whatever each does; and only then are the pending runs whose every
  * book was saved removed, since nothing is serving or saving them any more. A failure of the last is
- * reported, never allowed to keep the app from quitting, which `quit` ends either way.
+ * reported, never allowed to keep the app from quitting, which `quit` ends either way. The log is
+ * waited for last, so that what the clean-up itself reports is in it.
  */
 export async function cleanUpBeforeQuit(
   cleanup: QuitCleanup,
@@ -32,6 +35,7 @@ export async function cleanUpBeforeQuit(
   } catch (error) {
     report('Could not clear exported pending books.', error);
   } finally {
+    await Promise.allSettled([cleanup.settleLog?.()]);
     quit();
   }
 }

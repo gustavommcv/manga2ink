@@ -182,6 +182,27 @@ describe('what the About tab gives for a report of a problem', () => {
     expect(screen.queryByText(/could not be (copied|opened)|^Copied/u)).not.toBeInTheDocument();
   });
 
+  it('opens the logs folder by its name', async () => {
+    const user = userEvent.setup();
+    const openAppFolder = vi.fn<MangaboundBridge['openAppFolder']>(() =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    await renderAbout({ openAppFolder });
+
+    await user.click(screen.getByRole('button', { name: /Open the logs folder/u }));
+
+    await waitFor(() => {
+      expect(openAppFolder).toHaveBeenCalledExactlyOnceWith({ folder: 'logs' });
+    });
+  });
+
+  it('warns that the log may hold paths, where the diagnostics say they hold none', async () => {
+    await renderAbout();
+
+    expect(screen.getByText(/with no paths and no names\./u)).toBeVisible();
+    expect(screen.getByText(/may hold the paths of books and folders/u)).toBeVisible();
+  });
+
   it.each([
     [
       'the diagnostics cannot be put on the clipboard',
@@ -248,6 +269,7 @@ describe('what the About tab gives for a report of a problem', () => {
 
     expect(await screen.findByText('Copiado. Cole no seu relato.')).toBeVisible();
     expect(screen.getByRole('button', { name: /Abrir a pasta de dados/u })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Abrir a pasta de logs/u })).toBeVisible();
   });
 });
 

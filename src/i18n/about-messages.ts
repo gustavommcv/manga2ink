@@ -34,6 +34,9 @@ export interface AboutMessages {
     /** Said once the diagnostics are on the clipboard. */
     readonly copied: string;
     readonly openData: string;
+    readonly openLogs: string;
+    /** What the log files hold, and what to do before they are shared. */
+    readonly logsText: string;
   };
   readonly support: {
     readonly title: string;
@@ -84,6 +87,9 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       copy: 'Copy diagnostics',
       copied: 'Copied. Paste it into your report.',
       openData: 'Open the data folder',
+      openLogs: 'Open the logs folder',
+      logsText:
+        'The log files record what went wrong, and may hold the paths of books and folders: look at them before you share them.',
     },
     support: {
       title: 'Support',
@@ -127,6 +133,9 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
       copy: 'Copiar diagnóstico',
       copied: 'Copiado. Cole no seu relato.',
       openData: 'Abrir a pasta de dados',
+      openLogs: 'Abrir a pasta de logs',
+      logsText:
+        'Os arquivos de log registram o que deu errado e podem ter os caminhos de livros e pastas: veja-os antes de compartilhar.',
     },
     support: {
       title: 'Apoio',

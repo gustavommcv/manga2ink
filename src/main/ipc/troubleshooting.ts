@@ -11,7 +11,10 @@ import { diagnosticsText } from '../diagnostics';
 import { handle, ignoredPayloadSchema } from './handle';
 import { failed, ok } from './result';
 
-type TroubleshootingContext = Pick<MainContext, 'appSettings' | 'processing' | 'toolchainStatus'>;
+type TroubleshootingContext = Pick<
+  MainContext,
+  'appSettings' | 'log' | 'processing' | 'toolchainStatus'
+>;
 
 /**
  * What helps a person report a problem (ADR 0057): the diagnostics put on the clipboard, and the
@@ -55,11 +58,18 @@ export function registerTroubleshootingHandlers(context: TroubleshootingContext)
   handle(
     'app:open-folder',
     openAppFolderCommandSchema,
-    async (): Promise<WorkflowResult<undefined>> => {
-      // The only folder there is to name today; a second one is a case here and a name in the contract.
-      const problem = await shell.openPath(app.getPath('userData'));
+    async (_event, command): Promise<WorkflowResult<undefined>> => {
+      let problem: string;
+      try {
+        // The folder of the log is made first, so it can be opened before anything has been written.
+        const folder =
+          command.folder === 'data' ? app.getPath('userData') : await context.log?.ensureFolder();
+        problem = folder === undefined ? 'There is no log.' : await shell.openPath(folder);
+      } catch (error) {
+        problem = error instanceof Error ? error.message : String(error);
+      }
       if (problem === '') return ok(undefined);
-      console.error('A folder of the app could not be opened.', problem);
+      console.error(`The ${command.folder} folder of the app could not be opened.`, problem);
       return failed({ code: 'folder_not_opened', said: message('failure.folderNotOpened', {}) });
     },
   );

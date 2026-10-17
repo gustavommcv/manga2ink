@@ -50,6 +50,7 @@ describe('what is let go of when the app quits', () => {
     settlePreferences: undefined,
     settleAppSettings: undefined,
     pruneCompleted: undefined,
+    settleLog: undefined,
   });
 
   it('is only what was built: a quit before the tools were ready reports nothing and quits', async () => {
@@ -68,6 +69,7 @@ describe('what is let go of when the app quits', () => {
     'settlePreferences',
     'settleAppSettings',
     'pruneCompleted',
+    'settleLog',
   ] as const)(
     'does not miss %s when it is the only thing there is, and does not wait for what is not',
     async (step) => {
@@ -111,12 +113,25 @@ describe('what is let go of when the app quits', () => {
           order.push('prune');
           return Promise.resolve();
         },
+        settleLog: () => {
+          order.push('log');
+          return Promise.resolve();
+        },
       },
       quit,
       vi.fn(),
     );
 
-    expect(order).toEqual(['abort', 'release', 'stop', 'settle', 'settle app', 'prune', 'quit']);
+    expect(order).toEqual([
+      'abort',
+      'release',
+      'stop',
+      'settle',
+      'settle app',
+      'prune',
+      'log',
+      'quit',
+    ]);
   });
 
   it('reports a prune that failed, with the reason, and quits all the same', async () => {
