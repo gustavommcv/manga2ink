@@ -39,19 +39,27 @@
 }
 
 /*
- * One fixed, sober dark theme: near-neutral graphite surfaces, a single soft lavender accent used
+ * Themes (ADR 0066). A theme is one block of these same variables, selected by the `data-theme`
+ * attribute of the page (which the app sets from what a person chose); a component reads the
+ * variables through the tokens above and never knows which theme it is in. A new theme is a new
+ * `:root[data-theme='...']` block that sets every variable, with its entry in `src/domain/theme.ts`.
+ * The bare `:root` is the dark theme too, so a page with no attribute (Storybook, a test, the moment
+ * before the app has read its settings) is drawn as the app has always been.
+ *
+ * The dark theme: near-neutral graphite surfaces, a single soft lavender accent used
  * sparingly, a soft cyan-teal only for what one item sets over the queue's options (ADR 0047),
  * muted amber/red for warning/failure, and no green anywhere. Completion is the accent plus a
  * check icon, never color alone. Flat: no glow, no drop shadows.
  *
- * Hex equivalents (Electron cannot read CSS variables, so src/main/index.ts hard-codes the window
- * background and title-bar overlay -- keep them in step with these): background #121214,
- * foreground #e8e8eb.
+ * Hex equivalents (Electron cannot read CSS variables, so the paint of the window and the title-bar
+ * overlay take them from `themeWindowColors` in src/domain/theme.ts, which a test keeps in step with
+ * the `--background` and `--foreground` below): background #121214, foreground #e8e8eb.
  *
  * Contrast (WCAG, measured): muted-foreground 7.1-7.6:1, subtle-foreground 5.1-5.5:1 on the
  * background/surface (4.6:1 on muted), accent 9.1-9.7:1, override 9.4-10:1, warning and failed 7+:1.
  */
-:root {
+:root,
+:root[data-theme='dark'] {
   color-scheme: dark;
   --accent: oklch(0.794 0.09 274);
   --background: oklch(0.183 0.004 286);

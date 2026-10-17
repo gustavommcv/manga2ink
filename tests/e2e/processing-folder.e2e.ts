@@ -85,6 +85,7 @@ describe('packaged processing folder', () => {
       language: 'system',
       notifyWhenDone: true,
       keepAwake: true,
+      theme: 'dark',
       processingFolder: work,
       earlierProcessingFolders: [],
     });
@@ -120,6 +121,7 @@ describe('packaged processing folder', () => {
       language: 'system',
       notifyWhenDone: true,
       keepAwake: true,
+      theme: 'dark',
       processingFolder: null,
       earlierProcessingFolders: [work],
     });

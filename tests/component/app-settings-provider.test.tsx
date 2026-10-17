@@ -42,6 +42,7 @@ const reading =
 
 afterEach(() => {
   document.documentElement.lang = '';
+  delete document.documentElement.dataset.theme;
 });
 
 describe('without an AppSettingsProvider', () => {
@@ -107,6 +108,43 @@ describe('AppSettingsProvider', () => {
 
     await waitFor(() => {
       expect(document.documentElement.lang).toBe('pt-BR');
+    });
+  });
+
+  it('puts the theme that was kept on the page, which the stylesheet selects its variables by', async () => {
+    const bridge = inertBridge({
+      loadAppSettings: () =>
+        Promise.resolve({
+          ok: true,
+          // A theme that a later build has, to show the page follows what was kept.
+          value: {
+            settings: { ...defaultAppSettings, theme: 'light' as never },
+            language: 'en',
+            unreadable: false,
+          },
+        }),
+    });
+
+    render(
+      <AppSettingsProvider bridge={bridge}>
+        <Probe />
+      </AppSettingsProvider>,
+    );
+
+    await waitFor(() => {
+      expect(document.documentElement.dataset.theme).toBe('light');
+    });
+  });
+
+  it('puts the default theme on the page when nothing else was kept', async () => {
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: reading('en') })}>
+        <Probe />
+      </AppSettingsProvider>,
+    );
+
+    await waitFor(() => {
+      expect(document.documentElement.dataset.theme).toBe('dark');
     });
   });
 

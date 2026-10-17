@@ -145,3 +145,93 @@ describe('the language in the general tab', () => {
     expect(saveAppSettings).not.toHaveBeenCalled();
   });
 });
+
+describe('the theme in the Interface tab', () => {
+  const keptTheme =
+    (theme: string): MangaboundBridge['loadAppSettings'] =>
+    () =>
+      Promise.resolve({
+        ok: true,
+        value: {
+          // A theme this build has not got is a file a newer one wrote; the select shows what it can.
+          settings: { ...defaultAppSettings, theme: theme as never },
+          language: 'en',
+          unreadable: false,
+        },
+      });
+
+  async function renderTheme(
+    overrides: Partial<MangaboundBridge> = {},
+  ): Promise<HTMLSelectElement> {
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
+        <InterfaceTab />
+      </AppSettingsProvider>,
+    );
+    return await screen.findByRole<HTMLSelectElement>('combobox', { name: 'Theme' });
+  }
+
+  it('is chosen from the themes the app has, each by its name, which for now is the one', async () => {
+    const select = await renderTheme();
+
+    expect(
+      within(select)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['Dark (graphite)']);
+    expect(select).toHaveDisplayValue('Dark (graphite)');
+  });
+
+  it('says what it does, and a choice is described by it', async () => {
+    const select = await renderTheme();
+
+    expect(select).toHaveAccessibleDescription('How the app looks. Applies right away.');
+  });
+
+  it('keeps the choice, naming only the theme, and says nothing when it is kept', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      Promise.resolve({ ok: true, value: { language: 'en' } }),
+    );
+    const select = await renderTheme({ saveAppSettings });
+
+    await user.selectOptions(select, 'Dark (graphite)');
+
+    await waitFor(() => {
+      expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ theme: 'dark' });
+    });
+    expect(screen.queryByText('The theme could not be saved. Try again.')).not.toBeInTheDocument();
+  });
+
+  it('says the theme could not be kept, and the language is not touched', async () => {
+    const user = userEvent.setup();
+    const select = await renderTheme({
+      saveAppSettings: () =>
+        Promise.resolve({ ok: false, error: { code: 'settings_save_failed', said: raw('No.') } }),
+    });
+
+    await user.selectOptions(select, 'Dark (graphite)');
+
+    expect(await screen.findByText('The theme could not be saved. Try again.')).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Language' })).toHaveDisplayValue('English');
+  });
+
+  it('is said in Portuguese for a window in Portuguese', async () => {
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('pt-BR', 'pt-BR') })}>
+        <InterfaceTab />
+      </AppSettingsProvider>,
+    );
+
+    const select = await screen.findByRole('combobox', { name: 'Tema' });
+
+    expect(select).toHaveDisplayValue('Escuro (grafite)');
+    expect(select).toHaveAccessibleDescription('Como o app se parece. Vale na hora.');
+  });
+
+  it('shows the first theme it has when the file named one this build has not got', async () => {
+    const select = await renderTheme({ loadAppSettings: keptTheme('light') });
+
+    expect(select).toBeVisible();
+  });
+});

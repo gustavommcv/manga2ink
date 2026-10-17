@@ -1,9 +1,13 @@
 import type { Preview } from '@storybook/react-vite';
 
+import { useEffect } from 'react';
+
 import { languages } from '../src/domain/app-settings';
+import { defaultTheme, themes } from '../src/domain/theme';
 import { languageNames, messagesFor } from '../src/i18n/messages';
 import { I18nContext } from '../src/renderer/hooks/use-messages';
 import { languageOf } from '../src/renderer/stories/language';
+import { themeOf } from '../src/renderer/stories/theme';
 
 import '../src/renderer/styles.css';
 
@@ -33,8 +37,17 @@ const preview: Preview = {
         items: languages.map((language) => ({ value: language, title: languageNames[language] })),
       },
     },
+    theme: {
+      description: 'The theme of the window',
+      toolbar: {
+        title: 'Theme',
+        icon: 'paintbrush',
+        dynamicTitle: true,
+        items: themes.map((theme) => ({ value: theme, title: theme })),
+      },
+    },
   },
-  initialGlobals: { language: 'en' },
+  initialGlobals: { language: 'en', theme: defaultTheme },
   decorators: [
     (Story, context) => {
       const language = languageOf(context.globals);
@@ -43,6 +56,14 @@ const preview: Preview = {
           <Story />
         </I18nContext.Provider>
       );
+    },
+    // The theme, as the app puts it on the page: `styles.css` selects its variables by it (ADR 0066).
+    (Story, context) => {
+      const theme = themeOf(context.globals);
+      useEffect(() => {
+        document.documentElement.dataset.theme = theme;
+      }, [theme]);
+      return <Story />;
     },
   ],
 };

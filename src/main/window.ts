@@ -3,6 +3,7 @@ import path from 'node:path';
 import { app, BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 
 import { rendererUrl } from './app-protocol';
+import { type Theme, themeWindowColors } from '@/domain/theme';
 import { minimumWindowSize } from '@/domain/window-state';
 
 import type { LeavingGuard } from './leaving';
@@ -10,15 +11,40 @@ import { isPermissionGranted } from './permission-policy';
 import type { WindowStateKeeper } from './window-state';
 
 /**
+ * The window's own buttons, drawn by the system over the top 48px: the same height as the title bar
+ * in the page, which draws no line of its own for that reason (see Titlebar), in the colors of the
+ * theme.
+ */
+const titleBarOverlay = (theme: Theme): { color: string; height: number; symbolColor: string } => ({
+  color: themeWindowColors[theme].background,
+  height: 48,
+  symbolColor: themeWindowColors[theme].foreground,
+});
+
+/**
+ * Gives a window the colors of a theme where the system, and not the page, draws them: what it is
+ * painted with before the page does, and the overlay of its buttons (not on macOS, where they are the
+ * system's own). The page itself follows the theme through its own variables (ADR 0066).
+ */
+export function applyThemeToWindow(
+  window: Pick<BrowserWindow, 'setBackgroundColor' | 'setTitleBarOverlay'>,
+  theme: Theme,
+): void {
+  window.setBackgroundColor(themeWindowColors[theme].background);
+  if (process.platform !== 'darwin') window.setTitleBarOverlay(titleBarOverlay(theme));
+}
+
+/**
  * Opens the window of the app. `leaving` is asked before the window closes where that ends the app
  * (not on macOS, where closing the last window leaves it running, and a conversion with it: the
  * books it makes are there to reopen), so a conversion is not lost to a click on the wrong button.
  * It opens as it was left, size and place, when that can still be had on the displays there are now
- * (ADR 0062).
+ * (ADR 0062), and in the colors of the theme that was chosen (ADR 0066).
  */
 export const createMainWindow = (
   leaving: LeavingGuard,
   windowState: Pick<WindowStateKeeper, 'placement' | 'track'>,
+  theme: Theme,
 ): BrowserWindow => {
   const { maximized, ...placement } = windowState.placement();
   const iconName = process.platform === 'win32' ? 'mangabound.ico' : 'mangabound.png';
@@ -28,20 +54,19 @@ export const createMainWindow = (
   > =
     process.platform === 'darwin'
       ? { trafficLightPosition: { x: 16, y: 16 } }
-      : // The overlay is the window's own buttons, drawn over the top 48px: the same height as the
-        // title bar in the page, which draws no line of its own for that reason (see Titlebar).
-        { titleBarOverlay: { color: '#121214', height: 48, symbolColor: '#e8e8eb' } };
+      : { titleBarOverlay: titleBarOverlay(theme) };
   const window = new BrowserWindow({
     icon: app.isPackaged
       ? path.join(process.resourcesPath, iconName)
       : path.join(app.getAppPath(), 'assets', 'icons', iconName),
-    // Electron cannot read CSS variables: these hex values are the theme's --background and
-    // --foreground from src/renderer/styles.css. Keep them in step. No show:false/'ready-to-show':
+    // Electron cannot read CSS variables: the hex values of a theme are in src/domain/theme.ts, and a
+    // test keeps them in step with its --background and --foreground in src/renderer/styles.css.
+    // No show:false/'ready-to-show':
     // Electron's own docs recommend showing immediately on a matching backgroundColor instead, for
     // exactly the case this project hit - 'ready-to-show' arriving late enough to make the app feel
     // like it never started at all. This also removes the class of bug that was possible with it: a
     // window and its process tree alive indefinitely because nothing ever called show().
-    backgroundColor: '#121214',
+    backgroundColor: themeWindowColors[theme].background,
     // The size, and the place when there is one to keep: otherwise the system chooses it.
     ...placement,
     // Small enough for half of a 1366px-wide screen with a tiling window manager's gaps and a

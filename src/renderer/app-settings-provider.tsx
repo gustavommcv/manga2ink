@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { defaultLanguage } from '@/domain/app-settings';
+import { defaultTheme } from '@/domain/theme';
 import { type AnyMessage, message } from '@/domain/message';
 import {
   type AppSettingsBridge,
@@ -46,8 +47,9 @@ async function saying(
 /**
  * Reads what a person decided about the app (ADR 0052) and gives everything under it the language
  * and its messages, and the way to change them, and what the app says about itself (its version, and
- * the way to open a place in the browser of the system, ADR 0054). It draws nothing until the
- * settings are read, which is a moment, so nothing is drawn in a language that is about to change.
+ * the way to open a place in the browser of the system, ADR 0054). It also puts the theme on the page
+ * (ADR 0066). It draws nothing until the settings are read, which is a moment, so nothing is drawn in
+ * a language that is about to change.
  */
 export function AppSettingsProvider({
   bridge,
@@ -58,6 +60,7 @@ export function AppSettingsProvider({
 }): React.JSX.Element | null {
   const state = useAppSettingsState(bridge);
   const language = state?.language ?? defaultLanguage;
+  const theme = state?.settings.theme ?? defaultTheme;
   const i18n = useMemo(() => ({ language, messages: messagesFor(language) }), [language]);
   const info = useMemo<AppInfo>(
     () => ({
@@ -102,6 +105,11 @@ export function AppSettingsProvider({
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
+
+  // And which theme it is in: the variables of `styles.css` that the attribute selects (ADR 0066).
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   if (state === undefined) return null;
   return (

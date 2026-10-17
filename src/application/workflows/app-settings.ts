@@ -13,6 +13,7 @@ import {
   type ProcessingChoice,
   resolveLanguage,
 } from '@/domain/app-settings';
+import type { Theme } from '@/domain/theme';
 
 export interface RestoredAppSettings {
   readonly settings: AppSettings;
@@ -81,6 +82,11 @@ export class AppSettingsWorkflow {
    */
   queueChoices(): Pick<AppSettings, 'keepAwake' | 'notifyWhenDone'> {
     return { keepAwake: this.kept.keepAwake, notifyWhenDone: this.kept.notifyWhenDone };
+  }
+
+  /** How the app looks, as it was last kept: what a window is made with (ADR 0066). */
+  theme(): Theme {
+    return this.kept.theme;
   }
 
   /** Where the app works, as it was last kept. */

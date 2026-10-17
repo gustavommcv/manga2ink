@@ -206,6 +206,7 @@ vi.mock('@/application/workflows/app-settings', () => ({
     };
     processing = (): unknown => ({ folder: '/chosen', earlier: [] });
     language = (): string => 'pt-BR';
+    theme = (): string => fake.context['theme'] as string;
     queueChoices = (): unknown => ({ keepAwake: false, notifyWhenDone: true });
     constructor(
       _store: unknown,
@@ -257,7 +258,10 @@ vi.mock('@/main/ipc/metadata', () => ({ registerMetadataHandlers: step('handlers
 vi.mock('@/main/ipc/opds', () => ({ registerOpdsHandlers: step('handlers:opds') }));
 vi.mock('@/main/ipc/pending', () => ({ registerPendingHandlers: step('handlers:pending') }));
 vi.mock('@/main/ipc/app-settings', () => ({
-  registerAppSettingsHandlers: step('handlers:app-settings'),
+  registerAppSettingsHandlers: (_workflow: unknown, themed: unknown) => {
+    fake.calls.push('handlers:app-settings');
+    fake.context['themed'] = themed;
+  },
 }));
 vi.mock('@/main/ipc/troubleshooting', () => ({
   registerTroubleshootingHandlers: step('handlers:troubleshooting'),
@@ -281,8 +285,12 @@ vi.mock('@/main/toolchain-bootstrap', () => ({
   },
 }));
 vi.mock('@/main/window', () => ({
-  createMainWindow: (leaving: unknown, keeper: unknown) => {
+  applyThemeToWindow: (window: unknown, theme: unknown) => {
+    ((fake.context['themedWindows'] ??= []) as unknown[]).push({ window, theme });
+  },
+  createMainWindow: (leaving: unknown, keeper: unknown, theme: unknown) => {
     fake.calls.push('window');
+    fake.context['windowTheme'] = theme;
     fake.context['windowLeaving'] = leaving;
     fake.context['windowKeeper'] = keeper;
   },
@@ -338,6 +346,7 @@ beforeEach(() => {
   fake.ready = undefined;
   fake.legacyMove = undefined;
   fake.context = {
+    theme: 'dark',
     activeJobs: new Map(),
     conversions: new Set(),
     queueRuns: { running: false, releaseAll: vi.fn() },
@@ -568,6 +577,34 @@ describe('starting the app', () => {
     fake.calls.length = 0;
     dispatch('activate');
     expect(fake.calls).toEqual([]);
+  });
+
+  it('makes the window in the colors of the theme that was chosen, also when it is made again from the dock', async () => {
+    fake.context['theme'] = 'dark';
+    const ready = await start();
+    await ready();
+    expect(fake.context['windowTheme']).toBe('dark');
+
+    fake.context['windowTheme'] = undefined;
+    fake.context['theme'] = 'chosen-later';
+    dispatch('activate');
+
+    expect(fake.context['windowTheme']).toBe('chosen-later');
+  });
+
+  it('gives every window that is open the colors of a theme that is kept', async () => {
+    const ready = await start();
+    await ready();
+    const first = { id: 1 };
+    const second = { id: 2 };
+    fake.windows = [first, second] as never;
+
+    (fake.context['themed'] as (theme: string) => void)('dark');
+
+    expect(fake.context['themedWindows']).toEqual([
+      { window: first, theme: 'dark' },
+      { window: second, theme: 'dark' },
+    ]);
   });
 
   it('gives the window the one keeper of its size and place, also when it is made again from the dock', async () => {

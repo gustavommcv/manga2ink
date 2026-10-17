@@ -40,11 +40,12 @@ describe('the languages of the app', () => {
     expect(languagePreferences).toEqual(['system', ...languages]);
   });
 
-  it('start by following the system, telling when a long queue ends and keeping the computer awake', () => {
+  it('start by following the system, telling when a long queue ends, keeping the computer awake, in the default theme', () => {
     expect(defaultAppSettings).toEqual({
       language: 'system',
       notifyWhenDone: true,
       keepAwake: true,
+      theme: 'dark',
     });
     expect(Object.isFrozen(defaultAppSettings)).toBe(true);
   });
@@ -57,8 +58,8 @@ describe('changing the app settings', () => {
       notifyWhenDone: false,
     });
     expect(applyingChange(defaultAppSettings, { language: 'pt-BR', keepAwake: false })).toEqual({
+      ...defaultAppSettings,
       language: 'pt-BR',
-      notifyWhenDone: true,
       keepAwake: false,
     });
   });
