@@ -134,6 +134,7 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'library.editOptions': [[false], [true]],
   'details.language.use': [['en-US']],
   'details.language.foldersSay': [['ja']],
+  'details.language.foldersSayButOnlyEpub': [['ja']],
   'details.titled.more': [[1], [4]],
   'details.lookup.willSearch': [['MangaDex', 'Work']],
   'details.lookup.useLabel': [['Author', 'Work']],

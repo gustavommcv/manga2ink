@@ -22,6 +22,7 @@ export interface DetailsMessages {
     readonly invalid: string;
     readonly use: (tag: string) => string;
     readonly foldersSay: (language: string) => string;
+    readonly foldersSayButOnlyEpub: (language: string) => string;
     readonly forEpub: string;
     readonly onlyEpub: string;
   };
@@ -81,6 +82,8 @@ export const detailsMessages: Readonly<Record<Language, DetailsMessages>> = {
       invalid: 'Use a language tag such as en-US or pt-BR. It is not used until it is valid.',
       use: (tag) => `Use ${tag}`,
       foldersSay: (language) => `The folder names say ${language}.`,
+      foldersSayButOnlyEpub: (language) =>
+        `The folder names say ${language}, but only EPUB files carry a language.`,
       forEpub: 'Used for EPUB output.',
       onlyEpub: 'Only EPUB files carry a language.',
     },
@@ -139,6 +142,8 @@ export const detailsMessages: Readonly<Record<Language, DetailsMessages>> = {
         'Use uma etiqueta de idioma como en-US ou pt-BR. Ela só passa a valer quando for válida.',
       use: (tag) => `Usar ${tag}`,
       foldersSay: (language) => `Os nomes das pastas indicam ${language}.`,
+      foldersSayButOnlyEpub: (language) =>
+        `Os nomes das pastas indicam ${language}, mas só os arquivos EPUB têm idioma.`,
       forEpub: 'Usado nos arquivos EPUB.',
       onlyEpub: 'Só os arquivos EPUB têm idioma.',
     },

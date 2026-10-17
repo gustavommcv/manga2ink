@@ -199,6 +199,20 @@ export const FolderDeclaresAnotherLanguage: Story = {
   },
 };
 
+/** The same folders made as a CBZ, which carries no language: nothing to offer, and the hint says why. */
+export const FolderDeclaresAnotherLanguageInACbz: Story = {
+  args: { declaredLanguage: 'pt-br', format: 'cbz' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByText('The folder names say pt-br, but only EPUB files carry a language.'),
+    ).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
+    // What is typed is kept with the folder for the next EPUB, so the field is not locked.
+    await expect(canvas.getByLabelText('Language')).toBeEnabled();
+  },
+};
+
 /** A language that is not a tag is refused where it is typed, instead of when the run starts. */
 export const InvalidLanguage: Story = {
   play: async ({ canvasElement }) => {

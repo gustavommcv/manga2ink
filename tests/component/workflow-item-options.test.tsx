@@ -6,7 +6,15 @@ import { type MangaboundBridge } from '@/shared/runtime-info';
 
 import { createMappingDraft } from '@/domain/mapping';
 
-import { addFolder, bridge, folder, installBridge, runButton } from './support/workflow';
+import {
+  addFolder,
+  bridge,
+  chapters,
+  folder,
+  inspection,
+  installBridge,
+  runButton,
+} from './support/workflow';
 import { converted, goodTitle, libraryBridge, looseTitle } from './support/library';
 import { raw } from '@/domain/message';
 
@@ -744,5 +752,71 @@ describe('the conversion options of an item that failed', () => {
     expect(again?.titleOptions?.map((own) => [own.title, own.format])).toEqual([
       ['Second Manga', 'pdf'],
     ]);
+  });
+});
+
+describe('the language field on the details of an item', () => {
+  /** The folder names say Portuguese, so the details page has a language to point out. */
+  const declaringPortuguese: MangaboundBridge['inspectInput'] = (id) => {
+    const base = inspection(id);
+    return Promise.resolve(
+      base.ok && base.value.kind === 'folder'
+        ? {
+            ok: true,
+            value: {
+              ...base.value,
+              mapping: createMappingDraft({
+                mangaTitle: base.value.displayName,
+                chapters: chapters.map((chapter) => ({ ...chapter, language: 'pt-br' })),
+                volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2'] }],
+              }),
+            },
+          }
+        : base,
+    );
+  };
+
+  const openDetails = async (user: UserEvent, name: string): Promise<void> => {
+    await user.click(await screen.findByRole('button', { name: `Edit details of ${name}` }));
+    expect(await screen.findByRole('heading', { name })).toBeVisible();
+  };
+
+  it('explains that only EPUB carries a language when the item is made as a CBZ, and stays editable', async () => {
+    const user = userEvent.setup();
+    installBridge(twoFolders({ inspectInput: declaringPortuguese }));
+    render(<App />);
+    await addFolder(user);
+
+    await openDetails(user, 'First');
+
+    expect(
+      screen.getByText('The folder names say pt-br, but only EPUB files carry a language.'),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
+    // What is typed is kept with the folder for the next EPUB, so the field is not locked.
+    expect(screen.getByLabelText('Language')).toBeEnabled();
+  });
+
+  it('offers the folder’s language when the item itself is set to EPUB, whatever the queue makes', async () => {
+    const user = userEvent.setup();
+    installBridge(twoFolders({ inspectInput: declaringPortuguese }));
+    render(<App />);
+    await addFolder(user);
+
+    await openOptions(user, 'First');
+    await user.selectOptions(screen.getByLabelText('Book format'), 'epub');
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    await openDetails(user, 'First');
+    expect(screen.getByText('The folder names say pt-br.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Use pt-BR' })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+
+    // The other item follows the queue, which makes CBZ, so it has nothing to offer.
+    await openDetails(user, 'Second');
+    expect(
+      screen.getByText('The folder names say pt-br, but only EPUB files carry a language.'),
+    ).toBeVisible();
+    expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
   });
 });

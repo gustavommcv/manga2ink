@@ -1162,10 +1162,13 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               <BookDetailsScreen
                 backLabel={messages.queue.title}
                 declaredLanguage={dominantLanguage(editingRow.mapping?.chapters ?? [])}
-                defaultLanguage={settings.language}
+                defaultLanguage={
+                  effectiveOptions(queueOptions, editingRow.options, singleBookActive).settings
+                    .language
+                }
                 defaultTitle={editingRow.displayName.replace(/\.cbz$/iu, '')}
                 details={editingRow.details ?? noBookDetails}
-                format={format}
+                format={effectiveOptions(queueOptions, editingRow.options, singleBookActive).format}
                 key={editingRow.id}
                 lookup={authorLookup}
                 {...(covers === undefined ? {} : { covers })}
@@ -1194,10 +1197,15 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               <BookDetailsScreen
                 backLabel={editingRow.displayName}
                 declaredLanguage={dominantLanguage(editingTitleEntry.draft.chapters)}
-                defaultLanguage={settings.language}
+                defaultLanguage={
+                  effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive)
+                    .settings.language
+                }
                 defaultTitle={editingTitleEntry.title}
                 details={editingTitleEntry.details ?? noBookDetails}
-                format={format}
+                format={
+                  effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).format
+                }
                 key={editingTitleEntry.title}
                 lookup={authorLookup}
                 {...(covers === undefined ? {} : { covers })}
