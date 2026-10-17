@@ -402,19 +402,27 @@ describe('FsPendingRuns.idleRuns', () => {
   const day = 24 * 60 * 60 * 1000;
   const now = Date.UTC(2026, 9, 16, 12, 0, 0);
 
-  /** Makes everything in a folder as old as it was `agoMs` before `now`. */
-  async function ageTree(target: string, agoMs: number): Promise<void> {
-    const when = new Date(now - agoMs);
+  /**
+   * Makes everything in a folder as old as it was `agoMs` before `from`: a day that is fixed, so that
+   * what a test says does not depend on when it runs, unless the test is about the clock.
+   */
+  async function ageTree(target: string, agoMs: number, from: number): Promise<void> {
+    const when = new Date(from - agoMs);
     for (const entry of await readdir(target, { withFileTypes: true })) {
       const child = path.join(target, entry.name);
-      if (entry.isDirectory()) await ageTree(child, agoMs);
+      if (entry.isDirectory()) await ageTree(child, agoMs, from);
       else await utimes(child, when, when);
     }
     await utimes(target, when, when);
   }
 
-  /** A run with one finished book, whose newest change is `agoMs` before `now`. */
-  async function runOf(store: FsPendingRuns, library: FsLibraryStore, agoMs: number) {
+  /** A run with one finished book, whose newest change is `agoMs` before `from` (the fixed day by default). */
+  async function runOf(
+    store: FsPendingRuns,
+    library: FsLibraryStore,
+    agoMs: number,
+    from: number = now,
+  ) {
     const run = await store.create();
     const entry: LibraryBookEntry = {
       relativePath: 'Book.epub',
@@ -426,7 +434,7 @@ describe('FsPendingRuns.idleRuns', () => {
     };
     await writeFile(path.join(run.path, entry.relativePath), 'hello');
     await library.publish(run.path, entry);
-    await ageTree(run.path, agoMs);
+    await ageTree(run.path, agoMs, from);
     return run;
   }
 
@@ -459,7 +467,9 @@ describe('FsPendingRuns.idleRuns', () => {
 
   it('does not delete anything, and takes the time of the call when it is not given one', async () => {
     const { store, library } = await fixture();
-    const run = await runOf(store, library, 0);
+    // As old as the clock says it is now, which is what a call that is not given a time reads: a fixed
+    // day would be a day in the past as soon as the calendar had gone past it.
+    const run = await runOf(store, library, 0, Date.now());
 
     expect(await store.idleRuns(day)).toEqual([]);
     expect((await store.idleRuns(-60_000)).map((idle) => idle.id)).toEqual([run.id]);
