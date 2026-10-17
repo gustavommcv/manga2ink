@@ -6,6 +6,8 @@ import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
 
+import { wordsOf } from '@/renderer/stories/language';
+
 import { MappingEditor } from './mapping-editor';
 import { raw } from '@/domain/message';
 
@@ -151,15 +153,16 @@ export const OnlineSourceNoneChosen: Story = {
 /** No file-name grouping, with an optional online suggestion available but not selected. */
 export const ManualWithOnlineOption: Story = {
   args: OnlineSourceNoneChosen.args,
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, globals }) => {
+    const { chaptersFrom } = wordsOf(globals).mapping;
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('tab', { name: 'Manual' })).toHaveAttribute(
+    await expect(canvas.getByRole('tab', { name: chaptersFrom.tabs.manual })).toHaveAttribute(
       'aria-selected',
       'true',
     );
     await expect(
-      canvas.getByRole('status', { name: 'No volumes found in file names' }),
-    ).toHaveTextContent('try Online source for a suggestion');
+      canvas.getByRole('status', { name: chaptersFrom.manual.noVolumesTitle }),
+    ).toHaveTextContent(chaptersFrom.manual.buildOrTry(chaptersFrom.tabs.online));
   },
 };
 
@@ -185,13 +188,16 @@ export const WithMetadataSuggestions: Story = {
     onSuggestVolumes: suggest,
   },
   // Nothing is chosen or searched until the user does it, so the results only exist after these.
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, globals }) => {
+    const { chaptersFrom, providers } = wordsOf(globals).mapping;
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('tab', { name: 'Online source' }));
-    await userEvent.click(await canvas.findByRole('combobox', { name: 'Source' }));
+    await userEvent.click(canvas.getByRole('tab', { name: chaptersFrom.tabs.online }));
+    await userEvent.click(await canvas.findByRole('combobox', { name: providers.label }));
     await userEvent.click(await canvas.findByRole('option', { name: /MangaDex/u }));
-    await userEvent.click(await canvas.findByRole('button', { name: 'Search' }));
-    await canvas.findAllByRole('button', { name: 'Use these volumes' });
+    await userEvent.click(
+      await canvas.findByRole('button', { name: chaptersFrom.online.searchButton }),
+    );
+    await canvas.findAllByRole('button', { name: chaptersFrom.online.use });
   },
 };
 
