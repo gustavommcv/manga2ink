@@ -12,10 +12,12 @@ import { FileLog } from '@/adapters/log/file-log';
 import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
+import { GithubReleaseFeed } from '@/adapters/releases/github-release-feed';
 import { FsAppSettingsStore } from '@/adapters/settings/fs-app-settings-store';
 import { FsSettingsStore } from '@/adapters/settings/fs-settings-store';
 import { AppSettingsWorkflow } from '@/application/workflows/app-settings';
 import { PreferencesWorkflow } from '@/application/workflows/preferences';
+import { UpdateCheckWorkflow } from '@/application/workflows/update-check';
 
 import { registerRendererScheme, serveRenderer } from './app-protocol';
 import { createMainContext } from './context';
@@ -34,6 +36,7 @@ import { registerPendingHandlers } from './ipc/pending';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
+import { registerUpdateHandlers } from './ipc/updates';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { bootstrapToolchain } from './toolchain-bootstrap';
@@ -144,6 +147,7 @@ void app.whenReady().then(async () => {
   registerAppSettingsHandlers(appSettingsWorkflow);
   registerProcessingFolderHandlers(context);
   registerProjectLinkHandlers();
+  registerUpdateHandlers(new UpdateCheckWorkflow(new GithubReleaseFeed()));
   registerTroubleshootingHandlers(context);
   registerInputHandlers(context);
   registerConversionHandlers(context);

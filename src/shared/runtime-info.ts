@@ -1,4 +1,5 @@
 import type { AnyMessage } from '@/domain/message';
+import type { UpdateCheck } from '@/domain/update-check';
 
 import type {
   RestoredAppSettings,
@@ -152,6 +153,11 @@ export interface MangaboundBridge {
    * its own language; it never gives an address (ADR 0054).
    */
   readonly openProjectLink: (command: OpenProjectLinkCommand) => Promise<WorkflowResult<undefined>>;
+  /**
+   * Looks for a version newer than the one that is running, in the list of releases that GitHub has
+   * (ADR 0062). Only when it is called: nothing looks for one by itself.
+   */
+  readonly checkForUpdates: () => Promise<WorkflowResult<UpdateCheck>>;
   /** Puts the diagnostics for a report of a problem on the clipboard (ADR 0057). */
   readonly copyDiagnostics: () => Promise<WorkflowResult<undefined>>;
   /** Opens a folder of the app, by name, in the file manager (ADR 0057). */

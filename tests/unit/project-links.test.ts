@@ -35,6 +35,9 @@ describe('the addresses the About tab can open', () => {
     expect(projectLinkAddress('third-party-notices', 'en', version)).toBe(
       'https://github.com/gustavommcv/mangabound/blob/main/THIRD-PARTY-NOTICES.md',
     );
+    expect(projectLinkAddress('releases', 'pt-BR', version)).toBe(
+      'https://github.com/gustavommcv/mangabound/releases',
+    );
     expect(projectLinkAddress('mangadex', 'en', version)).toBe('https://mangadex.org/');
     expect(projectLinkAddress('support', 'en', version)).toBe(supportAddress);
   });

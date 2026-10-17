@@ -11,4 +11,6 @@ export interface ProviderMessageValues {
   readonly 'provider.malformedJson': { readonly service: string };
   readonly 'provider.unexpectedSearch': { readonly service: string };
   readonly 'provider.unexpectedVolumes': { readonly service: string };
+  /** The list of the releases of the app that the check for updates reads (ADR 0062). */
+  readonly 'provider.unexpectedReleases': { readonly service: string };
 }

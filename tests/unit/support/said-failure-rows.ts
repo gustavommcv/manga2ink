@@ -550,4 +550,11 @@ export const failureRows: Rows<
       'MangaDex devolveu uma resposta de volumes inesperada.',
     ],
   ],
+  'provider.unexpectedReleases': [
+    [
+      { service: 'GitHub' },
+      'GitHub returned an unexpected list of versions.',
+      'GitHub devolveu uma lista de versões inesperada.',
+    ],
+  ],
 };

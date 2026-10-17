@@ -18,6 +18,8 @@ export const providerSaid: Readonly<Record<Language, SaidFor<ProviderMessageValu
       `${service} returned an unexpected search response.`,
     'provider.unexpectedVolumes': ({ service }) =>
       `${service} returned an unexpected volumes response.`,
+    'provider.unexpectedReleases': ({ service }) =>
+      `${service} returned an unexpected list of versions.`,
   },
   'pt-BR': {
     'provider.catalogue': () => 'Catálogo comunitário de mangás, com dados de volumes e capítulos',
@@ -33,5 +35,7 @@ export const providerSaid: Readonly<Record<Language, SaidFor<ProviderMessageValu
       `${service} devolveu uma resposta de busca inesperada.`,
     'provider.unexpectedVolumes': ({ service }) =>
       `${service} devolveu uma resposta de volumes inesperada.`,
+    'provider.unexpectedReleases': ({ service }) =>
+      `${service} devolveu uma lista de versões inesperada.`,
   },
 };

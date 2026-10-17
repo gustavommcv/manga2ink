@@ -34,6 +34,8 @@ export function projectLinkAddress(link: ProjectLink, language: Language, versio
       return `${repository}/issues`;
     case 'release-notes':
       return `${repository}/releases/tag/v${encodeURIComponent(version)}`;
+    case 'releases':
+      return `${repository}/releases`;
     case 'license':
       return `${repository}/blob/main/LICENSE`;
     case 'third-party-notices':
