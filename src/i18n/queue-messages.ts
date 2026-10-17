@@ -68,6 +68,8 @@ export interface QueueMessages {
     readonly reading: (items: number) => string;
     readonly nothingRuns: string;
     readonly leftOut: (items: number) => string;
+    /** Said before the run, when a drive the app works on has less room than the queue would take (ADR 0060). */
+    readonly lowSpace: (free: string, needed: string) => string;
   };
   readonly plans: {
     readonly validated: string;
@@ -152,6 +154,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingRuns: 'Nothing here can run yet.',
       leftOut: (items) =>
         `${String(items)} ${countOf(items, 'item', 'items')} will be left out. Use the pencil on a row to fix it.`,
+      lowSpace: (free, needed) =>
+        `Only ${free} are free where Mangabound works, and this queue may take about ${needed}. Make room, or choose another working folder in App settings, under Processing.`,
     },
     plans: {
       validated: 'Plan validated',
@@ -235,6 +239,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingRuns: 'Nada aqui pode rodar ainda.',
       leftOut: (items) =>
         `${String(items)} ${countOf(items, 'item ficará', 'itens ficarão')} de fora. Use o lápis na linha para corrigir.`,
+      lowSpace: (free, needed) =>
+        `Só há ${free} livres onde o Mangabound trabalha, e esta fila pode ocupar cerca de ${needed}. Libere espaço ou escolha outra pasta de trabalho em Configurações do app, em Processamento.`,
     },
     plans: {
       validated: 'Plano validado',

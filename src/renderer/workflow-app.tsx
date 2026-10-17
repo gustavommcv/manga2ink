@@ -62,6 +62,7 @@ import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { SaidError } from '@/renderer/lib/said-error';
+import { useWorkingSpace } from '@/renderer/hooks/use-working-space';
 import { useSharing } from '@/renderer/hooks/use-sharing';
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
@@ -215,6 +216,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
   }, [bridge]);
 
   const sharing = useSharing(bridge, setFailure);
+  const workingSpace = useWorkingSpace(bridge, navigation.screen === 'queue');
 
   useEffect(() => {
     let current = true;
@@ -939,6 +941,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               format={format}
               mode={mode}
               pendingRuns={pendingRuns}
+              space={workingSpace}
               onOpenPending={openPendingRun}
               onDeletePending={discardPendingRun}
               onAddFiles={() => {

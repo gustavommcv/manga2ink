@@ -29,6 +29,7 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.run.process': [[0], [1], [3]],
   'queue.run.reading': [[1], [2]],
   'queue.run.leftOut': [[1], [2]],
+  'queue.run.lowSpace': [['1.5 GB', '3 GB']],
   'queue.plans.pages': [[1], [2]],
   'queue.plans.oneBookFor': [['Berserk']],
   'queue.pending.andMore': [

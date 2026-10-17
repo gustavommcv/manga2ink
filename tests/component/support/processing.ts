@@ -1,3 +1,4 @@
+import type { WorkingSpace } from '@/domain/working-space';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 
 /** Where the app works when nobody has chosen a folder: its own places, with room to spare. */
@@ -8,6 +9,13 @@ export const defaultProcessingStatus: ProcessingFolderStatus = {
   available: true,
   freeBytes: 120 * 1024 ** 3,
   earlier: [],
+};
+
+/** Drives with room to spare, so no test is warned unless it is about the warning. */
+export const roomyWorkingSpace: WorkingSpace = {
+  scratchFreeBytes: 40 * 1024 ** 3,
+  pendingFreeBytes: 120 * 1024 ** 3,
+  sameDrive: false,
 };
 
 /** Where the app works once a folder is chosen: Pending and Scratch inside it. */

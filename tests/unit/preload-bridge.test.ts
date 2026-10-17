@@ -135,6 +135,7 @@ const forwarded: readonly (readonly [
   ['copyDiagnostics', [], 'app:copy-diagnostics', undefined],
   ['openAppFolder', [{ folder: 'data' }], 'app:open-folder', { folder: 'data' }],
   ['getProcessingFolder', [], 'app:get-processing-folder', undefined],
+  ['getWorkingSpace', [], 'app:get-working-space', undefined],
   ['chooseProcessingFolder', [], 'app:choose-processing-folder', undefined],
   ['useDefaultProcessingFolder', [], 'app:use-default-processing-folder', undefined],
 ];

@@ -85,6 +85,13 @@ test.describe('at the size the window opens at', () => {
     await expect(page.locator('#storybook-root')).toHaveScreenshot('queue-with-items.png');
   });
 
+  test('the warning of too little room stays above the Process button', async ({ page }) => {
+    await page.goto('/iframe.html?id=workflows-queue--low-space&viewMode=story');
+    await expect(page.getByText(/free where Mangabound works/u)).toBeVisible();
+    await page.evaluate(async () => document.fonts.ready);
+    await expect(page.locator('#storybook-root')).toHaveScreenshot('queue-low-space.png');
+  });
+
   test('a library in the queue remains visually consistent', async ({ page }) => {
     await page.goto('/iframe.html?id=workflows-queue--with-library&viewMode=story');
     await expect(page.getByText('Library · 3 titles · 3 volumes')).toBeVisible();

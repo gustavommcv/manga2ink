@@ -81,6 +81,21 @@ describe('asking where the app works', () => {
   });
 });
 
+describe('asking what is left on the drives', () => {
+  it('tells what the places of the app have free, and whether they share a drive', async () => {
+    const space = { scratchFreeBytes: 10, pendingFreeBytes: 20, sameDrive: true };
+    contextFor({ processing: { workingSpace: () => Promise.resolve(space) } });
+
+    expect(await call('app:get-working-space')).toEqual({ ok: true, value: space });
+  });
+
+  it('is a failure, not an answer, before the places are known', async () => {
+    contextFor({ processing: undefined });
+
+    expect(await call('app:get-working-space')).toMatchObject({ ok: false });
+  });
+});
+
 describe('choosing the folder the app works in', () => {
   it('opens a dialog for a folder, and starts it where the folder in use is', async () => {
     const { check, choose } = contextFor({
