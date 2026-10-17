@@ -56,6 +56,7 @@ function build(workflow: Record<string, unknown>) {
     mangapressCli: undefined,
     selectedLibraries: new Map([['run', libraryPath]]),
     activeJobs: new Map<string, AbortController>(),
+    conversions: new Set<string>(),
     workflow,
     artifactPaths: new Map(),
     pendingArtifacts: new Map(),

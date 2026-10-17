@@ -8,7 +8,12 @@ import { failed, ok } from './result';
 
 type JobContext = Pick<
   MainContext,
-  'selectedLibraries' | 'activeJobs' | 'artifactPaths' | 'pendingArtifacts' | 'pendingRunActivity'
+  | 'selectedLibraries'
+  | 'activeJobs'
+  | 'artifactPaths'
+  | 'conversions'
+  | 'pendingArtifacts'
+  | 'pendingRunActivity'
 > & {
   readonly libraryPublisher: Pick<MainContext['libraryPublisher'], 'publish'>;
 };
@@ -46,6 +51,7 @@ export async function runJob<Value>(
   }
   const controller = new AbortController();
   context.activeJobs.set(command.jobId, controller);
+  context.conversions.add(command.jobId);
   // Chained, not concurrent: catalog publication reads, merges and rewrites a whole manifest.
   let chain: Promise<void> = Promise.resolve();
   try {
@@ -72,5 +78,6 @@ export async function runJob<Value>(
     // Even when conversion fails, earlier books must reach the catalog before the job disappears.
     await chain;
     context.activeJobs.delete(command.jobId);
+    context.conversions.delete(command.jobId);
   }
 }

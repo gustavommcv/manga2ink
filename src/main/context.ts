@@ -39,6 +39,8 @@ export interface MainContext {
   coverStore: FsCoverStore | undefined;
   readonly pendingRunActivity: PendingRunActivity;
   readonly activeJobs: Map<string, AbortController>;
+  /** The ids of the conversions that are running: the jobs that would be lost if the app closed (ADR 0059). */
+  readonly conversions: Set<string>;
   readonly metadataProviders: Map<string, MetadataProviderPort>;
   readonly libraryStore: FsLibraryStore;
   /** What the share serves: the library store, except that the pending folder is every ready book. */
@@ -83,6 +85,7 @@ export function createMainContext(): MainContext {
     coverStore: undefined,
     pendingRunActivity: new PendingRunActivity(),
     activeJobs: new Map(),
+    conversions: new Set(),
     metadataProviders: new Map(
       createMetadataProviders().map((provider) => [provider.descriptor.id, provider] as const),
     ),

@@ -236,7 +236,30 @@ vi.mock('@/main/toolchain-bootstrap', () => ({
     return Promise.resolve({ state: 'blocked', tools: [], message: 'Not ready.' });
   },
 }));
-vi.mock('@/main/window', () => ({ createMainWindow: step('window') }));
+vi.mock('@/main/window', () => ({
+  createMainWindow: (leaving: unknown) => {
+    fake.calls.push('window');
+    fake.context['windowLeaving'] = leaving;
+  },
+}));
+vi.mock('@/main/leaving', () => ({
+  LeavingGuard: class {
+    constructor(
+      readonly converting: () => boolean,
+      readonly ask: () => Promise<boolean>,
+    ) {
+      fake.context['leavingGuard'] = this;
+    }
+    allows(leave: () => void): boolean {
+      fake.context['leaveWith'] = leave;
+      return fake.context['leavingAllowed'] !== false;
+    }
+  },
+  askToLeave: (words: unknown, window: unknown) => {
+    fake.context['asked'] = { words, window };
+    return Promise.resolve(true);
+  },
+}));
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
 const onPlatform = (platform: NodeJS.Platform): void => {
@@ -271,6 +294,7 @@ beforeEach(() => {
   fake.legacyMove = undefined;
   fake.context = {
     activeJobs: new Map(),
+    conversions: new Set(),
     pendingCatalog: { useRoot: step('use-root') },
     workflow: undefined,
     activeSharing: undefined,
@@ -533,6 +557,76 @@ describe('an installer that is still running', () => {
     await start();
 
     expect(fake.calls).toContain('quit');
+  });
+});
+
+describe('leaving while a conversion runs', () => {
+  it('gives the window the guard, each time a window is made', async () => {
+    const ready = await start();
+    await ready();
+    const first = fake.context['windowLeaving'];
+    fake.calls.length = 0;
+
+    dispatch('activate');
+
+    expect(first).toBe(fake.context['leavingGuard']);
+    expect(fake.context['windowLeaving']).toBe(first);
+    expect(fake.calls).toEqual(['window']);
+  });
+
+  it('counts a conversion that is running, and nothing else, as something to lose', async () => {
+    await start();
+    const guard = fake.context['leavingGuard'] as { converting: () => boolean };
+    // A search or a validation is in `activeJobs` too: it is over in a moment, and loses nothing.
+    (fake.context['activeJobs'] as Map<string, unknown>).set('search', {});
+    expect(guard.converting()).toBe(false);
+
+    (fake.context['conversions'] as Set<string>).add('job');
+
+    expect(guard.converting()).toBe(true);
+  });
+
+  it('asks in the words of the window, over the window that is open', async () => {
+    fake.windows = [{ isMinimized: () => false, restore: vi.fn(), focus: vi.fn() }];
+    await start();
+    const guard = fake.context['leavingGuard'] as { ask: () => Promise<boolean> };
+
+    expect(await guard.ask()).toBe(true);
+
+    const asked = fake.context['asked'] as { words: { message: string }; window: unknown };
+    expect(asked.words.message).toBe('A conversion is still running.');
+    expect(asked.window).toBe(fake.windows[0]);
+  });
+
+  it('keeps the app open, and does not clean up, while the person is being asked', async () => {
+    await start();
+    fake.context['leavingAllowed'] = false;
+    const quitting = { preventDefault: vi.fn() };
+
+    dispatch('before-quit', quitting);
+
+    expect(quitting.preventDefault).toHaveBeenCalledOnce();
+    expect(fake.calls).not.toContain('clean-up');
+  });
+
+  it('quits again, for the person who agreed, to go on with the quit that was held back', async () => {
+    await start();
+    fake.context['leavingAllowed'] = false;
+    dispatch('before-quit', { preventDefault: vi.fn() });
+    fake.calls.length = 0;
+
+    (fake.context['leaveWith'] as () => void)();
+
+    expect(fake.calls).toEqual(['quit']);
+  });
+
+  it('cleans up once leaving is allowed, as it did before there was a question', async () => {
+    await start();
+    fake.context['leavingAllowed'] = true;
+
+    dispatch('before-quit', { preventDefault: vi.fn() });
+
+    expect(fake.calls).toContain('clean-up');
   });
 });
 

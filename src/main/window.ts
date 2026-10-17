@@ -3,9 +3,15 @@ import path from 'node:path';
 import { app, BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 
 import { rendererUrl } from './app-protocol';
+import type { LeavingGuard } from './leaving';
 import { isPermissionGranted } from './permission-policy';
 
-export const createMainWindow = (): BrowserWindow => {
+/**
+ * Opens the window of the app. `leaving` is asked before the window closes where that ends the app
+ * (not on macOS, where closing the last window leaves it running, and a conversion with it: the
+ * books it makes are there to reopen), so a conversion is not lost to a click on the wrong button.
+ */
+export const createMainWindow = (leaving: LeavingGuard): BrowserWindow => {
   const iconName = process.platform === 'win32' ? 'mangabound.ico' : 'mangabound.png';
   const platformTitleBar: Pick<
     BrowserWindowConstructorOptions,
@@ -60,6 +66,15 @@ export const createMainWindow = (): BrowserWindow => {
   window.webContents.on('will-navigate', (event) => {
     event.preventDefault();
   });
+
+  if (process.platform !== 'darwin') {
+    window.on('close', (event) => {
+      const leave = (): void => {
+        window.close();
+      };
+      if (!leaving.allows(leave)) event.preventDefault();
+    });
+  }
 
   // Two different ways the entry point can fail to ever appear, needing two different signals:
   // loadURL()'s own rejection (tied to did-fail-load) covers the page failing to load; it does not

@@ -3,7 +3,13 @@ import path from 'node:path';
 import { BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createMainWindow } from '@/main/window';
+import type { LeavingGuard } from '@/main/leaving';
+import { createMainWindow as makeMainWindow } from '@/main/window';
+
+/** A guard that lets the window close, and remembers being asked. */
+const letting = { allows: vi.fn<LeavingGuard['allows']>(() => true) };
+const createMainWindow = (guard: Pick<LeavingGuard, 'allows'> = letting): BrowserWindow =>
+  makeMainWindow(guard as LeavingGuard);
 
 type Listener = (...args: never[]) => void;
 const electron = vi.hoisted(() => ({
@@ -18,6 +24,8 @@ const electron = vi.hoisted(() => ({
   setWindowOpenHandler: vi.fn(),
   once: vi.fn<(event: string, listener: (...args: never[]) => void) => void>(),
   on: vi.fn<(event: string, listener: (...args: never[]) => void) => void>(),
+  windowOn: vi.fn<(event: string, listener: (...args: never[]) => void) => void>(),
+  close: vi.fn<() => void>(),
 }));
 vi.mock('electron', () => ({
   app: {
@@ -46,6 +54,12 @@ vi.mock('electron', () => ({
     }
     loadURL(url: string): Promise<void> {
       return electron.loadURL(url);
+    }
+    on(event: string, listener: (...args: never[]) => void): void {
+      electron.windowOn(event, listener);
+    }
+    close(): void {
+      electron.close();
     }
   },
 }));
@@ -85,9 +99,12 @@ beforeEach(() => {
     electron.setWindowOpenHandler,
     electron.once,
     electron.on,
+    electron.windowOn,
+    electron.close,
   ]) {
     mock.mockReset();
   }
+  letting.allows.mockReset().mockReturnValue(true);
   vi.stubGlobal('MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY', '/build/preload/index.js');
   Object.defineProperty(process, 'resourcesPath', {
     configurable: true,
@@ -281,5 +298,53 @@ describe('a page that never appears', () => {
 
   it('hands the window back', () => {
     expect(createMainWindow()).toBeInstanceOf(BrowserWindow);
+  });
+});
+
+describe('closing the window while a conversion runs', () => {
+  it.each(['win32', 'linux'] as const)(
+    'asks first on %s, where closing the window ends the app, and holds the close back',
+    (platform) => {
+      onPlatform(platform);
+      const guard = { allows: vi.fn<LeavingGuard['allows']>(() => false) };
+      createMainWindow(guard);
+      const preventDefault = vi.fn();
+
+      listenerOf(electron.windowOn, 'close')({ preventDefault } as never);
+
+      expect(guard.allows).toHaveBeenCalledOnce();
+      expect(preventDefault).toHaveBeenCalledOnce();
+    },
+  );
+
+  it('lets the window close when nothing is to be lost, or when the person agreed', () => {
+    onPlatform('win32');
+    createMainWindow();
+    const preventDefault = vi.fn();
+
+    listenerOf(electron.windowOn, 'close')({ preventDefault } as never);
+
+    expect(preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('closes the window again, once the person has agreed, to go on with what was held back', () => {
+    onPlatform('linux');
+    letting.allows.mockImplementation((leave) => {
+      leave();
+      return false;
+    });
+    createMainWindow();
+
+    listenerOf(electron.windowOn, 'close')({ preventDefault: vi.fn() } as never);
+
+    expect(electron.close).toHaveBeenCalledOnce();
+  });
+
+  it('does not ask on macOS, where closing the window leaves the app and its conversion running', () => {
+    onPlatform('darwin');
+    createMainWindow();
+
+    expect(electron.windowOn).not.toHaveBeenCalled();
+    expect(letting.allows).not.toHaveBeenCalled();
   });
 });

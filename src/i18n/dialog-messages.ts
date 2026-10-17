@@ -10,6 +10,13 @@ export interface DialogMessages {
   readonly chooseProcessingFolder: { readonly title: string; readonly button: string };
   readonly saveBook: { readonly title: string };
   readonly saveAll: { readonly title: string };
+  /** Asked before the app is closed while a conversion runs (ADR 0059). */
+  readonly leaveWhileConverting: {
+    readonly message: string;
+    readonly detail: string;
+    readonly keep: string;
+    readonly leave: string;
+  };
 }
 
 /** The main process writes these, in the language the window is in (ADR 0052). */
@@ -26,6 +33,12 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     },
     saveBook: { title: 'Save book as' },
     saveAll: { title: 'Save all books to a folder' },
+    leaveWhileConverting: {
+      message: 'A conversion is still running.',
+      detail: 'If you close Mangabound now, it will be lost.',
+      keep: 'Keep converting',
+      leave: 'Close anyway',
+    },
   },
   'pt-BR': {
     chooseCover: { title: 'Escolher uma capa', images: 'Imagens' },
@@ -42,5 +55,11 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     },
     saveBook: { title: 'Salvar livro como' },
     saveAll: { title: 'Salvar todos os livros em uma pasta' },
+    leaveWhileConverting: {
+      message: 'Há uma conversão em andamento.',
+      detail: 'Se você fechar o Mangabound agora, ela será perdida.',
+      keep: 'Continuar convertendo',
+      leave: 'Fechar mesmo',
+    },
   },
 };
