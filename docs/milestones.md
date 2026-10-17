@@ -2,7 +2,7 @@
 
 ## Current priorities
 
-Status reviewed on **2026-10-16**. The initial M0–M7b implementation has been delivered; M8 remains in progress while public alpha releases continue. The converters are pinned and bundled, and application and documentation CI run on pull requests and `main`. Later CLI options can be explicitly deferred under [ADR 0035](adr/0035-mangapress-0-7-first-its-options-in-steps.md); the capability check reports that list. The milestones below retain the original implementation sequence, not a description of an unfinished scaffold.
+Status reviewed on **2026-10-17**. The initial M0–M7b implementation has been delivered; M8 remains in progress while public alpha releases continue. The converters are pinned and bundled, and application and documentation CI run on pull requests and `main`. Later CLI options can be explicitly deferred under [ADR 0035](adr/0035-mangapress-0-7-first-its-options-in-steps.md); the capability check reports that list. The milestones below retain the original implementation sequence, not a description of an unfinished scaffold.
 
 Keep this list current as work lands. Each item needs a focused change and verification; a merge does not authorize a release tag. The [release checklist](release-checklist.md) separates the basic smoke test from checks needed for changed integrations.
 
@@ -15,7 +15,7 @@ Keep this list current as work lands. Each item needs a focused change and verif
 
 ### Development-tool findings, 2026-10-14
 
-`npm audit` over the whole tree reports 26 findings (24 high, 2 moderate) on 2026-10-16; it reported 28 on 2026-10-14 with the same lockfile, since the count follows the advisory database. The production audit (`npm run audit:production`, and `npm audit --omit=dev`) reports none: nothing below is in the packaged app. They are in the test runner (WebdriverIO, mocha, puppeteer-core) and in Forge's webpack plugin, which run on a developer's machine or in CI.
+`npm audit` over the whole tree reports 26 findings (24 high, 2 moderate) on 2026-10-17, as it did on 2026-10-16; it reported 28 on 2026-10-14 with the same lockfile, since the count follows the advisory database. The production audit (`npm run audit:production`, and `npm audit --omit=dev`) reports none: nothing below is in the packaged app. They are in the test runner (WebdriverIO, mocha, puppeteer-core) and in Forge's webpack plugin, which run on a developer's machine or in CI.
 
 Compatible fixes were taken (`brace-expansion`, `fast-uri` and `ip-address` to their patched releases in the lockfile). The rest has one of three causes:
 

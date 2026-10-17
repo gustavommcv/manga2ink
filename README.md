@@ -16,6 +16,7 @@ _Interface example with Storybook sample data. The guide and screenshots follow 
 - Create CBZ, EPUB, or PDF books for devices such as Kindle, Kobo, and reMarkable, or use custom page dimensions.
 - Produce separate volumes or combine a series into one book (EPUB only for now).
 - Set book details, covers, and image-processing options.
+- Use the app in English or Brazilian Portuguese, in a dark or a light theme.
 
 ## Download
 
