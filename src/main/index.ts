@@ -1,7 +1,7 @@
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import started from 'electron-squirrel-startup';
 
 import { directoryExists } from '@/adapters/library/directory-exists';
@@ -14,6 +14,7 @@ import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
 import { GithubReleaseFeed } from '@/adapters/releases/github-release-feed';
 import { FsAppSettingsStore } from '@/adapters/settings/fs-app-settings-store';
+import { FsWindowStateStore } from '@/adapters/settings/fs-window-state-store';
 import { FsSettingsStore } from '@/adapters/settings/fs-settings-store';
 import { AppSettingsWorkflow } from '@/application/workflows/app-settings';
 import { PreferencesWorkflow } from '@/application/workflows/preferences';
@@ -23,6 +24,7 @@ import { registerRendererScheme, serveRenderer } from './app-protocol';
 import { createMainContext } from './context';
 import { settleEarlierFolders } from './processing-status';
 import { cleanUpBeforeQuit } from './quit-cleanup';
+import { WindowStateKeeper, windowPositionsAreKnown } from './window-state';
 import { askToLeave, LeavingGuard } from './leaving';
 import { installLog, logFolder } from './log';
 import { registerArtifactHandlers } from './ipc/artifacts';
@@ -33,6 +35,7 @@ import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { dialogWords } from './ipc/dialog-words';
 import { registerPendingHandlers } from './ipc/pending';
+import { registerPendingCleanupHandlers } from './ipc/pending-cleanup';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
@@ -67,6 +70,8 @@ const leaving = new LeavingGuard(
 );
 const oneDay = 24 * 60 * 60 * 1000;
 let cleanupStarted = false;
+// The size and place of the window, kept between sessions (ADR 0062); built when the app is ready.
+let windowState: WindowStateKeeper | undefined;
 
 void app.whenReady().then(async () => {
   if (!holdsTheLock) return;
@@ -155,12 +160,29 @@ void app.whenReady().then(async () => {
   registerMetadataHandlers(context);
   registerArtifactHandlers(context);
   registerPendingHandlers(context);
+  registerPendingCleanupHandlers(context);
   registerOpdsHandlers(context);
 
   serveRenderer();
-  createMainWindow(leaving);
+  const keeper = new WindowStateKeeper(
+    new FsWindowStateStore(path.join(app.getPath('userData'), 'window-state.json')),
+    () => {
+      // The main display first, since a window that cannot be placed goes there.
+      const main = screen.getPrimaryDisplay();
+      return [main, ...screen.getAllDisplays().filter((display) => display.id !== main.id)].map(
+        (display) => display.workArea,
+      );
+    },
+    windowPositionsAreKnown(process.platform, process.env),
+    (message, cause) => {
+      console.error(message, cause);
+    },
+  );
+  windowState = keeper;
+  await keeper.restore();
+  createMainWindow(leaving, keeper);
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow(leaving);
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow(leaving, keeper);
   });
 });
 
@@ -189,6 +211,8 @@ app.on('before-quit', (event) => {
         context.appSettings === undefined ? undefined : () => context.appSettings!.settled(),
       pruneCompleted:
         context.pendingRuns === undefined ? undefined : () => context.pendingRuns!.pruneCompleted(),
+      // The window as it is now, since the quit may go on before its own last move is written.
+      settleWindowState: windowState === undefined ? undefined : () => windowState!.flush(),
       settleLog: context.log === undefined ? undefined : () => context.log!.settled(),
     },
     () => {

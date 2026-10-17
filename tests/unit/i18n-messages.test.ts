@@ -41,6 +41,20 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.pending.confirmDeletion': [['Vol.01']],
   'queue.pending.question': [[1], [2]],
   'processing.earlier.books': [[1], [2]],
+  'processing.waiting.summary': [
+    [1, 1, '480 MB'],
+    [5, 2, '1.2 GB'],
+  ],
+  'processing.waiting.days': [[7], [30], [90]],
+  'processing.waiting.nothingIdle': [[30]],
+  'processing.waiting.question': [
+    [1, 1, '480 MB', 30],
+    [2, 3, '1.2 GB', 90],
+  ],
+  'processing.waiting.deleted': [
+    [1, '480 MB'],
+    [2, '1.2 GB'],
+  ],
   'mapping.editor.origin.suggestedBy': [['MangaDex']],
   'mapping.editor.title': [[''], ['Chainsaw Man']],
   'mapping.editor.start.createVolume': [['1']],

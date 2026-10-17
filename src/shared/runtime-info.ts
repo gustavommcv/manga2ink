@@ -8,6 +8,8 @@ import type {
 } from './app-settings-contract';
 import type { NetworkInterfaceOption, OpdsAuthConfig, OpdsSharingStatus } from './opds-contract';
 import type { OpenAppFolderCommand } from './app-folders-contract';
+import type { WaitingBooks } from '@/domain/pending-cleanup';
+import type { IdleDaysCommand } from './pending-cleanup-contract';
 import type { ProcessingFolderStatus } from './processing-folder-contract';
 import type { OpenProjectLinkCommand } from './project-links-contract';
 import type { RestoredSettings, SaveSettingsCommand } from './settings-contract';
@@ -70,6 +72,10 @@ export interface MangaboundBridge {
   readonly createPendingRun: () => Promise<WorkflowResult<string>>;
   readonly listPendingRuns: () => Promise<WorkflowResult<readonly PendingRunSummary[]>>;
   readonly discardPendingRun: (libraryId: string) => Promise<WorkflowResult<undefined>>;
+  /** How much waits in conversions untouched for that many days, which a clean-up would delete (ADR 0061). */
+  readonly countIdlePending: (command: IdleDaysCommand) => Promise<WorkflowResult<WaitingBooks>>;
+  /** Deletes the conversions untouched for that many days, apart from any in use; says what went. */
+  readonly deleteIdlePending: (command: IdleDaysCommand) => Promise<WorkflowResult<WaitingBooks>>;
   readonly saveArtifactAs: (
     artifactId: string,
   ) => Promise<WorkflowResult<{ saved: boolean; warning?: AnyMessage }>>;

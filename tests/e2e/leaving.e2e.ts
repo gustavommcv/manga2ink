@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import { $, $$, browser } from '@wdio/globals';
 
-import { resetQueue } from './support';
+import { recordProgress, reportedProgress, resetQueue } from './support';
 
 const temporaryDirectories: string[] = [];
 
@@ -55,9 +55,15 @@ describe('packaged window closed during a conversion', () => {
       timeout: 120_000,
       timeoutMsg: 'The folders were not all read.',
     });
+    await recordProgress();
     await $(`button=Process ${String(folders.length)} items`).click();
 
-    // The window is asked to close while the books are being made.
+    // The window is asked to close while the books are being made: once the first item has begun,
+    // not before, or the question would be asked of a run that has not started a conversion yet.
+    await browser.waitUntil(async () => (await reportedProgress()).length > 0, {
+      timeout: 120_000,
+      timeoutMsg: 'The conversion did not begin.',
+    });
     await browser.electron.execute((electron) => {
       electron.BrowserWindow.getAllWindows()[0]?.close();
     });

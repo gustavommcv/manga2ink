@@ -52,6 +52,26 @@ export function discardRefusal(state: {
   return undefined;
 }
 
+/**
+ * Lets go of what the window was given for a run that is gone: the folder it was asked to read from
+ * and the ids of its books, so that nothing the page still holds can reach it.
+ */
+export function forgetPendingRun(
+  maps: {
+    readonly selectedLibraries: Map<string, string>;
+    readonly pendingArtifacts: Map<string, PendingReference>;
+    readonly artifactPaths: Map<string, string>;
+  },
+  runId: string,
+): void {
+  maps.selectedLibraries.delete(runId);
+  for (const [artifactId, reference] of maps.pendingArtifacts) {
+    if (reference.runId !== runId) continue;
+    maps.pendingArtifacts.delete(artifactId);
+    maps.artifactPaths.delete(artifactId);
+  }
+}
+
 /** The refusal of a destination whose extension is not the one of the book's own format. */
 export function wrongExtension(
   format: BookFormat,

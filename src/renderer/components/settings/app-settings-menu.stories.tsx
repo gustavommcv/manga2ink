@@ -2,6 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import type { Language, LanguagePreference } from '@/domain/app-settings';
+import type { WaitingBooks } from '@/domain/pending-cleanup';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { Titlebar } from '@/renderer/components/shell/titlebar';
 import type { AppSettingsBridge } from '@/renderer/hooks/use-app-settings';
@@ -30,6 +31,7 @@ const ownPlaces: ProcessingFolderStatus = {
   pending: '/home/reader/.local/share/mangabound/pending',
   available: true,
   freeBytes: 38 * 1024 ** 3,
+  waiting: { runs: 2, books: 5, bytes: 1.2 * 1024 ** 3 },
   earlier: [],
 };
 const onABigDrive: ProcessingFolderStatus = {
@@ -38,8 +40,11 @@ const onABigDrive: ProcessingFolderStatus = {
   pending: '/mnt/books/Pending',
   available: true,
   freeBytes: 812 * 1024 ** 3,
+  waiting: { runs: 1, books: 3, bytes: 480 * 1024 ** 2 },
   earlier: [{ folder: '/home/reader/.local/share/mangabound/pending', books: 3 }],
 };
+
+const noBooks: WaitingBooks = { runs: 0, books: 0, bytes: 0 };
 
 /** What the app settings were kept as, and what keeping a choice answers. */
 function bridgeFor(
@@ -67,6 +72,8 @@ function bridgeFor(
     getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
+    countIdlePending: () => Promise.resolve({ ok: true, value: noBooks }),
+    deleteIdlePending: () => Promise.resolve({ ok: true, value: noBooks }),
     ...processing,
   };
 }
@@ -417,6 +424,35 @@ export const ProcessingInPortuguese: Story = {
     const panel = within(dialog).getByRole('tabpanel', { name: 'Processamento' });
     await expect(await within(panel).findByText('3 livros')).toBeVisible();
     await expect(within(panel).getByText('Pasta de trabalho')).toBeVisible();
+  },
+};
+
+const idleBooks: WaitingBooks = { runs: 1, books: 3, bytes: 480 * 1024 ** 2 };
+
+/** Books have waited long: the clean-up asks what would go, says it, and deletes only when told to. */
+export const ProcessingCleaningUp: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      getProcessingFolder: () => Promise.resolve({ ok: true, value: onABigDrive }),
+      countIdlePending: () => Promise.resolve({ ok: true, value: idleBooks }),
+      deleteIdlePending: () => Promise.resolve({ ok: true, value: idleBooks }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
+    await expect(await within(panel).findByText(/3 books in 1 conversion/u)).toBeVisible();
+    await userEvent.click(within(panel).getByRole('button', { name: 'Delete…' }));
+
+    const question = await within(panel).findByRole('group');
+    await expect(question).toHaveTextContent('Books that were not saved yet will be lost.');
+    await userEvent.click(within(question).getByRole('button', { name: 'Delete' }));
+    await expect(await within(panel).findByText('Deleted 1 conversion, 480 MB.')).toBeVisible();
   },
 };
 

@@ -1,4 +1,4 @@
-# ADR 0062: The app looks for a newer version when it is asked, and sends a person to the page to download it
+# ADR 0063: The app looks for a newer version when it is asked, and sends a person to the page to download it
 
 - Status: Accepted
 - Date: 2026-10-17

@@ -91,6 +91,8 @@ export function AppSettingsProvider({
       get: () => reaching(bridge.getProcessingFolder),
       choose: () => reaching(bridge.chooseProcessingFolder),
       useDefault: () => reaching(bridge.useDefaultProcessingFolder),
+      countIdle: (days) => reaching(() => bridge.countIdlePending({ days })),
+      deleteIdle: (days) => reaching(() => bridge.deleteIdlePending({ days })),
     }),
     [bridge],
   );

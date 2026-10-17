@@ -36,6 +36,7 @@ const status: ProcessingFolderStatus = {
   pending: path.resolve('big', 'Pending'),
   available: true,
   freeBytes: 1000,
+  waiting: { runs: 0, books: 0, bytes: 0 },
   earlier: [],
 };
 

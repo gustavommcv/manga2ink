@@ -922,7 +922,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             status={sharing.status}
           />
         </ShareMenu>
-        <AppSettingsMenu />
+        <AppSettingsMenu
+          onClose={() => {
+            // What the Processing tab deletes is in the list of ready books.
+            void refreshPendingRuns();
+          }}
+        />
       </Titlebar>
       {/* The line under the bar is this area's top edge: see Titlebar for why it is not the bar's. */}
       <div className="border-border min-h-0 flex-1 overflow-y-auto border-t">

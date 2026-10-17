@@ -82,8 +82,23 @@ describe('what the window is told of where the app works', () => {
       pending: own,
       available: true,
       freeBytes: 5000,
+      waiting: { runs: 0, books: 0, bytes: 0 },
       earlier: [],
     });
+  });
+
+  it('adds up every book that waits, wherever it waits, as conversions, books and bytes', async () => {
+    const { context } = contextFor({
+      choice: { folder: at('big'), earlier: [at('old')] },
+      runs: [
+        run(own, 'a', 2),
+        run(path.join(at('old'), 'Pending'), 'b', 3),
+        run(path.join(at('big'), 'Pending'), 'c', 1),
+      ],
+      there: [at('old')],
+    });
+
+    expect((await processingStatus(context)).waiting).toEqual({ runs: 3, books: 6, bytes: 6 });
   });
 
   it('is the folder that was chosen, with Pending and Scratch in it', async () => {

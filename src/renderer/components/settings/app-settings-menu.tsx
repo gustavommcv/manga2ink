@@ -86,13 +86,20 @@ function AppSettingsContent({ tabs }: { readonly tabs: Tabs }): React.JSX.Elemen
  * screen, so it adds nothing to where the window is and can be opened from anywhere.
  */
 export function AppSettingsMenu({
+  onClose,
   tabs = appSettingsTabs,
 }: {
+  /** Told when the dialog is closed, so that what it may have changed is read again. */
+  readonly onClose?: () => void;
   readonly tabs?: Tabs;
 }): React.JSX.Element {
   const { appSettings: words } = useMessages();
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) onClose?.();
+      }}
+    >
       <DialogTrigger asChild>
         <Button aria-label={words.open} className="size-8" size="icon" variant="outline">
           <Settings />

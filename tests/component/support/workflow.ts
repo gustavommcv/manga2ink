@@ -166,6 +166,8 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
     openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     getWorkingSpace: () => Promise.resolve({ ok: true, value: roomyWorkingSpace }),
+    countIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
+    deleteIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     ...overrides,

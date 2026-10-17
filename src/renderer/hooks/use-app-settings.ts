@@ -19,6 +19,8 @@ export type AppSettingsBridge = Pick<
   | 'checkForUpdates'
   | 'chooseProcessingFolder'
   | 'copyDiagnostics'
+  | 'countIdlePending'
+  | 'deleteIdlePending'
   | 'getProcessingFolder'
   | 'getToolchainStatus'
   | 'loadAppSettings'
