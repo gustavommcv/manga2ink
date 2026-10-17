@@ -69,6 +69,10 @@ export function AppSettingsProvider({
           return false;
         }
       },
+      checkForUpdates: async () => {
+        const answer = await reaching(bridge.checkForUpdates);
+        return answer.ok ? { found: answer.value } : { failed: answer.error.said };
+      },
       copyDiagnostics: async () => saying(() => bridge.copyDiagnostics()),
       openFolder: async (folder) => saying(() => bridge.openAppFolder({ folder })),
       tools: async () => {

@@ -60,6 +60,8 @@ function bridgeFor(
     openProjectLink: opens,
     runtime: { electron: '44.3.0', platform: 'win32', version: '0.1.0-alpha.15' },
     getToolchainStatus: () => Promise.resolve(bundledTools),
+    checkForUpdates: () =>
+      Promise.resolve({ ok: true, value: { status: 'current', version: '0.1.0-alpha.15' } }),
     copyDiagnostics: () => Promise.resolve({ ok: true, value: undefined }),
     openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
@@ -259,7 +261,7 @@ export const WhenAPageCannotBeOpened: Story = {
   },
 };
 
-/** The Updates tab: the app cannot update itself yet, and the choices are drawn and cannot be changed. */
+/** The Updates tab before anything is asked: the check is a button, and the rest is drawn and cannot be changed. */
 export const Updates: Story = {
   play: async ({ canvas, canvasElement }) => {
     await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
@@ -268,8 +270,94 @@ export const Updates: Story = {
     });
     await userEvent.click(within(dialog).getByRole('tab', { name: 'Updates' }));
 
-    await expect(within(dialog).getByRole('status', { name: 'Not available yet' })).toBeVisible();
-    await expect(within(dialog).getByRole('button', { name: 'Check for updates' })).toBeDisabled();
+    await expect(
+      within(dialog).getByRole('status', { name: 'Updates are manual for now' }),
+    ).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Check for updates' })).toBeEnabled();
+  },
+};
+
+const newerVersion: AppSettingsBridge['checkForUpdates'] = () =>
+  Promise.resolve({
+    ok: true,
+    value: {
+      status: 'available',
+      version: '0.1.0-alpha.16',
+      tag: 'v0.1.0-alpha.16',
+      publishedAt: '2026-10-20T10:00:00Z',
+    },
+  });
+
+/** A newer version is out: it is said with its day, and a button opens the page to download it. */
+export const UpdateAvailable: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, { checkForUpdates: newerVersion }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Updates' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Check for updates' }));
+
+    await expect(
+      await within(dialog).findByText(
+        'A new version is available: 0.1.0-alpha.16, published on October 20, 2026.',
+      ),
+    ).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Download the update' })).toBeVisible();
+  },
+};
+
+/** The same, in Brazilian Portuguese, with the date written as the language writes it. */
+export const UpdateAvailableInPortuguese: Story = {
+  parameters: {
+    bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt, undefined, { checkForUpdates: newerVersion }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Configurações do app' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Configurações do app',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Atualizações' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Buscar atualizações' }));
+
+    await expect(
+      await within(dialog).findByText(
+        'Há uma versão nova: 0.1.0-alpha.16, publicada em 20 de outubro de 2026.',
+      ),
+    ).toBeVisible();
+    await expect(
+      within(dialog).getByRole('button', { name: 'Baixar a atualização' }),
+    ).toBeVisible();
+  },
+};
+
+/** GitHub could not be asked: what went wrong is said, and the check can be made again. */
+export const WhenTheCheckFails: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      checkForUpdates: () =>
+        Promise.resolve({
+          ok: false,
+          error: {
+            code: 'network_error',
+            said: message('provider.unreachable', { service: 'GitHub' }),
+          },
+        }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Updates' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Check for updates' }));
+
+    await expect(await within(dialog).findByText('Could not reach GitHub.')).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Check for updates' })).toBeEnabled();
   },
 };
 

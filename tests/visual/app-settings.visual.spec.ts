@@ -39,9 +39,23 @@ test.describe('at the size the window opens at', () => {
   test('the Updates tab of the app settings remains visually consistent', async ({ page }) => {
     await page.goto('/iframe.html?id=settings-app-settings-dialog--updates&viewMode=story');
     const dialog = page.getByRole('dialog', { name: 'App settings' });
-    await expect(dialog.getByRole('status', { name: 'Not available yet' })).toBeVisible();
+    await expect(dialog.getByRole('status', { name: 'Updates are manual for now' })).toBeVisible();
     await page.evaluate(async () => document.fonts.ready);
     await expect(page).toHaveScreenshot('app-settings-updates.png');
+  });
+
+  test('the Updates tab with a new version remains visually consistent, in Portuguese', async ({
+    page,
+  }) => {
+    await page.goto(
+      '/iframe.html?id=settings-app-settings-dialog--update-available-in-portuguese&viewMode=story',
+    );
+    const dialog = page.getByRole('dialog', { name: 'Configurações do app' });
+    await expect(
+      dialog.getByText('Há uma versão nova: 0.1.0-alpha.16, publicada em 20 de outubro de 2026.'),
+    ).toBeVisible();
+    await page.evaluate(async () => document.fonts.ready);
+    await expect(page).toHaveScreenshot('app-settings-update-available-portuguese.png');
   });
 });
 
@@ -56,7 +70,7 @@ test.describe('in a window that is narrow, and in one that is short', () => {
     await expect(
       page
         .getByRole('dialog', { name: 'App settings' })
-        .getByRole('status', { name: 'Not available yet' }),
+        .getByRole('status', { name: 'Updates are manual for now' }),
     ).toBeVisible();
     await page.evaluate(async () => document.fonts.ready);
     await expect(page).toHaveScreenshot('app-settings-narrow.png');

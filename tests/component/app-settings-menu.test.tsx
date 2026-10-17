@@ -261,7 +261,7 @@ describe('the tabs of the dialog', () => {
     expect(screen.getByRole('tab', { name: 'About' })).toHaveFocus();
     await user.keyboard('{ArrowLeft}');
     expect(screen.getByRole('tab', { name: 'Updates' })).toHaveFocus();
-    expect(screen.getByRole('tabpanel')).toHaveTextContent('Not available yet');
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Updates are manual for now');
   });
 
   it('leaves the other keys alone, and keeps one tab in the order of Tab', async () => {

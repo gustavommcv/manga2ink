@@ -1,9 +1,13 @@
 import { createContext, useContext } from 'react';
 
 import type { AnyMessage } from '@/domain/message';
+import type { UpdateCheck } from '@/domain/update-check';
 import type { AppFolder } from '@/shared/app-folders-contract';
 import type { ProjectLink } from '@/shared/project-links-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
+
+/** What a check for a newer version came to: what it found, or what to say it could not. */
+export type UpdateCheckOutcome = { readonly found: UpdateCheck } | { readonly failed: AnyMessage };
 
 /** What the app says about itself in the About tab (ADR 0054). */
 export interface AppInfo {
@@ -14,6 +18,8 @@ export interface AppInfo {
    * named, never given as an address.
    */
   readonly openLink: (link: ProjectLink) => Promise<boolean>;
+  /** Looks for a version newer than the one that is running, when it is called (ADR 0062). */
+  readonly checkForUpdates: () => Promise<UpdateCheckOutcome>;
   /** Puts the diagnostics for a report on the clipboard; what to say if that failed, or nothing. */
   readonly copyDiagnostics: () => Promise<AnyMessage | undefined>;
   /** Opens a folder of the app in the file manager, by name; what to say if that failed, or nothing. */
