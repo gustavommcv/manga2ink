@@ -7,7 +7,7 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## Dispositivo e formato
 
-Escolha o seu modelo em **Device**. Para definir o tamanho das páginas, abra **Advanced conversion options** e preencha **Custom width** e **Custom height**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
+Escolha o seu modelo em **Dispositivo**. Para definir o tamanho das páginas, abra **Opções avançadas de conversão** e preencha **Largura personalizada** e **Altura personalizada**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
 
 | Formato | Quando escolher                                                                                                         |
 | ------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -24,41 +24,41 @@ O que funciona depende do aplicativo de leitura, e não só do dispositivo. O le
 
 Essas dimensões são apenas um exemplo; use o tamanho adequado à sua tela.
 
-## Advanced conversion options
+## Opções avançadas de conversão
 
-**Advanced conversion options** reúne os ajustes do mangapress, agrupados por finalidade: **Reading**, **Double-page spreads**, **Size and borders**, **Cropping**, **Two-page view**, **Color and tone**, **Page images**, **Cover** e **Book metadata**. Comece pelos padrões do seu dispositivo, altere um ajuste de cada vez e confira o livro que sai. Se a arte for cortada, reduza o recorte ou desative-o.
+**Opções avançadas de conversão** reúne os ajustes do mangapress, agrupados por finalidade: **Leitura**, **Páginas duplas**, **Tamanho e bordas**, **Corte**, **Visão de duas páginas**, **Cor e tom**, **Imagens das páginas**, **Capa** e **Metadados do livro**. Comece pelos padrões do seu dispositivo, altere um ajuste de cada vez e confira o livro que sai. Se a arte for cortada, reduza o recorte ou desative-o.
 
 Cada grupo tem uma página própria na [visão geral](../advanced-options/). Lá, a mesma página é convertida com e sem cada opção, e toda opção é listada com a flag de linha de comando que a define.
 
 <TutorialImage
   name="generated/page-layout"
-  alt="Webtoon strips selecionado em Reading, com a ordem de leitura de mangá e os controles de páginas duplas desabilitados e seus motivos visíveis."
-  caption="Com Webtoon strips, a ordem de leitura de mangá e os controles de páginas largas não se aplicam. Para páginas comuns de mangá, mantenha Manga or comic pages."
+  alt="Tiras de webtoon selecionado em Leitura, com a ordem de leitura de mangá e os controles de páginas duplas desabilitados e seus motivos visíveis."
+  caption="Com Tiras de webtoon, a ordem de leitura de mangá e os controles de páginas largas não se aplicam. Para páginas comuns de mangá, mantenha Páginas de mangá ou quadrinhos."
 />
 
-Algumas opções só importam depois de outra. Por exemplo, as páginas mantidas em cor continuam em JPEG mesmo quando **Page format** é PNG, até que **Color pages as PNG too** seja ligada. Os controles abaixo mostram isso, e a página [Imagens das páginas](../advanced-options/page-images/) mede o que cada escolha custa.
+Algumas opções só importam depois de outra. Por exemplo, as páginas mantidas em cor continuam em JPEG mesmo quando **Formato da página** é PNG, até que **Páginas coloridas também em PNG** seja ligada. Os controles abaixo mostram isso, e a página [Imagens das páginas](../advanced-options/page-images/) mede o que cada escolha custa.
 
 <TutorialImage
   name="generated/page-images"
   alt="Controles de cor e formato de imagem para um dispositivo colorido, com páginas em tons de cinza em PNG e qualidade JPEG disponível para as páginas mantidas em cor."
-  caption="Neste exemplo, as páginas coloridas continuam em JPEG. Color pages as PNG too também as salva em PNG."
+  caption="Neste exemplo, as páginas coloridas continuam em JPEG. Páginas coloridas também em PNG também as salva em PNG."
 />
 
-Duas opções ficam ao lado do dispositivo. **Use the images as they are** empacota as páginas sem tocar nelas ([Imagens das páginas](../advanced-options/page-images/#use-the-images-as-they-are)). **Name the book .epub** evita que o EPUB de um Kobo se chame `.kepub.epub` ([Metadados do livro](../advanced-options/book-metadata/#name-the-book-epub)).
+Duas opções ficam ao lado do dispositivo. **Usar as imagens como estão** empacota as páginas sem tocar nelas ([Imagens das páginas](../advanced-options/page-images/#usar-as-imagens-como-estão)). **Nomear o livro como .epub** evita que o EPUB de um Kobo se chame `.kepub.epub` ([Metadados do livro](../advanced-options/book-metadata/#nomear-o-livro-como-epub)).
 
-Uma opção que outra escolha torna inútil continua visível, esmaecida, e diz o motivo. Por exemplo, **Webtoon strips** trava as opções que um webtoon nunca usa ([Leitura](../advanced-options/reading/#o-que-mais-muda-com-ela) as lista). O que você tinha escolhido volta quando você retorna às páginas.
+Uma opção que outra escolha torna inútil continua visível, esmaecida, e diz o motivo. Por exemplo, **Tiras de webtoon** trava as opções que um webtoon nunca usa ([Leitura](../advanced-options/reading/#o-que-mais-muda-com-ela) as lista). O que você tinha escolhido volta quando você retorna às páginas.
 
-Você pode restaurar um campo alterado sozinho, ou todos de uma vez com **Reset to defaults**. As suas opções são lembradas entre sessões.
+Você pode restaurar um campo alterado sozinho, ou todos de uma vez com **Restaurar padrões**. As suas opções são lembradas entre sessões.
 
 ## Um livro para a série
 
-Ative **Create one book for the series** na fila para reunir os capítulos e volumes dela em um único livro. No índice, os capítulos ficam dentro dos seus volumes.
+Ative **Criar um livro para a série** na fila para reunir os capítulos e volumes dela em um único livro. No índice, os capítulos ficam dentro dos seus volumes.
 
 Esse modo usa EPUB e mantém as duas etapas ligadas. Desative-o para mudar o formato ou as etapas. Um livro combinado grande pode demorar mais para abrir no e-reader.
 
 <TutorialImage
   name="generated/single-book"
-  alt="Create one book for the series ativado, com as etapas e o formato EPUB bloqueados."
+  alt="Criar um livro para a série ativado, com as etapas e o formato EPUB bloqueados."
 />
 
 A ferramenta de linha de comando tem padrões próprios, que não são os do aplicativo. Para uso no terminal, veja [mangapress](../../cli/mangapress/).

@@ -5,12 +5,12 @@ description: 'O que acontece quando o Mangabound processa um mangá: montagem do
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
 
-Após **Process**, o Mangabound executa as etapas escolhidas:
+Após **Processar**, o Mangabound executa as etapas escolhidas:
 
-1. **Building volume files**: o mangabind junta os capítulos de cada volume e escreve um CBZ intermediário para ele. Você pode acompanhar a contagem de capítulos e páginas enquanto os volumes são gerados.
-2. **Converting**: o mangapress processa as páginas e escreve o formato que você escolheu. Vários volumes podem rodar ao mesmo tempo, então use **Show details** para ver o estado de cada um.
+1. **Montando os arquivos de volume**: o mangabind junta os capítulos de cada volume e escreve um CBZ intermediário para ele. Você pode acompanhar a contagem de capítulos e páginas enquanto os volumes são gerados.
+2. **Convertendo**: o mangapress processa as páginas e escreve o formato que você escolheu. Vários volumes podem rodar ao mesmo tempo, então use **Mostrar detalhes** para ver o estado de cada um.
 
-A barra geral acompanha toda a execução. Em **Show details**, **Saving** indica que um livro está sendo empacotado ou gravado. A barra dele fica abaixo de 100% até essa etapa terminar, mesmo que todas as páginas já tenham sido processadas.
+A barra geral acompanha toda a execução. Em **Mostrar detalhes**, **Salvando** indica que um livro está sendo empacotado ou gravado. A barra dele fica abaixo de 100% até essa etapa terminar, mesmo que todas as páginas já tenham sido processadas.
 
 <TutorialImage
   name="generated/processing-details"
@@ -19,7 +19,7 @@ A barra geral acompanha toda a execução. Em **Show details**, **Saving** indic
 
 ## Cancelamento e falhas
 
-Use **Cancel** para interromper a execução. Espere o aplicativo terminar de parar antes de começar de novo. Cancelar não remove o seu mangá original.
+Use **Cancelar conversão** para interromper a execução. Espere o aplicativo terminar de parar antes de começar de novo. Cancelar não remove o seu mangá original.
 
 Se um item falhar ou for ignorado, leia a mensagem dele nos resultados. Quando **Fix** for oferecido, use-o para corrigir capítulos sem volume. Em erros de gravação, confira o espaço livre e as permissões do destino. Uma falha da fonte online não impede você de organizar à mão.
 

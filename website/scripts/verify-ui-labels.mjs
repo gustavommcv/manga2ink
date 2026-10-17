@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { languages } from '../site.config.mjs';
-import { missingLabels } from './ui-labels.mjs';
+import { interfaceTextFor, missingLabels } from './ui-labels.mjs';
 
 /** The guides of the app itself. The other pages speak of other programs' menus, or of code. */
 const guides = ['user-guide', 'getting-started/quickstart.mdx'];
@@ -18,6 +18,9 @@ const allowed = new Map([
   ['Create volume 1', 'the label is "Create volume {number}"'],
   ['Process N items', 'the label counts the items in the queue'],
   ['Use pt-BR', 'the label is "Use {language}"'],
+  ['Usar pt-BR', 'the label is "Usar {language}"'],
+  ['Criar o volume 1', 'the label is "Criar o volume {number}"'],
+  ['Processar N itens', 'the label counts the items in the queue'],
   // Emphasis on a column or a value of a table, or on a part of the page of options.
   ['The captions', 'emphasis on a part of the options page'],
   ['The tables of values', 'emphasis on a part of the options page'],
@@ -34,8 +37,8 @@ const allowed = new Map([
   ['todas', 'emphasis on a word of the mapping editor page'],
   ['Uma capa sua é guardada num CBZ', 'emphasis on a sentence of the cover page'],
   ['Um PDF nunca recebe capa', 'emphasis on a sentence of the cover page'],
-  ['On, com Manga reading order desligada', 'a value of a table'],
-  ['On, com Crop the cover to fill the screen', 'a value of a table'],
+  ['On, com Ordem de leitura de mangá desligada', 'a value of a table'],
+  ['On, com Cortar a capa para preencher a tela', 'a value of a table'],
   ['240 − 64 × potência', 'a formula'],
   ['As páginas', 'emphasis on a part of the options page'],
   ['A conversão', 'emphasis on a part of the options page'],
@@ -58,31 +61,41 @@ function filesIn(directory) {
     .map((entry) => path.join(entry.parentPath, entry.name));
 }
 
-const interfaceText = sourceFolders
+const sources = sourceFolders
   .flatMap((folder) => filesIn(path.join(root, folder)))
   .filter((file) => /\.tsx?$/u.test(file) && !/\.(stories|test)\.tsx?$/u.test(file))
-  .map((file) => readFileSync(file, 'utf8'))
-  .join('\n');
+  .map((file) => readFileSync(file, 'utf8'));
+const tags = languages.map(({ lang }) => lang);
+// What the interface says in each language of the guide, read once.
+const interfaceTexts = new Map(
+  languages.map(({ id, lang }) => [id, interfaceTextFor(lang, sources, tags)]),
+);
 
 const docs = path.resolve(import.meta.dirname, '..', 'src', 'content', 'docs');
-// The guides of every language name the controls as the interface does, in English: a language has them
-// once it has translated them, and the pages it leaves in English are the English ones, already checked.
-const pages = languages.flatMap(({ directory }) =>
+// The guide of a language names the controls as the interface does in that language: Portuguese by
+// the words of the app in Portuguese, and a language the app does not have yet (Japanese) by the
+// English ones, which is what the app says until it is translated. A page a language leaves in
+// English is the English one, already checked.
+const pages = languages.flatMap(({ id, directory }) =>
   guides.flatMap((guide) => {
     const target = path.join(docs, directory, guide);
     if (!existsSync(target)) return [];
-    return /\.mdx$/u.test(guide)
-      ? [target]
-      : filesIn(target).filter((file) => /\.mdx$/u.test(file));
+    return (
+      /\.mdx$/u.test(guide) ? [target] : filesIn(target).filter((file) => /\.mdx$/u.test(file))
+    ).map((file) => ({ file, id }));
   }),
 );
 
 let problems = 0;
-for (const page of pages) {
-  const missing = missingLabels(readFileSync(page, 'utf8'), interfaceText, new Set(allowed.keys()));
+for (const { file, id } of pages) {
+  const missing = missingLabels(
+    readFileSync(file, 'utf8'),
+    interfaceTexts.get(id) ?? '',
+    new Set(allowed.keys()),
+  );
   for (const phrase of missing) {
     problems += 1;
-    console.error(`${path.relative(docs, page)}: "${phrase}" is not a name in the interface.`);
+    console.error(`${path.relative(docs, file)}: "${phrase}" is not a name in the interface.`);
   }
 }
 console.log(

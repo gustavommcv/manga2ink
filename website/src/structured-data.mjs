@@ -1,9 +1,11 @@
+import { appLanguages } from '../site.config.mjs';
+
 const application = {
   '@type': 'SoftwareApplication',
   name: 'Mangabound',
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Windows, macOS, Linux',
-  inLanguage: 'en',
+  inLanguage: appLanguages,
   downloadUrl: 'https://github.com/gustavommcv/mangabound/releases',
   license: 'https://opensource.org/license/mit',
   isAccessibleForFree: true,

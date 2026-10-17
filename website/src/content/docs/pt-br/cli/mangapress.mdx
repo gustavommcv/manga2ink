@@ -31,11 +31,11 @@ Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profil
 Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
 ```
 
-Um tamanho personalizado também muda o nome do EPUB de um Kobo: veja [Metadados do livro](../../user-guide/advanced-options/book-metadata/#name-the-book-epub).
+Um tamanho personalizado também muda o nome do EPUB de um Kobo: veja [Metadados do livro](../../user-guide/advanced-options/book-metadata/#nomear-o-livro-como-epub).
 
 `--format FORMATO`, ou `-f`, é `epub`, `cbz`, `pdf` ou `auto`, que é o padrão. `auto` escolhe CBZ para um Kindle, PDF para um reMarkable e EPUB para os outros dispositivos: `-p KPW6` e `-p K11` dão um CBZ, `-p KoLC` um EPUB e `-p Rmk2` um PDF. O livro recebe o nome da entrada com a extensão do formato, e um arquivo que já existe nunca é sobrescrito: o livro ganha outro nome, e o relatório diz qual.
 
-No Mangabound, isso são **Device**, **Book format**, **Custom width** e **Custom height** nas [Configurações de conversão](../../user-guide/output-profiles/). O app sempre nomeia o formato; ele não usa `auto`.
+No Mangabound, isso são **Dispositivo**, **Formato do livro**, **Largura personalizada** e **Altura personalizada** nas [Configurações de conversão](../../user-guide/output-profiles/). O app sempre nomeia o formato; ele não usa `auto`.
 
 ## Prévia de uma conversão
 
@@ -59,7 +59,7 @@ Os avisos são os mesmos que uma execução de verdade imprime, então a prévia
 
 ## Saída mais enxuta
 
-`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Mangabound isso é **Quiet mode**, em **Tool behavior**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
+`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Mangabound isso é **Modo silencioso**, em **Comportamento das ferramentas**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
 
 ## Outras opções
 

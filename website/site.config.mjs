@@ -13,6 +13,13 @@ export const languages = [
 ];
 
 /**
+ * The languages the application itself is in, as the structured data of the home pages says them. The
+ * guide has a language the app does not have yet (Japanese), so this is not the list above; a test of the
+ * app says when it differs from the app's own list (`languages` of `src/domain/app-settings.ts`).
+ */
+export const appLanguages = ['en', 'pt-BR'];
+
+/**
  * The code Google Search Console gives for the "HTML tag" verification method: only the value of
  * the tag's `content` attribute. Empty until the owner supplies the value; see SEO.md.
  */
