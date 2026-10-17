@@ -161,7 +161,7 @@ export interface MangaboundBridge {
   readonly openProjectLink: (command: OpenProjectLinkCommand) => Promise<WorkflowResult<undefined>>;
   /**
    * Looks for a version newer than the one that is running, in the list of releases that GitHub has
-   * (ADR 0062). Only when it is called: nothing looks for one by itself.
+   * (ADR 0063). Only when it is called: nothing looks for one by itself.
    */
   readonly checkForUpdates: () => Promise<WorkflowResult<UpdateCheck>>;
   /** Puts the diagnostics for a report of a problem on the clipboard (ADR 0057). */

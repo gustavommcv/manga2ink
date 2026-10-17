@@ -2,7 +2,7 @@ import type { ReleaseFeedPort } from '@/application/ports/release-feed';
 import { chooseUpdate, type UpdateCheck } from '@/domain/update-check';
 
 /**
- * Looks for a version newer than the one that is running, when a person asks (ADR 0062). It only
+ * Looks for a version newer than the one that is running, when a person asks (ADR 0063). It only
  * reads the list of releases; telling the person where to get a new one is the window's, and
  * installing it is not done.
  */

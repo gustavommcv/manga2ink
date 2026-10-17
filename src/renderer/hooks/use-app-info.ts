@@ -18,7 +18,7 @@ export interface AppInfo {
    * named, never given as an address.
    */
   readonly openLink: (link: ProjectLink) => Promise<boolean>;
-  /** Looks for a version newer than the one that is running, when it is called (ADR 0062). */
+  /** Looks for a version newer than the one that is running, when it is called (ADR 0063). */
   readonly checkForUpdates: () => Promise<UpdateCheckOutcome>;
   /** Puts the diagnostics for a report on the clipboard; what to say if that failed, or nothing. */
   readonly copyDiagnostics: () => Promise<AnyMessage | undefined>;

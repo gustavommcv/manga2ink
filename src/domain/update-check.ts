@@ -1,5 +1,5 @@
 /**
- * Whether a version newer than the one that is running has been published (ADR 0062). A version is
+ * Whether a version newer than the one that is running has been published (ADR 0063). A version is
  * a semantic version as the releases write it, with a `v` in the tag (`v0.1.0-alpha.15`), and an
  * alpha is before the version it leads to and after the alpha before it, so that
  * `0.1.0-alpha.9 < 0.1.0-alpha.10 < 0.1.0`.

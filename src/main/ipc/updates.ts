@@ -8,7 +8,7 @@ import { handle, ignoredPayloadSchema } from './handle';
 import { ok } from './result';
 
 /**
- * Looking for a newer version, when the window asks (ADR 0062). It is asked on a click, never at
+ * Looking for a newer version, when the window asks (ADR 0063). It is asked on a click, never at
  * launch and never on a timer; the version that is running is the main process's to say, and a
  * failure to reach GitHub is told to the window as the failure of an online source is.
  */

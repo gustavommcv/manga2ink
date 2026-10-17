@@ -11,7 +11,7 @@ const serviceName = 'GitHub';
 /**
  * The list of the releases of the app, newest created first, as GitHub gives it to anyone: no
  * account, no token, and nothing about the person or the computer is sent but what any request
- * carries (ADR 0062). A page of thirty is far more than a check needs: a release newer than the one
+ * carries (ADR 0063). A page of thirty is far more than a check needs: a release newer than the one
  * that runs is among the latest.
  */
 export const releasesAddress =

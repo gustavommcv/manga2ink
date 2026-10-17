@@ -16,7 +16,7 @@ type Check =
   | { readonly phase: 'done'; readonly outcome: UpdateCheckOutcome };
 
 /**
- * What a person can do about keeping the app up to date (ADR 0062). The check is a button: it asks
+ * What a person can do about keeping the app up to date (ADR 0063). The check is a button: it asks
  * GitHub which versions exist when it is clicked, says whether a newer one is out, and, when one
  * is, opens the page where it is downloaded, in the browser of the system. The app does not
  * install it: nothing is looked for by itself, and the choices that would belong to that (checking
