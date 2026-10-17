@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
 
 import { base } from '../../site.config.mjs';
-import { openFullSizeImage } from '../support/tutorial-images.mjs';
+import { captureOn, openFullSizeImage } from '../support/tutorial-images.mjs';
 
 const root = base.replace(/\/?$/, '/');
 test.use({ deviceScaleFactor: 2 });
@@ -65,7 +65,7 @@ test('screen captures retain background space around their content', async () =>
     'save-results',
     'processing-details',
     'book-warnings',
-  ]) {
+  ].flatMap((captured) => [captured, `pt-br/${captured}`])) {
     const capture = manifest.captures.find((entry) => entry.name === name);
     for (const variant of capture.variants) {
       const image = sharp(
@@ -155,68 +155,72 @@ for (const colorScheme of ['light', 'dark']) {
   });
 }
 
-test('published tutorial images and their full-size links retain the source pixels', async ({
-  page,
-}) => {
-  const manifest = JSON.parse(
-    await readFile(
-      new URL('../../src/assets/tutorial/generated/capture.json', import.meta.url),
-      'utf8',
-    ),
-  );
-  for (const [route, name] of [
-    ['user-guide/adding-manga/', 'generated/book-details'],
-    ['user-guide/adding-manga/', 'generated/book-covers'],
-    ['user-guide/output-profiles/', 'generated/page-layout'],
-    ['user-guide/output-profiles/', 'generated/page-images'],
-    ['user-guide/exporting/', 'generated/book-warnings'],
-    ['user-guide/processing/', 'generated/processing-details'],
-    ['koreader/connecting/', 'koreader/opds-setup'],
-    ['koreader/recommended-settings/', 'koreader/status-overlap'],
-  ]) {
-    await page.goto(`${root}${route}`);
-    if (name === 'koreader/opds-setup') {
-      await page.locator('.sl-markdown-content details summary').click();
+for (const locale of ['', 'pt-br/']) {
+  test(`published tutorial images and their full-size links retain the source pixels: ${locale || 'en'}`, async ({
+    page,
+  }) => {
+    const manifest = JSON.parse(
+      await readFile(
+        new URL('../../src/assets/tutorial/generated/capture.json', import.meta.url),
+        'utf8',
+      ),
+    );
+    for (const [route, authored] of [
+      ['user-guide/adding-manga/', 'generated/book-details'],
+      ['user-guide/adding-manga/', 'generated/book-covers'],
+      ['user-guide/output-profiles/', 'generated/page-layout'],
+      ['user-guide/output-profiles/', 'generated/page-images'],
+      ['user-guide/exporting/', 'generated/book-warnings'],
+      ['user-guide/processing/', 'generated/processing-details'],
+      ['koreader/connecting/', 'koreader/opds-setup'],
+      ['koreader/recommended-settings/', 'koreader/status-overlap'],
+    ]) {
+      // The page of a language shows the picture of the app in that language.
+      const name = captureOn(locale, authored);
+      await page.goto(`${root}${locale}${route}`);
+      if (name === 'koreader/opds-setup') {
+        await page.locator('.sl-markdown-content details summary').click();
+      }
+      await expectReadableImage(page, name);
+      const figure = page.locator(`[data-tutorial-image="${name}"]`).first();
+      const optimized = await page.request.get(
+        await figure.locator('img').evaluate((element) => element.currentSrc),
+      );
+      const fullSize = await page.request.get(
+        await figure.locator('a').evaluate((element) => element.href),
+      );
+      expect(optimized.ok()).toBe(true);
+      expect(fullSize.ok()).toBe(true);
+      const published = await optimized.body();
+      const { width } = await sharp(published).metadata();
+      const variant = name.startsWith('generated/')
+        ? manifest.captures
+            .find((capture) => `generated/${capture.name}` === name)
+            .variants.find((capture) => capture.width === width)
+        : undefined;
+      const sourceName = variant ? `generated/${variant.file}` : `${name}.png`;
+      const publishedPixels = await sharp(published).ensureAlpha().raw().toBuffer();
+      const sourcePixels = await sharp(
+        await readFile(new URL(`../../src/assets/tutorial/${sourceName}`, import.meta.url)),
+      )
+        .ensureAlpha()
+        .raw()
+        .toBuffer();
+      expect(publishedPixels.equals(sourcePixels)).toBe(true);
+      const fullPixels = await sharp(await fullSize.body())
+        .ensureAlpha()
+        .raw()
+        .toBuffer();
+      const masterPixels = await sharp(
+        await readFile(new URL(`../../src/assets/tutorial/${name}.png`, import.meta.url)),
+      )
+        .ensureAlpha()
+        .raw()
+        .toBuffer();
+      expect(fullPixels.equals(masterPixels)).toBe(true);
     }
-    await expectReadableImage(page, name);
-    const figure = page.locator(`[data-tutorial-image="${name}"]`).first();
-    const optimized = await page.request.get(
-      await figure.locator('img').evaluate((element) => element.currentSrc),
-    );
-    const fullSize = await page.request.get(
-      await figure.locator('a').evaluate((element) => element.href),
-    );
-    expect(optimized.ok()).toBe(true);
-    expect(fullSize.ok()).toBe(true);
-    const published = await optimized.body();
-    const { width } = await sharp(published).metadata();
-    const variant = name.startsWith('generated/')
-      ? manifest.captures
-          .find((capture) => `generated/${capture.name}` === name)
-          .variants.find((capture) => capture.width === width)
-      : undefined;
-    const sourceName = variant ? `generated/${variant.file}` : `${name}.png`;
-    const publishedPixels = await sharp(published).ensureAlpha().raw().toBuffer();
-    const sourcePixels = await sharp(
-      await readFile(new URL(`../../src/assets/tutorial/${sourceName}`, import.meta.url)),
-    )
-      .ensureAlpha()
-      .raw()
-      .toBuffer();
-    expect(publishedPixels.equals(sourcePixels)).toBe(true);
-    const fullPixels = await sharp(await fullSize.body())
-      .ensureAlpha()
-      .raw()
-      .toBuffer();
-    const masterPixels = await sharp(
-      await readFile(new URL(`../../src/assets/tutorial/${name}.png`, import.meta.url)),
-    )
-      .ensureAlpha()
-      .raw()
-      .toBuffer();
-    expect(fullPixels.equals(masterPixels)).toBe(true);
-  }
-});
+  });
+}
 
 for (const locale of ['', 'pt-br/', 'ja/']) {
   for (const colorScheme of ['light', 'dark']) {
@@ -226,14 +230,16 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
       await page.emulateMedia({ colorScheme });
       for (const [route, images, stepImages = []] of applicationPages) {
         await page.goto(`${root}${locale}${route}`);
-        for (const name of images) await expectReadableImage(page, `generated/${name}`);
+        for (const name of images) {
+          await expectReadableImage(page, captureOn(locale, `generated/${name}`));
+        }
         const walkthroughs = await page.locator('.sl-markdown-content details').all();
         expect(walkthroughs).toHaveLength(stepImages.length);
         for (const [index, details] of walkthroughs.entries()) {
           await expect(details).not.toHaveAttribute('open');
           await expect(details.locator('[data-tutorial-image]').last()).toHaveAttribute(
             'data-tutorial-image',
-            `generated/${stepImages[index]}`,
+            captureOn(locale, `generated/${stepImages[index]}`),
           );
           const summary = details.locator('summary');
           await summary.focus();
@@ -382,8 +388,10 @@ for (const density of [1, 2, 3, 4]) {
       });
       let selectedBytes = 0;
       let fullSizeBytes = 0;
-      for (const [route] of applicationPages) {
-        await page.goto(`${root}${route}`);
+      for (const [locale, [route]] of ['', 'pt-br/'].flatMap((folder) =>
+        applicationPages.map((entry) => [folder, entry]),
+      )) {
+        await page.goto(`${root}${locale}${route}`);
         for (const summary of await page.locator('.sl-markdown-content details summary').all())
           await summary.click();
         for (const figure of await page.locator('[data-tutorial-image]').all()) {

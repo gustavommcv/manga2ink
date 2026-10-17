@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
 import { base } from '../../site.config.mjs';
-import { openFullSizeImage } from '../support/tutorial-images.mjs';
+import { captureOn, openFullSizeImage } from '../support/tutorial-images.mjs';
 
 for (const locale of ['', 'pt-br/', 'ja/']) {
   test(`full-size tutorial links open real images during development: ${locale || 'en'}`, async ({
@@ -17,7 +17,7 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
       ['koreader/recommended-settings/', 'koreader/status-overlap'],
     ]) {
       await page.goto(`${base.replace(/\/?$/, '/')}${locale}${route}`);
-      await openFullSizeImage(page, name);
+      await openFullSizeImage(page, captureOn(locale, name));
     }
   });
 }
