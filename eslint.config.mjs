@@ -4,6 +4,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import { moduleBoundaries } from './eslint-rules/module-boundaries.mjs';
+import { noLiteralText } from './eslint-rules/no-literal-text.mjs';
 
 export default tseslint.config(
   {
@@ -72,6 +73,18 @@ export default tseslint.config(
       'react-hooks': reactHooks,
     },
     rules: reactHooks.configs.flat.recommended.rules,
+  },
+  {
+    // ADR 0052: the text of the window is in the catalogs of src/i18n, not in its components. The
+    // stories are examples that are not part of the window, and may write what they show.
+    files: ['src/renderer/**/*.tsx'],
+    ignores: ['**/*.stories.tsx'],
+    plugins: {
+      'window-text': { rules: { 'no-literal-text': noLiteralText } },
+    },
+    rules: {
+      'window-text/no-literal-text': 'error',
+    },
   },
   {
     files: ['tests/**/*.{ts,tsx}'],
