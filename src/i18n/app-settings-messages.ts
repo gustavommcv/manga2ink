@@ -4,6 +4,8 @@ import type { Language } from '@/domain/app-settings';
 export interface AppSettingsMessages {
   /** The name of the gear button. */
   readonly open: string;
+  /** What it shows when the pointer rests on it: its name, and the keys that do the same (ADR 0064). */
+  readonly openTip: (shortcut: string) => string;
   readonly title: string;
   /** What the dialog is for, for a person who cannot see it. */
   readonly description: string;
@@ -30,6 +32,7 @@ export interface AppSettingsMessages {
 export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>> = {
   en: {
     open: 'App settings',
+    openTip: (shortcut) => `App settings (${shortcut})`,
     title: 'App settings',
     description: 'Choices about the app itself. Each change is kept as you make it.',
     close: 'Close app settings',
@@ -48,6 +51,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
   },
   'pt-BR': {
     open: 'Configurações do app',
+    openTip: (shortcut) => `Configurações do app (${shortcut})`,
     title: 'Configurações do app',
     description: 'Escolhas sobre o próprio app. Cada mudança é guardada assim que você a faz.',
     close: 'Fechar as configurações do app',

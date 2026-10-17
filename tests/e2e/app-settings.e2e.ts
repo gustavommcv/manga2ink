@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { $, browser } from '@wdio/globals';
+import { Key } from 'webdriverio';
 
 interface KeptAppSettings {
   readonly version: number;
@@ -154,5 +155,21 @@ describe('packaged app settings', () => {
     assert.deepEqual(sizes[2], sizes[0]);
     assert.ok(sizes[0] !== undefined && sizes[0].width > 0 && sizes[0].top >= 48);
     await browser.keys('Escape');
+  });
+
+  it('opens by the keys of the system, Ctrl+, or Cmd+, on a Mac, and the gear says so', async () => {
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    const gear = $('button[aria-label="App settings"]');
+    assert.equal(
+      await gear.getAttribute('aria-keyshortcuts'),
+      process.platform === 'darwin' ? 'Meta+,' : 'Control+,',
+    );
+
+    // `Key.Ctrl` is Command on a Mac, where the shortcut is Cmd+,.
+    await browser.keys([Key.Ctrl, ',']);
+
+    await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
+    await browser.keys('Escape');
+    await $('[role="dialog"]').waitForExist({ reverse: true, timeout: 30_000 });
   });
 });

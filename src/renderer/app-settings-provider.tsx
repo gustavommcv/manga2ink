@@ -62,6 +62,7 @@ export function AppSettingsProvider({
   const info = useMemo<AppInfo>(
     () => ({
       version: bridge.runtime.version,
+      platform: bridge.runtime.platform,
       openLink: async (link) => {
         try {
           return (await bridge.openProjectLink({ link, language })).ok;

@@ -19,6 +19,7 @@ function messagePaths(value: unknown, path = ''): readonly (readonly [string, un
  * new one cannot be added without being said once in every language.
  */
 const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
+  'appSettings.openTip': [['Ctrl+,'], ['⌘,']],
   'queue.row.editTitlesOf': [['Library']],
   'queue.row.editVolumesFor': [['Series']],
   'queue.row.editDetailsOf': [['Series']],

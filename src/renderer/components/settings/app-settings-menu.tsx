@@ -1,5 +1,5 @@
 import { Settings, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   type AppSettingsTab,
@@ -16,7 +16,9 @@ import {
 } from '@/renderer/components/ui/dialog';
 import { SettingsNav } from '@/renderer/components/settings/app-settings-nav';
 import { panelId, tabId } from '@/renderer/components/ui/tabs';
+import { useAppInfo } from '@/renderer/hooks/use-app-info';
 import { useMessages } from '@/renderer/hooks/use-messages';
+import { settingsShortcut } from '@/renderer/lib/shortcuts';
 
 type Tabs = readonly [AppSettingsTab, ...AppSettingsTab[]];
 
@@ -83,7 +85,8 @@ function AppSettingsContent({ tabs }: { readonly tabs: Tabs }): React.JSX.Elemen
 /**
  * The gear on the title bar, and the dialog it opens (ADR 0052): what a person decides about the
  * app itself, a tab for each thing, in a list beside the panel (ADR 0055). It is a dialog and not a
- * screen, so it adds nothing to where the window is and can be opened from anywhere.
+ * screen, so it adds nothing to where the window is and can be opened from anywhere. The keys that
+ * open it (Ctrl+, or Cmd+,, ADR 0064) work wherever the focus is in the window, and are announced.
  */
 export function AppSettingsMenu({
   onClose,
@@ -94,14 +97,40 @@ export function AppSettingsMenu({
   readonly tabs?: Tabs;
 }): React.JSX.Element {
   const { appSettings: words } = useMessages();
+  const { platform } = useAppInfo();
+  const shortcut = useMemo(() => settingsShortcut(platform), [platform]);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const listen = (event: KeyboardEvent): void => {
+      if (!shortcut.matches(event)) return;
+      event.preventDefault();
+      // Pressed again while it is open, it stays open: it is a way in, not a switch.
+      setOpen(true);
+    };
+    window.addEventListener('keydown', listen);
+    return () => {
+      window.removeEventListener('keydown', listen);
+    };
+  }, [shortcut]);
+
   return (
     <Dialog
-      onOpenChange={(open) => {
-        if (!open) onClose?.();
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) onClose?.();
       }}
+      open={open}
     >
       <DialogTrigger asChild>
-        <Button aria-label={words.open} className="size-8" size="icon" variant="outline">
+        <Button
+          aria-keyshortcuts={shortcut.announced}
+          aria-label={words.open}
+          className="size-8"
+          size="icon"
+          title={words.openTip(shortcut.label)}
+          variant="outline"
+        >
           <Settings />
         </Button>
       </DialogTrigger>

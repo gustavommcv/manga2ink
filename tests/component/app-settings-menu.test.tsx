@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -28,10 +28,14 @@ const twoTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [
 async function renderMenu(
   options: {
     readonly language?: 'en' | 'pt-BR';
+    readonly platform?: NodeJS.Platform;
     readonly tabs?: readonly [AppSettingsTab, ...AppSettingsTab[]];
   } = {},
 ): Promise<void> {
-  const bridge = inertBridge({ loadAppSettings: reading(options.language ?? 'en') });
+  const bridge = inertBridge({
+    loadAppSettings: reading(options.language ?? 'en'),
+    runtime: { electron: '44.3.0', platform: options.platform ?? 'win32', version: '0.1.0' },
+  });
   render(
     <AppSettingsProvider bridge={bridge}>
       <AppSettingsMenu {...(options.tabs === undefined ? {} : { tabs: options.tabs })} />
@@ -291,6 +295,114 @@ describe('the tabs of the dialog', () => {
       'aria-selected',
       'true',
     );
+  });
+});
+
+describe('the keys that open the app settings', () => {
+  it('open the dialog with Ctrl+, on Windows, wherever the focus is in the window', async () => {
+    const user = userEvent.setup();
+    await renderMenu({ platform: 'win32' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.keyboard('{Control>},{/Control}');
+
+    expect(await screen.findByRole('dialog', { name: 'App settings' })).toBeVisible();
+  });
+
+  it('open it with Ctrl+, on Linux, and with Cmd+, on macOS', async () => {
+    const user = userEvent.setup();
+    await renderMenu({ platform: 'linux' });
+    await user.keyboard('{Control>},{/Control}');
+    expect(await screen.findByRole('dialog')).toBeVisible();
+    await user.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    cleanup();
+
+    await renderMenu({ platform: 'darwin' });
+    await user.keyboard('{Meta>},{/Meta}');
+    expect(await screen.findByRole('dialog')).toBeVisible();
+  });
+
+  it('leave it shut when the keys are the wrong ones for the system, or not these at all', async () => {
+    const user = userEvent.setup();
+    await renderMenu({ platform: 'darwin' });
+
+    await user.keyboard('{Control>},{/Control}');
+    await user.keyboard(',');
+    await user.keyboard('{Meta>}a{/Meta}');
+    await user.keyboard('{Meta>}{Shift>},{/Shift}{/Meta}');
+    await user.keyboard('{Meta>}{Alt>},{/Alt}{/Meta}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('do not type the comma, nor do what the page would do with them', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    const typed = vi.fn<(event: KeyboardEvent) => void>();
+    window.addEventListener('keydown', typed);
+
+    await user.keyboard('{Control>},{/Control}');
+
+    const comma = typed.mock.calls.map(([event]) => event).find((event) => event.key === ',');
+    expect(comma?.defaultPrevented).toBe(true);
+    window.removeEventListener('keydown', typed);
+  });
+
+  it('keep the dialog open when they are pressed while it is, and the gear still closes it by Escape', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    await user.keyboard('{Control>},{/Control}');
+    await screen.findByRole('dialog');
+
+    await user.keyboard('{Control>},{/Control}');
+
+    expect(screen.getByRole('dialog')).toBeVisible();
+    await user.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
+  it('are given up when the menu goes, so a page without it does not open a dialog', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+    cleanup();
+
+    await user.keyboard('{Control>},{/Control}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('are announced on the gear, and shown when the pointer rests on it, as the system writes them', async () => {
+    await renderMenu({ platform: 'win32' });
+    let gear = screen.getByRole('button', { name: 'App settings' });
+    expect(gear).toHaveAttribute('aria-keyshortcuts', 'Control+,');
+    expect(gear).toHaveAttribute('title', 'App settings (Ctrl+,)');
+    cleanup();
+
+    await renderMenu({ platform: 'darwin', language: 'pt-BR' });
+    gear = screen.getByRole('button', { name: 'Configurações do app' });
+    expect(gear).toHaveAttribute('aria-keyshortcuts', 'Meta+,');
+    expect(gear).toHaveAttribute('title', 'Configurações do app (⌘,)');
+  });
+
+  it('still open the dialog by a click, and tell when it closes', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: reading('en') })}>
+        <AppSettingsMenu onClose={onClose} />
+      </AppSettingsProvider>,
+    );
+
+    await user.click(await screen.findByRole('button', { name: 'App settings' }));
+    expect(await screen.findByRole('dialog')).toBeVisible();
+    await user.keyboard('{Escape}');
+
+    expect(onClose).toHaveBeenCalledOnce();
   });
 });
 
