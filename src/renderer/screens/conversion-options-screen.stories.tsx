@@ -6,6 +6,7 @@ import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
+import { wordsOf } from '@/renderer/stories/language';
 
 import {
   ConversionOptionsScreen,
@@ -80,10 +81,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, globals }) => {
+    const words = wordsOf(globals);
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('heading', { name: 'Conversion options' })).toHaveFocus();
-    await expect(canvas.getByRole('button', { name: 'Reset to defaults' })).toHaveAttribute(
+    await expect(canvas.getByRole('heading', { name: words.options.page.title })).toHaveFocus();
+    await expect(canvas.getByRole('button', { name: words.settings.reset.button })).toHaveAttribute(
       'aria-disabled',
       'true',
     );

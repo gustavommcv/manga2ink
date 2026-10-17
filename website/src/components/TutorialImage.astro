@@ -17,12 +17,28 @@ interface Props {
   pending?: boolean;
 }
 
-const { name, alt, caption, pending = false } = Astro.props;
-const fullSizeLabel = stringsFor(Astro.locals.starlightRoute).tutorialImage.openFullSize;
+const { name: authoredName, alt, caption, pending = false } = Astro.props;
+const route = Astro.locals.starlightRoute;
+const fullSizeLabel = stringsFor(route).tutorialImage.openFullSize;
 const images = import.meta.glob<ImageMetadata>('../assets/tutorial/**/*.png', {
   eager: true,
   import: 'default',
 });
+// A capture of the app is made in each language the app has, and a page of the guide shows the one
+// in its own language, so a button in the text is named as it is in the picture. A language the app
+// does not have yet, and a page shown in English as a fallback, show the English picture.
+const language = route.isFallback ? 'en' : route.lang;
+const folder = language === 'en' ? '' : `${language.toLowerCase()}/`;
+const authoredCapture = authoredName.startsWith('generated/')
+  ? authoredName.slice('generated/'.length)
+  : undefined;
+const inTheLanguage =
+  authoredCapture !== undefined &&
+  captureManifest.captures.some((entry) => entry.name === `${folder}${authoredCapture}`);
+const name =
+  authoredCapture !== undefined && inTheLanguage
+    ? `generated/${folder}${authoredCapture}`
+    : authoredName;
 const source = images[`../assets/tutorial/${name}.png`];
 if (!source && !pending)
   throw new Error(

@@ -28,3 +28,7 @@ Storybook uses deterministic sample data: it illustrates the UI, not real filesy
 - [Storybook static publishing](https://storybook.js.org/docs/sharing/publish-storybook)
 - [Playwright element screenshots](https://playwright.dev/docs/screenshots)
 - [Astro image support](https://docs.astro.build/en/guides/images/)
+
+## Update 2026-10-17
+
+The app has a second language, and the pictures of the guide follow it: the capture job makes each picture once for every language the app has (English and Brazilian Portuguese), opening the same story with the language global of Storybook, so a button named in the text is named the same in the picture. The scenario reads the labels it checks from the catalogs of the app, not from a copy. A page of the guide shows the picture in its own language; a language the app does not have yet (Japanese) and a page shown in English as a fallback show the English one. The manifest records the language of each capture. Nothing else of this ADR changes: the images are still generated from the source commit and kept out of Git.

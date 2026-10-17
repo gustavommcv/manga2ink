@@ -11,6 +11,7 @@ import { message, raw } from '@/domain/message';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 import { SaidError } from '@/renderer/lib/said-error';
+import { wordsOf } from '@/renderer/stories/language';
 
 /** Keeps what is typed and the source chosen, the way the app does, so the stories work as used. */
 function Stateful(props: BookDetailsScreenProps): React.JSX.Element {
@@ -130,14 +131,13 @@ export const WithCovers: Story = {
       ],
     },
   },
-  play: async ({ canvasElement }) => {
-    const covers = within(
-      within(canvasElement).getByRole('list', { name: 'Books and their covers' }),
-    );
+  play: async ({ canvasElement, globals }) => {
+    const { covers: words } = wordsOf(globals).details;
+    const covers = within(within(canvasElement).getByRole('list', { name: words.list }));
     await expect(covers.getAllByRole('listitem')).toHaveLength(5);
-    await expect(covers.getByText('01.jpg · from a folder')).toBeVisible();
+    await expect(covers.getByText(words.fromFolder('01.jpg'))).toBeVisible();
     await expect(covers.getByText('IMG_2041.jpg')).toBeVisible();
-    await expect(covers.getAllByText('First page')).toHaveLength(2);
+    await expect(covers.getAllByText(words.firstPage)).toHaveLength(2);
   },
 };
 
@@ -237,16 +237,21 @@ export const FindingTheAuthor: Story = {
       ]),
     ),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, globals }) => {
+    const words = wordsOf(globals);
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Find author' }));
-    await userEvent.click(canvas.getByRole('combobox', { name: 'Source' }));
+    await userEvent.click(canvas.getByRole('button', { name: words.details.author.find }));
+    await userEvent.click(canvas.getByRole('combobox', { name: words.mapping.providers.label }));
     await userEvent.click(await canvas.findByRole('option', { name: /MangaDex/u }));
-    await userEvent.click(await canvas.findByRole('button', { name: 'Search' }));
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Use Fujimoto Tatsuki from Chainsaw Man' }),
+      await canvas.findByRole('button', { name: words.mapping.chaptersFrom.online.searchButton }),
     );
-    await expect(canvas.getByLabelText('Author')).toHaveValue('Fujimoto Tatsuki');
+    await userEvent.click(
+      await canvas.findByRole('button', {
+        name: words.details.lookup.useLabel('Fujimoto Tatsuki', 'Chainsaw Man'),
+      }),
+    );
+    await expect(canvas.getByLabelText(words.details.author.label)).toHaveValue('Fujimoto Tatsuki');
   },
 };
 

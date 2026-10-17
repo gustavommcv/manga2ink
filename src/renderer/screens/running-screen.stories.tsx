@@ -4,6 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { message, raw } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { I18nContext } from '@/renderer/hooks/use-messages';
+import { wordsOf } from '@/renderer/stories/language';
 
 import { RunningScreen } from './running-screen';
 
@@ -76,10 +77,11 @@ export const MultipleVolumes: Story = {
       ],
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, globals }) => {
+    const { details } = wordsOf(globals).running;
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Show details' }));
-    await expect(canvas.getByRole('region', { name: 'Volume details' })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: details.show }));
+    await expect(canvas.getByRole('region', { name: details.region })).toBeVisible();
   },
 };
 

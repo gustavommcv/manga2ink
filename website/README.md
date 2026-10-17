@@ -16,7 +16,7 @@ npm run site:check
 npm run site:dev
 ```
 
-Open <http://localhost:4321/mangabound/>. The root `site:media` command generates the app captures; `site:dev`, `site:build`, and `site:check` run it first. The resulting PNGs and `capture.json` are ignored build inputs under `website/src/assets/tutorial/generated/`, not committed media or visual baselines. After changing app UI/stories, rerun `site:media` (the website dev server does not rebuild Storybook). Direct website-package builds/checks require these inputs or the current CI artifact; a missing referenced capture deliberately fails the build.
+Open <http://localhost:4321/mangabound/>. The root `site:media` command generates the app captures, in each language the app has (the guide's pages in Portuguese show the Portuguese ones); `site:dev`, `site:build`, and `site:check` run it first. The resulting PNGs and `capture.json` are ignored build inputs under `website/src/assets/tutorial/generated/`, not committed media or visual baselines. After changing app UI/stories, rerun `site:media` (the website dev server does not rebuild Storybook). Direct website-package builds/checks require these inputs or the current CI artifact; a missing referenced capture deliberately fails the build.
 
 `npm run site:build` generates `website/dist/`; `npm run site:preview` serves that production output, including the Pagefind search index. Search must be tested against a production build, not only the development server.
 
