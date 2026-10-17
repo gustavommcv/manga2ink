@@ -146,29 +146,41 @@ describe('packaged app settings', () => {
     await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
     await $('button[aria-label="App settings"]').click();
     await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
-    await $('[role="tab"]=Processing').click();
-    const panel = $('[role="tabpanel"]');
-    await panel.$(`label=${notify}`).waitForDisplayed({ timeout: 30_000 });
-    assert.equal(await checked(notify), true);
-    assert.equal(await checked(awake), true);
+    try {
+      await $('[role="tab"]=Processing').click();
+      const panel = $('[role="tabpanel"]');
+      await panel.$(`label=${notify}`).waitForDisplayed({ timeout: 30_000 });
+      assert.equal(await checked(notify), true);
+      assert.equal(await checked(awake), true);
 
-    // Turning one off keeps only that one off, in the file the language is in.
-    await panel.$(`label=${notify}`).click();
-    await browser.waitUntil(
-      async () => existsSync(file) && (await readKept(file)).notifyWhenDone === false,
-      { timeout: 30_000, timeoutMsg: 'the app settings file did not get the choice' },
-    );
-    assert.equal((await readKept(file)).keepAwake, true);
-    assert.equal(await checked(notify), false);
-    assert.equal(await checked(awake), true);
+      // Turning one off keeps only that one off, in the file the language is in. The page shows it
+      // once the main process has answered, which is a moment after the file is written.
+      await panel.$(`label=${notify}`).click();
+      await browser.waitUntil(
+        async () => existsSync(file) && (await readKept(file)).notifyWhenDone === false,
+        { timeout: 30_000, timeoutMsg: 'the app settings file did not get the choice' },
+      );
+      assert.equal((await readKept(file)).keepAwake, true);
+      await browser.waitUntil(async () => !(await checked(notify)), {
+        timeout: 30_000,
+        timeoutMsg: 'the choice was kept but the checkbox was not shown unchecked',
+      });
+      assert.equal(await checked(awake), true);
 
-    // And turning it on again puts it back, so the next tests find the app as it began.
-    await panel.$(`label=${notify}`).click();
-    await browser.waitUntil(async () => (await readKept(file)).notifyWhenDone === true, {
-      timeout: 30_000,
-      timeoutMsg: 'the app settings file did not get the choice back',
-    });
-    await browser.keys('Escape');
+      // And turning it on again puts it back, so the next tests find the app as it began.
+      await panel.$(`label=${notify}`).click();
+      await browser.waitUntil(async () => (await readKept(file)).notifyWhenDone === true, {
+        timeout: 30_000,
+        timeoutMsg: 'the app settings file did not get the choice back',
+      });
+      await browser.waitUntil(async () => await checked(notify), {
+        timeout: 30_000,
+        timeoutMsg: 'the choice was put back but the checkbox was not shown checked',
+      });
+    } finally {
+      // Whatever happened, the dialog is put away, so that a failure here is not one in the next test.
+      await browser.keys('Escape');
+    }
   });
 
   it('keeps its size from one tab to the next, and stays under the title bar', async () => {
