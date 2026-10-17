@@ -95,7 +95,8 @@ describe('the order of versions', () => {
   it('is a total order: the reverse says the opposite, and two sides of a third are ordered', () => {
     fc.assert(
       fc.property(version, version, version, (a, b, c) => {
-        expect(order(a, b)).toBe(-order(b, a));
+        // The two are opposites (or both zero): their sum is zero, which also holds for -0 and +0.
+        expect(order(a, b) + order(b, a)).toBe(0);
         expect(order(a, a)).toBe(0);
         if (order(a, b) <= 0 && order(b, c) <= 0) expect(order(a, c)).toBeLessThanOrEqual(0);
       }),
