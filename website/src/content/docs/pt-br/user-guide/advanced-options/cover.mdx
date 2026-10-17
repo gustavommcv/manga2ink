@@ -1,16 +1,16 @@
 ---
-title: 'Capa (Cover)'
-description: 'O que Cut the front cover from a wide image e Crop the cover to fill the screen fazem com a capa de um livro, mostrado numa página e numa imagem larga, e quais formatos têm capa.'
+title: 'Capa'
+description: 'O que Recortar a capa frontal de uma imagem larga e Cortar a capa para preencher a tela fazem com a capa de um livro, mostrado numa página e numa imagem larga, e quais formatos têm capa.'
 ---
 
 import OptionBook from '../../../../../components/OptionBook.astro';
 import OptionExample from '../../../../../components/OptionExample.astro';
 
-A seção **Cover** das [Advanced conversion options](../../output-profiles/#advanced-conversion-options) trata da capa que um leitor mostra na sua biblioteca. Por padrão ela é feita a partir da primeira imagem de cada livro. Tem dois controles: **Cut the front cover from a wide image** e **Crop the cover to fill the screen**. Você também pode dar a um livro uma capa sua, como descrito em [Adicionando mangás](../../adding-manga/#uma-capa-sua).
+A seção **Capa** das [Opções avançadas de conversão](../../output-profiles/#opções-avançadas-de-conversão) trata da capa que um leitor mostra na sua biblioteca. Por padrão ela é feita a partir da primeira imagem de cada livro. Tem dois controles: **Recortar a capa frontal de uma imagem larga** e **Cortar a capa para preencher a tela**. Você também pode dar a um livro uma capa sua, como descrito em [Adicionando mangás](../../adding-manga/#uma-capa-sua).
 
 ## Como a capa é feita
 
-A capa não é uma página. O mangapress a faz a partir da primeira imagem do livro, como ela veio, à parte das páginas: o que quer que aconteça com a primeira página, como as margens cortadas, uma página larga dividida em duas ou uma página girada, a capa é a imagem inteira, em pé. A capa é cinza, a menos que **Color pages** mantenha a cor, nunca é ampliada, só reduzida para caber dentro da tela, e é gravada como JPEG, na qualidade das páginas.
+A capa não é uma página. O mangapress a faz a partir da primeira imagem do livro, como ela veio, à parte das páginas: o que quer que aconteça com a primeira página, como as margens cortadas, uma página larga dividida em duas ou uma página girada, a capa é a imagem inteira, em pé. A capa é cinza, a menos que **Páginas coloridas** mantenha a cor, nunca é ampliada, só reduzida para caber dentro da tela, e é gravada como JPEG, na qualidade das páginas.
 
 As imagens mostram a capa de um EPUB feita com a primeira página de _Pepper&Carrot_, episódio 6, que tem 992 × 1373 pixels, na tela do Kindle Paperwhite 6, de 1272 × 1696. O cinza é a tela em volta da capa.
 
@@ -33,31 +33,31 @@ Um EPUB sempre tem uma. Um CBZ só tem quando a capa da frente foi cortada de um
   id="cover-formats"
   labels={{
     epub: 'EPUB',
-    'epub-fill': 'EPUB, com Crop the cover to fill the screen',
-    'epub-color': 'EPUB, com Color pages: Keep in color',
+    'epub-fill': 'EPUB, com Cortar a capa para preencher a tela',
+    'epub-color': 'EPUB, com Páginas coloridas: Manter em cores',
     cbz: 'CBZ',
-    'cbz-fill': 'CBZ, com Crop the cover to fill the screen',
-    'cbz-smart-page': 'CBZ, com Cut the front cover from a wide image, numa página',
-    'cbz-smart-wide': 'CBZ, com Cut the front cover from a wide image, numa imagem larga',
-    'cbz-smart-fill': 'CBZ, com isso e Crop the cover to fill the screen',
+    'cbz-fill': 'CBZ, com Cortar a capa para preencher a tela',
+    'cbz-smart-page': 'CBZ, com Recortar a capa frontal de uma imagem larga, numa página',
+    'cbz-smart-wide': 'CBZ, com Recortar a capa frontal de uma imagem larga, numa imagem larga',
+    'cbz-smart-fill': 'CBZ, com isso e Cortar a capa para preencher a tela',
     'cbz-own': 'CBZ, com uma capa sua',
-    'cbz-own-fill': 'CBZ, com uma capa sua e Crop the cover to fill the screen',
+    'cbz-own-fill': 'CBZ, com uma capa sua e Cortar a capa para preencher a tela',
     'pdf-own': 'PDF, com uma capa sua',
-    'pdf-smart-wide': 'PDF, com Cut the front cover from a wide image, numa imagem larga',
+    'pdf-smart-wide': 'PDF, com Recortar a capa frontal de uma imagem larga, numa imagem larga',
   }}
 />
 
-- **Um CBZ não faz capa por conta própria.** Sem nada ligado, com **Crop the cover to fill the screen** e com **Cut the front cover from a wide image** numa imagem que não é larga, o CBZ não tem capa, e a primeira página é tudo o que há para mostrar.
+- **Um CBZ não faz capa por conta própria.** Sem nada ligado, com **Cortar a capa para preencher a tela** e com **Recortar a capa frontal de uma imagem larga** numa imagem que não é larga, o CBZ não tem capa, e a primeira página é tudo o que há para mostrar.
 - **Uma capa sua é guardada num CBZ** quaisquer que sejam as opções, e as duas opções valem para ela: as linhas com `--cover` têm os mesmos tamanhos das outras. O app passa `--cover` quando você escolhe uma capa para um livro.
 - **Um PDF nunca recebe capa**, por opção nenhuma nem por uma capa sua: ele guarda uma imagem por página, e nada mais.
 
-## Crop the cover to fill the screen
+## Cortar a capa para preencher a tela
 
 Por padrão a capa é ajustada para caber dentro da tela, com a tela aparecendo em volta quando os formatos diferem, e uma capa pequena não é ampliada. Com a opção ligada, ela é cortada no tamanho exato da tela, e uma capa pequena é ampliada até ele: a primeira página do episódio, de 992 × 1373, vira uma capa de 1272 × 1696 na segunda imagem acima, e a borda que não cabe é cortada. `--coverfill` a liga.
 
 Ela só importa para um livro que tem capa: um EPUB, ou um CBZ com uma capa sua ou uma cortada de uma imagem larga. O app a esmaece para um PDF, e para um CBZ a menos que a capa da frente seja cortada de uma imagem larga. Ele olha só as configurações, não as capas que você escolheu para os livros, então para um CBZ com uma capa sua a opção fica esmaecida embora o mangapress a aplicasse, como mostram as linhas com uma capa sua.
 
-## Cut the front cover from a wide image
+## Recortar a capa frontal de uma imagem larga
 
 Uma primeira imagem que é uma sobrecapa inteira ou uma página dupla tem a capa da frente numa parte dela. Esta opção corta essa parte para a capa, em vez de usar a imagem toda. `--smartcovercrop` a liga.
 
@@ -78,12 +78,12 @@ O exemplo não tem sobrecapa, então uma página dupla faz o papel dela: duas p�
 
 - **Off**, a imagem inteira é a capa: reduzida à largura da tela, já que é mais larga que alta, então 1272 × 848 pixels.
 - **On**, a capa é a página da esquerda, com 1015 × 1440 pixels: 47% da largura da imagem, e a altura toda.
-- **On, com Manga reading order desligada**, é a página da direita. A ordem de leitura diz de que lado da lombada fica a frente: com ela ligada, um livro lido da direita para a esquerda a tem à esquerda.
-- **On, com Crop the cover to fill the screen**, a mesma página é ampliada e cortada para a tela, 1272 × 1696.
+- **On, com Ordem de leitura de mangá desligada**, é a página da direita. A ordem de leitura diz de que lado da lombada fica a frente: com ela ligada, um livro lido da direita para a esquerda a tem à esquerda.
+- **On, com Cortar a capa para preencher a tela**, a mesma página é ampliada e cortada para a tela, 1272 × 1696.
 
 ### Quanto da imagem é tomado
 
-O mangapress decide pelo formato da imagem, em faixas, de uma página dupla simples até uma sobrecapa com orelhas; são as faixas do Kindle Comic Converter, que o mangapress segue. Uma imagem que não é mais larga que alta já é uma capa e fica inteira. A tabela corta uma imagem de cada faixa das mesmas três páginas, com Manga reading order ligada: a largura da capa é a parte da imagem que foi tomada.
+O mangapress decide pelo formato da imagem, em faixas, de uma página dupla simples até uma sobrecapa com orelhas; são as faixas do Kindle Comic Converter, que o mangapress segue. Uma imagem que não é mais larga que alta já é uma capa e fica inteira. A tabela corta uma imagem de cada faixa das mesmas três páginas, com Ordem de leitura de mangá ligada: a largura da capa é a parte da imagem que foi tomada.
 
 <OptionBook
   id="cover-smart-bands"

@@ -3,20 +3,20 @@ title: 'Opções avançadas de conversão'
 description: 'O que as opções avançadas das configurações de conversão do Mangabound fazem com uma página, mostrado em páginas reais convertidas com e sem cada opção.'
 ---
 
-As **Advanced conversion options** das [Configurações de conversão](../output-profiles/) são as configurações do mangapress, o conversor que faz os livros. A maioria muda os pixels de uma página. Estas páginas mostram como: uma página real, convertida duas vezes, com só aquela opção diferente.
+As **Opções avançadas de conversão** das [Configurações de conversão](../output-profiles/) são as configurações do mangapress, o conversor que faz os livros. A maioria muda os pixels de uma página. Estas páginas mostram como: uma página real, convertida duas vezes, com só aquela opção diferente.
 
 ## Uma página para cada grupo de opções
 
-| Página                                                       | O que mostra                                                                                                                      |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| [Leitura (Reading)](reading/)                                | Um capítulo no formato de webtoon convertido como páginas e como tiras, e a direção de leitura que cada formato de livro registra |
-| [Recorte (Cropping)](cropping/)                              | Quanto de uma página é cortado, em pixels, e o que o corte mantém                                                                 |
-| [Cor e tom (Color and tone)](color-and-tone/)                | A mesma página em tons de cinza e em cor, mais clara e mais escura, com os números da mudança                                     |
-| [Páginas duplas (Double-page spreads)](double-page-spreads/) | Uma página dupla cortada, mantida inteira ou das duas formas, em que ordem, e o que a visão de duas páginas grava num EPUB        |
-| [Tamanho e bordas (Size and borders)](size-and-borders/)     | Como uma página é ajustada à tela, ampliada, esticada ou cortada para preencher, e o que a cerca quando não tem o formato dela    |
-| [Imagens das páginas (Page images)](page-images/)            | O arquivo em que cada página é gravada: JPEG ou PNG, quantos cinzas, e o que cada um custa em bytes                               |
-| [Capa (Cover)](cover/)                                       | Como a capa de um livro é feita a partir da primeira imagem, quais formatos têm uma, e a frente de uma imagem larga cortada dela  |
-| [Metadados do livro (Book metadata)](book-metadata/)         | Onde cada formato guarda título, autor e idioma, o que um ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub     |
+| Página                                 | O que mostra                                                                                                                      |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [Leitura](reading/)                    | Um capítulo no formato de webtoon convertido como páginas e como tiras, e a direção de leitura que cada formato de livro registra |
+| [Corte](cropping/)                     | Quanto de uma página é cortado, em pixels, e o que o corte mantém                                                                 |
+| [Cor e tom](color-and-tone/)           | A mesma página em tons de cinza e em cor, mais clara e mais escura, com os números da mudança                                     |
+| [Páginas duplas](double-page-spreads/) | Uma página dupla cortada, mantida inteira ou das duas formas, em que ordem, e o que a visão de duas páginas grava num EPUB        |
+| [Tamanho e bordas](size-and-borders/)  | Como uma página é ajustada à tela, ampliada, esticada ou cortada para preencher, e o que a cerca quando não tem o formato dela    |
+| [Imagens das páginas](page-images/)    | O arquivo em que cada página é gravada: JPEG ou PNG, quantos cinzas, e o que cada um custa em bytes                               |
+| [Capa](cover/)                         | Como a capa de um livro é feita a partir da primeira imagem, quais formatos têm uma, e a frente de uma imagem larga cortada dela  |
+| [Metadados do livro](book-metadata/)   | Onde cada formato guarda título, autor e idioma, o que um ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub     |
 
 ## Todas as opções
 
@@ -24,70 +24,70 @@ Cada opção com o nome que o app usa, as flags que a definem na linha de comand
 
 ### Dispositivo e saída
 
-- [Device, Book format, Custom width e Custom height](../output-profiles/#dispositivo-e-formato): `--profile` (`-p`), `--format` (`-f`), `--customwidth` e `--customheight`. O que as flags fazem, com a saída da própria ferramenta, está no [CLI mangapress](../../cli/mangapress/#escolhendo-o-dispositivo-e-o-formato).
+- [Dispositivo, Formato do livro, Largura personalizada e Altura personalizada](../output-profiles/#dispositivo-e-formato): `--profile` (`-p`), `--format` (`-f`), `--customwidth` e `--customheight`. O que as flags fazem, com a saída da própria ferramenta, está no [CLI mangapress](../../cli/mangapress/#escolhendo-o-dispositivo-e-o-formato).
 
 ### Leitura
 
-- [Content](reading/#content): `--webtoon`, ou `-w`.
-- [Manga reading order](reading/#manga-reading-order): `--manga-style`, ou `-m`. O que ela faz com uma página dupla dividida está em [Páginas duplas](double-page-spreads/#manga-reading-order).
+- [Conteúdo](reading/#conteúdo): `--webtoon`, ou `-w`.
+- [Ordem de leitura de mangá](reading/#ordem-de-leitura-de-mangá): `--manga-style`, ou `-m`. O que ela faz com uma página dupla dividida está em [Páginas duplas](double-page-spreads/#ordem-de-leitura-de-mangá).
 
 ### Páginas duplas
 
-- [Wide pages](double-page-spreads/#wide-pages): `--splitter`, ou `-r`.
-- [Whole spread first](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotatefirst`.
-- [Keep the whole spread upright](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--norotate`.
-- [Rotate clockwise](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotateright`.
-- [Restack 4-panel strips as 2×2](double-page-spreads/#restack-4-panel-strips-as-22): `--maximizestrips`.
-- [Start on the other side](double-page-spreads/#two-page-view): `--spreadshift`.
-- [Invert page turns](double-page-spreads/#two-page-view): `--invertdirection`.
-- [One page in landscape](double-page-spreads/#two-page-view): `--onepagelandscape`.
+- [Páginas largas](double-page-spreads/#páginas-largas): `--splitter`, ou `-r`.
+- [Página dupla inteira primeiro](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotatefirst`.
+- [Manter a página dupla inteira em pé](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--norotate`.
+- [Girar no sentido horário](double-page-spreads/#a-página-dupla-inteira-primeiro-em-pé-ou-no-sentido-horário): `--rotateright`.
+- [Reempilhar tiras de 4 quadros em 2×2](double-page-spreads/#reempilhar-tiras-de-4-quadros-em-22): `--maximizestrips`.
+- [Começar do outro lado](double-page-spreads/#visão-de-duas-páginas): `--spreadshift`.
+- [Inverter a virada de página](double-page-spreads/#visão-de-duas-páginas): `--invertdirection`.
+- [Uma página na horizontal](double-page-spreads/#visão-de-duas-páginas): `--onepagelandscape`.
 
 ### Tamanho e bordas
 
-- [Page size](size-and-borders/#page-size): `--upscale` (`-u`) para **Fit, enlarging small pages**, `--stretch` (`-s`) para **Stretch to the screen**, `--wallpaper` para **Crop to fill the screen**.
-- [Borders](size-and-borders/#borders): `--whiteborders` e `--blackborders`.
+- [Tamanho da página](size-and-borders/#tamanho-da-página): `--upscale` (`-u`) para **Ajustar, ampliando páginas pequenas**, `--stretch` (`-s`) para **Esticar até a tela**, `--wallpaper` para **Cortar para preencher a tela**.
+- [Bordas](size-and-borders/#bordas): `--whiteborders` e `--blackborders`.
 
 ### Recorte
 
-- [Page cropping](cropping/#page-cropping): `--cropping`, ou `-c`.
-- [Cropping power](cropping/#cropping-power): `--croppingpower`.
-- [Minimum retained area](cropping/#minimum-retained-area): `--croppingminimum`.
-- [Preserved margin](cropping/#preserved-margin): `--preservemargin`.
-- [Inter-panel cropping](cropping/#inter-panel-cropping): `--ipc`.
+- [Corte das páginas](cropping/#corte-das-páginas): `--cropping`, ou `-c`.
+- [Intensidade do corte](cropping/#intensidade-do-corte): `--croppingpower`.
+- [Área mínima mantida](cropping/#área-mínima-mantida): `--croppingminimum`.
+- [Margem preservada](cropping/#margem-preservada): `--preservemargin`.
+- [Corte entre quadros](cropping/#corte-entre-quadros): `--ipc`.
 
 ### Cor e tom
 
-- [Color pages](color-and-tone/#color-pages): `--forcecolor`.
-- [Autocontrast](color-and-tone/#autocontrast): `--colorautocontrast` e `--noautocontrast`.
-- [Auto-level black point](color-and-tone/#autocontrast): `--autolevel`.
-- [Gamma](color-and-tone/#gamma): `--gamma`, ou `-g`.
-- [Reduce rainbow effect](color-and-tone/#reduce-rainbow-effect): `--eraserainbow`.
+- [Páginas coloridas](color-and-tone/#páginas-coloridas): `--forcecolor`.
+- [Contraste automático](color-and-tone/#contraste-automático): `--colorautocontrast` e `--noautocontrast`.
+- [Nivelar o ponto preto automaticamente](color-and-tone/#contraste-automático): `--autolevel`.
+- [Gama](color-and-tone/#gama): `--gamma`, ou `-g`.
+- [Reduzir o efeito arco-íris](color-and-tone/#reduzir-o-efeito-arco-íris): `--eraserainbow`.
 
 ### Imagens das páginas
 
-- [Page format](page-images/#page-format): `--forcepng`.
-- [Keep all 256 grays](page-images/#keep-all-256-grays): `--noquantize`.
-- [8-bit PNG](page-images/#8-bit-png): `--pnglegacy`.
-- [Color pages as PNG too](page-images/#color-pages-as-png-too): `--force-png-rgb`.
-- [JPEG quality](page-images/#jpeg-quality): `--jpeg-quality`.
-- [Use the images as they are](page-images/#use-the-images-as-they-are): `--noprocessing`.
+- [Formato da página](page-images/#formato-da-página): `--forcepng`.
+- [Manter os 256 cinzas](page-images/#manter-os-256-cinzas): `--noquantize`.
+- [PNG de 8 bits](page-images/#png-de-8-bits): `--pnglegacy`.
+- [Páginas coloridas também em PNG](page-images/#páginas-coloridas-também-em-png): `--force-png-rgb`.
+- [Qualidade do JPEG](page-images/#qualidade-do-jpeg): `--jpeg-quality`.
+- [Usar as imagens como estão](page-images/#usar-as-imagens-como-estão): `--noprocessing`.
 
 ### Capa
 
-- [Cut the front cover from a wide image](cover/#cut-the-front-cover-from-a-wide-image): `--smartcovercrop`.
-- [Crop the cover to fill the screen](cover/#crop-the-cover-to-fill-the-screen): `--coverfill`.
+- [Recortar a capa frontal de uma imagem larga](cover/#recortar-a-capa-frontal-de-uma-imagem-larga): `--smartcovercrop`.
+- [Cortar a capa para preencher a tela](cover/#cortar-a-capa-para-preencher-a-tela): `--coverfill`.
 
 ### Metadados do livro
 
 - [Título e autor do livro](book-metadata/#título-e-autor-do-livro): `--title` (`-t`) e `--author` (`-a`).
-- [ComicInfo title](book-metadata/#comicinfo-title): `--metadatatitle`.
-- [Keep ComicInfo.xml](book-metadata/#keep-comicinfoxml): `--keepcomicinfo`.
-- [EPUB language](book-metadata/#epub-language): `--language`.
-- [Name the book .epub](book-metadata/#name-the-book-epub): `--nokepub`.
+- [Título do ComicInfo](book-metadata/#título-do-comicinfo): `--metadatatitle`.
+- [Manter o ComicInfo.xml](book-metadata/#manter-o-comicinfoxml): `--keepcomicinfo`.
+- [Idioma do EPUB](book-metadata/#idioma-do-epub): `--language`.
+- [Nomear o livro como .epub](book-metadata/#nomear-o-livro-como-epub): `--nokepub`.
 
 ### Comportamento da ferramenta
 
-- [Quiet mode](../../cli/mangapress/#saída-mais-enxuta): `--quiet`, ou `-q`.
+- [Modo silencioso](../../cli/mangapress/#saída-mais-enxuta): `--quiet`, ou `-q`.
 - [Prévia de uma conversão](../../cli/mangapress/#prévia-de-uma-conversão), só na linha de comando: `--dry-run`, ou `-n`.
 
 ## Como os exemplos foram feitos

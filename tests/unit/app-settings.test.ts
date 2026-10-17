@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import fc from 'fast-check';
@@ -17,6 +20,15 @@ import {
 } from '@/domain/app-settings';
 
 describe('the languages of the app', () => {
+  it('are the ones the website says the application is in, which its structured data tells search engines', async () => {
+    const site = await readFile(path.resolve('website/site.config.mjs'), 'utf8');
+    const declared = /export const appLanguages = \[([^\]]*)\]/u.exec(site)?.[1] ?? '';
+
+    expect(declared.split(',').map((tag) => tag.trim().replaceAll("'", ''))).toEqual([
+      ...languages,
+    ]);
+  });
+
   it('start in English, the language every message is first written in', () => {
     expect(defaultLanguage).toBe('en');
     expect(languages[0]).toBe(defaultLanguage);
