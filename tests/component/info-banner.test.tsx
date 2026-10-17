@@ -23,6 +23,12 @@ describe('InfoBanner', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
+  it('names itself "Information" when it has neither a title nor a name of its own', () => {
+    render(<InfoBanner message="Something worth knowing." />);
+
+    expect(screen.getByRole('status', { name: 'Information' })).toBeVisible();
+  });
+
   it('renders message without heading when title is omitted', () => {
     render(
       <InfoBanner

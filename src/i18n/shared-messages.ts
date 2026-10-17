@@ -7,6 +7,8 @@ export interface SharedMessages {
     readonly label: string;
     readonly dismiss: string;
   };
+  /** The name of a banner of information that has no title to name it by. */
+  readonly infoBanner: { readonly label: string };
   /** The banner that says the bundled tools need attention. */
   readonly toolchain: { readonly label: string; readonly title: string };
   /** What the window says when the app could not start at all, which it says without having read the settings. */
@@ -30,6 +32,7 @@ export interface SharedMessages {
 export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
   en: {
     notices: { label: 'Notices', dismiss: 'Dismiss these notices' },
+    infoBanner: { label: 'Information' },
     toolchain: { label: 'Bundled tool status', title: 'Conversion tools need attention' },
     startup: {
       label: 'Startup error',
@@ -45,6 +48,7 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
   },
   'pt-BR': {
     notices: { label: 'Avisos', dismiss: 'Dispensar estes avisos' },
+    infoBanner: { label: 'Informação' },
     toolchain: {
       label: 'Estado das ferramentas incluídas',
       title: 'As ferramentas de conversão precisam de atenção',

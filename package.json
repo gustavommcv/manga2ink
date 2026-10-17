@@ -23,6 +23,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings=0",
     "lint:boundaries": "node scripts/verify-lint-boundaries.mjs",
+    "lint:text": "node scripts/verify-lint-text.mjs",
     "typecheck": "tsc --noEmit",
     "pretest:unit": "npm run toolchain:acquire",
     "test:unit": "vitest run --project unit --coverage",
@@ -39,7 +40,7 @@
     "toolchain:check": "node scripts/verify-toolchain-lock.mjs",
     "toolchain:update": "node scripts/update-toolchain-lock.mjs --write",
     "audit:production": "npm audit --omit=dev",
-    "check": "npm run format:check && npm run lint && npm run lint:boundaries && npm run typecheck && npm run audit:production && npm run toolchain:check && npm run test:unit && npm run capabilities:check && npm run test:component && npm run test:stories && npm run build-storybook"
+    "check": "npm run format:check && npm run lint && npm run lint:boundaries && npm run lint:text && npm run typecheck && npm run audit:production && npm run toolchain:check && npm run test:unit && npm run capabilities:check && npm run test:component && npm run test:stories && npm run build-storybook"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.12",

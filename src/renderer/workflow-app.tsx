@@ -1042,7 +1042,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                   }}
                   variant="ghost"
                 >
-                  <ChevronLeft /> Queue
+                  <ChevronLeft /> {messages.queue.title}
                 </Button>
                 <MappingEditor
                   initialDraft={editingRow.mapping}

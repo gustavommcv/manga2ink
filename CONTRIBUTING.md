@@ -47,6 +47,7 @@ The pictures and measured tables of the advanced-options pages are made from ope
 | `npm run format:check`                    | Prettier; `npm run format` applies formatting.                                  |
 | `npm run lint`                            | ESLint, with no warnings allowed.                                               |
 | `npm run lint:boundaries`                 | Regression tests for the module-boundary rule.                                  |
+| `npm run lint:text`                       | Regression tests for the rule against literal text in the window's components.  |
 | `npm run typecheck`                       | Strict TypeScript over source and tests.                                        |
 | `npm run audit:production`                | Audit the app's production dependencies.                                        |
 | `npm run toolchain:check`                 | Validate the pinned converter manifest.                                         |
