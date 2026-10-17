@@ -350,6 +350,23 @@ export const Updates: Story = {
   },
 };
 
+/** The Updates tab as it first opens, in Brazilian Portuguese: nothing is asked until the button is. */
+export const UpdatesInPortuguese: Story = {
+  parameters: { bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Configurações do app' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Configurações do app',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Atualizações' }));
+
+    await expect(
+      within(dialog).getByRole('status', { name: 'Atualizações manuais por enquanto' }),
+    ).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Buscar atualizações' })).toBeEnabled();
+  },
+};
+
 const newerVersion: AppSettingsBridge['checkForUpdates'] = () =>
   Promise.resolve({
     ok: true,
@@ -471,6 +488,22 @@ export const ProcessingInAChosenFolder: Story = {
     await expect(
       within(panel).getByRole('button', { name: 'Use the default folder' }),
     ).toBeEnabled();
+  },
+};
+
+/** The Processing tab as it first opens, in Brazilian Portuguese: the app in its own places. */
+export const ProcessingInOwnPlacesInPortuguese: Story = {
+  parameters: { bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'Configurações do app' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Configurações do app',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processamento' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processamento' });
+    await expect(await within(panel).findByText('Escolhida pelo Mangabound')).toBeVisible();
+    await expect(within(panel).getByRole('button', { name: 'Usar a pasta padrão' })).toBeDisabled();
   },
 };
 
