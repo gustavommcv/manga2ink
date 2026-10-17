@@ -109,6 +109,11 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'results.failed': [['Berserk']],
   'results.skipped': [['Berserk']],
   'results.fixBook': [['Berserk']],
+  'updates.upToDate': [['0.1.0-alpha.15']],
+  'updates.available': [
+    ['0.1.0-alpha.16', 'October 20, 2026'],
+    ['0.1.0-alpha.16', undefined],
+  ],
   'library.summary': [[1], [3]],
   'library.chips.volumes': [[1], [2]],
   'library.chapters': [

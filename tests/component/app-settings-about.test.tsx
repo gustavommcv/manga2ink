@@ -332,7 +332,7 @@ describe('the About tab', () => {
     expect(screen.queryByText('That page could not be opened. Try again.')).not.toBeInTheDocument();
   });
 
-  it('has a button for every place the main process knows, so none is left out of reach', async () => {
+  it('has a button for every place the main process knows but the releases, which the Updates tab opens, so none is left out of reach', async () => {
     const user = userEvent.setup();
     const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
@@ -342,7 +342,7 @@ describe('the About tab', () => {
     for (const button of screen.getAllByRole('button')) await user.click(button);
 
     expect(openProjectLink.mock.calls.map(([command]) => command.link).sort()).toEqual(
-      [...projectLinks].sort(),
+      projectLinks.filter((link) => link !== 'releases').sort(),
     );
   });
 

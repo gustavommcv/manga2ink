@@ -16,6 +16,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
  */
 export type AppSettingsBridge = Pick<
   MangaboundBridge,
+  | 'checkForUpdates'
   | 'chooseProcessingFolder'
   | 'copyDiagnostics'
   | 'countIdlePending'

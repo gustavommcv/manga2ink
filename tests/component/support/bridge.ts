@@ -73,6 +73,8 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
       }),
     saveAppSettings: () => Promise.resolve({ ok: true, value: { language: 'en' } }),
     openProjectLink: () => nothing,
+    checkForUpdates: () =>
+      Promise.resolve({ ok: true, value: { status: 'current', version: '0.1.0-alpha.15' } }),
     copyDiagnostics: () => nothing,
     openAppFolder: () => nothing,
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),

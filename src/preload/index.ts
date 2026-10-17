@@ -4,6 +4,7 @@ import type { AttachedCover } from '../domain/book-covers';
 import { droppedPaths } from './dropped-paths';
 import type { MappingDraft } from '../domain/mapping';
 import type { AnyMessage } from '../domain/message';
+import type { UpdateCheck } from '../domain/update-check';
 import type { WorkingSpace } from '../domain/working-space';
 import type {
   NetworkInterfaceOption,
@@ -168,6 +169,7 @@ const bridge: MangaboundBridge = Object.freeze({
   saveAppSettings: (command: SaveAppSettingsCommand) =>
     invoke<SavedAppSettings>('app:save-settings', command),
   openProjectLink: (command: OpenProjectLinkCommand) => invoke<undefined>('app:open-link', command),
+  checkForUpdates: () => invoke<UpdateCheck>('app:check-updates'),
   copyDiagnostics: () => invoke<undefined>('app:copy-diagnostics'),
   openAppFolder: (command: OpenAppFolderCommand) => invoke<undefined>('app:open-folder', command),
   getProcessingFolder: () => invoke<ProcessingFolderStatus>('app:get-processing-folder'),
