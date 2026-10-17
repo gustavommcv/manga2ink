@@ -121,6 +121,21 @@ export const Closed: Story = {
   },
 };
 
+/** The keys that open it work wherever the focus is: the gear is not what is pressed. */
+export const OpenedByTheKeyboard: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    const gear = await canvas.findByRole('button', { name: 'App settings' });
+    await expect(gear).toHaveAttribute('aria-keyshortcuts', 'Control+,');
+    await expect(gear).toHaveAttribute('title', 'App settings (Ctrl+,)');
+
+    await userEvent.keyboard('{Control>},{/Control}');
+
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', { name: 'App settings' }),
+    ).toBeVisible();
+  },
+};
+
 export const Open: Story = {
   play: async ({ canvas, canvasElement }) => {
     await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));

@@ -13,6 +13,8 @@ export type UpdateCheckOutcome = { readonly found: UpdateCheck } | { readonly fa
 export interface AppInfo {
   /** The running version, with any prerelease label (e.g. "0.1.0-alpha.15"). */
   readonly version: string;
+  /** The system the app runs on, which decides the keys a shortcut is made of (ADR 0064). */
+  readonly platform: NodeJS.Platform;
   /**
    * Opens a place in the browser of the system, and says whether it could be opened. The place is
    * named, never given as an address.
