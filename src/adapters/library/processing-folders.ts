@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import type { ProcessingChoice } from '@/domain/app-settings';
 import { type AnyMessage, message } from '@/domain/message';
+import type { WorkingSpace } from '@/domain/working-space';
 
 import type { PendingRoots } from './fs-pending-runs';
 
@@ -47,11 +48,15 @@ export interface ProcessingFoldersIo {
   readonly probeWrite: (folder: string) => Promise<void>;
   /** The bytes a person can still write on the drive `folder` is on, or null when it cannot be said. */
   readonly freeBytes: (folder: string) => Promise<number | null>;
+  /** Which drive `folder` is on, as a number two folders on one drive share, or null when it cannot be said. */
+  readonly drive: (folder: string) => Promise<number | null>;
 }
 
 /** What the disk is asked, so the answers to the ways it can fail can be tried without failing a disk. */
 export interface DiskCalls {
-  readonly stat: (folder: string) => Promise<{ readonly isDirectory: () => boolean }>;
+  readonly stat: (
+    folder: string,
+  ) => Promise<{ readonly isDirectory: () => boolean; readonly dev: number }>;
   readonly statfs: (folder: string) => Promise<{ readonly bavail: number; readonly bsize: number }>;
   readonly mkdir: (folder: string, options: { readonly recursive: true }) => Promise<unknown>;
   readonly writeFile: (file: string, contents: string) => Promise<void>;
@@ -85,18 +90,31 @@ export function diskIoOver(disk: DiskCalls): ProcessingFoldersIo {
       await disk.writeFile(probe, '');
       await disk.rm(probe, { force: true });
     },
-    freeBytes: async (folder) => {
-      // The folder may not be made yet: the drive is the one the nearest folder that is there is on.
-      for (let here = folder; ; here = path.dirname(here)) {
-        try {
-          const space = await disk.statfs(here);
-          return space.bavail * space.bsize;
-        } catch (error) {
-          if (!isMissing(error) || path.dirname(here) === here) return null;
-        }
-      }
-    },
+    freeBytes: (folder) =>
+      nearestThatIsThere(folder, async (here) => {
+        const space = await disk.statfs(here);
+        return space.bavail * space.bsize;
+      }),
+    drive: (folder) => nearestThatIsThere(folder, async (here) => (await disk.stat(here)).dev),
   };
+}
+
+/**
+ * Asks about a folder that may not be made yet: the answer is the one for the nearest folder that
+ * is there, which is on the same drive. Null when nothing up to the root is there, or when asking
+ * went wrong in a way other than the folder not being there.
+ */
+async function nearestThatIsThere(
+  folder: string,
+  ask: (here: string) => Promise<number>,
+): Promise<number | null> {
+  for (let here = folder; ; here = path.dirname(here)) {
+    try {
+      return await ask(here);
+    } catch (error) {
+      if (!isMissing(error) || path.dirname(here) === here) return null;
+    }
+  }
 }
 
 const diskIo = diskIoOver(realDisk);
@@ -210,6 +228,22 @@ export class ProcessingFolders {
   /** What is left on the drive finished books are kept on, or null when that cannot be said. */
   freeBytes(): Promise<number | null> {
     return this.io.freeBytes(this.pendingRoot());
+  }
+
+  /** What is left on the drives of both places, and whether they are one (ADR 0060). */
+  async workingSpace(): Promise<WorkingSpace> {
+    const [pending, scratch] = [this.pendingRoot(), this.scratchRoot()];
+    const [pendingFreeBytes, scratchFreeBytes, pendingDrive, scratchDrive] = await Promise.all([
+      this.io.freeBytes(pending),
+      this.io.freeBytes(scratch),
+      this.io.drive(pending),
+      this.io.drive(scratch),
+    ]);
+    return {
+      scratchFreeBytes,
+      pendingFreeBytes,
+      sameDrive: pendingDrive !== null && pendingDrive === scratchDrive,
+    };
   }
 }
 

@@ -66,6 +66,7 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     onReset: vi.fn(),
     onSingleBook: vi.fn(),
     onValidate: vi.fn(),
+    space: null,
     profiles: [
       {
         code: 'KPW6',

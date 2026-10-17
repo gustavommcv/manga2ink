@@ -39,6 +39,7 @@ import type {
 } from './workflow-contract';
 
 import type { AttachedCover } from '@/domain/book-covers';
+import type { WorkingSpace } from '@/domain/working-space';
 import type { MappingDraft } from '@/domain/mapping';
 
 export interface RuntimeInfo {
@@ -157,6 +158,8 @@ export interface MangaboundBridge {
   readonly openAppFolder: (command: OpenAppFolderCommand) => Promise<WorkflowResult<undefined>>;
   /** Where the app builds volumes and keeps finished books, and what is waiting elsewhere (ADR 0056). */
   readonly getProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
+  /** What is left on the drives the app works on, to say before a run that there is too little (ADR 0060). */
+  readonly getWorkingSpace: () => Promise<WorkflowResult<WorkingSpace>>;
   /** Opens a dialog to choose the folder the app works in; resolves to null when it is cancelled. */
   readonly chooseProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus | null>>;
   /** Puts the app back to the places it picks itself. */

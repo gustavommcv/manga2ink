@@ -15,6 +15,7 @@ const screens = [
   'shell-title-bar--while-sharing',
   'workflows-queue--empty',
   'workflows-queue--with-items',
+  'workflows-queue--low-space',
   'workflows-queue--plan-validated',
   'workflows-queue--ready-books-confirm-delete',
   'workflows-queue--some-items-not-added',

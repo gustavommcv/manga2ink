@@ -4,6 +4,7 @@ import { dialog } from 'electron';
 
 import { ProcessingFolderError } from '@/adapters/library/processing-folders';
 import { message } from '@/domain/message';
+import type { WorkingSpace } from '@/domain/working-space';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -46,6 +47,15 @@ export function registerProcessingFolderHandlers(context: ProcessingContext): vo
     ignoredPayloadSchema,
     async (): Promise<WorkflowResult<ProcessingFolderStatus>> =>
       ok(await processingStatus(context)),
+  );
+  handle(
+    'app:get-working-space',
+    ignoredPayloadSchema,
+    async (): Promise<WorkflowResult<WorkingSpace>> => {
+      if (context.processing === undefined)
+        throw new Error('Where the app works is not known yet.');
+      return ok(await context.processing.workingSpace());
+    },
   );
   handle(
     'app:choose-processing-folder',

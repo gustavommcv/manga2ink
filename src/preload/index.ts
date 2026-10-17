@@ -4,6 +4,7 @@ import type { AttachedCover } from '../domain/book-covers';
 import { droppedPaths } from './dropped-paths';
 import type { MappingDraft } from '../domain/mapping';
 import type { AnyMessage } from '../domain/message';
+import type { WorkingSpace } from '../domain/working-space';
 import type {
   NetworkInterfaceOption,
   OpdsAuthConfig,
@@ -164,6 +165,7 @@ const bridge: MangaboundBridge = Object.freeze({
   copyDiagnostics: () => invoke<undefined>('app:copy-diagnostics'),
   openAppFolder: (command: OpenAppFolderCommand) => invoke<undefined>('app:open-folder', command),
   getProcessingFolder: () => invoke<ProcessingFolderStatus>('app:get-processing-folder'),
+  getWorkingSpace: () => invoke<WorkingSpace>('app:get-working-space'),
   chooseProcessingFolder: () =>
     invoke<ProcessingFolderStatus | null>('app:choose-processing-folder'),
   useDefaultProcessingFolder: () =>

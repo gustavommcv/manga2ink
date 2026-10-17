@@ -34,6 +34,7 @@ function foldersFor(
     },
     probeWrite: () => Promise.resolve(),
     freeBytes: () => Promise.resolve(1000),
+    drive: () => Promise.resolve(1),
     ...io,
   };
   return { folders: new ProcessingFolders(defaults, () => choice, fake), made };
@@ -148,6 +149,7 @@ describe('getting the places ready', () => {
       },
       probeWrite: () => Promise.resolve(),
       freeBytes: () => Promise.resolve(null),
+      drive: () => Promise.resolve(null),
     });
     const roots = folders.asPendingRoots();
 
@@ -300,6 +302,19 @@ describe('on a real disk', () => {
     expect(await deep.freeBytes()).toBeGreaterThan(0);
   });
 
+  it('knows on a real disk that two folders of one folder are on one drive, though neither is made', async () => {
+    const together = new ProcessingFolders(
+      { pending: path.join(directory, 'p', 'x'), scratch: path.join(directory, 's', 'y') },
+      () => defaultProcessingChoice,
+    );
+
+    const space = await together.workingSpace();
+
+    expect(space.sameDrive).toBe(true);
+    expect(space.pendingFreeBytes).toBeGreaterThan(0);
+    expect(space.scratchFreeBytes).toBeGreaterThan(0);
+  });
+
   it('says nothing when the drive does not answer, and not an error', async () => {
     // A file is not a folder: asking the space under it fails with ENOTDIR, then the folder above answers.
     const file = path.join(directory, 'a-file');
@@ -313,11 +328,49 @@ describe('on a real disk', () => {
   });
 });
 
+describe('what is left on the drives the app works on', () => {
+  const choice: ProcessingChoice = { folder: at('big'), earlier: [] };
+
+  it('is the room of each place, and that they are one drive when the drive of both is the same', async () => {
+    const { folders } = foldersFor(choice, {
+      freeBytes: (folder) => Promise.resolve(folder.endsWith('Pending') ? 700 : 900),
+      drive: () => Promise.resolve(4),
+    });
+
+    expect(await folders.workingSpace()).toEqual({
+      scratchFreeBytes: 900,
+      pendingFreeBytes: 700,
+      sameDrive: true,
+    });
+  });
+
+  it('is two drives when the places are on different ones', async () => {
+    const { folders } = foldersFor(defaultProcessingChoice, {
+      drive: (folder) => Promise.resolve(folder === defaults.pending ? 1 : 2),
+    });
+
+    expect(await folders.workingSpace()).toMatchObject({ sameDrive: false });
+  });
+
+  it('does not say two drives are one when it cannot say which they are', async () => {
+    const { folders } = foldersFor(choice, {
+      freeBytes: () => Promise.resolve(null),
+      drive: () => Promise.resolve(null),
+    });
+
+    expect(await folders.workingSpace()).toEqual({
+      scratchFreeBytes: null,
+      pendingFreeBytes: null,
+      sameDrive: false,
+    });
+  });
+});
+
 describe('asking the disk', () => {
   const error = (code: string): NodeJS.ErrnoException => Object.assign(new Error(code), { code });
   const disk = (calls: Partial<DiskCalls>): ProcessingFoldersIo =>
     diskIoOver({
-      stat: () => Promise.resolve({ isDirectory: () => true }),
+      stat: () => Promise.resolve({ isDirectory: () => true, dev: 7 }),
       statfs: () => Promise.resolve({ bavail: 10, bsize: 4096 }),
       mkdir: () => Promise.resolve(undefined),
       writeFile: () => Promise.resolve(),
@@ -333,7 +386,7 @@ describe('asking the disk', () => {
   });
 
   it('does not take a file for a folder', async () => {
-    const io = disk({ stat: () => Promise.resolve({ isDirectory: () => false }) });
+    const io = disk({ stat: () => Promise.resolve({ isDirectory: () => false, dev: 7 }) });
 
     expect(await io.isDirectory(at('file'))).toBe(false);
   });
@@ -396,6 +449,30 @@ describe('asking the disk', () => {
 
     expect(await io.freeBytes(at('a', 'b'))).toBeNull();
     expect(statfs).toHaveBeenCalledTimes(1);
+  });
+
+  it('says which drive a folder is on by the nearest folder that is there', async () => {
+    const stat = vi.fn<DiskCalls['stat']>((folder) =>
+      folder === at('a')
+        ? Promise.resolve({ isDirectory: () => true, dev: 42 })
+        : Promise.reject(error('ENOENT')),
+    );
+
+    expect(await disk({ stat }).drive(at('a', 'b', 'c'))).toBe(42);
+    expect(stat.mock.calls.map(([folder]) => folder)).toEqual([
+      at('a', 'b', 'c'),
+      at('a', 'b'),
+      at('a'),
+    ]);
+  });
+
+  it('says nothing is known of the drive when no folder up to the root is there, or the disk fails otherwise', async () => {
+    expect(
+      await disk({ stat: () => Promise.reject(error('ENOENT')) }).drive(at('a', 'b')),
+    ).toBeNull();
+    expect(
+      await disk({ stat: () => Promise.reject(error('EACCES')) }).drive(at('a', 'b')),
+    ).toBeNull();
   });
 
   it('makes a folder with those above it', async () => {

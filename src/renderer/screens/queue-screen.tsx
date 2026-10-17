@@ -5,6 +5,7 @@ import {
   FolderPlus,
   LoaderCircle,
   Trash2,
+  TriangleAlert,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ import type { BookFormat } from '@/domain/conversion';
 import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangapress } from '@/domain/preferences';
 import { defaultProcessMode, type ProcessMode, singleBookLockReason } from '@/domain/process-mode';
+import { lowSpace, roomNeeded, type WorkingSpace } from '@/domain/working-space';
 import { DropTarget } from '@/renderer/components/queue/drop-target';
 import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
@@ -25,6 +27,7 @@ import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages'
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
+import { sizeOf } from '@/i18n/size';
 import type {
   DeviceProfileSummary,
   PlanSummary,
@@ -71,6 +74,8 @@ export interface QueueScreenProps {
   readonly rows: readonly QueueRow[];
   readonly settings: MangapressSettings;
   readonly singleBook: boolean;
+  /** What is left on the drives the app works on, or null while it is not known (ADR 0060). */
+  readonly space: WorkingSpace | null;
   readonly validating: boolean;
 }
 
@@ -119,9 +124,11 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     rows,
     settings,
     singleBook,
+    space,
     validating,
   } = props;
   const words = useMessages().queue;
+  const language = useLanguage();
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -140,6 +147,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           : summary.skipped > 0
             ? words.run.leftOut(summary.skipped)
             : undefined;
+  const short = space === null ? null : lowSpace(space, roomNeeded(rows, mode));
   const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
   const singleBookActive = singleBook && !onlyCbz;
 
@@ -405,6 +413,17 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           {hint !== undefined && (
             <p aria-live="polite" className="text-muted-foreground text-xs">
               {hint}
+            </p>
+          )}
+          {short !== null && (
+            <p className="text-status-warning flex gap-2 text-xs" role="status">
+              <TriangleAlert aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+              <span>
+                {words.run.lowSpace(
+                  sizeOf(language, short.freeBytes),
+                  sizeOf(language, short.neededBytes),
+                )}
+              </span>
             </p>
           )}
         </div>

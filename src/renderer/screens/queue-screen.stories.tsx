@@ -133,6 +133,7 @@ const base: QueueScreenProps = {
   onReset: () => undefined,
   onSingleBook: () => undefined,
   onValidate: () => undefined,
+  space: null,
   profiles: [
     {
       code: 'KPW6',
@@ -191,6 +192,23 @@ export const EmptyChoosing: Story = {
 
 export const WithItems: Story = {
   args: { rows },
+};
+
+/** Less is free where the app works than the queue may take: said above the button, which still works. */
+export const LowSpace: Story = {
+  args: {
+    rows: rows.slice(0, 1),
+    space: {
+      scratchFreeBytes: 600 * 1024 ** 2,
+      pendingFreeBytes: 600 * 1024 ** 2,
+      sameDrive: true,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText(/free where Mangabound works/u)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: /^Process/u })).toBeEnabled();
+  },
 };
 
 export const WithLibrary: Story = {
