@@ -16,6 +16,8 @@ import type {
   SavedAppSettings,
 } from '../shared/app-settings-contract';
 import type { OpenAppFolderCommand } from '../shared/app-folders-contract';
+import type { WaitingBooks } from '../domain/pending-cleanup';
+import type { IdleDaysCommand } from '../shared/pending-cleanup-contract';
 import type { ProcessingFolderStatus } from '../shared/processing-folder-contract';
 import type { OpenProjectLinkCommand } from '../shared/project-links-contract';
 import type { MangaboundBridge } from '../shared/runtime-info';
@@ -94,6 +96,10 @@ const bridge: MangaboundBridge = Object.freeze({
   createPendingRun: () => invoke<string>('pending:create'),
   listPendingRuns: () => invoke<readonly PendingRunSummary[]>('pending:list'),
   discardPendingRun: (libraryId: string) => invoke<undefined>('pending:discard', libraryId),
+  countIdlePending: (command: IdleDaysCommand) =>
+    invoke<WaitingBooks>('pending:count-idle', command),
+  deleteIdlePending: (command: IdleDaysCommand) =>
+    invoke<WaitingBooks>('pending:delete-idle', command),
   saveArtifactAs: (artifactId: string) =>
     invoke<{ saved: boolean; warning?: AnyMessage }>('pending:save-as', artifactId),
   saveAllArtifacts: (artifactIds: readonly string[]) =>

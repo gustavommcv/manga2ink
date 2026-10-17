@@ -273,6 +273,19 @@ export class FsPendingRuns {
     }
   }
 
+  /**
+   * The runs nothing has changed in for `olderThanMs`: what was made, and left waiting, a while ago.
+   * It is the time of the last change in the run, not of its birth, which some file systems do not
+   * keep: a run that could not say when it was made would otherwise look as old as can be.
+   */
+  async idleRuns(olderThanMs: number, now = Date.now()): Promise<readonly PendingRun[]> {
+    const idle: PendingRun[] = [];
+    for (const run of await this.list()) {
+      if (now - (await newestChange(run.path)) > olderThanMs) idle.push(run);
+    }
+    return idle;
+  }
+
   /** Remove only an existing app-owned run; exported copies live outside this root. */
   async discard(id: string): Promise<boolean> {
     const run = (await this.list()).find((candidate) => candidate.id === id);

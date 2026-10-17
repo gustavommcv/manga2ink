@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 
+import type { IdleDays, WaitingBooks } from '@/domain/pending-cleanup';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -12,6 +13,10 @@ export interface ProcessingFolderApi {
   /** Opens the dialog; resolves to null when it is cancelled. */
   readonly choose: () => Promise<WorkflowResult<ProcessingFolderStatus | null>>;
   readonly useDefault: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
+  /** What the conversions untouched for that many days hold: what a clean-up would delete (ADR 0061). */
+  readonly countIdle: (days: IdleDays) => Promise<WorkflowResult<WaitingBooks>>;
+  /** Deletes those conversions, and says what went. */
+  readonly deleteIdle: (days: IdleDays) => Promise<WorkflowResult<WaitingBooks>>;
 }
 
 /** Where the provider puts the way to ask, for everything under it. */

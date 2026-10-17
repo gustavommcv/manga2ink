@@ -31,6 +31,7 @@ import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
 import { dialogWords } from './ipc/dialog-words';
 import { registerPendingHandlers } from './ipc/pending';
+import { registerPendingCleanupHandlers } from './ipc/pending-cleanup';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
@@ -151,6 +152,7 @@ void app.whenReady().then(async () => {
   registerMetadataHandlers(context);
   registerArtifactHandlers(context);
   registerPendingHandlers(context);
+  registerPendingCleanupHandlers(context);
   registerOpdsHandlers(context);
 
   serveRenderer();

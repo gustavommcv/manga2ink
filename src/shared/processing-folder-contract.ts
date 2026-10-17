@@ -1,3 +1,5 @@
+import type { WaitingBooks } from '@/domain/pending-cleanup';
+
 /**
  * Where the app works, as the window is told of it (ADR 0056). The paths are for the person to read:
  * the window never sends one back, it asks the main process to open a dialog and to use what is
@@ -14,6 +16,8 @@ export interface ProcessingFolderStatus {
   readonly available: boolean;
   /** What is left on the drive the finished books are on, or null when that cannot be said. */
   readonly freeBytes: number | null;
+  /** Every book waiting to be saved, in the folder in use and in the earlier ones (ADR 0061). */
+  readonly waiting: WaitingBooks;
   /** Folders other than the one in use that books are still waiting in. They stay in the list. */
   readonly earlier: readonly ProcessingFolderEarlier[];
 }

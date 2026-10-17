@@ -8,6 +8,7 @@ export const defaultProcessingStatus: ProcessingFolderStatus = {
   pending: '/home/reader/.local/share/mangabound/pending',
   available: true,
   freeBytes: 120 * 1024 ** 3,
+  waiting: { runs: 0, books: 0, bytes: 0 },
   earlier: [],
 };
 
@@ -25,5 +26,6 @@ export const chosenProcessingStatus: ProcessingFolderStatus = {
   pending: '/mnt/books/Pending',
   available: true,
   freeBytes: 800 * 1024 ** 3,
+  waiting: { runs: 0, books: 0, bytes: 0 },
   earlier: [],
 };

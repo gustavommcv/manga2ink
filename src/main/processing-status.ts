@@ -4,6 +4,7 @@ import { pendingFolderName } from '@/adapters/library/processing-folders';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 
 import type { MainContext } from './context';
+import { waitingBooks } from './waiting-books';
 
 type StatusContext = Pick<MainContext, 'appSettings' | 'pendingRuns' | 'processing'>;
 
@@ -35,6 +36,7 @@ export async function processingStatus(context: StatusContext): Promise<Processi
     pending: current,
     available: await processing.available(),
     freeBytes: await processing.freeBytes(),
+    waiting: waitingBooks(runs),
     earlier: processing
       .pendingRoots()
       .filter((root) => root !== current)

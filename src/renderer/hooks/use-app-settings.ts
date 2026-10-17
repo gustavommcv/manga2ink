@@ -18,6 +18,8 @@ export type AppSettingsBridge = Pick<
   MangaboundBridge,
   | 'chooseProcessingFolder'
   | 'copyDiagnostics'
+  | 'countIdlePending'
+  | 'deleteIdlePending'
   | 'getProcessingFolder'
   | 'getToolchainStatus'
   | 'loadAppSettings'
