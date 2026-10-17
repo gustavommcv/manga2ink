@@ -18,6 +18,7 @@ const fake = vi.hoisted(() => {
     legacyMove: undefined as undefined | Record<string, unknown>,
     context: undefined as unknown as Record<string, unknown>,
     quit: undefined as unknown as { mock: { calls: unknown[][] } } & (() => void),
+    nativeTheme: { themeSource: 'system' },
   };
   return state;
 });
@@ -45,6 +46,7 @@ vi.mock('electron', () => ({
     getPreferredSystemLanguages: () => ['pt-BR', 'en-US'],
   },
   BrowserWindow: { getAllWindows: () => fake.windows },
+  nativeTheme: fake.nativeTheme,
   screen: {
     getPrimaryDisplay: () => ({ id: 2, workArea: { x: 0, y: 0, width: 1920, height: 1040 } }),
     getAllDisplays: () => [
@@ -227,7 +229,10 @@ vi.mock('@/application/workflows/preferences', () => ({
 }));
 vi.mock('@/main/app-protocol', () => ({
   registerRendererScheme: step('register-scheme'),
-  serveRenderer: step('serve-renderer'),
+  serveRenderer: (theme: unknown) => {
+    fake.calls.push('serve-renderer');
+    fake.context['servedTheme'] = theme;
+  },
 }));
 vi.mock('@/main/context', () => ({ createMainContext: () => fake.context }));
 vi.mock('@/main/quit-cleanup', () => ({
@@ -285,6 +290,9 @@ vi.mock('@/main/toolchain-bootstrap', () => ({
   },
 }));
 vi.mock('@/main/window', () => ({
+  applyThemeToApp: (system: unknown, theme: unknown) => {
+    ((fake.context['themedApp'] ??= []) as unknown[]).push({ system, theme });
+  },
   applyThemeToWindow: (window: unknown, theme: unknown) => {
     ((fake.context['themedWindows'] ??= []) as unknown[]).push({ window, theme });
   },
@@ -592,19 +600,33 @@ describe('starting the app', () => {
     expect(fake.context['windowTheme']).toBe('chosen-later');
   });
 
-  it('gives every window that is open the colors of a theme that is kept', async () => {
+  it('gives every window that is open the colors of a theme that is kept, and what the system draws its scheme', async () => {
     const ready = await start();
     await ready();
     const first = { id: 1 };
     const second = { id: 2 };
     fake.windows = [first, second] as never;
+    fake.context['themedApp'] = [];
 
-    (fake.context['themed'] as (theme: string) => void)('dark');
+    (fake.context['themed'] as (theme: string) => void)('light');
 
     expect(fake.context['themedWindows']).toEqual([
-      { window: first, theme: 'dark' },
-      { window: second, theme: 'dark' },
+      { window: first, theme: 'light' },
+      { window: second, theme: 'light' },
     ]);
+    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, theme: 'light' }]);
+  });
+
+  it('serves the page in the theme that is chosen when it is asked for, and gives the system its scheme from the start', async () => {
+    fake.context['theme'] = 'light';
+    const ready = await start();
+    await ready();
+
+    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, theme: 'light' }]);
+    const served = fake.context['servedTheme'] as () => string;
+    expect(served()).toBe('light');
+    fake.context['theme'] = 'dark';
+    expect(served()).toBe('dark');
   });
 
   it('gives the window the one keeper of its size and place, also when it is made again from the dock', async () => {

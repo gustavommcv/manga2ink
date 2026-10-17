@@ -39,21 +39,36 @@
 }
 
 /*
- * Themes (ADR 0066). A theme is one block of these same variables, selected by the `data-theme`
- * attribute of the page (which the app sets from what a person chose); a component reads the
- * variables through the tokens above and never knows which theme it is in. A new theme is a new
- * `:root[data-theme='...']` block that sets every variable, with its entry in `src/domain/theme.ts`.
- * The bare `:root` is the dark theme too, so a page with no attribute (Storybook, a test, the moment
- * before the app has read its settings) is drawn as the app has always been.
- *
- * The dark theme: near-neutral graphite surfaces, a single soft lavender accent used
- * sparingly, a soft cyan-teal only for what one item sets over the queue's options (ADR 0047),
- * muted amber/red for warning/failure, and no green anywhere. Completion is the accent plus a
- * check icon, never color alone. Flat: no glow, no drop shadows.
+ * Themes (ADR 0066, ADR 0067). A theme is one block of these same color variables, selected by the
+ * `data-theme` attribute of the page (which the app sets from what a person chose); a component reads
+ * the variables through the tokens above and never knows which theme it is in. A new theme is a new
+ * `:root[data-theme='...']` block that sets every color variable, with its entry in
+ * `src/domain/theme.ts`. The bare `:root` is the dark theme too, so a page with no attribute
+ * (Storybook, a test) is drawn as the app has always been. What does not change with the theme
+ * (the font and the radius) is set once, here.
  *
  * Hex equivalents (Electron cannot read CSS variables, so the paint of the window and the title-bar
  * overlay take them from `themeWindowColors` in src/domain/theme.ts, which a test keeps in step with
- * the `--background` and `--foreground` below): background #121214, foreground #e8e8eb.
+ * the `--background`, the `--foreground` and the `color-scheme` of each block): dark background
+ * #121214, foreground #e8e8eb; light background #f5f5f8, foreground #18181d.
+ *
+ * Both themes keep the same hues: graphite for the neutrals (286), a lavender for the accent (274),
+ * a cyan-teal only for what one item sets over the queue's options (ADR 0047) (200), amber for a
+ * warning (82 in the dark, 72 in the light, where it has to be darker to read) and red for a failure
+ * (24), and no green anywhere. Completion is the accent plus a check icon, never color alone. Flat:
+ * no glow, no drop shadows. What changes between them is lightness: the light theme's text colors
+ * are the dark theme's turned over, and a test measures the contrast of every pair the interface
+ * uses, in each theme, against the numbers below.
+ */
+:root {
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --radius: 0.625rem;
+}
+
+/*
+ * The dark theme: near-neutral graphite surfaces, a single soft lavender accent used sparingly,
+ * muted amber/red for warning/failure.
  *
  * Contrast (WCAG, measured): muted-foreground 7.1-7.6:1, subtle-foreground 5.1-5.5:1 on the
  * background/surface (4.6:1 on muted), accent 9.1-9.7:1, override 9.4-10:1, warning and failed 7+:1.
@@ -67,14 +82,11 @@
   --destructive: oklch(0.52 0.15 24);
   --destructive-foreground: oklch(0.985 0.005 17);
   --foreground: oklch(0.932 0.004 286);
-  --font-sans:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --muted: oklch(0.258 0.007 286);
   --muted-foreground: oklch(0.721 0.011 286);
   --override: oklch(0.79 0.09 200);
   --primary: oklch(0.794 0.09 274);
   --primary-foreground: oklch(0.205 0.03 275);
-  --radius: 0.625rem;
   --ring: oklch(0.794 0.09 274);
   --subtle-foreground: oklch(0.636 0.013 286);
   --surface: oklch(0.215 0.006 286);
@@ -85,6 +97,42 @@
   --status-running: oklch(0.794 0.09 274);
   --status-warning: oklch(0.79 0.104 82);
   --titlebar: oklch(0.183 0.004 286);
+}
+
+/*
+ * The light theme: an off-white page with white surfaces raised a little above it, as the dark
+ * theme raises its surfaces by being lighter, near-black graphite text, and the same hues as the
+ * dark theme, deep enough to be read on white: an indigo accent, a petrol teal, a brick red and a
+ * brown amber.
+ *
+ * Contrast (WCAG, measured): foreground 14.6-17.4:1, muted-foreground 7.1-7.6:1 on the
+ * background/surface (6.4:1 on muted), subtle-foreground 5.6-5.9:1 (5.0:1 on muted), accent 7.8-8.3:1,
+ * override 7.5-8.1:1, failed 7.7-8.3:1, warning 7.6-8.1:1 (7:1 and 6.8:1 on muted at the least), the
+ * label of a primary button 8.1:1 and of a destructive one 6.2:1.
+ */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --accent: oklch(0.43 0.14 274);
+  --background: oklch(0.97 0.004 286);
+  --border: oklch(0.8 0.01 286);
+  --destructive: oklch(0.5 0.16 24);
+  --destructive-foreground: oklch(0.985 0.005 17);
+  --foreground: oklch(0.21 0.01 286);
+  --muted: oklch(0.935 0.006 286);
+  --muted-foreground: oklch(0.44 0.014 286);
+  --override: oklch(0.42 0.07 205);
+  --primary: oklch(0.43 0.14 274);
+  --primary-foreground: oklch(0.985 0.004 275);
+  --ring: oklch(0.43 0.14 274);
+  --subtle-foreground: oklch(0.5 0.014 286);
+  --surface: oklch(0.995 0.002 286);
+  --status-cancelled: oklch(0.5 0.014 286);
+  --status-complete: oklch(0.43 0.14 274);
+  --status-failed: oklch(0.44 0.15 25);
+  --status-pending: oklch(0.5 0.014 286);
+  --status-running: oklch(0.43 0.14 274);
+  --status-warning: oklch(0.43 0.09 72);
+  --titlebar: oklch(0.97 0.004 286);
 }
 
 * {

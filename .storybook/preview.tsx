@@ -1,9 +1,10 @@
+/// <reference types="vite/client" />
 import type { Preview } from '@storybook/react-vite';
 
 import { useEffect } from 'react';
 
 import { languages } from '../src/domain/app-settings';
-import { defaultTheme, themes } from '../src/domain/theme';
+import { themes } from '../src/domain/theme';
 import { languageNames, messagesFor } from '../src/i18n/messages';
 import { I18nContext } from '../src/renderer/hooks/use-messages';
 import { languageOf } from '../src/renderer/stories/language';
@@ -47,7 +48,9 @@ const preview: Preview = {
       },
     },
   },
-  initialGlobals: { language: 'en', theme: defaultTheme },
+  // The theme every story opens in: the default one, or the one `STORYBOOK_THEME` names, which is how
+  // the same stories are run once more in the light theme (`storybook-light` in vitest.config.ts).
+  initialGlobals: { language: 'en', theme: themeOf({ theme: import.meta.env.STORYBOOK_THEME }) },
   decorators: [
     (Story, context) => {
       const language = languageOf(context.globals);

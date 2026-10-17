@@ -3,10 +3,38 @@ import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type TestProjectInlineConfiguration } from 'vitest/config';
 
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 const browserExecutable = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+
+/** The stories, run in a browser, in the theme the variable names (the default one when it names none). */
+function storiesProject(name: string, theme?: string): TestProjectInlineConfiguration {
+  return {
+    extends: true,
+    ...(theme === undefined
+      ? {}
+      : { define: { 'import.meta.env.STORYBOOK_THEME': JSON.stringify(theme) } }),
+    plugins: [
+      storybookTest({
+        configDir: path.join(rootDirectory, '.storybook'),
+      }),
+    ],
+    test: {
+      browser: {
+        enabled: true,
+        headless: true,
+        instances: [{ browser: 'chromium' }],
+        provider: playwright(
+          browserExecutable === undefined
+            ? {}
+            : { launchOptions: { executablePath: browserExecutable } },
+        ),
+      },
+      name,
+    },
+  };
+}
 
 export default defineConfig({
   resolve: {
@@ -59,27 +87,10 @@ export default defineConfig({
           setupFiles: ['./tests/component/setup.ts'],
         },
       },
-      {
-        extends: true,
-        plugins: [
-          storybookTest({
-            configDir: path.join(rootDirectory, '.storybook'),
-          }),
-        ],
-        test: {
-          browser: {
-            enabled: true,
-            headless: true,
-            instances: [{ browser: 'chromium' }],
-            provider: playwright(
-              browserExecutable === undefined
-                ? {}
-                : { launchOptions: { executablePath: browserExecutable } },
-            ),
-          },
-          name: 'storybook',
-        },
-      },
+      storiesProject('storybook'),
+      // The same stories, in the light theme (ADR 0067): the accessibility check reads the contrast of
+      // what is drawn, so a theme is only as good as the stories it passes in.
+      storiesProject('storybook-light', 'light'),
     ],
   },
 });

@@ -1,7 +1,7 @@
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, screen } from 'electron';
 import started from 'electron-squirrel-startup';
 
 import { directoryExists } from '@/adapters/library/directory-exists';
@@ -44,7 +44,7 @@ import { registerUpdateHandlers } from './ipc/updates';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { bootstrapToolchain } from './toolchain-bootstrap';
-import { applyThemeToWindow, createMainWindow } from './window';
+import { applyThemeToApp, applyThemeToWindow, createMainWindow } from './window';
 
 if (started) app.quit();
 
@@ -152,6 +152,7 @@ void app.whenReady().then(async () => {
 
   registerSettingsHandlers(context, preferencesWorkflow);
   registerAppSettingsHandlers(appSettingsWorkflow, (theme) => {
+    applyThemeToApp(nativeTheme, theme);
     for (const window of BrowserWindow.getAllWindows()) applyThemeToWindow(window, theme);
   });
   registerProcessingFolderHandlers(context);
@@ -175,7 +176,10 @@ void app.whenReady().then(async () => {
   registerPendingCleanupHandlers(context);
   registerOpdsHandlers(context);
 
-  serveRenderer();
+  // The page is given in the theme that was chosen, and what the system draws is in its scheme, from
+  // the start (ADR 0067).
+  serveRenderer(() => appSettingsWorkflow.theme());
+  applyThemeToApp(nativeTheme, appSettingsWorkflow.theme());
   const keeper = new WindowStateKeeper(
     new FsWindowStateStore(path.join(app.getPath('userData'), 'window-state.json')),
     () => {

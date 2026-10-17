@@ -54,7 +54,7 @@ The pictures and measured tables of the advanced-options pages are made from ope
 | `npm run test:unit`                       | Logic, adapters, the main process and the preload; acquires the verified tools. |
 | `npm run capabilities:check`              | Detect CLI flags the app does not represent.                                    |
 | `npm run test:component`                  | Accessible React behavior against a fake desktop bridge, with a coverage floor. |
-| `npm run test:stories`                    | Storybook interactions and axe accessibility checks.                            |
+| `npm run test:stories`                    | Storybook interactions and axe checks, in both themes.                          |
 | `npm run build-storybook`                 | Build the isolated UI reference.                                                |
 | `npm run test:visual`                     | Compare selected UI states with Windows CI baselines.                           |
 | `npm run test:mutation`                   | Not a gate. Changes the layers that hold logic one thing at a time.             |
@@ -85,7 +85,7 @@ Fix a surviving change by writing the test that would have failed, not by touchi
 
 `npm run storybook` opens an isolated UI workshop at <http://localhost:6006>, without Electron or conversion tools. Put `<component>.stories.tsx` beside the component, reuse existing story patterns, and use `play` interactions where behavior matters. Every story runs an axe WCAG A/AA check.
 
-`npm run test:stories` needs Playwright's Chromium. If downloading it is unavailable, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an existing Chromium executable; CI uses Playwright's matching browser.
+`npm run test:stories` runs every story twice, in the default theme and in the light one (ADR 0067), so a story that cannot be read in the light theme fails; the toolbar's Theme picks the theme to look at. It needs Playwright's Chromium. If downloading it is unavailable, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an existing Chromium executable; CI uses Playwright's matching browser.
 
 Visual baselines live in `tests/visual/__screenshots__` and come from Windows CI, not local rendering:
 

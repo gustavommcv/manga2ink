@@ -59,7 +59,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     theme: {
       label: 'Theme',
       help: 'How the app looks. Applies right away.',
-      names: { dark: 'Dark (graphite)' },
+      names: { dark: 'Dark (graphite)', light: 'Light (paper)' },
       saveFailed: 'The theme could not be saved. Try again.',
     },
     unreadable: 'The saved app settings could not be read, so the defaults are in use.',
@@ -84,7 +84,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     theme: {
       label: 'Tema',
       help: 'Como o app se parece. Vale na hora.',
-      names: { dark: 'Escuro (grafite)' },
+      names: { dark: 'Escuro (grafite)', light: 'Claro (papel)' },
       saveFailed: 'Não foi possível guardar o tema. Tente de novo.',
     },
     unreadable:

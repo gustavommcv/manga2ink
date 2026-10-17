@@ -5,7 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type Theme, themes, themeWindowColors } from '@/domain/theme';
 import type { LeavingGuard } from '@/main/leaving';
-import { applyThemeToWindow, createMainWindow as makeMainWindow } from '@/main/window';
+import {
+  applyThemeToApp,
+  applyThemeToWindow,
+  createMainWindow as makeMainWindow,
+} from '@/main/window';
 import type { WindowStateKeeper } from '@/main/window-state';
 
 /** A guard that lets the window close, and remembers being asked. */
@@ -481,5 +485,24 @@ describe('giving a window the colors of a theme', () => {
 
     expect(window.setBackgroundColor).toHaveBeenCalledOnce();
     expect(window.setTitleBarOverlay).not.toHaveBeenCalled();
+  });
+});
+
+describe('giving what the system draws the scheme of a theme', () => {
+  it.each(themes)('makes it the scheme of the %s theme, whatever the system is set to', (theme) => {
+    const system = { themeSource: 'system' as 'dark' | 'light' | 'system' };
+
+    applyThemeToApp(system, theme);
+
+    expect(system.themeSource).toBe(themeWindowColors[theme].scheme);
+  });
+
+  it('is dark for the dark theme and light for the light one', () => {
+    const system = { themeSource: 'system' as 'dark' | 'light' | 'system' };
+
+    applyThemeToApp(system, 'light');
+    expect(system.themeSource).toBe('light');
+    applyThemeToApp(system, 'dark');
+    expect(system.themeSource).toBe('dark');
   });
 });

@@ -11,6 +11,7 @@ interface KeptAppSettings {
   readonly language: string;
   readonly notifyWhenDone?: boolean;
   readonly keepAwake?: boolean;
+  readonly theme?: string;
 }
 
 const readKept = async (file: string): Promise<KeptAppSettings> =>
@@ -76,6 +77,25 @@ async function waitForDialogTitle(title: string, file: string): Promise<void> {
       `the dialog should be titled "${title}", and it held: ${held}; the file holds: ${kept}`,
       { cause: error },
     );
+  }
+}
+
+/**
+ * Picks a theme in the dialog, and waits for the page to be in it. As with the language, the click on
+ * the option now and then does not reach the page as a change, so it is made again, and said when it
+ * had to be.
+ */
+async function chooseTheme(value: string): Promise<void> {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await $('select[id$="-theme"]').selectByAttribute('value', value);
+    try {
+      await browser.waitUntil(async () => (await $('html').getAttribute('data-theme')) === value, {
+        timeout: 5_000,
+      });
+      return;
+    } catch {
+      console.warn(`the theme select did not change the page after attempt ${attempt} of ${value}`);
+    }
   }
 }
 
@@ -184,6 +204,49 @@ describe('packaged app settings', () => {
       });
     } finally {
       // Whatever happened, the dialog is put away, so that a failure here is not one in the next test.
+      await browser.keys('Escape');
+    }
+  });
+
+  it('changes the theme at once, keeps it, and the window, the system and the page served all follow it', async () => {
+    const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
+    const file = path.join(userData, 'app-settings.json');
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="App settings"]').click();
+    await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
+    try {
+      assert.equal(await $('html').getAttribute('data-theme'), 'dark');
+
+      // The light theme: the page is in it as soon as it is chosen, and the choice is in the file.
+      await chooseTheme('light');
+      await browser.waitUntil(
+        async () => existsSync(file) && (await readKept(file)).theme === 'light',
+        { timeout: 30_000, timeoutMsg: 'the app settings file did not get the theme' },
+      );
+
+      // What the main process does with it (ADR 0067): it paints the window, gives what the system
+      // draws the same scheme, and serves the page already in the theme, so that the next launch does
+      // not open in the other one for a moment.
+      const colors = await browser.electron.execute((electron) => ({
+        background: electron.BrowserWindow.getAllWindows()[0]?.getBackgroundColor(),
+        scheme: electron.nativeTheme.themeSource,
+      }));
+      assert.equal(colors.background?.toLowerCase(), '#f5f5f8');
+      assert.equal(colors.scheme, 'light');
+      // Asked by the main process: the scheme gives the page no fetch of its own, on purpose.
+      const served = await browser.electron.execute(async (electron) => {
+        const [window] = electron.BrowserWindow.getAllWindows();
+        const response = await electron.net.fetch(window?.webContents.getURL() ?? '');
+        return await response.text();
+      });
+      assert.match(served, /<html[^>]*data-theme="light"/u);
+    } finally {
+      // The next tests find the app as it began, and the dialog is put away whatever happened.
+      await chooseTheme('dark');
+      await browser.waitUntil(
+        async () => existsSync(file) && (await readKept(file)).theme === 'dark',
+        { timeout: 30_000, timeoutMsg: 'the app settings file did not get the dark theme back' },
+      );
       await browser.keys('Escape');
     }
   });

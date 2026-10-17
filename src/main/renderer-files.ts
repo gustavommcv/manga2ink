@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import type { Theme } from '@/domain/theme';
 import { isInsideLibrary } from '@/library/paths';
 
 /**
@@ -59,6 +60,20 @@ export function rendererFile(root: string, requestUrl: string): string | undefin
   if (requested.includes('\0') || requested.includes('\\')) return undefined;
   const file = path.resolve(root, `.${requested}`);
   return isInsideLibrary(root, file) ? file : undefined;
+}
+
+/**
+ * The page with the theme it is to open in (ADR 0067): the `data-theme` of its `<html>` is set to
+ * `theme`, before the page is given, so that its first paint is already in the colors of the theme
+ * and not in the default one for the moment before the app has read its settings. The build writes
+ * the attribute without quotes (`data-theme=dark`), the source with them, and both are read. A page
+ * that has no such attribute is given as it is.
+ */
+export function pageInTheme(html: string, theme: Theme): string {
+  return html.replace(
+    /(<html\b[^>]*?\sdata-theme=)(?:"[^"]*"|'[^']*'|[^\s>]+)/iu,
+    (_whole, before: string) => `${before}"${theme}"`,
+  );
 }
 
 const contentTypes: ReadonlyMap<string, string> = new Map([

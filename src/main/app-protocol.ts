@@ -2,9 +2,18 @@ import { readFile } from 'node:fs/promises';
 
 import { protocol } from 'electron';
 
-import { contentTypeFor, rendererFile, rendererLocation, rendererScheme } from './renderer-files';
+import type { Theme } from '@/domain/theme';
+
+import {
+  contentTypeFor,
+  pageInTheme,
+  rendererFile,
+  rendererLocation,
+  rendererScheme,
+} from './renderer-files';
 
 const location = rendererLocation(MAIN_WINDOW_WEBPACK_ENTRY);
+const htmlType = 'text/html; charset=utf-8';
 
 /** Where the window loads its page from: the development server, or the packaged scheme. */
 export const rendererUrl = location.url;
@@ -19,8 +28,11 @@ export function registerRendererScheme(): void {
   ]);
 }
 
-/** Answers the page's requests on the packaged scheme from the folder the build put it in. */
-export function serveRenderer(): void {
+/**
+ * Answers the page's requests on the packaged scheme from the folder the build put it in. The page
+ * itself is given in the theme that is chosen when it is asked for (ADR 0067).
+ */
+export function serveRenderer(theme: () => Theme): void {
   const { root } = location;
   if (root === undefined) return;
   protocol.handle(rendererScheme, async (request) => {
@@ -28,7 +40,12 @@ export function serveRenderer(): void {
     const file = rendererFile(root, request.url);
     if (file === undefined) return new Response(null, { status: 404 });
     try {
-      return new Response(new Uint8Array(await readFile(file)), {
+      const content = await readFile(file);
+      const body =
+        contentTypeFor(file) === htmlType
+          ? Buffer.from(pageInTheme(content.toString('utf8'), theme()), 'utf8')
+          : content;
+      return new Response(new Uint8Array(body), {
         headers: {
           'content-type': contentTypeFor(file),
           'x-content-type-options': 'nosniff',

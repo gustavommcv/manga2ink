@@ -147,6 +147,56 @@ export const Open: Story = {
   },
 };
 
+/** What was kept is the light theme: the page is drawn in it, and the dialog says so (ADR 0067). */
+export const InTheLightTheme: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      loadAppSettings: () =>
+        Promise.resolve({
+          ok: true,
+          value: {
+            settings: { ...defaultAppSettings, theme: 'light' },
+            language: 'en',
+            unreadable: false,
+          },
+        }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await expect(within(dialog).getByRole('combobox', { name: 'Theme' })).toHaveDisplayValue(
+      'Light (paper)',
+    );
+    await waitFor(async () => {
+      await expect(document.documentElement.dataset.theme).toBe('light');
+    });
+  },
+};
+
+/** Choosing a theme keeps it and the page is in it at once, with no other change. */
+export const ChoosingTheLightTheme: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.selectOptions(
+      within(dialog).getByRole('combobox', { name: 'Theme' }),
+      'Light (paper)',
+    );
+
+    await waitFor(async () => {
+      await expect(document.documentElement.dataset.theme).toBe('light');
+    });
+    await expect(within(dialog).getByRole('combobox', { name: 'Language' })).toHaveDisplayValue(
+      'English',
+    );
+  },
+};
+
 export const InPortuguese: Story = {
   parameters: { bridge: bridgeFor('pt-BR', 'pt-BR', keepsIt) },
   play: async ({ canvas, canvasElement }) => {

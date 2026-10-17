@@ -22,6 +22,17 @@ const titleBarOverlay = (theme: Theme): { color: string; height: number; symbolC
 });
 
 /**
+ * Makes the parts of the app that the system draws (dialogs, menus, scrollbars) the scheme of the
+ * theme, so they sit with the page whatever the system itself is set to (ADR 0067).
+ */
+export function applyThemeToApp(
+  system: { themeSource: 'dark' | 'light' | 'system' },
+  theme: Theme,
+): void {
+  system.themeSource = themeWindowColors[theme].scheme;
+}
+
+/**
  * Gives a window the colors of a theme where the system, and not the page, draws them: what it is
  * painted with before the page does, and the overlay of its buttons (not on macOS, where they are the
  * system's own). The page itself follows the theme through its own variables (ADR 0066).

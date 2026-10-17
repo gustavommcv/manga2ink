@@ -31,7 +31,7 @@
     "test:mutation": "node tests/mutation/run.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:stories": "vitest run --project storybook",
+    "test:stories": "vitest run --project storybook --project storybook-light",
     "test:visual": "playwright test --config playwright.visual.config.ts",
     "test:e2e": "wdio run wdio.conf.ts",
     "precapabilities:check": "npm run toolchain:acquire",
