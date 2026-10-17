@@ -120,9 +120,12 @@ describe('the theme, in the file', () => {
     expect(parseStoredAppSettings(file({ language: 'en' }))?.theme).toBe('dark');
   });
 
-  it('is the one the file holds, when this build has it', () => {
-    expect(parseStoredAppSettings(file({ theme: 'dark' }))?.theme).toBe('dark');
-  });
+  it.each(['dark', 'light'] as const)(
+    'is the one the file holds, when this build has it: %s',
+    (theme) => {
+      expect(parseStoredAppSettings(file({ theme }))?.theme).toBe(theme);
+    },
+  );
 
   it.each([
     ['a theme this build does not have, one a newer version added', 'neon'],
@@ -133,10 +136,10 @@ describe('the theme, in the file', () => {
     expect(parseStoredAppSettings(file({ theme }))).toEqual(defaultKeptAppSettings);
   });
 
-  it('is written, and read back as it was', () => {
-    const settings: KeptAppSettings = { ...kept('en'), theme: 'dark' };
+  it.each(['dark', 'light'] as const)('is written, and read back as it was: %s', (theme) => {
+    const settings: KeptAppSettings = { ...kept('en'), theme };
 
-    expect(serializeStoredAppSettings(settings)).toContain('"theme": "dark"');
+    expect(serializeStoredAppSettings(settings)).toContain(`"theme": "${theme}"`);
     expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
   });
 });

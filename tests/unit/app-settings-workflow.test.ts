@@ -145,6 +145,18 @@ describe('how the app looks', () => {
 
     expect((await workflow.restore()).settings.theme).toBe('dark');
   });
+
+  it('is the light theme once it is kept, for the window that is made next and for what is restored', async () => {
+    const { store, save } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+    await workflow.restore();
+
+    await workflow.save({ theme: 'light' });
+
+    expect(workflow.theme()).toBe('light');
+    expect(save).toHaveBeenCalledExactlyOnceWith({ ...defaultKeptAppSettings, theme: 'light' });
+    expect((await workflow.restore()).settings.theme).toBe('light');
+  });
 });
 
 describe('what a queue does', () => {

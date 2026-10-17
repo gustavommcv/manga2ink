@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { Theme } from '@/domain/theme';
 import type * as AppProtocol from '@/main/app-protocol';
 
 type Handler = (request: Request) => Promise<Response>;
@@ -36,7 +37,7 @@ describe('where the window loads its page from', () => {
     const app = await loadWith('http://localhost:3000/main_window');
 
     expect(app.rendererUrl).toBe('http://localhost:3000/main_window');
-    app.serveRenderer();
+    app.serveRenderer(() => 'dark');
     expect(electron.handle).not.toHaveBeenCalled();
   });
 
@@ -63,18 +64,24 @@ describe('the scheme the packaged page is served on', () => {
   describe('answering the page', () => {
     let site: string;
     let handler: Handler;
+    let theme: Theme;
     beforeEach(async () => {
+      theme = 'dark';
       const parent = await mkdtemp(path.join(os.tmpdir(), 'mangabound-app-protocol-'));
       site = path.join(parent, 'site');
       await mkdir(path.join(site, 'main_window'), { recursive: true });
       await writeFile(path.join(site, 'main_window', 'index.html'), '<p>page</p>');
+      await writeFile(
+        path.join(site, 'main_window', 'themed.html'),
+        '<html class=app lang=en data-theme=dark><p>themed</p>',
+      );
       await writeFile(path.join(site, 'main_window', 'main_window.js'), 'start();');
       await writeFile(path.join(site, 'main_window', 'logo.svg'), '<svg/>');
       await mkdir(path.join(site, 'main_window', 'folder.js'));
       // Next to the site, and so outside the folder that serves it.
       await writeFile(path.join(parent, 'secret.txt'), 'not the page’s');
       const app = await loadWith(`file://${path.join(site, 'main_window', 'index.html')}`);
-      app.serveRenderer();
+      app.serveRenderer(() => theme);
       const [scheme, registered] = electron.handle.mock.calls[0] ?? [];
       expect(scheme).toBe('app');
       handler = registered as Handler;
@@ -94,6 +101,18 @@ describe('the scheme the packaged page is served on', () => {
       const script = await get('/main_window/main_window.js');
       expect(script.headers.get('content-type')).toBe('text/javascript; charset=utf-8');
       expect(await script.text()).toBe('start();');
+    });
+
+    it('gives the page in the theme that is chosen when it is asked for, and not the others', async () => {
+      const first = await (await get('/main_window/themed.html')).text();
+      theme = 'light';
+      const later = await (await get('/main_window/themed.html')).text();
+
+      expect(first).toBe('<html class=app lang=en data-theme="dark"><p>themed</p>');
+      expect(later).toBe('<html class=app lang=en data-theme="light"><p>themed</p>');
+      // A script is given as it is, whatever it holds.
+      theme = 'dark';
+      expect(await (await get('/main_window/main_window.js')).text()).toBe('start();');
     });
 
     it('gives a file of a type that is not listed as a plain download, so the page cannot run it', async () => {

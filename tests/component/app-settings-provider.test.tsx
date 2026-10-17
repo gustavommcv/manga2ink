@@ -116,9 +116,8 @@ describe('AppSettingsProvider', () => {
       loadAppSettings: () =>
         Promise.resolve({
           ok: true,
-          // A theme that a later build has, to show the page follows what was kept.
           value: {
-            settings: { ...defaultAppSettings, theme: 'light' as never },
+            settings: { ...defaultAppSettings, theme: 'light' },
             language: 'en',
             unreadable: false,
           },

@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { contentTypeFor, rendererFile, rendererLocation } from '@/main/renderer-files';
+import { contentTypeFor, pageInTheme, rendererFile, rendererLocation } from '@/main/renderer-files';
 
 const root = path.resolve('build', 'renderer');
 
@@ -83,5 +83,45 @@ describe('contentTypeFor', () => {
   it('calls anything else a plain download, which a page cannot run', () => {
     expect(contentTypeFor('payload.exe')).toBe('application/octet-stream');
     expect(contentTypeFor('noextension')).toBe('application/octet-stream');
+  });
+});
+
+describe('pageInTheme', () => {
+  it('names the theme on the html element, as the build writes it, without quotes', () => {
+    const built = '<!doctype html><html class=mangabound-app lang=en data-theme=dark><head></head>';
+
+    expect(pageInTheme(built, 'light')).toBe(
+      '<!doctype html><html class=mangabound-app lang=en data-theme="light"><head></head>',
+    );
+  });
+
+  it.each([
+    ['double quotes', '<html lang="en" data-theme="dark">'],
+    ['single quotes', "<html lang='en' data-theme='dark'>"],
+    ['no quotes', '<html lang=en data-theme=dark>'],
+    ['capitals, which HTML allows', '<HTML LANG=en DATA-THEME=dark>'],
+    ['a line break before the attribute', '<html lang="en"\n  data-theme="dark">'],
+  ])('takes the attribute written with %s', (_name, html) => {
+    expect(pageInTheme(html, 'light')).toMatch(/data-theme="light"/iu);
+    expect(pageInTheme(html, 'light')).not.toMatch(/dark/iu);
+  });
+
+  it('is the theme that is asked for, whatever the page named, and never anything else', () => {
+    expect(pageInTheme('<html data-theme=light>', 'dark')).toBe('<html data-theme="dark">');
+  });
+
+  it('changes only the html element, not an attribute of that name further down', () => {
+    const page = '<html lang=en data-theme=dark><body><div data-theme=dark></div></body>';
+
+    expect(pageInTheme(page, 'light')).toBe(
+      '<html lang=en data-theme="light"><body><div data-theme=dark></div></body>',
+    );
+  });
+
+  it('gives a page that has no such attribute as it is', () => {
+    const page = '<html lang=en><body data-theme=dark></body></html>';
+
+    expect(pageInTheme(page, 'light')).toBe(page);
+    expect(pageInTheme('<p>not a page</p>', 'light')).toBe('<p>not a page</p>');
   });
 });
