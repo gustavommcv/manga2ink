@@ -1,6 +1,7 @@
 import { Info } from 'lucide-react';
 import type React from 'react';
 
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 export interface InfoBannerProps {
@@ -20,9 +21,10 @@ export function InfoBanner({
   message,
   title,
 }: InfoBannerProps): React.JSX.Element {
+  const words = useMessages().shared.infoBanner;
   return (
     <div
-      aria-label={ariaLabel ?? title ?? 'Information'}
+      aria-label={ariaLabel ?? title ?? words.label}
       className={cn(
         'border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-lg border px-4 py-3',
         className,
