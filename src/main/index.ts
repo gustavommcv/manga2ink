@@ -21,6 +21,7 @@ import { registerRendererScheme, serveRenderer } from './app-protocol';
 import { createMainContext } from './context';
 import { settleEarlierFolders } from './processing-status';
 import { cleanUpBeforeQuit } from './quit-cleanup';
+import { askToLeave, LeavingGuard } from './leaving';
 import { installLog, logFolder } from './log';
 import { registerArtifactHandlers } from './ipc/artifacts';
 import { registerConversionHandlers } from './ipc/conversion';
@@ -28,6 +29,7 @@ import { registerCoverHandlers } from './ipc/covers';
 import { registerInputHandlers } from './ipc/inputs';
 import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
+import { dialogWords } from './ipc/dialog-words';
 import { registerPendingHandlers } from './ipc/pending';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
@@ -55,6 +57,11 @@ app.on('second-instance', () => {
 });
 
 const context = createMainContext();
+// Asked before the app is closed while a conversion runs, whichever way it is closed (ADR 0059).
+const leaving = new LeavingGuard(
+  () => context.conversions.size > 0,
+  () => askToLeave(dialogWords(context).leaveWhileConverting, BrowserWindow.getAllWindows()[0]),
+);
 const oneDay = 24 * 60 * 60 * 1000;
 let cleanupStarted = false;
 
@@ -147,15 +154,23 @@ void app.whenReady().then(async () => {
   registerOpdsHandlers(context);
 
   serveRenderer();
-  createMainWindow();
+  createMainWindow(leaving);
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow(leaving);
   });
 });
 
 app.on('before-quit', (event) => {
   if (cleanupStarted) return;
   event.preventDefault();
+  // Quitting is held either way; once the person has agreed it goes on, and `quit` comes back here.
+  if (
+    !leaving.allows(() => {
+      app.quit();
+    })
+  ) {
+    return;
+  }
   cleanupStarted = true;
   void cleanUpBeforeQuit(
     {

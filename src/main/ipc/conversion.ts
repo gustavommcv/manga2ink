@@ -39,6 +39,7 @@ type ConversionContext = Pick<
   | 'mangapressCli'
   | 'selectedLibraries'
   | 'activeJobs'
+  | 'conversions'
   | 'workflow'
   | 'artifactPaths'
   | 'libraryPublisher'

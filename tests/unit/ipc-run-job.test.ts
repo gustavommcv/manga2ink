@@ -35,6 +35,7 @@ function context(): JobContext {
   return {
     selectedLibraries: new Map([['run', libraryPath]]),
     activeJobs: new Map(),
+    conversions: new Set(),
     artifactPaths: new Map(),
     pendingArtifacts: new Map(),
     pendingRunActivity: new PendingRunActivity(),
@@ -199,6 +200,38 @@ describe('conversion job lifetime', () => {
       cause,
     );
     expect(state.activeJobs.size).toBe(0);
+  });
+
+  it('counts as a conversion that is running only while it runs, so that closing the app can ask', async () => {
+    const state = context();
+    let during: readonly string[] = [];
+
+    await runJob(command, state, () => {
+      during = [...state.conversions];
+      return Promise.resolve('done');
+    });
+
+    expect(during).toEqual(['job']);
+    expect(state.conversions.size).toBe(0);
+  });
+
+  it('is no longer a conversion that is running once it has failed', async () => {
+    const state = context();
+
+    await expect(
+      runJob(command, state, () => Promise.reject(new Error('The tool failed.'))),
+    ).rejects.toThrow('The tool failed.');
+
+    expect(state.conversions.size).toBe(0);
+  });
+
+  it('is not one for a request that was refused before it started', async () => {
+    const state = context();
+    state.selectedLibraries.clear();
+
+    await runJob(command, state, vi.fn());
+
+    expect(state.conversions.size).toBe(0);
   });
 
   it('cleans up even if the run callback throws synchronously', async () => {

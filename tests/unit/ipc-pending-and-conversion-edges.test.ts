@@ -77,6 +77,7 @@ describe('pending books, at the edges', () => {
       preferredNetworkInterface: undefined,
       activeSharingTarget: undefined,
       activeJobs: new Map<string, AbortController>(),
+      conversions: new Set<string>(),
       pendingRunActivity: new PendingRunActivity(),
       ...overrides,
     };
@@ -271,6 +272,7 @@ describe('conversion, at the edges', () => {
       mangapressCli: undefined as unknown,
       selectedLibraries: new Map<string, string>(),
       activeJobs: new Map<string, AbortController>(),
+      conversions: new Set<string>(),
       workflow,
       artifactPaths: new Map<string, string>(),
       libraryPublisher: {},

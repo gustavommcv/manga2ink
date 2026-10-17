@@ -59,6 +59,7 @@ describe('cancelling a job that was started', () => {
     mangapressCli: undefined,
     selectedLibraries: new Map<string, string>(),
     activeJobs: new Map<string, AbortController>(),
+    conversions: new Set<string>(),
     workflow,
     artifactPaths: new Map(),
     libraryPublisher: {},
@@ -69,6 +70,7 @@ describe('cancelling a job that was started', () => {
   const metadataContext = (provider: unknown) => ({
     metadataProviders: new Map([['source', provider]]),
     activeJobs: new Map<string, AbortController>(),
+    conversions: new Set<string>(),
   });
 
   /**
