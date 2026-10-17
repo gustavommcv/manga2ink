@@ -398,6 +398,75 @@ describe('FsPendingRuns', () => {
   });
 });
 
+describe('FsPendingRuns.idleRuns', () => {
+  const day = 24 * 60 * 60 * 1000;
+  const now = Date.UTC(2026, 9, 16, 12, 0, 0);
+
+  /** Makes everything in a folder as old as it was `agoMs` before `now`. */
+  async function ageTree(target: string, agoMs: number): Promise<void> {
+    const when = new Date(now - agoMs);
+    for (const entry of await readdir(target, { withFileTypes: true })) {
+      const child = path.join(target, entry.name);
+      if (entry.isDirectory()) await ageTree(child, agoMs);
+      else await utimes(child, when, when);
+    }
+    await utimes(target, when, when);
+  }
+
+  /** A run with one finished book, whose newest change is `agoMs` before `now`. */
+  async function runOf(store: FsPendingRuns, library: FsLibraryStore, agoMs: number) {
+    const run = await store.create();
+    const entry: LibraryBookEntry = {
+      relativePath: 'Book.epub',
+      title: 'Book',
+      author: 'Author',
+      format: 'epub',
+      bytes: 5,
+      convertedAt: '2026-09-28T00:00:00.000Z',
+    };
+    await writeFile(path.join(run.path, entry.relativePath), 'hello');
+    await library.publish(run.path, entry);
+    await ageTree(run.path, agoMs);
+    return run;
+  }
+
+  it('lists the runs nothing has changed in for longer than the age, and not the others', async () => {
+    const { store, library } = await fixture();
+    const old = await runOf(store, library, 40 * day);
+    await runOf(store, library, 2 * day);
+
+    const idle = await store.idleRuns(30 * day, now);
+
+    expect(idle.map((run) => run.id)).toEqual([old.id]);
+  });
+
+  it('leaves a run alone that something in it changed lately, such as a book that was just saved', async () => {
+    const { store, library } = await fixture();
+    const run = await runOf(store, library, 40 * day);
+    const recent = new Date(now - 60 * 1000);
+    await utimes(path.join(run.path, 'Book.epub'), recent, recent);
+
+    expect(await store.idleRuns(30 * day, now)).toEqual([]);
+  });
+
+  it('takes a run that is exactly as old as the age as not old enough, and the next moment of it as old', async () => {
+    const { store, library } = await fixture();
+    await runOf(store, library, 30 * day);
+
+    expect(await store.idleRuns(30 * day, now)).toEqual([]);
+    expect(await store.idleRuns(30 * day, now + 1)).toHaveLength(1);
+  });
+
+  it('does not delete anything, and takes the time of the call when it is not given one', async () => {
+    const { store, library } = await fixture();
+    const run = await runOf(store, library, 0);
+
+    expect(await store.idleRuns(day)).toEqual([]);
+    expect((await store.idleRuns(-60_000)).map((idle) => idle.id)).toEqual([run.id]);
+    expect((await store.list()).map((listed) => listed.id)).toEqual([run.id]);
+  });
+});
+
 describe('FsPendingRuns.pruneAbandoned', () => {
   const day = 24 * 60 * 60 * 1000;
   const now = Date.UTC(2026, 9, 4, 12, 0, 0);

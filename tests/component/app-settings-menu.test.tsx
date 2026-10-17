@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AppSettingsMenu } from '@/renderer/components/settings/app-settings-menu';
@@ -291,6 +291,36 @@ describe('the tabs of the dialog', () => {
       'aria-selected',
       'true',
     );
+  });
+});
+
+describe('what the dialog tells when it is closed', () => {
+  it('tells it once, when it closes, and not when it opens', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: reading('en') })}>
+        <AppSettingsMenu onClose={onClose} />
+      </AppSettingsProvider>,
+    );
+
+    await user.click(await screen.findByRole('button', { name: 'App settings' }));
+    await screen.findByRole('dialog');
+    expect(onClose).not.toHaveBeenCalled();
+
+    await user.keyboard('{Escape}');
+
+    expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('closes just the same when nobody listens', async () => {
+    const user = userEvent.setup();
+    await renderMenu();
+
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });
 

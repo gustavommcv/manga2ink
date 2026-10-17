@@ -94,6 +94,34 @@ describe('queue application workflow', () => {
     expect(convert).not.toHaveBeenCalled();
   });
 
+  it('reads the ready books again when the app settings are closed, since the Processing tab may have deleted some', async () => {
+    const user = userEvent.setup();
+    const pending = {
+      libraryId: 'old-run',
+      createdAt: 1_000,
+      artifacts: [
+        { id: 'old-book', name: 'Old.epub', bytes: 2048, format: 'epub' as const, saved: false },
+      ],
+    };
+    const listPendingRuns = vi
+      .fn<MangaboundBridge['listPendingRuns']>()
+      .mockResolvedValueOnce({ ok: true, value: [pending] })
+      .mockResolvedValue({ ok: true, value: [] });
+    installBridge(bridge({ listPendingRuns }));
+    render(<App />);
+    expect(await screen.findByText('Old.epub')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'App settings' }));
+    await screen.findByRole('dialog');
+    expect(listPendingRuns).toHaveBeenCalledTimes(1);
+    await user.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(screen.queryByText('Old.epub')).not.toBeInTheDocument();
+    });
+    expect(listPendingRuns).toHaveBeenCalledTimes(2);
+  });
+
   it('identifies separate pending conversions by their books', async () => {
     const user = userEvent.setup();
     installBridge(

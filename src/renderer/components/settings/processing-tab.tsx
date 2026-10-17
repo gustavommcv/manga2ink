@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { AnyMessage } from '@/domain/message';
 import { sizeOf } from '@/i18n/size';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { WaitingBooksSection } from '@/renderer/components/settings/waiting-books';
 import { Button } from '@/renderer/components/ui/button';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
@@ -34,6 +35,13 @@ export function ProcessingTab(): React.JSX.Element {
     return () => {
       reading = false;
     };
+  }, [api]);
+
+  /** Reads what the main process says again, after something it did to the books that wait. */
+  const reread = useCallback((): void => {
+    void api.get().then((answer) => {
+      if (answer.ok) setStatus(answer.value);
+    });
   }, [api]);
 
   /** Asks the main process to change something, and shows what it did or why it did not. */
@@ -96,6 +104,8 @@ export function ProcessingTab(): React.JSX.Element {
             </Button>
           </div>
           <p className="text-muted-foreground text-xs leading-relaxed">{words.help}</p>
+
+          <WaitingBooksSection onChanged={reread} waiting={status.waiting} />
 
           {status.earlier.length > 0 && (
             <section className="space-y-2">

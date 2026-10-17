@@ -18,7 +18,12 @@ import { type AnyMessage, message } from '@/domain/message';
 import type { MainContext } from '../context';
 import { dialogWords } from './dialog-words';
 import { handle, ignoredPayloadSchema } from './handle';
-import { discardRefusal, runOfSelection, wrongExtension } from './pending-decisions';
+import {
+  discardRefusal,
+  forgetPendingRun,
+  runOfSelection,
+  wrongExtension,
+} from './pending-decisions';
 import { rememberSaveFolder } from './remembered-folders';
 import { failed, ok } from './result';
 
@@ -157,12 +162,7 @@ export function registerPendingHandlers(context: PendingContext): void {
             said: message('failure.pendingNotFound', {}),
           });
         }
-        context.selectedLibraries.delete(id);
-        for (const [artifactId, reference] of context.pendingArtifacts) {
-          if (reference.runId !== id) continue;
-          context.pendingArtifacts.delete(artifactId);
-          context.artifactPaths.delete(artifactId);
-        }
+        forgetPendingRun(context, id);
         return ok(undefined);
       } finally {
         release();

@@ -77,6 +77,8 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
     openAppFolder: () => nothing,
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     getWorkingSpace: () => Promise.resolve({ ok: true, value: roomyWorkingSpace }),
+    countIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
+    deleteIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     ...overrides,
