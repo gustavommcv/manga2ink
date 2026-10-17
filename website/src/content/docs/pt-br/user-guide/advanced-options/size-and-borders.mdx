@@ -17,7 +17,7 @@ O mangapress decide nesta ordem, e vale a primeira regra que se aplica:
 2. **Cortar para preencher a tela** está escolhida: a página é escalada até cobrir a tela e o resto é cortado.
 3. A página já cabe dentro da tela e **Ajustar, sem ampliar** está escolhida: a página fica como está, mesmo que menor.
 4. O formato da página é próximo ao da tela, dentro de cerca de 1,5%: ela é cortada nos poucos pixels que não cabem e não tem borda nenhuma. Nos testes, uma página 0,9% fora do formato da tela foi cortada, e uma 1,7% fora foi preenchida.
-5. Caso contrário, em CBZ ou PDF, a página é ajustada para caber na tela e preenchida até ela com uma cor; com borda **Brancas** ela só é ajustada, sem preenchimento. Um EPUB só é ajustado, e suas bordas são o fundo da página.
+5. Caso contrário, em CBZ ou PDF, a página é ajustada para caber na tela e preenchida até ela com uma cor; com as bordas **Brancas** ela só é ajustada, sem preenchimento. Um EPUB só é ajustado, e suas bordas são o fundo da página.
 
 Se mais de uma opção de tamanho for dada na linha de comando, `--stretch` vence `--wallpaper`, e as duas vencem `--upscale`: as duas primeiras regras, portanto. O app define exatamente uma delas.
 
@@ -78,9 +78,9 @@ Uma página clara e uma tela mais alta que ela:
   }}
 />
 
-A margem da própria página é branca, então **Automáticas** preenche com branco e a página parece ocupar a tela. **Brancas** deixa a página como o arquivo de 954 × 1320 pixels que ela é: o cinza em volta dela na imagem é do leitor, e o que um leitor põe ali cabe ao leitor. **Pretas** preenche com preto.
+A margem da própria página é branca, então com **Automáticas** o preenchimento é branco e a página parece ocupar a tela. Com **Brancas**, a página fica como o arquivo de 954 × 1320 pixels que ela é: o cinza em volta dela na imagem é do leitor, e o que um leitor põe ali cabe ao leitor. Com **Pretas**, o preenchimento é preto.
 
-Uma página escura é onde **Automáticas** aparece. A imagem abaixo é uma página de fundo preto: a Wikipe-tan lutando contra um troll, desenhada em traço branco e algumas cores sobre o preto, por Polylerus.
+Uma página escura é onde **Automáticas** faz diferença. A imagem abaixo é uma página de fundo preto: a Wikipe-tan lutando contra um troll, desenhada em traço branco e algumas cores sobre o preto, por Polylerus.
 
 <OptionExample
   id="borders-dark-page"
@@ -92,6 +92,6 @@ Uma página escura é onde **Automáticas** aparece. A imagem abaixo é uma pág
   }}
 />
 
-**Automáticas** achou uma página escura e preencheu com preto, então a primeira e a terceira imagens são o mesmo arquivo aqui. **Brancas** dá a página sozinha, 954 × 1471 pixels, e em EPUB lhe daria um fundo branco que apareceria como uma moldura clara em volta de uma imagem escura.
+Com **Automáticas**, o mangapress achou uma página escura e preencheu com preto, então a primeira e a terceira imagens são o mesmo arquivo aqui. Com **Brancas**, o resultado é a página sozinha, 954 × 1471 pixels, e em EPUB lhe daria um fundo branco que apareceria como uma moldura clara em volta de uma imagem escura.
 
 Uma página cortada para caber, como na quarta regra acima, não tem bordas para escolher.
