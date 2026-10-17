@@ -3,15 +3,24 @@ import path from 'node:path';
 import { app, BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 
 import { rendererUrl } from './app-protocol';
+import { minimumWindowSize } from '@/domain/window-state';
+
 import type { LeavingGuard } from './leaving';
 import { isPermissionGranted } from './permission-policy';
+import type { WindowStateKeeper } from './window-state';
 
 /**
  * Opens the window of the app. `leaving` is asked before the window closes where that ends the app
  * (not on macOS, where closing the last window leaves it running, and a conversion with it: the
  * books it makes are there to reopen), so a conversion is not lost to a click on the wrong button.
+ * It opens as it was left, size and place, when that can still be had on the displays there are now
+ * (ADR 0062).
  */
-export const createMainWindow = (leaving: LeavingGuard): BrowserWindow => {
+export const createMainWindow = (
+  leaving: LeavingGuard,
+  windowState: Pick<WindowStateKeeper, 'placement' | 'track'>,
+): BrowserWindow => {
+  const { maximized, ...placement } = windowState.placement();
   const iconName = process.platform === 'win32' ? 'mangabound.ico' : 'mangabound.png';
   const platformTitleBar: Pick<
     BrowserWindowConstructorOptions,
@@ -33,16 +42,16 @@ export const createMainWindow = (leaving: LeavingGuard): BrowserWindow => {
     // like it never started at all. This also removes the class of bug that was possible with it: a
     // window and its process tree alive indefinitely because nothing ever called show().
     backgroundColor: '#121214',
-    height: 760,
+    // The size, and the place when there is one to keep: otherwise the system chooses it.
+    ...placement,
     // Small enough for half of a 1366px-wide screen with a tiling window manager's gaps and a
     // reader beside it: a tiled window is not allowed under its minimum, so a larger one is drawn
     // past the edge of the screen instead of being made to fit. The pages are laid out and checked
     // down to this width (tests/visual/narrow-window.visual.spec.ts).
-    minHeight: 400,
-    minWidth: 480,
+    minHeight: minimumWindowSize.height,
+    minWidth: minimumWindowSize.width,
     title: 'Mangabound',
     titleBarStyle: 'hidden',
-    width: 1180,
     ...platformTitleBar,
     webPreferences: {
       // The preload runs sandboxed, with no access to the main-process-only `app` module; this is
@@ -53,6 +62,16 @@ export const createMainWindow = (leaving: LeavingGuard): BrowserWindow => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       sandbox: true,
     },
+  });
+  // Asked for before the window is drawn, so it does not open in one size and jump to the other.
+  if (maximized) window.maximize();
+  // Through the emitter every window is, which takes the events the keeper listens for by name.
+  const emitter: NodeJS.EventEmitter = window;
+  windowState.track({
+    on: (event, listener) => emitter.on(event, listener),
+    getNormalBounds: () => window.getNormalBounds(),
+    isMaximized: () => window.isMaximized(),
+    isDestroyed: () => window.isDestroyed(),
   });
   // Request, check and device handlers are three separate doors: each one that is left alone
   // answers "yes" for everything.
