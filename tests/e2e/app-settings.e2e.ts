@@ -100,6 +100,11 @@ describe('packaged app settings', () => {
     await dialog.waitForDisplayed({ timeout: 30_000 });
     assert.equal(await dialog.$('h2').getText(), 'App settings');
 
+    // The page is in the theme the app starts with, which the stylesheet selects its colors by, and
+    // the dialog offers the themes there are (ADR 0066).
+    assert.equal(await $('html').getAttribute('data-theme'), 'dark');
+    assert.equal(await dialog.$('option=Dark (graphite)').isExisting(), true);
+
     // Choosing Portuguese changes the dialog at once and keeps the choice.
     await chooseLanguage('pt-BR');
     await waitForDialogTitle('Configurações do app', file);

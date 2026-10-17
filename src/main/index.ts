@@ -44,7 +44,7 @@ import { registerUpdateHandlers } from './ipc/updates';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { bootstrapToolchain } from './toolchain-bootstrap';
-import { createMainWindow } from './window';
+import { applyThemeToWindow, createMainWindow } from './window';
 
 if (started) app.quit();
 
@@ -151,7 +151,9 @@ void app.whenReady().then(async () => {
   });
 
   registerSettingsHandlers(context, preferencesWorkflow);
-  registerAppSettingsHandlers(appSettingsWorkflow);
+  registerAppSettingsHandlers(appSettingsWorkflow, (theme) => {
+    for (const window of BrowserWindow.getAllWindows()) applyThemeToWindow(window, theme);
+  });
   registerProcessingFolderHandlers(context);
   registerProjectLinkHandlers();
   registerUpdateHandlers(new UpdateCheckWorkflow(new GithubReleaseFeed()));
@@ -190,9 +192,11 @@ void app.whenReady().then(async () => {
   );
   windowState = keeper;
   await keeper.restore();
-  createMainWindow(leaving, keeper);
+  createMainWindow(leaving, keeper, appSettingsWorkflow.theme());
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow(leaving, keeper);
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createMainWindow(leaving, keeper, appSettingsWorkflow.theme());
+    }
   });
 });
 

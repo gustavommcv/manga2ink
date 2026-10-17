@@ -1,3 +1,5 @@
+import { defaultTheme, type Theme } from './theme';
+
 /**
  * The languages the app is written in, English first: it is the one every message is first written
  * in and the one a person gets when nothing else fits. A language is added here, with its catalog
@@ -24,13 +26,16 @@ export interface AppSettings {
   readonly notifyWhenDone: boolean;
   /** Keep the computer from going to sleep while a queue runs (ADR 0065). */
   readonly keepAwake: boolean;
+  /** How the app looks (ADR 0066). */
+  readonly theme: Theme;
 }
 
-/** Where the app starts: in the language of the system, telling and keeping awake. */
+/** Where the app starts: in the language of the system, telling and keeping awake, in the default theme. */
 export const defaultAppSettings: AppSettings = Object.freeze({
   language: 'system',
   notifyWhenDone: true,
   keepAwake: true,
+  theme: defaultTheme,
 });
 
 /** What a person changes at one time: any of the choices, and nothing else. */
@@ -55,6 +60,7 @@ export function choicesOf(settings: AppSettings): AppSettings {
     language: settings.language,
     notifyWhenDone: settings.notifyWhenDone,
     keepAwake: settings.keepAwake,
+    theme: settings.theme,
   };
 }
 

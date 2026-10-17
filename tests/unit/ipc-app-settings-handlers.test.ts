@@ -46,6 +46,7 @@ describe('the command that keeps the app settings', () => {
       notifyWhenDone: false,
     });
     expect(saveAppSettingsCommandSchema.parse({ keepAwake: true })).toEqual({ keepAwake: true });
+    expect(saveAppSettingsCommandSchema.parse({ theme: 'dark' })).toEqual({ theme: 'dark' });
     expect(
       saveAppSettingsCommandSchema.parse({
         language: 'en',
@@ -63,6 +64,9 @@ describe('the command that keeps the app settings', () => {
     { notifyWhenDone: 'yes' },
     { keepAwake: 1 },
     { notifyWhenDone: null },
+    { theme: 'neon' },
+    { theme: 3 },
+    { theme: undefined },
     { language: undefined },
     'pt-BR',
     null,
@@ -86,7 +90,7 @@ describe('loading the app settings', () => {
       unreadable: false,
     };
     const restore = vi.fn(() => Promise.resolve(restored));
-    registerAppSettingsHandlers({ restore, save: vi.fn() });
+    registerAppSettingsHandlers({ restore, save: vi.fn() }, vi.fn());
 
     expect(await call('app:load-settings')).toEqual({ ok: true, value: restored });
   });
@@ -95,7 +99,7 @@ describe('loading the app settings', () => {
 describe('keeping the app settings', () => {
   it('keeps what the window sends and says the language it comes to', async () => {
     const save = vi.fn(() => Promise.resolve({ language: 'pt-BR' as const }));
-    registerAppSettingsHandlers({ restore: vi.fn(), save });
+    registerAppSettingsHandlers({ restore: vi.fn(), save }, vi.fn());
 
     expect(await call('app:save-settings', { language: 'system' })).toEqual({
       ok: true,
@@ -104,9 +108,54 @@ describe('keeping the app settings', () => {
     expect(save).toHaveBeenCalledExactlyOnceWith({ language: 'system' });
   });
 
+  it('tells which theme was kept, once it is, so the windows that are open are given its colors', async () => {
+    const save = vi.fn(() => Promise.resolve({ language: 'en' as const }));
+    const themed = vi.fn();
+    registerAppSettingsHandlers({ restore: vi.fn(), save }, themed);
+
+    await call('app:save-settings', { theme: 'dark', keepAwake: false });
+
+    expect(save).toHaveBeenCalledExactlyOnceWith({ theme: 'dark', keepAwake: false });
+    expect(themed).toHaveBeenCalledExactlyOnceWith('dark');
+  });
+
+  it('does not touch the windows for a change that is not of the theme', async () => {
+    const themed = vi.fn();
+    registerAppSettingsHandlers(
+      { restore: vi.fn(), save: vi.fn(() => Promise.resolve({ language: 'en' as const })) },
+      themed,
+    );
+
+    await call('app:save-settings', { language: 'en' });
+
+    expect(themed).not.toHaveBeenCalled();
+  });
+
+  it('does not give the windows a theme that could not be kept', async () => {
+    const themed = vi.fn();
+    registerAppSettingsHandlers(
+      { restore: vi.fn(), save: vi.fn(() => Promise.reject(new SettingsSaveError())) },
+      themed,
+    );
+
+    await call('app:save-settings', { theme: 'dark' });
+
+    expect(themed).not.toHaveBeenCalled();
+  });
+
+  it('refuses a theme the app does not have, and keeps nothing', async () => {
+    const save = vi.fn();
+    const themed = vi.fn();
+    registerAppSettingsHandlers({ restore: vi.fn(), save }, themed);
+
+    expect(await call('app:save-settings', { theme: 'neon' })).toMatchObject({ ok: false });
+    expect(save).not.toHaveBeenCalled();
+    expect(themed).not.toHaveBeenCalled();
+  });
+
   it('refuses what is not a choice of the app, and keeps nothing', async () => {
     const save = vi.fn();
-    registerAppSettingsHandlers({ restore: vi.fn(), save });
+    registerAppSettingsHandlers({ restore: vi.fn(), save }, vi.fn());
 
     expect(await call('app:save-settings', { language: 'klingon' })).toMatchObject({
       ok: false,
@@ -116,7 +165,7 @@ describe('keeping the app settings', () => {
 
   it('says the settings could not be kept when the file cannot be written', async () => {
     const save = vi.fn(() => Promise.reject(new SettingsSaveError()));
-    registerAppSettingsHandlers({ restore: vi.fn(), save });
+    registerAppSettingsHandlers({ restore: vi.fn(), save }, vi.fn());
 
     expect(await call('app:save-settings', { language: 'en' })).toMatchObject({
       ok: false,

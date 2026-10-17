@@ -3,8 +3,9 @@ import path from 'node:path';
 import { BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type Theme, themes, themeWindowColors } from '@/domain/theme';
 import type { LeavingGuard } from '@/main/leaving';
-import { createMainWindow as makeMainWindow } from '@/main/window';
+import { applyThemeToWindow, createMainWindow as makeMainWindow } from '@/main/window';
 import type { WindowStateKeeper } from '@/main/window-state';
 
 /** A guard that lets the window close, and remembers being asked. */
@@ -21,7 +22,8 @@ const keeping = {
 const createMainWindow = (
   guard: Pick<LeavingGuard, 'allows'> = letting,
   keeper: Pick<WindowStateKeeper, 'placement' | 'track'> = keeping,
-): BrowserWindow => makeMainWindow(guard as LeavingGuard, keeper);
+  theme: Theme = 'dark',
+): BrowserWindow => makeMainWindow(guard as LeavingGuard, keeper, theme);
 
 type Listener = (...args: never[]) => void;
 const electron = vi.hoisted(() => ({
@@ -251,6 +253,19 @@ describe('the window itself', () => {
     expect(optionsOfWindow()).not.toHaveProperty('show');
   });
 
+  it.each(themes)('is painted with the colors of the %s theme, as it opens', (theme) => {
+    onPlatform('linux');
+    createMainWindow(letting, keeping, theme);
+
+    expect(optionsOfWindow()).toMatchObject({
+      backgroundColor: themeWindowColors[theme].background,
+      titleBarOverlay: {
+        color: themeWindowColors[theme].background,
+        symbolColor: themeWindowColors[theme].foreground,
+      },
+    });
+  });
+
   it('draws its own buttons over a title bar of the page on Windows and Linux', () => {
     onPlatform('linux');
     createMainWindow();
@@ -433,5 +448,38 @@ describe('closing the window while a conversion runs', () => {
 
     expect(electron.windowOn).not.toHaveBeenCalled();
     expect(letting.allows).not.toHaveBeenCalled();
+  });
+});
+
+describe('giving a window the colors of a theme', () => {
+  const fakeWindow = (): {
+    readonly setBackgroundColor: ReturnType<typeof vi.fn<(color: string) => void>>;
+    readonly setTitleBarOverlay: ReturnType<typeof vi.fn<(options: unknown) => void>>;
+  } => ({ setBackgroundColor: vi.fn(), setTitleBarOverlay: vi.fn() });
+
+  it.each(['win32', 'linux'] as const)('paints it and its overlay of buttons on %s', (platform) => {
+    onPlatform(platform);
+    const window = fakeWindow();
+
+    applyThemeToWindow(window, 'dark');
+
+    expect(window.setBackgroundColor).toHaveBeenCalledExactlyOnceWith(
+      themeWindowColors.dark.background,
+    );
+    expect(window.setTitleBarOverlay).toHaveBeenCalledExactlyOnceWith({
+      color: themeWindowColors.dark.background,
+      height: 48,
+      symbolColor: themeWindowColors.dark.foreground,
+    });
+  });
+
+  it('paints only the window on macOS, where the buttons are the system’s own', () => {
+    onPlatform('darwin');
+    const window = fakeWindow();
+
+    applyThemeToWindow(window, 'dark');
+
+    expect(window.setBackgroundColor).toHaveBeenCalledOnce();
+    expect(window.setTitleBarOverlay).not.toHaveBeenCalled();
   });
 });

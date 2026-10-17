@@ -31,6 +31,7 @@ const written = (language: LanguagePreference): Record<string, unknown> => ({
   language,
   notifyWhenDone: true,
   keepAwake: true,
+  theme: 'dark',
   processingFolder: null,
   earlierProcessingFolders: [],
 });
@@ -156,6 +157,7 @@ describe('saving the file of the app settings', () => {
       language: 'en',
       notifyWhenDone: true,
       keepAwake: true,
+      theme: 'dark',
       processingFolder: processing.folder,
       earlierProcessingFolders: processing.earlier,
     });

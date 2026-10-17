@@ -68,7 +68,7 @@ describe('reading the file of the app settings', () => {
 describe('writing the file of the app settings', () => {
   it('writes the version and the choices, on lines of their own', () => {
     expect(serializeStoredAppSettings(kept('pt-BR'))).toBe(
-      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
+      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "theme": "dark",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
     );
   });
 
@@ -112,6 +112,32 @@ describe('the choices about a queue, in the file', () => {
     expect(parseStoredAppSettings(file({ notifyWhenDone: value, keepAwake: value }))).toMatchObject(
       { notifyWhenDone: true, keepAwake: true },
     );
+  });
+});
+
+describe('the theme, in the file', () => {
+  it('is the default one for a file that does not have it, which an earlier version wrote', () => {
+    expect(parseStoredAppSettings(file({ language: 'en' }))?.theme).toBe('dark');
+  });
+
+  it('is the one the file holds, when this build has it', () => {
+    expect(parseStoredAppSettings(file({ theme: 'dark' }))?.theme).toBe('dark');
+  });
+
+  it.each([
+    ['a theme this build does not have, one a newer version added', 'neon'],
+    ['a theme written another way', 'Dark'],
+    ['a number', 3],
+    ['nothing', null],
+  ])('is the default one when the file has %s', (_name, theme) => {
+    expect(parseStoredAppSettings(file({ theme }))).toEqual(defaultKeptAppSettings);
+  });
+
+  it('is written, and read back as it was', () => {
+    const settings: KeptAppSettings = { ...kept('en'), theme: 'dark' };
+
+    expect(serializeStoredAppSettings(settings)).toContain('"theme": "dark"');
+    expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
   });
 });
 

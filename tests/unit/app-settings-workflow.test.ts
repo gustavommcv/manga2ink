@@ -124,6 +124,29 @@ describe('keeping the app settings', () => {
   });
 });
 
+describe('how the app looks', () => {
+  it('is the theme that was kept, and what a change of it keeps', async () => {
+    const { store, save } = fakeStore({
+      settings: { ...defaultKeptAppSettings, theme: 'dark' },
+      unreadable: false,
+    });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+    await workflow.restore();
+
+    expect(workflow.theme()).toBe('dark');
+    await workflow.save({ theme: 'dark' });
+
+    expect(save).toHaveBeenCalledExactlyOnceWith({ ...defaultKeptAppSettings, theme: 'dark' });
+  });
+
+  it('is told to the window with the rest of the choices', async () => {
+    const { store } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+
+    expect((await workflow.restore()).settings.theme).toBe('dark');
+  });
+});
+
 describe('what a queue does', () => {
   it('is on until a person turns it off, and is read as it is now each time it is asked', async () => {
     const { store } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });

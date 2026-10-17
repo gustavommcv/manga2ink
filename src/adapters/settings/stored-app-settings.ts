@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { isTheme } from '@/domain/theme';
+
 import {
   defaultAppSettings,
   defaultProcessingChoice,
@@ -41,7 +43,7 @@ function processingIn(file: Record<string, unknown>): ProcessingChoice {
  * not JSON, not an object, or another version. A language the app does not have (one that a newer
  * version added, or a hand edit) is not a reason to lose the file: it reads as following the system,
  * and a folder that is not an absolute path reads as none. A yes or no that is missing or is not one
- * is the one the app starts with. Keys that are not known are dropped, and a file that has none of
+ * is the one the app starts with, and so is a theme that is missing or that this build does not have. Keys that are not known are dropped, and a file that has none of
  * the folders (one an earlier version wrote) is one with the app's own places.
  */
 export function parseStoredAppSettings(raw: string): KeptAppSettings | undefined {
@@ -58,6 +60,7 @@ export function parseStoredAppSettings(raw: string): KeptAppSettings | undefined
     language: isLanguagePreference(file.language) ? file.language : defaultAppSettings.language,
     notifyWhenDone: flagIn(file.notifyWhenDone, defaultAppSettings.notifyWhenDone),
     keepAwake: flagIn(file.keepAwake, defaultAppSettings.keepAwake),
+    theme: isTheme(file.theme) ? file.theme : defaultAppSettings.theme,
     processing: processingIn(file),
   };
 }
@@ -69,6 +72,7 @@ export function serializeStoredAppSettings(settings: KeptAppSettings): string {
       language: settings.language,
       notifyWhenDone: settings.notifyWhenDone,
       keepAwake: settings.keepAwake,
+      theme: settings.theme,
       processingFolder: settings.processing.folder,
       earlierProcessingFolders: settings.processing.earlier,
     },

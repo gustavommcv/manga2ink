@@ -1,4 +1,5 @@
 import type { Language } from '@/domain/app-settings';
+import type { Theme } from '@/domain/theme';
 
 /** The words of the dialog behind the gear on the title bar (ADR 0052). */
 export interface AppSettingsMessages {
@@ -24,6 +25,14 @@ export interface AppSettingsMessages {
     readonly system: string;
     readonly saveFailed: string;
   };
+  /** How the app looks (ADR 0066). */
+  readonly theme: {
+    readonly label: string;
+    readonly help: string;
+    /** What each theme is called: a theme is not added without its name in every language. */
+    readonly names: Readonly<Record<Theme, string>>;
+    readonly saveFailed: string;
+  };
   /** Said when the file of the app settings was there and could not be used. */
   readonly unreadable: string;
 }
@@ -47,6 +56,12 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
       system: 'Automatic (system language)',
       saveFailed: 'The language could not be saved. Try again.',
     },
+    theme: {
+      label: 'Theme',
+      help: 'How the app looks. Applies right away.',
+      names: { dark: 'Dark (graphite)' },
+      saveFailed: 'The theme could not be saved. Try again.',
+    },
     unreadable: 'The saved app settings could not be read, so the defaults are in use.',
   },
   'pt-BR': {
@@ -65,6 +80,12 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
       help: 'Vale na hora. Livros, títulos e as mensagens das próprias ferramentas não são traduzidos.',
       system: 'Automático (idioma do sistema)',
       saveFailed: 'Não foi possível guardar o idioma. Tente de novo.',
+    },
+    theme: {
+      label: 'Tema',
+      help: 'Como o app se parece. Vale na hora.',
+      names: { dark: 'Escuro (grafite)' },
+      saveFailed: 'Não foi possível guardar o tema. Tente de novo.',
     },
     unreadable:
       'As configurações do app guardadas não puderam ser lidas, então os padrões estão em uso.',
