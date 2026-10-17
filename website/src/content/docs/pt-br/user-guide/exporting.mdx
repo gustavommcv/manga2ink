@@ -7,15 +7,15 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## Salve uma cópia
 
-Use **Save as…** ao lado de um livro para escolher nome e destino. Para vários livros, **Save all to folder…** copia todos para a pasta selecionada.
+Use **Salvar como…** ao lado de um livro para escolher nome e destino. Para vários livros, **Salvar todos em uma pasta…** copia todos para a pasta selecionada.
 
-Você pode salvar de novo enquanto os livros pendentes ainda estiverem lá. **Save all to folder…** nunca substitui arquivos existentes. Em vez disso, ele escolhe um nome numerado livre, então salvar várias vezes pode deixar cópias extras. **Save as…** usa a janela de salvar do seu sistema, que pergunta antes de sobrescrever um arquivo.
+Você pode salvar de novo enquanto os livros pendentes ainda estiverem lá. **Salvar todos em uma pasta…** nunca substitui arquivos existentes. Em vez disso, ele escolhe um nome numerado livre, então salvar várias vezes pode deixar cópias extras. **Salvar como…** usa a janela de salvar do seu sistema, que pergunta antes de sobrescrever um arquivo.
 
 Se o salvamento falhar ou mostrar um aviso, leia a mensagem e tente de novo. O Mangabound também registra cada livro salvo em uma lista dentro da pasta de destino, que é a que o compartilhamento usa. Um livro pode ter sido copiado mesmo que esse registro tenha falhado, então confira a pasta antes de copiá-lo de novo. A cópia pendente continua disponível.
 
 <TutorialImage
   name="generated/save-results"
-  alt="Livros prontos com salvamento individual, Save all to folder e compartilhamento."
+  alt="Livros prontos com salvamento individual, Salvar todos em uma pasta e compartilhamento."
 />
 
 ## Avisos sobre os livros
@@ -27,59 +27,59 @@ Se o salvamento falhar ou mostrar um aviso, leia a mensagem e tente de novo. O M
   alt="Três livros prontos com dois avisos amarelos, cada um indicando a quais livros se aplica."
 />
 
-- **Pages smaller than the screen**: mais de um quarto das páginas é menor que a tela e nada as amplia. Escolha **Fit, enlarging small pages** em **Page size**, nas [opções de conversão](../output-profiles/), e converta de novo.
-- **Pages already converted once**: as páginas parecem já ter sido convertidas pelo Kindle Comic Converter. Converter de novo reduz a qualidade; use os arquivos originais, se tiver.
-- **Files that are not images were left out**: o que você adicionou tem arquivos que não são imagens de página, então eles não estão no livro.
-- **A .json file beside the book was not used** e **Some labelled spreads were not joined**: o mangapress procura um arquivo `.json` com rótulos de página dupla ao lado de um CBZ que você adiciona. O primeiro aviso diz que esse arquivo não era uma lista de rótulos de página dupla, então o livro foi feito sem ele. O segundo diz que uma posição rotulada não tinha página com que ser unida.
-- **Saved under another name**: o livro substituiria o arquivo de onde ele foi feito, então recebeu outro nome.
-- **Pages that end early have a blank part**: o arquivo de uma página termina antes de a imagem estar completa, em geral porque um download parou. O livro guarda o que pôde ser lido, e o resto dessa página fica em branco. Baixe o capítulo de novo para ter a página inteira.
+- **Páginas menores que a tela**: mais de um quarto das páginas é menor que a tela e nada as amplia. Escolha **Ajustar, ampliando páginas pequenas** em **Tamanho da página**, nas [opções de conversão](../output-profiles/), e converta de novo.
+- **Páginas já convertidas uma vez**: as páginas parecem já ter sido convertidas pelo Kindle Comic Converter. Converter de novo reduz a qualidade; use os arquivos originais, se tiver.
+- **Arquivos que não são imagens ficaram de fora**: o que você adicionou tem arquivos que não são imagens de página, então eles não estão no livro.
+- **Um arquivo .json ao lado do livro não foi usado** e **Algumas páginas duplas marcadas não foram unidas**: o mangapress procura um arquivo `.json` com rótulos de página dupla ao lado de um CBZ que você adiciona. O primeiro aviso diz que esse arquivo não era uma lista de rótulos de página dupla, então o livro foi feito sem ele. O segundo diz que uma posição rotulada não tinha página com que ser unida.
+- **Salvo com outro nome**: o livro substituiria o arquivo de onde ele foi feito, então recebeu outro nome.
+- **Páginas que terminam antes do fim têm uma parte em branco**: o arquivo de uma página termina antes de a imagem estar completa, em geral porque um download parou. O livro guarda o que pôde ser lido, e o resto dessa página fica em branco. Baixe o capítulo de novo para ter a página inteira.
 
 A etapa que junta os capítulos em volumes, feita pelo mangabind, acrescenta avisos próprios quando deixa algo de fora de um livro:
 
-- **Chapters with more than one copy were left out**: um capítulo está na pasta mais de uma vez, então nenhuma das cópias está no livro. Remova todas menos uma e converta de novo.
-- **Chapters are missing inside a volume** e **Chapters with no pages were left out**: falta um número de capítulo entre o primeiro e o último de um volume, ou um capítulo não tem páginas.
-- **Links that lead outside the folder were left out**: um arquivo da pasta é um link que não leva a um arquivo dentro dela, então não foi copiado. Coloque uma cópia do arquivo na pasta, se ele deve estar lá.
-- **Files in a chapter that are not page images were left out**: os nomes desses arquivos não dizem que são imagens (JPEG, PNG, WebP, GIF, BMP, AVIF, JPEG XL ou TIFF). Se um for uma página, dê a ele a extensão do seu formato e converta de novo. Arquivos ocultos do sistema, como `.DS_Store`, ficam de fora sem aviso.
-- **Pages that expand to too much were left out**: uma página dentro de um CBZ declara que, ao ser descompactada, ocupa muito mais do que uma página poderia ocupar (mais de 256 MiB, ou mais de mil vezes o tamanho dela no arquivo). É assim que parece um arquivo feito para encher a memória de um computador, por isso ele ficou de fora.
+- **Capítulos com mais de uma cópia ficaram de fora**: um capítulo está na pasta mais de uma vez, então nenhuma das cópias está no livro. Remova todas menos uma e converta de novo.
+- **Faltam capítulos dentro de um volume** e **Capítulos sem páginas ficaram de fora**: falta um número de capítulo entre o primeiro e o último de um volume, ou um capítulo não tem páginas.
+- **Links que levam para fora da pasta ficaram de fora**: um arquivo da pasta é um link que não leva a um arquivo dentro dela, então não foi copiado. Coloque uma cópia do arquivo na pasta, se ele deve estar lá.
+- **Arquivos de um capítulo que não são imagens de página ficaram de fora**: os nomes desses arquivos não dizem que são imagens (JPEG, PNG, WebP, GIF, BMP, AVIF, JPEG XL ou TIFF). Se um for uma página, dê a ele a extensão do seu formato e converta de novo. Arquivos ocultos do sistema, como `.DS_Store`, ficam de fora sem aviso.
+- **Páginas que se expandem demais ficaram de fora**: uma página dentro de um CBZ declara que, ao ser descompactada, ocupa muito mais do que uma página poderia ocupar (mais de 256 MiB, ou mais de mil vezes o tamanho dela no arquivo). É assim que parece um arquivo feito para encher a memória de um computador, por isso ele ficou de fora.
 
-Se um mangapress mais novo enviar um tipo de aviso que esta versão não conhece, ele aparece com as palavras do próprio mangapress, sob **A note from mangapress**. Os avisos aparecem com os resultados da conversão que os gerou. Livros que você reabrir depois em **Ready books** são listados sem eles.
+Se um mangapress mais novo enviar um tipo de aviso que esta versão não conhece, ele aparece com as palavras do próprio mangapress, sob **Uma observação do mangapress**. Os avisos aparecem com os resultados da conversão que os gerou. Livros que você reabrir depois em **Livros prontos** são listados sem eles.
 
 ## Abra ou compartilhe
 
 - A ação de abrir, ao lado do livro, o abre no aplicativo padrão do seu sistema. Se nenhum estiver definido para EPUB, CBZ ou PDF, instale um leitor compatível ou escolha um nas configurações do sistema.
 - A ação de pasta aparece para um livro salvo e mostra onde ele foi salvo.
-- **Share these books** compartilha todos os livros prontos, de todas as conversões pendentes, com o KOReader pela rede local. Você não precisa salvá-los antes. Veja [compartilhamento local](../../koreader/opds-sharing/).
+- **Compartilhar estes livros** compartilha todos os livros prontos, de todas as conversões pendentes, com o KOReader pela rede local. Você não precisa salvá-los antes. Veja [compartilhamento local](../../koreader/opds-sharing/).
 
 ## O que permanece após reiniciar?
 
-Os livros pendentes ficam guardados nos dados do próprio Mangabound, no seu computador, ou na pasta de trabalho que você escolheu (veja **Onde o Mangabound trabalha?** abaixo), e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Ready books**, na fila. **View books** abre os resultados dela.
+Os livros pendentes ficam guardados nos dados do próprio Mangabound, no seu computador, ou na pasta de trabalho que você escolheu (veja **Onde o Mangabound trabalha?** abaixo), e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Livros prontos**, na fila. **Ver livros** abre os resultados dela.
 
-Se você fechar o Mangabound enquanto uma conversão está em andamento, ele pergunta antes, porque a conversão para e os livros que ela não terminou são perdidos. Escolha **Keep converting** para continuar. No macOS, fechar só a janela não a interrompe.
+Se você fechar o Mangabound enquanto uma conversão está em andamento, ele pergunta antes, porque a conversão para e os livros que ela não terminou são perdidos. Escolha **Continuar convertendo** para continuar. No macOS, fechar só a janela não a interrompe.
 
 Quando todos os livros de uma conversão concluída foram salvos e registrados, o Mangabound pode limpar as cópias pendentes dela ao fechar o aplicativo. As cópias que você salvou continuam onde você as salvou. Faça os seus próprios backups: os livros pendentes não são uma biblioteca permanente.
 
 <TutorialImage
   name="generated/ready-books"
-  alt="Ready books com ações para reabrir ou excluir a conversão pendente."
+  alt="Livros prontos com ações para reabrir ou excluir a conversão pendente."
 />
 
 ## Onde o Mangabound trabalha?
 
 Por padrão, o Mangabound monta os volumes na pasta temporária do sistema enquanto converte, e guarda os livros prontos na própria pasta de dados dele até você salvá-los. Em um computador cuja pasta temporária é pequena, ou cujo disco está quase cheio, uma série longa pode ficar sem espaço.
 
-Para usar um disco com mais espaço, abra **App settings** (a engrenagem na barra de título), escolha **Processing** e selecione **Choose a folder…**. O Mangabound cria duas pastas dentro da que você escolher: **Pending**, para os livros prontos, e **Scratch**, para os volumes que ele monta durante a conversão. A aba mostra os dois caminhos e quanto espaço está livre.
+Para usar um disco com mais espaço, abra **Configurações do app** (a engrenagem na barra de título), escolha **Processamento** e selecione **Escolher uma pasta…**. O Mangabound cria duas pastas dentro da que você escolher: **Pending**, para os livros prontos, e **Scratch**, para os volumes que ele monta durante a conversão. A aba mostra os dois caminhos e quanto espaço está livre.
 
-- A mudança vale para a próxima conversão. Os livros que já estavam esperando ficam onde estão e continuam em **Ready books**: você ainda pode salvá-los ou apagá-los, e compartilhá-los pelos resultados deles. A aba lista as pastas que ainda guardam livros, e o Mangabound deixa de procurar em uma delas quando ela fica vazia.
+- A mudança vale para a próxima conversão. Os livros que já estavam esperando ficam onde estão e continuam em **Livros prontos**: você ainda pode salvá-los ou apagá-los, e compartilhá-los pelos resultados deles. A aba lista as pastas que ainda guardam livros, e o Mangabound deixa de procurar em uma delas quando ela fica vazia.
 - Você não pode mudar a pasta enquanto uma conversão ou um compartilhamento está em andamento.
-- Se o disco da pasta não está conectado, o Mangabound avisa e não converte até que esteja, em vez de trabalhar em silêncio em outro lugar. **Use the default folder** deixa tudo como era.
+- Se o disco da pasta não está conectado, o Mangabound avisa e não converte até que esteja, em vez de trabalhar em silêncio em outro lugar. **Usar a pasta padrão** deixa tudo como era.
 - Os livros que você salvou em outra pasta não são afetados.
 
 ## Exclua livros pendentes
 
-Na seção **Ready books** da fila, cada grupo de conversões tem uma ação **Delete**. Depois que você confirma, ela remove permanentemente **todos os livros pendentes daquele grupo**. Não é só uma linha da lista, e não se limita a um volume.
+Na seção **Livros prontos** da fila, cada grupo de conversões tem uma ação **Apagar**. Depois que você confirma, ela remove permanentemente **todos os livros pendentes daquele grupo**. Não é só uma linha da lista, e não se limita a um volume.
 
 Ela não remove os seus arquivos originais nem as cópias que você salvou em outra pasta. Não é possível excluir enquanto uma conversão está em andamento, nem enquanto os livros daquele grupo estão sendo salvos ou compartilhados. Pare o compartilhamento, ou espere a operação terminar, e tente de novo.
 
 :::caution[Salve primeiro]
-Se a conversão pendente for a sua única cópia, Delete joga fora os livros dela. Para tê-los de volta, você teria que processar os arquivos originais de novo.
+Se a conversão pendente for a sua única cópia, **Apagar** joga fora os livros dela. Para tê-los de volta, você teria que processar os arquivos originais de novo.
 :::

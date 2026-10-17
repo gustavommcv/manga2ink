@@ -29,3 +29,7 @@ Starlight already has the mechanism: a page that a language does not have is bui
 ## Update 2026-10-16
 
 Japanese now has every page of the guide, and its list in `i18n-gaps.json` is empty, as Portuguese's is. The mechanism stays for what comes next: a page added to the guide in English first is on the list of each language that has not translated it, and the Japanese home page says so.
+
+## Update 2026-10-17
+
+The application has Brazilian Portuguese, so the guide follows it, as the consequence above said it would: the Portuguese guide names the controls as the Portuguese application does (the same words as its pictures, which are made in each language the app has, ADR 0034), and the check of the labels reads each language's own words from the catalogs of the application. A language the application does not have yet, Japanese, is checked against the English words, which is what its guide names the controls by until the application is translated. A page's headings that name an option are the option's name too, so their anchors changed with them.
