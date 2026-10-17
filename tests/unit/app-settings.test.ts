@@ -6,6 +6,8 @@ import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 
 import {
+  applyingChange,
+  choicesOf,
   choosingFolder,
   defaultAppSettings,
   defaultKeptAppSettings,
@@ -38,9 +40,51 @@ describe('the languages of the app', () => {
     expect(languagePreferences).toEqual(['system', ...languages]);
   });
 
-  it('start by following the system', () => {
-    expect(defaultAppSettings).toEqual({ language: 'system' });
+  it('start by following the system, telling when a long queue ends and keeping the computer awake', () => {
+    expect(defaultAppSettings).toEqual({
+      language: 'system',
+      notifyWhenDone: true,
+      keepAwake: true,
+    });
     expect(Object.isFrozen(defaultAppSettings)).toBe(true);
+  });
+});
+
+describe('changing the app settings', () => {
+  it('takes the choices a change names, and leaves the others as they were', () => {
+    expect(applyingChange(defaultAppSettings, { notifyWhenDone: false })).toEqual({
+      ...defaultAppSettings,
+      notifyWhenDone: false,
+    });
+    expect(applyingChange(defaultAppSettings, { language: 'pt-BR', keepAwake: false })).toEqual({
+      language: 'pt-BR',
+      notifyWhenDone: true,
+      keepAwake: false,
+    });
+  });
+
+  it('leaves a choice it names as undefined as it was', () => {
+    expect(applyingChange(defaultAppSettings, { language: undefined, keepAwake: false })).toEqual({
+      ...defaultAppSettings,
+      keepAwake: false,
+    });
+  });
+
+  it('keeps what is not a choice of the window, when the settings are the whole of what is kept', () => {
+    const processing = { folder: '/big', earlier: [] };
+
+    expect(applyingChange({ ...defaultKeptAppSettings, processing }, { language: 'en' })).toEqual({
+      ...defaultKeptAppSettings,
+      language: 'en',
+      processing,
+    });
+  });
+
+  it('is told from the whole of what is kept by the choices the window reads', () => {
+    expect(choicesOf({ ...defaultKeptAppSettings, language: 'en' })).toEqual({
+      ...defaultAppSettings,
+      language: 'en',
+    });
   });
 });
 

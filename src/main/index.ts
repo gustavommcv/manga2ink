@@ -36,6 +36,7 @@ import { registerOpdsHandlers } from './ipc/opds';
 import { dialogWords } from './ipc/dialog-words';
 import { registerPendingHandlers } from './ipc/pending';
 import { registerPendingCleanupHandlers } from './ipc/pending-cleanup';
+import { electronQueueSystem, registerQueueRunHandlers } from './ipc/queue-runs';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
@@ -63,9 +64,10 @@ app.on('second-instance', () => {
 });
 
 const context = createMainContext();
-// Asked before the app is closed while a conversion runs, whichever way it is closed (ADR 0059).
+// Asked before the app is closed while a conversion runs, whichever way it is closed (ADR 0059): one
+// that is making books, or a queue that has begun and has not yet, or has just finished one (ADR 0065).
 const leaving = new LeavingGuard(
-  () => context.conversions.size > 0,
+  () => context.queueRuns.running || context.conversions.size > 0,
   () => askToLeave(dialogWords(context).leaveWhileConverting, BrowserWindow.getAllWindows()[0]),
 );
 const oneDay = 24 * 60 * 60 * 1000;
@@ -156,6 +158,14 @@ void app.whenReady().then(async () => {
   registerTroubleshootingHandlers(context);
   registerInputHandlers(context);
   registerConversionHandlers(context);
+  registerQueueRunHandlers(
+    {
+      queueRuns: context.queueRuns,
+      choices: () => appSettingsWorkflow.queueChoices(),
+      words: () => dialogWords(context).queueEnded,
+    },
+    electronQueueSystem(),
+  );
   registerCoverHandlers(context);
   registerMetadataHandlers(context);
   registerArtifactHandlers(context);
@@ -200,6 +210,9 @@ app.on('before-quit', (event) => {
   cleanupStarted = true;
   void cleanUpBeforeQuit(
     {
+      releaseQueues: () => {
+        context.queueRuns.releaseAll();
+      },
       activeJobs: context.activeJobs,
       // A change made an instant before quitting is still written.
       releaseAll: context.workflow === undefined ? undefined : () => context.workflow!.releaseAll(),

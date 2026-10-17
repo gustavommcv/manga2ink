@@ -23,12 +23,14 @@ const settingsFile = path.join('data', 'app-settings.json');
 const kept = (
   language: LanguagePreference,
   processing: ProcessingChoice = defaultProcessingChoice,
-): KeptAppSettings => ({ language, processing });
+): KeptAppSettings => ({ ...defaultKeptAppSettings, language, processing });
 
 /** What the file holds for a language, with the app working in its own places. */
 const written = (language: LanguagePreference): Record<string, unknown> => ({
   version: appSettingsFileVersion,
   language,
+  notifyWhenDone: true,
+  keepAwake: true,
   processingFolder: null,
   earlierProcessingFolders: [],
 });
@@ -152,6 +154,8 @@ describe('saving the file of the app settings', () => {
     expect(JSON.parse(files.get(settingsFile) ?? '{}')).toEqual({
       version: appSettingsFileVersion,
       language: 'en',
+      notifyWhenDone: true,
+      keepAwake: true,
       processingFolder: processing.folder,
       earlierProcessingFolders: processing.earlier,
     });

@@ -11,6 +11,7 @@ import type { OpenAppFolderCommand } from './app-folders-contract';
 import type { WaitingBooks } from '@/domain/pending-cleanup';
 import type { IdleDaysCommand } from './pending-cleanup-contract';
 import type { ProcessingFolderStatus } from './processing-folder-contract';
+import type { EndQueueCommand } from './queue-run-contract';
 import type { OpenProjectLinkCommand } from './project-links-contract';
 import type { RestoredSettings, SaveSettingsCommand } from './settings-contract';
 import type { ToolchainStatus } from './toolchain-status';
@@ -69,6 +70,14 @@ export interface MangaboundBridge {
     command: ConversionCommand,
   ) => Promise<WorkflowResult<readonly ArtifactSummary[]>>;
   readonly planConversion: (command: PlanConversionCommand) => Promise<WorkflowResult<PlanSummary>>;
+  /**
+   * Tells the main process a queue has begun (a press of Process), and gives back the token that ends
+   * it. A queue the main process knows of is asked about before the app is closed, keeps the computer
+   * awake and is told of when it ends (ADR 0065).
+   */
+  readonly beginQueue: () => Promise<WorkflowResult<string>>;
+  /** Tells it the queue has ended, and how it went, in numbers only. */
+  readonly endQueue: (command: EndQueueCommand) => Promise<WorkflowResult<undefined>>;
   readonly createPendingRun: () => Promise<WorkflowResult<string>>;
   readonly listPendingRuns: () => Promise<WorkflowResult<readonly PendingRunSummary[]>>;
   readonly discardPendingRun: (libraryId: string) => Promise<WorkflowResult<undefined>>;

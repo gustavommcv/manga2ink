@@ -44,6 +44,7 @@ afterEach(() => {
 
 describe('what is let go of when the app quits', () => {
   const nothing = (): QuitCleanup => ({
+    releaseQueues: () => undefined,
     activeJobs: new Map(),
     releaseAll: undefined,
     stopSharing: undefined,
@@ -94,6 +95,7 @@ describe('what is let go of when the app quits', () => {
 
     await cleanUpBeforeQuit(
       {
+        releaseQueues: () => undefined,
         activeJobs: new Map([['job', job]]),
         releaseAll: () => {
           order.push('release');

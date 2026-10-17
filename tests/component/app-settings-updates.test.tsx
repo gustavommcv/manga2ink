@@ -9,11 +9,15 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { deferred } from './support/workflow';
 import { inertBridge } from './support/bridge';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const reading =
   (language: 'en' | 'pt-BR'): MangaboundBridge['loadAppSettings'] =>
   () =>
-    Promise.resolve({ ok: true, value: { settings: { language }, language, unreadable: false } });
+    Promise.resolve({
+      ok: true,
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
+    });
 
 const newer: MangaboundBridge['checkForUpdates'] = () =>
   Promise.resolve({

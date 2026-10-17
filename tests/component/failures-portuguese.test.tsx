@@ -8,6 +8,7 @@ import { App } from '@/renderer/app';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { bridge, installBridge } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -19,7 +20,11 @@ const inPortugueseWith = (overrides: Partial<MangaboundBridge>): void => {
       loadAppSettings: () =>
         Promise.resolve({
           ok: true,
-          value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+          value: {
+            settings: { ...defaultAppSettings, language: 'pt-BR' },
+            language: 'pt-BR',
+            unreadable: false,
+          },
         }),
       ...overrides,
     }),

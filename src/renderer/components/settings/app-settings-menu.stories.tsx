@@ -12,6 +12,7 @@ import type { AppSettingsTab } from './app-settings-tabs';
 import { message, raw } from '@/domain/message';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 /** The tools the app ships, as they were checked at launch. */
 const bundledTools: ToolchainStatus = {
@@ -59,7 +60,7 @@ function bridgeFor(
     loadAppSettings: () =>
       Promise.resolve({
         ok: true,
-        value: { settings: { language: kept }, language, unreadable: false },
+        value: { settings: { ...defaultAppSettings, language: kept }, language, unreadable: false },
       }),
     saveAppSettings: keeps,
     openProjectLink: opens,

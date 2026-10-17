@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import type { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import type { FileLog } from '@/adapters/log/file-log';
 import { FsLibraryStore } from '@/adapters/library/fs-library-store';
@@ -22,6 +24,7 @@ import type { ToolchainStatus } from '@/shared/toolchain-status';
 
 import type { SharingTarget } from './ipc/sharing-target';
 import { PendingRunActivity } from './pending-run-activity';
+import { QueueRuns } from './queue-runs';
 
 /**
  * Everything the main process's IPC handlers share, constructed once in index.ts and passed to
@@ -41,6 +44,8 @@ export interface MainContext {
   readonly activeJobs: Map<string, AbortController>;
   /** The ids of the conversions that are running: the jobs that would be lost if the app closed (ADR 0059). */
   readonly conversions: Set<string>;
+  /** The queues that are running, from the click on Process to the last item, as the window tells it (ADR 0065). */
+  readonly queueRuns: QueueRuns;
   readonly metadataProviders: Map<string, MetadataProviderPort>;
   readonly libraryStore: FsLibraryStore;
   /** What the share serves: the library store, except that the pending folder is every ready book. */
@@ -86,6 +91,7 @@ export function createMainContext(): MainContext {
     pendingRunActivity: new PendingRunActivity(),
     activeJobs: new Map(),
     conversions: new Set(),
+    queueRuns: new QueueRuns({ now: Date.now, newToken: randomUUID }),
     metadataProviders: new Map(
       createMetadataProviders().map((provider) => [provider.descriptor.id, provider] as const),
     ),

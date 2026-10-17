@@ -1,5 +1,7 @@
 import type { Language } from '@/domain/app-settings';
 
+import { countOf } from './count';
+
 /** What the native dialogs of the operating system are given to say: their titles and filters. */
 export interface DialogMessages {
   readonly chooseCover: { readonly title: string; readonly images: string };
@@ -16,6 +18,21 @@ export interface DialogMessages {
     readonly detail: string;
     readonly keep: string;
     readonly leave: string;
+  };
+  /** Said by a notification when a long queue ends, with the window out of sight (ADR 0065). */
+  readonly queueEnded: {
+    readonly done: {
+      readonly title: string;
+      readonly body: (books: number) => string;
+    };
+    readonly notes: {
+      readonly title: string;
+      readonly body: (books: number) => string;
+    };
+    readonly failures: {
+      readonly title: string;
+      readonly body: (books: number, failures: number) => string;
+    };
   };
 }
 
@@ -39,6 +56,25 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       keep: 'Keep converting',
       leave: 'Close anyway',
     },
+    queueEnded: {
+      done: {
+        title: 'Your books are ready',
+        body: (books) =>
+          `${String(books)} ${countOf(books, 'book', 'books')} ready to save in Mangabound.`,
+      },
+      notes: {
+        title: 'Your books are ready, with notes',
+        body: (books) =>
+          `${String(books)} ${countOf(books, 'book', 'books')} ready. Open Mangabound to see the notes.`,
+      },
+      failures: {
+        title: 'Some conversions failed',
+        body: (books, failures) =>
+          books === 0
+            ? 'Nothing was made. Open Mangabound to see why.'
+            : `${String(books)} ${countOf(books, 'book', 'books')} ready, ${String(failures)} ${countOf(failures, 'failure', 'failures')}. Open Mangabound to see why.`,
+      },
+    },
   },
   'pt-BR': {
     chooseCover: { title: 'Escolher uma capa', images: 'Imagens' },
@@ -60,6 +96,25 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       detail: 'Se você fechar o Mangabound agora, ela será perdida.',
       keep: 'Continuar convertendo',
       leave: 'Fechar mesmo',
+    },
+    queueEnded: {
+      done: {
+        title: 'Seus livros estão prontos',
+        body: (books) =>
+          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')} para salvar no Mangabound.`,
+      },
+      notes: {
+        title: 'Seus livros estão prontos, com observações',
+        body: (books) =>
+          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}. Abra o Mangabound para ver as observações.`,
+      },
+      failures: {
+        title: 'Algumas conversões falharam',
+        body: (books, failures) =>
+          books === 0
+            ? 'Nada foi feito. Abra o Mangabound para ver o motivo.'
+            : `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}, ${String(failures)} ${countOf(failures, 'falha', 'falhas')}. Abra o Mangabound para ver o motivo.`,
+      },
     },
   },
 };

@@ -18,6 +18,11 @@ function folderIn(value: unknown): string | undefined {
   return typeof value === 'string' && path.isAbsolute(value) ? value : undefined;
 }
 
+/** A yes or no the file holds; anything else (or nothing) is what the app starts with. */
+function flagIn(value: unknown, fallback: boolean): boolean {
+  return typeof value === 'boolean' ? value : fallback;
+}
+
 function processingIn(file: Record<string, unknown>): ProcessingChoice {
   const folder = folderIn(file.processingFolder) ?? null;
   const named: unknown = file.earlierProcessingFolders;
@@ -35,8 +40,9 @@ function processingIn(file: Record<string, unknown>): ProcessingChoice {
  * What the file of the app settings holds, or undefined when the file as a whole cannot be used:
  * not JSON, not an object, or another version. A language the app does not have (one that a newer
  * version added, or a hand edit) is not a reason to lose the file: it reads as following the system,
- * and a folder that is not an absolute path reads as none. Keys that are not known are dropped, and a
- * file that has none of the folders (one an earlier version wrote) is one with the app's own places.
+ * and a folder that is not an absolute path reads as none. A yes or no that is missing or is not one
+ * is the one the app starts with. Keys that are not known are dropped, and a file that has none of
+ * the folders (one an earlier version wrote) is one with the app's own places.
  */
 export function parseStoredAppSettings(raw: string): KeptAppSettings | undefined {
   let json: unknown;
@@ -50,6 +56,8 @@ export function parseStoredAppSettings(raw: string): KeptAppSettings | undefined
   if (file.version !== appSettingsFileVersion) return undefined;
   return {
     language: isLanguagePreference(file.language) ? file.language : defaultAppSettings.language,
+    notifyWhenDone: flagIn(file.notifyWhenDone, defaultAppSettings.notifyWhenDone),
+    keepAwake: flagIn(file.keepAwake, defaultAppSettings.keepAwake),
     processing: processingIn(file),
   };
 }
@@ -59,6 +67,8 @@ export function serializeStoredAppSettings(settings: KeptAppSettings): string {
     {
       version: appSettingsFileVersion,
       language: settings.language,
+      notifyWhenDone: settings.notifyWhenDone,
+      keepAwake: settings.keepAwake,
       processingFolder: settings.processing.folder,
       earlierProcessingFolders: settings.processing.earlier,
     },

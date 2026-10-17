@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import { $, $$, browser } from '@wdio/globals';
 
-import { recordProgress, reportedProgress, resetQueue } from './support';
+import { resetQueue } from './support';
 
 const temporaryDirectories: string[] = [];
 
@@ -55,21 +55,18 @@ describe('packaged window closed during a conversion', () => {
       timeout: 120_000,
       timeoutMsg: 'The folders were not all read.',
     });
-    await recordProgress();
     await $(`button=Process ${String(folders.length)} items`).click();
 
-    // The window is asked to close while the books are being made: once the first item has begun,
-    // not before, or the question would be asked of a run that has not started a conversion yet.
-    await browser.waitUntil(async () => (await reportedProgress()).length > 0, {
-      timeout: 120_000,
-      timeoutMsg: 'The conversion did not begin.',
-    });
+    // The window is asked to close at once, with no wait for the first item to begin, as a person
+    // who clicks Process and then the close button does. The gap that ADR 0065 closes (the queue has
+    // begun, no conversion has yet) is a few milliseconds here, too short to hit on purpose, so the
+    // unit and component tests are what hold it; this checks the real window asks as soon as it can.
     await browser.electron.execute((electron) => {
       electron.BrowserWindow.getAllWindows()[0]?.close();
     });
     await browser.waitUntil(() => messageBox.mock.calls.length >= 1, {
       timeout: 30_000,
-      timeoutMsg: 'Closing the window during a conversion asked nothing.',
+      timeoutMsg: 'Closing the window just after Process asked nothing.',
     });
 
     const options = messageBox.mock.calls[0]?.find(

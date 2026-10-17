@@ -37,7 +37,7 @@ const reading =
   () =>
     Promise.resolve({
       ok: true,
-      value: { settings: { language }, language, unreadable: false },
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
     });
 
 afterEach(() => {

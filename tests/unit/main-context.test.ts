@@ -26,6 +26,18 @@ describe('the context the handlers of the main process share', () => {
     expect(context.currentPreferences).toBe(defaultPreferences);
   });
 
+  it('has no queue running, and gives each queue a token of its own', () => {
+    const { queueRuns } = createMainContext();
+
+    expect(queueRuns.running).toBe(false);
+    const first = queueRuns.begin(1, { keepAwake: false, notifyWhenDone: false });
+    const second = queueRuns.begin(1, { keepAwake: false, notifyWhenDone: false });
+
+    expect(first).not.toBe(second);
+    expect(queueRuns.running).toBe(true);
+    expect(queueRuns.end(first)?.elapsedMs).toBeGreaterThanOrEqual(0);
+  });
+
   it('is waiting for what start-up builds: the workflow, the preferences, the stores of the pending books and covers', () => {
     const context = createMainContext();
 

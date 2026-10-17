@@ -1,6 +1,9 @@
 import type { AppSettingsStorePort } from '@/application/ports/app-settings-store';
 import {
   type AppSettings,
+  type AppSettingsChange,
+  applyingChange,
+  choicesOf,
   choosingFolder,
   defaultKeptAppSettings,
   defaultLanguage,
@@ -48,16 +51,19 @@ export class AppSettingsWorkflow {
     }
     this.current = resolveLanguage(this.kept.language, this.systemLanguages());
     return {
-      settings: { language: this.kept.language },
+      settings: choicesOf(this.kept),
       language: this.current,
       unreadable: this.unreadable,
     };
   }
 
-  /** The language the kept settings come to, said only once they are kept. */
-  async save(settings: AppSettings): Promise<{ readonly language: Language }> {
-    await this.keep({ ...this.kept, language: settings.language });
-    this.current = resolveLanguage(settings.language, this.systemLanguages());
+  /**
+   * Keeps the choices a change names, with the rest as it was, and says the language the kept
+   * settings come to, only once they are kept.
+   */
+  async save(change: AppSettingsChange): Promise<{ readonly language: Language }> {
+    await this.keep(applyingChange(this.kept, change));
+    this.current = resolveLanguage(this.kept.language, this.systemLanguages());
     return { language: this.current };
   }
 
@@ -67,6 +73,14 @@ export class AppSettingsWorkflow {
    */
   language(): Language {
     return this.current;
+  }
+
+  /**
+   * The choices that decide what a queue does, as they are now: read when a queue begins, so a
+   * change is for the next one and does not touch the one that is running (ADR 0065).
+   */
+  queueChoices(): Pick<AppSettings, 'keepAwake' | 'notifyWhenDone'> {
+    return { keepAwake: this.kept.keepAwake, notifyWhenDone: this.kept.notifyWhenDone };
   }
 
   /** Where the app works, as it was last kept. */

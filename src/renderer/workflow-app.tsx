@@ -34,6 +34,7 @@ import {
   withDeviceProfile,
 } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
+import { nothingMade, type QueueRunSummary, summarizeRun } from '@/domain/queue-run';
 import {
   defaultProcessMode,
   type ProcessMode,
@@ -61,6 +62,7 @@ import { useBookCovers } from '@/renderer/hooks/use-book-covers';
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { beginQueue, endQueue } from '@/renderer/lib/queue-signal';
 import { SaidError } from '@/renderer/lib/said-error';
 import { useWorkingSpace } from '@/renderer/hooks/use-working-space';
 import { useSharing } from '@/renderer/hooks/use-sharing';
@@ -423,14 +425,13 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     }
   };
 
-  const startRun = async (): Promise<void> => {
-    const items = runnableRows(rows, mode);
-    if (items.length === 0) return;
+  /** Converts the items of the queue one after another, and says how it went. */
+  const runQueue = async (items: ReturnType<typeof runnableRows>): Promise<QueueRunSummary> => {
     setFailure(undefined);
     const created = await bridge.createPendingRun();
     if (!created.ok) {
       setFailure(created.error);
-      return;
+      return nothingMade;
     }
     const runId = created.value;
     setActiveRunId(runId);
@@ -518,12 +519,30 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     removeRows(report.completedRowIds);
     if (!report.hasResults) {
       setNavigation({ screen: 'queue' });
-      return;
+      return summarizeRun(report.outcomes, cancelRequested.current);
     }
     setOutcomes(report.outcomes);
     setResultSummary(describeRun(mode, deviceName, format, withOwnOptions));
     await refreshPendingRuns();
     setNavigation({ screen: 'results' });
+    return summarizeRun(report.outcomes, cancelRequested.current);
+  };
+
+  /**
+   * A press of Process. The main process is told the queue has begun from the click, and that it has
+   * ended whatever way it ends, so that it is asked about before the app is closed, keeps the
+   * computer awake and tells when it is done (ADR 0065). A queue is never left running there.
+   */
+  const startRun = async (): Promise<void> => {
+    const items = runnableRows(rows, mode);
+    if (items.length === 0) return;
+    const queue = await beginQueue(bridge);
+    let summary = nothingMade;
+    try {
+      summary = await runQueue(items);
+    } finally {
+      await endQueue(bridge, queue, summary);
+    }
   };
 
   const cancelConversion = async (): Promise<void> => {

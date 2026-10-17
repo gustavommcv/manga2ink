@@ -9,6 +9,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 import { raw } from '@/domain/message';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const kept =
   (
@@ -18,7 +19,11 @@ const kept =
   () =>
     Promise.resolve({
       ok: true,
-      value: { settings: { language: preference }, language, unreadable: false },
+      value: {
+        settings: { ...defaultAppSettings, language: preference },
+        language,
+        unreadable: false,
+      },
     });
 
 async function renderGeneral(

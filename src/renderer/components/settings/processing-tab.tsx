@@ -1,10 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 
+import type { AppSettings } from '@/domain/app-settings';
 import type { AnyMessage } from '@/domain/message';
+import { longQueueMs } from '@/domain/queue-run';
 import { sizeOf } from '@/i18n/size';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { WaitingBooksSection } from '@/renderer/components/settings/waiting-books';
 import { Button } from '@/renderer/components/ui/button';
+import { Checkbox } from '@/renderer/components/ui/checkbox';
+import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
@@ -20,6 +24,8 @@ export function ProcessingTab(): React.JSX.Element {
   const language = useLanguage();
   const api = useProcessingFolder();
   const { say } = useSay();
+  const { settings, change: keep } = useAppSettings();
+  const [choiceFailed, setChoiceFailed] = useState(false);
   const [status, setStatus] = useState<ProcessingFolderStatus>();
   // What the main process says went wrong, as it says it: the window writes it in its language.
   const [failure, setFailure] = useState<AnyMessage>();
@@ -53,6 +59,13 @@ export function ProcessingTab(): React.JSX.Element {
       if (!answer.ok) {
         setFailure(answer.error.said);
       } else if (answer.value !== null) setStatus(answer.value);
+    });
+  };
+
+  /** Keeps a choice about a queue; it is for the next one, and what is running is not touched. */
+  const choose = (choice: Pick<AppSettings, 'keepAwake'> | Pick<AppSettings, 'notifyWhenDone'>) => {
+    void keep(choice).then((kept) => {
+      setChoiceFailed(!kept);
     });
   };
 
@@ -127,6 +140,64 @@ export function ProcessingTab(): React.JSX.Element {
       )}
 
       <div aria-live="polite">{failure !== undefined && <FieldMessage error={say(failure)} />}</div>
+
+      <section className="space-y-3">
+        <h3 className="text-sm font-medium">{words.queue.title}</h3>
+        <QueueChoice
+          checked={settings.notifyWhenDone}
+          help={words.queue.notify.help(longQueueMs / 1000)}
+          label={words.queue.notify.label}
+          onChange={(notifyWhenDone) => {
+            choose({ notifyWhenDone });
+          }}
+        />
+        <QueueChoice
+          checked={settings.keepAwake}
+          help={words.queue.awake.help}
+          label={words.queue.awake.label}
+          onChange={(keepAwake) => {
+            choose({ keepAwake });
+          }}
+        />
+        <div aria-live="polite">
+          {choiceFailed && <FieldMessage error={words.queue.saveFailed} />}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/** A yes or no about what a queue does, with what it does said under its name. */
+function QueueChoice({
+  checked,
+  help,
+  label,
+  onChange,
+}: {
+  readonly checked: boolean;
+  readonly help: string;
+  readonly label: string;
+  readonly onChange: (checked: boolean) => void;
+}): React.JSX.Element {
+  const id = useId();
+  return (
+    <div className="flex items-start gap-3">
+      <Checkbox
+        aria-describedby={`${id}-help`}
+        checked={checked}
+        id={id}
+        onCheckedChange={(next) => {
+          onChange(next === true);
+        }}
+      />
+      <div className="space-y-0.5">
+        <label className="text-sm leading-none font-medium text-balance" htmlFor={id}>
+          {label}
+        </label>
+        <p className="text-muted-foreground text-xs" id={`${id}-help`}>
+          {help}
+        </p>
+      </div>
     </div>
   );
 }

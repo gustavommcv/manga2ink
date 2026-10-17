@@ -10,6 +10,7 @@ import { RunningScreen } from '@/renderer/screens/running-screen';
 
 import { inPortuguese } from './support/i18n';
 import { bridge, installBridge } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -279,7 +280,11 @@ describe('the books of an earlier conversion, in Portuguese', () => {
         loadAppSettings: () =>
           Promise.resolve({
             ok: true,
-            value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+            value: {
+              settings: { ...defaultAppSettings, language: 'pt-BR' },
+              language: 'pt-BR',
+              unreadable: false,
+            },
           }),
         listPendingRuns: () =>
           Promise.resolve({

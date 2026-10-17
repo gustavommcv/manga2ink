@@ -7,12 +7,13 @@ import {
   defaultProcessingChoice,
   type KeptAppSettings,
   type LanguagePreference,
+  defaultAppSettings,
 } from '@/domain/app-settings';
 
 const kept = (
   language: LanguagePreference,
   processing = defaultProcessingChoice,
-): KeptAppSettings => ({ language, processing });
+): KeptAppSettings => ({ ...defaultKeptAppSettings, language, processing });
 
 function fakeStore(load: Awaited<ReturnType<AppSettingsStorePort['load']>>): {
   readonly store: AppSettingsStorePort;
@@ -30,7 +31,7 @@ describe('restoring the app settings', () => {
     const workflow = new AppSettingsWorkflow(store, () => ['en-US']);
 
     expect(await workflow.restore()).toEqual({
-      settings: { language: 'pt-BR' },
+      settings: { ...defaultAppSettings, language: 'pt-BR' },
       language: 'pt-BR',
       unreadable: false,
     });
@@ -41,7 +42,7 @@ describe('restoring the app settings', () => {
     const workflow = new AppSettingsWorkflow(store, () => ['pt-PT', 'en']);
 
     expect(await workflow.restore()).toEqual({
-      settings: { language: 'system' },
+      settings: { ...defaultAppSettings, language: 'system' },
       language: 'pt-BR',
       unreadable: false,
     });
@@ -52,7 +53,7 @@ describe('restoring the app settings', () => {
     const workflow = new AppSettingsWorkflow(store, () => []);
 
     expect(await workflow.restore()).toEqual({
-      settings: { language: 'system' },
+      settings: { ...defaultAppSettings, language: 'system' },
       language: 'en',
       unreadable: true,
     });
@@ -71,7 +72,11 @@ describe('restoring the app settings again', () => {
 
     expect(load).toHaveBeenCalledOnce();
     expect(save).toHaveBeenCalledOnce();
-    expect(again).toEqual({ settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: true });
+    expect(again).toEqual({
+      settings: { ...defaultAppSettings, language: 'pt-BR' },
+      language: 'pt-BR',
+      unreadable: true,
+    });
   });
 });
 
@@ -84,6 +89,22 @@ describe('keeping the app settings', () => {
     expect(await workflow.save({ language: 'en' })).toEqual({ language: 'en' });
 
     expect(save.mock.calls).toEqual([[kept('system')], [kept('en')]]);
+  });
+
+  it('keeps only the choices a change names, with the rest as it was', async () => {
+    const { store, save } = fakeStore({ settings: kept('pt-BR'), unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+    await workflow.restore();
+
+    expect(await workflow.save({ notifyWhenDone: false })).toEqual({ language: 'pt-BR' });
+    expect(await workflow.save({ keepAwake: false, language: undefined })).toEqual({
+      language: 'pt-BR',
+    });
+
+    expect(save.mock.calls).toEqual([
+      [{ ...kept('pt-BR'), notifyWhenDone: false }],
+      [{ ...kept('pt-BR'), notifyWhenDone: false, keepAwake: false }],
+    ]);
   });
 
   it('does not say a language when the keeping failed', async () => {
@@ -100,6 +121,20 @@ describe('keeping the app settings', () => {
     await new AppSettingsWorkflow(store, () => []).settled();
 
     expect(settled).toHaveBeenCalledOnce();
+  });
+});
+
+describe('what a queue does', () => {
+  it('is on until a person turns it off, and is read as it is now each time it is asked', async () => {
+    const { store } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+    await workflow.restore();
+
+    expect(workflow.queueChoices()).toEqual({ keepAwake: true, notifyWhenDone: true });
+
+    await workflow.save({ keepAwake: false });
+
+    expect(workflow.queueChoices()).toEqual({ keepAwake: false, notifyWhenDone: true });
   });
 });
 
@@ -120,7 +155,7 @@ describe('where the app works', () => {
     const restored = await workflow.restore();
 
     expect(workflow.processing()).toEqual(processing);
-    expect(restored.settings).toEqual({ language: 'en' });
+    expect(restored.settings).toEqual({ ...defaultAppSettings, language: 'en' });
   });
 
   it('keeps a chosen folder with the language as it is, and says what is kept', async () => {
