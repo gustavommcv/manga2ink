@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from 'node:util';
 
 import { load } from 'cheerio';
 
-import { languages as siteLanguages } from '../site.config.mjs';
+import { appLanguages, languages as siteLanguages } from '../site.config.mjs';
 
 const portablePath = (value) => value.replaceAll('\\', '/');
 
@@ -208,7 +208,7 @@ export function auditSearchData(pages, { site, base, languages = siteLanguages }
                 name: 'Mangabound',
                 url: address,
                 description,
-                inLanguage: type === 'WebSite' ? lang : 'en',
+                inLanguage: type === 'WebSite' ? lang : appLanguages,
               };
         for (const [key, value] of Object.entries(expected)) {
           if (!isDeepStrictEqual(entity[key], value))

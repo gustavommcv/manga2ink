@@ -1,7 +1,9 @@
 /**
  * What a guide of the app calls a button, a switch or a section is written in bold, and is the
- * name the interface shows. Each is checked against the text of the app, so that a label that was
- * renamed does not stay in a guide as something a person will look for and not find.
+ * name the interface shows in the language of the guide. Each is checked against the text of the
+ * app in that language, so that a label that was renamed does not stay in a guide as something a
+ * person will look for and not find, and a guide in Portuguese names a button as the app in
+ * Portuguese does.
  */
 
 /** The bold phrases of a page, in the order they appear. Links and code are not emphasis. */
@@ -43,4 +45,41 @@ export function missingLabels(text, interfaceText, allowed = new Set()) {
       ),
     ),
   ];
+}
+
+/**
+ * What each language says in a source of the app that has its words in catalogs (`src/i18n`): a
+ * catalog is an object with one entry for each language at the top, `en: {` and `'pt-BR': {`, and
+ * what a language says is from its entry to the next one. What comes before the first entry (the
+ * types, and the comments that describe them) is no language's words and is left out. A source with
+ * no entry of that kind has none, and the map is empty.
+ */
+export function sectionsOf(source, tags) {
+  const marker = new RegExp(`^  (?:'(${tags.join('|')})'|(${tags.join('|')})): [{(]`, 'gmu');
+  const starts = [...source.matchAll(marker)].map((match) => ({
+    tag: match[1] ?? match[2],
+    at: match.index,
+  }));
+  const sections = new Map();
+  for (const [index, { tag, at }] of starts.entries()) {
+    const text = source.slice(at, starts[index + 1]?.at);
+    sections.set(tag, `${sections.get(tag) ?? ''}\n${text}`);
+  }
+  return sections;
+}
+
+/**
+ * What the interface says in a language: the words that the app's catalogs have for it, and the text
+ * of everything that is not a catalog (a name written in a component is the same in every language).
+ * A language the app does not have yet says what English says, which is what a guide of it names the
+ * controls by until the app is translated.
+ */
+export function interfaceTextFor(tag, sources, tags, fallback = 'en') {
+  return sources
+    .map((source) => {
+      const sections = sectionsOf(source, tags);
+      if (sections.size === 0) return source;
+      return sections.get(tag) ?? sections.get(fallback) ?? '';
+    })
+    .join('\n');
 }

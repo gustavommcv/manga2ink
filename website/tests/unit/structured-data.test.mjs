@@ -6,7 +6,7 @@ import { scriptJson, structuredData } from '../../src/structured-data.mjs';
 const home = 'https://example.org/mangabound/pt-br/';
 const page = { home, title: 'Instalação', description: 'Baixe o pacote.', lang: 'pt-BR' };
 
-test('the Portuguese site describes the English application without translating its language', () => {
+test('the Portuguese site describes the application in the languages the app has, not only its own', () => {
   const [website, application] = structuredData({ ...page, url: home })['@graph'];
   assert.deepEqual(website, {
     '@type': 'WebSite',
@@ -17,7 +17,7 @@ test('the Portuguese site describes the English application without translating 
   });
   assert.equal(application['@type'], 'SoftwareApplication');
   assert.equal(application.url, home);
-  assert.equal(application.inLanguage, 'en');
+  assert.deepEqual(application.inLanguage, ['en', 'pt-BR']);
   assert.equal(application.offers.price, '0');
 });
 

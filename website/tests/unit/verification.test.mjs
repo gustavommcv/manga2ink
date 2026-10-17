@@ -204,7 +204,7 @@ const indexed = (
               name: 'Mangabound',
               url,
               description: text,
-              inLanguage: 'en',
+              inLanguage: ['en', 'pt-BR'],
             },
           ],
         }

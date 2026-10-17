@@ -41,7 +41,7 @@ for (const [source, lang] of [
   ['index.html', 'en'],
   ['pt-br/index.html', 'pt-BR'],
 ]) {
-  test(`the built ${lang} home describes the site, the English app, and local sharing`, () => {
+  test(`the built ${lang} home describes the site, the app and its languages, and local sharing`, () => {
     const page = pages.find((page) => page.path === source);
     assert.ok(page, `${source} must be built`);
     const $ = load(page.html);
@@ -54,7 +54,7 @@ for (const [source, lang] of [
     assert.equal(website.url, url);
     assert.equal(website.inLanguage, lang);
     assert.equal(application.url, url);
-    assert.equal(application.inLanguage, 'en');
+    assert.deepEqual(application.inLanguage, ['en', 'pt-BR']);
     assert.equal(application.offers.price, '0');
     assert.equal(application.downloadUrl, 'https://github.com/gustavommcv/mangabound/releases');
     assert.equal($('html').attr('lang'), lang);
