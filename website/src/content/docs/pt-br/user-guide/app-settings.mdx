@@ -1,0 +1,70 @@
+---
+title: 'Configurações do app'
+description: 'As configurações do app, aba por aba: idioma e tema, onde o Mangabound trabalha e o que ele faz enquanto converte, a busca por uma versão nova e o que ajuda a relatar um problema.'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+Abra as **Configurações do app** na engrenagem do lado direito da barra de título, ou pressione Ctrl+, no Windows e no Linux ou Cmd+, no Mac. Cada mudança é guardada assim que você a faz, então não há nada a salvar, e Esc fecha o diálogo. Ele tem quatro abas. O que você escolhe aqui é sobre o próprio app, não sobre os livros: as opções de conversão ficam na fila.
+
+## Interface
+
+<TutorialImage
+  name="generated/app-settings-interface"
+  alt="A aba Interface das configurações do app, com as escolhas de Idioma e de Tema."
+/>
+
+- **Idioma** é **Automático (idioma do sistema)**, que segue o do seu sistema, **English** ou **Português (Brasil)**. Vale na hora. Livros, títulos e as mensagens dos próprios conversores não são traduzidos, e o app ainda não está em japonês.
+- **Tema** é **Escuro (grafite)**, em que o app começa, ou **Claro (papel)**. Vale na hora, inclusive na barra de título da janela. As imagens deste guia são do tema escuro.
+
+## Processamento
+
+<TutorialImage
+  name="generated/app-settings-processing"
+  alt="A aba Processamento das configurações do app, com a pasta em que o Mangabound trabalha, o espaço livre nela e os livros esperando para serem salvos."
+/>
+
+Esta aba é sobre onde o app trabalha e o que ele faz enquanto converte.
+
+- **Pasta de trabalho** é onde o Mangabound monta os volumes durante a conversão e guarda os livros prontos até você salvá-los. Ela é **Escolhida pelo Mangabound** até você escolher uma: **Escolher uma pasta…** mostra o espaço livre, e **Usar a pasta padrão** volta ao início. [Onde o Mangabound trabalha?](../exporting/#onde-o-mangabound-trabalha) diz o que muda e o que não muda.
+- **Livros esperando para serem salvos** diz quantos livros estão esperando, em quantas conversões, e quanto espaço ocupam, e limpa o que ninguém tocou há 7, 30 ou 90 dias, depois de perguntar: veja [Exclua livros pendentes](../exporting/#exclua-livros-pendentes).
+
+<TutorialImage
+  name="generated/app-settings-queue"
+  alt="O fim da aba Processamento, com as duas escolhas sobre o que o Mangabound faz enquanto converte, as duas ligadas."
+/>
+
+- **Enquanto o Mangabound converte** tem duas escolhas, as duas ligadas até você desligá-las. Uma mudança vale na próxima vez que você pressionar **Processar**, não para uma conversão que está rodando. **Avisar quando uma conversão longa terminar** mostra uma notificação do seu sistema quando uma conversão que levou mais de 30 segundos termina e nenhuma janela do Mangabound está em primeiro plano. **Manter o computador acordado durante a conversão** impede o computador de dormir até a conversão terminar; a tela ainda pode apagar. [Enquanto o Mangabound converte](../exporting/#enquanto-o-mangabound-converte) tem os detalhes.
+
+## Atualizações
+
+<TutorialImage
+  name="generated/app-settings-updates"
+  alt="A aba Atualizações das configurações do app, com a versão instalada e o botão Buscar atualizações."
+/>
+
+A aba diz qual versão está instalada. **Buscar atualizações** pergunta ao GitHub se há uma mais nova, e só quando você clica: ela diz qual é e o dia em que foi publicada, e **Baixar a atualização** abre a página de download no seu navegador. O app ainda não a instala por você: baixe o arquivo do seu sistema e instale por cima da versão que você tem, como em [Atualizar](../../getting-started/installation/#atualizar).
+
+**Verificar atualizações automaticamente** e **Versões a procurar** aparecem, mas ainda não podem ser mudadas. Elas passarão a funcionar quando o app puder se atualizar sozinho. Até lá a busca procura versões estáveis e de pré-lançamento, já que todas as versões até agora são de pré-lançamento.
+
+## Sobre
+
+<TutorialImage
+  name="generated/app-settings-about"
+  alt="A aba Sobre das configurações do app, com a versão, os links para o guia, o repositório, as notas da versão e os problemas, as ferramentas de conversão e os botões que copiam o diagnóstico e abrem as pastas de dados e de logs."
+/>
+
+A aba **Sobre** diz o que o app é e qual versão está rodando. Ela tem links para o **Guia do usuário**, o **GitHub**, as **Notas da versão** da versão que você tem e **Relatar um problema**, e lista as **Ferramentas de conversão**, mangabind e mangapress, com suas versões e se cada uma passou na verificação que o app faz toda vez que abre.
+
+**Solução de problemas**, na mesma aba, ajuda com um relato de problema:
+
+- **Copiar diagnóstico** coloca na área de transferência a versão do app e do que ele usa para rodar, o seu sistema e a sua máquina (a versão do sistema, os processadores e a memória), o idioma da janela, se você escolheu uma pasta de trabalho (não qual) e se as ferramentas de conversão passaram na verificação. Ele não tem nenhum caminho nem nome de livro ou de pasta, e nada do log. Cole no seu relato: veja [Relatar um problema](../../getting-started/installation/#relatar-um-problema).
+- **Abrir a pasta de dados** e **Abrir a pasta de logs** as abrem no seu gerenciador de arquivos. Os arquivos de log registram o que deu errado e podem ter os caminhos de livros e pastas: veja-os antes de compartilhar.
+
+Nada disso é enviado a lugar nenhum. **Apoiar o projeto** abre a página em que o projeto pode ser apoiado, e a aba termina com os créditos e a licença.
+
+## O que o app guarda
+
+- O que você escolhe nas **Configurações do app**, em um arquivo próprio que a redefinição das opções de conversão não toca.
+- O tamanho e o lugar da janela. O Mangabound abre como você o deixou: o tamanho, se estava maximizado e, onde o sistema deixa um programa posicionar a própria janela, a posição. No Wayland, no Linux, um programa não pode posicionar a janela, então só o tamanho e se estava maximizada são guardados ali, e um gerenciador de janelas em mosaico decide sozinho o tamanho de uma janela em mosaico.
+- As opções de conversão, como antes. [O que permanece após reiniciar?](../exporting/#o-que-permanece-após-reiniciar) diz o que uma reinicialização guarda dos livros.

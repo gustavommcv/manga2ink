@@ -1,0 +1,70 @@
+---
+title: 'App settings'
+description: 'The app settings, tab by tab: language and theme, where Mangabound works and what it does while it converts, checking for a new version, and what helps you report a problem.'
+---
+
+import TutorialImage from '../../../components/TutorialImage.astro';
+
+Open **App settings** with the gear on the right of the title bar, or press Ctrl+, on Windows and Linux or Cmd+, on a Mac. Each change is kept as you make it, so there is nothing to save, and Esc closes the dialog. It has four tabs. What you choose here is about the app itself, not about the books: the conversion options stay in the queue.
+
+## Interface
+
+<TutorialImage
+  name="generated/app-settings-interface"
+  alt="The Interface tab of the app settings, with the Language and Theme choices."
+/>
+
+- **Language** is **Automatic (system language)**, which follows your system's, **English** or **Português (Brasil)**. It applies at once. Books, titles and the converters' own messages are not translated, and the app is not in Japanese yet.
+- **Theme** is **Dark (graphite)**, which the app starts in, or **Light (paper)**. It applies at once, the window's title bar included. The pictures in this guide are of the dark theme.
+
+## Processing
+
+<TutorialImage
+  name="generated/app-settings-processing"
+  alt="The Processing tab of the app settings, with the folder Mangabound works in, the space left there and the books waiting to be saved."
+/>
+
+This tab is about where the app works and what it does while it converts.
+
+- **Working folder** is where Mangabound builds volumes while it converts and keeps finished books until you save them. It is **Chosen by Mangabound** until you pick one: **Choose a folder…** shows the space left, and **Use the default folder** goes back. [Where does Mangabound work?](../exporting/#where-does-mangabound-work) says what changes and what does not.
+- **Books waiting to be saved** says how many books are waiting, in how many conversions, and how much room they take, and clears what nothing has touched for 7, 30 or 90 days, after asking: see [Delete pending books](../exporting/#delete-pending-books).
+
+<TutorialImage
+  name="generated/app-settings-queue"
+  alt="The end of the Processing tab, with the two choices about what Mangabound does while it converts, both on."
+/>
+
+- **While Mangabound converts** has two choices, both on until you turn them off. A change applies to the next time you press **Process**, not to a conversion that is running. **Tell me when a long conversion ends** shows a notification from your system when a conversion that took more than 30 seconds ends and no Mangabound window is in front. **Keep the computer awake while converting** stops the computer from going to sleep until the conversion ends; the screen can still turn off. [While Mangabound converts](../exporting/#while-mangabound-converts) has the details.
+
+## Updates
+
+<TutorialImage
+  name="generated/app-settings-updates"
+  alt="The Updates tab of the app settings, with the installed version and the Check for updates button."
+/>
+
+The tab says which version is installed. **Check for updates** asks GitHub whether a newer one is out, and only when you click: it says which one and the day it was published, and **Download the update** opens the download page in your browser. The app does not install it for you yet: download the file for your system and install it over the one you have, as in [Updating](../../getting-started/installation/#updating).
+
+**Check for updates automatically** and **Versions to look for** are shown but cannot be changed yet. They will work when the app can update itself. Until then the check looks for stable and pre-release versions, since every release so far is a pre-release.
+
+## About
+
+<TutorialImage
+  name="generated/app-settings-about"
+  alt="The About tab of the app settings, with the version, the links to the guide, the repository, the release notes and the issues, the conversion tools and the buttons that copy the diagnostics and open the data and logs folders."
+/>
+
+**About** says what the app is and which version is running. It links to the **User guide**, **GitHub**, the **Release notes** of the version you have and **Report a problem**, and it lists the **Conversion tools**, mangabind and mangapress, with their versions and whether each passed the check the app makes every time it starts.
+
+**Troubleshooting**, in the same tab, helps with a report of a problem:
+
+- **Copy diagnostics** puts on the clipboard the version of the app and of what it runs on, your system and machine (the system version, the processors and the memory), the language of the window, whether you chose a working folder (not which one), and whether the conversion tools passed their check. It holds no path and no name of a book or a folder, and nothing from the log. Paste it into your report: see [Reporting a problem](../../getting-started/installation/#reporting-a-problem).
+- **Open the data folder** and **Open the logs folder** open them in your file manager. The log files record what went wrong, and may hold the paths of books and folders: look at them before you share them.
+
+Nothing is sent anywhere by any of this. **Support the project** opens the page where the project can be supported, and the tab ends with the credits and the license.
+
+## What the app remembers
+
+- What you choose in **App settings**, in a file of its own that the reset of the conversion options leaves alone.
+- The size and place of the window. Mangabound opens as you left it: its size, whether it was maximized and, where the system lets a program place its window, its position. Under Wayland on Linux a program cannot place its window, so only the size and whether it was maximized are kept there, and a tiling window manager decides the size of a tiled window itself.
+- The conversion options, as before. [Saving and ready books](../exporting/#what-survives-a-restart) says what a restart keeps of the books.

@@ -20,6 +20,16 @@ const applicationPages = [
   ['user-guide/output-profiles/', ['device-settings', 'page-layout', 'page-images', 'single-book']],
   ['user-guide/processing/', ['processing-details']],
   ['user-guide/exporting/', ['save-results', 'book-warnings', 'ready-books']],
+  [
+    'user-guide/app-settings/',
+    [
+      'app-settings-interface',
+      'app-settings-processing',
+      'app-settings-queue',
+      'app-settings-updates',
+      'app-settings-about',
+    ],
+  ],
   ['koreader/opds-sharing/', ['share-panel'], ['share-panel']],
 ];
 
@@ -378,6 +388,9 @@ for (const density of [1, 2, 3, 4]) {
     test('the browser selects readable native sources without always loading the master', async ({
       page,
     }, testInfo) => {
+      // It opens every page that has a capture and fetches each one twice, in both languages, so what
+      // it does grows with the guide: a minute is room for the pictures there are, on a busy machine.
+      test.setTimeout(60_000);
       if (testInfo.project.name === 'desktop')
         await page.setViewportSize({ width: 1920, height: 1080 });
       const seen = new Set();

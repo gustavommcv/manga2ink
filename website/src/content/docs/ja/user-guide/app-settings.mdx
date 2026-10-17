@@ -1,0 +1,70 @@
+---
+title: 'アプリの設定'
+description: 'アプリの設定をタブごとに説明します。言語とテーマ、Mangabound が作業する場所と変換中の動作、新しいバージョンの確認、問題を報告するときに役立つ情報です。'
+---
+
+import TutorialImage from '../../../../components/TutorialImage.astro';
+
+タイトルバーの右にある歯車、または Windows と Linux では Ctrl+,、Mac では Cmd+, で **App settings** を開きます。変更は行った時点で保存されるので、保存の操作は要りません。Esc でダイアログを閉じられます。タブは 4 つあります。ここで選ぶのはアプリ自体のことで、本のことではありません。変換のオプションはキューに残ります。
+
+## Interface
+
+<TutorialImage
+  name="generated/app-settings-interface"
+  alt="アプリの設定の Interface タブ。Language と Theme の選択肢があります。"
+/>
+
+- **Language** は、システムの言語に従う **Automatic (system language)**、**English**、**Português (Brasil)** から選びます。すぐに反映されます。本、タイトル、変換ツール自身のメッセージは翻訳されません。アプリはまだ日本語に対応していません。
+- **Theme** は、アプリが最初に使う **Dark (graphite)** か **Light (paper)** です。ウィンドウのタイトルバーを含め、すぐに反映されます。このガイドの画像はダークテーマの画面です。
+
+## Processing
+
+<TutorialImage
+  name="generated/app-settings-processing"
+  alt="アプリの設定の Processing タブ。Mangabound が作業するフォルダー、その空き容量、保存待ちの本が表示されています。"
+/>
+
+このタブは、アプリが作業する場所と、変換中の動作についてのものです。
+
+- **Working folder** は、変換中に Mangabound がボリュームを作り、保存するまで完成した本を置いておくフォルダーです。選ぶまでは **Chosen by Mangabound** と表示されます。**Choose a folder…** で空き容量を確認しながら別のフォルダーを選び、**Use the default folder** で元に戻します。何が変わり、何が変わらないかは[Mangabound が作業する場所](../exporting/#mangabound-が作業する場所)を見てください。
+- **Books waiting to be saved** は、待機している本の数、変換の数、使っている容量を示し、7 日、30 日、90 日のあいだ何も変更されていないものを、確認したうえで整理します。[保留中の本を削除する](../exporting/#保留中の本を削除する)を見てください。
+
+<TutorialImage
+  name="generated/app-settings-queue"
+  alt="Processing タブの末尾。Mangabound が変換中に行うことについての 2 つの選択肢で、どちらもオンです。"
+/>
+
+- **While Mangabound converts** には 2 つの選択肢があり、オフにするまでどちらもオンです。変更は次に **Process** を押したときから有効で、動いている変換には影響しません。**Tell me when a long conversion ends** は、30 秒を超えた変換が終わり、Mangabound のウィンドウが前面にないときに、システムの通知を表示します。**Keep the computer awake while converting** は、変換が終わるまでコンピューターがスリープに入らないようにします。画面は消えることがあります。詳しくは[Mangabound が変換しているあいだ](../exporting/#mangabound-が変換しているあいだ)を見てください。
+
+## Updates
+
+<TutorialImage
+  name="generated/app-settings-updates"
+  alt="アプリの設定の Updates タブ。インストール済みのバージョンと Check for updates ボタンがあります。"
+/>
+
+このタブには、インストールされているバージョンが表示されます。**Check for updates** は、クリックしたときだけ、新しいバージョンが出ているかを GitHub に尋ねます。出ていれば、そのバージョンと公開日を伝え、**Download the update** でダウンロードページがブラウザーで開きます。アプリはまだ自分でインストールしません。お使いのシステム用のファイルをダウンロードし、[更新する](../../getting-started/installation/#更新する)のとおり、今のものの上にインストールしてください。
+
+**Check for updates automatically** と **Versions to look for** は表示されますが、まだ変更できません。アプリが自分で更新できるようになったときに使えるようになります。それまでは、これまでのリリースがすべてプレリリースなので、確認では安定版とプレリリースの両方を探します。
+
+## About
+
+<TutorialImage
+  name="generated/app-settings-about"
+  alt="アプリの設定の About タブ。バージョン、ガイド、リポジトリ、リリースノート、問題報告へのリンク、変換ツール、診断情報をコピーするボタンとデータとログのフォルダーを開くボタンが表示されています。"
+/>
+
+**About** には、アプリが何であるかと、動いているバージョンが表示されます。**User guide**、**GitHub**、お使いのバージョンの **Release notes**、**Report a problem** へのリンクがあり、**Conversion tools**（mangabind と mangapress）を、バージョンと、起動のたびにアプリが行う確認に通ったかどうかとともに一覧にします。
+
+同じタブの **Troubleshooting** は、問題を報告するときに役立ちます。
+
+- **Copy diagnostics** は、アプリとその実行環境のバージョン、システムとマシン（システムのバージョン、プロセッサー、メモリ）、ウィンドウの言語、作業フォルダーを選んだかどうか（どれかは含みません）、変換ツールが確認に通ったかどうかをクリップボードに入れます。パス、本やフォルダーの名前、ログの内容は含まれません。報告に貼り付けてください。[問題を報告する](../../getting-started/installation/#問題を報告する)を見てください。
+- **Open the data folder** と **Open the logs folder** は、それぞれのフォルダーをファイルマネージャーで開きます。ログファイルにはうまくいかなかったことが記録され、本やフォルダーのパスが含まれていることがあります。共有する前に内容を確認してください。
+
+これらによって何かがどこかへ送られることはありません。**Support the project** は、プロジェクトを支援できるページを開きます。タブの最後には、クレジットとライセンスがあります。
+
+## アプリが覚えているもの
+
+- **App settings** で選んだこと。専用のファイルに保存され、変換オプションのリセットでは変わりません。
+- ウィンドウの大きさと位置。Mangabound は、最後に使ったとおりに開きます。大きさ、最大化していたかどうか、そしてシステムがプログラムによるウィンドウの配置を認めている場合は位置です。Linux の Wayland ではプログラムがウィンドウの位置を決められないため、そこでは大きさと最大化しているかどうかだけが保存され、タイリング型のウィンドウマネージャーでは、並べられたウィンドウの大きさをマネージャー自身が決めます。
+- 変換オプション。これまでと同じです。再起動したときに本がどう残るかは[再起動後に残るもの](../exporting/#再起動後に残るもの)を見てください。

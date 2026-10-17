@@ -544,3 +544,76 @@ tutorial(
     await capture(page, 'share-panel', active, page.getByRole('region', { name: panel.title }));
   },
 );
+
+/** The stories of the dialog of the app settings, one for each tab, in each language of the pictures. */
+const settingsStories = {
+  en: {
+    interface: 'settings-app-settings-dialog--open',
+    processing: 'settings-app-settings-dialog--processing',
+    updates: 'settings-app-settings-dialog--updates',
+    about: 'settings-app-settings-dialog--about',
+  },
+  'pt-BR': {
+    interface: 'settings-app-settings-dialog--in-portuguese',
+    processing: 'settings-app-settings-dialog--processing-in-own-places-in-portuguese',
+    updates: 'settings-app-settings-dialog--updates-in-portuguese',
+    about: 'settings-app-settings-dialog--about-in-portuguese',
+  },
+} as const satisfies Record<Language, Record<string, string>>;
+
+tutorial(
+  'the app settings show each of their tabs, and the end of the longest',
+  async ({ capture, language, open, page, t }) => {
+    const stories = settingsStories[language];
+    const words = t.appSettings;
+    const dialog = page.getByRole('dialog', { name: words.title });
+    const selected = (name: string): Locator =>
+      dialog.getByRole('tab', { name, exact: true, selected: true });
+
+    await open(stories.interface);
+    await expect(dialog).toBeVisible();
+    await expect(selected(words.interface)).toBeVisible();
+    await expect(dialog.getByRole('combobox', { name: words.language.label })).toBeVisible();
+    await expect(dialog.getByRole('combobox', { name: words.theme.label })).toBeVisible();
+    await capture(page, 'app-settings-interface', stories.interface, dialog);
+
+    await open(stories.processing);
+    await expect(dialog).toBeVisible();
+    await expect(selected(words.processing)).toBeVisible();
+    await expect(dialog.getByRole('button', { name: t.processing.choose })).toBeVisible();
+    await capture(page, 'app-settings-processing', stories.processing, dialog);
+    // The choices about a queue are at the end of the tab, below what the dialog shows at first: the
+    // tab is scrolled to its end, which is what a person does to reach them.
+    await expect(
+      dialog.getByRole('checkbox', { name: t.processing.queue.notify.label }),
+    ).toBeChecked();
+    await expect(
+      dialog.getByRole('checkbox', { name: t.processing.queue.awake.label }),
+    ).toBeChecked();
+    await dialog.getByText(t.processing.queue.awake.help, { exact: true }).evaluate((element) => {
+      element.scrollIntoView({ block: 'end' });
+    });
+    await expect(dialog.getByText(t.processing.queue.title, { exact: true })).toBeInViewport();
+    await capture(page, 'app-settings-queue', stories.processing, dialog);
+
+    await open(stories.updates);
+    await expect(dialog).toBeVisible();
+    await expect(selected(words.updates)).toBeVisible();
+    await expect(dialog.getByRole('button', { name: t.updates.check })).toBeEnabled();
+    await expect(dialog.getByRole('checkbox', { name: t.updates.automatic.label })).toBeDisabled();
+    await capture(page, 'app-settings-updates', stories.updates, dialog);
+
+    await open(stories.about);
+    await expect(dialog).toBeVisible();
+    await expect(selected(words.about)).toBeVisible();
+    await expect(
+      dialog.getByRole('button', { name: t.about.learnMore.releaseNotes }),
+    ).toBeVisible();
+    // What helps a report of a problem is in the picture too: the diagnostics and the two folders.
+    await expect(dialog.getByRole('button', { name: t.about.troubleshooting.copy })).toBeVisible();
+    await expect(
+      dialog.getByRole('button', { name: t.about.troubleshooting.openLogs }),
+    ).toBeVisible();
+    await capture(page, 'app-settings-about', stories.about, dialog);
+  },
+);

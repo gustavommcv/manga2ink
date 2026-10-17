@@ -77,6 +77,7 @@ export default defineConfig({
             },
             { slug: 'user-guide/processing' },
             { slug: 'user-guide/exporting' },
+            { slug: 'user-guide/app-settings' },
             { slug: 'getting-started/overview' },
           ],
         },
