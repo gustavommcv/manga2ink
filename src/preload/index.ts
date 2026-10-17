@@ -20,6 +20,7 @@ import type { OpenAppFolderCommand } from '../shared/app-folders-contract';
 import type { WaitingBooks } from '../domain/pending-cleanup';
 import type { IdleDaysCommand } from '../shared/pending-cleanup-contract';
 import type { ProcessingFolderStatus } from '../shared/processing-folder-contract';
+import type { EndQueueCommand } from '../shared/queue-run-contract';
 import type { OpenProjectLinkCommand } from '../shared/project-links-contract';
 import type { MangaboundBridge } from '../shared/runtime-info';
 import type { RestoredSettings, SaveSettingsCommand } from '../shared/settings-contract';
@@ -94,6 +95,8 @@ const bridge: MangaboundBridge = Object.freeze({
   convert: (command: ConversionCommand) =>
     invoke<readonly ArtifactSummary[]>('workflow:convert', command),
   planConversion: (command: PlanConversionCommand) => invoke<PlanSummary>('workflow:plan', command),
+  beginQueue: () => invoke<string>('queue:begin'),
+  endQueue: (command: EndQueueCommand) => invoke<undefined>('queue:end', command),
   createPendingRun: () => invoke<string>('pending:create'),
   listPendingRuns: () => invoke<readonly PendingRunSummary[]>('pending:list'),
   discardPendingRun: (libraryId: string) => invoke<undefined>('pending:discard', libraryId),

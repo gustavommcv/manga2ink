@@ -18,6 +18,7 @@ const kept = (
   language: LanguagePreference,
   processing = defaultProcessingChoice,
 ): KeptAppSettings => ({
+  ...defaultKeptAppSettings,
   language,
   processing,
 });
@@ -65,14 +66,52 @@ describe('reading the file of the app settings', () => {
 });
 
 describe('writing the file of the app settings', () => {
-  it('writes the version and the language, on lines of their own', () => {
+  it('writes the version and the choices, on lines of their own', () => {
     expect(serializeStoredAppSettings(kept('pt-BR'))).toBe(
-      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
+      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
     );
+  });
+
+  it('writes a yes or no that was turned off, and reads it back', () => {
+    const settings: KeptAppSettings = { ...kept('en'), notifyWhenDone: false, keepAwake: false };
+
+    expect(serializeStoredAppSettings(settings)).toContain('"notifyWhenDone": false');
+    expect(serializeStoredAppSettings(settings)).toContain('"keepAwake": false');
+    expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
   });
 
   it('writes what it reads back', () => {
     expect(parseStoredAppSettings(serializeStoredAppSettings(kept('en')))).toEqual(kept('en'));
+  });
+});
+
+describe('the choices about a queue, in the file', () => {
+  it('start on for a file an earlier version wrote, which does not have them', () => {
+    expect(parseStoredAppSettings(file({ language: 'en' }))).toMatchObject({
+      notifyWhenDone: true,
+      keepAwake: true,
+    });
+  });
+
+  it('give the yes or no the file holds, each on its own', () => {
+    expect(parseStoredAppSettings(file({ notifyWhenDone: false, keepAwake: true }))).toMatchObject({
+      notifyWhenDone: false,
+      keepAwake: true,
+    });
+    expect(parseStoredAppSettings(file({ notifyWhenDone: true, keepAwake: false }))).toMatchObject({
+      notifyWhenDone: true,
+      keepAwake: false,
+    });
+  });
+
+  it.each([
+    ['a text', 'no'],
+    ['a number', 0],
+    ['nothing', null],
+  ])('start on when the file has %s in place of a yes or no', (_name, value) => {
+    expect(parseStoredAppSettings(file({ notifyWhenDone: value, keepAwake: value }))).toMatchObject(
+      { notifyWhenDone: true, keepAwake: true },
+    );
   });
 });
 

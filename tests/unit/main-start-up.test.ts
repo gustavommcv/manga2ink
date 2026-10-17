@@ -205,6 +205,8 @@ vi.mock('@/application/workflows/app-settings', () => ({
       return Promise.resolve();
     };
     processing = (): unknown => ({ folder: '/chosen', earlier: [] });
+    language = (): string => 'pt-BR';
+    queueChoices = (): unknown => ({ keepAwake: false, notifyWhenDone: true });
     constructor(
       _store: unknown,
       readonly systemLanguages: () => readonly string[],
@@ -241,6 +243,13 @@ vi.mock('@/main/quit-cleanup', () => ({
 vi.mock('@/main/ipc/artifacts', () => ({ registerArtifactHandlers: step('handlers:artifacts') }));
 vi.mock('@/main/ipc/conversion', () => ({
   registerConversionHandlers: step('handlers:conversion'),
+}));
+vi.mock('@/main/ipc/queue-runs', () => ({
+  electronQueueSystem: () => 'the system of the app',
+  registerQueueRunHandlers: (handlers: unknown, system: unknown) => {
+    fake.calls.push('handlers:queue-runs');
+    fake.context['queueHandlers'] = { handlers, system };
+  },
 }));
 vi.mock('@/main/ipc/covers', () => ({ registerCoverHandlers: step('handlers:covers') }));
 vi.mock('@/main/ipc/inputs', () => ({ registerInputHandlers: step('handlers:inputs') }));
@@ -331,6 +340,7 @@ beforeEach(() => {
   fake.context = {
     activeJobs: new Map(),
     conversions: new Set(),
+    queueRuns: { running: false, releaseAll: vi.fn() },
     pendingCatalog: { useRoot: step('use-root') },
     workflow: undefined,
     activeSharing: undefined,
@@ -386,6 +396,7 @@ describe('starting the app', () => {
       'handlers:troubleshooting',
       'handlers:inputs',
       'handlers:conversion',
+      'handlers:queue-runs',
       'handlers:covers',
       'handlers:metadata',
       'handlers:artifacts',
@@ -665,6 +676,36 @@ describe('leaving while a conversion runs', () => {
     expect(guard.converting()).toBe(true);
   });
 
+  it('gives the queue handlers the queues, the choices as they are now and the words of the window', async () => {
+    const ready = await start();
+
+    await ready();
+
+    const { handlers, system } = fake.context['queueHandlers'] as {
+      handlers: {
+        queueRuns: unknown;
+        choices: () => unknown;
+        words: () => { done: { title: string } };
+      };
+      system: unknown;
+    };
+    expect(handlers.queueRuns).toBe(fake.context['queueRuns']);
+    expect(handlers.choices()).toEqual({ keepAwake: false, notifyWhenDone: true });
+    // The window was read in Portuguese, so that is what a notification says.
+    expect(handlers.words().done.title).toBe('Seus livros estão prontos');
+    expect(system).toBe('the system of the app');
+  });
+
+  it('counts a queue that is running as something to lose, before and between its conversions', async () => {
+    await start();
+    const guard = fake.context['leavingGuard'] as { converting: () => boolean };
+    expect(guard.converting()).toBe(false);
+
+    (fake.context['queueRuns'] as { running: boolean }).running = true;
+
+    expect(guard.converting()).toBe(true);
+  });
+
   it('asks in the words of the window, over the window that is open', async () => {
     fake.windows = [{ isMinimized: () => false, restore: vi.fn(), focus: vi.fn() }];
     await start();
@@ -737,6 +778,17 @@ describe('quitting', () => {
     expect(steps['pruneCompleted']).toBeUndefined();
     expect(steps['settleWindowState']).toBeUndefined();
     expect(steps['settleLog']).toBeUndefined();
+  });
+
+  it('lets go of the queues that are running, whenever the app quits', async () => {
+    await start();
+
+    dispatch('before-quit', { preventDefault: vi.fn() });
+    (cleanUp().steps['releaseQueues'] as () => void)();
+
+    expect(
+      (fake.context['queueRuns'] as { releaseAll: () => void }).releaseAll,
+    ).toHaveBeenCalledOnce();
   });
 
   it('keeps the window as it is now when the keeper exists, since the quit may be ahead of its last move', async () => {

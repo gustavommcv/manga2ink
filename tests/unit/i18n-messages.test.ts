@@ -42,6 +42,14 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.pending.confirmDeletion': [['Vol.01']],
   'queue.pending.question': [[1], [2]],
   'processing.earlier.books': [[1], [2]],
+  'processing.queue.notify.help': [[30]],
+  'dialogs.queueEnded.done.body': [[1], [3]],
+  'dialogs.queueEnded.notes.body': [[1], [3]],
+  'dialogs.queueEnded.failures.body': [
+    [0, 2],
+    [1, 1],
+    [3, 2],
+  ],
   'processing.waiting.summary': [
     [1, 1, '480 MB'],
     [5, 2, '1.2 GB'],

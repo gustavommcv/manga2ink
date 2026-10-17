@@ -8,7 +8,7 @@ import {
   type AppSettingsTab,
   appSettingsTabs,
 } from '@/renderer/components/settings/app-settings-tabs';
-import { languages } from '@/domain/app-settings';
+import { languages, defaultAppSettings } from '@/domain/app-settings';
 import { messagesFor } from '@/i18n/messages';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
@@ -17,7 +17,10 @@ import { inertBridge } from './support/bridge';
 const reading =
   (language: 'en' | 'pt-BR'): MangaboundBridge['loadAppSettings'] =>
   () =>
-    Promise.resolve({ ok: true, value: { settings: { language }, language, unreadable: false } });
+    Promise.resolve({
+      ok: true,
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
+    });
 
 /** Two tabs that say what is in them, so the way the dialog is made can be seen on its own. */
 const twoTabs: readonly [AppSettingsTab, ...AppSettingsTab[]] = [

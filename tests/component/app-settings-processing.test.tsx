@@ -13,11 +13,15 @@ import type { WorkflowResult } from '@/shared/workflow-contract';
 import { inertBridge } from './support/bridge';
 import { chosenProcessingStatus, defaultProcessingStatus } from './support/processing';
 import { deferred } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const speaking =
   (language: Language): MangaboundBridge['loadAppSettings'] =>
   () =>
-    Promise.resolve({ ok: true, value: { settings: { language }, language, unreadable: false } });
+    Promise.resolve({
+      ok: true,
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
+    });
 
 const answering =
   (status: ProcessingFolderStatus): MangaboundBridge['getProcessingFolder'] =>
@@ -362,5 +366,134 @@ describe('the Processing tab in Portuguese', () => {
     expect(screen.getByText('1 livro')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Escolher uma pasta…' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Usar a pasta padrão' })).toBeEnabled();
+  });
+});
+
+describe('what a queue does, chosen in the Processing tab', () => {
+  const kept = (
+    change: Partial<typeof defaultAppSettings>,
+  ): MangaboundBridge['loadAppSettings'] => {
+    return () =>
+      Promise.resolve({
+        ok: true,
+        value: {
+          settings: { ...defaultAppSettings, language: 'en', ...change },
+          language: 'en',
+          unreadable: false,
+        },
+      });
+  };
+  const saving = (): ReturnType<typeof vi.fn<MangaboundBridge['saveAppSettings']>> =>
+    vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      Promise.resolve({ ok: true, value: { language: 'en' } }),
+    );
+
+  it('has both turned on to begin with, each said by what it does', async () => {
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
+
+    expect(screen.getByRole('heading', { name: 'While Mangabound converts' })).toBeVisible();
+    const notify = screen.getByRole('checkbox', { name: 'Tell me when a long conversion ends' });
+    const awake = screen.getByRole('checkbox', {
+      name: 'Keep the computer awake while converting',
+    });
+    expect(notify).toBeChecked();
+    expect(awake).toBeChecked();
+    expect(notify).toHaveAccessibleDescription(
+      'A system notification, only when the conversion took more than 30 seconds and no Mangabound window is in front. Clicking it brings the window back.',
+    );
+    expect(awake).toHaveAccessibleDescription(
+      'The screen may still turn off, but the computer will not go to sleep and stop the conversion.',
+    );
+  });
+
+  it('shows them as they were kept', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      loadAppSettings: kept({ notifyWhenDone: false }),
+    });
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Tell me when a long conversion ends' }),
+    ).not.toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Keep the computer awake while converting' }),
+    ).toBeChecked();
+  });
+
+  it('keeps only the choice that was changed, and shows it changed once it is kept', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = saving();
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
+    const notify = screen.getByRole('checkbox', { name: 'Tell me when a long conversion ends' });
+
+    await user.click(notify);
+
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ notifyWhenDone: false });
+    await waitFor(() => {
+      expect(notify).not.toBeChecked();
+    });
+    expect(
+      screen.getByRole('checkbox', { name: 'Keep the computer awake while converting' }),
+    ).toBeChecked();
+  });
+
+  it('keeps the other choice the same way, and can turn one back on', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = saving();
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      loadAppSettings: kept({ keepAwake: false }),
+      saveAppSettings,
+    });
+    const awake = screen.getByRole('checkbox', {
+      name: 'Keep the computer awake while converting',
+    });
+    expect(awake).not.toBeChecked();
+
+    await user.click(awake);
+
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ keepAwake: true });
+    await waitFor(() => {
+      expect(awake).toBeChecked();
+    });
+  });
+
+  it('says the change could not be kept, and leaves the choice as it was; the message goes with the next one that is kept', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi
+      .fn<MangaboundBridge['saveAppSettings']>()
+      .mockResolvedValueOnce({
+        ok: false,
+        error: { code: 'settings_save_failed', said: message('failure.internal', {}) },
+      })
+      .mockResolvedValueOnce({ ok: true, value: { language: 'en' } });
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
+    const notify = screen.getByRole('checkbox', { name: 'Tell me when a long conversion ends' });
+
+    await user.click(notify);
+
+    expect(await screen.findByText('The change could not be saved. Try again.')).toBeVisible();
+    expect(notify).toBeChecked();
+    await user.click(notify);
+    await waitFor(() => {
+      expect(
+        screen.queryByText('The change could not be saved. Try again.'),
+      ).not.toBeInTheDocument();
+    });
+    expect(notify).not.toBeChecked();
+  });
+
+  it('says it in Portuguese for a window in Portuguese', async () => {
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) }, 'pt-BR');
+
+    expect(screen.getByRole('heading', { name: 'Enquanto o Mangabound converte' })).toBeVisible();
+    expect(
+      screen.getByRole('checkbox', { name: 'Avisar quando uma conversão longa terminar' }),
+    ).toHaveAccessibleDescription(
+      'Uma notificação do sistema, só se a conversão levou mais de 30 segundos e nenhuma janela do Mangabound estiver em primeiro plano. Ao clicar nela, a janela volta.',
+    );
+    expect(
+      screen.getByRole('checkbox', { name: 'Manter o computador acordado durante a conversão' }),
+    ).toBeChecked();
   });
 });

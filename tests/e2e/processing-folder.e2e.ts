@@ -83,6 +83,8 @@ describe('packaged processing folder', () => {
     assert.deepEqual(JSON.parse(await readFile(settingsFile, 'utf8')), {
       version: 1,
       language: 'system',
+      notifyWhenDone: true,
+      keepAwake: true,
       processingFolder: work,
       earlierProcessingFolders: [],
     });
@@ -116,6 +118,8 @@ describe('packaged processing folder', () => {
     assert.deepEqual(JSON.parse(await readFile(settingsFile, 'utf8')), {
       version: 1,
       language: 'system',
+      notifyWhenDone: true,
+      keepAwake: true,
       processingFolder: null,
       earlierProcessingFolders: [work],
     });

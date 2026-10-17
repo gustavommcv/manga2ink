@@ -7,6 +7,7 @@ import { InfoBanner } from '@/renderer/components/shared/info-banner';
 
 import { inPortuguese } from './support/i18n';
 import { bridge, installBridge } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -28,7 +29,11 @@ describe('the last words that were written in a component, in Portuguese', () =>
         loadAppSettings: () =>
           Promise.resolve({
             ok: true,
-            value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+            value: {
+              settings: { ...defaultAppSettings, language: 'pt-BR' },
+              language: 'pt-BR',
+              unreadable: false,
+            },
           }),
       }),
     );

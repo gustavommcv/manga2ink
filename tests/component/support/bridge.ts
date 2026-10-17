@@ -42,6 +42,8 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
         ok: true,
         value: { tool: 'mangabind', title: '', message: raw(''), books: [], issues: [] },
       }),
+    beginQueue: () => Promise.resolve({ ok: true, value: 'queue-token' }),
+    endQueue: () => nothing,
     createPendingRun: () => Promise.resolve({ ok: true, value: 'pending-run' }),
     listPendingRuns: () => Promise.resolve({ ok: true, value: [] }),
     discardPendingRun: () => nothing,

@@ -10,6 +10,7 @@ import { App } from '@/renderer/app';
 
 import { inPortuguese } from './support/i18n';
 import { bridge, installBridge } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const profiles = [
   {
@@ -234,7 +235,11 @@ describe('the notice of a device that is no longer offered, in Portuguese', () =
         loadAppSettings: () =>
           Promise.resolve({
             ok: true,
-            value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+            value: {
+              settings: { ...defaultAppSettings, language: 'pt-BR' },
+              language: 'pt-BR',
+              unreadable: false,
+            },
           }),
         loadSettings: () =>
           Promise.resolve({

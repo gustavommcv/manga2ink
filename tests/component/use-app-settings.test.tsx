@@ -53,12 +53,16 @@ describe('useAppSettingsState', () => {
       await act(async () => {
         read.resolve({
           ok: true,
-          value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+          value: {
+            settings: { ...defaultAppSettings, language: 'pt-BR' },
+            language: 'pt-BR',
+            unreadable: false,
+          },
         });
         await read.promise;
       });
       expect(result.current).toMatchObject({
-        settings: { language: 'pt-BR' },
+        settings: { ...defaultAppSettings, language: 'pt-BR' },
         language: 'pt-BR',
         unreadable: false,
       });
@@ -66,14 +70,17 @@ describe('useAppSettingsState', () => {
 
     it('gives the language the choice comes to, which the main process worked out', async () => {
       const bridge = inertBridge({
-        loadAppSettings: restored({ settings: { language: 'system' }, language: 'pt-BR' }),
+        loadAppSettings: restored({
+          settings: { ...defaultAppSettings, language: 'system' },
+          language: 'pt-BR',
+        }),
       });
 
       const { result } = renderHook(() => useAppSettingsState(bridge));
 
       await waitFor(() => {
         expect(result.current).toMatchObject({
-          settings: { language: 'system' },
+          settings: { ...defaultAppSettings, language: 'system' },
           language: 'pt-BR',
         });
       });
@@ -178,7 +185,7 @@ describe('useAppSettingsState', () => {
       expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ language: 'system' });
       // What is in the file is good now, so it is not said to be unreadable any more.
       expect(result.current).toMatchObject({
-        settings: { language: 'system' },
+        settings: { ...defaultAppSettings, language: 'system' },
         language: 'pt-BR',
         unreadable: false,
       });
@@ -189,7 +196,7 @@ describe('useAppSettingsState', () => {
       ['fails', () => Promise.reject(new Error('The channel is gone.'))],
     ])('keeps what there was, and says so, when keeping it %s', async (_name, saveAppSettings) => {
       const bridge = inertBridge({
-        loadAppSettings: restored({ settings: { language: 'en' } }),
+        loadAppSettings: restored({ settings: { ...defaultAppSettings, language: 'en' } }),
         saveAppSettings,
       });
       const { result } = renderHook(() => useAppSettingsState(bridge));
@@ -203,7 +210,59 @@ describe('useAppSettingsState', () => {
       });
 
       expect(kept).toBe(false);
-      expect(result.current).toMatchObject({ settings: { language: 'en' }, language: 'en' });
+      expect(result.current).toMatchObject({
+        settings: { ...defaultAppSettings, language: 'en' },
+        language: 'en',
+      });
+    });
+  });
+
+  describe('changing the other choices', () => {
+    it('sends only the choice that changed, and keeps every change that was kept, each on top of the last', async () => {
+      const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+        Promise.resolve({ ok: true, value: { language: 'en' } }),
+      );
+      const bridge = inertBridge({ loadAppSettings: restored(), saveAppSettings });
+      const { result } = renderHook(() => useAppSettingsState(bridge));
+      await waitFor(() => {
+        expect(result.current).toBeDefined();
+      });
+
+      await act(async () => {
+        await result.current?.change({ notifyWhenDone: false });
+      });
+      await act(async () => {
+        await result.current?.change({ keepAwake: false });
+      });
+
+      expect(saveAppSettings.mock.calls).toEqual([
+        [{ notifyWhenDone: false }],
+        [{ keepAwake: false }],
+      ]);
+      expect(result.current?.settings).toEqual({
+        language: 'system',
+        notifyWhenDone: false,
+        keepAwake: false,
+      });
+    });
+
+    it('keeps the choices as they were when the change is not kept, and says so', async () => {
+      const bridge = inertBridge({
+        loadAppSettings: restored(),
+        saveAppSettings: () => Promise.resolve(failing),
+      });
+      const { result } = renderHook(() => useAppSettingsState(bridge));
+      await waitFor(() => {
+        expect(result.current).toBeDefined();
+      });
+
+      let kept: boolean | undefined;
+      await act(async () => {
+        kept = await result.current?.change({ keepAwake: false });
+      });
+
+      expect(kept).toBe(false);
+      expect(result.current?.settings).toEqual(defaultAppSettings);
     });
   });
 });

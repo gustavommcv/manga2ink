@@ -8,6 +8,7 @@ import { WorkflowApp } from '@/renderer/workflow-app';
 import { message, raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -192,7 +193,11 @@ describe('application startup', () => {
         loadAppSettings: () =>
           Promise.resolve({
             ok: true,
-            value: { settings: { language: 'pt-BR' }, language: 'pt-BR', unreadable: false },
+            value: {
+              settings: { ...defaultAppSettings, language: 'pt-BR' },
+              language: 'pt-BR',
+              unreadable: false,
+            },
           }),
       });
 
@@ -211,7 +216,11 @@ describe('application startup', () => {
         loadAppSettings: () =>
           Promise.resolve({
             ok: true,
-            value: { settings: { language: 'system' }, language: 'en', unreadable: true },
+            value: {
+              settings: { ...defaultAppSettings, language: 'system' },
+              language: 'en',
+              unreadable: true,
+            },
           }),
       });
 

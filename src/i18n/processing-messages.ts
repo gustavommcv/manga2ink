@@ -47,6 +47,18 @@ export interface ProcessingMessages {
     /** Said when what was found could not be deleted because it was being saved. */
     readonly inUse: string;
   };
+  /** What a person chooses about a queue while it runs and when it ends (ADR 0065). */
+  readonly queue: {
+    readonly title: string;
+    readonly notify: {
+      readonly label: string;
+      /** Says when the notification comes: `seconds` is how long a queue has to take. */
+      readonly help: (seconds: number) => string;
+    };
+    readonly awake: { readonly label: string; readonly help: string };
+    /** Said when a choice could not be kept. */
+    readonly saveFailed: string;
+  };
 }
 
 /** A language is added by one entry here, and the compiler says where the others are missing. */
@@ -88,6 +100,19 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
         `Deleted ${String(runs)} ${countOf(runs, 'conversion', 'conversions')}, ${size}.`,
       inUse: 'Nothing was deleted: what was found is being saved.',
     },
+    queue: {
+      title: 'While Mangabound converts',
+      notify: {
+        label: 'Tell me when a long conversion ends',
+        help: (seconds) =>
+          `A system notification, only when the conversion took more than ${String(seconds)} seconds and no Mangabound window is in front. Clicking it brings the window back.`,
+      },
+      awake: {
+        label: 'Keep the computer awake while converting',
+        help: 'The screen may still turn off, but the computer will not go to sleep and stop the conversion.',
+      },
+      saveFailed: 'The change could not be saved. Try again.',
+    },
   },
   'pt-BR': {
     description:
@@ -125,6 +150,19 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       deleted: (runs, size) =>
         `${String(runs)} ${countOf(runs, 'conversão apagada', 'conversões apagadas')}, ${size}.`,
       inUse: 'Nada foi apagado: o que foi encontrado está sendo salvo.',
+    },
+    queue: {
+      title: 'Enquanto o Mangabound converte',
+      notify: {
+        label: 'Avisar quando uma conversão longa terminar',
+        help: (seconds) =>
+          `Uma notificação do sistema, só se a conversão levou mais de ${String(seconds)} segundos e nenhuma janela do Mangabound estiver em primeiro plano. Ao clicar nela, a janela volta.`,
+      },
+      awake: {
+        label: 'Manter o computador acordado durante a conversão',
+        help: 'A tela ainda pode apagar, mas o computador não vai dormir e interromper a conversão.',
+      },
+      saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },
   },
 };

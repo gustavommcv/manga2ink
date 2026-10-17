@@ -13,6 +13,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
 import { inertBridge } from './support/bridge';
 import { defaultProcessingStatus } from './support/processing';
 import { deferred } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const GiB = 1024 ** 3;
 const MiB = 1024 ** 2;
@@ -26,7 +27,10 @@ const found: WaitingBooks = { runs: 1, books: 3, bytes: 480 * MiB };
 const speaking =
   (language: Language): MangaboundBridge['loadAppSettings'] =>
   () =>
-    Promise.resolve({ ok: true, value: { settings: { language }, language, unreadable: false } });
+    Promise.resolve({
+      ok: true,
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
+    });
 
 const reading =
   (...statuses: ProcessingFolderStatus[]): MangaboundBridge['getProcessingFolder'] =>

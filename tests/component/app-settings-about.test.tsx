@@ -13,11 +13,15 @@ import type { ToolchainStatus } from '@/shared/toolchain-status';
 
 import { inertBridge } from './support/bridge';
 import { deferred } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 const speaking =
   (language: Language): MangaboundBridge['loadAppSettings'] =>
   () =>
-    Promise.resolve({ ok: true, value: { settings: { language }, language, unreadable: false } });
+    Promise.resolve({
+      ok: true,
+      value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
+    });
 
 async function renderAbout(
   overrides: Partial<MangaboundBridge> = {},

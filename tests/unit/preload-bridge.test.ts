@@ -68,6 +68,13 @@ const forwarded: readonly (readonly [
   ['getDeviceProfiles', [], 'workflow:get-device-profiles', undefined],
   ['convert', [{ jobId: 'job' }], 'workflow:convert', { jobId: 'job' }],
   ['planConversion', [{ jobId: 'job' }], 'workflow:plan', { jobId: 'job' }],
+  ['beginQueue', [], 'queue:begin', undefined],
+  [
+    'endQueue',
+    [{ token: 'queue-1', summary: { books: 2, failures: 0, notes: 0, cancelled: false } }],
+    'queue:end',
+    { token: 'queue-1', summary: { books: 2, failures: 0, notes: 0, cancelled: false } },
+  ],
   ['createPendingRun', [], 'pending:create', undefined],
   ['listPendingRuns', [], 'pending:list', undefined],
   ['discardPendingRun', ['library-1'], 'pending:discard', 'library-1'],

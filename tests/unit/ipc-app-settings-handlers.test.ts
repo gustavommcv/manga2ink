@@ -6,6 +6,7 @@ import { SettingsSaveError } from '@/application/ports/settings-store';
 import { registerAppSettingsHandlers } from '@/main/ipc/app-settings';
 import { saveAppSettingsCommandSchema } from '@/shared/app-settings-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 type Listener = (event: IpcMainInvokeEvent, payload: unknown) => Promise<WorkflowResult<unknown>>;
 const electron = vi.hoisted(() => ({ listeners: new Map<string, Listener>() }));
@@ -40,24 +41,47 @@ describe('the command that keeps the app settings', () => {
     });
   });
 
-  it.each([{}, { language: 'ja' }, { language: 3 }, { language: '' }, 'pt-BR', null])(
-    'refuses %j',
-    (command) => {
-      expect(saveAppSettingsCommandSchema.safeParse(command).success).toBe(false);
-    },
-  );
+  it('takes a yes or no for each of the choices about a queue, alone or with the language', () => {
+    expect(saveAppSettingsCommandSchema.parse({ notifyWhenDone: false })).toEqual({
+      notifyWhenDone: false,
+    });
+    expect(saveAppSettingsCommandSchema.parse({ keepAwake: true })).toEqual({ keepAwake: true });
+    expect(
+      saveAppSettingsCommandSchema.parse({
+        language: 'en',
+        notifyWhenDone: true,
+        keepAwake: false,
+      }),
+    ).toEqual({ language: 'en', notifyWhenDone: true, keepAwake: false });
+  });
+
+  it.each([
+    {},
+    { language: 'ja' },
+    { language: 3 },
+    { language: '' },
+    { notifyWhenDone: 'yes' },
+    { keepAwake: 1 },
+    { notifyWhenDone: null },
+    { language: undefined },
+    'pt-BR',
+    null,
+  ])('refuses %j', (command) => {
+    expect(saveAppSettingsCommandSchema.safeParse(command).success).toBe(false);
+  });
 
   it('drops what it does not know', () => {
     expect(saveAppSettingsCommandSchema.parse({ language: 'en', folder: '/books' })).toEqual({
       language: 'en',
     });
+    expect(saveAppSettingsCommandSchema.safeParse({ folder: '/books' }).success).toBe(false);
   });
 });
 
 describe('loading the app settings', () => {
   it('tells the window what was kept and the language it comes to', async () => {
     const restored = {
-      settings: { language: 'system' as const },
+      settings: { ...defaultAppSettings, language: 'system' as const },
       language: 'pt-BR' as const,
       unreadable: false,
     };

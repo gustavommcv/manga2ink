@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 import {
   type AppSettings,
+  type AppSettingsChange,
+  applyingChange,
   defaultAppSettings,
   type Language,
   type LanguagePreference,
@@ -38,7 +40,9 @@ export interface AppSettingsState {
   readonly language: Language;
   /** True when the file was there and could not be used, so these are the defaults. */
   readonly unreadable: boolean;
-  /** Keeps a choice and says whether it was kept; the language changes only once it is. */
+  /** Keeps the choices a change names and says whether they were kept; nothing shown changes until they are. */
+  readonly change: (change: AppSettingsChange) => Promise<boolean>;
+  /** Keeps a language and says whether it was kept; the language changes only once it is. */
   readonly setLanguage: (language: LanguagePreference) => Promise<boolean>;
 }
 
@@ -79,13 +83,17 @@ export function useAppSettingsState(bridge: AppSettingsBridge): AppSettingsState
     };
   }, [bridge]);
 
-  const setLanguage = useCallback(
-    async (language: LanguagePreference): Promise<boolean> => {
+  const change = useCallback(
+    async (choices: AppSettingsChange): Promise<boolean> => {
       try {
-        const result = await bridge.saveAppSettings({ language });
+        const result = await bridge.saveAppSettings(choices);
         if (!result.ok) return false;
         // What was just written is good, whatever the file was before.
-        setLoaded({ settings: { language }, language: result.value.language, unreadable: false });
+        setLoaded((before) => ({
+          settings: applyingChange(before?.settings ?? defaultAppSettings, choices),
+          language: result.value.language,
+          unreadable: false,
+        }));
         return true;
       } catch {
         return false;
@@ -93,10 +101,14 @@ export function useAppSettingsState(bridge: AppSettingsBridge): AppSettingsState
     },
     [bridge],
   );
+  const setLanguage = useCallback(
+    (language: LanguagePreference): Promise<boolean> => change({ language }),
+    [change],
+  );
 
   return useMemo(
-    () => (loaded === undefined ? undefined : { ...loaded, setLanguage }),
-    [loaded, setLanguage],
+    () => (loaded === undefined ? undefined : { ...loaded, change, setLanguage }),
+    [loaded, change, setLanguage],
   );
 }
 

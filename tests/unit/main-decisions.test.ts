@@ -447,6 +447,9 @@ describe('what the app lets go of when it quits', () => {
     return {
       order,
       cleanup: {
+        releaseQueues: () => {
+          order.push('release queues');
+        },
         activeJobs: new Map<string, { readonly abort: () => void }>(),
         releaseAll: step('release'),
         stopSharing: step('stop sharing'),
@@ -460,7 +463,7 @@ describe('what the app lets go of when it quits', () => {
     };
   }
 
-  it('stops the conversions, lets go of the rest, removes the finished runs last, and then quits', async () => {
+  it('lets go of the queues first, stops the conversions, lets go of the rest, removes the finished runs last, and then quits', async () => {
     const { cleanup: steps, order } = cleanup();
     const abort = vi.fn(() => order.push('abort'));
     const quit = vi.fn(() => order.push('quit'));
@@ -479,6 +482,7 @@ describe('what the app lets go of when it quits', () => {
 
     expect(abort).toHaveBeenCalledTimes(2);
     expect(order).toEqual([
+      'release queues',
       'abort',
       'abort',
       'release',
@@ -560,6 +564,7 @@ describe('what the app lets go of when it quits', () => {
 
     await cleanUpBeforeQuit(
       {
+        releaseQueues: () => undefined,
         activeJobs: new Map(),
         releaseAll: undefined,
         stopSharing: undefined,

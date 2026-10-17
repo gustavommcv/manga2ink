@@ -20,10 +20,43 @@ export type LanguagePreference = (typeof languagePreferences)[number];
  */
 export interface AppSettings {
   readonly language: LanguagePreference;
+  /** Tell when a long queue ends, if no window of the app is in front (ADR 0065). */
+  readonly notifyWhenDone: boolean;
+  /** Keep the computer from going to sleep while a queue runs (ADR 0065). */
+  readonly keepAwake: boolean;
 }
 
-/** Where the app starts: in the language of the system. */
-export const defaultAppSettings: AppSettings = Object.freeze({ language: 'system' });
+/** Where the app starts: in the language of the system, telling and keeping awake. */
+export const defaultAppSettings: AppSettings = Object.freeze({
+  language: 'system',
+  notifyWhenDone: true,
+  keepAwake: true,
+});
+
+/** What a person changes at one time: any of the choices, and nothing else. */
+export type AppSettingsChange = { readonly [Choice in keyof AppSettings]?: AppSettings[Choice] };
+
+/** The settings with the choices a change names; a choice it leaves out (or leaves undefined) stays. */
+export function applyingChange<Settings extends AppSettings>(
+  settings: Settings,
+  change: AppSettingsChange,
+): Settings {
+  return {
+    ...settings,
+    ...Object.fromEntries(
+      Object.entries<unknown>(change).filter(([, value]) => value !== undefined),
+    ),
+  };
+}
+
+/** The choices the window reads and changes, out of everything the file keeps. */
+export function choicesOf(settings: AppSettings): AppSettings {
+  return {
+    language: settings.language,
+    notifyWhenDone: settings.notifyWhenDone,
+    keepAwake: settings.keepAwake,
+  };
+}
 
 export function isLanguagePreference(value: unknown): value is LanguagePreference {
   return languagePreferences.includes(value as LanguagePreference);

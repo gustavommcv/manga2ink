@@ -12,6 +12,7 @@ import { App } from '@/renderer/app';
 
 import { inPortuguese } from './support/i18n';
 import { bridge, installBridge } from './support/workflow';
+import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
   Reflect.deleteProperty(window, 'mangabound');
@@ -25,7 +26,7 @@ const portuguese = {
     Promise.resolve({
       ok: true as const,
       value: {
-        settings: { language: 'pt-BR' as const },
+        settings: { ...defaultAppSettings, language: 'pt-BR' as const },
         language: 'pt-BR' as const,
         unreadable: false,
       },
