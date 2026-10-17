@@ -13,6 +13,7 @@ import { createNodeProcessRunner } from '@/adapters/process/node-process-runner'
 import { verifyBundledToolchain } from '@/adapters/toolchain/verification';
 import { conversionConcurrency } from '@/application/workflows/conversion-concurrency';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
+import { message } from '@/domain/message';
 import type { ToolchainStatus, ToolchainTarget } from '@/shared/toolchain-status';
 
 import type { MainContext } from './context';
@@ -47,7 +48,7 @@ export async function bootstrapToolchain(
     toolchainStatus = {
       state: 'blocked',
       tools: [],
-      message: 'The bundled-tool manifest could not be verified. Reinstall Mangabound.',
+      message: message('toolchain.manifestUnverified', {}),
     };
   }
   if (toolchainStatus.state === 'ready' && toolchainStatus.target !== undefined) {

@@ -172,7 +172,7 @@ describe('mapping editor', () => {
             id: 'mangadex',
             displayName: 'MangaDex',
             homepage: 'https://mangadex.org',
-            description: 'Community catalogue',
+            description: raw('Community catalogue'),
           },
         ]}
         onSearchMetadata={() => Promise.resolve([])}
@@ -410,13 +410,13 @@ describe('mapping editor', () => {
     id: 'mangadex',
     displayName: 'MangaDex',
     homepage: 'https://mangadex.org',
-    description: 'Community catalogue of manga, with volume and chapter data',
+    description: raw('Community catalogue of manga, with volume and chapter data'),
   } as const;
   const otherSource = {
     id: 'other',
     displayName: 'Other Source',
     homepage: 'https://other.example',
-    description: 'Another catalogue',
+    description: raw('Another catalogue'),
   } as const;
 
   /** Opens the Online source tab and picks a source from the list, as a person would. */

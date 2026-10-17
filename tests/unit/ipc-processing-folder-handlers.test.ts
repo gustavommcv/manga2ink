@@ -39,6 +39,8 @@ const status: ProcessingFolderStatus = {
   earlier: [],
 };
 
+let language: 'en' | 'pt-BR' = 'en';
+
 function contextFor(overrides: Record<string, unknown> = {}): {
   context: Parameters<typeof registerProcessingFolderHandlers>[0];
   choose: ReturnType<typeof vi.fn>;
@@ -50,7 +52,7 @@ function contextFor(overrides: Record<string, unknown> = {}): {
     activeJobs: new Map(),
     activeSharing: undefined,
     activeSharingTarget: undefined,
-    appSettings: { chooseProcessingFolder: choose },
+    appSettings: { chooseProcessingFolder: choose, language: () => language },
     pendingRuns: {},
     processing: { chosen: () => null, check },
     ...overrides,
@@ -60,6 +62,7 @@ function contextFor(overrides: Record<string, unknown> = {}): {
 }
 
 beforeEach(() => {
+  language = 'en';
   electron.status.mockResolvedValue(status);
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
 });
@@ -89,12 +92,29 @@ describe('choosing the folder the app works in', () => {
 
     expect(electron.showOpenDialog).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
+        title: 'Choose the folder Mangabound works in',
+        buttonLabel: 'Use this folder',
         properties: ['openDirectory', 'createDirectory'],
         defaultPath: path.resolve('now'),
       }),
     );
     expect(check).not.toHaveBeenCalled();
     expect(choose).not.toHaveBeenCalled();
+  });
+
+  it('gives the dialog its words in the language of the window', async () => {
+    language = 'pt-BR';
+    contextFor();
+    electron.showOpenDialog.mockResolvedValue({ canceled: true, filePaths: [] });
+
+    await call('app:choose-processing-folder');
+
+    expect(electron.showOpenDialog).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        title: 'Escolher a pasta em que o Mangabound trabalha',
+        buttonLabel: 'Usar esta pasta',
+      }),
+    );
   });
 
   it('starts the dialog anywhere when no folder is chosen', async () => {

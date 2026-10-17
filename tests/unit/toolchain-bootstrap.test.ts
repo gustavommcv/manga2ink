@@ -10,6 +10,7 @@ import type {
   ToolchainTarget,
   ToolVerificationStatus,
 } from '@/shared/toolchain-status';
+import { message, raw } from '@/domain/message';
 
 interface Made {
   readonly name: string;
@@ -78,14 +79,14 @@ const tool = (
   name,
   releaseTag: 'v1.0.0',
   state: 'ready',
-  message: 'Ready.',
+  message: raw('Ready.'),
   ...(capabilities === undefined ? {} : { capabilities }),
 });
 const ready = (
   target: ToolchainTarget,
   tools: readonly ToolVerificationStatus[] = [tool('mangabind'), tool('mangapress')],
-): ToolchainStatus => ({ state: 'ready', target, tools, message: 'Ready.' });
-const blocked: ToolchainStatus = { state: 'blocked', tools: [], message: 'Not these tools.' };
+): ToolchainStatus => ({ state: 'ready', target, tools, message: raw('Ready.') });
+const blocked: ToolchainStatus = { state: 'blocked', tools: [], message: raw('Not these tools.') };
 
 const emptyContext = (): Parameters<typeof bootstrapToolchain>[0] => ({
   workflow: undefined,
@@ -242,7 +243,7 @@ describe('a toolchain that did not verify', () => {
     const withoutTarget: ToolchainStatus = {
       state: 'ready',
       tools: [tool('mangabind'), tool('mangapress')],
-      message: 'Ready.',
+      message: raw('Ready.'),
     };
     fake.verify.mockResolvedValue(withoutTarget);
     const context = emptyContext();
@@ -261,7 +262,7 @@ describe('a toolchain that did not verify', () => {
     expect(status).toEqual({
       state: 'blocked',
       tools: [],
-      message: 'The bundled-tool manifest could not be verified. Reinstall Mangabound.',
+      message: message('toolchain.manifestUnverified', {}),
     });
     expect(context.workflow).toBeUndefined();
     expect(fake.made).toEqual([]);

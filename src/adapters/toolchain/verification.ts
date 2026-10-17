@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 import { parseMangabindProtocolInfo } from '@/adapters/mangabind/protocol';
 import { parseMangapressEventStream } from '@/adapters/mangapress/protocol';
 import { loadToolchainManifest, type ToolchainManifest } from '@/adapters/toolchain/manifest';
+import { message } from '@/domain/message';
 import type {
   ToolName,
   ToolchainStatus,
@@ -146,14 +147,14 @@ async function verifyTool(
       releaseTag: pin.releaseTag,
       state: 'ready',
       capabilities,
-      message: `${toolName} ${pin.releaseTag} is verified.`,
+      message: message('toolchain.toolReady', { tool: toolName, release: pin.releaseTag }),
     };
   } catch {
     return {
       name: toolName,
       releaseTag: pin.releaseTag,
       state: 'failed',
-      message: `${toolName} could not be verified. Reinstall Mangabound to restore its bundled tools.`,
+      message: message('toolchain.toolFailed', { tool: toolName }),
     };
   }
 }
@@ -170,7 +171,7 @@ export async function verifyBundledToolchain({
     return {
       state: 'blocked',
       tools: [],
-      message: `Mangabound does not bundle tools for ${platform}-${arch}.`,
+      message: message('toolchain.noTarget', { platform, arch }),
     };
   }
 
@@ -184,8 +185,6 @@ export async function verifyBundledToolchain({
     state: ready ? 'ready' : 'blocked',
     target,
     tools,
-    message: ready
-      ? 'Bundled conversion tools are verified and ready.'
-      : 'Conversion is unavailable until the bundled tools are restored.',
+    message: message(ready ? 'toolchain.ready' : 'toolchain.unavailable', {}),
   };
 }

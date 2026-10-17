@@ -1,4 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+
+import { messagesFor } from '@/i18n/messages';
+import { I18nContext } from '@/renderer/hooks/use-messages';
 
 import { SharePanel } from './share-panel';
 
@@ -45,6 +49,25 @@ export const ReadyToStart: Story = {
     onChooseLibrary: () => undefined,
     onStart: () => undefined,
     onStop: () => undefined,
+  },
+};
+
+const inPortuguese: Decorator = (Story) => (
+  <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+    <Story />
+  </I18nContext.Provider>
+);
+
+/** The panel in Brazilian Portuguese, ready to start: every label and placeholder in its words. */
+export const ReadyToStartInPortuguese: Story = {
+  decorators: [inPortuguese],
+  args: { ...ReadyToStart.args },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('heading', { name: 'Compartilhar com o seu e-reader' }),
+    ).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Começar a compartilhar' })).toBeEnabled();
   },
 };
 

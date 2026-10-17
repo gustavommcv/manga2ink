@@ -469,8 +469,8 @@ export interface MetadataProviderDescriptor {
   readonly displayName: string;
   /** The service's own site, shown in the list and opened from the credit. */
   readonly homepage: string;
-  /** What the service is, in a few words. */
-  readonly description: string;
+  /** What the service is, in a few words, said by the window in its language. */
+  readonly description: AnyMessage;
 }
 
 export interface MetadataSearchResult {

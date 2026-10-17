@@ -1,4 +1,5 @@
 import type { VolumeSuggestion } from '@/domain/mapping';
+import type { AnyMessage } from '@/domain/message';
 
 export interface MetadataProviderDescriptor {
   /** Stable, lowercase id the renderer and the IPC contract refer to the provider by. */
@@ -10,8 +11,8 @@ export interface MetadataProviderDescriptor {
    * link opens: the main process opens this address for a provider, never one the page supplies.
    */
   readonly homepage: string;
-  /** What the service is, in a few words, shown in the list of sources. */
-  readonly description: string;
+  /** What the service is, in a few words, shown in the list of sources in the language of the window. */
+  readonly description: AnyMessage;
 }
 
 export interface MetadataSearchResult {

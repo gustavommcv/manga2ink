@@ -24,7 +24,7 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
         state: 'ready',
         target: 'win32-x64',
         tools: [],
-        message: 'Bundled conversion tools are verified and ready.',
+        message: message('toolchain.ready', {}),
       }),
     chooseInputs: () => Promise.resolve({ ok: true, value: { inputs: [], rejected: [] } }),
     registerDroppedFiles: () => Promise.resolve({ ok: true, value: { inputs: [], rejected: [] } }),

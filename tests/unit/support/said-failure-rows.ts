@@ -498,6 +498,13 @@ export const failureRows: Rows<
     ],
   ],
 
+  'provider.catalogue': [
+    [
+      {},
+      'Community catalogue of manga, with volume and chapter data',
+      'Catálogo comunitário de mangás, com dados de volumes e capítulos',
+    ],
+  ],
   'provider.timeout': [
     [
       { service: 'MangaDex' },

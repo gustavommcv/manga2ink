@@ -6,6 +6,7 @@ import type { SaidFor } from './say';
 /** Why a source of metadata could not be used just now, in every language (ADR 0053). */
 export const providerSaid: Readonly<Record<Language, SaidFor<ProviderMessageValues>>> = {
   en: {
+    'provider.catalogue': () => 'Community catalogue of manga, with volume and chapter data',
     'provider.timeout': ({ service }) => `${service} did not answer in time. Try again shortly.`,
     'provider.unreachable': ({ service }) => `Could not reach ${service}.`,
     'provider.rateLimited': ({ service }) =>
@@ -19,6 +20,7 @@ export const providerSaid: Readonly<Record<Language, SaidFor<ProviderMessageValu
       `${service} returned an unexpected volumes response.`,
   },
   'pt-BR': {
+    'provider.catalogue': () => 'Catálogo comunitário de mangás, com dados de volumes e capítulos',
     'provider.timeout': ({ service }) =>
       `${service} não respondeu a tempo. Tente de novo em instantes.`,
     'provider.unreachable': ({ service }) => `Não foi possível acessar ${service}.`,

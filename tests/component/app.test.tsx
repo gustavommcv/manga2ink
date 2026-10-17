@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/renderer/app';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { WorkflowApp } from '@/renderer/workflow-app';
-import { raw } from '@/domain/message';
+import { message, raw } from '@/domain/message';
 
 import { inertBridge } from './support/bridge';
 
@@ -91,16 +91,16 @@ describe('application startup', () => {
             name: 'mangabind',
             releaseTag: 'v0.4.0',
             state: 'ready',
-            message: 'mangabind v0.4.0 is verified.',
+            message: message('toolchain.toolReady', { tool: 'mangabind', release: 'v0.4.0' }),
           },
           {
             name: 'mangapress',
             releaseTag: 'v0.5.0',
             state: 'ready',
-            message: 'mangapress v0.5.0 is verified.',
+            message: message('toolchain.toolReady', { tool: 'mangapress', release: 'v0.5.0' }),
           },
         ],
-        message: 'Bundled conversion tools are verified and ready.',
+        message: message('toolchain.ready', {}),
       }),
     });
 
@@ -126,8 +126,9 @@ describe('application startup', () => {
   });
 
   it('shows the repair path when the bridge resolves with a blocked toolchain, not only when it rejects', async () => {
-    const message =
+    const text =
       'A bundled conversion tool failed verification. Reinstall Mangabound to restore it.';
+    const unavailable = raw(text);
     installBridge({
       getToolchainStatus: vi.fn().mockResolvedValue({
         state: 'blocked',
@@ -137,23 +138,23 @@ describe('application startup', () => {
             name: 'mangabind',
             releaseTag: 'v0.4.0',
             state: 'failed',
-            message: 'mangabind failed verification. Reinstall Mangabound to restore it.',
+            message: raw('mangabind failed verification. Reinstall Mangabound to restore it.'),
           },
           {
             name: 'mangapress',
             releaseTag: 'v0.5.0',
             state: 'ready',
-            message: 'mangapress v0.5.0 is verified.',
+            message: message('toolchain.toolReady', { tool: 'mangapress', release: 'v0.5.0' }),
           },
         ],
-        message,
+        message: unavailable,
       }),
     });
 
     render(<App />);
 
     expect(await screen.findByText('Conversion tools need attention')).toBeVisible();
-    expect(screen.getByText(message)).toBeVisible();
+    expect(screen.getByText(text)).toBeVisible();
     expect(screen.queryByText('Conversion tools ready')).not.toBeInTheDocument();
   });
 

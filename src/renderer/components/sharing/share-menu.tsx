@@ -3,6 +3,7 @@ import { useEffect, useId, useRef } from 'react';
 
 import { Button } from '@/renderer/components/ui/button';
 import { useClickOutside } from '@/renderer/hooks/use-click-outside';
+import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 export interface ShareMenuProps {
@@ -30,6 +31,7 @@ export function ShareMenu({
   sharing,
   children,
 }: ShareMenuProps): React.JSX.Element {
+  const words = useMessages().sharing.menu;
   const panel = useRef<HTMLDivElement>(null);
   // Set by the ways of closing that come from the keyboard or the panel's own button.
   const returnFocus = useRef(false);
@@ -74,7 +76,7 @@ export function ShareMenu({
         size="sm"
         variant="outline"
       >
-        <RadioTower /> {sharing ? 'Sharing' : 'Share'}
+        <RadioTower /> {sharing ? words.sharing : words.share}
       </Button>
       {open && (
         <div
@@ -88,7 +90,7 @@ export function ShareMenu({
           <div className="relative">
             {children}
             <Button
-              aria-label="Close sharing"
+              aria-label={words.close}
               className="absolute top-3 right-3"
               onClick={close}
               size="icon"

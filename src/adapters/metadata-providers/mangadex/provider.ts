@@ -12,6 +12,7 @@ import type {
   MetadataSearchResult,
 } from '@/application/ports/metadata-provider';
 import type { VolumeSuggestion } from '@/domain/mapping';
+import { message } from '@/domain/message';
 
 /**
  * MangaDex's public API, https://api.mangadex.org/docs/. Its rules for third-party apps, as read
@@ -27,7 +28,7 @@ export const mangaDexDescriptor = {
   id: 'mangadex',
   displayName: 'MangaDex',
   homepage: 'https://mangadex.org',
-  description: 'Community catalogue of manga, with volume and chapter data',
+  description: message('provider.catalogue', {}),
 } as const;
 
 /** The language volumes are looked up in when the folders declare none, or it has none to give. */

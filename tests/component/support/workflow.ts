@@ -18,7 +18,7 @@ export const readyToolchain = {
   state: 'ready' as const,
   target: 'win32-x64' as const,
   tools: [],
-  message: 'Bundled conversion tools are verified and ready.',
+  message: message('toolchain.ready', {}),
 };
 
 export const chapters = [

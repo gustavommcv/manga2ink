@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { message } from '@/domain/message';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
@@ -41,7 +42,7 @@ export function useToolchain(
           setToolchain({
             state: 'blocked',
             tools: [],
-            message: 'The bundled conversion tools could not be checked.',
+            message: message('toolchain.checkFailed', {}),
           });
         }
       });

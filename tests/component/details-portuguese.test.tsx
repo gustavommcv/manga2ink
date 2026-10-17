@@ -61,7 +61,7 @@ const mangaDex: MetadataProviderDescriptor = {
   id: 'mangadex',
   displayName: 'MangaDex',
   homepage: 'https://mangadex.org',
-  description: 'Community catalogue of manga',
+  description: raw('Community catalogue of manga'),
 };
 
 describe('the screen of a library, in Portuguese', () => {
