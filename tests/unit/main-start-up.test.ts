@@ -45,6 +45,13 @@ vi.mock('electron', () => ({
     getPreferredSystemLanguages: () => ['pt-BR', 'en-US'],
   },
   BrowserWindow: { getAllWindows: () => fake.windows },
+  screen: {
+    getPrimaryDisplay: () => ({ id: 2, workArea: { x: 0, y: 0, width: 1920, height: 1040 } }),
+    getAllDisplays: () => [
+      { id: 1, workArea: { x: -1280, y: 0, width: 1280, height: 984 } },
+      { id: 2, workArea: { x: 0, y: 0, width: 1920, height: 1040 } },
+    ],
+  },
   ipcMain: {
     handle: (channel: string, listener: Handler) => {
       fake.invoked.set(channel, listener);
@@ -162,6 +169,34 @@ vi.mock('@/adapters/settings/fs-app-settings-store', () => ({
     }
   },
 }));
+vi.mock('@/adapters/settings/fs-window-state-store', () => ({
+  FsWindowStateStore: class {
+    constructor(readonly file: string) {
+      fake.calls.push(`window-state-store:${file}`);
+    }
+  },
+}));
+vi.mock('@/main/window-state', () => ({
+  windowPositionsAreKnown: (platform: string, env: unknown) => {
+    fake.context['positionsAsked'] = { platform, env };
+    return fake.context['positionsKnown'] !== false;
+  },
+  WindowStateKeeper: class {
+    constructor(
+      readonly store: unknown,
+      readonly areas: () => unknown,
+      readonly positionsKnown: boolean,
+      readonly report: (message: string, cause: unknown) => void,
+    ) {
+      fake.context['keeper'] = this;
+    }
+    restore = (): Promise<void> => {
+      fake.calls.push('window-state:restore');
+      return Promise.resolve();
+    };
+    flush = (): string => 'window state kept';
+  },
+}));
 vi.mock('@/application/workflows/app-settings', () => ({
   AppSettingsWorkflow: class {
     settled = (): Promise<void> => Promise.resolve();
@@ -237,9 +272,10 @@ vi.mock('@/main/toolchain-bootstrap', () => ({
   },
 }));
 vi.mock('@/main/window', () => ({
-  createMainWindow: (leaving: unknown) => {
+  createMainWindow: (leaving: unknown, keeper: unknown) => {
     fake.calls.push('window');
     fake.context['windowLeaving'] = leaving;
+    fake.context['windowKeeper'] = keeper;
   },
 }));
 vi.mock('@/main/leaving', () => ({
@@ -356,6 +392,9 @@ describe('starting the app', () => {
       'handlers:pending',
       'handlers:opds',
       'serve-renderer',
+      // What was kept of the window is read before it is made, so it opens as it was left.
+      `window-state-store:${path.join('/home/userData', 'window-state.json')}`,
+      'window-state:restore',
       'window',
     ]);
   });
@@ -519,6 +558,46 @@ describe('starting the app', () => {
     dispatch('activate');
     expect(fake.calls).toEqual([]);
   });
+
+  it('gives the window the one keeper of its size and place, also when it is made again from the dock', async () => {
+    const ready = await start();
+    await ready();
+    const keeper = fake.context['keeper'];
+    expect(fake.context['windowKeeper']).toBe(keeper);
+
+    fake.context['windowKeeper'] = undefined;
+    dispatch('activate');
+
+    expect(fake.context['windowKeeper']).toBe(keeper);
+  });
+
+  it('tells the keeper the parts of the displays a window may use, the main display first, and whether a place can be kept', async () => {
+    onPlatform('linux');
+    const ready = await start();
+    await ready();
+    const keeper = fake.context['keeper'] as {
+      areas: () => unknown;
+      positionsKnown: boolean;
+      report: (message: string, cause: unknown) => void;
+    };
+
+    expect(keeper.areas()).toEqual([
+      { x: 0, y: 0, width: 1920, height: 1040 },
+      { x: -1280, y: 0, width: 1280, height: 984 },
+    ]);
+    expect(keeper.positionsKnown).toBe(true);
+    expect(fake.context['positionsAsked']).toEqual({ platform: 'linux', env: process.env });
+    keeper.report('It could not be kept.', new Error('disk'));
+    expect(console.error).toHaveBeenCalledWith('It could not be kept.', expect.any(Error));
+  });
+
+  it('does not keep a place when the system does not let a program place its window', async () => {
+    fake.context['positionsKnown'] = false;
+    const ready = await start();
+    await ready();
+
+    expect((fake.context['keeper'] as { positionsKnown: boolean }).positionsKnown).toBe(false);
+  });
 });
 
 describe('a second copy of the app', () => {
@@ -656,7 +735,17 @@ describe('quitting', () => {
     expect(steps['settlePreferences']).toBeUndefined();
     expect(steps['settleAppSettings']).toBeUndefined();
     expect(steps['pruneCompleted']).toBeUndefined();
+    expect(steps['settleWindowState']).toBeUndefined();
     expect(steps['settleLog']).toBeUndefined();
+  });
+
+  it('keeps the window as it is now when the keeper exists, since the quit may be ahead of its last move', async () => {
+    const ready = await start();
+    await ready();
+
+    dispatch('before-quit', { preventDefault: vi.fn() });
+
+    expect((cleanUp().steps['settleWindowState'] as () => unknown)()).toBe('window state kept');
   });
 
   it('releases the books, stops the share and writes the last change when they exist', async () => {

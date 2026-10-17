@@ -5,11 +5,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { LeavingGuard } from '@/main/leaving';
 import { createMainWindow as makeMainWindow } from '@/main/window';
+import type { WindowStateKeeper } from '@/main/window-state';
 
 /** A guard that lets the window close, and remembers being asked. */
 const letting = { allows: vi.fn<LeavingGuard['allows']>(() => true) };
-const createMainWindow = (guard: Pick<LeavingGuard, 'allows'> = letting): BrowserWindow =>
-  makeMainWindow(guard as LeavingGuard);
+/** A keeper that opens the window at the size it opened at before there was one, and follows it. */
+const keeping = {
+  placement: vi.fn<WindowStateKeeper['placement']>(() => ({
+    width: 1180,
+    height: 760,
+    maximized: false,
+  })),
+  track: vi.fn<WindowStateKeeper['track']>(),
+};
+const createMainWindow = (
+  guard: Pick<LeavingGuard, 'allows'> = letting,
+  keeper: Pick<WindowStateKeeper, 'placement' | 'track'> = keeping,
+): BrowserWindow => makeMainWindow(guard as LeavingGuard, keeper);
 
 type Listener = (...args: never[]) => void;
 const electron = vi.hoisted(() => ({
@@ -26,6 +38,10 @@ const electron = vi.hoisted(() => ({
   on: vi.fn<(event: string, listener: (...args: never[]) => void) => void>(),
   windowOn: vi.fn<(event: string, listener: (...args: never[]) => void) => void>(),
   close: vi.fn<() => void>(),
+  maximize: vi.fn<() => void>(),
+  getNormalBounds: vi.fn(() => ({ x: 10, y: 20, width: 900, height: 700 })),
+  isMaximized: vi.fn(() => false),
+  isDestroyed: vi.fn(() => false),
 }));
 vi.mock('electron', () => ({
   app: {
@@ -60,6 +76,18 @@ vi.mock('electron', () => ({
     }
     close(): void {
       electron.close();
+    }
+    maximize(): void {
+      electron.maximize();
+    }
+    getNormalBounds(): { x: number; y: number; width: number; height: number } {
+      return electron.getNormalBounds();
+    }
+    isMaximized(): boolean {
+      return electron.isMaximized();
+    }
+    isDestroyed(): boolean {
+      return electron.isDestroyed();
     }
   },
 }));
@@ -101,9 +129,15 @@ beforeEach(() => {
     electron.on,
     electron.windowOn,
     electron.close,
+    electron.maximize,
   ]) {
     mock.mockReset();
   }
+  electron.getNormalBounds.mockReset().mockReturnValue({ x: 10, y: 20, width: 900, height: 700 });
+  electron.isMaximized.mockReset().mockReturnValue(false);
+  electron.isDestroyed.mockReset().mockReturnValue(false);
+  keeping.placement.mockReset().mockReturnValue({ width: 1180, height: 760, maximized: false });
+  keeping.track.mockReset();
   letting.allows.mockReset().mockReturnValue(true);
   vi.stubGlobal('MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY', '/build/preload/index.js');
   Object.defineProperty(process, 'resourcesPath', {
@@ -251,6 +285,59 @@ describe('the window itself', () => {
     createMainWindow();
 
     expect(optionsOfWindow().icon).toBe(expectedIcon);
+  });
+});
+
+describe('the size and place the window was left in', () => {
+  it('opens at the size and the place the keeper gives, when there is a place to give', () => {
+    keeping.placement.mockReturnValue({ width: 900, height: 600, x: 120, y: 80, maximized: false });
+
+    createMainWindow();
+
+    expect(optionsOfWindow()).toMatchObject({ width: 900, height: 600, x: 120, y: 80 });
+    expect(optionsOfWindow()).not.toHaveProperty('maximized');
+  });
+
+  it('leaves the place to the system when the keeper gives none', () => {
+    createMainWindow();
+
+    expect(optionsOfWindow()).toMatchObject({ width: 1180, height: 760 });
+    expect(optionsOfWindow()).not.toHaveProperty('x');
+    expect(optionsOfWindow()).not.toHaveProperty('y');
+  });
+
+  it('is never made smaller than the least a window can be made, whatever was kept', () => {
+    createMainWindow();
+
+    expect(optionsOfWindow()).toMatchObject({ minWidth: 480, minHeight: 400 });
+  });
+
+  it('is maximized at once when it was left maximized, and not otherwise', () => {
+    createMainWindow();
+    expect(electron.maximize).not.toHaveBeenCalled();
+
+    keeping.placement.mockReturnValue({ width: 1180, height: 760, maximized: true });
+    createMainWindow();
+
+    expect(electron.maximize).toHaveBeenCalledOnce();
+  });
+
+  it('is followed by the keeper, which is given the window by what it needs of it', () => {
+    const window = createMainWindow();
+
+    expect(keeping.track).toHaveBeenCalledOnce();
+    const tracked = keeping.track.mock.calls[0]?.[0];
+    if (tracked === undefined) throw new Error('The window was not followed.');
+    expect(window).toBeInstanceOf(BrowserWindow);
+
+    const listener = vi.fn();
+    tracked.on('resize', listener);
+    expect(electron.windowOn).toHaveBeenCalledWith('resize', listener);
+    expect(tracked.getNormalBounds()).toEqual({ x: 10, y: 20, width: 900, height: 700 });
+    electron.isMaximized.mockReturnValue(true);
+    expect(tracked.isMaximized()).toBe(true);
+    electron.isDestroyed.mockReturnValue(true);
+    expect(tracked.isDestroyed()).toBe(true);
   });
 });
 

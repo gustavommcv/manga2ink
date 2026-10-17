@@ -50,6 +50,7 @@ describe('what is let go of when the app quits', () => {
     settlePreferences: undefined,
     settleAppSettings: undefined,
     pruneCompleted: undefined,
+    settleWindowState: undefined,
     settleLog: undefined,
   });
 
@@ -68,6 +69,7 @@ describe('what is let go of when the app quits', () => {
     'stopSharing',
     'settlePreferences',
     'settleAppSettings',
+    'settleWindowState',
     'pruneCompleted',
     'settleLog',
   ] as const)(
@@ -109,6 +111,10 @@ describe('what is let go of when the app quits', () => {
           order.push('settle app');
           return Promise.resolve();
         },
+        settleWindowState: () => {
+          order.push('window');
+          return Promise.resolve();
+        },
         pruneCompleted: () => {
           order.push('prune');
           return Promise.resolve();
@@ -128,6 +134,7 @@ describe('what is let go of when the app quits', () => {
       'stop',
       'settle',
       'settle app',
+      'window',
       'prune',
       'log',
       'quit',
