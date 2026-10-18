@@ -63,6 +63,9 @@ export default defineConfig({
             {
               label: 'Advanced options',
               translations: { 'pt-BR': 'Opções avançadas', ja: '詳細オプション' },
+              // Closed until a person opens it or reads one of its pages: it has eight pages, and the
+              // other groups of the guide are short.
+              collapsed: true,
               items: [
                 { slug: 'user-guide/advanced-options' },
                 { slug: 'user-guide/advanced-options/reading' },
