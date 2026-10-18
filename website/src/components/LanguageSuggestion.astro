@@ -1,0 +1,195 @@
+---
+// A suggestion at the top of a page, for a reader whose browser asks for a language of the site other than
+// the one the page is in (ADR 0069): the same page in that language, to switch to, to put away for this
+// visit, or for good. It is written in the language it suggests, so that it is read by the person it is
+// for. Nothing is sent anywhere and nothing is changed for the reader: a page does not redirect.
+//
+// The page holds one template for each language it could suggest and the address of the page in each of
+// them; the script looks at the browser's languages and shows the one that fits, or nothing. The words
+// stay in templates, which are not part of the page until then, so a search engine and the search of the
+// guide do not read them as text of the page.
+import { base, languages } from '../../site.config.mjs';
+import { stringsOfLanguage } from '../i18n/strings';
+import { pathsInEachLanguage } from '../language-suggestion.mjs';
+
+const route = Astro.locals.starlightRoute;
+// The not-found page is at no address in the other languages.
+const shown = route.entry.id !== '404';
+const paths = pathsInEachLanguage({ base, pathname: Astro.url.pathname, languages });
+const offered = languages.filter(({ lang }) => lang !== route.lang);
+---
+
+{shown && (
+  <div
+    class="language-suggestion"
+    data-language-suggestion
+    data-current={route.lang}
+    data-languages={JSON.stringify(languages.map(({ lang }) => lang))}
+    data-paths={JSON.stringify(paths)}
+    data-pagefind-ignore
+    hidden
+  >
+    {offered.map(({ lang }) => {
+      const words = stringsOfLanguage(lang).languageSuggestion;
+      return (
+        <template data-language={lang}>
+          <section aria-label={words.label} lang={lang}>
+            <p>{words.message}</p>
+            <div class="actions">
+              <a class="switch" data-switch>
+                {words.switch}
+              </a>
+              <button type="button" data-dismiss>
+                {words.dismiss}
+              </button>
+              <button type="button" data-never>
+                {words.never}
+              </button>
+            </div>
+          </section>
+        </template>
+      );
+    })}
+  </div>
+)}
+
+<style>
+  .language-suggestion {
+    border-block-end: 1px solid var(--sl-color-hairline);
+    background-color: var(--sl-color-bg-sidebar);
+    color: var(--sl-color-text);
+    margin-block-end: 1rem;
+  }
+  .language-suggestion :global(section) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    padding: 0.75rem var(--sl-nav-pad-x, 1rem);
+  }
+  .language-suggestion :global(p) {
+    margin: 0;
+    max-width: 60ch;
+    line-height: var(--sl-line-height-headings);
+    text-align: center;
+    text-wrap: balance;
+    /* Japanese is broken between phrases, not in the middle of one. */
+    word-break: auto-phrase;
+  }
+  .language-suggestion :global(.actions) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .language-suggestion :global(a),
+  .language-suggestion :global(button) {
+    font: inherit;
+    font-size: var(--sl-text-sm);
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--sl-color-gray-4);
+    background: transparent;
+    color: var(--sl-color-text);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .language-suggestion :global(a:hover),
+  .language-suggestion :global(button:hover) {
+    background-color: var(--sl-color-gray-5);
+  }
+  /* The one that does what the suggestion is for: the colors Starlight gives its own banner. */
+  .language-suggestion :global(a) {
+    border-color: transparent;
+    background-color: var(--sl-color-bg-accent);
+    color: var(--sl-color-text-invert);
+    font-weight: 600;
+  }
+  .language-suggestion :global(a:hover) {
+    background-color: var(--sl-color-accent-high, var(--sl-color-bg-accent));
+  }
+</style>
+
+<script>
+  import { languageToSuggest } from '../language-suggestion.mjs';
+
+  // What a reader decided is kept in the browser and nowhere else: `never` and `chosen` stay, `dismissed`
+  // lasts for the visit. A browser that will not keep them (private windows, blocked storage) shows the
+  // suggestion on each page, which is the cost of not remembering.
+  const key = 'mangabound-language-suggestion';
+  const chosenKey = 'mangabound-language-chosen';
+
+  const read = (store: () => Storage, name: string): string | undefined => {
+    try {
+      return store().getItem(name) ?? undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const write = (store: () => Storage, name: string, value: string): void => {
+    try {
+      store().setItem(name, value);
+    } catch {
+      // Nothing to keep it in: the choice is for this page only.
+    }
+  };
+
+  const holder = document.querySelector<HTMLElement>('[data-language-suggestion]');
+  if (holder) {
+    const current = holder.dataset.current ?? '';
+    const siteLanguages = JSON.parse(holder.dataset.languages ?? '[]') as string[];
+    const paths = JSON.parse(holder.dataset.paths ?? '{}') as Record<string, string>;
+
+    // The reader who picks a language with the selector of the site has chosen it: no suggestion on it.
+    // The page has two selectors, the one in the header and the one in the menu of a narrow screen.
+    for (const select of document.querySelectorAll('starlight-lang-select select')) {
+      select.addEventListener('change', (event) => {
+        const value = (event.currentTarget as HTMLSelectElement).value;
+        const picked = siteLanguages.find((language) => {
+          const path = paths[language];
+          return path !== undefined && path.replace(/\/$/, '') === value.replace(/\/$/, '');
+        });
+        if (picked !== undefined) write(() => localStorage, chosenKey, picked);
+      });
+    }
+
+    const target = languageToSuggest({
+      current,
+      readerLanguages: navigator.languages,
+      siteLanguages,
+      never: read(() => localStorage, key) === 'never',
+      dismissed: read(() => sessionStorage, key) === 'dismissed',
+      chosen: read(() => localStorage, chosenKey),
+    });
+    const template = target
+      ? holder.querySelector<HTMLTemplateElement>(`template[data-language="${target}"]`)
+      : null;
+    const path = target ? paths[target] : undefined;
+
+    if (template && path !== undefined && target !== undefined) {
+      holder.append(template.content.cloneNode(true));
+      const put = (): void => {
+        holder.hidden = true;
+        holder.replaceChildren();
+      };
+      const link = holder.querySelector<HTMLAnchorElement>('[data-switch]');
+      if (link) {
+        link.href = `${path}${location.search}${location.hash}`;
+        // Going to the language is choosing it: the page it leads to does not suggest anything.
+        link.addEventListener('click', () => {
+          write(() => localStorage, chosenKey, target);
+        });
+      }
+      holder.querySelector('[data-dismiss]')?.addEventListener('click', () => {
+        write(() => sessionStorage, key, 'dismissed');
+        put();
+      });
+      holder.querySelector('[data-never]')?.addEventListener('click', () => {
+        write(() => localStorage, key, 'never');
+        put();
+      });
+      holder.hidden = false;
+    }
+  }
+</script>

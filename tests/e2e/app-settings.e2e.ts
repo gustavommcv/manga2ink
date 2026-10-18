@@ -81,7 +81,11 @@ async function waitForDialogTitle(title: string, file: string): Promise<void> {
   }
 }
 
-/** The theme the system is set to, which an app that follows it comes to (ADR 0070). */
+/**
+ * The theme the system is set to, which an app that follows it comes to (ADR 0070). It says it only
+ * while the app follows the system: once a theme is chosen, Electron's `shouldUseDarkColors` answers
+ * for that theme, so a test asks it before it chooses anything and keeps the answer.
+ */
 const systemTheme = (): Promise<'dark' | 'light'> =>
   browser.electron.execute((electron) =>
     electron.nativeTheme.shouldUseDarkColors ? ('dark' as const) : ('light' as const),
@@ -285,8 +289,11 @@ describe('packaged app settings', () => {
     await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
     await $('button[aria-label="App settings"]').click();
     await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
+    // Asked first, while the app still follows the system, and kept: after a theme is chosen the
+    // system answers for that theme.
+    const system = await systemTheme();
     try {
-      assert.equal(await $('html').getAttribute('data-theme'), await systemTheme());
+      assert.equal(await $('html').getAttribute('data-theme'), system);
 
       // The light theme: the page is in it as soon as it is chosen, and the choice is in the file.
       await chooseTheme('light');
@@ -321,7 +328,6 @@ describe('packaged app settings', () => {
 
       // And looking as the system does gives the system its own setting back, and the window and the
       // page what it comes to (ADR 0070); the file holds the choice, not what it comes to.
-      const system = await systemTheme();
       await chooseTheme('system', system);
       await browser.waitUntil(
         async () => existsSync(file) && (await readKept(file)).theme === 'system',
@@ -368,7 +374,7 @@ describe('packaged app settings', () => {
     } finally {
       // The next tests find the app as it began, looking as the system does, and the dialog is put
       // away whatever happened.
-      await chooseTheme('system', await systemTheme());
+      await chooseTheme('system', system);
       await browser.waitUntil(
         async () => existsSync(file) && (await readKept(file)).theme === 'system',
         { timeout: 30_000, timeoutMsg: 'the app settings file did not get the system theme back' },

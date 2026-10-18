@@ -9,6 +9,21 @@ export interface Strings {
   brandLogo: { openFullSize: string };
   /** The heart in the header that leads to the page where the project can be supported. */
   support: { label: string };
+  /**
+   * What the suggestion of a language at the top of a page says (ADR 0069). It is written in the language
+   * it suggests, which is not the language of the page it is on: it is what the reader's browser asked for.
+   */
+  languageSuggestion: {
+    /** The name of the region that holds it, for a person who cannot see it. */
+    label: string;
+    message: string;
+    /** The link to the same page in the language it suggests. */
+    switch: string;
+    /** Puts it away for this visit. */
+    dismiss: string;
+    /** Puts it away for good. */
+    never: string;
+  };
   tutorialImage: { openFullSize: string };
   releaseDownloads: {
     latest: string;
@@ -81,6 +96,13 @@ const english: Strings = {
   numberLocale: 'en',
   brandLogo: { openFullSize: 'Open full-size logo' },
   support: { label: 'Support the project' },
+  languageSuggestion: {
+    label: 'Language of this page',
+    message: 'Your browser is set to English, and this guide is available in English.',
+    switch: 'Switch to English',
+    dismiss: 'Not now',
+    never: 'Don’t ask again',
+  },
   tutorialImage: { openFullSize: 'Open full-size image' },
   releaseDownloads: {
     latest: 'Latest available version:',
@@ -158,6 +180,13 @@ const portuguese: Strings = {
   numberLocale: 'pt-BR',
   brandLogo: { openFullSize: 'Abrir logo em tamanho original' },
   support: { label: 'Apoie o projeto' },
+  languageSuggestion: {
+    label: 'Idioma desta página',
+    message: 'Seu navegador está em português, e este guia está disponível em português.',
+    switch: 'Mudar para português',
+    dismiss: 'Agora não',
+    never: 'Não perguntar de novo',
+  },
   tutorialImage: { openFullSize: 'Abrir imagem em tamanho original' },
   releaseDownloads: {
     latest: 'Última versão disponível:',
@@ -235,6 +264,13 @@ const japanese: Strings = {
   numberLocale: 'ja',
   brandLogo: { openFullSize: 'ロゴを元のサイズで開く' },
   support: { label: 'プロジェクトを支援する' },
+  languageSuggestion: {
+    label: 'このページの言語',
+    message: 'お使いのブラウザは日本語に設定されています。このガイドは日本語でも読めます。',
+    switch: '日本語に切り替える',
+    dismiss: '今はしない',
+    never: '今後は表示しない',
+  },
   tutorialImage: { openFullSize: '画像を元のサイズで開く' },
   releaseDownloads: {
     latest: '公開されている最新バージョン:',
@@ -309,6 +345,13 @@ const japanese: Strings = {
 };
 
 const catalogs: Record<string, Strings> = { en: english, 'pt-BR': portuguese, ja: japanese };
+
+/** The words of the components in a language of the site, whatever language the page is in. */
+export function stringsOfLanguage(lang: string): Strings {
+  const catalog = catalogs[lang];
+  if (!catalog) throw new Error(`The components have no words for the language ${lang}.`);
+  return catalog;
+}
 
 /** The language the pages of every other language fall back to, when they are not translated. */
 const sourceLanguage = 'en';
