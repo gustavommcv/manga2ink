@@ -43,3 +43,25 @@ for (const locale of Object.keys(label)) {
     });
   }
 }
+
+for (const locale of Object.keys(label)) {
+  test(`the heart is on the left of the link to GitHub: ${locale || 'en'}`, async ({
+    page,
+  }, testInfo) => {
+    await page.goto(`${root}${locale}getting-started/quickstart/`);
+    if (testInfo.project.name === 'mobile') {
+      await page.locator('button.sl-menu-button').click();
+    }
+    const heart = page.locator(`a[href="${supportUrl}"]`).filter({ visible: true }).first();
+    const github = page
+      .locator('a[href="https://github.com/gustavommcv/mangabound"]')
+      .filter({ visible: true })
+      .first();
+    const [near, far] = [await heart.boundingBox(), await github.boundingBox()];
+    expect(near).not.toBeNull();
+    expect(far).not.toBeNull();
+    // Side by side, the heart first: it ends before the other begins.
+    expect((near?.x ?? 0) + (near?.width ?? 0)).toBeLessThanOrEqual(far?.x ?? 0);
+    expect(Math.abs((near?.y ?? 0) - (far?.y ?? 0))).toBeLessThan(4);
+  });
+}

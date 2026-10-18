@@ -1,7 +1,7 @@
 ---
-// The social links of the header (and of the menu on a narrow screen): Starlight's own, from
-// `social` in astro.config.mjs, and after them a heart that leads to the page where the project can
-// be supported, named in the language of the page.
+// The links of the header (and of the menu on a narrow screen): a heart that leads to the page where
+// the project can be supported, named in the language of the page, and after it, on its right,
+// Starlight's own social links, from `social` in astro.config.mjs (GitHub).
 import Default from '@astrojs/starlight/components/SocialIcons.astro';
 import { Icon } from '@astrojs/starlight/components';
 
@@ -11,11 +11,11 @@ import { stringsFor } from '../i18n/strings';
 const label = stringsFor(Astro.locals.starlightRoute).support.label;
 ---
 
-<Default />
 <a href={supportUrl} rel="noopener" class="sl-flex support" title={label}>
   <span class="sr-only">{label}</span>
   <Icon name="heart" />
 </a>
+<Default />
 
 <style>
   @layer starlight.core {
