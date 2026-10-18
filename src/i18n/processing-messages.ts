@@ -1,5 +1,4 @@
 import type { Language } from '@/domain/app-settings';
-import type { ParallelChoice } from '@/domain/parallel-conversions';
 
 import { countOf } from './count';
 
@@ -60,7 +59,8 @@ export interface ProcessingMessages {
     /** How many books of a title are converted at the same time (ADR 0068). */
     readonly parallel: {
       readonly label: string;
-      readonly names: Readonly<Record<ParallelChoice, string>>;
+      /** The app's own count, with the number it comes to on this computer. The other choices are their numbers. */
+      readonly automatic: (count: number) => string;
       readonly help: string;
     };
     /** Said when a choice could not be kept. */
@@ -120,8 +120,8 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       },
       parallel: {
         label: 'Parallel conversions',
-        names: { automatic: 'Automatic', 1: '1', 2: '2', 3: '3', 4: '4', 6: '6', 8: '8' },
-        help: 'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
+        automatic: (count) => `Automatic (${String(count)} on this computer)`,
+        help: 'How many books of one title are converted at the same time. Automatic works it out from the processors and memory of this computer, and never comes to more than 3. The most you can choose depends on this computer too. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
       },
       saveFailed: 'The change could not be saved. Try again.',
     },
@@ -176,8 +176,8 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       },
       parallel: {
         label: 'Conversões em paralelo',
-        names: { automatic: 'Automático', 1: '1', 2: '2', 3: '3', 4: '4', 6: '6', 8: '8' },
-        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
+        automatic: (count) => `Automático (${String(count)} neste computador)`,
+        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático calcula pelos processadores e pela memória deste computador, e nunca passa de 3. O máximo que você pode escolher também depende deste computador. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
       },
       saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },

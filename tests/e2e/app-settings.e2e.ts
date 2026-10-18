@@ -243,14 +243,23 @@ describe('packaged app settings', () => {
       await $('label=Parallel conversions').waitForDisplayed({ timeout: 30_000 });
       const id = await $('label=Parallel conversions').getAttribute('for');
       assert.equal(await $(`[id="${id}"]`).getValue(), 'automatic');
+      // The app's own count says what it comes to on this computer, and one is always on offer: a
+      // small computer (a runner) may be asked for no more than that.
+      const firstOption = await browser.execute(
+        (select: string | null) =>
+          (document.getElementById(select ?? '') as HTMLSelectElement | null)?.options[0]
+            ?.textContent,
+        id,
+      );
+      assert.match(String(firstOption), /^Automatic \(\d+ on this computer\)$/u);
 
       // A number is kept as a number, next to the other choices and without touching them.
-      await chooseParallel(file, '2', 2);
+      await chooseParallel(file, '1', 1);
       const kept = await readKept(file);
       assert.equal(kept.keepAwake, true);
       assert.equal(kept.notifyWhenDone, true);
       assert.equal(kept.theme, 'dark');
-      assert.equal(await $(`[id="${id}"]`).getValue(), '2');
+      assert.equal(await $(`[id="${id}"]`).getValue(), '1');
 
       // And the app's own count puts it back, so the next tests find the app as it began.
       await chooseParallel(file, 'automatic', 'automatic');

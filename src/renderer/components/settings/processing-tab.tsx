@@ -2,7 +2,7 @@ import { useCallback, useEffect, useId, useState } from 'react';
 
 import type { AppSettingsChange } from '@/domain/app-settings';
 import type { AnyMessage } from '@/domain/message';
-import { parallelChoiceNamed, parallelChoices } from '@/domain/parallel-conversions';
+import { type ConversionCapacity, parallelChoiceNamed } from '@/domain/parallel-conversions';
 import { longQueueMs } from '@/domain/queue-run';
 import { sizeOf } from '@/i18n/size';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
@@ -30,6 +30,8 @@ export function ProcessingTab(): React.JSX.Element {
   const parallelId = useId();
   const [choiceFailed, setChoiceFailed] = useState(false);
   const [status, setStatus] = useState<ProcessingFolderStatus>();
+  // What this computer can do as to conversions at once; nothing until it is said (ADR 0068).
+  const [capacity, setCapacity] = useState<ConversionCapacity>();
   // What the main process says went wrong, as it says it: the window writes it in its language.
   const [failure, setFailure] = useState<AnyMessage>();
   const [working, setWorking] = useState(false);
@@ -40,6 +42,17 @@ export function ProcessingTab(): React.JSX.Element {
       if (!reading) return;
       if (answer.ok) setStatus(answer.value);
       else setFailure(answer.error.said);
+    });
+    return () => {
+      reading = false;
+    };
+  }, [api]);
+
+  useEffect(() => {
+    let reading = true;
+    // A computer that cannot say offers no number to choose: the app's own count stays in force.
+    void api.conversionCapacity().then((answer) => {
+      if (reading && answer.ok) setCapacity(answer.value);
     });
     return () => {
       reading = false;
@@ -162,29 +175,39 @@ export function ProcessingTab(): React.JSX.Element {
             choose({ keepAwake });
           }}
         />
-        <div className="space-y-2">
-          <label className="text-sm leading-none font-medium" htmlFor={parallelId}>
-            {words.queue.parallel.label}
-          </label>
-          <NativeSelect
-            aria-describedby={`${parallelId}-help`}
-            id={parallelId}
-            onChange={(event) => {
-              const parallelConversions = parallelChoiceNamed(event.target.value);
-              if (parallelConversions !== undefined) choose({ parallelConversions });
-            }}
-            value={String(settings.parallelConversions)}
-          >
-            {parallelChoices.map((choice) => (
-              <option key={choice} value={String(choice)}>
-                {words.queue.parallel.names[choice]}
+        {capacity !== undefined && (
+          <div className="space-y-2">
+            <label className="text-sm leading-none font-medium" htmlFor={parallelId}>
+              {words.queue.parallel.label}
+            </label>
+            <NativeSelect
+              aria-describedby={`${parallelId}-help`}
+              id={parallelId}
+              onChange={(event) => {
+                const parallelConversions = parallelChoiceNamed(event.target.value);
+                if (parallelConversions !== undefined) choose({ parallelConversions });
+              }}
+              // A number kept on a bigger computer is shown as what this one will do with it.
+              value={
+                settings.parallelConversions === 'automatic'
+                  ? 'automatic'
+                  : String(Math.min(settings.parallelConversions, capacity.most))
+              }
+            >
+              <option value="automatic">
+                {words.queue.parallel.automatic(capacity.automatic)}
               </option>
-            ))}
-          </NativeSelect>
-          <p className="text-muted-foreground text-xs" id={`${parallelId}-help`}>
-            {words.queue.parallel.help}
-          </p>
-        </div>
+              {Array.from({ length: capacity.most }, (_unused, index) => index + 1).map((count) => (
+                <option key={count} value={String(count)}>
+                  {String(count)}
+                </option>
+              ))}
+            </NativeSelect>
+            <p className="text-muted-foreground text-xs" id={`${parallelId}-help`}>
+              {words.queue.parallel.help}
+            </p>
+          </div>
+        )}
         <div aria-live="polite">
           {choiceFailed && <FieldMessage error={words.queue.saveFailed} />}
         </div>

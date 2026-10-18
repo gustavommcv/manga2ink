@@ -246,12 +246,14 @@ describe('how many conversions the workflow runs side by side', () => {
   it.each([
     [1, 1],
     [2, 2],
-    [3, 3],
+    [6, 6],
+    [8, 6],
+    [12, 6],
   ] as const)(
-    'is the %i that was chosen, whatever the machine is, when no queue is running',
+    'is the %i that was chosen, lowered to what this machine can be asked for, when no queue is running',
     async (chosen, expected) => {
-      fake.processors = 2;
-      fake.memory = 2 * 1024 ** 3;
+      fake.processors = 12;
+      fake.memory = 32 * 1024 ** 3;
 
       expect((await limitOf(choosing(chosen)))()).toBe(expected);
     },

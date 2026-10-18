@@ -146,6 +146,7 @@ const forwarded: readonly (readonly [
   ['countIdlePending', [{ days: 30 }], 'pending:count-idle', { days: 30 }],
   ['deleteIdlePending', [{ days: 7 }], 'pending:delete-idle', { days: 7 }],
   ['getWorkingSpace', [], 'app:get-working-space', undefined],
+  ['getConversionCapacity', [], 'app:get-conversion-capacity', undefined],
   ['chooseProcessingFolder', [], 'app:choose-processing-folder', undefined],
   ['useDefaultProcessingFolder', [], 'app:use-default-processing-folder', undefined],
 ];

@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { availableParallelism, totalmem } from 'node:os';
 import path from 'node:path';
 
 import { app } from 'electron';
@@ -18,6 +17,7 @@ import type { ToolchainStatus, ToolchainTarget } from '@/shared/toolchain-status
 
 import type { MainContext } from './context';
 import { conversionLimit } from './conversion-limit';
+import { machineCapacity } from './machine';
 
 function executablePath(
   toolchainRoot: string,
@@ -84,7 +84,7 @@ export async function bootstrapToolchain(
       conversionLimit({
         running: () => context.queueRuns.parallelChoices,
         chosen: () => context.appSettings?.parallelConversions() ?? defaultParallelChoice,
-        machine: () => ({ processors: availableParallelism(), memoryBytes: totalmem() }),
+        machine: machineCapacity,
       }),
       context.coverStore,
     );

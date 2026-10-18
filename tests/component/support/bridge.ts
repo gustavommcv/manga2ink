@@ -3,7 +3,7 @@ import { defaultPreferences } from '@/domain/preferences';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 import { message, raw } from '@/domain/message';
 
-import { defaultProcessingStatus, roomyWorkingSpace } from './processing';
+import { defaultProcessingStatus, roomyWorkingSpace, sixCoreCapacity } from './processing';
 
 const nothing = Promise.resolve({ ok: true as const, value: undefined });
 
@@ -81,6 +81,7 @@ export function inertBridge(overrides: Partial<MangaboundBridge> = {}): Mangabou
     openAppFolder: () => nothing,
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     getWorkingSpace: () => Promise.resolve({ ok: true, value: roomyWorkingSpace }),
+    getConversionCapacity: () => Promise.resolve({ ok: true, value: sixCoreCapacity }),
     countIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     deleteIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),

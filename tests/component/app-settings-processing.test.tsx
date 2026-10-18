@@ -516,42 +516,84 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
     vi.fn<MangaboundBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'en' } }),
     );
+  /** What this computer says it can do: what automatic comes to, and the most that can be asked for. */
+  const capacity = (automatic: number, most: number): MangaboundBridge['getConversionCapacity'] => {
+    return () => Promise.resolve({ ok: true, value: { automatic, most } });
+  };
+  /** The select, once the computer has said what it can do. */
+  const parallelSelect = (name = 'Parallel conversions'): Promise<HTMLElement> =>
+    screen.findByRole('combobox', { name });
+  const optionsOf = (select: HTMLElement): (string | null)[] =>
+    within(select)
+      .getAllByRole('option')
+      .map((option) => option.textContent);
 
-  it('starts on the app’s own count, with the choices on offer and what each does said', async () => {
-    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
+  it('starts on the app’s own count, with the number it comes to here and the numbers up to what this computer can be asked for', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(3, 6),
+    });
 
-    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+    const parallel = await parallelSelect();
     expect(parallel).toHaveValue('automatic');
-    expect(
-      within(parallel)
-        .getAllByRole('option')
-        .map((option) => option.textContent),
-    ).toEqual(['Automatic', '1', '2', '3', '4', '6', '8']);
+    expect(optionsOf(parallel)).toEqual([
+      'Automatic (3 on this computer)',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
     expect(parallel).toHaveAccessibleDescription(
-      'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
+      'How many books of one title are converted at the same time. Automatic works it out from the processors and memory of this computer, and never comes to more than 3. The most you can choose depends on this computer too. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
     );
+  });
+
+  it('offers fewer numbers on a smaller computer, and says what automatic comes to there', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(1, 2),
+    });
+
+    expect(optionsOf(await parallelSelect())).toEqual(['Automatic (1 on this computer)', '1', '2']);
   });
 
   it('shows the number that was kept', async () => {
     await renderTab({
       getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(3, 6),
       loadAppSettings: kept({ parallelConversions: 2 }),
     });
 
-    expect(screen.getByRole('combobox', { name: 'Parallel conversions' })).toHaveValue('2');
+    expect(await parallelSelect()).toHaveValue('2');
+  });
+
+  it('shows a number that was kept on a bigger computer as the most this one will do with it', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(1, 2),
+      loadAppSettings: kept({ parallelConversions: 12 }),
+    });
+
+    expect(await parallelSelect()).toHaveValue('2');
   });
 
   it('keeps only the number that was chosen, as a number, and shows it once it is kept', async () => {
     const user = userEvent.setup();
     const saveAppSettings = saving();
-    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
-    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(3, 6),
+      saveAppSettings,
+    });
+    const parallel = await parallelSelect();
 
-    await user.selectOptions(parallel, '6');
+    await user.selectOptions(parallel, '5');
 
-    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ parallelConversions: 6 });
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ parallelConversions: 5 });
     await waitFor(() => {
-      expect(parallel).toHaveValue('6');
+      expect(parallel).toHaveValue('5');
     });
     await user.selectOptions(parallel, 'automatic');
     expect(saveAppSettings).toHaveBeenLastCalledWith({ parallelConversions: 'automatic' });
@@ -563,8 +605,12 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
       ok: false,
       error: { code: 'settings_save_failed', said: message('failure.internal', {}) },
     });
-    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
-    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: capacity(3, 6),
+      saveAppSettings,
+    });
+    const parallel = await parallelSelect();
 
     await user.selectOptions(parallel, '2');
 
@@ -572,13 +618,35 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
     expect(parallel).toHaveValue('automatic');
   });
 
-  it('says it in Portuguese for a window in Portuguese', async () => {
-    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) }, 'pt-BR');
+  it('offers no number when the computer cannot say what it can do, and the app’s own count stays', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      getConversionCapacity: () => Promise.reject(new Error('unreachable')),
+    });
 
-    const parallel = screen.getByRole('combobox', { name: 'Conversões em paralelo' });
-    expect(within(parallel).getAllByRole('option')[0]).toHaveTextContent('Automático');
+    // The rest of the tab is there, and the choice is not.
+    expect(await screen.findByText('Chosen by Mangabound')).toBeVisible();
+    expect(
+      screen.getByRole('checkbox', { name: 'Keep the computer awake while converting' }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole('combobox', { name: 'Parallel conversions' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('says it in Portuguese for a window in Portuguese', async () => {
+    await renderTab(
+      {
+        getProcessingFolder: answering(defaultProcessingStatus),
+        getConversionCapacity: capacity(3, 6),
+      },
+      'pt-BR',
+    );
+
+    const parallel = await parallelSelect('Conversões em paralelo');
+    expect(optionsOf(parallel)[0]).toBe('Automático (3 neste computador)');
     expect(parallel).toHaveAccessibleDescription(
-      'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
+      'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático calcula pelos processadores e pela memória deste computador, e nunca passa de 3. O máximo que você pode escolher também depende deste computador. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
     );
   });
 });

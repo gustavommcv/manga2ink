@@ -37,12 +37,14 @@ import { dialogWords } from './ipc/dialog-words';
 import { registerPendingHandlers } from './ipc/pending';
 import { registerPendingCleanupHandlers } from './ipc/pending-cleanup';
 import { electronQueueSystem, registerQueueRunHandlers } from './ipc/queue-runs';
+import { registerConversionCapacityHandlers } from './ipc/conversion-capacity';
 import { registerProcessingFolderHandlers } from './ipc/processing-folder';
 import { registerTroubleshootingHandlers } from './ipc/troubleshooting';
 import { registerProjectLinkHandlers } from './ipc/project-links';
 import { registerUpdateHandlers } from './ipc/updates';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
+import { machineCapacity } from './machine';
 import { bootstrapToolchain } from './toolchain-bootstrap';
 import { applyThemeToApp, applyThemeToWindow, createMainWindow } from './window';
 
@@ -156,6 +158,7 @@ void app.whenReady().then(async () => {
     for (const window of BrowserWindow.getAllWindows()) applyThemeToWindow(window, theme);
   });
   registerProcessingFolderHandlers(context);
+  registerConversionCapacityHandlers(machineCapacity);
   registerProjectLinkHandlers();
   registerUpdateHandlers(new UpdateCheckWorkflow(new GithubReleaseFeed()));
   registerTroubleshootingHandlers(context);

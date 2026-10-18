@@ -5,6 +5,7 @@ import { droppedPaths } from './dropped-paths';
 import type { MappingDraft } from '../domain/mapping';
 import type { AnyMessage } from '../domain/message';
 import type { UpdateCheck } from '../domain/update-check';
+import type { ConversionCapacity } from '../domain/parallel-conversions';
 import type { WorkingSpace } from '../domain/working-space';
 import type {
   NetworkInterfaceOption,
@@ -177,6 +178,7 @@ const bridge: MangaboundBridge = Object.freeze({
   openAppFolder: (command: OpenAppFolderCommand) => invoke<undefined>('app:open-folder', command),
   getProcessingFolder: () => invoke<ProcessingFolderStatus>('app:get-processing-folder'),
   getWorkingSpace: () => invoke<WorkingSpace>('app:get-working-space'),
+  getConversionCapacity: () => invoke<ConversionCapacity>('app:get-conversion-capacity'),
   chooseProcessingFolder: () =>
     invoke<ProcessingFolderStatus | null>('app:choose-processing-folder'),
   useDefaultProcessingFolder: () =>
