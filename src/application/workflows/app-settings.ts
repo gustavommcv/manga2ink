@@ -14,7 +14,7 @@ import {
   resolveLanguage,
 } from '@/domain/app-settings';
 import type { ParallelChoice } from '@/domain/parallel-conversions';
-import type { Theme } from '@/domain/theme';
+import type { ThemePreference } from '@/domain/theme';
 
 export interface RestoredAppSettings {
   readonly settings: AppSettings;
@@ -97,8 +97,11 @@ export class AppSettingsWorkflow {
     return this.kept.parallelConversions;
   }
 
-  /** How the app looks, as it was last kept: what a window is made with (ADR 0066). */
-  theme(): Theme {
+  /**
+   * How the app looks, as it was last kept: a theme, or that it follows the system's (ADR 0066, ADR
+   * 0070), which the main process, where the system's setting is known, comes to a theme with.
+   */
+  theme(): ThemePreference {
     return this.kept.theme;
   }
 

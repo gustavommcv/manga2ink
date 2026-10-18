@@ -143,7 +143,7 @@ describe('how the app looks', () => {
     const { store } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
     const workflow = new AppSettingsWorkflow(store, () => []);
 
-    expect((await workflow.restore()).settings.theme).toBe('dark');
+    expect((await workflow.restore()).settings.theme).toBe('system');
   });
 
   it('is the light theme once it is kept, for the window that is made next and for what is restored', async () => {

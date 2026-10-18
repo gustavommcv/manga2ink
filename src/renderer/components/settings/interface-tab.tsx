@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 
 import { isLanguagePreference, languagePreferences } from '@/domain/app-settings';
-import { isTheme, themes } from '@/domain/theme';
+import { isThemePreference, themePreferences } from '@/domain/theme';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
@@ -58,16 +58,16 @@ export function InterfaceTab(): React.JSX.Element {
           id={`${id}-theme`}
           onChange={(event) => {
             const choice = event.target.value;
-            if (!isTheme(choice)) return;
+            if (!isThemePreference(choice)) return;
             void change({ theme: choice }).then((kept) => {
               setThemeFailed(!kept);
             });
           }}
           value={settings.theme}
         >
-          {themes.map((choice) => (
+          {themePreferences.map((choice) => (
             <option key={choice} value={choice}>
-              {words.theme.names[choice]}
+              {choice === 'system' ? words.theme.system : words.theme.names[choice]}
             </option>
           ))}
         </NativeSelect>

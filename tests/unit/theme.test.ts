@@ -3,7 +3,17 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { defaultTheme, isTheme, type Theme, themes, themeWindowColors } from '@/domain/theme';
+import {
+  defaultTheme,
+  defaultThemePreference,
+  isTheme,
+  isThemePreference,
+  resolveTheme,
+  type Theme,
+  themePreferences,
+  themes,
+  themeWindowColors,
+} from '@/domain/theme';
 import { themeOf } from '@/renderer/stories/theme';
 
 const stylesheet = path.resolve('src', 'renderer', 'styles.css');
@@ -106,6 +116,34 @@ describe('the themes of the app', () => {
     expect(themeOf({ theme: 'neon' })).toBe(defaultTheme);
     expect(themeOf({ theme: 3 })).toBe(defaultTheme);
     for (const theme of themes) expect(themeOf({ theme })).toBe(theme);
+  });
+});
+
+describe('what a person chooses of the look', () => {
+  it('is a theme, or to look as the system does, which is where a person starts', () => {
+    expect(themePreferences).toEqual(['system', 'dark', 'light']);
+    expect(defaultThemePreference).toBe('system');
+    expect(themePreferences).toContain(defaultThemePreference);
+  });
+
+  it('is told from what is not a choice', () => {
+    for (const choice of themePreferences) expect(isThemePreference(choice)).toBe(true);
+    for (const other of ['System', 'auto', '', 'neon', undefined, null, 3, {}]) {
+      expect(isThemePreference(other)).toBe(false);
+    }
+  });
+
+  it.each(themes)(
+    'comes to the theme itself when it is the %s theme, whatever the system is set to',
+    (theme) => {
+      expect(resolveTheme(theme, true)).toBe(theme);
+      expect(resolveTheme(theme, false)).toBe(theme);
+    },
+  );
+
+  it('comes to the dark theme when the system is set to dark, and the light one when it is not', () => {
+    expect(resolveTheme('system', true)).toBe('dark');
+    expect(resolveTheme('system', false)).toBe('light');
   });
 });
 

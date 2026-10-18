@@ -49,6 +49,7 @@ describe('the command that keeps the app settings', () => {
     expect(saveAppSettingsCommandSchema.parse({ keepAwake: true })).toEqual({ keepAwake: true });
     expect(saveAppSettingsCommandSchema.parse({ theme: 'dark' })).toEqual({ theme: 'dark' });
     expect(saveAppSettingsCommandSchema.parse({ theme: 'light' })).toEqual({ theme: 'light' });
+    expect(saveAppSettingsCommandSchema.parse({ theme: 'system' })).toEqual({ theme: 'system' });
     expect(
       saveAppSettingsCommandSchema.parse({
         language: 'en',

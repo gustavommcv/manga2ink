@@ -1,6 +1,6 @@
 # ADR 0067: The light theme
 
-- Status: Accepted
+- Status: Accepted (amended by 0070)
 - Date: 2026-10-17
 - Amends: [ADR 0066](0066-the-look-of-the-app-is-a-theme-and-a-theme-is-a-block-of-tokens.md) (it left the flash of the default theme, and the images and checks of each theme, to this change)
 - Relates to: [ADR 0002](0002-shadcn-radix-tailwind-design-system.md) (the tokens), [ADR 0047](0047-an-option-of-an-item-is-put-back-to-the-queues.md) (the color for what an item sets over the queue)

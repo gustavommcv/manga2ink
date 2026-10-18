@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { LanguagePreference } from '@/domain/app-settings';
-import type { Theme } from '@/domain/theme';
+import type { ThemePreference } from '@/domain/theme';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
 import type { MangaboundBridge } from '@/shared/runtime-info';
@@ -149,7 +149,7 @@ describe('the language in the general tab', () => {
 
 describe('the theme in the Interface tab', () => {
   const keptTheme =
-    (theme: Theme): MangaboundBridge['loadAppSettings'] =>
+    (theme: ThemePreference): MangaboundBridge['loadAppSettings'] =>
     () =>
       Promise.resolve({
         ok: true,
@@ -174,11 +174,13 @@ describe('the theme in the Interface tab', () => {
       within(select)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['Dark (graphite)', 'Light (paper)']);
-    expect(select).toHaveDisplayValue('Dark (graphite)');
+    ).toEqual(['Automatic (system theme)', 'Dark (graphite)', 'Light (paper)']);
+    // Where a person starts: looking as the system does, as the language starts as the system's.
+    expect(select).toHaveDisplayValue('Automatic (system theme)');
   });
 
   it.each([
+    ['system', 'Automatic (system theme)'],
     ['dark', 'Dark (graphite)'],
     ['light', 'Light (paper)'],
   ] as const)('shows the theme that was kept: %s', async (theme, shown) => {
@@ -190,7 +192,9 @@ describe('the theme in the Interface tab', () => {
   it('says what it does, and a choice is described by it', async () => {
     const select = await renderTheme();
 
-    expect(select).toHaveAccessibleDescription('How the app looks. Applies right away.');
+    expect(select).toHaveAccessibleDescription(
+      'How the app looks. Automatic follows the light or dark setting of the system, also when it changes. Applies right away.',
+    );
   });
 
   it('keeps the choice, naming only the theme, shows it at once, and says nothing when it is kept', async () => {
@@ -211,6 +215,23 @@ describe('the theme in the Interface tab', () => {
     expect(screen.queryByText('The theme could not be saved. Try again.')).not.toBeInTheDocument();
   });
 
+  it('keeps the choice to look as the system does, naming only the theme', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      Promise.resolve({ ok: true, value: { language: 'en' } }),
+    );
+    const select = await renderTheme({ saveAppSettings, loadAppSettings: keptTheme('dark') });
+
+    await user.selectOptions(select, 'Automatic (system theme)');
+
+    await waitFor(() => {
+      expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ theme: 'system' });
+    });
+    await waitFor(() => {
+      expect(select).toHaveDisplayValue('Automatic (system theme)');
+    });
+  });
+
   it('says the theme could not be kept, and the language is not touched', async () => {
     const user = userEvent.setup();
     const select = await renderTheme({
@@ -221,7 +242,7 @@ describe('the theme in the Interface tab', () => {
     await user.selectOptions(select, 'Light (paper)');
 
     expect(await screen.findByText('The theme could not be saved. Try again.')).toBeVisible();
-    expect(select).toHaveDisplayValue('Dark (graphite)');
+    expect(select).toHaveDisplayValue('Automatic (system theme)');
     expect(screen.getByRole('combobox', { name: 'Language' })).toHaveDisplayValue('English');
   });
 
@@ -234,12 +255,14 @@ describe('the theme in the Interface tab', () => {
 
     const select = await screen.findByRole('combobox', { name: 'Tema' });
 
-    expect(select).toHaveDisplayValue('Escuro (grafite)');
+    expect(select).toHaveDisplayValue('Automático (tema do sistema)');
     expect(
       within(select)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['Escuro (grafite)', 'Claro (papel)']);
-    expect(select).toHaveAccessibleDescription('Como o app se parece. Vale na hora.');
+    ).toEqual(['Automático (tema do sistema)', 'Escuro (grafite)', 'Claro (papel)']);
+    expect(select).toHaveAccessibleDescription(
+      'Como o app se parece. O automático segue o claro ou escuro do sistema, também quando ele muda. Vale na hora.',
+    );
   });
 });
