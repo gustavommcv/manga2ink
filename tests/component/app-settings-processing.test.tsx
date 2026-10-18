@@ -526,9 +526,9 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
       within(parallel)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['Automatic', '1', '2', '3']);
+    ).toEqual(['Automatic', '1', '2', '3', '4', '6', '8']);
     expect(parallel).toHaveAccessibleDescription(
-      'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once can be faster on a computer with room to spare, and uses more memory. It applies the next time you press Process.',
+      'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
     );
   });
 
@@ -547,11 +547,11 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
     await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
     const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
 
-    await user.selectOptions(parallel, '3');
+    await user.selectOptions(parallel, '6');
 
-    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ parallelConversions: 3 });
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ parallelConversions: 6 });
     await waitFor(() => {
-      expect(parallel).toHaveValue('3');
+      expect(parallel).toHaveValue('6');
     });
     await user.selectOptions(parallel, 'automatic');
     expect(saveAppSettings).toHaveBeenLastCalledWith({ parallelConversions: 'automatic' });
@@ -578,7 +578,7 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
     const parallel = screen.getByRole('combobox', { name: 'Conversões em paralelo' });
     expect(within(parallel).getAllByRole('option')[0]).toHaveTextContent('Automático');
     expect(parallel).toHaveAccessibleDescription(
-      'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo pode ser mais rápido em um computador com folga, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
+      'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
     );
   });
 });

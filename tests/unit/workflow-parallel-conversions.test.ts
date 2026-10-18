@@ -93,22 +93,25 @@ const ids = (numbers: readonly number[]): string[] =>
   numbers.map((number) => `artifact-${String(number)}`);
 
 describe('how many volumes of a title the workflow converts at once', () => {
-  it.each([1, 2, 3])(
+  it.each([1, 2, 3, 4, 6, 8])(
     'is never more than the %i it was given, and the books come out in the order of the volumes',
     async (limit) => {
-      const title = titleOf(5, () => limit);
+      // Two more volumes than the limit, so that the pool is full and then has to go on.
+      const volumes = limit + 2;
+      const title = titleOf(volumes, () => limit);
+      const numbers = Array.from({ length: volumes }, (_unused, index) => index + 1);
 
       const run = title.start();
       await vi.waitFor(() => {
         expect(title.running.size).toBe(limit);
       });
       // The last to start ends first each time, so the books finish out of order.
-      await title.finishBackwards(5);
+      await title.finishBackwards(volumes);
       const artifacts = await run;
 
       expect(title.meter.peak).toBe(limit);
-      expect(artifacts.map((artifact) => artifact.id)).toEqual(ids([1, 2, 3, 4, 5]));
-      expect(title.published).toEqual(ids([1, 2, 3, 4, 5]));
+      expect(artifacts.map((artifact) => artifact.id)).toEqual(ids(numbers));
+      expect(title.published).toEqual(ids(numbers));
     },
   );
 
@@ -151,10 +154,10 @@ describe('how many volumes of a title the workflow converts at once', () => {
     expect(title.meter.peak).toBe(3);
   });
 
-  it.each([2, 3])(
+  it.each([2, 3, 6])(
     'stops all %i that are in progress when the person cancels, and starts no later volume',
     async (limit) => {
-      const title = titleOf(5, () => limit);
+      const title = titleOf(limit + 2, () => limit);
       const controller = new AbortController();
 
       const run = title.start(controller.signal);

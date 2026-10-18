@@ -29,8 +29,11 @@ describe('conversions at once for what a person chose', () => {
     expect(conversionsAtOnce('automatic', roomy)).toBe(3);
   });
 
-  it.each([1, 2, 3] as const)('is %i when that is what was asked for, on any machine', (asked) => {
-    expect(conversionsAtOnce(asked, small)).toBe(asked);
-    expect(conversionsAtOnce(asked, roomy)).toBe(asked);
-  });
+  it.each([1, 2, 3, 4, 6, 8] as const)(
+    'is %i when that is what was asked for, on any machine',
+    (asked) => {
+      expect(conversionsAtOnce(asked, small)).toBe(asked);
+      expect(conversionsAtOnce(asked, roomy)).toBe(asked);
+    },
+  );
 });

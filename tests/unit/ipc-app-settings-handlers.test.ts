@@ -57,7 +57,7 @@ describe('the command that keeps the app settings', () => {
     ).toEqual({ language: 'en', notifyWhenDone: true, keepAwake: false });
   });
 
-  it.each(['automatic', 1, 2, 3] as const)(
+  it.each(['automatic', 1, 2, 3, 4, 6, 8] as const)(
     'takes how many are converted at once: the app’s own count, or %s',
     (parallelConversions) => {
       expect(saveAppSettingsCommandSchema.parse({ parallelConversions })).toEqual({
@@ -69,7 +69,9 @@ describe('the command that keeps the app settings', () => {
   it.each([
     {},
     { parallelConversions: 0 },
-    { parallelConversions: 4 },
+    { parallelConversions: 5 },
+    { parallelConversions: 7 },
+    { parallelConversions: 9 },
     { parallelConversions: 2.5 },
     { parallelConversions: '2' },
     { parallelConversions: 'auto' },

@@ -149,7 +149,7 @@ describe('how many are converted at once, in the file', () => {
     expect(parseStoredAppSettings(file({ language: 'en' }))?.parallelConversions).toBe('automatic');
   });
 
-  it.each(['automatic', 1, 2, 3] as const)(
+  it.each(['automatic', 1, 2, 3, 4, 6, 8] as const)(
     'is the one the file holds: %s',
     (parallelConversions) => {
       expect(parseStoredAppSettings(file({ parallelConversions }))?.parallelConversions).toBe(
@@ -159,7 +159,8 @@ describe('how many are converted at once, in the file', () => {
   );
 
   it.each([
-    ['a number this build does not allow', 4],
+    ['a number this build does not allow', 5],
+    ['one that is too many', 9],
     ['zero', 0],
     ['a number written as text', '2'],
     ['a count that is not whole', 1.5],
@@ -168,14 +169,17 @@ describe('how many are converted at once, in the file', () => {
     expect(parseStoredAppSettings(file({ parallelConversions }))).toEqual(defaultKeptAppSettings);
   });
 
-  it.each(['automatic', 1, 2, 3] as const)('is written, and read back as it was: %s', (choice) => {
-    const settings: KeptAppSettings = { ...kept('en'), parallelConversions: choice };
+  it.each(['automatic', 1, 2, 3, 4, 6, 8] as const)(
+    'is written, and read back as it was: %s',
+    (choice) => {
+      const settings: KeptAppSettings = { ...kept('en'), parallelConversions: choice };
 
-    expect(serializeStoredAppSettings(settings)).toContain(
-      `"parallelConversions": ${JSON.stringify(choice)}`,
-    );
-    expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
-  });
+      expect(serializeStoredAppSettings(settings)).toContain(
+        `"parallelConversions": ${JSON.stringify(choice)}`,
+      );
+      expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
+    },
+  );
 });
 
 describe('the folders the app works in, in the file', () => {

@@ -120,8 +120,8 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       },
       parallel: {
         label: 'Parallel conversions',
-        names: { automatic: 'Automatic', 1: '1', 2: '2', 3: '3' },
-        help: 'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once can be faster on a computer with room to spare, and uses more memory. It applies the next time you press Process.',
+        names: { automatic: 'Automatic', 1: '1', 2: '2', 3: '3', 4: '4', 6: '6', 8: '8' },
+        help: 'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
       },
       saveFailed: 'The change could not be saved. Try again.',
     },
@@ -176,8 +176,8 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       },
       parallel: {
         label: 'Conversões em paralelo',
-        names: { automatic: 'Automático', 1: '1', 2: '2', 3: '3' },
-        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo pode ser mais rápido em um computador com folga, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
+        names: { automatic: 'Automático', 1: '1', 2: '2', 3: '3', 4: '4', 6: '6', 8: '8' },
+        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
       },
       saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },

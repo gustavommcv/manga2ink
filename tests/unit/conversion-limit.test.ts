@@ -24,7 +24,7 @@ describe('how many books of a title are converted at once', () => {
     expect(limitWith({ machine: () => small })()).toBe(1);
   });
 
-  it.each([1, 2, 3] as const)(
+  it.each([1, 2, 3, 4, 6, 8] as const)(
     'is the %i that was chosen, whatever the machine is, when no queue runs',
     (chosen) => {
       expect(limitWith({ chosen: () => chosen, machine: () => small })()).toBe(chosen);
@@ -33,6 +33,7 @@ describe('how many books of a title are converted at once', () => {
 
   it('is what the queue that runs began with, and not what is chosen since', () => {
     expect(limitWith({ running: () => [2], chosen: () => 3 })()).toBe(2);
+    expect(limitWith({ running: () => [8], chosen: () => 1 })()).toBe(8);
     expect(limitWith({ running: () => ['automatic'], chosen: () => 1 })()).toBe(3);
   });
 
