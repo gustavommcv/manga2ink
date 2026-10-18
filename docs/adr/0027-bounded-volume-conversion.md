@@ -1,6 +1,6 @@
 # ADR 0027: Convert separate volumes with bounded concurrency
 
-- Status: Accepted
+- Status: Accepted (the limit is a choice since [ADR 0068](0068-how-many-are-converted-at-once-is-a-choice-a-queue-keeps.md))
 - Date: 2026-09-28
 
 ## Context

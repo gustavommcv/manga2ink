@@ -497,3 +497,88 @@ describe('what a queue does, chosen in the Processing tab', () => {
     ).toBeChecked();
   });
 });
+
+describe('how many conversions run at once, chosen in the Processing tab', () => {
+  const kept = (
+    change: Partial<typeof defaultAppSettings>,
+  ): MangaboundBridge['loadAppSettings'] => {
+    return () =>
+      Promise.resolve({
+        ok: true,
+        value: {
+          settings: { ...defaultAppSettings, language: 'en', ...change },
+          language: 'en',
+          unreadable: false,
+        },
+      });
+  };
+  const saving = (): ReturnType<typeof vi.fn<MangaboundBridge['saveAppSettings']>> =>
+    vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      Promise.resolve({ ok: true, value: { language: 'en' } }),
+    );
+
+  it('starts on the app’s own count, with the choices on offer and what each does said', async () => {
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
+
+    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+    expect(parallel).toHaveValue('automatic');
+    expect(
+      within(parallel)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['Automatic', '1', '2', '3']);
+    expect(parallel).toHaveAccessibleDescription(
+      'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once can be faster on a computer with room to spare, and uses more memory. It applies the next time you press Process.',
+    );
+  });
+
+  it('shows the number that was kept', async () => {
+    await renderTab({
+      getProcessingFolder: answering(defaultProcessingStatus),
+      loadAppSettings: kept({ parallelConversions: 2 }),
+    });
+
+    expect(screen.getByRole('combobox', { name: 'Parallel conversions' })).toHaveValue('2');
+  });
+
+  it('keeps only the number that was chosen, as a number, and shows it once it is kept', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = saving();
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
+    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+
+    await user.selectOptions(parallel, '3');
+
+    expect(saveAppSettings).toHaveBeenCalledExactlyOnceWith({ parallelConversions: 3 });
+    await waitFor(() => {
+      expect(parallel).toHaveValue('3');
+    });
+    await user.selectOptions(parallel, 'automatic');
+    expect(saveAppSettings).toHaveBeenLastCalledWith({ parallelConversions: 'automatic' });
+  });
+
+  it('says the change could not be kept, and leaves the number as it was', async () => {
+    const user = userEvent.setup();
+    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>().mockResolvedValue({
+      ok: false,
+      error: { code: 'settings_save_failed', said: message('failure.internal', {}) },
+    });
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus), saveAppSettings });
+    const parallel = screen.getByRole('combobox', { name: 'Parallel conversions' });
+
+    await user.selectOptions(parallel, '2');
+
+    expect(await screen.findByText('The change could not be saved. Try again.')).toBeVisible();
+    expect(parallel).toHaveValue('automatic');
+  });
+
+  it('says it in Portuguese for a window in Portuguese', async () => {
+    await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) }, 'pt-BR');
+
+    const parallel = screen.getByRole('combobox', { name: 'Conversões em paralelo' });
+    expect(within(parallel).getAllByRole('option')[0]).toHaveTextContent('Automático');
+    expect(parallel).toHaveAccessibleDescription(
+      'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo pode ser mais rápido em um computador com folga, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
+    );
+  });
+});

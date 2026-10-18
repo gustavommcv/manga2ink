@@ -171,7 +171,7 @@ describe('conversion workflow', () => {
       ports.conversion,
       () => 'session',
       ports.bookFiles,
-      2,
+      () => 2,
     );
     const inspected = await workflow.inspect(folder);
     const progress: ConversionProgress[] = [];
@@ -278,7 +278,7 @@ describe('conversion workflow', () => {
       ports.conversion,
       () => 'session',
       ports.bookFiles,
-      2,
+      () => 2,
     );
     const inspected = await workflow.inspect(folder);
     const published: string[] = [];
@@ -335,7 +335,7 @@ describe('conversion workflow', () => {
       ports.conversion,
       () => 'session',
       ports.bookFiles,
-      2,
+      () => 2,
     );
     const inspected = await workflow.inspect(folder);
     const run = workflow.convert(

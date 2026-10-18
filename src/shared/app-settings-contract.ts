@@ -6,12 +6,14 @@ import {
   type Language,
   languagePreferences,
 } from '@/domain/app-settings';
+import { isParallelChoice, type ParallelChoice } from '@/domain/parallel-conversions';
 import { themes } from '@/domain/theme';
 
 /**
  * What the window sends to keep the app settings (ADR 0052): the choices that changed, one or
  * several, and no others. The language is one of the languages the app has, or the system's; a theme
- * is one the app has (ADR 0066); the others are a yes or no (ADR 0065).
+ * is one the app has (ADR 0066); how many are converted at once is the app's own count or 1, 2 or 3
+ * (ADR 0068); the others are a yes or no (ADR 0065).
  */
 export const saveAppSettingsCommandSchema = z
   .object({
@@ -19,6 +21,9 @@ export const saveAppSettingsCommandSchema = z
     notifyWhenDone: z.boolean().optional(),
     keepAwake: z.boolean().optional(),
     theme: z.enum(themes).optional(),
+    parallelConversions: z
+      .custom<ParallelChoice>(isParallelChoice, 'Not a number of conversions this app has.')
+      .optional(),
   })
   .refine((change) => Object.values<unknown>(change).some((choice) => choice !== undefined), {
     message: 'A change names at least one choice.',

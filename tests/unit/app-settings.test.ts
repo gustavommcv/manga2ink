@@ -40,12 +40,13 @@ describe('the languages of the app', () => {
     expect(languagePreferences).toEqual(['system', ...languages]);
   });
 
-  it('start by following the system, telling when a long queue ends, keeping the computer awake, in the default theme', () => {
+  it('start by following the system, telling when a long queue ends, keeping the computer awake, in the default theme, converting as many at once as the computer allows', () => {
     expect(defaultAppSettings).toEqual({
       language: 'system',
       notifyWhenDone: true,
       keepAwake: true,
       theme: 'dark',
+      parallelConversions: 'automatic',
     });
     expect(Object.isFrozen(defaultAppSettings)).toBe(true);
   });

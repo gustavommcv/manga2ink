@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { QueueRuns } from '@/main/queue-runs';
 import { bootstrapToolchain } from '@/main/toolchain-bootstrap';
 import type {
   ToolchainStatus,
@@ -11,6 +12,7 @@ import type {
   ToolVerificationStatus,
 } from '@/shared/toolchain-status';
 import { message, raw } from '@/domain/message';
+import type { ParallelChoice } from '@/domain/parallel-conversions';
 
 interface Made {
   readonly name: string;
@@ -93,6 +95,8 @@ const emptyContext = (): Parameters<typeof bootstrapToolchain>[0] => ({
   mangapressCli: undefined,
   coverStore: undefined,
   processing: undefined,
+  queueRuns: new QueueRuns({ now: () => 0, newToken: () => 'queue' }),
+  appSettings: undefined,
 });
 const madeOf = (name: string): Made[] => fake.made.filter((entry) => entry.name === name);
 
@@ -167,7 +171,7 @@ describe('a toolchain that verified', () => {
       conversion?.instance,
       randomUUID,
       madeOf('book-files')[0]?.instance,
-      2,
+      expect.any(Function),
       coverStore,
     ]);
   });
@@ -214,15 +218,61 @@ describe('a toolchain that verified', () => {
 
     expect(madeOf('mangabind-cli')[0]?.args[2]).toBe(expected);
   });
+});
 
-  it('is told how many conversions the machine can run side by side', async () => {
+describe('how many conversions the workflow runs side by side', () => {
+  /** The limit the workflow was given, which it asks each time a title starts. */
+  const limitOf = async (context = emptyContext()): Promise<() => number> => {
+    fake.verify.mockResolvedValue(ready('linux-x64'));
+    await bootstrapToolchain(context);
+    return madeOf('workflow')[0]?.args[4] as () => number;
+  };
+  const choosing = (parallelConversions: ParallelChoice): ReturnType<typeof emptyContext> => ({
+    ...emptyContext(),
+    appSettings: { parallelConversions: () => parallelConversions } as never,
+  });
+
+  it('is what the machine can run when nobody chose, counted again each time it is asked', async () => {
     fake.processors = 4;
     fake.memory = 4 * 1024 ** 3;
-    fake.verify.mockResolvedValue(ready('linux-x64'));
+    const limit = await limitOf();
 
-    await bootstrapToolchain(emptyContext());
+    expect(limit()).toBe(1);
+    fake.processors = 12;
+    fake.memory = 32 * 1024 ** 3;
+    expect(limit()).toBe(3);
+  });
 
-    expect(madeOf('workflow')[0]?.args[4]).toBe(1);
+  it.each([
+    [1, 1],
+    [2, 2],
+    [3, 3],
+  ] as const)(
+    'is the %i that was chosen, whatever the machine is, when no queue is running',
+    async (chosen, expected) => {
+      fake.processors = 2;
+      fake.memory = 2 * 1024 ** 3;
+
+      expect((await limitOf(choosing(chosen)))()).toBe(expected);
+    },
+  );
+
+  it('is what the queue that is running began with, and a change made meanwhile is for the next one', async () => {
+    const context = choosing(1);
+    const limit = await limitOf(context);
+    const token = context.queueRuns.begin(1, {
+      keepAwake: true,
+      notifyWhenDone: true,
+      parallelConversions: 3,
+    });
+
+    expect(limit()).toBe(3);
+    // The person chose another number while it ran: not for this queue.
+    context.appSettings = { parallelConversions: () => 2 } as never;
+    expect(limit()).toBe(3);
+
+    context.queueRuns.end(token);
+    expect(limit()).toBe(2);
   });
 });
 

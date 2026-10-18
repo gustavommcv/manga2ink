@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 
-import type { AppSettings } from '@/domain/app-settings';
+import type { AppSettingsChange } from '@/domain/app-settings';
 import type { AnyMessage } from '@/domain/message';
+import { parallelChoiceNamed, parallelChoices } from '@/domain/parallel-conversions';
 import { longQueueMs } from '@/domain/queue-run';
 import { sizeOf } from '@/i18n/size';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { WaitingBooksSection } from '@/renderer/components/settings/waiting-books';
 import { Button } from '@/renderer/components/ui/button';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
+import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
@@ -25,6 +27,7 @@ export function ProcessingTab(): React.JSX.Element {
   const api = useProcessingFolder();
   const { say } = useSay();
   const { settings, change: keep } = useAppSettings();
+  const parallelId = useId();
   const [choiceFailed, setChoiceFailed] = useState(false);
   const [status, setStatus] = useState<ProcessingFolderStatus>();
   // What the main process says went wrong, as it says it: the window writes it in its language.
@@ -63,7 +66,7 @@ export function ProcessingTab(): React.JSX.Element {
   };
 
   /** Keeps a choice about a queue; it is for the next one, and what is running is not touched. */
-  const choose = (choice: Pick<AppSettings, 'keepAwake'> | Pick<AppSettings, 'notifyWhenDone'>) => {
+  const choose = (choice: AppSettingsChange): void => {
     void keep(choice).then((kept) => {
       setChoiceFailed(!kept);
     });
@@ -159,6 +162,29 @@ export function ProcessingTab(): React.JSX.Element {
             choose({ keepAwake });
           }}
         />
+        <div className="space-y-2">
+          <label className="text-sm leading-none font-medium" htmlFor={parallelId}>
+            {words.queue.parallel.label}
+          </label>
+          <NativeSelect
+            aria-describedby={`${parallelId}-help`}
+            id={parallelId}
+            onChange={(event) => {
+              const parallelConversions = parallelChoiceNamed(event.target.value);
+              if (parallelConversions !== undefined) choose({ parallelConversions });
+            }}
+            value={String(settings.parallelConversions)}
+          >
+            {parallelChoices.map((choice) => (
+              <option key={choice} value={String(choice)}>
+                {words.queue.parallel.names[choice]}
+              </option>
+            ))}
+          </NativeSelect>
+          <p className="text-muted-foreground text-xs" id={`${parallelId}-help`}>
+            {words.queue.parallel.help}
+          </p>
+        </div>
         <div aria-live="polite">
           {choiceFailed && <FieldMessage error={words.queue.saveFailed} />}
         </div>

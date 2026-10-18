@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { produceVolumes } from '@/application/workflows/volume-production';
+import { produceVolumes, workerLimit } from '@/application/workflows/volume-production';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
 import { message, raw } from '@/domain/message';
 
@@ -322,5 +322,21 @@ describe('volume production', () => {
     jobs[0]!.reject(conversionError);
     jobs[1]!.resolve(book(1));
     expect(await run).toEqual({ status: 'failed', artifacts: [book(1)], error: publicationError });
+  });
+});
+
+describe('how many workers a limit comes to', () => {
+  it.each([
+    [1, 1],
+    [2, 2],
+    [3, 3],
+    [2.9, 2],
+    [0.4, 1],
+    [0, 1],
+    [-3, 1],
+    [Number.NaN, 1],
+    [Number.POSITIVE_INFINITY, 1],
+  ])('a limit of %f comes to %f workers', (asked, workers) => {
+    expect(workerLimit(asked)).toBe(workers);
   });
 });

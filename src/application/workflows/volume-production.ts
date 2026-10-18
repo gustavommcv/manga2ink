@@ -21,6 +21,14 @@ export type VolumeProductionResult =
       readonly error: unknown;
     };
 
+/**
+ * How many books a pool converts at once for a limit it was given: at least one, whole, and one for
+ * anything that is not a number. A pool of none would end having made nothing and said nothing.
+ */
+export function workerLimit(asked: number): number {
+  return Number.isFinite(asked) ? Math.max(1, Math.floor(asked)) : 1;
+}
+
 /** Schedule one title's volumes and report completed books in input order (ADR 0027). */
 export async function produceVolumes(
   volumeCount: number,
@@ -143,7 +151,7 @@ export async function produceVolumes(
     try {
       progressFor(0);
       await Promise.all(
-        Array.from({ length: Math.min(maxParallelConversions, volumeCount) }, worker),
+        Array.from({ length: Math.min(workerLimit(maxParallelConversions), volumeCount) }, worker),
       );
     } finally {
       context.signal?.removeEventListener('abort', cancel);

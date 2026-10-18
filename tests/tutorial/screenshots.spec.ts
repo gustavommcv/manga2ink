@@ -590,9 +590,14 @@ tutorial(
     await expect(
       dialog.getByRole('checkbox', { name: t.processing.queue.awake.label }),
     ).toBeChecked();
-    await dialog.getByText(t.processing.queue.awake.help, { exact: true }).evaluate((element) => {
-      element.scrollIntoView({ block: 'end' });
-    });
+    await expect(
+      dialog.getByRole('combobox', { name: t.processing.queue.parallel.label }),
+    ).toHaveValue('automatic');
+    await dialog
+      .getByText(t.processing.queue.parallel.help, { exact: true })
+      .evaluate((element) => {
+        element.scrollIntoView({ block: 'end' });
+      });
     await expect(dialog.getByText(t.processing.queue.title, { exact: true })).toBeInViewport();
     await capture(page, 'app-settings-queue', stories.processing, dialog);
 

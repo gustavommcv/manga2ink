@@ -25,7 +25,7 @@ function workflowWith(
     ports.conversion,
     () => `id-${String(++id)}`,
     ports.bookFiles,
-    1,
+    () => 1,
     covers.store,
   );
 }

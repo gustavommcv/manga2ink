@@ -1,4 +1,5 @@
 import type { Language } from '@/domain/app-settings';
+import type { ParallelChoice } from '@/domain/parallel-conversions';
 
 import { countOf } from './count';
 
@@ -56,6 +57,12 @@ export interface ProcessingMessages {
       readonly help: (seconds: number) => string;
     };
     readonly awake: { readonly label: string; readonly help: string };
+    /** How many books of a title are converted at the same time (ADR 0068). */
+    readonly parallel: {
+      readonly label: string;
+      readonly names: Readonly<Record<ParallelChoice, string>>;
+      readonly help: string;
+    };
     /** Said when a choice could not be kept. */
     readonly saveFailed: string;
   };
@@ -111,6 +118,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
         label: 'Keep the computer awake while converting',
         help: 'The screen may still turn off, but the computer will not go to sleep and stop the conversion.',
       },
+      parallel: {
+        label: 'Parallel conversions',
+        names: { automatic: 'Automatic', 1: '1', 2: '2', 3: '3' },
+        help: 'How many books of one title are converted at the same time. Automatic uses up to 3, and fewer on a computer with few processors or little memory. More at once can be faster on a computer with room to spare, and uses more memory. It applies the next time you press Process.',
+      },
       saveFailed: 'The change could not be saved. Try again.',
     },
   },
@@ -161,6 +173,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       awake: {
         label: 'Manter o computador acordado durante a conversão',
         help: 'A tela ainda pode apagar, mas o computador não vai dormir e interromper a conversão.',
+      },
+      parallel: {
+        label: 'Conversões em paralelo',
+        names: { automatic: 'Automático', 1: '1', 2: '2', 3: '3' },
+        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático usa até 3, e menos em um computador com poucos processadores ou pouca memória. Mais ao mesmo tempo pode ser mais rápido em um computador com folga, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
       },
       saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },
