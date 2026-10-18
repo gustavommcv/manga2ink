@@ -126,6 +126,15 @@ export function BookDetailsScreen({
     declaredElsewhere && format === 'epub' && isLanguageTag(declaredLanguage)
       ? canonicalLanguageTag(declaredLanguage)
       : undefined;
+  // The field stays editable for every format: the language is kept with the folder (ADR 0032) for
+  // the next time it is made as an EPUB, so only what the hint says depends on the format.
+  const languageDescription = declaredElsewhere
+    ? format === 'epub'
+      ? words.language.foldersSay(declaredLanguage)
+      : words.language.foldersSayButOnlyEpub(declaredLanguage)
+    : format === 'epub'
+      ? words.language.forEpub
+      : words.language.onlyEpub;
 
   return (
     <section aria-labelledby="book-details-title" className="mx-auto max-w-3xl space-y-5">
@@ -262,11 +271,7 @@ export function BookDetailsScreen({
           <FieldMessage
             {...(languageError === undefined
               ? {
-                  description: declaredElsewhere
-                    ? words.language.foldersSay(declaredLanguage)
-                    : format === 'epub'
-                      ? words.language.forEpub
-                      : words.language.onlyEpub,
+                  description: languageDescription,
                 }
               : { error: languageError })}
             id="details-language-message"

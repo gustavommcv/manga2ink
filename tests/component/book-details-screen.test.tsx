@@ -247,8 +247,12 @@ describe('the book details screen', () => {
 
     rerender(<BookDetailsScreen {...base} declaredLanguage="pt-br" format="cbz" />);
     expect(screen.queryByRole('button', { name: /^Use / })).not.toBeInTheDocument();
-    // The folder is still said to declare it: it is true, and it drives the online lookup.
-    expect(screen.getByText('The folder names say pt-br.')).toBeVisible();
+    // The folder is still said to declare it: it is true, and it drives the online lookup. The
+    // hint says too why there is nothing to set, and the field stays open for the next EPUB.
+    expect(
+      screen.getByText('The folder names say pt-br, but only EPUB files carry a language.'),
+    ).toBeVisible();
+    expect(screen.getByLabelText('Language')).toBeEnabled();
   });
 
   it('says a CBZ file has no author and only EPUB has a language', () => {

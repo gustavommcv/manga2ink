@@ -203,6 +203,15 @@ describe('the details of a book, in Portuguese', () => {
     expect(screen.getByText(/Use uma etiqueta de idioma como en-US ou pt-BR/u)).toBeVisible();
   });
 
+  it('says that the folders declare a language and that only an EPUB carries one', () => {
+    render(inPortuguese(<BookDetailsScreen {...props} declaredLanguage="ja" format="cbz" />));
+
+    expect(screen.getByLabelText('Idioma')).toHaveAccessibleDescription(
+      'Os nomes das pastas indicam ja, mas só os arquivos EPUB têm idioma.',
+    );
+    expect(screen.queryByRole('button', { name: /^Usar / })).not.toBeInTheDocument();
+  });
+
   it('says that a CBZ keeps no author and that a PDF has no cover', () => {
     const { rerender } = render(inPortuguese(<BookDetailsScreen {...props} format="cbz" />));
     expect(
