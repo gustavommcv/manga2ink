@@ -1,3 +1,4 @@
+import type { ConversionCapacity } from '@/domain/parallel-conversions';
 import type { WorkingSpace } from '@/domain/working-space';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 
@@ -18,6 +19,9 @@ export const roomyWorkingSpace: WorkingSpace = {
   pendingFreeBytes: 120 * 1024 ** 3,
   sameDrive: false,
 };
+
+/** A computer of twelve processor threads and plenty of memory: three is what Automatic comes to, six the most. */
+export const sixCoreCapacity: ConversionCapacity = { automatic: 3, most: 6 };
 
 /** Where the app works once a folder is chosen: Pending and Scratch inside it. */
 export const chosenProcessingStatus: ProcessingFolderStatus = {

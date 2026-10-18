@@ -244,6 +244,7 @@ describe('useAppSettingsState', () => {
         notifyWhenDone: false,
         keepAwake: false,
         theme: 'dark',
+        parallelConversions: 'automatic',
       });
     });
 

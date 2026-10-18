@@ -1,8 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { QueueRuns } from '@/main/queue-runs';
+import { type QueueChoices, QueueRuns } from '@/main/queue-runs';
 
-const choices = { keepAwake: true, notifyWhenDone: true };
+const choices: QueueChoices = {
+  keepAwake: true,
+  notifyWhenDone: true,
+  parallelConversions: 'automatic',
+};
 
 function registry(): { readonly runs: QueueRuns; readonly time: { now: number } } {
   const time = { now: 1_000 };
@@ -39,7 +43,11 @@ describe('the queues that are running', () => {
 
   it('says how long a queue ran and whether its end is to be told, as they were when it began', () => {
     const { runs, time } = registry();
-    const token = runs.begin(1, { keepAwake: false, notifyWhenDone: false });
+    const token = runs.begin(1, {
+      keepAwake: false,
+      notifyWhenDone: false,
+      parallelConversions: 'automatic',
+    });
     time.now += 45_000;
 
     expect(runs.end(token)).toEqual({ elapsedMs: 45_000, notifyWhenDone: false });
@@ -60,14 +68,46 @@ describe('keeping the computer awake for the queues', () => {
     const { runs } = registry();
     expect(runs.keepsAwake).toBe(false);
 
-    const quiet = runs.begin(1, { keepAwake: false, notifyWhenDone: true });
+    const quiet = runs.begin(1, {
+      keepAwake: false,
+      notifyWhenDone: true,
+      parallelConversions: 'automatic',
+    });
     expect(runs.keepsAwake).toBe(false);
-    const awake = runs.begin(1, { keepAwake: true, notifyWhenDone: true });
+    const awake = runs.begin(1, {
+      keepAwake: true,
+      notifyWhenDone: true,
+      parallelConversions: 'automatic',
+    });
     expect(runs.keepsAwake).toBe(true);
 
     runs.end(awake);
     expect(runs.keepsAwake).toBe(false);
     runs.end(quiet);
+  });
+});
+
+describe('how many are converted at once, for the queues', () => {
+  it('is what each queue began with, for as long as it runs', () => {
+    const { runs } = registry();
+    expect(runs.parallelChoices).toEqual([]);
+
+    const first = runs.begin(1, { ...choices, parallelConversions: 2 });
+    runs.begin(1, { ...choices, parallelConversions: 'automatic' });
+
+    expect(runs.parallelChoices).toEqual([2, 'automatic']);
+    runs.end(first);
+    expect(runs.parallelChoices).toEqual(['automatic']);
+  });
+
+  it('is not changed by changing the choices object it was given', () => {
+    const { runs } = registry();
+    const given = { ...choices, parallelConversions: 1 as const };
+    runs.begin(1, given);
+
+    (given as { parallelConversions: unknown }).parallelConversions = 3;
+
+    expect(runs.parallelChoices).toEqual([1]);
   });
 });
 

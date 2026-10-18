@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { availableParallelism, totalmem } from 'node:os';
 import path from 'node:path';
 
 import { app } from 'electron';
@@ -11,12 +10,14 @@ import { MangapressCliAdapter } from '@/adapters/mangapress/cli';
 import { MangapressConversionAdapter } from '@/adapters/mangapress/conversion-port';
 import { createNodeProcessRunner } from '@/adapters/process/node-process-runner';
 import { verifyBundledToolchain } from '@/adapters/toolchain/verification';
-import { conversionConcurrency } from '@/application/workflows/conversion-concurrency';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import { message } from '@/domain/message';
+import { defaultParallelChoice } from '@/domain/parallel-conversions';
 import type { ToolchainStatus, ToolchainTarget } from '@/shared/toolchain-status';
 
 import type { MainContext } from './context';
+import { conversionLimit } from './conversion-limit';
+import { machineCapacity } from './machine';
 
 function executablePath(
   toolchainRoot: string,
@@ -32,7 +33,10 @@ function executablePath(
  * workflow onto the context so every IPC handler can reach it. Runs once, during app.whenReady().
  */
 export async function bootstrapToolchain(
-  context: Pick<MainContext, 'workflow' | 'mangapressCli' | 'coverStore' | 'processing'>,
+  context: Pick<
+    MainContext,
+    'workflow' | 'mangapressCli' | 'coverStore' | 'processing' | 'queueRuns' | 'appSettings'
+  >,
 ): Promise<ToolchainStatus> {
   const toolchainRoot = app.isPackaged
     ? path.join(process.resourcesPath, 'toolchain')
@@ -76,7 +80,12 @@ export async function bootstrapToolchain(
       new MangapressConversionAdapter(context.mangapressCli),
       randomUUID,
       new FsBookFileStore(),
-      conversionConcurrency(availableParallelism(), totalmem()),
+      // Asked each time a title starts, from what the queue that runs began with (ADR 0068).
+      conversionLimit({
+        running: () => context.queueRuns.parallelChoices,
+        chosen: () => context.appSettings?.parallelConversions() ?? defaultParallelChoice,
+        machine: machineCapacity,
+      }),
       context.coverStore,
     );
   }

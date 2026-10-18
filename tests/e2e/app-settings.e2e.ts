@@ -12,6 +12,7 @@ interface KeptAppSettings {
   readonly notifyWhenDone?: boolean;
   readonly keepAwake?: boolean;
   readonly theme?: string;
+  readonly parallelConversions?: string | number;
 }
 
 const readKept = async (file: string): Promise<KeptAppSettings> =>
@@ -97,6 +98,29 @@ async function chooseTheme(value: string): Promise<void> {
       console.warn(`the theme select did not change the page after attempt ${attempt} of ${value}`);
     }
   }
+}
+
+/**
+ * Picks how many conversions run at once, and waits for the file to hold it. As with the language and
+ * the theme, the choice now and then does not reach the page as a change, so it is made again, and
+ * said when it had to be.
+ */
+async function chooseParallel(file: string, value: string, kept: string | number): Promise<void> {
+  const id = await $('label=Parallel conversions').getAttribute('for');
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await $(`[id="${id}"]`).selectByAttribute('value', value);
+    try {
+      await browser.waitUntil(async () => (await readKept(file)).parallelConversions === kept, {
+        timeout: 5_000,
+      });
+      return;
+    } catch {
+      console.warn(
+        `the select of parallel conversions did not keep ${value} after attempt ${attempt}`,
+      );
+    }
+  }
+  throw new Error(`the app settings file did not get ${value} conversions at once`);
 }
 
 /** Whether the checkbox that a label names is checked, as the page says it. */
@@ -202,6 +226,44 @@ describe('packaged app settings', () => {
         timeout: 30_000,
         timeoutMsg: 'the choice was put back but the checkbox was not shown checked',
       });
+    } finally {
+      // Whatever happened, the dialog is put away, so that a failure here is not one in the next test.
+      await browser.keys('Escape');
+    }
+  });
+
+  it('keeps how many conversions run at once in the same file, and the app’s own count until a number is chosen', async () => {
+    const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
+    const file = path.join(userData, 'app-settings.json');
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="App settings"]').click();
+    await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
+    try {
+      await $('[role="tab"]=Processing').click();
+      await $('label=Parallel conversions').waitForDisplayed({ timeout: 30_000 });
+      const id = await $('label=Parallel conversions').getAttribute('for');
+      assert.equal(await $(`[id="${id}"]`).getValue(), 'automatic');
+      // The app's own count says what it comes to on this computer, and one is always on offer: a
+      // small computer (a runner) may be asked for no more than that.
+      const firstOption = await browser.execute(
+        (select: string | null) =>
+          (document.getElementById(select ?? '') as HTMLSelectElement | null)?.options[0]
+            ?.textContent,
+        id,
+      );
+      assert.match(String(firstOption), /^Automatic \(\d+ on this computer\)$/u);
+
+      // A number is kept as a number, next to the other choices and without touching them.
+      await chooseParallel(file, '1', 1);
+      const kept = await readKept(file);
+      assert.equal(kept.keepAwake, true);
+      assert.equal(kept.notifyWhenDone, true);
+      assert.equal(kept.theme, 'dark');
+      assert.equal(await $(`[id="${id}"]`).getValue(), '1');
+
+      // And the app's own count puts it back, so the next tests find the app as it began.
+      await chooseParallel(file, 'automatic', 'automatic');
+      assert.equal(await $(`[id="${id}"]`).getValue(), 'automatic');
     } finally {
       // Whatever happened, the dialog is put away, so that a failure here is not one in the next test.
       await browser.keys('Escape');

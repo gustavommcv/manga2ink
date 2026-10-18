@@ -23,7 +23,7 @@ export class ConversionWorkflow {
     conversion: ConversionPort,
     createId: () => string,
     bookFiles: BookFileStorePort,
-    maxParallelConversions = 1,
+    maxParallelConversions: () => number = () => 1,
     coverStore: CoverStorePort & CoverSourcePort = keepsNoCovers,
   ) {
     this.sessions = new InputSessions(binding, createId);

@@ -43,6 +43,7 @@ import type {
 } from './workflow-contract';
 
 import type { AttachedCover } from '@/domain/book-covers';
+import type { ConversionCapacity } from '@/domain/parallel-conversions';
 import type { WorkingSpace } from '@/domain/working-space';
 import type { MappingDraft } from '@/domain/mapping';
 
@@ -181,6 +182,8 @@ export interface MangaboundBridge {
   readonly getProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
   /** What is left on the drives the app works on, to say before a run that there is too little (ADR 0060). */
   readonly getWorkingSpace: () => Promise<WorkflowResult<WorkingSpace>>;
+  /** What "automatic" comes to on this computer and the most a number can be asked for (ADR 0068). */
+  readonly getConversionCapacity: () => Promise<WorkflowResult<ConversionCapacity>>;
   /** Opens a dialog to choose the folder the app works in; resolves to null when it is cancelled. */
   readonly chooseProcessingFolder: () => Promise<WorkflowResult<ProcessingFolderStatus | null>>;
   /** Puts the app back to the places it picks itself. */

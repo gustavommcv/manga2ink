@@ -21,6 +21,7 @@ export type AppSettingsBridge = Pick<
   | 'checkForUpdates'
   | 'chooseProcessingFolder'
   | 'copyDiagnostics'
+  | 'getConversionCapacity'
   | 'countIdlePending'
   | 'deleteIdlePending'
   | 'getProcessingFolder'

@@ -1,7 +1,14 @@
-/** What a queue was started with: the choices as they were then, since a change is for the next one (ADR 0065). */
+import type { ParallelChoice } from '@/domain/parallel-conversions';
+
+/**
+ * What a queue was started with: the choices as they were then, since a change is for the next one
+ * (ADR 0065, ADR 0068).
+ */
 export interface QueueChoices {
   readonly keepAwake: boolean;
   readonly notifyWhenDone: boolean;
+  /** How many books of a title are converted at once while it runs. */
+  readonly parallelConversions: ParallelChoice;
 }
 
 /** What is left of a queue once it has ended: how long it ran, and whether its end is to be told. */
@@ -47,7 +54,11 @@ export class QueueRuns {
     this.queues.set(token, {
       owner,
       startedAt: this.sources.now(),
-      choices: { keepAwake: choices.keepAwake, notifyWhenDone: choices.notifyWhenDone },
+      choices: {
+        keepAwake: choices.keepAwake,
+        notifyWhenDone: choices.notifyWhenDone,
+        parallelConversions: choices.parallelConversions,
+      },
     });
     this.changed();
     return token;
@@ -91,6 +102,14 @@ export class QueueRuns {
   /** Whether a queue that is running asked for the computer to be kept awake. */
   get keepsAwake(): boolean {
     return [...this.queues.values()].some((queue) => queue.choices.keepAwake);
+  }
+
+  /**
+   * How many books of a title each queue that is running asked to convert at once, as it asked when
+   * it began: a change made since is for the next queue (ADR 0068).
+   */
+  get parallelChoices(): readonly ParallelChoice[] {
+    return [...this.queues.values()].map((queue) => queue.choices.parallelConversions);
   }
 
   /** Calls `listener` every time a queue begins, ends or is let go of. */

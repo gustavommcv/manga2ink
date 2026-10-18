@@ -44,7 +44,8 @@ export class BookProduction {
     private readonly conversion: ConversionPort,
     private readonly createId: () => string,
     private readonly bookFiles: BookFileStorePort,
-    private readonly maxParallelConversions: number,
+    /** How many volumes of a title are converted at once, asked each time a title starts (ADR 0068). */
+    private readonly maxParallelConversions: () => number,
   ) {}
 
   /** Give the scheduler one book-producing callback; metadata and paths stay in the workflow. */
@@ -85,7 +86,7 @@ export class BookProduction {
 
     return produceVolumes(inputs.length, convertAt, {
       ...context,
-      maxParallelConversions: this.maxParallelConversions,
+      maxParallelConversions: this.maxParallelConversions(),
       sequential: mode === 'bind-only',
     });
   }

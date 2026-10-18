@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import type { IdleDays, WaitingBooks } from '@/domain/pending-cleanup';
+import type { ConversionCapacity } from '@/domain/parallel-conversions';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -13,6 +14,8 @@ export interface ProcessingFolderApi {
   /** Opens the dialog; resolves to null when it is cancelled. */
   readonly choose: () => Promise<WorkflowResult<ProcessingFolderStatus | null>>;
   readonly useDefault: () => Promise<WorkflowResult<ProcessingFolderStatus>>;
+  /** What "automatic" comes to on this computer, and the most a number of conversions at once can be (ADR 0068). */
+  readonly conversionCapacity: () => Promise<WorkflowResult<ConversionCapacity>>;
   /** What the conversions untouched for that many days hold: what a clean-up would delete (ADR 0061). */
   readonly countIdle: (days: IdleDays) => Promise<WorkflowResult<WaitingBooks>>;
   /** Deletes those conversions, and says what went. */

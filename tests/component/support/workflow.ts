@@ -6,7 +6,7 @@ import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
 import { type MangaboundBridge } from '@/shared/runtime-info';
 import { type RestoredSettings } from '@/shared/settings-contract';
-import { defaultProcessingStatus, roomyWorkingSpace } from './processing';
+import { defaultProcessingStatus, roomyWorkingSpace, sixCoreCapacity } from './processing';
 import {
   type InspectedInputPayload,
   type SelectedInput,
@@ -168,6 +168,7 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
     openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: defaultProcessingStatus }),
     getWorkingSpace: () => Promise.resolve({ ok: true, value: roomyWorkingSpace }),
+    getConversionCapacity: () => Promise.resolve({ ok: true, value: sixCoreCapacity }),
     countIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     deleteIdlePending: () => Promise.resolve({ ok: true, value: { runs: 0, books: 0, bytes: 0 } }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),

@@ -13,6 +13,7 @@ import {
   type KeptAppSettings,
   type LanguagePreference,
 } from '@/domain/app-settings';
+import { parallelChoices } from '@/domain/parallel-conversions';
 
 const kept = (
   language: LanguagePreference,
@@ -68,7 +69,7 @@ describe('reading the file of the app settings', () => {
 describe('writing the file of the app settings', () => {
   it('writes the version and the choices, on lines of their own', () => {
     expect(serializeStoredAppSettings(kept('pt-BR'))).toBe(
-      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "theme": "dark",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
+      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "theme": "dark",\n  "parallelConversions": "automatic",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
     );
   });
 
@@ -140,6 +141,38 @@ describe('the theme, in the file', () => {
     const settings: KeptAppSettings = { ...kept('en'), theme };
 
     expect(serializeStoredAppSettings(settings)).toContain(`"theme": "${theme}"`);
+    expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
+  });
+});
+
+describe('how many are converted at once, in the file', () => {
+  it('is the app’s own count for a file that does not have it, which an earlier version wrote', () => {
+    expect(parseStoredAppSettings(file({ language: 'en' }))?.parallelConversions).toBe('automatic');
+  });
+
+  it.each(parallelChoices)('is the one the file holds: %s', (parallelConversions) => {
+    expect(parseStoredAppSettings(file({ parallelConversions }))?.parallelConversions).toBe(
+      parallelConversions,
+    );
+  });
+
+  it.each([
+    ['a number this build does not allow', 13],
+    ['one that is far too many', 99],
+    ['zero', 0],
+    ['a number written as text', '2'],
+    ['a count that is not whole', 1.5],
+    ['nothing', null],
+  ])('is the app’s own count when the file has %s', (_name, parallelConversions) => {
+    expect(parseStoredAppSettings(file({ parallelConversions }))).toEqual(defaultKeptAppSettings);
+  });
+
+  it.each(parallelChoices)('is written, and read back as it was: %s', (choice) => {
+    const settings: KeptAppSettings = { ...kept('en'), parallelConversions: choice };
+
+    expect(serializeStoredAppSettings(settings)).toContain(
+      `"parallelConversions": ${JSON.stringify(choice)}`,
+    );
     expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
   });
 });

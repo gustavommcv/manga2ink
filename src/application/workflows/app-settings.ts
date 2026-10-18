@@ -13,6 +13,7 @@ import {
   type ProcessingChoice,
   resolveLanguage,
 } from '@/domain/app-settings';
+import type { ParallelChoice } from '@/domain/parallel-conversions';
 import type { Theme } from '@/domain/theme';
 
 export interface RestoredAppSettings {
@@ -80,8 +81,20 @@ export class AppSettingsWorkflow {
    * The choices that decide what a queue does, as they are now: read when a queue begins, so a
    * change is for the next one and does not touch the one that is running (ADR 0065).
    */
-  queueChoices(): Pick<AppSettings, 'keepAwake' | 'notifyWhenDone'> {
-    return { keepAwake: this.kept.keepAwake, notifyWhenDone: this.kept.notifyWhenDone };
+  queueChoices(): Pick<AppSettings, 'keepAwake' | 'notifyWhenDone' | 'parallelConversions'> {
+    return {
+      keepAwake: this.kept.keepAwake,
+      notifyWhenDone: this.kept.notifyWhenDone,
+      parallelConversions: this.kept.parallelConversions,
+    };
+  }
+
+  /**
+   * How many books of a title are to be converted at once, as it was last kept: what a conversion
+   * that no queue asked for is made with (ADR 0068).
+   */
+  parallelConversions(): ParallelChoice {
+    return this.kept.parallelConversions;
   }
 
   /** How the app looks, as it was last kept: what a window is made with (ADR 0066). */

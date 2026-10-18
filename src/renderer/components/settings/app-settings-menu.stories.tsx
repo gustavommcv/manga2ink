@@ -71,6 +71,8 @@ function bridgeFor(
     copyDiagnostics: () => Promise.resolve({ ok: true, value: undefined }),
     openAppFolder: () => Promise.resolve({ ok: true, value: undefined }),
     getProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
+    // A computer of twelve processor threads: three is what Automatic comes to, six the most.
+    getConversionCapacity: () => Promise.resolve({ ok: true, value: { automatic: 3, most: 6 } }),
     chooseProcessingFolder: () => Promise.resolve({ ok: true, value: null }),
     useDefaultProcessingFolder: () => Promise.resolve({ ok: true, value: ownPlaces }),
     countIdlePending: () => Promise.resolve({ ok: true, value: noBooks }),
@@ -465,6 +467,55 @@ export const Processing: Story = {
     await expect(
       within(panel).getByRole('button', { name: 'Use the default folder' }),
     ).toBeDisabled();
+
+    // How many books of a title are converted at once starts on the app's own count. This story is
+    // the one the guide's pictures of the tab are made from, so it is left as a person finds it.
+    await expect(
+      await within(panel).findByRole('combobox', { name: 'Parallel conversions' }),
+    ).toHaveValue('automatic');
+  },
+};
+
+/** A small computer: automatic comes to one, and two is the most that can be asked for. */
+export const ProcessingOnASmallComputer: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      getConversionCapacity: () => Promise.resolve({ ok: true, value: { automatic: 1, most: 2 } }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
+    const parallel = await within(panel).findByRole('combobox', { name: 'Parallel conversions' });
+    await expect(
+      within(parallel)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['Automatic (1 on this computer)', '1', '2']);
+  },
+};
+
+/** A number of conversions at once is chosen, and the number chosen is the one shown. */
+export const ProcessingParallelConversions: Story = {
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
+    const parallel = await within(panel).findByRole('combobox', { name: 'Parallel conversions' });
+    await expect(parallel).toHaveValue('automatic');
+    await userEvent.selectOptions(parallel, '2');
+    await expect(parallel).toHaveValue('2');
+    await userEvent.selectOptions(parallel, 'automatic');
+    await expect(parallel).toHaveValue('automatic');
   },
 };
 
@@ -504,6 +555,9 @@ export const ProcessingInOwnPlacesInPortuguese: Story = {
     const panel = within(dialog).getByRole('tabpanel', { name: 'Processamento' });
     await expect(await within(panel).findByText('Escolhida pelo Mangabound')).toBeVisible();
     await expect(within(panel).getByRole('button', { name: 'Usar a pasta padrão' })).toBeDisabled();
+    await expect(
+      await within(panel).findByRole('combobox', { name: 'Conversões em paralelo' }),
+    ).toHaveValue('automatic');
   },
 };
 

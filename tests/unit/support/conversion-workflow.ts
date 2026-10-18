@@ -228,7 +228,7 @@ export async function openLibrary(
     ports.conversion,
     () => `id-${String(++id)}`,
     ports.bookFiles,
-    maxParallelConversions,
+    () => maxParallelConversions,
     ...(coverStore === undefined ? [] : [coverStore]),
   );
   const inspected = await workflow.inspect(library);

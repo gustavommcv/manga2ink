@@ -15,6 +15,9 @@ import { defaultProcessingStatus } from './support/processing';
 import { deferred } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
+/** The choice of days of the clean-up: the tab has another select, so this one is asked for by name. */
+const days = 'Delete what has waited, untouched, for more than';
+
 const GiB = 1024 ** 3;
 const MiB = 1024 ** 2;
 
@@ -92,7 +95,7 @@ describe('the books that wait, in the Processing tab', () => {
     await renderTab({ getProcessingFolder: reading(defaultProcessingStatus) });
 
     expect(screen.getByText('No books are waiting.')).toBeVisible();
-    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: days })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Delete…' })).not.toBeInTheDocument();
   });
 
@@ -102,7 +105,7 @@ describe('the books that wait, in the Processing tab', () => {
     const deleteIdlePending = vi.fn<MangaboundBridge['deleteIdlePending']>();
     await renderTab({ countIdlePending, deleteIdlePending });
 
-    await user.selectOptions(screen.getByRole('combobox'), '7');
+    await user.selectOptions(screen.getByRole('combobox', { name: days }), '7');
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
 
     const question = await screen.findByRole('group');
@@ -112,7 +115,7 @@ describe('the books that wait, in the Processing tab', () => {
     expect(question).toHaveFocus();
     expect(countIdlePending).toHaveBeenCalledExactlyOnceWith({ days: 7 });
     expect(deleteIdlePending).not.toHaveBeenCalled();
-    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.getByRole('combobox', { name: days })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Delete…' })).toBeDisabled();
   });
 
@@ -191,7 +194,7 @@ describe('the books that wait, in the Processing tab', () => {
     const user = userEvent.setup();
     await renderTab({ countIdlePending: counting({ runs: 0, books: 0, bytes: 0 }) });
 
-    await user.selectOptions(screen.getByRole('combobox'), '90');
+    await user.selectOptions(screen.getByRole('combobox', { name: days }), '90');
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
 
     expect(await screen.findByText('Nothing has waited for more than 90 days.')).toBeVisible();
@@ -205,7 +208,7 @@ describe('the books that wait, in the Processing tab', () => {
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
     await screen.findByText('Nothing has waited for more than 30 days.');
 
-    await user.selectOptions(screen.getByRole('combobox'), '7');
+    await user.selectOptions(screen.getByRole('combobox', { name: days }), '7');
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
 
     expect(await screen.findByText('Nothing has waited for more than 7 days.')).toBeVisible();

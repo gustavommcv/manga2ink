@@ -10,7 +10,7 @@ import {
   type QueueSystem,
   registerQueueRunHandlers,
 } from '@/main/ipc/queue-runs';
-import { QueueRuns } from '@/main/queue-runs';
+import { type QueueChoices, QueueRuns } from '@/main/queue-runs';
 import { endQueueCommandSchema } from '@/shared/queue-run-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -90,7 +90,8 @@ function setUp(overrides: { now?: () => number } = {}): {
   readonly start: ReturnType<typeof vi.fn<(type: 'prevent-app-suspension') => number>>;
   readonly stop: ReturnType<typeof vi.fn<(id: number) => void>>;
   readonly show: ReturnType<typeof vi.fn>;
-  readonly choices: { keepAwake: boolean; notifyWhenDone: boolean };
+  /** The choices a queue begins with; a test changes them, to see a queue keep the ones it began with. */
+  readonly choices: { -readonly [Choice in keyof QueueChoices]: QueueChoices[Choice] };
   readonly time: { now: number };
   readonly inFront: { value: boolean };
 } {
@@ -104,7 +105,11 @@ function setUp(overrides: { now?: () => number } = {}): {
   const stop = vi.fn<(id: number) => void>();
   const show = vi.fn();
   const inFront = { value: false };
-  const choices = { keepAwake: true, notifyWhenDone: true };
+  const choices: { -readonly [Choice in keyof QueueChoices]: QueueChoices[Choice] } = {
+    keepAwake: true,
+    notifyWhenDone: true,
+    parallelConversions: 'automatic',
+  };
   const system: QueueSystem = {
     blocker: { start, stop },
     shell: {

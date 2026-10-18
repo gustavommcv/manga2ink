@@ -56,6 +56,13 @@ export interface ProcessingMessages {
       readonly help: (seconds: number) => string;
     };
     readonly awake: { readonly label: string; readonly help: string };
+    /** How many books of a title are converted at the same time (ADR 0068). */
+    readonly parallel: {
+      readonly label: string;
+      /** The app's own count, with the number it comes to on this computer. The other choices are their numbers. */
+      readonly automatic: (count: number) => string;
+      readonly help: string;
+    };
     /** Said when a choice could not be kept. */
     readonly saveFailed: string;
   };
@@ -111,6 +118,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
         label: 'Keep the computer awake while converting',
         help: 'The screen may still turn off, but the computer will not go to sleep and stop the conversion.',
       },
+      parallel: {
+        label: 'Parallel conversions',
+        automatic: (count) => `Automatic (${String(count)} on this computer)`,
+        help: 'How many books of one title are converted at the same time. Automatic works it out from the processors and memory of this computer, and never comes to more than 3. The most you can choose depends on this computer too. More at once helps only on a computer with many processors, and uses more memory. It applies the next time you press Process.',
+      },
       saveFailed: 'The change could not be saved. Try again.',
     },
   },
@@ -161,6 +173,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       awake: {
         label: 'Manter o computador acordado durante a conversão',
         help: 'A tela ainda pode apagar, mas o computador não vai dormir e interromper a conversão.',
+      },
+      parallel: {
+        label: 'Conversões em paralelo',
+        automatic: (count) => `Automático (${String(count)} neste computador)`,
+        help: 'Quantos livros de um mesmo título são convertidos ao mesmo tempo. O Automático calcula pelos processadores e pela memória deste computador, e nunca passa de 3. O máximo que você pode escolher também depende deste computador. Mais ao mesmo tempo só ajuda em um computador com muitos processadores, e usa mais memória. Vale na próxima vez que você pressionar Processar.',
       },
       saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },

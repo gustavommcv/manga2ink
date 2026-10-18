@@ -30,8 +30,16 @@ describe('the context the handlers of the main process share', () => {
     const { queueRuns } = createMainContext();
 
     expect(queueRuns.running).toBe(false);
-    const first = queueRuns.begin(1, { keepAwake: false, notifyWhenDone: false });
-    const second = queueRuns.begin(1, { keepAwake: false, notifyWhenDone: false });
+    const first = queueRuns.begin(1, {
+      keepAwake: false,
+      notifyWhenDone: false,
+      parallelConversions: 'automatic',
+    });
+    const second = queueRuns.begin(1, {
+      keepAwake: false,
+      notifyWhenDone: false,
+      parallelConversions: 'automatic',
+    });
 
     expect(first).not.toBe(second);
     expect(queueRuns.running).toBe(true);

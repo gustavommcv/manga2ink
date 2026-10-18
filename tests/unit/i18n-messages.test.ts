@@ -43,6 +43,7 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.pending.question': [[1], [2]],
   'processing.earlier.books': [[1], [2]],
   'processing.queue.notify.help': [[30]],
+  'processing.queue.parallel.automatic': [[3], [1]],
   'dialogs.queueEnded.done.body': [[1], [3]],
   'dialogs.queueEnded.notes.body': [[1], [3]],
   'dialogs.queueEnded.failures.body': [

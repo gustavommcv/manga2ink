@@ -1,3 +1,4 @@
+import { defaultParallelChoice, type ParallelChoice } from './parallel-conversions';
 import { defaultTheme, type Theme } from './theme';
 
 /**
@@ -28,14 +29,20 @@ export interface AppSettings {
   readonly keepAwake: boolean;
   /** How the app looks (ADR 0066). */
   readonly theme: Theme;
+  /** How many books of a title are converted at once, or the app's own count (ADR 0068). */
+  readonly parallelConversions: ParallelChoice;
 }
 
-/** Where the app starts: in the language of the system, telling and keeping awake, in the default theme. */
+/**
+ * Where the app starts: in the language of the system, telling and keeping awake, in the default
+ * theme, converting as many at once as the computer allows.
+ */
 export const defaultAppSettings: AppSettings = Object.freeze({
   language: 'system',
   notifyWhenDone: true,
   keepAwake: true,
   theme: defaultTheme,
+  parallelConversions: defaultParallelChoice,
 });
 
 /** What a person changes at one time: any of the choices, and nothing else. */
@@ -61,6 +68,7 @@ export function choicesOf(settings: AppSettings): AppSettings {
     notifyWhenDone: settings.notifyWhenDone,
     keepAwake: settings.keepAwake,
     theme: settings.theme,
+    parallelConversions: settings.parallelConversions,
   };
 }
 

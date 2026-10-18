@@ -159,17 +159,45 @@ describe('how the app looks', () => {
   });
 });
 
+describe('how many are converted at once', () => {
+  it('is the app’s own count until a person chooses, and is what is kept once they do', async () => {
+    const { store, save } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
+    const workflow = new AppSettingsWorkflow(store, () => []);
+    await workflow.restore();
+
+    expect(workflow.parallelConversions()).toBe('automatic');
+
+    await workflow.save({ parallelConversions: 2 });
+
+    expect(workflow.parallelConversions()).toBe(2);
+    expect(workflow.queueChoices().parallelConversions).toBe(2);
+    expect(save).toHaveBeenCalledExactlyOnceWith({
+      ...defaultKeptAppSettings,
+      parallelConversions: 2,
+    });
+    expect((await workflow.restore()).settings.parallelConversions).toBe(2);
+  });
+});
+
 describe('what a queue does', () => {
   it('is on until a person turns it off, and is read as it is now each time it is asked', async () => {
     const { store } = fakeStore({ settings: defaultKeptAppSettings, unreadable: false });
     const workflow = new AppSettingsWorkflow(store, () => []);
     await workflow.restore();
 
-    expect(workflow.queueChoices()).toEqual({ keepAwake: true, notifyWhenDone: true });
+    expect(workflow.queueChoices()).toEqual({
+      keepAwake: true,
+      notifyWhenDone: true,
+      parallelConversions: 'automatic',
+    });
 
     await workflow.save({ keepAwake: false });
 
-    expect(workflow.queueChoices()).toEqual({ keepAwake: false, notifyWhenDone: true });
+    expect(workflow.queueChoices()).toEqual({
+      keepAwake: false,
+      notifyWhenDone: true,
+      parallelConversions: 'automatic',
+    });
   });
 });
 

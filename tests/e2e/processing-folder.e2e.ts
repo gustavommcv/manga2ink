@@ -86,6 +86,7 @@ describe('packaged processing folder', () => {
       notifyWhenDone: true,
       keepAwake: true,
       theme: 'dark',
+      parallelConversions: 'automatic',
       processingFolder: work,
       earlierProcessingFolders: [],
     });
@@ -122,6 +123,7 @@ describe('packaged processing folder', () => {
       notifyWhenDone: true,
       keepAwake: true,
       theme: 'dark',
+      parallelConversions: 'automatic',
       processingFolder: null,
       earlierProcessingFolders: [work],
     });
