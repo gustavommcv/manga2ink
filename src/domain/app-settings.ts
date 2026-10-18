@@ -1,5 +1,5 @@
 import { defaultParallelChoice, type ParallelChoice } from './parallel-conversions';
-import { defaultTheme, type Theme } from './theme';
+import { defaultThemePreference, type ThemePreference } from './theme';
 
 /**
  * The languages the app is written in, English first: it is the one every message is first written
@@ -27,21 +27,21 @@ export interface AppSettings {
   readonly notifyWhenDone: boolean;
   /** Keep the computer from going to sleep while a queue runs (ADR 0065). */
   readonly keepAwake: boolean;
-  /** How the app looks (ADR 0066). */
-  readonly theme: Theme;
+  /** How the app looks, or that it follows the system's light or dark setting (ADR 0066, ADR 0070). */
+  readonly theme: ThemePreference;
   /** How many books of a title are converted at once, or the app's own count (ADR 0068). */
   readonly parallelConversions: ParallelChoice;
 }
 
 /**
- * Where the app starts: in the language of the system, telling and keeping awake, in the default
- * theme, converting as many at once as the computer allows.
+ * Where the app starts: in the language of the system, telling and keeping awake, looking as the
+ * system does, converting as many at once as the computer allows.
  */
 export const defaultAppSettings: AppSettings = Object.freeze({
   language: 'system',
   notifyWhenDone: true,
   keepAwake: true,
-  theme: defaultTheme,
+  theme: defaultThemePreference,
   parallelConversions: defaultParallelChoice,
 });
 

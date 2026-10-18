@@ -31,6 +31,8 @@ export interface AppSettingsMessages {
     readonly help: string;
     /** What each theme is called: a theme is not added without its name in every language. */
     readonly names: Readonly<Record<Theme, string>>;
+    /** The choice to look as the system does, as the language has its own (ADR 0070). */
+    readonly system: string;
     readonly saveFailed: string;
   };
   /** Said when the file of the app settings was there and could not be used. */
@@ -58,8 +60,9 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     },
     theme: {
       label: 'Theme',
-      help: 'How the app looks. Applies right away.',
+      help: 'How the app looks. Automatic follows the light or dark setting of the system, also when it changes. Applies right away.',
       names: { dark: 'Dark (graphite)', light: 'Light (paper)' },
+      system: 'Automatic (system theme)',
       saveFailed: 'The theme could not be saved. Try again.',
     },
     unreadable: 'The saved app settings could not be read, so the defaults are in use.',
@@ -83,8 +86,9 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     },
     theme: {
       label: 'Tema',
-      help: 'Como o app se parece. Vale na hora.',
+      help: 'Como o app se parece. O automático segue o claro ou escuro do sistema, também quando ele muda. Vale na hora.',
       names: { dark: 'Escuro (grafite)', light: 'Claro (papel)' },
+      system: 'Automático (tema do sistema)',
       saveFailed: 'Não foi possível guardar o tema. Tente de novo.',
     },
     unreadable:

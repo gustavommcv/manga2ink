@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,6 +9,7 @@ import { useLanguage, useMessages } from '@/renderer/hooks/use-messages';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
+import { pretendToBeTheSystem } from './support/system-theme';
 
 /** Says the language and one message of it, and offers a way to change the language. */
 function Probe(): React.JSX.Element {
@@ -135,7 +136,65 @@ describe('AppSettingsProvider', () => {
     });
   });
 
-  it('puts the default theme on the page when nothing else was kept', async () => {
+  it('puts the theme the system is set to on the page when nothing else was kept, and follows it', async () => {
+    const system = pretendToBeTheSystem(false);
+    try {
+      render(
+        <AppSettingsProvider bridge={inertBridge({ loadAppSettings: reading('en') })}>
+          <Probe />
+        </AppSettingsProvider>,
+      );
+      await waitFor(() => {
+        expect(document.documentElement.dataset.theme).toBe('light');
+      });
+
+      act(() => {
+        system.set(true);
+      });
+
+      await waitFor(() => {
+        expect(document.documentElement.dataset.theme).toBe('dark');
+      });
+    } finally {
+      system.restore();
+    }
+  });
+
+  it('keeps the theme that was chosen when the system changes', async () => {
+    const system = pretendToBeTheSystem(false);
+    try {
+      render(
+        <AppSettingsProvider
+          bridge={inertBridge({
+            loadAppSettings: () =>
+              Promise.resolve({
+                ok: true,
+                value: {
+                  settings: { ...defaultAppSettings, theme: 'dark' },
+                  language: 'en',
+                  unreadable: false,
+                },
+              }),
+          })}
+        >
+          <Probe />
+        </AppSettingsProvider>,
+      );
+      await waitFor(() => {
+        expect(document.documentElement.dataset.theme).toBe('dark');
+      });
+
+      act(() => {
+        system.set(false);
+      });
+
+      expect(document.documentElement.dataset.theme).toBe('dark');
+    } finally {
+      system.restore();
+    }
+  });
+
+  it('puts the dark theme on the page when nothing else was kept and the system cannot be asked', async () => {
     render(
       <AppSettingsProvider bridge={inertBridge({ loadAppSettings: reading('en') })}>
         <Probe />

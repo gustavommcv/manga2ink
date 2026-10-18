@@ -1,6 +1,6 @@
 # ADR 0066: The look of the app is a theme, and a theme is a block of tokens
 
-- Status: Accepted
+- Status: Accepted (amended by 0067, 0070)
 - Date: 2026-10-17
 - Relates to: [ADR 0002](0002-shadcn-radix-tailwind-design-system.md) (the design tokens), [ADR 0052](0052-the-app-language-is-chosen-behind-a-gear.md) (the app's own settings and the dialog behind the gear), [ADR 0062](0062-the-window-opens-as-it-was-left.md) (what the main process makes the window with)
 

@@ -69,7 +69,7 @@ describe('reading the file of the app settings', () => {
 describe('writing the file of the app settings', () => {
   it('writes the version and the choices, on lines of their own', () => {
     expect(serializeStoredAppSettings(kept('pt-BR'))).toBe(
-      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "theme": "dark",\n  "parallelConversions": "automatic",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
+      `{\n  "version": ${String(appSettingsFileVersion)},\n  "language": "pt-BR",\n  "notifyWhenDone": true,\n  "keepAwake": true,\n  "theme": "system",\n  "parallelConversions": "automatic",\n  "processingFolder": null,\n  "earlierProcessingFolders": []\n}\n`,
     );
   });
 
@@ -118,10 +118,10 @@ describe('the choices about a queue, in the file', () => {
 
 describe('the theme, in the file', () => {
   it('is the default one for a file that does not have it, which an earlier version wrote', () => {
-    expect(parseStoredAppSettings(file({ language: 'en' }))?.theme).toBe('dark');
+    expect(parseStoredAppSettings(file({ language: 'en' }))?.theme).toBe('system');
   });
 
-  it.each(['dark', 'light'] as const)(
+  it.each(['system', 'dark', 'light'] as const)(
     'is the one the file holds, when this build has it: %s',
     (theme) => {
       expect(parseStoredAppSettings(file({ theme }))?.theme).toBe(theme);
@@ -131,18 +131,22 @@ describe('the theme, in the file', () => {
   it.each([
     ['a theme this build does not have, one a newer version added', 'neon'],
     ['a theme written another way', 'Dark'],
+    ['the system written another way', 'System'],
     ['a number', 3],
     ['nothing', null],
   ])('is the default one when the file has %s', (_name, theme) => {
     expect(parseStoredAppSettings(file({ theme }))).toEqual(defaultKeptAppSettings);
   });
 
-  it.each(['dark', 'light'] as const)('is written, and read back as it was: %s', (theme) => {
-    const settings: KeptAppSettings = { ...kept('en'), theme };
+  it.each(['system', 'dark', 'light'] as const)(
+    'is written, and read back as it was: %s',
+    (theme) => {
+      const settings: KeptAppSettings = { ...kept('en'), theme };
 
-    expect(serializeStoredAppSettings(settings)).toContain(`"theme": "${theme}"`);
-    expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
-  });
+      expect(serializeStoredAppSettings(settings)).toContain(`"theme": "${theme}"`);
+      expect(parseStoredAppSettings(serializeStoredAppSettings(settings))).toEqual(settings);
+    },
+  );
 });
 
 describe('how many are converted at once, in the file', () => {

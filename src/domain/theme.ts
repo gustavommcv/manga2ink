@@ -8,11 +8,39 @@ export const themes = ['dark', 'light'] as const;
 
 export type Theme = (typeof themes)[number];
 
-/** The theme a person starts with, and the one a file that names no theme this build has gets. */
+/**
+ * The theme the app is drawn in when nothing says otherwise: the one the bare `:root` of the
+ * stylesheet selects, a story with no toolbar choice, and what a system that is dark comes to. It is
+ * not what a person starts with (they start with `defaultThemePreference`).
+ */
 export const defaultTheme: Theme = 'dark';
 
 export function isTheme(value: unknown): value is Theme {
   return themes.includes(value as Theme);
+}
+
+/** What a person chooses: one of the themes, or whatever the system is set to (ADR 0070). */
+export const themePreferences = ['system', ...themes] as const;
+
+export type ThemePreference = (typeof themePreferences)[number];
+
+/**
+ * What a person starts with, and what a file that names no preference this build has gets: the look
+ * of the system, as the language starts as the system's.
+ */
+export const defaultThemePreference: ThemePreference = 'system';
+
+export function isThemePreference(value: unknown): value is ThemePreference {
+  return themePreferences.includes(value as ThemePreference);
+}
+
+/**
+ * The theme a preference comes to: a chosen one is that one, and following the system it is the dark
+ * theme when the system is set to dark and the light one when it is not.
+ */
+export function resolveTheme(preference: ThemePreference, systemIsDark: boolean): Theme {
+  if (preference !== 'system') return preference;
+  return systemIsDark ? 'dark' : 'light';
 }
 
 /**

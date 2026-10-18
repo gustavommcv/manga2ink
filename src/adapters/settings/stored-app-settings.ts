@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { isParallelChoice } from '@/domain/parallel-conversions';
-import { isTheme } from '@/domain/theme';
+import { isThemePreference } from '@/domain/theme';
 
 import {
   defaultAppSettings,
@@ -62,7 +62,7 @@ export function parseStoredAppSettings(raw: string): KeptAppSettings | undefined
     language: isLanguagePreference(file.language) ? file.language : defaultAppSettings.language,
     notifyWhenDone: flagIn(file.notifyWhenDone, defaultAppSettings.notifyWhenDone),
     keepAwake: flagIn(file.keepAwake, defaultAppSettings.keepAwake),
-    theme: isTheme(file.theme) ? file.theme : defaultAppSettings.theme,
+    theme: isThemePreference(file.theme) ? file.theme : defaultAppSettings.theme,
     parallelConversions: isParallelChoice(file.parallelConversions)
       ? file.parallelConversions
       : defaultAppSettings.parallelConversions,

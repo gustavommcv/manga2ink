@@ -243,7 +243,7 @@ describe('useAppSettingsState', () => {
         language: 'system',
         notifyWhenDone: false,
         keepAwake: false,
-        theme: 'dark',
+        theme: 'system',
         parallelConversions: 'automatic',
       });
     });

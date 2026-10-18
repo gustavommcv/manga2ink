@@ -18,7 +18,7 @@ const fake = vi.hoisted(() => {
     legacyMove: undefined as undefined | Record<string, unknown>,
     context: undefined as unknown as Record<string, unknown>,
     quit: undefined as unknown as { mock: { calls: unknown[][] } } & (() => void),
-    nativeTheme: { themeSource: 'system' },
+    nativeTheme: { themeSource: 'system', shouldUseDarkColors: false },
   };
   return state;
 });
@@ -290,11 +290,14 @@ vi.mock('@/main/toolchain-bootstrap', () => ({
   },
 }));
 vi.mock('@/main/window', () => ({
-  applyThemeToApp: (system: unknown, theme: unknown) => {
-    ((fake.context['themedApp'] ??= []) as unknown[]).push({ system, theme });
+  applyThemeToApp: (system: unknown, preference: unknown) => {
+    ((fake.context['themedApp'] ??= []) as unknown[]).push({ system, preference });
   },
-  applyThemeToWindow: (window: unknown, theme: unknown) => {
-    ((fake.context['themedWindows'] ??= []) as unknown[]).push({ window, theme });
+  applyThemePreference: (system: unknown, windows: unknown, preference: unknown) => {
+    ((fake.context['themedWindows'] ??= []) as unknown[]).push({ system, windows, preference });
+  },
+  followSystemTheme: (system: unknown, preference: unknown, windows: unknown) => {
+    fake.context['followed'] = { system, preference, windows };
   },
   createMainWindow: (leaving: unknown, keeper: unknown, theme: unknown) => {
     fake.calls.push('window');
@@ -344,6 +347,7 @@ const dispatch = (event: string, ...args: unknown[]): unknown =>
   (fake.listeners.get(event) as (...given: unknown[]) => unknown)(...args);
 
 beforeEach(() => {
+  fake.nativeTheme.shouldUseDarkColors = false;
   fake.calls.length = 0;
   fake.started = false;
   fake.packaged = true;
@@ -594,39 +598,89 @@ describe('starting the app', () => {
     expect(fake.context['windowTheme']).toBe('dark');
 
     fake.context['windowTheme'] = undefined;
-    fake.context['theme'] = 'chosen-later';
+    fake.context['theme'] = 'light';
     dispatch('activate');
 
-    expect(fake.context['windowTheme']).toBe('chosen-later');
+    expect(fake.context['windowTheme']).toBe('light');
   });
 
-  it('gives every window that is open the colors of a theme that is kept, and what the system draws its scheme', async () => {
+  it.each([
+    [true, 'dark'],
+    [false, 'light'],
+  ])(
+    'makes the window in the theme the system is set to, for a person who follows it: dark %s is %s',
+    async (systemIsDark, theme) => {
+      fake.context['theme'] = 'system';
+      fake.nativeTheme.shouldUseDarkColors = systemIsDark;
+      const ready = await start();
+      await ready();
+      expect(fake.context['windowTheme']).toBe(theme);
+
+      // And again from the dock, when the system has changed since.
+      fake.nativeTheme.shouldUseDarkColors = !systemIsDark;
+      dispatch('activate');
+
+      expect(fake.context['windowTheme']).toBe(systemIsDark ? 'light' : 'dark');
+    },
+  );
+
+  it('gives every window that is open, and the system, what a theme preference that is kept comes to', async () => {
     const ready = await start();
     await ready();
     const first = { id: 1 };
     const second = { id: 2 };
     fake.windows = [first, second] as never;
-    fake.context['themedApp'] = [];
+    fake.context['themedWindows'] = [];
 
-    (fake.context['themed'] as (theme: string) => void)('light');
+    (fake.context['themed'] as (preference: string) => void)('system');
 
     expect(fake.context['themedWindows']).toEqual([
-      { window: first, theme: 'light' },
-      { window: second, theme: 'light' },
+      { system: fake.nativeTheme, windows: [first, second], preference: 'system' },
     ]);
-    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, theme: 'light' }]);
   });
 
-  it('serves the page in the theme that is chosen when it is asked for, and gives the system its scheme from the start', async () => {
+  it('serves the page in the theme that is chosen when it is asked for, and gives the system its preference from the start', async () => {
     fake.context['theme'] = 'light';
     const ready = await start();
     await ready();
 
-    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, theme: 'light' }]);
+    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, preference: 'light' }]);
     const served = fake.context['servedTheme'] as () => string;
     expect(served()).toBe('light');
     fake.context['theme'] = 'dark';
     expect(served()).toBe('dark');
+  });
+
+  it('serves the page in the theme the system is set to, now, for a person who follows it', async () => {
+    fake.context['theme'] = 'system';
+    const ready = await start();
+    await ready();
+    const served = fake.context['servedTheme'] as () => string;
+
+    fake.nativeTheme.shouldUseDarkColors = true;
+    expect(served()).toBe('dark');
+    fake.nativeTheme.shouldUseDarkColors = false;
+    expect(served()).toBe('light');
+    expect(fake.context['themedApp']).toEqual([{ system: fake.nativeTheme, preference: 'system' }]);
+  });
+
+  it('follows the system while the preference says so, asking the preference and the windows each time', async () => {
+    fake.context['theme'] = 'system';
+    const ready = await start();
+    await ready();
+    const followed = fake.context['followed'] as {
+      system: unknown;
+      preference: () => string;
+      windows: () => unknown;
+    };
+    const window = { id: 1 };
+    fake.windows = [window] as never;
+
+    expect(followed.system).toBe(fake.nativeTheme);
+    expect(followed.preference()).toBe('system');
+    fake.context['theme'] = 'dark';
+    expect(followed.preference()).toBe('dark');
+    expect(followed.windows()).toEqual([window]);
   });
 
   it('gives the window the one keeper of its size and place, also when it is made again from the dock', async () => {

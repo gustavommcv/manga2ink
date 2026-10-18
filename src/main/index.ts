@@ -9,6 +9,7 @@ import { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
 import { FileLog } from '@/adapters/log/file-log';
+import { resolveTheme, type Theme } from '@/domain/theme';
 import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
@@ -46,7 +47,12 @@ import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
 import { machineCapacity } from './machine';
 import { bootstrapToolchain } from './toolchain-bootstrap';
-import { applyThemeToApp, applyThemeToWindow, createMainWindow } from './window';
+import {
+  applyThemePreference,
+  applyThemeToApp,
+  createMainWindow,
+  followSystemTheme,
+} from './window';
 
 if (started) app.quit();
 
@@ -153,9 +159,8 @@ void app.whenReady().then(async () => {
   });
 
   registerSettingsHandlers(context, preferencesWorkflow);
-  registerAppSettingsHandlers(appSettingsWorkflow, (theme) => {
-    applyThemeToApp(nativeTheme, theme);
-    for (const window of BrowserWindow.getAllWindows()) applyThemeToWindow(window, theme);
+  registerAppSettingsHandlers(appSettingsWorkflow, (preference) => {
+    applyThemePreference(nativeTheme, BrowserWindow.getAllWindows(), preference);
   });
   registerProcessingFolderHandlers(context);
   registerConversionCapacityHandlers(machineCapacity);
@@ -181,8 +186,16 @@ void app.whenReady().then(async () => {
 
   // The page is given in the theme that was chosen, and what the system draws is in its scheme, from
   // the start (ADR 0067).
-  serveRenderer(() => appSettingsWorkflow.theme());
+  // The theme is what the preference comes to now: the system's, for a person who follows it (ADR 0070).
+  const currentTheme = (): Theme =>
+    resolveTheme(appSettingsWorkflow.theme(), nativeTheme.shouldUseDarkColors);
+  serveRenderer(currentTheme);
   applyThemeToApp(nativeTheme, appSettingsWorkflow.theme());
+  followSystemTheme(
+    nativeTheme,
+    () => appSettingsWorkflow.theme(),
+    () => BrowserWindow.getAllWindows(),
+  );
   const keeper = new WindowStateKeeper(
     new FsWindowStateStore(path.join(app.getPath('userData'), 'window-state.json')),
     () => {
@@ -199,10 +212,10 @@ void app.whenReady().then(async () => {
   );
   windowState = keeper;
   await keeper.restore();
-  createMainWindow(leaving, keeper, appSettingsWorkflow.theme());
+  createMainWindow(leaving, keeper, currentTheme());
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createMainWindow(leaving, keeper, appSettingsWorkflow.theme());
+      createMainWindow(leaving, keeper, currentTheme());
     }
   });
 });

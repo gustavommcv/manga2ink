@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { defaultLanguage } from '@/domain/app-settings';
-import { defaultTheme } from '@/domain/theme';
+import { defaultThemePreference } from '@/domain/theme';
 import { type AnyMessage, message } from '@/domain/message';
 import {
   type AppSettingsBridge,
@@ -14,6 +14,7 @@ import {
   ProcessingFolderContext,
 } from '@/renderer/hooks/use-processing-folder';
 import { I18nContext } from '@/renderer/hooks/use-messages';
+import { useResolvedTheme } from '@/renderer/hooks/use-resolved-theme';
 import { messagesFor } from '@/i18n/messages';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
@@ -60,7 +61,8 @@ export function AppSettingsProvider({
 }): React.JSX.Element | null {
   const state = useAppSettingsState(bridge);
   const language = state?.language ?? defaultLanguage;
-  const theme = state?.settings.theme ?? defaultTheme;
+  // The theme the choice comes to: the system's, for a person who follows it (ADR 0070).
+  const theme = useResolvedTheme(state?.settings.theme ?? defaultThemePreference);
   const i18n = useMemo(() => ({ language, messages: messagesFor(language) }), [language]);
   const info = useMemo<AppInfo>(
     () => ({
@@ -107,10 +109,13 @@ export function AppSettingsProvider({
     document.documentElement.lang = language;
   }, [language]);
 
-  // And which theme it is in: the variables of `styles.css` that the attribute selects (ADR 0066).
+  // And which theme it is in: the variables of `styles.css` that the attribute selects (ADR 0066). It is
+  // put again once the settings are read, since what was kept can be the theme the system already comes
+  // to, and the page was given that one before.
+  const read = state !== undefined;
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-  }, [theme]);
+  }, [theme, read]);
 
   if (state === undefined) return null;
   return (

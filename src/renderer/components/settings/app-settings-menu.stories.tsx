@@ -149,6 +149,32 @@ export const Open: Story = {
   },
 };
 
+/** Nothing about the theme was kept: the app looks as the system does, and the dialog says so (ADR 0070). */
+export const LookingAsTheSystemDoes: Story = {
+  parameters: {
+    bridge: bridgeFor('en', 'en', keepsIt, undefined, {
+      loadAppSettings: () =>
+        Promise.resolve({
+          ok: true,
+          value: { settings: defaultAppSettings, language: 'en', unreadable: false },
+        }),
+    }),
+  },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'App settings' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'App settings',
+    });
+    const theme = within(dialog).getByRole('combobox', { name: 'Theme' });
+    await expect(theme).toHaveDisplayValue('Automatic (system theme)');
+    await expect(
+      within(theme)
+        .getAllByRole('option')
+        .map((option) => option.textContent),
+    ).toEqual(['Automatic (system theme)', 'Dark (graphite)', 'Light (paper)']);
+  },
+};
+
 /** What was kept is the light theme: the page is drawn in it, and the dialog says so (ADR 0067). */
 export const InTheLightTheme: Story = {
   parameters: {

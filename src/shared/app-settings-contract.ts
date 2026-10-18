@@ -7,7 +7,7 @@ import {
   languagePreferences,
 } from '@/domain/app-settings';
 import { isParallelChoice, type ParallelChoice } from '@/domain/parallel-conversions';
-import { themes } from '@/domain/theme';
+import { themePreferences } from '@/domain/theme';
 
 /**
  * What the window sends to keep the app settings (ADR 0052): the choices that changed, one or
@@ -20,7 +20,7 @@ export const saveAppSettingsCommandSchema = z
     language: z.enum(languagePreferences).optional(),
     notifyWhenDone: z.boolean().optional(),
     keepAwake: z.boolean().optional(),
-    theme: z.enum(themes).optional(),
+    theme: z.enum(themePreferences).optional(),
     parallelConversions: z
       .custom<ParallelChoice>(isParallelChoice, 'Not a number of conversions this app has.')
       .optional(),

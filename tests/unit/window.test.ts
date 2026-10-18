@@ -6,8 +6,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type Theme, themes, themeWindowColors } from '@/domain/theme';
 import type { LeavingGuard } from '@/main/leaving';
 import {
+  applyThemePreference,
   applyThemeToApp,
   applyThemeToWindow,
+  followSystemTheme,
   createMainWindow as makeMainWindow,
 } from '@/main/window';
 import type { WindowStateKeeper } from '@/main/window-state';
@@ -504,5 +506,146 @@ describe('giving what the system draws the scheme of a theme', () => {
     expect(system.themeSource).toBe('light');
     applyThemeToApp(system, 'dark');
     expect(system.themeSource).toBe('dark');
+  });
+
+  it('is the system’s own for a person who chose to follow it, so the page is told the same', () => {
+    const system = { themeSource: 'dark' as 'dark' | 'light' | 'system' };
+
+    applyThemeToApp(system, 'system');
+
+    expect(system.themeSource).toBe('system');
+  });
+});
+
+describe('a theme preference that is kept (ADR 0070)', () => {
+  const fakeWindow = () => ({ setBackgroundColor: vi.fn(), setTitleBarOverlay: vi.fn() });
+  const systemSetTo = (dark: boolean) => ({
+    themeSource: 'dark' as 'dark' | 'light' | 'system',
+    shouldUseDarkColors: dark,
+  });
+
+  it.each([
+    ['dark', true, 'dark'],
+    ['light', true, 'light'],
+    ['system', true, 'dark'],
+    ['system', false, 'light'],
+  ] as const)(
+    'gives the system its scheme and every window the colors of what %s comes to when the system is dark: %s',
+    (preference, dark, theme) => {
+      onPlatform('linux');
+      const system = systemSetTo(dark);
+      const first = fakeWindow();
+      const second = fakeWindow();
+
+      applyThemePreference(system, [first, second], preference);
+
+      expect(system.themeSource).toBe(
+        preference === 'system' ? 'system' : themeWindowColors[theme].scheme,
+      );
+      for (const window of [first, second]) {
+        expect(window.setBackgroundColor).toHaveBeenCalledExactlyOnceWith(
+          themeWindowColors[theme].background,
+        );
+      }
+    },
+  );
+
+  it('has no window to paint when none is open, and still gives the system its scheme', () => {
+    const system = systemSetTo(false);
+
+    applyThemePreference(system, [], 'dark');
+
+    expect(system.themeSource).toBe('dark');
+  });
+});
+
+describe('following the system while a person has chosen to (ADR 0070)', () => {
+  function followed(preference: 'system' | 'dark' | 'light', dark: boolean) {
+    const windows = [
+      { setBackgroundColor: vi.fn(), setTitleBarOverlay: vi.fn() },
+      { setBackgroundColor: vi.fn(), setTitleBarOverlay: vi.fn() },
+    ];
+    let listener: () => void = () => undefined;
+    const system = {
+      themeSource: 'system' as 'dark' | 'light' | 'system',
+      shouldUseDarkColors: dark,
+      on: vi.fn((event: string, given: () => void) => {
+        listener = given;
+        return event;
+      }),
+    };
+    followSystemTheme(
+      system,
+      () => preference,
+      () => windows,
+    );
+    return {
+      system,
+      windows,
+      changed: () => {
+        listener();
+      },
+    };
+  }
+
+  it('listens to the system once, for its own setting changing', () => {
+    const { system } = followed('system', true);
+
+    expect(system.on).toHaveBeenCalledExactlyOnceWith('updated', expect.any(Function));
+  });
+
+  it.each([
+    [true, 'dark'],
+    [false, 'light'],
+  ] as const)(
+    'gives every window the colors of the theme the system comes to when it changes: dark %s',
+    (dark, theme) => {
+      onPlatform('win32');
+      const { windows, changed } = followed('system', dark);
+
+      changed();
+
+      for (const window of windows) {
+        expect(window.setBackgroundColor).toHaveBeenCalledExactlyOnceWith(
+          themeWindowColors[theme].background,
+        );
+        expect(window.setTitleBarOverlay).toHaveBeenCalledOnce();
+      }
+    },
+  );
+
+  it.each(['dark', 'light'] as const)(
+    'leaves the windows alone when the person chose the %s theme',
+    (preference) => {
+      const { windows, changed } = followed(preference, true);
+
+      changed();
+
+      for (const window of windows) expect(window.setBackgroundColor).not.toHaveBeenCalled();
+    },
+  );
+
+  it('asks what the person chose each time, not once', () => {
+    let preference: 'system' | 'dark' = 'dark';
+    const window = { setBackgroundColor: vi.fn(), setTitleBarOverlay: vi.fn() };
+    let listener: () => void = () => undefined;
+    followSystemTheme(
+      {
+        themeSource: 'system',
+        shouldUseDarkColors: false,
+        on: (_event: 'updated', given: () => void) => {
+          listener = given;
+        },
+      },
+      () => preference,
+      () => [window],
+    );
+
+    listener();
+    expect(window.setBackgroundColor).not.toHaveBeenCalled();
+    preference = 'system';
+    listener();
+
+    expect(window.setBackgroundColor).toHaveBeenCalledOnce();
   });
 });

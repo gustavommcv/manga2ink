@@ -1,5 +1,5 @@
 import type { AppSettingsWorkflow } from '@/application/workflows/app-settings';
-import type { Theme } from '@/domain/theme';
+import type { ThemePreference } from '@/domain/theme';
 import {
   type RestoredAppSettings,
   type SavedAppSettings,
@@ -13,12 +13,12 @@ import { ok } from './result';
 /**
  * Loading and keeping what a person decided about the app itself (ADR 0052). Both answers carry the
  * language the choice comes to, worked out here, where the system's languages are known. When a theme
- * is among what was kept, `themed` is told it, once it is kept, so the windows that are open are given
- * its colors where the system draws them (ADR 0066).
+ * is among what was kept, `themed` is told the preference, once it is kept, so the windows that are
+ * open are given the colors of the theme it comes to, where the system draws them (ADR 0066, ADR 0070).
  */
 export function registerAppSettingsHandlers(
   workflow: Pick<AppSettingsWorkflow, 'restore' | 'save'>,
-  themed: (theme: Theme) => void,
+  themed: (theme: ThemePreference) => void,
 ): void {
   handle(
     'app:load-settings',

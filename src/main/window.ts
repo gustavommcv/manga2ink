@@ -3,7 +3,7 @@ import path from 'node:path';
 import { app, BrowserWindow, type BrowserWindowConstructorOptions } from 'electron';
 
 import { rendererUrl } from './app-protocol';
-import { type Theme, themeWindowColors } from '@/domain/theme';
+import { resolveTheme, type Theme, type ThemePreference, themeWindowColors } from '@/domain/theme';
 import { minimumWindowSize } from '@/domain/window-state';
 
 import type { LeavingGuard } from './leaving';
@@ -21,15 +21,23 @@ const titleBarOverlay = (theme: Theme): { color: string; height: number; symbolC
   symbolColor: themeWindowColors[theme].foreground,
 });
 
+/** What of the system's own look the app asks and tells (Electron's `nativeTheme`). */
+export interface ThemeSystem {
+  themeSource: 'dark' | 'light' | 'system';
+  readonly shouldUseDarkColors: boolean;
+}
+
 /**
  * Makes the parts of the app that the system draws (dialogs, menus, scrollbars) the scheme of the
- * theme, so they sit with the page whatever the system itself is set to (ADR 0067).
+ * theme, so they sit with the page whatever the system itself is set to (ADR 0067); and, for a
+ * person who chose to follow the system, the system's own, which is also what the page's
+ * `prefers-color-scheme` then says (ADR 0070).
  */
 export function applyThemeToApp(
-  system: { themeSource: 'dark' | 'light' | 'system' },
-  theme: Theme,
+  system: Pick<ThemeSystem, 'themeSource'>,
+  preference: ThemePreference,
 ): void {
-  system.themeSource = themeWindowColors[theme].scheme;
+  system.themeSource = preference === 'system' ? 'system' : themeWindowColors[preference].scheme;
 }
 
 /**
@@ -43,6 +51,37 @@ export function applyThemeToWindow(
 ): void {
   window.setBackgroundColor(themeWindowColors[theme].background);
   if (process.platform !== 'darwin') window.setTitleBarOverlay(titleBarOverlay(theme));
+}
+
+/**
+ * A theme is chosen (ADR 0070): the system is told its scheme, and every open window is given the colors
+ * of the theme the preference comes to now, which for one that follows the system is the system's.
+ */
+export function applyThemePreference(
+  system: ThemeSystem,
+  windows: readonly Pick<BrowserWindow, 'setBackgroundColor' | 'setTitleBarOverlay'>[],
+  preference: ThemePreference,
+): void {
+  applyThemeToApp(system, preference);
+  const theme = resolveTheme(preference, system.shouldUseDarkColors);
+  for (const window of windows) applyThemeToWindow(window, theme);
+}
+
+/**
+ * Follows the system while the person has chosen to (ADR 0070): when the system's own light or dark
+ * setting changes, the windows are given the colors of the theme it comes to. The page follows it by
+ * itself, through the same setting, and the system's own parts are drawn as it says.
+ */
+export function followSystemTheme(
+  system: ThemeSystem & { on: (event: 'updated', listener: () => void) => unknown },
+  preference: () => ThemePreference,
+  windows: () => readonly Pick<BrowserWindow, 'setBackgroundColor' | 'setTitleBarOverlay'>[],
+): void {
+  system.on('updated', () => {
+    if (preference() !== 'system') return;
+    const theme = resolveTheme('system', system.shouldUseDarkColors);
+    for (const window of windows()) applyThemeToWindow(window, theme);
+  });
 }
 
 /**

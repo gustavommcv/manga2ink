@@ -81,18 +81,26 @@ async function waitForDialogTitle(title: string, file: string): Promise<void> {
   }
 }
 
+/** The theme the system is set to, which an app that follows it comes to (ADR 0070). */
+const systemTheme = (): Promise<'dark' | 'light'> =>
+  browser.electron.execute((electron) =>
+    electron.nativeTheme.shouldUseDarkColors ? ('dark' as const) : ('light' as const),
+  );
+
 /**
- * Picks a theme in the dialog, and waits for the page to be in it. As with the language, the click on
- * the option now and then does not reach the page as a change, so it is made again, and said when it
- * had to be.
+ * Picks a theme in the dialog, and waits for the page to be in the theme it comes to (`pageTheme`: the
+ * theme itself, or what the system is set to for the choice to follow it). As with the language, the
+ * click on the option now and then does not reach the page as a change, so it is made again, and said
+ * when it had to be.
  */
-async function chooseTheme(value: string): Promise<void> {
+async function chooseTheme(value: string, pageTheme: string = value): Promise<void> {
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     await $('select[id$="-theme"]').selectByAttribute('value', value);
     try {
-      await browser.waitUntil(async () => (await $('html').getAttribute('data-theme')) === value, {
-        timeout: 5_000,
-      });
+      await browser.waitUntil(
+        async () => (await $('html').getAttribute('data-theme')) === pageTheme,
+        { timeout: 5_000 },
+      );
       return;
     } catch {
       console.warn(`the theme select did not change the page after attempt ${attempt} of ${value}`);
@@ -144,9 +152,10 @@ describe('packaged app settings', () => {
     await dialog.waitForDisplayed({ timeout: 30_000 });
     assert.equal(await dialog.$('h2').getText(), 'App settings');
 
-    // The page is in the theme the app starts with, which the stylesheet selects its colors by, and
-    // the dialog offers the themes there are (ADR 0066).
-    assert.equal(await $('html').getAttribute('data-theme'), 'dark');
+    // The app starts looking as the system does (ADR 0070): the page is in the theme the system comes
+    // to, which the stylesheet selects its colors by, and the dialog offers the themes there are.
+    assert.equal(await $('html').getAttribute('data-theme'), await systemTheme());
+    assert.equal(await dialog.$('option=Automatic (system theme)').isExisting(), true);
     assert.equal(await dialog.$('option=Dark (graphite)').isExisting(), true);
 
     // Choosing Portuguese changes the dialog at once and keeps the choice.
@@ -258,7 +267,7 @@ describe('packaged app settings', () => {
       const kept = await readKept(file);
       assert.equal(kept.keepAwake, true);
       assert.equal(kept.notifyWhenDone, true);
-      assert.equal(kept.theme, 'dark');
+      assert.equal(kept.theme, 'system');
       assert.equal(await $(`[id="${id}"]`).getValue(), '1');
 
       // And the app's own count puts it back, so the next tests find the app as it began.
@@ -277,7 +286,7 @@ describe('packaged app settings', () => {
     await $('button[aria-label="App settings"]').click();
     await $('[role="dialog"]').waitForDisplayed({ timeout: 30_000 });
     try {
-      assert.equal(await $('html').getAttribute('data-theme'), 'dark');
+      assert.equal(await $('html').getAttribute('data-theme'), await systemTheme());
 
       // The light theme: the page is in it as soon as it is chosen, and the choice is in the file.
       await chooseTheme('light');
@@ -302,12 +311,67 @@ describe('packaged app settings', () => {
         return await response.text();
       });
       assert.match(served, /<html[^>]*data-theme="light"/u);
-    } finally {
-      // The next tests find the app as it began, and the dialog is put away whatever happened.
+
+      // The dark theme is the same the other way round, whatever the system is set to.
       await chooseTheme('dark');
+      assert.equal(
+        await browser.electron.execute((electron) => electron.nativeTheme.themeSource),
+        'dark',
+      );
+
+      // And looking as the system does gives the system its own setting back, and the window and the
+      // page what it comes to (ADR 0070); the file holds the choice, not what it comes to.
+      const system = await systemTheme();
+      await chooseTheme('system', system);
       await browser.waitUntil(
-        async () => existsSync(file) && (await readKept(file)).theme === 'dark',
-        { timeout: 30_000, timeoutMsg: 'the app settings file did not get the dark theme back' },
+        async () => existsSync(file) && (await readKept(file)).theme === 'system',
+        {
+          timeout: 30_000,
+          timeoutMsg: 'the app settings file did not get the choice to follow the system',
+        },
+      );
+      const followed = await browser.electron.execute((electron) => ({
+        background: electron.BrowserWindow.getAllWindows()[0]?.getBackgroundColor(),
+        source: electron.nativeTheme.themeSource,
+      }));
+      assert.equal(followed.source, 'system');
+      assert.equal(followed.background?.toLowerCase(), system === 'dark' ? '#121214' : '#f5f5f8');
+      const servedAgain = await browser.electron.execute(async (electron) => {
+        const [window] = electron.BrowserWindow.getAllWindows();
+        const response = await electron.net.fetch(window?.webContents.getURL() ?? '');
+        return await response.text();
+      });
+      assert.match(servedAgain, new RegExp(`<html[^>]*data-theme="${system}"`, 'u'));
+
+      // The system changes its setting while the app runs. Asking Electron for the other scheme is
+      // what a change of the system's looks like to the app: the window is painted again by the main
+      // process, and the page, asking `prefers-color-scheme`, changes by itself.
+      const other = system === 'dark' ? 'light' : 'dark';
+      await browser.electron.execute((electron, source: 'dark' | 'light') => {
+        electron.nativeTheme.themeSource = source;
+      }, other);
+      await browser.waitUntil(async () => (await $('html').getAttribute('data-theme')) === other, {
+        timeout: 30_000,
+        timeoutMsg: 'the page did not follow the change of the system',
+      });
+      const changed = await browser.electron.execute((electron) =>
+        electron.BrowserWindow.getAllWindows()[0]?.getBackgroundColor(),
+      );
+      assert.equal(changed?.toLowerCase(), other === 'dark' ? '#121214' : '#f5f5f8');
+      await browser.electron.execute((electron) => {
+        electron.nativeTheme.themeSource = 'system';
+      });
+      await browser.waitUntil(async () => (await $('html').getAttribute('data-theme')) === system, {
+        timeout: 30_000,
+        timeoutMsg: 'the page did not follow the system back',
+      });
+    } finally {
+      // The next tests find the app as it began, looking as the system does, and the dialog is put
+      // away whatever happened.
+      await chooseTheme('system', await systemTheme());
+      await browser.waitUntil(
+        async () => existsSync(file) && (await readKept(file)).theme === 'system',
+        { timeout: 30_000, timeoutMsg: 'the app settings file did not get the system theme back' },
       );
       await browser.keys('Escape');
     }
