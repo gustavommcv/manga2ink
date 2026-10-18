@@ -31,7 +31,10 @@ export default defineConfig({
       description:
         'Mangabound organizes manga chapters into volumes, converts them into EPUB, CBZ or PDF for your e-reader, and shares books with KOReader over your local network.',
       routeMiddleware: './src/routeData.ts',
-      components: { SocialIcons: './src/components/SocialIcons.astro' },
+      components: {
+        Banner: './src/components/Banner.astro',
+        SocialIcons: './src/components/SocialIcons.astro',
+      },
       head: [
         { tag: 'meta', attrs: { property: 'og:image', content: socialPreview } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
