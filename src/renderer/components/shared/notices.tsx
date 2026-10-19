@@ -1,6 +1,4 @@
-import { X } from 'lucide-react';
-
-import { Button } from '@/renderer/components/ui/button';
+import { Callout } from '@/renderer/components/shared/callout';
 import { useMessages } from '@/renderer/hooks/use-messages';
 
 /**
@@ -17,19 +15,17 @@ export function Notices({
   const words = useMessages().shared.notices;
   if (notices.length === 0) return null;
   return (
-    <div
+    <Callout
       aria-label={words.label}
-      className="border-status-warning/40 bg-status-warning/10 mb-6 flex items-start gap-3 rounded-lg border px-4 py-3"
+      className="mb-6"
+      dismiss={{ label: words.dismiss, onDismiss }}
       role="status"
     >
-      <ul className="min-w-0 flex-1 space-y-1 text-xs">
+      <ul className="space-y-1">
         {notices.map((notice) => (
           <li key={notice}>{notice}</li>
         ))}
       </ul>
-      <Button aria-label={words.dismiss} onClick={onDismiss} size="icon" variant="ghost">
-        <X />
-      </Button>
-    </div>
+    </Callout>
   );
 }

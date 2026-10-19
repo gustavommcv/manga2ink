@@ -1,6 +1,7 @@
 import { SlidersHorizontal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { Callout } from '@/renderer/components/shared/callout';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
 
@@ -41,25 +42,25 @@ export function ItemsWithOptionsNotice({
     );
   }
   return (
-    <div
+    <Callout
+      action={
+        <Button
+          onClick={() => {
+            setCleared(count);
+            onClear();
+          }}
+          size="sm"
+          variant="outline"
+        >
+          {words.clearAll}
+        </Button>
+      }
       aria-label={words.label}
-      className="border-override/40 bg-override/10 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-lg border px-4 py-3"
+      icon={SlidersHorizontal}
       role="group"
+      tone="override"
     >
-      <SlidersHorizontal aria-hidden="true" className="text-override size-4 shrink-0" />
-      <p className="text-muted-foreground min-w-48 flex-1 text-xs leading-relaxed">
-        <span className="text-foreground font-medium">{words.some(count)}</span> {words.keep}
-      </p>
-      <Button
-        onClick={() => {
-          setCleared(count);
-          onClear();
-        }}
-        size="sm"
-        variant="outline"
-      >
-        {words.clearAll}
-      </Button>
-    </div>
+      <span className="text-foreground font-medium">{words.some(count)}</span> {words.keep}
+    </Callout>
   );
 }

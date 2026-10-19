@@ -2,7 +2,8 @@ import { Info } from 'lucide-react';
 import type React from 'react';
 
 import { useMessages } from '@/renderer/hooks/use-messages';
-import { cn } from '@/renderer/lib/utils';
+
+import { Callout } from './callout';
 
 export interface InfoBannerProps {
   readonly 'aria-label'?: string;
@@ -23,23 +24,14 @@ export function InfoBanner({
 }: InfoBannerProps): React.JSX.Element {
   const words = useMessages().shared.infoBanner;
   return (
-    <div
+    <Callout
       aria-label={ariaLabel ?? title ?? words.label}
-      className={cn(
-        'border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-lg border px-4 py-3',
-        className,
-      )}
+      {...(className === undefined ? {} : { className })}
+      icon={Info}
       role="status"
+      {...(title === undefined ? {} : { title })}
     >
-      <Info aria-hidden="true" className="text-status-warning mt-0.5 size-4 shrink-0" />
-      <div className="min-w-0 flex-1 text-xs">
-        {title !== undefined && <h2 className="text-foreground text-sm font-semibold">{title}</h2>}
-        <div
-          className={cn('text-muted-foreground leading-relaxed', title !== undefined && 'mt-0.5')}
-        >
-          {message}
-        </div>
-      </div>
-    </div>
+      {message}
+    </Callout>
   );
 }

@@ -38,6 +38,7 @@ import type { MappingMessages } from '@/i18n/mapping-messages';
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
+import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
@@ -409,17 +410,9 @@ export function MappingEditor({
       )}
 
       {operationMessage !== undefined && (
-        <div
-          aria-live="polite"
-          className="border-border bg-muted flex items-start gap-3 rounded-lg border px-4 py-3 text-sm"
-          role="status"
-        >
-          <AlertTriangle
-            aria-hidden="true"
-            className="text-status-warning mt-0.5 size-4 shrink-0"
-          />
-          <span>{operationMessage}</span>
-        </div>
+        <Callout icon={AlertTriangle} role="status" tone="neutral">
+          {operationMessage}
+        </Callout>
       )}
 
       {!showEditor && (

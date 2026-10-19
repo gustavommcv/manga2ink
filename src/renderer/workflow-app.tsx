@@ -51,6 +51,7 @@ import {
   MappingEditor,
   type MappingEditorProps,
 } from '@/renderer/components/mapping/mapping-editor';
+import { Callout } from '@/renderer/components/shared/callout';
 import { Notices } from '@/renderer/components/shared/notices';
 import { SendToKoreader } from '@/renderer/components/sharing/send-to-koreader';
 import { SharePanel } from '@/renderer/components/sharing/share-panel';
@@ -1301,16 +1302,15 @@ function ToolchainBanner({
   const { say } = useSay();
   if (toolchain === undefined || toolchain.state === 'ready') return null;
   return (
-    <section
+    <Callout
       aria-label={words.label}
-      className="border-border bg-surface mb-8 flex items-start gap-3 rounded-lg border px-4 py-3"
+      className="mb-6"
+      icon={CircleAlert}
+      title={words.title}
+      tone="neutral"
     >
-      <CircleAlert aria-hidden="true" className="text-status-warning mt-0.5 size-4" />
-      <div>
-        <h2 className="text-sm font-semibold">{words.title}</h2>
-        <p className="text-muted-foreground mt-0.5 text-xs">{say(toolchain.message)}</p>
-      </div>
-    </section>
+      {say(toolchain.message)}
+    </Callout>
   );
 }
 
@@ -1322,28 +1322,25 @@ export function IssueCallout({
   const { failure: words } = useMessages().shared;
   const { say } = useSay();
   return (
-    <section
-      className="border-status-failed/50 bg-status-failed/10 mb-6 rounded-lg border p-4"
+    <Callout
       aria-label={words.label}
+      className="mb-6"
+      icon={CircleAlert}
       role="alert"
+      title={words.title}
+      tone="failed"
     >
-      <div className="flex items-start gap-3">
-        <CircleAlert aria-hidden="true" className="text-status-failed mt-0.5 size-5 shrink-0" />
-        <div>
-          <h2 className="text-sm font-semibold">{words.title}</h2>
-          <p className="text-muted-foreground mt-1 text-sm leading-6">{say(failure.said)}</p>
-          {failure.issue?.diagnostic !== undefined && (
-            <details className="mt-3">
-              <summary className="text-muted-foreground cursor-pointer text-xs">
-                {words.technicalDetails}
-              </summary>
-              <pre className="bg-background mt-2 overflow-auto rounded-md p-3 text-xs whitespace-pre-wrap">
-                {failure.issue.diagnostic}
-              </pre>
-            </details>
-          )}
-        </div>
-      </div>
-    </section>
+      <p>{say(failure.said)}</p>
+      {failure.issue?.diagnostic !== undefined && (
+        <details className="mt-3">
+          <summary className="text-muted-foreground cursor-pointer text-xs">
+            {words.technicalDetails}
+          </summary>
+          <pre className="bg-background mt-2 overflow-auto rounded-md p-3 text-xs whitespace-pre-wrap">
+            {failure.issue.diagnostic}
+          </pre>
+        </details>
+      )}
+    </Callout>
   );
 }
