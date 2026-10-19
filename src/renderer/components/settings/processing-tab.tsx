@@ -5,10 +5,10 @@ import type { AnyMessage } from '@/domain/message';
 import { type ConversionCapacity, parallelChoiceNamed } from '@/domain/parallel-conversions';
 import { longQueueMs } from '@/domain/queue-run';
 import { sizeOf } from '@/i18n/size';
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { WaitingBooksSection } from '@/renderer/components/settings/waiting-books';
 import { Button } from '@/renderer/components/ui/button';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -230,24 +230,18 @@ function QueueChoice({
 }): React.JSX.Element {
   const id = useId();
   return (
-    <div className="flex items-start gap-3">
-      <Checkbox
-        aria-describedby={`${id}-help`}
-        checked={checked}
-        id={id}
-        onCheckedChange={(next) => {
-          onChange(next === true);
-        }}
-      />
-      <div className="space-y-0.5">
-        <label className="text-sm leading-none font-medium text-balance" htmlFor={id}>
-          {label}
-        </label>
+    <CheckRow
+      checked={checked}
+      describedBy={`${id}-help`}
+      id={id}
+      note={
         <p className="text-muted-foreground text-xs" id={`${id}-help`}>
           {help}
         </p>
-      </div>
-    </div>
+      }
+      onChange={onChange}
+      title={label}
+    />
   );
 }
 

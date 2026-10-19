@@ -9,9 +9,8 @@ import {
   singleBookLockReason,
   stepsFromMode,
 } from '@/domain/process-mode';
-import { CheckRow } from '@/renderer/components/settings/check-row';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 
 interface ProcessStepsProps {
@@ -105,15 +104,10 @@ function Step({
 }): React.JSX.Element {
   return (
     <CheckRow
-      box={
-        <Checkbox
-          aria-describedby={reason === undefined ? `${id}-tool` : `${id}-tool ${id}-reason`}
-          checked={checked}
-          disabled={reason !== undefined}
-          id={id}
-          onCheckedChange={onChange}
-        />
-      }
+      checked={checked}
+      describedBy={reason === undefined ? `${id}-tool` : `${id}-tool ${id}-reason`}
+      disabled={reason !== undefined}
+      id={id}
       note={
         <div className="space-y-0.5">
           <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
@@ -126,6 +120,7 @@ function Step({
           )}
         </div>
       }
+      onChange={onChange}
       title={
         <SettingFieldHeader
           changed={changed}

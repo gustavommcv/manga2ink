@@ -105,7 +105,7 @@ describe('mapping editor', () => {
     await user.click(screen.getByRole('button', { name: 'Edit chapter mapping' }));
     const chapterThreeRow = screen
       .getByRole('checkbox', { name: 'Select Chapter 3' })
-      .closest('div');
+      .closest<HTMLElement>('[data-slot="chapter-row"]');
     expect(within(chapterThreeRow!).getByText('Volume 2')).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Show mapping summary' }));
@@ -192,7 +192,9 @@ describe('mapping editor', () => {
     await user.selectOptions(screen.getByLabelText('Move selected chapters to'), 'volume-2');
     await user.click(screen.getByRole('button', { name: 'Assign selected' }));
 
-    const chapterTwoRow = screen.getByRole('checkbox', { name: 'Select Chapter 2' }).closest('div');
+    const chapterTwoRow = screen
+      .getByRole('checkbox', { name: 'Select Chapter 2' })
+      .closest<HTMLElement>('[data-slot="chapter-row"]');
     expect(chapterTwoRow).not.toBeNull();
     expect(within(chapterTwoRow!).getByText('Volume 2')).toBeVisible();
 
@@ -628,10 +630,10 @@ describe('mapping editor', () => {
       expect(onSuggestVolumes).toHaveBeenCalledWith('mangadex', 'work-1', undefined);
       const chapterOneRow = screen
         .getByRole('checkbox', { name: 'Select Chapter 1' })
-        .closest('div');
+        .closest<HTMLElement>('[data-slot="chapter-row"]');
       const chapterThreeRow = screen
         .getByRole('checkbox', { name: 'Select Chapter 3' })
-        .closest('div');
+        .closest<HTMLElement>('[data-slot="chapter-row"]');
       expect(within(chapterOneRow!).getByText('Volume 1')).toBeVisible();
       expect(within(chapterThreeRow!).getByText('Unassigned')).toBeVisible();
 

@@ -2,9 +2,9 @@ import { Download } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { dayOf } from '@/i18n/day';
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Button } from '@/renderer/components/ui/button';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { type UpdateCheckOutcome, useAppInfo } from '@/renderer/hooks/use-app-info';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -100,20 +100,20 @@ export function UpdatesTab(): React.JSX.Element {
           </div>
         </div>
 
-        <div className="flex items-start gap-3">
-          <Checkbox aria-describedby={`${id}-automatic-help`} disabled id={`${id}-automatic`} />
-          <div className="space-y-0.5">
-            <label
-              className="text-sm leading-none font-medium text-balance"
-              htmlFor={`${id}-automatic`}
-            >
-              {words.automatic.label}
-            </label>
+        {/* Not yet: the box is there to say it will be, and cannot be changed. */}
+        <CheckRow
+          checked={false}
+          describedBy={`${id}-automatic-help`}
+          disabled
+          id={`${id}-automatic`}
+          note={
             <p className="text-muted-foreground text-xs" id={`${id}-automatic-help`}>
               {words.automatic.help}
             </p>
-          </div>
-        </div>
+          }
+          onChange={() => undefined}
+          title={words.automatic.label}
+        />
 
         <div className="max-w-sm space-y-2">
           <label className="text-sm font-medium" htmlFor={`${id}-channel`}>
