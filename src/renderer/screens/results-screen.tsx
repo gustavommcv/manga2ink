@@ -11,7 +11,9 @@ import type { Language } from '@/domain/app-settings';
 import { warningNotices } from '@/domain/book-warnings';
 import type { AnyMessage } from '@/domain/message';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
+import { TwoColumns } from '@/renderer/components/shared/two-columns';
 import { Button } from '@/renderer/components/ui/button';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import type { ArtifactSummary } from '@/shared/workflow-contract';
@@ -67,26 +69,18 @@ export function ResultsScreen({
   const problems = outcomes.filter((outcome) => outcome.status !== 'done');
   const notices = warningNotices(artifacts);
   return (
-    <section
-      aria-labelledby="results-title"
-      className={
-        aside === undefined
-          ? 'space-y-6'
-          : 'grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]'
-      }
-    >
-      <div className="min-w-0 space-y-5">
-        <ScreenHeader
-          actions={
-            <Button onClick={onBack} variant="outline">
-              {words.convertMore}
-            </Button>
-          }
-          description={summary === undefined ? undefined : say(summary)}
-          id="results-title"
-          title={artifacts.length === 0 ? words.none : words.ready(artifacts.length)}
-        />
-
+    <Screen labelledBy="results-title">
+      <ScreenHeader
+        actions={
+          <Button onClick={onBack} variant="outline">
+            {words.convertMore}
+          </Button>
+        }
+        description={summary === undefined ? undefined : say(summary)}
+        id="results-title"
+        title={artifacts.length === 0 ? words.none : words.ready(artifacts.length)}
+      />
+      <TwoColumns aside={aside} className="space-y-5">
         {artifacts.length > 1 && onSaveAll !== undefined && (
           <Button
             onClick={() => {
@@ -225,8 +219,7 @@ export function ResultsScreen({
             ))}
           </ul>
         )}
-      </div>
-      {aside}
-    </section>
+      </TwoColumns>
+    </Screen>
   );
 }

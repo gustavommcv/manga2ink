@@ -18,6 +18,7 @@ import { AuthorLookupPanel, type AuthorLookup } from '@/renderer/components/deta
 import { type BookCoverControls, BookCovers } from '@/renderer/components/details/book-covers';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
@@ -135,7 +136,7 @@ export function BookDetailsScreen({
       : words.language.onlyEpub;
 
   return (
-    <section aria-labelledby="book-details-title" className="mx-auto max-w-3xl space-y-5">
+    <Screen labelledBy="book-details-title" width="form">
       <ScreenHeader
         back={{ label: backLabel, onBack }}
         description={words.intro}
@@ -296,6 +297,6 @@ export function BookDetailsScreen({
           {...(format === 'pdf' ? { unavailable: words.covers.pdf } : {})}
         />
       )}
-    </section>
+    </Screen>
   );
 }

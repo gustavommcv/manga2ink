@@ -40,6 +40,7 @@ import { MappingSummary } from './mapping-summary';
 
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { SaidError } from '@/renderer/lib/said-error';
@@ -244,7 +245,7 @@ export function MappingEditor({
   };
 
   return (
-    <section aria-labelledby="mapping-title" className="space-y-6">
+    <Screen labelledBy="mapping-title">
       <ScreenHeader
         actions={
           <>
@@ -857,6 +858,6 @@ export function MappingEditor({
           </div>
         </div>
       )}
-    </section>
+    </Screen>
   );
 }

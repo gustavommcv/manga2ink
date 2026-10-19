@@ -3,6 +3,7 @@ import { useId, useState } from 'react';
 
 import type { ConversionProgress } from '@/domain/conversion';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -70,9 +71,10 @@ export function RunningScreen({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const detailsId = useId();
   return (
-    <section
-      aria-labelledby="running-title"
-      className="mx-auto flex min-h-96 max-w-xl flex-col justify-center"
+    <Screen
+      className="flex min-h-96 flex-col justify-center space-y-0"
+      labelledBy="running-title"
+      width="status"
     >
       <LoaderCircle aria-hidden="true" className="text-accent size-7 animate-spin" />
       <div className="mt-6">
@@ -170,6 +172,6 @@ export function RunningScreen({
       <Button className="mt-8 self-start" onClick={onCancel} variant="outline">
         <Square /> {words.cancel}
       </Button>
-    </section>
+    </Screen>
   );
 }
