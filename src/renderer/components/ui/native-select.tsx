@@ -12,7 +12,7 @@ function NativeSelect({
     <div className="relative">
       <select
         className={cn(
-          'border-border bg-background text-foreground focus-visible:border-ring focus-visible:ring-ring/30 h-9 w-full appearance-none rounded-md border py-1 pr-9 pl-3 text-sm transition-[border-color,box-shadow] outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'border-control-border bg-background text-foreground focus-visible:border-ring focus-visible:ring-ring/30 h-9 w-full appearance-none rounded-md border py-1 pr-9 pl-3 text-sm transition-[border-color,box-shadow] outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
           className,
         )}
         data-slot="native-select"
