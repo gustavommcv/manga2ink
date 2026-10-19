@@ -1,10 +1,11 @@
-import { ArrowLeft, RotateCcw } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { RotateCcw } from 'lucide-react';
 
 import type { BookFormat } from '@/domain/conversion';
 import type { RunOptions } from '@/domain/item-options';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import { Eyebrow } from '@/renderer/components/shared/eyebrow';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
@@ -52,46 +53,33 @@ export function ItemOptionsScreen({
   singleBook,
 }: ItemOptionsScreenProps): React.JSX.Element {
   const words = useMessages().options.item;
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
-
   return (
     <section className="mx-auto max-w-5xl space-y-6" aria-labelledby="item-options-title">
-      <Button onClick={onBack} variant="ghost">
-        <ArrowLeft /> {backLabel}
-      </Button>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
-          <h1
-            className="focus-visible:ring-ring focus-visible:ring-offset-background mt-2 rounded-md text-3xl font-semibold tracking-tight break-all outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            id="item-options-title"
-            ref={titleRef}
-            tabIndex={-1}
-          >
-            {words.title(name)}
-          </h1>
-          <p className="text-muted-foreground mt-3 text-sm">{words.description}</p>
-        </div>
-        <div className="w-72 shrink-0">
-          <Button
-            aria-disabled={!hasOwnOptions}
-            className="aria-disabled:hover:text-muted-foreground -ml-3 aria-disabled:cursor-default aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
-            onClick={() => {
-              if (hasOwnOptions) onUseQueueOptions();
-            }}
-            size="sm"
-            variant="ghost"
-          >
-            <RotateCcw /> {words.useQueue}
-          </Button>
-          <p aria-live="polite" className="text-subtle-foreground mt-1 text-xs">
-            {hasOwnOptions ? words.hasOwn : words.followsQueue}
-          </p>
-        </div>
-      </div>
+      <ScreenHeader
+        actions={
+          <div className="w-72 shrink-0">
+            <Button
+              aria-disabled={!hasOwnOptions}
+              className="aria-disabled:hover:text-muted-foreground -ml-3 aria-disabled:cursor-default aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
+              onClick={() => {
+                if (hasOwnOptions) onUseQueueOptions();
+              }}
+              size="sm"
+              variant="ghost"
+            >
+              <RotateCcw /> {words.useQueue}
+            </Button>
+            <p aria-live="polite" className="text-subtle-foreground mt-1 text-xs">
+              {hasOwnOptions ? words.hasOwn : words.followsQueue}
+            </p>
+          </div>
+        }
+        back={{ label: backLabel, onBack }}
+        description={words.description}
+        eyebrow={<Eyebrow>{words.kicker}</Eyebrow>}
+        id="item-options-title"
+        title={words.title(name)}
+      />
       <MangapressSettingsEditor
         format={format}
         onFormat={(next) => {

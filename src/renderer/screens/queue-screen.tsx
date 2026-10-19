@@ -8,7 +8,7 @@ import {
   TriangleAlert,
   X,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { type QueueRow, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
@@ -21,6 +21,7 @@ import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -131,9 +132,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const language = useLanguage();
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   const summary = summarizeQueue(rows, mode);
   const mangapressRuns = mode !== 'bind-only';
   const canRun = !disabled && summary.inspecting === 0 && summary.runnable > 0;
@@ -157,31 +155,32 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
       className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
     >
       <div className="min-w-0 space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1
-            className="focus-visible:ring-ring focus-visible:ring-offset-background rounded-md text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            id="queue-title"
-            ref={titleRef}
-            tabIndex={-1}
-          >
-            {words.title}
-          </h1>
-          <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs">
-            {String(rows.length)}
-          </span>
-          <span className="flex-1" />
-          <Button disabled={disabled} onClick={onAddFiles} size="sm" variant="outline">
-            <FilePlus2 /> {words.files}
-          </Button>
-          <Button disabled={disabled} onClick={onAddFolders} size="sm" variant="outline">
-            <FolderPlus /> {words.folder}
-          </Button>
-          {rows.length > 0 && (
-            <Button onClick={onClear} size="sm" variant="ghost">
-              {words.clear}
-            </Button>
-          )}
-        </div>
+        <ScreenHeader
+          actions={
+            <div className="flex items-center gap-2">
+              <Button disabled={disabled} onClick={onAddFiles} size="sm" variant="outline">
+                <FilePlus2 /> {words.files}
+              </Button>
+              <Button disabled={disabled} onClick={onAddFolders} size="sm" variant="outline">
+                <FolderPlus /> {words.folder}
+              </Button>
+              {rows.length > 0 && (
+                <Button onClick={onClear} size="sm" variant="ghost">
+                  {words.clear}
+                </Button>
+              )}
+            </div>
+          }
+          badge={
+            <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs">
+              {String(rows.length)}
+            </span>
+          }
+          id="queue-title"
+          size="section"
+          title={words.title}
+          titleRef={titleRef}
+        />
 
         <DropTarget
           disabled={disabled}

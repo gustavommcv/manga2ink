@@ -1,5 +1,5 @@
-import { ChevronLeft, Search } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 import {
   type BookDetails,
@@ -16,7 +16,9 @@ import {
 import type { BookFormat } from '@/domain/conversion';
 import { AuthorLookupPanel, type AuthorLookup } from '@/renderer/components/details/author-lookup';
 import { type BookCoverControls, BookCovers } from '@/renderer/components/details/book-covers';
+import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
@@ -74,14 +76,10 @@ export function BookDetailsScreen({
   volumes,
 }: BookDetailsScreenProps): React.JSX.Element {
   const words = useMessages().details;
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const authorRef = useRef<HTMLInputElement>(null);
   const languageRef = useRef<HTMLInputElement>(null);
   const [lookupOpen, setLookupOpen] = useState(false);
   const [titleCutShort, setTitleCutShort] = useState(false);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   const [text, setText] = useState({
     title: details.title ?? '',
     author: details.author ?? '',
@@ -138,21 +136,13 @@ export function BookDetailsScreen({
 
   return (
     <section aria-labelledby="book-details-title" className="mx-auto max-w-3xl space-y-5">
-      <Button onClick={onBack} variant="ghost">
-        <ChevronLeft /> {backLabel}
-      </Button>
-      <div>
-        <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
-        <h1
-          className="focus-visible:ring-ring focus-visible:ring-offset-background mt-1 rounded-md text-2xl font-semibold tracking-tight break-all outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-          id="book-details-title"
-          ref={titleRef}
-          tabIndex={-1}
-        >
-          {name}
-        </h1>
-        <p className="text-subtle-foreground mt-1 text-sm">{words.intro}</p>
-      </div>
+      <ScreenHeader
+        back={{ label: backLabel, onBack }}
+        description={words.intro}
+        eyebrow={<Eyebrow>{words.kicker}</Eyebrow>}
+        id="book-details-title"
+        title={name}
+      />
 
       <div className="border-border bg-surface space-y-5 rounded-xl border p-6">
         <div className="space-y-2">
