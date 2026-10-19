@@ -50,7 +50,7 @@ export function ScreenHeader({
   return (
     <header className="space-y-5">
       {back !== undefined && (
-        <Button onClick={back.onBack} variant="ghost">
+        <Button flush="start" onClick={back.onBack} variant="ghost">
           <ChevronLeft /> {back.label}
         </Button>
       )}

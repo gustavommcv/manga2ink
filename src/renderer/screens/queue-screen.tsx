@@ -320,7 +320,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                 <FolderPlus /> {words.folder}
               </Button>
               {rows.length > 0 && (
-                <Button onClick={onClear} size="sm" variant="ghost">
+                <Button flush="end" onClick={onClear} size="sm" variant="ghost">
                   {words.clear}
                 </Button>
               )}

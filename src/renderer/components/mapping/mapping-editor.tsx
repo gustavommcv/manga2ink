@@ -455,6 +455,7 @@ export function MappingEditor({
                       : new Set(draft.chapters.map((chapter) => chapter.id)),
                   );
                 }}
+                flush="end"
                 size="sm"
                 variant="ghost"
               >

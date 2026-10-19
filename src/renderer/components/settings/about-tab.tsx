@@ -228,7 +228,7 @@ function LinkButton({
 }): React.JSX.Element {
   return (
     <Button
-      className={plain ? '-ml-3' : undefined}
+      flush={plain ? 'start' : undefined}
       onClick={() => {
         open(link);
       }}

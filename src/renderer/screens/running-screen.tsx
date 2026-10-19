@@ -121,7 +121,8 @@ export function RunningScreen({
           <Button
             aria-controls={detailsOpen ? detailsId : undefined}
             aria-expanded={detailsOpen}
-            className="mt-3 -ml-3 self-start"
+            className="mt-3 self-start"
+            flush="start"
             onClick={() => {
               setDetailsOpen((open) => !open);
             }}
