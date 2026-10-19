@@ -1,5 +1,4 @@
-import { ChevronLeft, Folder, Layers, SlidersHorizontal, UserPen } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { Folder, Layers, SlidersHorizontal, UserPen } from 'lucide-react';
 
 import { hasBookDetails } from '@/domain/book-details';
 import { isPendingTitle, isWaitingTitle, type LibraryTitle } from '@/domain/input-queue';
@@ -9,6 +8,7 @@ import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { cn } from '@/renderer/lib/utils';
 
 export interface LibraryScreenProps {
@@ -38,34 +38,16 @@ export function LibraryScreen({
 }: LibraryScreenProps): React.JSX.Element {
   const messages = useMessages();
   const words = messages.library;
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   return (
     <section aria-labelledby="library-title" className="mx-auto max-w-3xl space-y-5">
-      <Button onClick={onBack} variant="ghost">
-        <ChevronLeft /> {messages.queue.title}
-      </Button>
-      <div>
-        <h1
-          className="focus-visible:ring-ring focus-visible:ring-offset-background rounded-md text-2xl font-semibold tracking-tight break-all outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-          id="library-title"
-          ref={titleRef}
-          tabIndex={-1}
-        >
-          {name}
-        </h1>
-        <p className="text-subtle-foreground mt-1 text-sm">{words.summary(titles.length)}</p>
-        {skippedLinks.length > 0 && <SkippedLinks names={skippedLinks} />}
-        {singleBook && (
-          <InfoBanner
-            className="mt-3"
-            message={words.singleBook.text}
-            title={words.singleBook.title}
-          />
-        )}
-      </div>
+      <ScreenHeader
+        back={{ label: messages.queue.title, onBack }}
+        description={words.summary(titles.length)}
+        id="library-title"
+        title={name}
+      />
+      {skippedLinks.length > 0 && <SkippedLinks names={skippedLinks} />}
+      {singleBook && <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />}
       <ul aria-label={words.titles} className="space-y-0.5">
         {titles.map((title) => (
           <TitleRow
@@ -87,7 +69,6 @@ function SkippedLinks({ names }: { readonly names: readonly string[] }): React.J
   const notice = skippedLinksNotice(names);
   return (
     <InfoBanner
-      className="mt-3"
       message={
         <>
           {say(notice.advice)} <strong className="text-foreground">{say(notice.names)}</strong>.

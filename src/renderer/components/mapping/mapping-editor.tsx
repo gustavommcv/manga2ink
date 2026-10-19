@@ -10,7 +10,7 @@ import {
   Trash2,
   Undo2,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import {
   createMappingHistory,
@@ -38,7 +38,9 @@ import type { MappingMessages } from '@/i18n/mapping-messages';
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
+import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { SaidError } from '@/renderer/lib/said-error';
 import { Button } from '@/renderer/components/ui/button';
@@ -155,10 +157,6 @@ export function MappingEditor({
     initialDraft.source?.provider,
   );
   const generatedId = useRef(0);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   const draft = history.present;
   const effectiveTargetVolumeId = draft.volumes.some((volume) => volume.id === targetVolumeId)
     ? targetVolumeId
@@ -247,10 +245,84 @@ export function MappingEditor({
 
   return (
     <section aria-labelledby="mapping-title" className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="text-muted-foreground text-xs font-medium">{words.kicker}</p>
+      <ScreenHeader
+        actions={
+          <>
+            {onSkipGrouping !== undefined && (
+              <div className="space-y-1">
+                <Button
+                  aria-describedby="skip-grouping-detail"
+                  disabled={singleBook}
+                  onClick={onSkipGrouping}
+                  variant="outline"
+                >
+                  {words.skipGrouping.button}
+                </Button>
+                <p className="text-muted-foreground max-w-56 text-xs" id="skip-grouping-detail">
+                  {singleBook ? words.skipGrouping.singleBook : words.skipGrouping.detail}
+                </p>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              {showEditor && issues.length === 0 && draft.volumes.length > 0 && (
+                <Button
+                  onClick={() => {
+                    setEditorExpanded(false);
+                  }}
+                  size="sm"
+                  variant="outline"
+                >
+                  {words.showSummary}
+                </Button>
+              )}
+              <div
+                className="flex items-center gap-1"
+                aria-label={words.history.label}
+                role="group"
+              >
+                <Button
+                  aria-label={words.history.undo}
+                  disabled={history.past.length === 0}
+                  onClick={() => {
+                    setHistory(undoMappingCommand(history));
+                  }}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Undo2 />
+                </Button>
+                <Button
+                  aria-label={words.history.redo}
+                  disabled={history.future.length === 0}
+                  onClick={() => {
+                    setHistory(redoMappingCommand(history));
+                  }}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <Redo2 />
+                </Button>
+                <Button
+                  aria-label={words.history.reset}
+                  disabled={history.past.length === 0}
+                  onClick={() => {
+                    setHistory(createMappingHistory(initialDraft));
+                    setSelectedChapterIds(new Set());
+                    setOperationMessage(undefined);
+                  }}
+                  size="icon"
+                  variant="ghost"
+                >
+                  <RotateCcw />
+                </Button>
+              </div>
+            </div>
+          </>
+        }
+        description={showEditor ? words.introEditing : words.introReviewing}
+        eyebrow={
+          <>
+            <Eyebrow>{words.kicker}</Eyebrow>
             <span className="border-border bg-muted text-muted-foreground rounded-full border px-2 py-0.5 text-xs">
               {mappingOriginLabel(
                 draft,
@@ -260,85 +332,11 @@ export function MappingEditor({
                 words.origin,
               )}
             </span>
-          </div>
-          <h1
-            id="mapping-title"
-            className="focus-visible:ring-ring focus-visible:ring-offset-background rounded-md text-2xl font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            ref={titleRef}
-            tabIndex={-1}
-          >
-            {words.title(draft.mangaTitle)}
-          </h1>
-          <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-            {showEditor ? words.introEditing : words.introReviewing}
-          </p>
-        </div>
-        {onSkipGrouping !== undefined && (
-          <div className="space-y-1">
-            <Button
-              aria-describedby="skip-grouping-detail"
-              disabled={singleBook}
-              onClick={onSkipGrouping}
-              variant="outline"
-            >
-              {words.skipGrouping.button}
-            </Button>
-            <p className="text-muted-foreground max-w-56 text-xs" id="skip-grouping-detail">
-              {singleBook ? words.skipGrouping.singleBook : words.skipGrouping.detail}
-            </p>
-          </div>
-        )}
-        <div className="flex items-center gap-2">
-          {showEditor && issues.length === 0 && draft.volumes.length > 0 && (
-            <Button
-              onClick={() => {
-                setEditorExpanded(false);
-              }}
-              size="sm"
-              variant="outline"
-            >
-              {words.showSummary}
-            </Button>
-          )}
-          <div className="flex items-center gap-1" aria-label={words.history.label} role="group">
-            <Button
-              aria-label={words.history.undo}
-              disabled={history.past.length === 0}
-              onClick={() => {
-                setHistory(undoMappingCommand(history));
-              }}
-              size="icon"
-              variant="ghost"
-            >
-              <Undo2 />
-            </Button>
-            <Button
-              aria-label={words.history.redo}
-              disabled={history.future.length === 0}
-              onClick={() => {
-                setHistory(redoMappingCommand(history));
-              }}
-              size="icon"
-              variant="ghost"
-            >
-              <Redo2 />
-            </Button>
-            <Button
-              aria-label={words.history.reset}
-              disabled={history.past.length === 0}
-              onClick={() => {
-                setHistory(createMappingHistory(initialDraft));
-                setSelectedChapterIds(new Set());
-                setOperationMessage(undefined);
-              }}
-              size="icon"
-              variant="ghost"
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+        id="mapping-title"
+        title={words.title(draft.mangaTitle)}
+      />
       {leftOut !== undefined && <InfoBanner message={say(leftOut)} title={words.leftOut} />}
       {singleBook && <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />}
 

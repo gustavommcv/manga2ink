@@ -1,7 +1,9 @@
 import { ChevronDown, LoaderCircle, Square } from 'lucide-react';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 
 import type { ConversionProgress } from '@/domain/conversion';
+import { Eyebrow } from '@/renderer/components/shared/eyebrow';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { isPageEvent, milestone } from '@/renderer/lib/announcements';
@@ -67,27 +69,27 @@ export function RunningScreen({
   const pageEvent = isPageEvent(progress, percentage);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const detailsId = useId();
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   return (
-    <section className="mx-auto flex min-h-96 max-w-xl flex-col justify-center">
+    <section
+      aria-labelledby="running-title"
+      className="mx-auto flex min-h-96 max-w-xl flex-col justify-center"
+    >
       <LoaderCircle aria-hidden="true" className="text-accent size-7 animate-spin" />
-      <p className="text-muted-foreground mt-6 text-xs font-medium">
-        {position === undefined
-          ? words.stage[progress?.stage ?? 'none']
-          : words.item(position.index, position.total)}
-      </p>
-      <h1
-        className="focus-visible:ring-ring focus-visible:ring-offset-background mt-2 rounded-md text-2xl font-semibold outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        ref={titleRef}
-        tabIndex={-1}
-      >
-        {(progress?.stage === 'binding' ? words.heading.binding : words.heading.converting)(
-          position?.name ?? words.heading.yourBooks,
-        )}
-      </h1>
+      <div className="mt-6">
+        <ScreenHeader
+          eyebrow={
+            <Eyebrow>
+              {position === undefined
+                ? words.stage[progress?.stage ?? 'none']
+                : words.item(position.index, position.total)}
+            </Eyebrow>
+          }
+          id="running-title"
+          title={(progress?.stage === 'binding' ? words.heading.binding : words.heading.converting)(
+            position?.name ?? words.heading.yourBooks,
+          )}
+        />
+      </div>
       {/* A stage or a volume is told as it is; a page is shown and not told (see isPageEvent). */}
       <p aria-live="polite" className="text-muted-foreground mt-3 text-sm empty:hidden">
         {pageEvent || progress === undefined ? undefined : say(progress.message)}

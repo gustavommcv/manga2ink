@@ -29,6 +29,7 @@ import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
 import { singleBookLockReason } from '@/domain/process-mode';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
@@ -869,7 +870,7 @@ function SettingsSection({
   return (
     <section className="border-border bg-surface rounded-xl border p-6">
       <div className="mb-5">
-        <p className="text-muted-foreground text-xs font-medium">{eyebrow}</p>
+        <Eyebrow>{eyebrow}</Eyebrow>
         <h2 className="mt-1 text-lg font-semibold">{title}</h2>
         <p className="text-muted-foreground mt-1 text-sm">{description}</p>
       </div>

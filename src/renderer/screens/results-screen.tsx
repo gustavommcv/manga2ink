@@ -6,12 +6,12 @@ import {
   FolderOpen,
   TriangleAlert,
 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
 
 import type { Language } from '@/domain/app-settings';
 import { warningNotices } from '@/domain/book-warnings';
 import type { AnyMessage } from '@/domain/message';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
+import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import type { ArtifactSummary } from '@/shared/workflow-contract';
@@ -66,10 +66,6 @@ export function ResultsScreen({
   const artifacts = outcomes.flatMap((outcome) => outcome.artifacts);
   const problems = outcomes.filter((outcome) => outcome.status !== 'done');
   const notices = warningNotices(artifacts);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    titleRef.current?.focus();
-  }, []);
   return (
     <section
       aria-labelledby="results-title"
@@ -80,24 +76,16 @@ export function ResultsScreen({
       }
     >
       <div className="min-w-0 space-y-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1
-              className="focus-visible:ring-ring focus-visible:ring-offset-background rounded-md text-2xl font-semibold tracking-tight outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              id="results-title"
-              ref={titleRef}
-              tabIndex={-1}
-            >
-              {artifacts.length === 0 ? words.none : words.ready(artifacts.length)}
-            </h1>
-            {summary !== undefined && (
-              <p className="text-subtle-foreground mt-1 text-sm break-all">{say(summary)}</p>
-            )}
-          </div>
-          <Button onClick={onBack} variant="outline">
-            {words.convertMore}
-          </Button>
-        </div>
+        <ScreenHeader
+          actions={
+            <Button onClick={onBack} variant="outline">
+              {words.convertMore}
+            </Button>
+          }
+          description={summary === undefined ? undefined : say(summary)}
+          id="results-title"
+          title={artifacts.length === 0 ? words.none : words.ready(artifacts.length)}
+        />
 
         {artifacts.length > 1 && onSaveAll !== undefined && (
           <Button
