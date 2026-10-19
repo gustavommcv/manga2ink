@@ -1,10 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, waitFor } from 'storybook/test';
 
-import { Button } from './button';
 import { themeOf } from '@/renderer/stories/theme';
 
-/** What text can be put on, in the order of how raised it is. */
+import { Button } from './button';
+import { Checkbox } from './checkbox';
+import { Input } from './input';
+import { NativeSelect } from './native-select';
+
+/** What text and controls can be put on, in the order of how raised it is. */
 const grounds = [
   { name: 'Page', className: 'bg-background' },
   { name: 'Surface', className: 'bg-surface' },
@@ -49,6 +53,18 @@ export const Palette: Story = {
               {text.name} on {ground.name.toLowerCase()}
             </p>
           ))}
+          {/* The edge of a control is told from the ground it is on (ADR 0076). */}
+          <div className="flex items-center gap-3 pt-2">
+            <Checkbox aria-label={`A box on ${ground.name.toLowerCase()}`} />
+            <div className="w-48">
+              <Input aria-label={`A field on ${ground.name.toLowerCase()}`} />
+            </div>
+            <div className="w-48">
+              <NativeSelect aria-label={`A select on ${ground.name.toLowerCase()}`}>
+                <option>A choice</option>
+              </NativeSelect>
+            </div>
+          </div>
         </section>
       ))}
       <div className="flex flex-wrap gap-3">

@@ -74,19 +74,40 @@ function hexOf(color: string | undefined): string {
     .join('')}`;
 }
 
-/** WCAG's relative luminance of a color of the stylesheet, as the screen is given it. */
-function luminanceOf(color: string | undefined): number {
-  const [red = 0, green = 0, blue = 0] = bytesOf(color).map((byte) => {
+/** WCAG's relative luminance of the three bytes a color is painted with. */
+function luminanceOfBytes(bytes: readonly [number, number, number]): number {
+  const [red = 0, green = 0, blue = 0] = bytes.map((byte) => {
     const encoded = byte / 255;
     return encoded <= 0.04045 ? encoded / 12.92 : ((encoded + 0.055) / 1.055) ** 2.4;
   });
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
 
+/** WCAG's contrast ratio of two colors, as the bytes they are painted with. */
+function contrastOfBytes(
+  first: readonly [number, number, number],
+  second: readonly [number, number, number],
+): number {
+  const [light = 0, dark = 0] = [luminanceOfBytes(first), luminanceOfBytes(second)].sort(
+    (a, b) => b - a,
+  );
+  return (light + 0.05) / (dark + 0.05);
+}
+
 /** WCAG's contrast ratio of two colors of the stylesheet. */
 function contrastOf(first: string | undefined, second: string | undefined): number {
-  const [light = 0, dark = 0] = [luminanceOf(first), luminanceOf(second)].sort((a, b) => b - a);
-  return (light + 0.05) / (dark + 0.05);
+  return contrastOfBytes(bytesOf(first), bytesOf(second));
+}
+
+/** What a color painted over another at some opacity comes to, as the bytes it is painted with. */
+function overOf(
+  top: string | undefined,
+  alpha: number,
+  ground: string | undefined,
+): readonly [number, number, number] {
+  const [a, b] = [bytesOf(top), bytesOf(ground)];
+  const mixed = a.map((byte, index) => Math.round(byte * alpha + (b[index] ?? 0) * (1 - alpha)));
+  return [mixed[0] ?? 0, mixed[1] ?? 0, mixed[2] ?? 0];
 }
 
 describe('the themes of the app', () => {
@@ -221,6 +242,27 @@ describe('the themes in the stylesheet', () => {
       }
     });
 
+    it('on the edge of a control: the box, the field and the select, against what each is on', async () => {
+      // WCAG 1.4.11: the boundary a control is told by is at least 3:1 with what is around it: the
+      // page, a raised surface, a row the pointer is over (muted at half over a surface), or the
+      // panel of the controls of a table (muted at 30%).
+      const tokens = await tokensOf(theme);
+      const border = bytesOf(tokens.get('--control-border'));
+      const around = {
+        'the page': bytesOf(tokens.get('--background')),
+        'a surface': bytesOf(tokens.get('--surface')),
+        'a row under the pointer': overOf(tokens.get('--muted'), 0.5, tokens.get('--surface')),
+        'a panel of controls': overOf(tokens.get('--muted'), 0.3, tokens.get('--surface')),
+      };
+
+      for (const [name, ground] of Object.entries(around)) {
+        expect(
+          contrastOfBytes(border, ground),
+          `--control-border on ${name}`,
+        ).toBeGreaterThanOrEqual(3);
+      }
+    });
+
     it('on the buttons: the label of a primary button, and of a destructive one', async () => {
       const tokens = await tokensOf(theme);
 
@@ -231,6 +273,18 @@ describe('the themes in the stylesheet', () => {
         contrastOf(tokens.get('--destructive-foreground'), tokens.get('--destructive')),
       ).toBeGreaterThanOrEqual(5.5);
     });
+  });
+
+  it('keep the default color of an edge in the base layer, where a utility can change it', async () => {
+    // A rule outside every layer wins over all of Tailwind's utilities, whatever their specificity:
+    // with `* { border-color }` outside the base layer, `border-control-border`, `border-primary` and
+    // the amber of a warning had no effect (ADR 0076).
+    const css = (await readFile(stylesheet, 'utf8')).replace(/\/\*[\s\S]*?\*\//gu, '');
+
+    expect(css).toMatch(/@layer base\s*\{\s*\*\s*\{\s*border-color:\s*var\(--border\);\s*\}\s*\}/u);
+    expect(css.replace(/@layer base\s*\{\s*\*\s*\{[^{}]*\}\s*\}/u, '')).not.toMatch(
+      /(?:^|\})\s*\*\s*\{[^{}]*border-color/u,
+    );
   });
 
   it('name the default theme on the page itself, before the app has read what a person chose', async () => {
