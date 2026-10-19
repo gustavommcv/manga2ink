@@ -6,7 +6,12 @@ import { Label } from '@/renderer/components/ui/label';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
-/** A changed setting is recognizable by color and by its labeled, keyboard-accessible action. */
+/**
+ * A changed setting is recognizable by color and by its labeled, keyboard-accessible action. The header
+ * is set in the label's own size (14px, a line of 20px): in the page's (16px, a line of 24px) the label
+ * sits in the middle of a taller line, and whatever is aligned to the header starts a few pixels away
+ * from where the text is (ADR 0071).
+ */
 export function SettingFieldHeader({
   changed,
   disabled = false,
@@ -37,7 +42,7 @@ export function SettingFieldHeader({
 
   return (
     <div
-      className="focus-visible:ring-ring relative pr-7 outline-none focus-visible:rounded-sm focus-visible:ring-2"
+      className="focus-visible:ring-ring relative pr-7 text-sm outline-none focus-visible:rounded-sm focus-visible:ring-2"
       ref={header}
       tabIndex={-1}
     >

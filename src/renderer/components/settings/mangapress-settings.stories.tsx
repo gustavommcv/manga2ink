@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
+import { I18nContext } from '@/renderer/hooks/use-messages';
+import { messagesFor } from '@/i18n/messages';
+
 import { defaultMangapressSettings } from '@/domain/output-profile';
 
 import { MangapressSettingsEditor } from './mangapress-settings';
@@ -76,6 +79,76 @@ type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {};
 
+/** The middle of an element, as the page draws it. */
+const middleOf = (element: Element | null): number => {
+  if (element === null) throw new Error('An element of the page is not drawn.');
+  const { top, height } = element.getBoundingClientRect();
+  return top + height / 2;
+};
+
+/**
+ * A choice beside a field with a label is in line with the field's control, and its description with
+ * the field's own; two choices side by side are in line with each other (ADR 0071).
+ */
+export const ChoicesLineUp: Story = {
+  play: async () => {
+    const select = document.getElementById('content');
+    const box = document.getElementById('manga-style');
+    await expect(Math.abs(middleOf(box) - middleOf(select))).toBeLessThanOrEqual(0.75);
+    await expect(
+      Math.abs(
+        (document.getElementById('manga-style-message')?.getBoundingClientRect().top ?? NaN) -
+          (document.getElementById('content-message')?.getBoundingClientRect().top ?? NaN),
+      ),
+    ).toBeLessThanOrEqual(0.75);
+
+    const first = document.getElementById('no-processing');
+    const second = document.getElementById('no-kepub');
+    await expect(Math.abs(middleOf(first) - middleOf(second))).toBeLessThanOrEqual(0.5);
+    await expect(first?.closest('[data-slot="check-row"]')).not.toHaveAttribute(
+      'data-beside-field',
+    );
+  },
+};
+
+/** The same, in Portuguese, whose words are longer: the lines still meet (ADR 0071). */
+export const ChoicesLineUpInPortuguese: Story = {
+  decorators: [
+    (Story) => (
+      <I18nContext.Provider value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+        <Story />
+      </I18nContext.Provider>
+    ),
+  ],
+  play: async () => {
+    await expect(
+      Math.abs(
+        middleOf(document.getElementById('manga-style')) -
+          middleOf(document.getElementById('content')),
+      ),
+    ).toBeLessThanOrEqual(0.75);
+    await expect(
+      Math.abs(
+        (document.getElementById('manga-style-message')?.getBoundingClientRect().top ?? NaN) -
+          (document.getElementById('content-message')?.getBoundingClientRect().top ?? NaN),
+      ),
+    ).toBeLessThanOrEqual(0.75);
+  },
+};
+
+/** A changed choice shows its reset button on the row of its box, not above or below it. */
+export const ChangedChoiceLinesUp: Story = {
+  args: { settings: { ...defaultMangapressSettings, mangaStyle: false } },
+  play: async () => {
+    const reset = within(document.body).getByRole('button', {
+      name: /Manga reading order/u,
+    });
+    await expect(
+      Math.abs(middleOf(reset) - middleOf(document.getElementById('manga-style'))),
+    ).toBeLessThanOrEqual(1.5);
+  },
+};
+
 export const ModifiedOptions: Story = {
   args: {
     format: 'cbz',
@@ -104,7 +177,10 @@ export const ConditionalControls: Story = {
   },
 };
 
-/** Webtoon strips lock what mangapress never does to them; each locked control says so. */
+/**
+ * Webtoon strips lock what mangapress never does to them; each locked control says so. A locked choice,
+ * dimmed and with the reason where its description is, stays where it is: in line with its neighbour.
+ */
 export const WebtoonStrips: Story = {
   args: {
     settings: { ...defaultMangapressSettings, webtoon: true },
@@ -117,6 +193,19 @@ export const WebtoonStrips: Story = {
     await expect(canvas.getByRole('combobox', { name: 'Borders' })).toBeDisabled();
     await expect(canvas.getByRole('combobox', { name: 'Page cropping' })).toBeDisabled();
     await expect(canvas.getByRole('combobox', { name: 'Inter-panel cropping' })).toBeEnabled();
+    // The locked choice is where it would be if it were not locked.
+    await expect(
+      Math.abs(
+        middleOf(document.getElementById('manga-style')) -
+          middleOf(document.getElementById('content')),
+      ),
+    ).toBeLessThanOrEqual(0.75);
+    await expect(
+      Math.abs(
+        (document.getElementById('manga-style-message')?.getBoundingClientRect().top ?? NaN) -
+          (document.getElementById('content-message')?.getBoundingClientRect().top ?? NaN),
+      ),
+    ).toBeLessThanOrEqual(0.75);
   },
 };
 
