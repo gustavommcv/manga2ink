@@ -20,6 +20,7 @@ import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { IconLine } from '@/renderer/components/shared/icon-line';
@@ -323,11 +324,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
               )}
             </div>
           }
-          badge={
-            <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs">
-              {String(rows.length)}
-            </span>
-          }
+          badge={<Badge>{String(rows.length)}</Badge>}
           id="queue-title"
           size="section"
           title={words.title}

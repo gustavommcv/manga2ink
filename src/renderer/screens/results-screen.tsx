@@ -12,6 +12,7 @@ import { warningNotices } from '@/domain/book-warnings';
 import type { AnyMessage } from '@/domain/message';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
 import { Callout } from '@/renderer/components/shared/callout';
+import { ListRow } from '@/renderer/components/shared/list-row';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
@@ -96,58 +97,52 @@ export function ResultsScreen({
         {artifacts.length > 0 && (
           <ul aria-label={words.books} className="space-y-1">
             {artifacts.map((artifact) => (
-              <li
-                className="hover:bg-muted/40 flex items-center gap-3 rounded-xl px-3 py-2.5"
-                key={artifact.id}
-              >
-                <span
-                  aria-hidden="true"
-                  className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-lg"
-                >
-                  <BookOpen className="size-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{artifact.name}</p>
-                  <p className="text-subtle-foreground text-xs">
-                    {formatBytes(artifact.bytes, language)} ·{' '}
-                    {savedIds?.has(artifact.id) === true ? words.saved : words.notSaved}
-                  </p>
-                </div>
-                {onSaveAs !== undefined && (
+              <ListRow
+                actions={[
+                  ...(onSaveAs === undefined
+                    ? []
+                    : [
+                        <Button
+                          aria-label={words.saveBookAs(artifact.name)}
+                          onClick={() => {
+                            onSaveAs(artifact.id);
+                          }}
+                          size="sm"
+                          variant="outline"
+                        >
+                          {words.saveAs}
+                        </Button>,
+                      ]),
+                  savedIds?.has(artifact.id) === true ? (
+                    <Button
+                      aria-label={words.showInFolder(artifact.name)}
+                      onClick={() => {
+                        onShow(artifact.id);
+                      }}
+                      size="icon"
+                      variant="outline"
+                    >
+                      <FolderOpen />
+                    </Button>
+                  ) : undefined,
                   <Button
-                    aria-label={words.saveBookAs(artifact.name)}
+                    aria-label={words.open(artifact.name)}
                     onClick={() => {
-                      onSaveAs(artifact.id);
-                    }}
-                    size="sm"
-                    variant="outline"
-                  >
-                    {words.saveAs}
-                  </Button>
-                )}
-                {savedIds?.has(artifact.id) === true && (
-                  <Button
-                    aria-label={words.showInFolder(artifact.name)}
-                    onClick={() => {
-                      onShow(artifact.id);
+                      onOpen(artifact.id);
                     }}
                     size="icon"
                     variant="outline"
                   >
-                    <FolderOpen />
-                  </Button>
-                )}
-                <Button
-                  aria-label={words.open(artifact.name)}
-                  onClick={() => {
-                    onOpen(artifact.id);
-                  }}
-                  size="icon"
-                  variant="outline"
-                >
-                  <ExternalLink />
-                </Button>
-              </li>
+                    <ExternalLink />
+                  </Button>,
+                ]}
+                detail={`${formatBytes(artifact.bytes, language)} · ${
+                  savedIds?.has(artifact.id) === true ? words.saved : words.notSaved
+                }`}
+                icon={<BookOpen />}
+                key={artifact.id}
+                title={artifact.name}
+              />
             ))}
           </ul>
         )}

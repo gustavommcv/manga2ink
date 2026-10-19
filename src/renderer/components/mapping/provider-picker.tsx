@@ -1,6 +1,7 @@
 import { Check, ChevronDown } from 'lucide-react';
 import { useId, useState } from 'react';
 
+import { IconTile } from '@/renderer/components/shared/icon-tile';
 import { useClickOutside } from '@/renderer/hooks/use-click-outside';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
@@ -167,12 +168,9 @@ export function ProviderPicker({
                 }}
                 role="option"
               >
-                <span
-                  aria-hidden="true"
-                  className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-lg text-sm font-semibold"
-                >
+                <IconTile className="text-sm font-semibold">
                   {option.value === undefined ? '–' : option.title.slice(0, 1).toUpperCase()}
-                </span>
+                </IconTile>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{option.title}</span>
                   <span className="text-subtle-foreground block truncate text-xs">

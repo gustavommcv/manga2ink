@@ -38,6 +38,7 @@ import type { MappingMessages } from '@/i18n/mapping-messages';
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
+import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
@@ -325,7 +326,7 @@ export function MappingEditor({
         eyebrow={
           <>
             <Eyebrow>{words.kicker}</Eyebrow>
-            <span className="border-border bg-muted text-muted-foreground rounded-full border px-2 py-0.5 text-xs">
+            <Badge>
               {mappingOriginLabel(
                 draft,
                 initialDraft,
@@ -333,7 +334,7 @@ export function MappingEditor({
                 metadataProviders,
                 words.origin,
               )}
-            </span>
+            </Badge>
           </>
         }
         id="mapping-title"
