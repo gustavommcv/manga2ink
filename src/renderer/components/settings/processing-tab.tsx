@@ -6,6 +6,7 @@ import { type ConversionCapacity, parallelChoiceNamed } from '@/domain/parallel-
 import { longQueueMs } from '@/domain/queue-run';
 import { sizeOf } from '@/i18n/size';
 import { CheckRow } from '@/renderer/components/shared/check-row';
+import { Field } from '@/renderer/components/shared/field';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { WaitingBooksSection } from '@/renderer/components/settings/waiting-books';
 import { Button } from '@/renderer/components/ui/button';
@@ -15,6 +16,7 @@ import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages'
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
 import type { WorkflowResult } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 /**
  * Where the app works (ADR 0056): the folder it builds volumes in while it converts and keeps
@@ -87,10 +89,10 @@ export function ProcessingTab(): React.JSX.Element {
 
   return (
     <div className="space-y-4">
-      <p className="text-muted-foreground text-xs leading-relaxed">{words.description}</p>
+      <Note>{words.description}</Note>
 
       {status === undefined ? (
-        failure === undefined && <p className="text-muted-foreground text-xs">{words.loading}</p>
+        failure === undefined && <Note>{words.loading}</Note>
       ) : (
         <>
           <dl className="border-border bg-background grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 rounded-lg border p-3 text-xs">
@@ -132,7 +134,7 @@ export function ProcessingTab(): React.JSX.Element {
               {words.useDefault}
             </Button>
           </div>
-          <p className="text-muted-foreground text-xs leading-relaxed">{words.help}</p>
+          <Note>{words.help}</Note>
 
           <WaitingBooksSection onChanged={reread} waiting={status.waiting} />
 
@@ -149,7 +151,7 @@ export function ProcessingTab(): React.JSX.Element {
                   </li>
                 ))}
               </ul>
-              <p className="text-muted-foreground text-xs leading-relaxed">{words.earlier.help}</p>
+              <Note>{words.earlier.help}</Note>
             </section>
           )}
         </>
@@ -176,12 +178,13 @@ export function ProcessingTab(): React.JSX.Element {
           }}
         />
         {capacity !== undefined && (
-          <div className="space-y-2">
-            <label className="text-sm leading-none font-medium" htmlFor={parallelId}>
-              {words.queue.parallel.label}
-            </label>
+          <Field
+            description={words.queue.parallel.help}
+            id={parallelId}
+            label={words.queue.parallel.label}
+          >
             <NativeSelect
-              aria-describedby={`${parallelId}-help`}
+              aria-describedby={`${parallelId}-message`}
               id={parallelId}
               onChange={(event) => {
                 const parallelConversions = parallelChoiceNamed(event.target.value);
@@ -203,10 +206,7 @@ export function ProcessingTab(): React.JSX.Element {
                 </option>
               ))}
             </NativeSelect>
-            <p className="text-muted-foreground text-xs" id={`${parallelId}-help`}>
-              {words.queue.parallel.help}
-            </p>
-          </div>
+          </Field>
         )}
         <div aria-live="polite">
           {choiceFailed && <FieldMessage error={words.queue.saveFailed} />}
@@ -234,11 +234,7 @@ function QueueChoice({
       checked={checked}
       describedBy={`${id}-help`}
       id={id}
-      note={
-        <p className="text-muted-foreground text-xs" id={`${id}-help`}>
-          {help}
-        </p>
-      }
+      note={<Note id={`${id}-help`}>{help}</Note>}
       onChange={onChange}
       title={label}
     />

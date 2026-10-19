@@ -6,7 +6,7 @@ import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
-import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { Notices } from '@/renderer/components/shared/notices';
 import { QueueScreen, type QueueScreenProps } from '@/renderer/screens/queue-screen';
 

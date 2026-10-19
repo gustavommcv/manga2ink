@@ -35,15 +35,16 @@ import {
 import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
 import { singleBookLockReason } from '@/domain/process-mode';
-import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
-import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { Field } from '@/renderer/components/shared/field';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { Input } from '@/renderer/components/ui/input';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 interface MangapressSettingsProps {
   readonly format: BookFormat;
@@ -929,18 +930,18 @@ function SelectField({
   readonly label: string;
 }): React.JSX.Element {
   return (
-    <div className="space-y-2">
-      <SettingFieldHeader
-        changed={changed}
-        disabled={disabled}
-        id={id}
-        label={label}
-        onReset={onReset}
-        resetsTo={resetsTo}
-      />
+    <Field
+      changed={changed}
+      description={description}
+      disabled={disabled}
+      error={error}
+      id={id}
+      label={label}
+      onReset={onReset}
+      resetsTo={resetsTo}
+    >
       {children}
-      <FieldMessage description={description} error={error} id={`${id}-message`} />
-    </div>
+    </Field>
   );
 }
 
@@ -965,14 +966,15 @@ function TextField({
   readonly value: string;
 }): React.JSX.Element {
   return (
-    <div className="space-y-2">
-      <SettingFieldHeader
-        changed={changed}
-        id={id}
-        label={label}
-        onReset={onReset}
-        resetsTo={resetsTo}
-      />
+    <Field
+      changed={changed}
+      description={description}
+      error={error}
+      id={id}
+      label={label}
+      onReset={onReset}
+      resetsTo={resetsTo}
+    >
       <Input
         aria-describedby={
           description === undefined && error === undefined ? undefined : `${id}-message`
@@ -985,8 +987,7 @@ function TextField({
         placeholder={placeholder}
         value={value}
       />
-      <FieldMessage description={description} error={error} id={`${id}-message`} />
-    </div>
+    </Field>
   );
 }
 
@@ -1025,15 +1026,16 @@ function NumberField({
   // typed after clearing the field come out as "12" for "2".
   const [typed, setTyped] = useState<string>();
   return (
-    <div className="space-y-2">
-      <SettingFieldHeader
-        changed={changed}
-        id={id}
-        label={label}
-        onReset={onReset}
-        optional={optional}
-        resetsTo={resetsTo}
-      />
+    <Field
+      changed={changed}
+      description={description}
+      error={error}
+      id={id}
+      label={label}
+      onReset={onReset}
+      optional={optional}
+      resetsTo={resetsTo}
+    >
       <Input
         aria-describedby={
           description === undefined && error === undefined ? undefined : `${id}-message`
@@ -1061,8 +1063,7 @@ function NumberField({
         type="number"
         value={typed ?? value ?? ''}
       />
-      <FieldMessage description={description} error={error} id={`${id}-message`} />
-    </div>
+    </Field>
   );
 }
 
@@ -1094,11 +1095,7 @@ function ToggleField({
       describedBy={`${id}-message`}
       disabled={disabled}
       id={id}
-      note={
-        <p className="text-muted-foreground text-xs leading-relaxed" id={`${id}-message`}>
-          {description}
-        </p>
-      }
+      note={<Note id={`${id}-message`}>{description}</Note>}
       onChange={onChecked}
       title={
         <SettingFieldHeader

@@ -17,12 +17,12 @@ import type { BookFormat } from '@/domain/conversion';
 import { AuthorLookupPanel, type AuthorLookup } from '@/renderer/components/details/author-lookup';
 import { type BookCoverControls, BookCovers } from '@/renderer/components/details/book-covers';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
-import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { Field } from '@/renderer/components/shared/field';
+import { Note } from '@/renderer/components/shared/note';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { Input } from '@/renderer/components/ui/input';
-import { Label } from '@/renderer/components/ui/label';
 import { useMessages } from '@/renderer/hooks/use-messages';
 
 export interface BookDetailsScreenProps {
@@ -146,10 +146,17 @@ export function BookDetailsScreen({
       />
 
       <div className="border-border bg-surface space-y-5 rounded-xl border p-6">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium" htmlFor="details-title">
-            {series ? words.titleField.series : words.titleField.book}
-          </Label>
+        <Field
+          description={
+            titleIsFull
+              ? words.titleField.full
+              : series
+                ? words.titleField.forSeries
+                : words.titleField.forBook
+          }
+          id="details-title"
+          label={series ? words.titleField.series : words.titleField.book}
+        >
           <Input
             aria-describedby="details-title-message"
             id="details-title"
@@ -164,56 +171,41 @@ export function BookDetailsScreen({
             placeholder={defaultTitle}
             value={text.title}
           />
-          <FieldMessage
-            description={
-              titleIsFull
-                ? words.titleField.full
-                : series
-                  ? words.titleField.forSeries
-                  : words.titleField.forBook
-            }
-            id="details-title-message"
-          />
-        </div>
+        </Field>
 
         <div className="space-y-2">
-          <Label className="text-sm font-medium" htmlFor="details-author">
-            {words.author.label}
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              aria-describedby="details-author-message"
-              className="min-w-0 flex-1"
-              id="details-author"
-              maxLength={maxDetailLength}
-              onChange={(event) => {
-                update('author', event.target.value);
-              }}
-              placeholder={words.author.placeholder}
-              ref={authorRef}
-              value={text.author}
-            />
-            {lookup !== undefined && lookup.providers.length > 0 && (
-              <Button
-                aria-controls="author-lookup"
-                aria-expanded={lookupOpen}
-                onClick={() => {
-                  setLookupOpen(!lookupOpen);
+          <Field
+            {...(format === 'cbz' ? { description: words.author.cbzNote } : {})}
+            id="details-author"
+            label={words.author.label}
+          >
+            <div className="flex gap-2">
+              <Input
+                aria-describedby="details-author-message"
+                className="min-w-0 flex-1"
+                id="details-author"
+                maxLength={maxDetailLength}
+                onChange={(event) => {
+                  update('author', event.target.value);
                 }}
-                variant="outline"
-              >
-                <Search aria-hidden="true" /> {words.author.find}
-              </Button>
-            )}
-          </div>
-          <FieldMessage
-            {...(format === 'cbz'
-              ? {
-                  description: words.author.cbzNote,
-                }
-              : {})}
-            id="details-author-message"
-          />
+                placeholder={words.author.placeholder}
+                ref={authorRef}
+                value={text.author}
+              />
+              {lookup !== undefined && lookup.providers.length > 0 && (
+                <Button
+                  aria-controls="author-lookup"
+                  aria-expanded={lookupOpen}
+                  onClick={() => {
+                    setLookupOpen(!lookupOpen);
+                  }}
+                  variant="outline"
+                >
+                  <Search aria-hidden="true" /> {words.author.find}
+                </Button>
+              )}
+            </div>
+          </Field>
           {lookupOpen && lookup !== undefined && (
             <AuthorLookupPanel
               id="author-lookup"
@@ -228,10 +220,13 @@ export function BookDetailsScreen({
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium" htmlFor="details-language">
-            {words.language.label}
-          </Label>
+        <Field
+          {...(languageError === undefined
+            ? { description: languageDescription }
+            : { error: languageError })}
+          id="details-language"
+          label={words.language.label}
+        >
           <div className="flex gap-2">
             <Input
               aria-describedby="details-language-message"
@@ -259,18 +254,10 @@ export function BookDetailsScreen({
               </Button>
             )}
           </div>
-          <FieldMessage
-            {...(languageError === undefined
-              ? {
-                  description: languageDescription,
-                }
-              : { error: languageError })}
-            id="details-language-message"
-          />
-        </div>
+        </Field>
       </div>
 
-      <div className="text-muted-foreground text-xs leading-relaxed">
+      <Note as="div">
         <p className="font-medium">{series ? words.titled.series : words.titled.book}</p>
         {series && volumes.length === 0 ? (
           <p className="mt-1">{words.titled.onceSet}</p>
@@ -284,7 +271,7 @@ export function BookDetailsScreen({
             {moreVolumes > 0 && <li>{words.titled.more(moreVolumes)}</li>}
           </ul>
         )}
-      </div>
+      </Note>
 
       {covers !== undefined && (
         <BookCovers

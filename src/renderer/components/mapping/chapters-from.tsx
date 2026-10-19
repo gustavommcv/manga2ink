@@ -15,6 +15,7 @@ import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useMetadataSearch } from '@/renderer/hooks/use-metadata-search';
 import { SaidError } from '@/renderer/lib/said-error';
 import type { MetadataProviderDescriptor, MetadataSearchResult } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 type Source = 'names' | 'online' | 'manual';
 
@@ -221,7 +222,7 @@ function OnlinePanel({
         <p className="text-muted-foreground text-sm">{words.pick}</p>
       ) : (
         <>
-          <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
+          <Note className="flex flex-wrap items-center gap-x-1.5">
             {words.dataBy}
             <button
               aria-label={words.open(provider.displayName)}
@@ -234,7 +235,7 @@ function OnlinePanel({
               {provider.displayName}
               <ExternalLink aria-hidden="true" className="size-3" />
             </button>
-          </p>
+          </Note>
           <form
             className="flex flex-wrap items-center gap-2"
             onSubmit={(event) => {
@@ -259,11 +260,11 @@ function OnlinePanel({
               {words.searchButton}
             </Button>
           </form>
-          <p className="text-muted-foreground text-xs">
+          <Note>
             {words.privacy(provider.displayName)}
             {language !== undefined && words.language(language)}
-          </p>
-          {searching && <p className="text-muted-foreground text-xs">{words.searching}</p>}
+          </Note>
+          {searching && <Note>{words.searching}</Note>}
           {panelError !== undefined && (
             <p className="text-status-failed text-xs" role="alert">
               {panelError}

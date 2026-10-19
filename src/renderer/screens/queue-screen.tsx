@@ -19,10 +19,11 @@ import { DropTarget } from '@/renderer/components/queue/drop-target';
 import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
-import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
+import { Field } from '@/renderer/components/shared/field';
 import { IconLine } from '@/renderer/components/shared/icon-line';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
@@ -39,6 +40,7 @@ import type {
   PendingRunSummary,
   RejectedInput,
 } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface RowPlan {
   readonly name: string;
@@ -172,16 +174,13 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         disabled={disabled || (onlyCbz && !singleBook)}
         id="combine-into-one-volume"
         note={
-          <p
-            className="text-muted-foreground text-xs leading-relaxed"
-            id="combine-into-one-volume-message"
-          >
+          <Note id="combine-into-one-volume-message">
             {onlyCbz
               ? singleBook
                 ? words.panel.singleBook.saved
                 : words.panel.singleBook.unavailable
               : words.panel.singleBook.produces}
-          </p>
+          </Note>
         }
         onChange={onSingleBook}
         title={
@@ -197,16 +196,15 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         }
       />
 
-      <div className="space-y-1.5">
-        <SettingFieldHeader
-          changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
-          disabled={!mangapressRuns || profiles.length === 0}
-          id="queue-device"
-          label={words.panel.device}
-          onReset={() => {
-            onDeviceProfile(defaultMangapressSettings.deviceProfile);
-          }}
-        />
+      <Field
+        changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
+        disabled={!mangapressRuns || profiles.length === 0}
+        id="queue-device"
+        label={words.panel.device}
+        onReset={() => {
+          onDeviceProfile(defaultMangapressSettings.deviceProfile);
+        }}
+      >
         <NativeSelect
           disabled={!mangapressRuns || profiles.length === 0}
           id="queue-device"
@@ -221,19 +219,19 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             </option>
           ))}
         </NativeSelect>
-      </div>
+      </Field>
 
-      <div className="space-y-1.5">
-        <SettingFieldHeader
-          changed={format !== defaultFormat}
-          disabled={!mangapressRuns || singleBookActive}
-          label={words.panel.format}
-          onReset={() => {
-            if (!singleBookActive) {
-              onFormat(defaultFormat);
-            }
-          }}
-        />
+      <Field
+        changed={format !== defaultFormat}
+        {...(singleBookActive ? { description: say(singleBookLockReason) } : {})}
+        disabled={!mangapressRuns || singleBookActive}
+        label={words.panel.format}
+        onReset={() => {
+          if (!singleBookActive) {
+            onFormat(defaultFormat);
+          }
+        }}
+      >
         <SegmentedControl
           disabled={!mangapressRuns || singleBookActive}
           label={words.panel.format}
@@ -241,32 +239,28 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           options={formatOptions}
           value={format}
         />
-        {singleBookActive && (
-          <p className="text-muted-foreground text-xs leading-relaxed">
-            {say(singleBookLockReason)}
-          </p>
+      </Field>
+
+      <div>
+        {mangapressRuns && (
+          <button
+            className="border-border hover:text-foreground focus-visible:ring-ring text-muted-foreground flex w-full items-center justify-between border-t py-2.5 text-sm outline-none focus-visible:ring-2"
+            onClick={onOpenOptions}
+            type="button"
+          >
+            {words.panel.advanced}
+            <ChevronRight aria-hidden="true" className="size-4" />
+          </button>
         )}
-      </div>
-
-      {mangapressRuns && (
-        <button
-          className="border-border hover:text-foreground focus-visible:ring-ring text-muted-foreground flex w-full items-center justify-between border-t py-2.5 text-sm outline-none focus-visible:ring-2"
-          onClick={onOpenOptions}
-          type="button"
-        >
-          {words.panel.advanced}
-          <ChevronRight aria-hidden="true" className="size-4" />
-        </button>
-      )}
-
-      <div className="border-border border-t pt-3">
-        <ResetOptions
-          changed={
-            mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
-          }
-          onReset={onReset}
-          scope="queue"
-        />
+        <div className="border-border border-t pt-3">
+          <ResetOptions
+            changed={
+              mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
+            }
+            onReset={onReset}
+            scope="queue"
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -287,9 +281,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           {validating ? words.run.validating : words.run.validate}
         </Button>
         {hint !== undefined && (
-          <p aria-live="polite" className="text-muted-foreground text-xs">
+          <Note aria-live="polite" className="text-center">
             {hint}
-          </p>
+          </Note>
         )}
         {short !== null && (
           <IconLine className="text-status-warning text-xs" icon={<TriangleAlert />}>
@@ -448,11 +442,11 @@ function PendingRunItem({
           <p className="truncate" title={description}>
             {description}
           </p>
-          <p className="text-muted-foreground text-xs">
+          <Note>
             {new Intl.DateTimeFormat(language, { dateStyle: 'medium', timeStyle: 'short' }).format(
               run.createdAt,
             )}
-          </p>
+          </Note>
         </div>
         <Button
           aria-label={words.viewBooksFrom(firstBook)}
@@ -491,9 +485,7 @@ function PendingRunItem({
           role="group"
           tabIndex={-1}
         >
-          <p className="text-muted-foreground text-xs leading-relaxed">
-            {words.question(run.artifacts.length)}
-          </p>
+          <Note>{words.question(run.artifacts.length)}</Note>
           <div className="flex gap-2">
             <Button
               disabled={deleting}
@@ -536,11 +528,11 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
           {words.validated}
         </h2>
       </div>
-      <p className="text-muted-foreground text-xs">{words.nothingWritten}</p>
+      <Note>{words.nothingWritten}</Note>
       {plans.map(({ name, plan }) => (
         <div key={name}>
           <h3 className="text-sm font-medium">{name}</h3>
-          <p className="text-muted-foreground mt-1 text-xs">{say(plan.message)}</p>
+          <Note className="mt-1">{say(plan.message)}</Note>
           <ul className="mt-2 space-y-1 text-sm">
             {plan.books.map((book) => (
               <li className="flex justify-between gap-4" key={book.name}>

@@ -19,7 +19,6 @@ const grounds = [
 const texts = [
   { name: 'Foreground', className: 'text-foreground' },
   { name: 'Muted foreground', className: 'text-muted-foreground' },
-  { name: 'Subtle foreground', className: 'text-subtle-foreground' },
   { name: 'Accent', className: 'text-accent' },
   { name: 'Override', className: 'text-override' },
   { name: 'Warning', className: 'text-status-warning' },

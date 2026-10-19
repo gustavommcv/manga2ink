@@ -41,6 +41,7 @@ import { MappingSummary } from './mapping-summary';
 import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
+import { Field } from '@/renderer/components/shared/field';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -52,6 +53,7 @@ import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import type { MetadataProviderDescriptor, MetadataSearchResult } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface MappingEditorProps {
   readonly initialDraft: MappingDraft;
@@ -261,9 +263,9 @@ export function MappingEditor({
                 >
                   {words.skipGrouping.button}
                 </Button>
-                <p className="text-muted-foreground max-w-56 text-xs" id="skip-grouping-detail">
+                <Note className="max-w-56" id="skip-grouping-detail">
                   {singleBook ? words.skipGrouping.singleBook : words.skipGrouping.detail}
-                </p>
+                </Note>
               </div>
             )}
             <div className="flex items-center gap-2">
@@ -437,9 +439,9 @@ export function MappingEditor({
                 <h2 id="chapters-title" className="text-sm font-semibold">
                   {words.chapters.title}
                 </h2>
-                <p className="text-muted-foreground mt-1 text-xs">
+                <Note className="mt-1">
                   {words.chapters.selected(selectedChapterIds.size, draft.chapters.length)}
-                </p>
+                </Note>
               </div>
               <Button
                 onClick={() => {
@@ -474,7 +476,7 @@ export function MappingEditor({
                         id={`chapter-${chapter.id}`}
                         note={
                           <Label
-                            className="text-subtle-foreground block text-xs font-normal"
+                            className="text-muted-foreground block text-xs font-normal"
                             htmlFor={`chapter-${chapter.id}`}
                           >
                             {words.chapters.pages(chapter.pageCount)}
@@ -501,8 +503,7 @@ export function MappingEditor({
             </div>
             <div className="border-border bg-muted/30 space-y-4 border-t p-5">
               <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
-                <div className="space-y-2">
-                  <Label htmlFor="target-volume">{words.chapters.moveTo}</Label>
+                <Field id="target-volume" label={words.chapters.moveTo}>
                   <NativeSelect
                     disabled={draft.volumes.length === 0}
                     id="target-volume"
@@ -520,7 +521,7 @@ export function MappingEditor({
                       </option>
                     ))}
                   </NativeSelect>
-                </div>
+                </Field>
                 <Button
                   disabled={selectedChapterIds.size === 0 || effectiveTargetVolumeId === ''}
                   onClick={assignSelected}
@@ -541,11 +542,8 @@ export function MappingEditor({
                 <legend className="text-muted-foreground px-1 text-xs font-medium">
                   {words.chapters.range.legend}
                 </legend>
-                <p className="text-muted-foreground text-xs sm:col-span-2 md:col-span-4">
-                  {words.chapters.range.note}
-                </p>
-                <div className="space-y-2">
-                  <Label htmlFor="range-start">{words.chapters.range.from}</Label>
+                <Note className="sm:col-span-2 md:col-span-4">{words.chapters.range.note}</Note>
+                <Field id="range-start" label={words.chapters.range.from}>
                   <NativeSelect
                     id="range-start"
                     onChange={(event) => {
@@ -559,9 +557,8 @@ export function MappingEditor({
                       </option>
                     ))}
                   </NativeSelect>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="range-end">{words.chapters.range.through}</Label>
+                </Field>
+                <Field id="range-end" label={words.chapters.range.through}>
                   <NativeSelect
                     id="range-end"
                     onChange={(event) => {
@@ -575,9 +572,8 @@ export function MappingEditor({
                       </option>
                     ))}
                   </NativeSelect>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="range-volume">{words.chapters.range.volume}</Label>
+                </Field>
+                <Field id="range-volume" label={words.chapters.range.volume}>
                   <NativeSelect
                     disabled={draft.volumes.length === 0}
                     id="range-volume"
@@ -595,7 +591,7 @@ export function MappingEditor({
                       </option>
                     ))}
                   </NativeSelect>
-                </div>
+                </Field>
                 <Button
                   disabled={rangeStart === '' || rangeEnd === '' || effectiveTargetVolumeId === ''}
                   onClick={() => {
@@ -624,9 +620,7 @@ export function MappingEditor({
                   <h2 id="volumes-title" className="text-sm font-semibold">
                     {words.volumes.title}
                   </h2>
-                  <p className="text-muted-foreground mt-1 text-xs">
-                    {words.volumes.created(draft.volumes.length)}
-                  </p>
+                  <Note className="mt-1">{words.volumes.created(draft.volumes.length)}</Note>
                 </div>
                 <div className="flex items-end gap-2">
                   <div className="flex items-center gap-2">
@@ -652,12 +646,9 @@ export function MappingEditor({
                   </Button>
                 </div>
               </div>
-              <p
-                className="text-muted-foreground mt-3 text-xs leading-relaxed"
-                id="new-volume-help"
-              >
+              <Note className="mt-3" id="new-volume-help">
                 {words.volumes.help}
-              </p>
+              </Note>
 
               {draft.volumes.length === 0 ? (
                 <div className="border-border text-muted-foreground mt-5 rounded-lg border border-dashed px-4 py-8 text-center text-sm">
@@ -717,9 +708,9 @@ export function MappingEditor({
                             <Trash2 />
                           </Button>
                         </div>
-                        <p className="text-muted-foreground mt-3 text-xs">
+                        <Note className="mt-3">
                           {words.volumes.chapterCount(volume.chapterIds.length)}
-                        </p>
+                        </Note>
                         {volume.chapterIds.length > 1 && (
                           <div className="mt-3 space-y-2">
                             <Label htmlFor={`split-${volume.id}`}>
@@ -766,9 +757,7 @@ export function MappingEditor({
                                 <Scissors /> {words.volumes.split}
                               </Button>
                             </div>
-                            <p className="text-muted-foreground text-xs">
-                              {words.volumes.splitHelp}
-                            </p>
+                            <Note>{words.volumes.splitHelp}</Note>
                           </div>
                         )}
                         {index > 0 && (

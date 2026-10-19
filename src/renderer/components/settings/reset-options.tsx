@@ -5,6 +5,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { ResetScope } from '@/i18n/settings-messages';
+import { Note } from '@/renderer/components/shared/note';
 
 /**
  * Puts options back to their defaults, after a second click: what it discards is also what was
@@ -71,7 +72,7 @@ export function ResetOptions({
           role="group"
           tabIndex={-1}
         >
-          <p className="text-muted-foreground text-xs leading-relaxed">{words.question[scope]}</p>
+          <Note>{words.question[scope]}</Note>
           <div className="flex gap-2">
             <Button
               onClick={() => {

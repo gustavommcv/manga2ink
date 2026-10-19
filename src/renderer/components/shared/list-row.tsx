@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import type React from 'react';
 
 import { IconTile } from './icon-tile';
+import { Note } from '@/renderer/components/shared/note';
 
 /**
  * A row of a list of things a person can act on (ADR 0078): the queue, the titles of a library, the
@@ -41,8 +42,8 @@ export function ListRow({
         <p className="truncate text-sm font-medium" title={titleHint}>
           {title}
         </p>
-        <p className="text-subtle-foreground truncate text-xs">{detail}</p>
-        {notes !== undefined && <p className="text-muted-foreground mt-1 text-xs">{notes}</p>}
+        <Note className="truncate">{detail}</Note>
+        {notes !== undefined && <Note className="mt-1">{notes}</Note>}
       </div>
       <div className="ml-auto flex items-center gap-3">
         {status}

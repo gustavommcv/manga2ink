@@ -4,6 +4,7 @@ import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
 import type { AnyMessage } from '@/domain/message';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { Note } from '@/renderer/components/shared/note';
 
 /** What the covers of an item can be told to do; the item itself is the page's. */
 export interface BookCoverControls {
@@ -92,13 +93,13 @@ export function BookCovers({
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{book.title}</p>
-                  <p className="text-subtle-foreground truncate text-xs">
+                  <Note className="truncate">
                     {cover === undefined
                       ? words.firstPage
                       : cover.origin === 'folder'
                         ? words.fromFolder(cover.name)
                         : cover.name}
-                  </p>
+                  </Note>
                 </div>
                 <Button
                   aria-label={
@@ -129,11 +130,7 @@ export function BookCovers({
           })}
         </ul>
       )}
-      {note !== undefined && (
-        <p className="text-muted-foreground text-xs" role="status">
-          {sayAll(note)}
-        </p>
-      )}
+      {note !== undefined && <Note role="status">{sayAll(note)}</Note>}
     </section>
   );
 }

@@ -9,6 +9,7 @@ import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { useProcessingFolder } from '@/renderer/hooks/use-processing-folder';
+import { Note } from '@/renderer/components/shared/note';
 
 /** Where the clean-up is: nothing asked, asking what would go, asking to confirm, or deleting. */
 type Step =
@@ -93,7 +94,7 @@ export function WaitingBooksSection({
           ? words.none
           : words.summary(waiting.books, waiting.runs, sizeOf(language, waiting.bytes))}
       </p>
-      <p className="text-muted-foreground text-xs leading-relaxed">{words.help}</p>
+      <Note>{words.help}</Note>
 
       {waiting.runs > 0 && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -169,7 +170,7 @@ export function WaitingBooksSection({
       )}
 
       <div aria-live="polite">
-        {told !== undefined && <p className="text-muted-foreground text-xs">{told}</p>}
+        {told !== undefined && <Note>{told}</Note>}
         {failure !== undefined && <FieldMessage error={say(failure)} />}
       </div>
     </section>

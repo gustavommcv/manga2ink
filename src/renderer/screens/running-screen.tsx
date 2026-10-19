@@ -8,6 +8,7 @@ import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { isPageEvent, milestone } from '@/renderer/lib/announcements';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface RunPosition {
   readonly name: string;
@@ -110,9 +111,7 @@ export function RunningScreen({
           {progress?.stage === 'binding' &&
             progress.completed !== undefined &&
             progress.total !== undefined && (
-              <p className="text-muted-foreground mt-2 text-xs">
-                {words.pagesCopied(progress.completed, progress.total)}
-              </p>
+              <Note className="mt-2">{words.pagesCopied(progress.completed, progress.total)}</Note>
             )}
         </div>
       )}

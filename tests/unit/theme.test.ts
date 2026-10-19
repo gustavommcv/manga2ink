@@ -220,14 +220,12 @@ describe('the themes in the stylesheet', () => {
     const least = (text: string, ground: (typeof grounds)[number]): number => {
       const onMuted = ground === '--muted';
       if (text === '--foreground') return 12;
-      if (text === '--subtle-foreground') return 4.5;
       return onMuted ? 6 : 7;
     };
 
     it.each([
       '--foreground',
       '--muted-foreground',
-      '--subtle-foreground',
       '--accent',
       '--override',
       '--status-failed',
