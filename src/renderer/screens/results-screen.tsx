@@ -11,6 +11,7 @@ import type { Language } from '@/domain/app-settings';
 import { warningNotices } from '@/domain/book-warnings';
 import type { AnyMessage } from '@/domain/message';
 import type { RunOutcome as ReportOutcome } from '@/domain/run-report';
+import { Callout } from '@/renderer/components/shared/callout';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
@@ -152,69 +153,41 @@ export function ResultsScreen({
         )}
 
         {problems.map((outcome) => (
-          <div
-            className={
-              outcome.status === 'failed'
-                ? 'border-status-failed/40 bg-status-failed/10 flex items-start gap-3 rounded-xl border p-4'
-                : 'border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-xl border p-4'
+          <Callout
+            action={
+              outcome.fixable === true ? (
+                <Button
+                  aria-label={words.fixBook(outcome.name)}
+                  onClick={() => {
+                    onFix(outcome.rowId);
+                  }}
+                  variant="outline"
+                >
+                  {words.fix}
+                </Button>
+              ) : undefined
             }
+            icon={outcome.status === 'failed' ? CircleAlert : TriangleAlert}
             key={`${outcome.rowId}:${outcome.name}`}
             role="status"
+            title={
+              outcome.status === 'failed' ? words.failed(outcome.name) : words.skipped(outcome.name)
+            }
+            tone={outcome.status === 'failed' ? 'failed' : 'warning'}
           >
-            {outcome.status === 'failed' ? (
-              <CircleAlert
-                aria-hidden="true"
-                className="text-status-failed mt-0.5 size-5 shrink-0"
-              />
-            ) : (
-              <TriangleAlert
-                aria-hidden="true"
-                className="text-status-warning mt-0.5 size-5 shrink-0"
-              />
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium">
-                {outcome.status === 'failed'
-                  ? words.failed(outcome.name)
-                  : words.skipped(outcome.name)}
-              </p>
-              {outcome.message !== undefined && (
-                <p className="text-muted-foreground mt-0.5 text-sm">{sayAll(outcome.message)}</p>
-              )}
-            </div>
-            {outcome.fixable === true && (
-              <Button
-                aria-label={words.fixBook(outcome.name)}
-                onClick={() => {
-                  onFix(outcome.rowId);
-                }}
-                variant="outline"
-              >
-                {words.fix}
-              </Button>
-            )}
-          </div>
+            {outcome.message === undefined ? undefined : sayAll(outcome.message)}
+          </Callout>
         ))}
 
         {notices.length > 0 && (
           <ul aria-label={words.warnings} className="space-y-5">
             {notices.map((notice) => (
-              <li
-                className="border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-xl border p-4"
-                key={`${notice.code}:${say(notice.message)}`}
-              >
-                <TriangleAlert
-                  aria-hidden="true"
-                  className="text-status-warning mt-0.5 size-5 shrink-0"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium">{say(notice.title)}</p>
-                  <p className="text-muted-foreground mt-0.5 text-sm">
-                    {notice.where === undefined
-                      ? say(notice.message)
-                      : `${say(notice.where)} ${say(notice.message)}`}
-                  </p>
-                </div>
+              <li key={`${notice.code}:${say(notice.message)}`}>
+                <Callout icon={TriangleAlert} title={say(notice.title)}>
+                  {notice.where === undefined
+                    ? say(notice.message)
+                    : `${say(notice.where)} ${say(notice.message)}`}
+                </Callout>
               </li>
             ))}
           </ul>

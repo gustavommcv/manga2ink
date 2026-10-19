@@ -6,7 +6,6 @@ import {
   LoaderCircle,
   Trash2,
   TriangleAlert,
-  X,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
@@ -21,7 +20,9 @@ import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { Callout } from '@/renderer/components/shared/callout';
 import { CheckRow } from '@/renderer/components/shared/check-row';
+import { IconLine } from '@/renderer/components/shared/icon-line';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
@@ -290,15 +291,14 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           </p>
         )}
         {short !== null && (
-          <p className="text-status-warning flex gap-2 text-xs" role="status">
-            <TriangleAlert aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-            <span>
+          <IconLine className="text-status-warning text-xs" icon={<TriangleAlert />}>
+            <p role="status">
               {words.run.lowSpace(
                 sizeOf(language, short.freeBytes),
                 sizeOf(language, short.neededBytes),
               )}
-            </span>
-          </p>
+            </p>
+          </IconLine>
         )}
       </div>
     </aside>
@@ -367,16 +367,16 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         </DropTarget>
 
         {rejected.length > 0 && (
-          <div
-            className="border-status-warning/40 bg-status-warning/10 flex items-start gap-3 rounded-lg border px-4 py-3"
+          <Callout
+            dismiss={{ label: words.rejected.dismiss, onDismiss: onDismissRejected }}
             role="status"
           >
-            <ul className="min-w-0 flex-1 space-y-1 text-xs">
+            <ul className="space-y-1">
               {rejected.map((item, index) => (
                 <li key={`${item.name ?? ''}-${String(index)}`}>
                   {item.name !== undefined && (
                     <>
-                      <span className="font-medium">{item.name}</span>{' '}
+                      <span className="text-foreground font-medium">{item.name}</span>{' '}
                       {words.rejected.wasNotAdded}{' '}
                     </>
                   )}
@@ -384,15 +384,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                 </li>
               ))}
             </ul>
-            <Button
-              aria-label={words.rejected.dismiss}
-              onClick={onDismissRejected}
-              size="icon"
-              variant="ghost"
-            >
-              <X />
-            </Button>
-          </div>
+          </Callout>
         )}
 
         {plans !== undefined && plans.length > 0 && <PlansPanel plans={plans} />}
