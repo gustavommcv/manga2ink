@@ -9,6 +9,7 @@ import {
   singleBookLockReason,
   stepsFromMode,
 } from '@/domain/process-mode';
+import { CheckRow } from '@/renderer/components/settings/check-row';
 import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -103,16 +104,29 @@ function Step({
   readonly tool: string;
 }): React.JSX.Element {
   return (
-    <div className="flex items-start gap-3">
-      <Checkbox
-        aria-describedby={reason === undefined ? `${id}-tool` : `${id}-tool ${id}-reason`}
-        checked={checked}
-        className="mt-0.5"
-        disabled={reason !== undefined}
-        id={id}
-        onCheckedChange={onChange}
-      />
-      <div className="min-w-0 flex-1 space-y-0.5">
+    <CheckRow
+      box={
+        <Checkbox
+          aria-describedby={reason === undefined ? `${id}-tool` : `${id}-tool ${id}-reason`}
+          checked={checked}
+          disabled={reason !== undefined}
+          id={id}
+          onCheckedChange={onChange}
+        />
+      }
+      note={
+        <div className="space-y-0.5">
+          <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
+            {tool}
+          </p>
+          {reason !== undefined && (
+            <p className="text-muted-foreground text-xs" id={`${id}-reason`}>
+              {reason}
+            </p>
+          )}
+        </div>
+      }
+      title={
         <SettingFieldHeader
           changed={changed}
           disabled={reason !== undefined}
@@ -120,15 +134,7 @@ function Step({
           label={label}
           onReset={onReset}
         />
-        <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
-          {tool}
-        </p>
-        {reason !== undefined && (
-          <p className="text-muted-foreground text-xs" id={`${id}-reason`}>
-            {reason}
-          </p>
-        )}
-      </div>
-    </div>
+      }
+    />
   );
 }

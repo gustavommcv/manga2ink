@@ -827,3 +827,58 @@ describe('mangapress settings editor', () => {
     }
   });
 });
+
+describe('where a choice is put among the fields of its section (ADR 0071)', () => {
+  const rowOf = (id: string): HTMLElement => {
+    const found = document.getElementById(id)?.closest<HTMLElement>('[data-slot="check-row"]');
+    if (found === null || found === undefined) throw new Error(`The choice ${id} is not drawn.`);
+    return found;
+  };
+
+  it('is in line with the control of the field beside it, when that field has a label', () => {
+    render(<StatefulEditor />);
+
+    // Beside the select of the content of the pages, and beside the select of the wide pages.
+    expect(rowOf('manga-style')).toHaveAttribute('data-beside-field');
+    expect(rowOf('rotate-first')).toHaveAttribute('data-beside-field');
+  });
+
+  it('is not moved when it is beside another choice, in either column', () => {
+    render(<StatefulEditor />);
+
+    for (const id of ['no-processing', 'no-kepub', 'no-rotate', 'rotate-right']) {
+      expect(rowOf(id), id).not.toHaveAttribute('data-beside-field');
+    }
+  });
+
+  it('is not moved when it is alone in its row', () => {
+    render(<StatefulEditor />);
+
+    // The fifth of a section whose first is a select: its row has nothing beside it.
+    expect(rowOf('maximize-strips')).not.toHaveAttribute('data-beside-field');
+  });
+
+  it('has a label slot only where it is beside a field, and nowhere else', () => {
+    const { container } = render(<StatefulEditor />);
+
+    const slots = container.querySelectorAll('[data-slot="check-row-lead"]');
+    const marked = container.querySelectorAll('[data-beside-field]');
+    expect(slots.length).toBeGreaterThan(0);
+    expect(slots).toHaveLength(marked.length);
+  });
+
+  it('keeps what each choice does: it is checked by its own box, named by its own words', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulEditor onChange={onChange} />);
+
+    await user.click(screen.getByRole('checkbox', { name: 'Manga reading order' }));
+
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ mangaStyle: !defaultMangapressSettings.mangaStyle }),
+    );
+    expect(
+      screen.getByRole('checkbox', { name: 'Manga reading order' }),
+    ).toHaveAccessibleDescription('Use right-to-left reading and spread-split order.');
+  });
+});
