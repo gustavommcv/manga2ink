@@ -5,6 +5,7 @@ import type { RunOptions } from '@/domain/item-options';
 import type { MangapressSettings } from '@/domain/output-profile';
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
@@ -54,7 +55,7 @@ export function ItemOptionsScreen({
 }: ItemOptionsScreenProps): React.JSX.Element {
   const words = useMessages().options.item;
   return (
-    <section className="mx-auto max-w-5xl space-y-6" aria-labelledby="item-options-title">
+    <Screen labelledBy="item-options-title">
       <ScreenHeader
         actions={
           <div className="w-72 shrink-0">
@@ -94,6 +95,6 @@ export function ItemOptionsScreen({
         settings={settings}
         singleBook={singleBook}
       />
-    </section>
+    </Screen>
   );
 }

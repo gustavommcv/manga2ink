@@ -8,6 +8,7 @@ import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { cn } from '@/renderer/lib/utils';
 
@@ -39,7 +40,7 @@ export function LibraryScreen({
   const messages = useMessages();
   const words = messages.library;
   return (
-    <section aria-labelledby="library-title" className="mx-auto max-w-3xl space-y-5">
+    <Screen labelledBy="library-title" width="form">
       <ScreenHeader
         back={{ label: messages.queue.title, onBack }}
         description={words.summary(titles.length)}
@@ -59,7 +60,7 @@ export function LibraryScreen({
           />
         ))}
       </ul>
-    </section>
+    </Screen>
   );
 }
 

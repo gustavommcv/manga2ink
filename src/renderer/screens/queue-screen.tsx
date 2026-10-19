@@ -21,7 +21,9 @@ import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
+import { TwoColumns } from '@/renderer/components/shared/two-columns';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -149,12 +151,165 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
   const singleBookActive = singleBook && !onlyCbz;
 
-  return (
-    <section
-      aria-labelledby="queue-title"
-      className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
+  const panel = (
+    <aside
+      aria-label={words.panel.label}
+      className="border-border bg-surface h-fit space-y-5 rounded-xl border p-5"
     >
-      <div className="min-w-0 space-y-3">
+      <ProcessSteps
+        disabled={disabled}
+        input={stepsInput(rows)}
+        mode={mode}
+        onMode={onMode}
+        singleBook={singleBookActive}
+      />
+
+      <div className="flex items-start gap-3">
+        <Checkbox
+          aria-describedby="combine-into-one-volume-message"
+          checked={singleBook}
+          className="mt-0.5"
+          disabled={disabled || (onlyCbz && !singleBook)}
+          id="combine-into-one-volume"
+          onCheckedChange={(value) => {
+            onSingleBook(value === true);
+          }}
+        />
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <SettingFieldHeader
+            changed={singleBook}
+            disabled={disabled || (onlyCbz && !singleBook)}
+            id="combine-into-one-volume"
+            label={words.panel.singleBook.label}
+            onReset={() => {
+              onSingleBook(false);
+            }}
+          />
+          <p
+            className="text-muted-foreground text-xs leading-relaxed"
+            id="combine-into-one-volume-message"
+          >
+            {onlyCbz
+              ? singleBook
+                ? words.panel.singleBook.saved
+                : words.panel.singleBook.unavailable
+              : words.panel.singleBook.produces}
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <SettingFieldHeader
+          changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
+          disabled={!mangapressRuns || profiles.length === 0}
+          id="queue-device"
+          label={words.panel.device}
+          onReset={() => {
+            onDeviceProfile(defaultMangapressSettings.deviceProfile);
+          }}
+        />
+        <NativeSelect
+          disabled={!mangapressRuns || profiles.length === 0}
+          id="queue-device"
+          onChange={(event) => {
+            onDeviceProfile(event.target.value);
+          }}
+          value={settings.deviceProfile}
+        >
+          {profiles.map((profile) => (
+            <option key={profile.code} value={profile.code}>
+              {profile.name}
+            </option>
+          ))}
+        </NativeSelect>
+      </div>
+
+      <div className="space-y-1.5">
+        <SettingFieldHeader
+          changed={format !== defaultFormat}
+          disabled={!mangapressRuns || singleBookActive}
+          label={words.panel.format}
+          onReset={() => {
+            if (!singleBookActive) {
+              onFormat(defaultFormat);
+            }
+          }}
+        />
+        <SegmentedControl
+          disabled={!mangapressRuns || singleBookActive}
+          label={words.panel.format}
+          onChange={onFormat}
+          options={formatOptions}
+          value={format}
+        />
+        {singleBookActive && (
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            {say(singleBookLockReason)}
+          </p>
+        )}
+      </div>
+
+      {mangapressRuns && (
+        <button
+          className="border-border hover:text-foreground focus-visible:ring-ring text-muted-foreground flex w-full items-center justify-between border-t py-2.5 text-sm outline-none focus-visible:ring-2"
+          onClick={onOpenOptions}
+          type="button"
+        >
+          {words.panel.advanced}
+          <ChevronRight aria-hidden="true" className="size-4" />
+        </button>
+      )}
+
+      <div className="border-border border-t pt-3">
+        <ResetOptions
+          changed={
+            mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
+          }
+          onReset={onReset}
+          scope="queue"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Button className="w-full" disabled={!canRun} onClick={onConvert} size="lg">
+          {words.run.process(summary.runnable)}
+        </Button>
+        <Button
+          className="w-full"
+          disabled={!canRun || validating}
+          onClick={onValidate}
+          variant="ghost"
+        >
+          {validating ? (
+            <LoaderCircle aria-hidden="true" className="animate-spin" />
+          ) : (
+            <CheckCircle2 />
+          )}
+          {validating ? words.run.validating : words.run.validate}
+        </Button>
+        {hint !== undefined && (
+          <p aria-live="polite" className="text-muted-foreground text-xs">
+            {hint}
+          </p>
+        )}
+        {short !== null && (
+          <p className="text-status-warning flex gap-2 text-xs" role="status">
+            <TriangleAlert aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+            <span>
+              {words.run.lowSpace(
+                sizeOf(language, short.freeBytes),
+                sizeOf(language, short.neededBytes),
+              )}
+            </span>
+          </p>
+        )}
+      </div>
+    </aside>
+  );
+
+  return (
+    <Screen labelledBy="queue-title">
+      <TwoColumns aside={panel} className="space-y-3">
         <ScreenHeader
           actions={
             <div className="flex items-center gap-2">
@@ -272,162 +427,8 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             </ul>
           </section>
         )}
-      </div>
-
-      <aside
-        aria-label={words.panel.label}
-        className="border-border bg-surface h-fit space-y-5 rounded-xl border p-5"
-      >
-        <ProcessSteps
-          disabled={disabled}
-          input={stepsInput(rows)}
-          mode={mode}
-          onMode={onMode}
-          singleBook={singleBookActive}
-        />
-
-        <div className="flex items-start gap-3">
-          <Checkbox
-            aria-describedby="combine-into-one-volume-message"
-            checked={singleBook}
-            className="mt-0.5"
-            disabled={disabled || (onlyCbz && !singleBook)}
-            id="combine-into-one-volume"
-            onCheckedChange={(value) => {
-              onSingleBook(value === true);
-            }}
-          />
-          <div className="min-w-0 flex-1 space-y-0.5">
-            <SettingFieldHeader
-              changed={singleBook}
-              disabled={disabled || (onlyCbz && !singleBook)}
-              id="combine-into-one-volume"
-              label={words.panel.singleBook.label}
-              onReset={() => {
-                onSingleBook(false);
-              }}
-            />
-            <p
-              className="text-muted-foreground text-xs leading-relaxed"
-              id="combine-into-one-volume-message"
-            >
-              {onlyCbz
-                ? singleBook
-                  ? words.panel.singleBook.saved
-                  : words.panel.singleBook.unavailable
-                : words.panel.singleBook.produces}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <SettingFieldHeader
-            changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
-            disabled={!mangapressRuns || profiles.length === 0}
-            id="queue-device"
-            label={words.panel.device}
-            onReset={() => {
-              onDeviceProfile(defaultMangapressSettings.deviceProfile);
-            }}
-          />
-          <NativeSelect
-            disabled={!mangapressRuns || profiles.length === 0}
-            id="queue-device"
-            onChange={(event) => {
-              onDeviceProfile(event.target.value);
-            }}
-            value={settings.deviceProfile}
-          >
-            {profiles.map((profile) => (
-              <option key={profile.code} value={profile.code}>
-                {profile.name}
-              </option>
-            ))}
-          </NativeSelect>
-        </div>
-
-        <div className="space-y-1.5">
-          <SettingFieldHeader
-            changed={format !== defaultFormat}
-            disabled={!mangapressRuns || singleBookActive}
-            label={words.panel.format}
-            onReset={() => {
-              if (!singleBookActive) {
-                onFormat(defaultFormat);
-              }
-            }}
-          />
-          <SegmentedControl
-            disabled={!mangapressRuns || singleBookActive}
-            label={words.panel.format}
-            onChange={onFormat}
-            options={formatOptions}
-            value={format}
-          />
-          {singleBookActive && (
-            <p className="text-muted-foreground text-xs leading-relaxed">
-              {say(singleBookLockReason)}
-            </p>
-          )}
-        </div>
-
-        {mangapressRuns && (
-          <button
-            className="border-border hover:text-foreground focus-visible:ring-ring text-muted-foreground flex w-full items-center justify-between border-t py-2.5 text-sm outline-none focus-visible:ring-2"
-            onClick={onOpenOptions}
-            type="button"
-          >
-            {words.panel.advanced}
-            <ChevronRight aria-hidden="true" className="size-4" />
-          </button>
-        )}
-
-        <div className="border-border border-t pt-3">
-          <ResetOptions
-            changed={
-              mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
-            }
-            onReset={onReset}
-            scope="queue"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Button className="w-full" disabled={!canRun} onClick={onConvert} size="lg">
-            {words.run.process(summary.runnable)}
-          </Button>
-          <Button
-            className="w-full"
-            disabled={!canRun || validating}
-            onClick={onValidate}
-            variant="ghost"
-          >
-            {validating ? (
-              <LoaderCircle aria-hidden="true" className="animate-spin" />
-            ) : (
-              <CheckCircle2 />
-            )}
-            {validating ? words.run.validating : words.run.validate}
-          </Button>
-          {hint !== undefined && (
-            <p aria-live="polite" className="text-muted-foreground text-xs">
-              {hint}
-            </p>
-          )}
-          {short !== null && (
-            <p className="text-status-warning flex gap-2 text-xs" role="status">
-              <TriangleAlert aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-              <span>
-                {words.run.lowSpace(
-                  sizeOf(language, short.freeBytes),
-                  sizeOf(language, short.neededBytes),
-                )}
-              </span>
-            </p>
-          )}
-        </div>
-      </aside>
-    </section>
+      </TwoColumns>
+    </Screen>
   );
 }
 

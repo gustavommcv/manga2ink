@@ -5,6 +5,7 @@ import { ItemsWithOptionsNotice } from '@/renderer/components/settings/items-wit
 import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
+import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
@@ -42,7 +43,7 @@ export function ConversionOptionsScreen({
 }: ConversionOptionsScreenProps): React.JSX.Element {
   const words = useMessages().options;
   return (
-    <section className="mx-auto max-w-5xl space-y-6" aria-labelledby="options-title">
+    <Screen labelledBy="options-title">
       <ScreenHeader
         actions={
           <div className="w-72 shrink-0">
@@ -69,6 +70,6 @@ export function ConversionOptionsScreen({
         settings={settings}
         singleBook={singleBook}
       />
-    </section>
+    </Screen>
   );
 }
