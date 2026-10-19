@@ -1,4 +1,11 @@
-import { type ReactNode, useState } from 'react';
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useState,
+} from 'react';
 
 import type { BookFormat } from '@/domain/conversion';
 import type { AnyMessage } from '@/domain/message';
@@ -28,6 +35,7 @@ import {
 import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
 import { singleBookLockReason } from '@/domain/process-mode';
+import { CheckRow } from '@/renderer/components/settings/check-row';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
@@ -855,6 +863,23 @@ export function MangapressSettingsEditor({
   );
 }
 
+/**
+ * Tells each choice (a checkbox) whether the field it shares a row with, in two columns, has a label
+ * above its control: then it is put in line with that control (`CheckRow`). The fields of a section
+ * are two to a row, in order, and none of them spans both columns.
+ */
+function besideTheirFields(children: ReactNode): ReactNode[] {
+  const fields = Children.toArray(children);
+  return fields.map((field, index) => {
+    if (!isValidElement(field) || field.type !== ToggleField) return field;
+    const mate = fields[index % 2 === 0 ? index + 1 : index - 1];
+    const besideField = isValidElement(mate) && mate.type !== ToggleField;
+    return besideField
+      ? cloneElement(field as ReactElement<{ besideField?: boolean }>, { besideField })
+      : field;
+  });
+}
+
 function SettingsSection({
   children,
   description,
@@ -873,7 +898,7 @@ function SettingsSection({
         <h2 className="mt-1 text-lg font-semibold">{title}</h2>
         <p className="text-muted-foreground mt-1 text-sm">{description}</p>
       </div>
-      <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">{children}</div>
+      <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">{besideTheirFields(children)}</div>
     </section>
   );
 }
@@ -1042,6 +1067,7 @@ function NumberField({
 }
 
 function ToggleField({
+  besideField = false,
   changed,
   checked,
   description,
@@ -1052,6 +1078,8 @@ function ToggleField({
   onReset,
   resetsTo,
 }: ResettableFieldProps & {
+  /** Set by its section when the field next to it has a label above its control (see `CheckRow`). */
+  readonly besideField?: boolean;
   readonly checked: boolean;
   readonly description: string;
   readonly disabled?: boolean;
@@ -1060,17 +1088,25 @@ function ToggleField({
   readonly onChecked: (checked: boolean) => void;
 }): React.JSX.Element {
   return (
-    <div className="flex gap-3">
-      <Checkbox
-        aria-describedby={`${id}-message`}
-        checked={checked}
-        disabled={disabled}
-        id={id}
-        onCheckedChange={(value) => {
-          onChecked(value === true);
-        }}
-      />
-      <div className="-mt-0.5 min-w-0 flex-1">
+    <CheckRow
+      besideField={besideField}
+      box={
+        <Checkbox
+          aria-describedby={`${id}-message`}
+          checked={checked}
+          disabled={disabled}
+          id={id}
+          onCheckedChange={(value) => {
+            onChecked(value === true);
+          }}
+        />
+      }
+      note={
+        <p className="text-muted-foreground text-xs leading-relaxed" id={`${id}-message`}>
+          {description}
+        </p>
+      }
+      title={
         <SettingFieldHeader
           changed={changed}
           disabled={disabled}
@@ -1079,10 +1115,7 @@ function ToggleField({
           onReset={onReset}
           resetsTo={resetsTo}
         />
-        <p className="text-muted-foreground mt-1 text-xs leading-relaxed" id={`${id}-message`}>
-          {description}
-        </p>
-      </div>
-    </div>
+      }
+    />
   );
 }
