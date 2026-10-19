@@ -10,19 +10,14 @@ import {
 } from 'lucide-react';
 
 import { hasBookDetails } from '@/domain/book-details';
-import { describeRow, type QueueRow, type RowTone, rowMode } from '@/domain/input-queue';
+import { describeRow, type QueueRow, rowMode } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangapress } from '@/domain/process-mode';
+import { Badge } from '@/renderer/components/shared/badge';
+import { ListRow } from '@/renderer/components/shared/list-row';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
-
-const chipTone: Record<RowTone, string> = {
-  neutral: 'bg-muted text-muted-foreground',
-  accent: 'bg-accent/15 text-accent',
-  warning: 'bg-status-warning/15 text-status-warning',
-  danger: 'bg-status-failed/15 text-status-failed',
-};
 
 /** One item in the queue: what it is, whether a run will process it, and how to change that. */
 export function QueueRowItem({
@@ -60,38 +55,9 @@ export function QueueRowItem({
   // Its conversion options matter wherever mangapress makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
   return (
-    // The status and the buttons are one group that drops under the name when the row is too narrow
-    // for both, rather than leaving the name a few letters wide.
-    <li className="hover:bg-muted/40 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl px-3 py-2.5 transition-colors">
-      <span
-        aria-hidden="true"
-        className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-lg"
-      >
-        {row.state === 'inspecting' ? (
-          <LoaderCircle className="size-4 animate-spin" />
-        ) : (
-          <Icon className="size-4" />
-        )}
-      </span>
-      <div className="min-w-48 flex-1">
-        <p className="truncate text-sm font-medium" title={row.displayPath}>
-          {row.displayName}
-        </p>
-        <p className="text-subtle-foreground truncate text-xs">{say(view.detail)}</p>
-        {view.notes.length > 0 && (
-          <p className="text-muted-foreground mt-0.5 text-xs">{sayAll(view.notes)}</p>
-        )}
-      </div>
-      <div className="ml-auto flex items-center gap-3">
-        <span
-          className={cn(
-            'shrink-0 rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap',
-            chipTone[view.tone],
-          )}
-        >
-          {say(view.chip)}
-        </span>
-        {editable && (
+    <ListRow
+      actions={[
+        editable ? (
           <Button
             aria-label={
               row.kind === 'library'
@@ -105,8 +71,8 @@ export function QueueRowItem({
           >
             <Layers />
           </Button>
-        )}
-        {detailsEditable && (
+        ) : undefined,
+        detailsEditable ? (
           <Button
             aria-label={words.editDetailsOf(row.displayName)}
             className={cn(detailsSet && 'text-accent')}
@@ -117,8 +83,8 @@ export function QueueRowItem({
           >
             <UserPen />
           </Button>
-        )}
-        {detailsEditable && (
+        ) : undefined,
+        detailsEditable ? (
           <Button
             aria-label={words.editOptionsOf(row.displayName)}
             className={cn(optionsSet && 'text-override')}
@@ -129,7 +95,7 @@ export function QueueRowItem({
           >
             <SlidersHorizontal />
           </Button>
-        )}
+        ) : undefined,
         <Button
           aria-label={words.remove(row.displayName)}
           onClick={onRemove}
@@ -137,8 +103,14 @@ export function QueueRowItem({
           variant="ghost"
         >
           <X />
-        </Button>
-      </div>
-    </li>
+        </Button>,
+      ]}
+      detail={say(view.detail)}
+      icon={row.state === 'inspecting' ? <LoaderCircle className="animate-spin" /> : <Icon />}
+      {...(view.notes.length > 0 ? { notes: sayAll(view.notes) } : {})}
+      status={<Badge tone={view.tone}>{say(view.chip)}</Badge>}
+      title={row.displayName}
+      titleHint={row.displayPath}
+    />
   );
 }

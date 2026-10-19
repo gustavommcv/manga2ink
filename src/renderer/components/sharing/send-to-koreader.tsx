@@ -1,5 +1,6 @@
 import { RadioTower } from 'lucide-react';
 
+import { Badge } from '@/renderer/components/shared/badge';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { OpdsSharingStatus } from '@/shared/opds-contract';
@@ -28,11 +29,7 @@ export function SendToKoreader({ onOpen, status }: SendToKoreaderProps): React.J
           {words.title}
         </h2>
         <span className="flex-1" />
-        {status.active && (
-          <span className="bg-accent/15 text-accent rounded-full px-2.5 py-0.5 text-xs">
-            {words.sharing}
-          </span>
-        )}
+        {status.active && <Badge tone="accent">{words.sharing}</Badge>}
       </div>
       <p className="text-muted-foreground text-sm">{words.text}</p>
       <Button onClick={onOpen} variant="outline">
