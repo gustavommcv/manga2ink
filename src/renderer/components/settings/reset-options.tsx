@@ -42,7 +42,7 @@ export function ResetOptions({
         aria-describedby={changed ? undefined : reasonId}
         aria-disabled={!changed}
         aria-expanded={confirming}
-        className="aria-disabled:hover:text-muted-foreground -ml-3 aria-disabled:cursor-default aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
+        flush="start"
         onClick={() => {
           if (!changed) return;
           setDone(false);

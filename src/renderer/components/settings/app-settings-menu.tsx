@@ -58,7 +58,7 @@ function AppSettingsContent({ tabs }: { readonly tabs: Tabs }): React.JSX.Elemen
             <DialogTitle>{words.title}</DialogTitle>
           )}
           <DialogClose asChild>
-            <Button aria-label={words.close} size="icon" variant="ghost">
+            <Button aria-label={words.close} flush="end" size="icon" variant="ghost">
               <X />
             </Button>
           </DialogClose>
