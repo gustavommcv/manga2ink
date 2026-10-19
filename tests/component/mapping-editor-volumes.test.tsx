@@ -28,7 +28,9 @@ const twoVolumes = (): MappingDraft =>
 
 /** What a chapter row says about where it is: its name is followed by its volume. */
 const placeOf = (name: string): string => {
-  const row = screen.getByLabelText(`Select ${name}`).closest('div');
+  const row = screen
+    .getByLabelText(`Select ${name}`)
+    .closest<HTMLElement>('[data-slot="chapter-row"]');
   if (row === null) throw new Error(`No row for ${name}`);
   return within(row).getByText(/^(Volume \d+|Unassigned)$/u).textContent;
 };

@@ -35,12 +35,11 @@ import {
 import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
 import { singleBookLockReason } from '@/domain/process-mode';
-import { CheckRow } from '@/renderer/components/settings/check-row';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { FieldMessage } from '@/renderer/components/shared/field-message';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { Input } from '@/renderer/components/ui/input';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
@@ -1091,22 +1090,16 @@ function ToggleField({
   return (
     <CheckRow
       besideField={besideField}
-      box={
-        <Checkbox
-          aria-describedby={`${id}-message`}
-          checked={checked}
-          disabled={disabled}
-          id={id}
-          onCheckedChange={(value) => {
-            onChecked(value === true);
-          }}
-        />
-      }
+      checked={checked}
+      describedBy={`${id}-message`}
+      disabled={disabled}
+      id={id}
       note={
         <p className="text-muted-foreground text-xs leading-relaxed" id={`${id}-message`}>
           {description}
         </p>
       }
+      onChange={onChecked}
       title={
         <SettingFieldHeader
           changed={changed}

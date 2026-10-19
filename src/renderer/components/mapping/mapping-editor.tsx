@@ -38,6 +38,7 @@ import type { MappingMessages } from '@/i18n/mapping-messages';
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -45,7 +46,6 @@ import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { SaidError } from '@/renderer/lib/said-error';
 import { Button } from '@/renderer/components/ui/button';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { Input } from '@/renderer/components/ui/input';
 import { Label } from '@/renderer/components/ui/label';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
@@ -470,25 +470,28 @@ export function MappingEditor({
                 return (
                   <div
                     className="border-border hover:bg-muted/50 flex items-center gap-3 border-b px-5 py-3 last:border-b-0"
+                    data-slot="chapter-row"
                     key={chapter.id}
                   >
-                    <Checkbox
-                      aria-label={words.chapters.select(chapter.name)}
-                      checked={selectedChapterIds.has(chapter.id)}
-                      id={`chapter-${chapter.id}`}
-                      onCheckedChange={(checked) => {
-                        toggleChapter(chapter.id, checked === true);
-                      }}
-                    />
-                    <Label
-                      className="min-w-0 flex-1 cursor-pointer"
-                      htmlFor={`chapter-${chapter.id}`}
-                    >
-                      <span className="block truncate">{chapter.name}</span>
-                      <span className="text-subtle-foreground mt-0.5 block text-xs font-normal">
-                        {words.chapters.pages(chapter.pageCount)}
-                      </span>
-                    </Label>
+                    <div className="min-w-0 flex-1">
+                      <CheckRow
+                        aria-label={words.chapters.select(chapter.name)}
+                        checked={selectedChapterIds.has(chapter.id)}
+                        id={`chapter-${chapter.id}`}
+                        note={
+                          <Label
+                            className="text-subtle-foreground block text-xs font-normal"
+                            htmlFor={`chapter-${chapter.id}`}
+                          >
+                            {words.chapters.pages(chapter.pageCount)}
+                          </Label>
+                        }
+                        onChange={(checked) => {
+                          toggleChapter(chapter.id, checked);
+                        }}
+                        title={chapter.name}
+                      />
+                    </div>
                     <span
                       className={
                         volumeId === undefined

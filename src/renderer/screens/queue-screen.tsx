@@ -21,13 +21,13 @@ import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
-import { Checkbox } from '@/renderer/components/ui/checkbox';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
 import { sizeOf } from '@/i18n/size';
@@ -164,27 +164,12 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         singleBook={singleBookActive}
       />
 
-      <div className="flex items-start gap-3">
-        <Checkbox
-          aria-describedby="combine-into-one-volume-message"
-          checked={singleBook}
-          className="mt-0.5"
-          disabled={disabled || (onlyCbz && !singleBook)}
-          id="combine-into-one-volume"
-          onCheckedChange={(value) => {
-            onSingleBook(value === true);
-          }}
-        />
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <SettingFieldHeader
-            changed={singleBook}
-            disabled={disabled || (onlyCbz && !singleBook)}
-            id="combine-into-one-volume"
-            label={words.panel.singleBook.label}
-            onReset={() => {
-              onSingleBook(false);
-            }}
-          />
+      <CheckRow
+        checked={singleBook}
+        describedBy="combine-into-one-volume-message"
+        disabled={disabled || (onlyCbz && !singleBook)}
+        id="combine-into-one-volume"
+        note={
           <p
             className="text-muted-foreground text-xs leading-relaxed"
             id="combine-into-one-volume-message"
@@ -195,8 +180,20 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                 : words.panel.singleBook.unavailable
               : words.panel.singleBook.produces}
           </p>
-        </div>
-      </div>
+        }
+        onChange={onSingleBook}
+        title={
+          <SettingFieldHeader
+            changed={singleBook}
+            disabled={disabled || (onlyCbz && !singleBook)}
+            id="combine-into-one-volume"
+            label={words.panel.singleBook.label}
+            onReset={() => {
+              onSingleBook(false);
+            }}
+          />
+        }
+      />
 
       <div className="space-y-1.5">
         <SettingFieldHeader
