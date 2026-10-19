@@ -4,8 +4,8 @@ import { expect } from 'storybook/test';
 
 import { ProcessSteps } from './process-steps';
 
-/** Where the middle of what a step says is, and where its box is, as the page draws them (ADR 0071). */
-function middles(id: string): { box: number; pair: number; titleLeft: number; toolLeft: number } {
+/** Where the middle of the title of a step is, and where its box is, as the page draws them (ADR 0071). */
+function middles(id: string): { box: number; title: number; titleLeft: number; toolLeft: number } {
   const box = document.getElementById(id)?.getBoundingClientRect();
   const title = document.querySelector(`label[for="${id}"]`)?.getBoundingClientRect();
   const tool = document.getElementById(`${id}-tool`)?.getBoundingClientRect();
@@ -14,7 +14,7 @@ function middles(id: string): { box: number; pair: number; titleLeft: number; to
   }
   return {
     box: box.top + box.height / 2,
-    pair: (Math.min(title.top, tool.top) + Math.max(title.bottom, tool.bottom)) / 2,
+    title: title.top + title.height / 2,
     titleLeft: title.left,
     toolLeft: tool.left,
   };
@@ -39,13 +39,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The box of each step is in the middle of its title and the tool under it, not by the first line. */
+/** The box of each step is centered on its title, and the tool under it is in line with the title. */
 export const FolderBothSteps: Story = {
   args: { input: 'folder', mode: 'bind-and-convert' },
   play: async () => {
     for (const id of ['step-group', 'step-convert']) {
-      const { box, pair, titleLeft, toolLeft } = middles(id);
-      await expect(Math.abs(box - pair)).toBeLessThanOrEqual(0.75);
+      const { box, title, titleLeft, toolLeft } = middles(id);
+      await expect(Math.abs(box - title)).toBeLessThanOrEqual(0.75);
       await expect(Math.abs(titleLeft - toolLeft)).toBeLessThanOrEqual(0.5);
     }
   },
@@ -73,12 +73,12 @@ export const ConvertOnly: Story = {
   args: { input: 'folder', mode: 'convert-only' },
 };
 
-/** The reason a box cannot be changed is under the step, in line with its title, and does not move the box. */
+/** The reason a box cannot be changed is under the tool, in line with the title, and does not move the box. */
 export const CbzHasOneProcess: Story = {
   args: { input: 'cbz', mode: 'convert-only' },
   play: async () => {
-    const { box, pair, titleLeft } = middles('step-convert');
-    await expect(Math.abs(box - pair)).toBeLessThanOrEqual(0.75);
+    const { box, title, titleLeft } = middles('step-convert');
+    await expect(Math.abs(box - title)).toBeLessThanOrEqual(0.75);
     const reason = document.getElementById('step-convert-reason');
     if (reason === null) throw new Error('The step says nothing of why it cannot be changed.');
     await expect(Math.abs(reason.getBoundingClientRect().left - titleLeft)).toBeLessThanOrEqual(
@@ -98,8 +98,8 @@ export const LockedWhileRunning: Story = {
   args: { input: 'library', mode: 'bind-only', disabled: true },
   play: async () => {
     for (const id of ['step-group', 'step-convert']) {
-      const { box, pair } = middles(id);
-      await expect(Math.abs(box - pair)).toBeLessThanOrEqual(0.75);
+      const { box, title } = middles(id);
+      await expect(Math.abs(box - title)).toBeLessThanOrEqual(0.75);
     }
   },
 };

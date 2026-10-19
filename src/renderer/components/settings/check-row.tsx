@@ -3,12 +3,10 @@ import type { ReactNode } from 'react';
 import { cn } from '@/renderer/lib/utils';
 
 /**
- * A checkbox with its words (ADR 0071): the box is centered on what the person reads as the option,
- * one place for both the steps of the queue and the choices of the options page.
- *
- * The box is centered on the title and, when there is one, the `pair` under it that belongs to it (the
- * tool a step uses), not on the first line only. What goes in `note` (a description, or why the box
- * cannot be changed) is under the row, in line with the title.
+ * A checkbox with its words (ADR 0071): the box is on the line of the title, centered on it, one rule for
+ * the steps of the queue and for the choices of the options page. What goes in `note` (what a step uses,
+ * a description, or why the box cannot be changed) is under the row, in line with the title; however
+ * long it is, it does not move the box.
  *
  * `besideField` is for a choice that sits in a grid next to a field that has a label above its control:
  * where there are two columns, the row is then as high as that control and the box and the title are
@@ -20,13 +18,11 @@ export function CheckRow({
   besideField = false,
   box,
   note,
-  pair,
   title,
 }: {
   readonly besideField?: boolean;
   readonly box: ReactNode;
   readonly note?: ReactNode;
-  readonly pair?: ReactNode;
   readonly title: ReactNode;
 }): React.JSX.Element {
   return (
@@ -36,10 +32,7 @@ export function CheckRow({
       )}
       <div className={cn('flex items-center gap-3', besideField && 'sm:min-h-9')}>
         {box}
-        <div className="min-w-0 flex-1 space-y-0.5">
-          {title}
-          {pair}
-        </div>
+        <div className="min-w-0 flex-1">{title}</div>
       </div>
       {/* In line with the title: the box is 16px wide and the gap 12px. */}
       {note !== undefined && (

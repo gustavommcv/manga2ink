@@ -115,16 +115,16 @@ function Step({
         />
       }
       note={
-        reason === undefined ? undefined : (
-          <p className="text-muted-foreground text-xs" id={`${id}-reason`}>
-            {reason}
+        <div className="space-y-0.5">
+          <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
+            {tool}
           </p>
-        )
-      }
-      pair={
-        <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
-          {tool}
-        </p>
+          {reason !== undefined && (
+            <p className="text-muted-foreground text-xs" id={`${id}-reason`}>
+              {reason}
+            </p>
+          )}
+        </div>
       }
       title={
         <SettingFieldHeader

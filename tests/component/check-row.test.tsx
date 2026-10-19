@@ -10,18 +10,32 @@ const row = (container: HTMLElement): HTMLElement => {
 };
 
 describe('a checkbox with its words', () => {
-  it('has the box, the title, what belongs to the title and the note under, in that order', () => {
+  it('has the box, the title and the note under, in that order', () => {
     const { container } = render(
       <CheckRow
         box={<input aria-label="The box" type="checkbox" />}
         note={<p>Why it is so.</p>}
-        pair={<p>What it uses</p>}
         title={<span>What it is</span>}
       />,
     );
 
-    expect(row(container).textContent).toBe('What it isWhat it usesWhy it is so.');
+    expect(row(container).textContent).toBe('What it isWhy it is so.');
     expect(screen.getByRole('checkbox', { name: 'The box' })).toBeVisible();
+  });
+
+  it('has the box on the line of the title only: the note is outside the row the box is centered in', () => {
+    const { container } = render(
+      <CheckRow
+        box={<input aria-label="The box" type="checkbox" />}
+        note={<p>A long note, which may take any number of lines.</p>}
+        title={<span>The title</span>}
+      />,
+    );
+
+    const line = container.querySelector('.flex');
+    expect(line).toContainElement(screen.getByRole('checkbox', { name: 'The box' }));
+    expect(line).toHaveTextContent('The title');
+    expect(line).not.toHaveTextContent('A long note');
   });
 
   it('has nothing but the box and the title when it is given no more', () => {
