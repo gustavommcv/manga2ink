@@ -38,7 +38,9 @@ export const WithADescription: Story = {
   args: { description: '1272 × 1696 · 16 gray levels' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const label = canvas.getByText('Device').getBoundingClientRect();
+    // The line the label is on, not the text in it: the height of the text depends on the font.
+    const label = canvas.getByText('Device').parentElement?.getBoundingClientRect();
+    if (label === undefined) throw new Error('The label is not drawn.');
     const control = canvas.getByRole('combobox').getBoundingClientRect();
     const note = canvas.getByText('1272 × 1696 · 16 gray levels').getBoundingClientRect();
     await expect(Math.abs(control.top - label.bottom - 8)).toBeLessThanOrEqual(1);
