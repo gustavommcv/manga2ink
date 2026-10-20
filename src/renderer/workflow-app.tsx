@@ -70,6 +70,7 @@ import { useSharing } from '@/renderer/hooks/use-sharing';
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
 import { resolveNetworkInterface } from '@/renderer/lib/sharing';
+import { Page } from '@/renderer/components/shell/page';
 import { Titlebar } from '@/renderer/components/shell/titlebar';
 import { Button } from '@/renderer/components/ui/button';
 import { type AuthorLookup } from '@/renderer/components/details/author-lookup';
@@ -949,342 +950,339 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
           }}
         />
       </Titlebar>
-      {/* The line under the bar is this area's top edge: see Titlebar for why it is not the bar's. */}
-      <div className="border-border min-h-0 flex-1 overflow-y-auto border-t">
-        <main className="mx-auto max-w-6xl px-8 py-10">
-          <ToolchainBanner toolchain={toolchain} />
-          <Notices
-            notices={notices}
-            onDismiss={() => {
-              setNotices([]);
+      <Page>
+        <ToolchainBanner toolchain={toolchain} />
+        <Notices
+          notices={notices}
+          onDismiss={() => {
+            setNotices([]);
+          }}
+        />
+        {failure !== undefined && <IssueCallout failure={failure} />}
+        {navigation.screen === 'queue' && (
+          <QueueScreen
+            disabled={toolchain?.state !== 'ready'}
+            format={format}
+            mode={mode}
+            pendingRuns={pendingRuns}
+            space={workingSpace}
+            onOpenPending={openPendingRun}
+            onDeletePending={discardPendingRun}
+            onAddFiles={() => {
+              void addFromDialog('files');
             }}
+            onAddFolders={() => {
+              void addFromDialog('folders');
+            }}
+            onClear={() => {
+              removeRows(rows.map((row) => row.id));
+            }}
+            onConvert={() => {
+              void startRun();
+            }}
+            onDeviceProfile={(code) => {
+              setSettings((current) => withDeviceProfile(current, code));
+            }}
+            onDismissRejected={() => {
+              setRejected([]);
+            }}
+            onDropFiles={(files) => {
+              void addDropped(files);
+            }}
+            onEdit={openEditor}
+            onEditDetails={openDetails}
+            onEditOptions={openOptions}
+            onFormat={handleFormat}
+            onMode={handleMode}
+            onOpenOptions={() => {
+              setNavigation({ screen: 'options' });
+            }}
+            onRemove={(id) => {
+              removeRows([id]);
+            }}
+            onReset={resetAll}
+            onSingleBook={handleSingleBook}
+            onValidate={() => {
+              void validatePlans();
+            }}
+            {...(plans === undefined ? {} : { plans })}
+            profiles={profiles}
+            rejected={rejected}
+            rows={rows}
+            settings={settings}
+            singleBook={singleBook}
+            validating={validating}
           />
-          {failure !== undefined && <IssueCallout failure={failure} />}
-          {navigation.screen === 'queue' && (
-            <QueueScreen
-              disabled={toolchain?.state !== 'ready'}
-              format={format}
-              mode={mode}
-              pendingRuns={pendingRuns}
-              space={workingSpace}
-              onOpenPending={openPendingRun}
-              onDeletePending={discardPendingRun}
-              onAddFiles={() => {
-                void addFromDialog('files');
-              }}
-              onAddFolders={() => {
-                void addFromDialog('folders');
-              }}
-              onClear={() => {
-                removeRows(rows.map((row) => row.id));
-              }}
-              onConvert={() => {
-                void startRun();
-              }}
-              onDeviceProfile={(code) => {
-                setSettings((current) => withDeviceProfile(current, code));
-              }}
-              onDismissRejected={() => {
-                setRejected([]);
-              }}
-              onDropFiles={(files) => {
-                void addDropped(files);
-              }}
-              onEdit={openEditor}
-              onEditDetails={openDetails}
-              onEditOptions={openOptions}
-              onFormat={handleFormat}
-              onMode={handleMode}
-              onOpenOptions={() => {
-                setNavigation({ screen: 'options' });
-              }}
-              onRemove={(id) => {
-                removeRows([id]);
-              }}
-              onReset={resetAll}
-              onSingleBook={handleSingleBook}
-              onValidate={() => {
-                void validatePlans();
-              }}
-              {...(plans === undefined ? {} : { plans })}
-              profiles={profiles}
-              rejected={rejected}
-              rows={rows}
-              settings={settings}
-              singleBook={singleBook}
-              validating={validating}
-            />
+        )}
+        {navigation.screen === 'options' && (
+          <ConversionOptionsScreen
+            format={format}
+            itemsWithOptions={itemsWithOptions(rows)}
+            onBack={() => {
+              setNavigation({ screen: 'queue' });
+            }}
+            onClearItemOptions={() => {
+              dispatch({ type: 'clear-options' });
+            }}
+            onFormat={handleFormat}
+            onNotify={notify}
+            onReset={resetMangapress}
+            onSettings={setSettings}
+            profiles={profiles}
+            settings={settings}
+            singleBook={singleBookActive}
+          />
+        )}
+        {itemOptionsOpen !== undefined && (
+          <ItemOptionsScreen
+            backLabel={itemOptionsOpen.backLabel}
+            format={effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).format}
+            hasOwnOptions={hasItemOptions(itemOptionsOpen.own)}
+            key={navigation.screen === 'item-options' ? JSON.stringify(navigation.target) : ''}
+            name={itemOptionsOpen.name}
+            onBack={() => {
+              setNavigation(itemOptionsOpen.back);
+            }}
+            onChange={(edited) => {
+              itemOptionsOpen.change(itemOptionsFor(queueOptions, edited, singleBookActive));
+            }}
+            onNotify={notify}
+            onUseQueueOptions={() => {
+              itemOptionsOpen.change(undefined);
+            }}
+            profiles={profiles}
+            queue={queueOptions}
+            settings={
+              effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).settings
+            }
+            singleBook={singleBookActive}
+          />
+        )}
+        {navigation.screen === 'mapping' &&
+          navigation.target.kind === 'input' &&
+          editingRow?.state === 'inspected' &&
+          editingRow.mapping !== undefined && (
+            <div className="space-y-4">
+              <Button
+                onClick={() => {
+                  setNavigation({ screen: 'queue' });
+                }}
+                variant="ghost"
+              >
+                <ChevronLeft /> {messages.queue.title}
+              </Button>
+              <MappingEditor
+                initialDraft={editingRow.mapping}
+                onConfirm={(_metadata, draft) => {
+                  dispatch({ type: 'confirm-mapping', id: editingRow.id, mapping: draft });
+                  setNavigation({ screen: 'queue' });
+                }}
+                onSkipGrouping={() => {
+                  setMode('convert-only');
+                  setNavigation({ screen: 'queue' });
+                }}
+                singleBook={singleBook}
+                {...(editingRow.unrecognized === undefined
+                  ? {}
+                  : { unrecognized: editingRow.unrecognized })}
+                {...metadataProviderProps}
+                startedFrom={
+                  editingRow.proposedSignature !== undefined &&
+                  editingRow.mapping.volumes.length > 0 &&
+                  mappingSignature(editingRow.mapping) === editingRow.proposedSignature
+                    ? 'mangabind'
+                    : undefined
+                }
+              />
+            </div>
           )}
-          {navigation.screen === 'options' && (
-            <ConversionOptionsScreen
-              format={format}
-              itemsWithOptions={itemsWithOptions(rows)}
+        {navigation.screen === 'library' &&
+          editingRow?.state === 'inspected' &&
+          editingRow.titles !== undefined && (
+            <LibraryScreen
+              name={editingRow.displayName}
               onBack={() => {
                 setNavigation({ screen: 'queue' });
               }}
-              onClearItemOptions={() => {
-                dispatch({ type: 'clear-options' });
+              onEdit={(title) => {
+                setNavigation({
+                  screen: 'mapping',
+                  target: { kind: 'title', rowId: editingRow.id, title },
+                });
               }}
-              onFormat={handleFormat}
-              onNotify={notify}
-              onReset={resetMangapress}
-              onSettings={setSettings}
-              profiles={profiles}
-              settings={settings}
-              singleBook={singleBookActive}
+              {...(libraryMakesBooks
+                ? {
+                    onEditDetails: (title: string) => {
+                      openTitleDetails(editingRow, title);
+                    },
+                    onEditOptions: (title: string) => {
+                      openTitleOptions(editingRow, title);
+                    },
+                  }
+                : {})}
+              {...(editingRow.skippedLinks === undefined
+                ? {}
+                : { skippedLinks: editingRow.skippedLinks })}
+              singleBook={singleBook}
+              titles={editingRow.titles}
             />
           )}
-          {itemOptionsOpen !== undefined && (
-            <ItemOptionsScreen
-              backLabel={itemOptionsOpen.backLabel}
-              format={effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).format}
-              hasOwnOptions={hasItemOptions(itemOptionsOpen.own)}
-              key={navigation.screen === 'item-options' ? JSON.stringify(navigation.target) : ''}
-              name={itemOptionsOpen.name}
-              onBack={() => {
-                setNavigation(itemOptionsOpen.back);
-              }}
-              onChange={(edited) => {
-                itemOptionsOpen.change(itemOptionsFor(queueOptions, edited, singleBookActive));
-              }}
-              onNotify={notify}
-              onUseQueueOptions={() => {
-                itemOptionsOpen.change(undefined);
-              }}
-              profiles={profiles}
-              queue={queueOptions}
-              settings={
-                effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).settings
-              }
-              singleBook={singleBookActive}
-            />
-          )}
-          {navigation.screen === 'mapping' &&
-            navigation.target.kind === 'input' &&
-            editingRow?.state === 'inspected' &&
-            editingRow.mapping !== undefined && (
-              <div className="space-y-4">
-                <Button
-                  onClick={() => {
-                    setNavigation({ screen: 'queue' });
-                  }}
-                  variant="ghost"
-                >
-                  <ChevronLeft /> {messages.queue.title}
-                </Button>
-                <MappingEditor
-                  initialDraft={editingRow.mapping}
-                  onConfirm={(_metadata, draft) => {
-                    dispatch({ type: 'confirm-mapping', id: editingRow.id, mapping: draft });
-                    setNavigation({ screen: 'queue' });
-                  }}
-                  onSkipGrouping={() => {
-                    setMode('convert-only');
-                    setNavigation({ screen: 'queue' });
-                  }}
-                  singleBook={singleBook}
-                  {...(editingRow.unrecognized === undefined
-                    ? {}
-                    : { unrecognized: editingRow.unrecognized })}
-                  {...metadataProviderProps}
-                  startedFrom={
-                    editingRow.proposedSignature !== undefined &&
-                    editingRow.mapping.volumes.length > 0 &&
-                    mappingSignature(editingRow.mapping) === editingRow.proposedSignature
-                      ? 'mangabind'
-                      : undefined
-                  }
-                />
-              </div>
-            )}
-          {navigation.screen === 'library' &&
-            editingRow?.state === 'inspected' &&
-            editingRow.titles !== undefined && (
-              <LibraryScreen
-                name={editingRow.displayName}
-                onBack={() => {
-                  setNavigation({ screen: 'queue' });
-                }}
-                onEdit={(title) => {
-                  setNavigation({
-                    screen: 'mapping',
-                    target: { kind: 'title', rowId: editingRow.id, title },
-                  });
-                }}
-                {...(libraryMakesBooks
-                  ? {
-                      onEditDetails: (title: string) => {
-                        openTitleDetails(editingRow, title);
-                      },
-                      onEditOptions: (title: string) => {
-                        openTitleOptions(editingRow, title);
-                      },
-                    }
-                  : {})}
-                {...(editingRow.skippedLinks === undefined
-                  ? {}
-                  : { skippedLinks: editingRow.skippedLinks })}
-                singleBook={singleBook}
-                titles={editingRow.titles}
-              />
-            )}
-          {navigation.screen === 'mapping' &&
-            navigation.target.kind === 'title' &&
-            editingRow?.state === 'inspected' &&
-            editingTitleEntry !== undefined && (
-              <div className="space-y-4">
-                <Button
-                  onClick={() => {
-                    setNavigation({ screen: 'library', rowId: editingRow.id });
-                  }}
-                  variant="ghost"
-                >
-                  <ChevronLeft /> {editingRow.displayName}
-                </Button>
-                <MappingEditor
-                  initialDraft={editingTitleEntry.draft}
-                  key={editingTitleEntry.title}
-                  onConfirm={(_metadata, draft) => {
-                    void confirmTitleMapping(editingRow, editingTitleEntry.title, draft);
-                  }}
-                  singleBook={singleBook}
-                  {...(editingTitleEntry.unrecognized === undefined
-                    ? {}
-                    : { unrecognized: editingTitleEntry.unrecognized, inLibrary: true })}
-                  {...metadataProviderProps}
-                  startedFrom={editingTitleEntry.draft.volumes.length > 0 ? 'mangabind' : undefined}
-                />
-              </div>
-            )}
-          {navigation.screen === 'details' &&
-            navigation.target.kind === 'input' &&
-            editingRow?.state === 'inspected' &&
-            editingRow.kind !== 'library' && (
-              <BookDetailsScreen
-                backLabel={messages.queue.title}
-                declaredLanguage={dominantLanguage(editingRow.mapping?.chapters ?? [])}
-                defaultLanguage={
-                  effectiveOptions(queueOptions, editingRow.options, singleBookActive).settings
-                    .language
-                }
-                defaultTitle={editingRow.displayName.replace(/\.cbz$/iu, '')}
-                details={editingRow.details ?? noBookDetails}
-                format={effectiveOptions(queueOptions, editingRow.options, singleBookActive).format}
-                key={editingRow.id}
-                lookup={authorLookup}
-                {...(covers === undefined ? {} : { covers })}
-                name={editingRow.displayName}
-                onBack={() => {
-                  // A loose CBZ has no folder to keep anything with.
-                  if (editingRow.kind === 'folder') {
-                    keepDetails(editingRow, undefined, editingRow.details ?? noBookDetails);
-                  }
-                  setNavigation({ screen: 'queue' });
-                }}
-                onChange={(details) => {
-                  dispatch({ type: 'set-details', id: editingRow.id, details });
-                }}
-                {...(editingRow.kind === 'folder' &&
-                !singleBook &&
-                rowMode(editingRow.kind, mode) === 'bind-and-convert'
-                  ? { volumes: volumeNumbers(editingRow.mapping) }
-                  : {})}
-              />
-            )}
-          {navigation.screen === 'details' &&
-            navigation.target.kind === 'title' &&
-            editingRow?.state === 'inspected' &&
-            editingTitleEntry !== undefined && (
-              <BookDetailsScreen
-                backLabel={editingRow.displayName}
-                declaredLanguage={dominantLanguage(editingTitleEntry.draft.chapters)}
-                defaultLanguage={
-                  effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive)
-                    .settings.language
-                }
-                defaultTitle={editingTitleEntry.title}
-                details={editingTitleEntry.details ?? noBookDetails}
-                format={
-                  effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).format
-                }
-                key={editingTitleEntry.title}
-                lookup={authorLookup}
-                {...(covers === undefined ? {} : { covers })}
-                name={editingTitleEntry.title}
-                onBack={() => {
-                  keepDetails(
-                    editingRow,
-                    editingTitleEntry.title,
-                    editingTitleEntry.details ?? noBookDetails,
-                  );
+        {navigation.screen === 'mapping' &&
+          navigation.target.kind === 'title' &&
+          editingRow?.state === 'inspected' &&
+          editingTitleEntry !== undefined && (
+            <div className="space-y-4">
+              <Button
+                onClick={() => {
                   setNavigation({ screen: 'library', rowId: editingRow.id });
                 }}
-                onChange={(details) => {
-                  dispatch({
-                    type: 'set-title-details',
-                    id: editingRow.id,
-                    title: editingTitleEntry.title,
-                    details,
-                  });
+                variant="ghost"
+              >
+                <ChevronLeft /> {editingRow.displayName}
+              </Button>
+              <MappingEditor
+                initialDraft={editingTitleEntry.draft}
+                key={editingTitleEntry.title}
+                onConfirm={(_metadata, draft) => {
+                  void confirmTitleMapping(editingRow, editingTitleEntry.title, draft);
                 }}
-                {...(singleBook ? {} : { volumes: volumeNumbers(editingTitleEntry.draft) })}
+                singleBook={singleBook}
+                {...(editingTitleEntry.unrecognized === undefined
+                  ? {}
+                  : { unrecognized: editingTitleEntry.unrecognized, inLibrary: true })}
+                {...metadataProviderProps}
+                startedFrom={editingTitleEntry.draft.volumes.length > 0 ? 'mangabind' : undefined}
               />
-            )}
-          {navigation.screen === 'running' && (
-            <RunningScreen
-              onCancel={() => {
-                void cancelConversion();
-              }}
-              {...(progress === undefined ? {} : { progress })}
-              {...(runPosition === undefined ? {} : { position: runPosition })}
-            />
+            </div>
           )}
-          {navigation.screen === 'results' && (
-            <ResultsScreen
-              aside={
-                outcomes.some((outcome) => outcome.artifacts.length > 0) &&
-                activeRunId !== undefined ? (
-                  <SendToKoreader
-                    onOpen={() => {
-                      sharing.shareBooks({
-                        libraryId: activeRunId,
-                        displayPath: messages.sharing.booksReady,
-                      });
-                    }}
-                    status={sharing.status}
-                  />
-                ) : undefined
+        {navigation.screen === 'details' &&
+          navigation.target.kind === 'input' &&
+          editingRow?.state === 'inspected' &&
+          editingRow.kind !== 'library' && (
+            <BookDetailsScreen
+              backLabel={messages.queue.title}
+              declaredLanguage={dominantLanguage(editingRow.mapping?.chapters ?? [])}
+              defaultLanguage={
+                effectiveOptions(queueOptions, editingRow.options, singleBookActive).settings
+                  .language
               }
+              defaultTitle={editingRow.displayName.replace(/\.cbz$/iu, '')}
+              details={editingRow.details ?? noBookDetails}
+              format={effectiveOptions(queueOptions, editingRow.options, singleBookActive).format}
+              key={editingRow.id}
+              lookup={authorLookup}
+              {...(covers === undefined ? {} : { covers })}
+              name={editingRow.displayName}
               onBack={() => {
-                // An error about a book that was being opened is about this screen, not the queue.
-                setFailure(undefined);
-                setOutcomes([]);
+                // A loose CBZ has no folder to keep anything with.
+                if (editingRow.kind === 'folder') {
+                  keepDetails(editingRow, undefined, editingRow.details ?? noBookDetails);
+                }
                 setNavigation({ screen: 'queue' });
               }}
-              onFix={(rowId) => {
-                setFailure(undefined);
-                setOutcomes([]);
-                openEditor(rowId);
+              onChange={(details) => {
+                dispatch({ type: 'set-details', id: editingRow.id, details });
               }}
-              onOpen={(artifactId) => {
-                void runArtifactAction(bridge.openArtifact, artifactId);
-              }}
-              onShow={(artifactId) => {
-                void runArtifactAction(bridge.showArtifactInFolder, artifactId);
-              }}
-              onSaveAs={(artifactId) => {
-                void saveArtifactAs(artifactId);
-              }}
-              onSaveAll={(artifactIds) => {
-                void saveAllArtifacts(artifactIds);
-              }}
-              savedIds={savedIds}
-              outcomes={outcomes}
-              {...(resultSummary === undefined ? {} : { summary: resultSummary })}
+              {...(editingRow.kind === 'folder' &&
+              !singleBook &&
+              rowMode(editingRow.kind, mode) === 'bind-and-convert'
+                ? { volumes: volumeNumbers(editingRow.mapping) }
+                : {})}
             />
           )}
-        </main>
-      </div>
+        {navigation.screen === 'details' &&
+          navigation.target.kind === 'title' &&
+          editingRow?.state === 'inspected' &&
+          editingTitleEntry !== undefined && (
+            <BookDetailsScreen
+              backLabel={editingRow.displayName}
+              declaredLanguage={dominantLanguage(editingTitleEntry.draft.chapters)}
+              defaultLanguage={
+                effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).settings
+                  .language
+              }
+              defaultTitle={editingTitleEntry.title}
+              details={editingTitleEntry.details ?? noBookDetails}
+              format={
+                effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).format
+              }
+              key={editingTitleEntry.title}
+              lookup={authorLookup}
+              {...(covers === undefined ? {} : { covers })}
+              name={editingTitleEntry.title}
+              onBack={() => {
+                keepDetails(
+                  editingRow,
+                  editingTitleEntry.title,
+                  editingTitleEntry.details ?? noBookDetails,
+                );
+                setNavigation({ screen: 'library', rowId: editingRow.id });
+              }}
+              onChange={(details) => {
+                dispatch({
+                  type: 'set-title-details',
+                  id: editingRow.id,
+                  title: editingTitleEntry.title,
+                  details,
+                });
+              }}
+              {...(singleBook ? {} : { volumes: volumeNumbers(editingTitleEntry.draft) })}
+            />
+          )}
+        {navigation.screen === 'running' && (
+          <RunningScreen
+            onCancel={() => {
+              void cancelConversion();
+            }}
+            {...(progress === undefined ? {} : { progress })}
+            {...(runPosition === undefined ? {} : { position: runPosition })}
+          />
+        )}
+        {navigation.screen === 'results' && (
+          <ResultsScreen
+            aside={
+              outcomes.some((outcome) => outcome.artifacts.length > 0) &&
+              activeRunId !== undefined ? (
+                <SendToKoreader
+                  onOpen={() => {
+                    sharing.shareBooks({
+                      libraryId: activeRunId,
+                      displayPath: messages.sharing.booksReady,
+                    });
+                  }}
+                  status={sharing.status}
+                />
+              ) : undefined
+            }
+            onBack={() => {
+              // An error about a book that was being opened is about this screen, not the queue.
+              setFailure(undefined);
+              setOutcomes([]);
+              setNavigation({ screen: 'queue' });
+            }}
+            onFix={(rowId) => {
+              setFailure(undefined);
+              setOutcomes([]);
+              openEditor(rowId);
+            }}
+            onOpen={(artifactId) => {
+              void runArtifactAction(bridge.openArtifact, artifactId);
+            }}
+            onShow={(artifactId) => {
+              void runArtifactAction(bridge.showArtifactInFolder, artifactId);
+            }}
+            onSaveAs={(artifactId) => {
+              void saveArtifactAs(artifactId);
+            }}
+            onSaveAll={(artifactIds) => {
+              void saveAllArtifacts(artifactIds);
+            }}
+            savedIds={savedIds}
+            outcomes={outcomes}
+            {...(resultSummary === undefined ? {} : { summary: resultSummary })}
+          />
+        )}
+      </Page>
     </div>
   );
 }

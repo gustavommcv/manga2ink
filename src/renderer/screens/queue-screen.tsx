@@ -158,7 +158,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const panel = (
     <aside
       aria-label={words.panel.label}
-      className="border-border bg-surface h-fit space-y-5 rounded-xl border p-5"
+      className="border-border bg-surface h-fit space-y-4 rounded-xl border p-5"
     >
       <ProcessSteps
         disabled={disabled}
