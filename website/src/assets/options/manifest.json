@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "mangapress": "0.8.0",
+  "mangapress": "0.8.1",
   "base": {
     "profile": "KPW6",
     "format": "cbz",
@@ -1021,7 +1021,7 @@
           "flags": ["--forcepng"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 347521,
+          "pageBytes": 343939,
           "file": "format-zoom-png.webp",
           "pictureWidth": 700,
           "pictureHeight": 700,
@@ -1034,7 +1034,7 @@
           "flags": ["--forcepng", "--noquantize"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 755923,
+          "pageBytes": 757716,
           "file": "format-zoom-png-256.webp",
           "pictureWidth": 700,
           "pictureHeight": 700,
@@ -1067,7 +1067,7 @@
           "flags": ["--forcepng"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 347521,
+          "pageBytes": 343939,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1077,7 +1077,7 @@
           "flags": ["--forcepng", "--pnglegacy"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 416169,
+          "pageBytes": 408488,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1087,7 +1087,7 @@
           "flags": ["--forcepng", "--noquantize"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 755923,
+          "pageBytes": 757716,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1117,7 +1117,7 @@
           "flags": ["--forcecolor", "--forcepng", "--force-png-rgb"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 2099905,
+          "pageBytes": 2090810,
           "fileType": "PNG",
           "sameAsInput": false
         }
