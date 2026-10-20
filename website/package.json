@@ -12,7 +12,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "astro check",
-    "test:unit": "node --experimental-test-coverage --test-coverage-include=scripts/verification.mjs --test-coverage-include=src/structured-data.mjs --test-coverage-include=src/language-suggestion.mjs --test-coverage-include=src/release-downloads.mjs --test-coverage-include=scripts/options-gallery-check.mjs --test-coverage-include=scripts/options-gallery/zip.mjs --test-coverage-include=scripts/options-gallery/book-facts.mjs --test-coverage-include=scripts/ui-labels.mjs --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test tests/unit/*.test.mjs",
+    "test:unit": "node --experimental-test-coverage --test-coverage-include=scripts/verification.mjs --test-coverage-include=src/structured-data.mjs --test-coverage-include=src/language-suggestion.mjs --test-coverage-include=src/release-downloads.mjs --test-coverage-include=scripts/options-gallery-check.mjs --test-coverage-include=scripts/options-gallery/zip.mjs --test-coverage-include=scripts/options-gallery/book-facts.mjs --test-coverage-include=scripts/ui-labels.mjs --test-coverage-include=tests/support/accessibility-exceptions.mjs --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test tests/unit/*.test.mjs",
     "test:browser": "playwright test",
     "test:media": "playwright test --config playwright.media.config.mjs",
     "options": "node scripts/generate-options-gallery.mjs",

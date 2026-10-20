@@ -1,7 +1,7 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import { base, supportUrl } from '../../site.config.mjs';
+import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
 
@@ -36,10 +36,7 @@ for (const locale of Object.keys(label)) {
       expect(
         scripts.filter((src) => !src.startsWith(page.url().split('/').slice(0, 3).join('/'))),
       ).toEqual([]);
-      const scan = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(scan.violations).toEqual([]);
+      await expectNoAccessibilityViolations(page);
     });
   }
 }

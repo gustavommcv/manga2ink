@@ -1,7 +1,7 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import { base } from '../../site.config.mjs';
+import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
 
@@ -255,10 +255,7 @@ for (const colorScheme of ['light', 'dark']) {
     await page.goto(address('en'));
     await expect(suggestion(page)).toBeVisible();
 
-    const scan = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-      .analyze();
-    expect(scan.violations).toEqual([]);
+    await expectNoAccessibilityViolations(page);
 
     // Nothing makes the page wider than the screen, however narrow it is.
     const overflow = await page.evaluate(
