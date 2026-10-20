@@ -65,8 +65,10 @@ test('the mapping editor in the light theme', async ({ page }) => {
 
 test('the button state gallery in the light theme', async ({ page }) => {
   await page.goto(inLight('design-system-button--state-gallery'));
-  await expect(page.locator('#storybook-root')).toBeVisible();
+  // Not the root alone: it is there before the story is drawn in it (see button.visual.spec.ts).
+  await expect(page.locator('#storybook-root').getByRole('button').first()).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('light-button-state-gallery.png');
 });
 
