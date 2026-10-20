@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
 
 import { base } from '../../site.config.mjs';
 import { captureOn, openFullSizeImage } from '../support/tutorial-images.mjs';
+import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
 test.use({ deviceScaleFactor: 2 });
@@ -311,10 +311,7 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
           );
         }
       }
-      const scan = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(scan.violations).toEqual([]);
+      await expectNoAccessibilityViolations(page);
       for (const details of steps) await details.locator('summary').click();
       await page
         .getByRole('heading', { name: 'Overlap status bar', exact: true })
@@ -367,10 +364,7 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
       await summary.press('Enter');
       await expect(details).toHaveAttribute('open');
       for (const name of names) await expectReadableImage(page, `koreader/${name}`, details);
-      const scan = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(scan.violations).toEqual([]);
+      await expectNoAccessibilityViolations(page);
       await details.scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath('opds-steps.png') });
       await summary.press('Space');

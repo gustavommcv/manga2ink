@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import { base } from '../../site.config.mjs';
+import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
 const notice = 'このコンテンツはまだ日本語訳がありません。';
@@ -124,10 +124,7 @@ for (const route of ['', 'getting-started/quickstart/']) {
     test(`the Japanese site is accessible: ${route || 'home'} ${colorScheme}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
       await page.goto(`${root}ja/${route}`);
-      const scan = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      expect(scan.violations).toEqual([]);
+      await expectNoAccessibilityViolations(page);
     });
   }
 }
