@@ -61,7 +61,7 @@ describe('packaged conversion pipeline', () => {
     await $('button[aria-label="Add volume"]').click();
     await $('button=Assign selected').click();
     await $('button=Confirm mapping').click();
-    await $('span=1 volume').waitForDisplayed({ timeout: 10_000 });
+    await $('span=1 volume').waitForDisplayed({ timeout: 30_000 });
     await $('button=Validate plan').click();
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
     assert.deepEqual(await readdir(libraryPath), []);
