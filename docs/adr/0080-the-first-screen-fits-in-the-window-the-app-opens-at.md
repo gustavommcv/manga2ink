@@ -14,7 +14,7 @@ The window of a person with a screen of 1366 by 768 px is as tall as the work ar
 
 - **`Page` (`components/shell/page.tsx`) is the area under the title bar,** the one that scrolls, with the page in it, 72 rem wide at most and 32 px from the sides and from the bar. The app and the screen that says it could not start use it, and the space over and under the page is 32 px where it was 40.
 - **The panel of the queue is 16 px between its parts, where it was 20,** which, with the other 16 px, makes the first screen 676 px tall in English and 658 px in Portuguese: it fits in 711 px with 35 px to spare, and in 681 px, the window of a laptop with a bar, with 5.
-- **A packaged test holds it:** with the window at the size it opens at, the area under the title bar is no taller than it is (`tests/e2e/first-screen.e2e.ts`), and I checked that it fails, by 37 px, with the old space.
+- **A packaged test holds it:** it measures the height the first screen needs, the title bar and the page, with the queue and its panel side by side, and says it is no more than the 760 px the window opens at (`tests/e2e/first-screen.e2e.ts`). It measures what the screen needs, not the window of the run: the window of a runner cannot always be as tall as a person's. I checked that it fails, at 788 px, with 64 px over and under the page.
 
 ## Consequences
 
