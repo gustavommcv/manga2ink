@@ -173,7 +173,7 @@ export function ProviderPicker({
                 </IconTile>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-medium">{option.title}</span>
-                  <span className="text-subtle-foreground block truncate text-xs">
+                  <span className="text-muted-foreground block truncate text-xs">
                     {option.detail}
                   </span>
                 </span>

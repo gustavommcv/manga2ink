@@ -9,6 +9,7 @@ import {
 } from '@/renderer/components/ui/dropdown-menu';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface DropTargetProps {
   readonly children?: React.ReactNode;
@@ -101,7 +102,7 @@ export function DropTarget({
         <DropdownMenuTrigger asChild>
           <button
             className={cn(
-              'text-subtle-foreground focus-visible:ring-ring flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50',
+              'text-muted-foreground focus-visible:ring-ring flex cursor-pointer items-center justify-center gap-2 rounded-md text-sm outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50',
               // The area under the pointer is what lights up, so the words follow it.
               empty
                 ? 'group-hover:text-foreground text-center'
@@ -124,9 +125,7 @@ export function DropTarget({
         </DropdownMenuContent>
       </DropdownMenu>
       {empty && !over && (
-        <p className="text-subtle-foreground mt-1 max-w-sm text-center text-xs text-balance">
-          {words.note}
-        </p>
+        <Note className="mt-1 max-w-sm text-center text-balance">{words.note}</Note>
       )}
     </div>
   );

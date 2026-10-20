@@ -10,6 +10,7 @@ import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface ItemOptionsScreenProps {
   /** Where Back leads: the queue, or the library the title is in. */
@@ -70,9 +71,9 @@ export function ItemOptionsScreen({
             >
               <RotateCcw /> {words.useQueue}
             </Button>
-            <p aria-live="polite" className="text-subtle-foreground mt-1 text-xs">
+            <Note aria-live="polite" className="mt-1">
               {hasOwnOptions ? words.hasOwn : words.followsQueue}
-            </p>
+            </Note>
           </div>
         }
         back={{ label: backLabel, onBack }}

@@ -23,7 +23,6 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-ring: var(--ring);
-  --color-subtle-foreground: var(--subtle-foreground);
   --color-surface: var(--surface);
   --color-status-cancelled: var(--status-cancelled);
   --color-status-complete: var(--status-complete);
@@ -71,8 +70,8 @@
  * The dark theme: near-neutral graphite surfaces, a single soft lavender accent used sparingly,
  * muted amber/red for warning/failure.
  *
- * Contrast (WCAG, measured): muted-foreground 7.1-7.6:1, subtle-foreground 5.1-5.5:1 on the
- * background/surface (4.6:1 on muted), accent 9.1-9.7:1, override 9.4-10:1, warning and failed 7+:1.
+ * Contrast (WCAG, measured): muted-foreground 7.1-7.6:1 on the background/surface (6.4:1 on muted),
+ * accent 9.1-9.7:1, override 9.4-10:1, warning and failed 7+:1.
  * The edge of a control (--control-border, ADR 0076) is 3.0-3.4:1 on the page, a surface and what the
  * pointer is over, where the hairlines of cards and rows (--border) are 1.2-1.4:1.
  */
@@ -92,7 +91,6 @@
   --primary: oklch(0.794 0.09 274);
   --primary-foreground: oklch(0.205 0.03 275);
   --ring: oklch(0.794 0.09 274);
-  --subtle-foreground: oklch(0.636 0.013 286);
   --surface: oklch(0.215 0.006 286);
   --status-cancelled: oklch(0.636 0.013 286);
   --status-complete: oklch(0.794 0.09 274);
@@ -110,7 +108,7 @@
  * brown amber.
  *
  * Contrast (WCAG, measured): foreground 14.6-17.4:1, muted-foreground 7.1-7.6:1 on the
- * background/surface (6.4:1 on muted), subtle-foreground 5.6-5.9:1 (5.0:1 on muted), accent 7.8-8.3:1,
+ * background/surface (6.4:1 on muted), accent 7.8-8.3:1,
  * override 7.5-8.1:1, failed 7.7-8.3:1, warning 7.6-8.1:1 (7:1 and 6.8:1 on muted at the least), the
  * label of a primary button 8.1:1 and of a destructive one 6.2:1.
  * The edge of a control (--control-border, ADR 0076) is 3.0-3.3:1 on the page, a surface and what the
@@ -131,7 +129,6 @@
   --primary: oklch(0.43 0.14 274);
   --primary-foreground: oklch(0.985 0.004 275);
   --ring: oklch(0.43 0.14 274);
-  --subtle-foreground: oklch(0.5 0.014 286);
   --surface: oklch(0.995 0.002 286);
   --status-cancelled: oklch(0.5 0.014 286);
   --status-complete: oklch(0.43 0.14 274);

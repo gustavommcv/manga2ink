@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 
 import { isLanguagePreference, languagePreferences } from '@/domain/app-settings';
 import { isThemePreference, themePreferences } from '@/domain/theme';
-import { FieldMessage } from '@/renderer/components/shared/field-message';
+import { Field } from '@/renderer/components/shared/field';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages } from '@/renderer/hooks/use-messages';
@@ -18,12 +18,15 @@ export function InterfaceTab(): React.JSX.Element {
 
   return (
     <div className="space-y-5">
-      <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor={`${id}-language`}>
-          {words.language.label}
-        </label>
+      <Field
+        announces
+        description={words.language.help}
+        {...(languageFailed ? { error: words.language.saveFailed } : {})}
+        id={`${id}-language`}
+        label={words.language.label}
+      >
         <NativeSelect
-          aria-describedby={`${id}-language-help`}
+          aria-describedby={`${id}-language-message`}
           id={`${id}-language`}
           onChange={(event) => {
             const choice = event.target.value;
@@ -40,21 +43,17 @@ export function InterfaceTab(): React.JSX.Element {
             </option>
           ))}
         </NativeSelect>
-        <div aria-live="polite">
-          <FieldMessage
-            description={words.language.help}
-            id={`${id}-language-help`}
-            {...(languageFailed ? { error: words.language.saveFailed } : {})}
-          />
-        </div>
-      </div>
+      </Field>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor={`${id}-theme`}>
-          {words.theme.label}
-        </label>
+      <Field
+        announces
+        description={words.theme.help}
+        {...(themeFailed ? { error: words.theme.saveFailed } : {})}
+        id={`${id}-theme`}
+        label={words.theme.label}
+      >
         <NativeSelect
-          aria-describedby={`${id}-theme-help`}
+          aria-describedby={`${id}-theme-message`}
           id={`${id}-theme`}
           onChange={(event) => {
             const choice = event.target.value;
@@ -71,14 +70,7 @@ export function InterfaceTab(): React.JSX.Element {
             </option>
           ))}
         </NativeSelect>
-        <div aria-live="polite">
-          <FieldMessage
-            description={words.theme.help}
-            id={`${id}-theme-help`}
-            {...(themeFailed ? { error: words.theme.saveFailed } : {})}
-          />
-        </div>
-      </div>
+      </Field>
     </div>
   );
 }

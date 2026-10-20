@@ -6,6 +6,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
 import { type SearchMetadata, useMetadataSearch } from '@/renderer/hooks/use-metadata-search';
 import type { MetadataProviderDescriptor } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 /** The online sources, and what is needed to ask one who wrote a work. */
 export interface AuthorLookup {
@@ -58,10 +59,10 @@ export function AuthorLookupPanel({
       </div>
 
       {provider === undefined ? (
-        <p className="text-muted-foreground text-xs">{words.pick}</p>
+        <Note>{words.pick}</Note>
       ) : (
         <>
-          <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
+          <Note className="flex flex-wrap items-center gap-x-1.5">
             {words.dataBy}
             <button
               aria-label={online.open(provider.displayName)}
@@ -74,11 +75,9 @@ export function AuthorLookupPanel({
               {provider.displayName}
               <ExternalLink aria-hidden="true" className="size-3" />
             </button>
-          </p>
+          </Note>
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-muted-foreground min-w-0 flex-1 text-xs leading-relaxed">
-              {words.willSearch(provider.displayName, title)}
-            </p>
+            <Note className="min-w-0 flex-1">{words.willSearch(provider.displayName, title)}</Note>
             <Button
               disabled={title === ''}
               onClick={() => {
@@ -90,7 +89,7 @@ export function AuthorLookupPanel({
               <Search aria-hidden="true" /> {online.searchButton}
             </Button>
           </div>
-          {searching && <p className="text-muted-foreground text-xs">{online.searching}</p>}
+          {searching && <Note>{online.searching}</Note>}
           {error !== undefined && (
             <p className="text-status-failed text-xs" role="alert">
               {error}
@@ -110,10 +109,10 @@ export function AuthorLookupPanel({
                   >
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm">{result.title}</p>
-                      <p className="text-muted-foreground truncate text-xs">
+                      <Note className="truncate">
                         {authors.length === 0 ? words.noAuthor : authors.join(', ')}
                         {result.year === undefined ? '' : ` · ${String(result.year)}`}
-                      </p>
+                      </Note>
                     </div>
                     {authors.length > 0 && (
                       <Button

@@ -8,6 +8,7 @@ import { Button } from '@/renderer/components/ui/button';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { type UpdateCheckOutcome, useAppInfo } from '@/renderer/hooks/use-app-info';
 import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { Note } from '@/renderer/components/shared/note';
 
 /** Where the check is: not asked yet, being asked, or what it came to. */
 type Check =
@@ -106,11 +107,7 @@ export function UpdatesTab(): React.JSX.Element {
           describedBy={`${id}-automatic-help`}
           disabled
           id={`${id}-automatic`}
-          note={
-            <p className="text-muted-foreground text-xs" id={`${id}-automatic-help`}>
-              {words.automatic.help}
-            </p>
-          }
+          note={<Note id={`${id}-automatic-help`}>{words.automatic.help}</Note>}
           onChange={() => undefined}
           title={words.automatic.label}
         />

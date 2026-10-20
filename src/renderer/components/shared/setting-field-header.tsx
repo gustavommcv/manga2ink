@@ -54,7 +54,7 @@ export function SettingFieldHeader({
           {optional && (
             <>
               {' '}
-              <span className="text-subtle-foreground font-normal">{words.optional}</span>
+              <span className="text-muted-foreground font-normal">{words.optional}</span>
             </>
           )}
         </Label>

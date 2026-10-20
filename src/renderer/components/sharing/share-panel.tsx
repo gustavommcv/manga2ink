@@ -13,6 +13,7 @@ import type {
   OpdsSharingStatus,
 } from '@/shared/opds-contract';
 import type { SelectedLibrary } from '@/shared/workflow-contract';
+import { Note } from '@/renderer/components/shared/note';
 
 export interface SharePanelProps {
   readonly library?: SelectedLibrary;
@@ -81,7 +82,7 @@ export function SharePanel({
           {words.title}
         </h2>
       </div>
-      <p className="text-muted-foreground mt-1 text-xs">{words.intro}</p>
+      <Note className="mt-1">{words.intro}</Note>
 
       {status.active ? (
         <div className="mt-4 space-y-3">
@@ -108,7 +109,7 @@ export function SharePanel({
               </Button>
             </div>
           </div>
-          <p className="text-subtle-foreground text-xs">{words.inKoreader}</p>
+          <Note>{words.inKoreader}</Note>
           <Button onClick={onStop} size="sm" variant="outline">
             {words.stop}
           </Button>
@@ -125,7 +126,7 @@ export function SharePanel({
           </div>
 
           {interfaces.length === 0 ? (
-            <p className="text-muted-foreground text-xs">{words.noInterfaces}</p>
+            <Note>{words.noInterfaces}</Note>
           ) : (
             <div>
               <Label htmlFor="share-interface">{words.networkInterface}</Label>
@@ -176,7 +177,7 @@ export function SharePanel({
               />
             </div>
           </div>
-          <p className="text-subtle-foreground text-xs">{words.blankHint}</p>
+          <Note>{words.blankHint}</Note>
 
           <Button
             disabled={!canStart}

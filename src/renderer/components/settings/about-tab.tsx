@@ -8,6 +8,7 @@ import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import type { AnyMessage } from '@/domain/message';
 import type { ProjectLink } from '@/shared/project-links-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
+import { Note } from '@/renderer/components/shared/note';
 
 /** What the app says about itself (ADR 0054): what it is, who it is by, and where to go from here. */
 export function AboutTab(): React.JSX.Element {
@@ -57,9 +58,9 @@ export function AboutTab(): React.JSX.Element {
         />
         <div className="min-w-0 space-y-1">
           <p className="text-lg font-semibold tracking-tight">Mangabound</p>
-          <p className="text-muted-foreground text-xs">
+          <Note>
             {words.version} {version}
-          </p>
+          </Note>
           <p className="text-sm leading-relaxed">{words.tagline}</p>
         </div>
       </div>
@@ -78,9 +79,9 @@ export function AboutTab(): React.JSX.Element {
       </Section>
 
       <Section title={words.troubleshooting.title}>
-        <p className="text-muted-foreground text-xs leading-relaxed">
+        <Note>
           {words.troubleshooting.text} {words.troubleshooting.logsText}
-        </p>
+        </Note>
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => {
@@ -116,7 +117,7 @@ export function AboutTab(): React.JSX.Element {
         <div aria-live="polite">
           {report !== undefined &&
             (report === 'copied' ? (
-              <p className="text-muted-foreground text-xs">{words.troubleshooting.copied}</p>
+              <Note>{words.troubleshooting.copied}</Note>
             ) : (
               <p className="text-status-failed text-xs">{say(report)}</p>
             ))}
@@ -125,7 +126,7 @@ export function AboutTab(): React.JSX.Element {
 
       <Section title={words.support.title}>
         <div className="flex items-center justify-between gap-4">
-          <p className="text-muted-foreground text-xs leading-relaxed">{words.support.text}</p>
+          <Note>{words.support.text}</Note>
           <Button
             onClick={() => {
               open('support');
@@ -150,7 +151,7 @@ export function AboutTab(): React.JSX.Element {
       </Section>
 
       <Section title={words.license.title}>
-        <p className="text-muted-foreground text-xs leading-relaxed">{words.license.text}</p>
+        <Note>{words.license.text}</Note>
         <div className="flex flex-wrap gap-2">
           <LinkButton label={words.license.mit} link="license" open={open} />
           <LinkButton label={words.license.notices} link="third-party-notices" open={open} />
@@ -171,10 +172,9 @@ function ToolVersions({
   readonly status: ToolchainStatus | null | undefined;
 }): React.JSX.Element {
   const { about: words } = useMessages();
-  if (status === null)
-    return <p className="text-muted-foreground text-xs">{words.tools.reading}</p>;
+  if (status === null) return <Note>{words.tools.reading}</Note>;
   if (status === undefined) {
-    return <p className="text-muted-foreground text-xs">{words.tools.unknown}</p>;
+    return <Note>{words.tools.unknown}</Note>;
   }
   if (status.tools.length === 0) {
     return <p className="text-status-failed text-xs">{words.tools.blocked}</p>;

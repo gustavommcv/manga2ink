@@ -1,6 +1,7 @@
 import type { MappingDraft } from '@/domain/mapping';
 import { Button } from '@/renderer/components/ui/button';
 import { useMessages } from '@/renderer/hooks/use-messages';
+import { Note } from '@/renderer/components/shared/note';
 
 export function MappingSummary({
   draft,
@@ -27,9 +28,9 @@ export function MappingSummary({
           <h2 className="text-sm font-semibold" id="mapping-summary-title">
             {words.summary.title}
           </h2>
-          <p className="text-muted-foreground mt-1 text-xs">
+          <Note className="mt-1">
             {words.summary.counts(volumes.length, assignedCount, draft.chapters.length)}
-          </p>
+          </Note>
         </div>
         <Button onClick={onEdit} size="sm" variant="outline">
           {words.summary.edit}
@@ -58,7 +59,7 @@ export function MappingSummary({
         })}
       </ol>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">{words.summary.review}</p>
+        <Note>{words.summary.review}</Note>
         <Button onClick={onConfirm}>{words.summary.confirm}</Button>
       </div>
     </section>

@@ -9,9 +9,10 @@ import {
   singleBookLockReason,
   stepsFromMode,
 } from '@/domain/process-mode';
-import { SettingFieldHeader } from '@/renderer/components/settings/setting-field-header';
+import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { Note } from '@/renderer/components/shared/note';
 
 interface ProcessStepsProps {
   /** What is being run, since a CBZ and a whole library allow different processes. */
@@ -50,7 +51,7 @@ export function ProcessSteps({
 
   return (
     <fieldset className="mx-0 min-w-0 space-y-3 border-0 p-0" disabled={disabled}>
-      <legend className="text-muted-foreground mb-2 text-xs font-medium">{words.legend}</legend>
+      <legend className="mb-2 text-sm font-medium">{words.legend}</legend>
       <Step
         changed={canRestoreStep && !steps.group}
         checked={steps.group}
@@ -110,14 +111,8 @@ function Step({
       id={id}
       note={
         <div className="space-y-0.5">
-          <p className="text-subtle-foreground text-xs" id={`${id}-tool`}>
-            {tool}
-          </p>
-          {reason !== undefined && (
-            <p className="text-muted-foreground text-xs" id={`${id}-reason`}>
-              {reason}
-            </p>
-          )}
+          <Note id={`${id}-tool`}>{tool}</Note>
+          {reason !== undefined && <Note id={`${id}-reason`}>{reason}</Note>}
         </div>
       }
       onChange={onChange}

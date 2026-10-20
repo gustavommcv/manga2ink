@@ -1,3 +1,5 @@
+import { Note } from '@/renderer/components/shared/note';
+
 /** The line under a form field: its error when it has one, otherwise what it is for. */
 export function FieldMessage({
   description,
@@ -10,14 +12,10 @@ export function FieldMessage({
 }): React.JSX.Element | null {
   if (error !== undefined) {
     return (
-      <p className="text-status-failed text-xs" id={id}>
+      <Note className="text-status-failed" id={id}>
         {error}
-      </p>
+      </Note>
     );
   }
-  return description === undefined ? null : (
-    <p className="text-muted-foreground text-xs leading-relaxed" id={id}>
-      {description}
-    </p>
-  );
+  return description === undefined ? null : <Note id={id}>{description}</Note>;
 }
