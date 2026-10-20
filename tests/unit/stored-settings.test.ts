@@ -224,6 +224,66 @@ describe('parseStoredSettings', () => {
       expect(parsed?.settings).not.toHaveProperty('preferredNetworkInterface');
     });
 
+    it('resets an option that is not a text but looks like one to a check of length, instead of failing', () => {
+      // Found by the property test, with the seed 462825352: zod compared the `length` of the object, and
+      // the comparison threw. The file as a whole is still read.
+      const parsed = parseStoredSettings(
+        JSON.stringify({
+          version: settingsFileVersion,
+          mode: false,
+          format: {},
+          singleBook: {},
+          settings: [],
+          providerId: { length: { toString: null } },
+          outputFolder: [],
+          extra: [],
+        }),
+      );
+
+      expect(parsed?.reset).toEqual(['mode', 'format', 'singleBook', 'providerId', 'outputFolder']);
+      expect(parsed?.settings).not.toHaveProperty('providerId');
+    });
+
+    it.each(['providerId', 'outputFolder', 'lastPickerFolder', 'preferredNetworkInterface'])(
+      'resets %s, which is left out, when it is an object whose length cannot be compared',
+      (field) => {
+        const parsed = parseStoredSettings(
+          file({ [field]: { length: { toString: null, valueOf: null } } }),
+        );
+
+        expect(parsed?.reset).toContain(field);
+        expect(parsed?.settings).not.toHaveProperty(field);
+      },
+    );
+
+    it.each(['mode', 'format'] as const)(
+      'resets %s to its default when it is an object whose length cannot be compared',
+      (field) => {
+        const parsed = parseStoredSettings(
+          file({ [field]: { length: { toString: null, valueOf: null } } }),
+        );
+
+        expect(parsed?.reset).toContain(field);
+        expect(parsed?.settings[field]).toBe(defaultPreferences[field]);
+      },
+    );
+
+    it.each(Object.keys(defaultMangapressSettings))(
+      'resets the option %s when it is an object whose length cannot be compared',
+      (name) => {
+        const parsed = parseStoredSettings(
+          file({
+            settings: { ...defaultMangapressSettings, [name]: { length: { toString: null } } },
+          }),
+        );
+
+        expect(parsed?.reset).toContain(name);
+        expect(parsed?.settings.settings[name as keyof typeof defaultMangapressSettings]).toEqual(
+          defaultMangapressSettings[name as keyof typeof defaultMangapressSettings],
+        );
+      },
+    );
+
     it('resets a custom device that has no size, with the size, and keeps the rest', () => {
       const parsed = parseStoredSettings(
         file({

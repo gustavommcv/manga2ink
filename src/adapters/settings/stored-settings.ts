@@ -32,6 +32,24 @@ export interface ParsedSettings {
 }
 
 /**
+ * `safeParse`, which does not throw for a value of the wrong kind but did for one that only looks like
+ * a string: zod checks the length of anything that has one, and compares it, so a file edited by hand
+ * to `{"length":{"toString":null}}` made the comparison throw a `TypeError`. A value that makes the check
+ * throw is a bad value like any other: `undefined` is what is given, and the option goes back to its
+ * default.
+ */
+function parseWithoutThrowing<Schema extends z.ZodType>(
+  schema: Schema,
+  value: unknown,
+): z.ZodSafeParseResult<z.output<Schema>> | undefined {
+  try {
+    return schema.safeParse(value);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * What a settings file holds, or undefined when the file as a whole cannot be used: not JSON,
  * not an object, or another version. A single value of the wrong kind or out of range (a hand
  * edit, or a range tightened by a later version) does not cost the person the rest: that option
@@ -67,8 +85,8 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
     value: unknown,
   ): z.output<Schema> | undefined => {
     if (value === undefined) return undefined;
-    const parsed = schema.safeParse(value);
-    if (parsed.success) return parsed.data;
+    const parsed = parseWithoutThrowing(schema, value);
+    if (parsed?.success === true) return parsed.data;
     reset.push(name);
     return undefined;
   };
