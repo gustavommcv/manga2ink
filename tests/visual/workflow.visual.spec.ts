@@ -25,8 +25,9 @@ test.describe('at the size the window opens at', () => {
     );
 
     await page.goto('/iframe.html?id=workflows-queue--single-book-active&viewMode=story');
-    await expect(page.getByRole('radio', { name: 'CBZ' })).toBeDisabled();
-    await expect(page.getByRole('radio', { name: 'CBZ' })).not.toHaveCSS('cursor', 'pointer');
+    const lockedStep = page.getByRole('checkbox', { name: 'Group chapters into volumes' });
+    await expect(lockedStep).toBeDisabled();
+    await expect(lockedStep).not.toHaveCSS('cursor', 'pointer');
   });
 
   test('the empty queue remains visually consistent', async ({ page }) => {
@@ -49,14 +50,14 @@ test.describe('at the size the window opens at', () => {
     await expect(page).toHaveScreenshot('conversion-options.png');
   });
 
-  test('the conversion options page keeps the single-book warning above its locked controls', async ({
+  test('the conversion options page keeps the single-book warning above its controls', async ({
     page,
   }) => {
     await page.goto(
       '/iframe.html?id=workflows-conversion-options--single-book-active&viewMode=story',
     );
     await expect(page.getByRole('status', { name: 'Single book for the series' })).toBeVisible();
-    await expect(page.getByLabel('Book format')).toBeDisabled();
+    await expect(page.getByLabel('Book format')).toBeEnabled();
     await page.evaluate(async () => document.fonts.ready);
     await expect(page).toHaveScreenshot('conversion-options-single-book.png');
   });
