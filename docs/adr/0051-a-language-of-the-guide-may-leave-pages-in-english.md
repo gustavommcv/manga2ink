@@ -35,3 +35,7 @@ Japanese now has every page of the guide, and its list in `i18n-gaps.json` is em
 The application has Brazilian Portuguese, so the guide follows it, as the consequence above said it would: the Portuguese guide names the controls as the Portuguese application does (the same words as its pictures, which are made in each language the app has, ADR 0034), and the check of the labels reads each language's own words from the catalogs of the application. A language the application does not have yet, Japanese, is checked against the English words, which is what its guide names the controls by until the application is translated. A page's headings that name an option are the option's name too, so their anchors changed with them.
 
 The Japanese home page also says that its pictures are of the English application. The sentence goes when the application has Japanese: the pictures, made for each language the app has (ADR 0034), and the names are Japanese then.
+
+## Update 2026-10-21
+
+The application has Japanese too ([ADR 0084](0084-the-app-is-also-in-japanese-written-to-read-naturally-and-open-to-correction.md)), so the Japanese guide follows it as the Portuguese one did: it names the controls as the Japanese application does, its pictures are of the Japanese application, and the check of the labels reads the Japanese catalogs. Every language of the guide is now a language of the application, and the sentence of the home page that said the pictures were of the English application is gone.
