@@ -260,6 +260,60 @@ export const InJapanese: Story = {
   },
 };
 
+/** The About tab in Japanese: the version, and where to go from here. */
+export const AboutInJapanese: Story = {
+  parameters: { bridge: bridgeFor('ja', 'ja', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'アプリの設定' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'アプリの設定',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: 'このアプリについて' }));
+
+    await expect(
+      within(dialog).getByRole('tabpanel', { name: 'このアプリについて' }),
+    ).toHaveTextContent('バージョン 0.1.0-alpha.15');
+  },
+};
+
+/** The Updates tab as it first opens, in Japanese: nothing is asked until the button is. */
+export const UpdatesInJapanese: Story = {
+  parameters: { bridge: bridgeFor('ja', 'ja', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'アプリの設定' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'アプリの設定',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: '更新' }));
+
+    await expect(
+      within(dialog).getByRole('status', { name: '更新は今のところ手動です' }),
+    ).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: '更新を確認' })).toBeEnabled();
+  },
+};
+
+/** The Processing tab as it first opens, in Japanese: the app in its own places. */
+export const ProcessingInOwnPlacesInJapanese: Story = {
+  parameters: { bridge: bridgeFor('ja', 'ja', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'アプリの設定' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'アプリの設定',
+    });
+    await userEvent.click(within(dialog).getByRole('tab', { name: '処理' }));
+
+    const panel = within(dialog).getByRole('tabpanel', { name: '処理' });
+    await expect(await within(panel).findByText('Mangabound が選択')).toBeVisible();
+    await expect(
+      within(panel).getByRole('button', { name: '初期設定のフォルダーを使う' }),
+    ).toBeDisabled();
+    await expect(await within(panel).findByRole('combobox', { name: '並列変換' })).toHaveValue(
+      'automatic',
+    );
+  },
+};
+
 /** Choosing a language changes the dialog itself at once, and the title bar's gear with it. */
 export const ChangingTheLanguage: Story = {
   play: async ({ canvas, canvasElement }) => {

@@ -71,7 +71,7 @@ export function sectionsOf(source, tags) {
 /**
  * What the interface says in a language: the words that the app's catalogs have for it, and the text
  * of everything that is not a catalog (a name written in a component is the same in every language).
- * A language the app does not have yet says what English says, which is what a guide of it names the
+ * A language the app does not have says what English says, which is what a guide of it names the
  * controls by until the app is translated.
  */
 export function interfaceTextFor(tag, sources, tags, fallback = 'en') {

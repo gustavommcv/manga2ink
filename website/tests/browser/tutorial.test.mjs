@@ -75,7 +75,7 @@ test('screen captures retain background space around their content', async () =>
     'save-results',
     'processing-details',
     'book-warnings',
-  ].flatMap((captured) => [captured, `pt-br/${captured}`])) {
+  ].flatMap((captured) => [captured, `pt-br/${captured}`, `ja/${captured}`])) {
     const capture = manifest.captures.find((entry) => entry.name === name);
     for (const variant of capture.variants) {
       const image = sharp(
@@ -165,7 +165,7 @@ for (const colorScheme of ['light', 'dark']) {
   });
 }
 
-for (const locale of ['', 'pt-br/']) {
+for (const locale of ['', 'pt-br/', 'ja/']) {
   test(`published tutorial images and their full-size links retain the source pixels: ${locale || 'en'}`, async ({
     page,
   }) => {
@@ -382,9 +382,9 @@ for (const density of [1, 2, 3, 4]) {
     test('the browser selects readable native sources without always loading the master', async ({
       page,
     }, testInfo) => {
-      // It opens every page that has a capture and fetches each one twice, in both languages, so what
-      // it does grows with the guide: a minute is room for the pictures there are, on a busy machine.
-      test.setTimeout(60_000);
+      // It opens every page that has a capture and fetches each one twice, in each language, so what
+      // it does grows with the guide: a minute and a half is room for the pictures there are, on a busy machine.
+      test.setTimeout(90_000);
       if (testInfo.project.name === 'desktop')
         await page.setViewportSize({ width: 1920, height: 1080 });
       const seen = new Set();
@@ -395,7 +395,7 @@ for (const density of [1, 2, 3, 4]) {
       });
       let selectedBytes = 0;
       let fullSizeBytes = 0;
-      for (const [locale, [route]] of ['', 'pt-br/'].flatMap((folder) =>
+      for (const [locale, [route]] of ['', 'pt-br/', 'ja/'].flatMap((folder) =>
         applicationPages.map((entry) => [folder, entry]),
       )) {
         await page.goto(`${root}${locale}${route}`);
