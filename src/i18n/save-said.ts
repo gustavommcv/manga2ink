@@ -41,4 +41,22 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.copiedNotRecorded': () =>
       'O livro foi copiado, mas o Mangabound não conseguiu registrar que ele foi salvo. A cópia pendente continua disponível para tentar de novo.',
   },
+  ja: {
+    'save.bookGone': () => 'この保留中の本は、もう利用できません。',
+    'save.bookBeingDeleted': () => 'この保留中の本は、削除されているところです。',
+    'save.wrongExtension': ({ extension }) => `この本には、${extension} ファイルを選んでください。`,
+    'save.nameUnavailable': () => '使用できるファイル名が見つかりませんでした。',
+    'save.destinationFull': () =>
+      '保存先がいっぱいです。空き容量を確保してから、もう一度お試しください。保留中の本は無事です。',
+    'save.cannotWrite': () =>
+      'Mangabound はその保存先に書き込めません。書き込み可能なフォルダーを選ぶか、フォルダーのアクセス許可を確認してください。',
+    'save.folderGone': () =>
+      '選んだ保存先のフォルダーは、もう利用できません。別のフォルダーを選んでください。',
+    'save.failed': () =>
+      '本を保存できませんでした。保留中のコピーは残っています。別の保存先をお試しください。',
+    'save.copiedCatalogFailed': () =>
+      '本はコピーされましたが、保存先のカタログを更新できませんでした。別のフォルダーを選ぶか、フォルダーのアクセス許可を確認してから、もう一度お試しください。保留中のコピーは無事です。',
+    'save.copiedNotRecorded': () =>
+      '本はコピーされましたが、Mangabound は保存済みであることを記録できませんでした。保留中のコピーは残っているので、もう一度お試しいただけます。',
+  },
 };

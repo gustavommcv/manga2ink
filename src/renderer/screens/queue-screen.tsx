@@ -30,7 +30,7 @@ import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
 import { Button } from '@/renderer/components/ui/button';
 import { useFocusOnOpen } from '@/renderer/hooks/use-focus-on-open';
-import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { useLanguage, useMessages, useSay, useSentenceMarks } from '@/renderer/hooks/use-messages';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
 import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
 import { sizeOf } from '@/i18n/size';
@@ -136,6 +136,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   } = props;
   const words = useMessages().queue;
   const language = useLanguage();
+  const { gap } = useSentenceMarks();
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const summary = summarizeQueue(rows, mode);
@@ -365,7 +366,8 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                   {item.name !== undefined && (
                     <>
                       <span className="text-foreground font-medium">{item.name}</span>{' '}
-                      {words.rejected.wasNotAdded}{' '}
+                      {words.rejected.wasNotAdded}
+                      {gap}
                     </>
                   )}
                   {say(item.reason)}

@@ -26,4 +26,14 @@ export const noticeSaid: Readonly<Record<Language, SaidFor<NoticeMessageValues>>
     'notice.deviceFallback': ({ profile, name }) =>
       `O perfil de dispositivo ${profile} não está disponível, então ${name} foi selecionado.`,
   },
+  ja: {
+    'notice.settingsUnreadable': () =>
+      '保存された設定を読み込めなかったため、初期設定を使用しています。',
+    'notice.optionsReset': ({ options }) =>
+      `保存されていた一部のオプションを使用できず、初期設定に戻りました: ${options
+        .map((option) => `「${optionFieldsMessages.ja.names[option]}」`)
+        .join('、')}。`,
+    'notice.deviceFallback': ({ profile, name }) =>
+      `端末プロファイル「${profile}」を利用できないため、「${name}」が選択されています。`,
+  },
 };

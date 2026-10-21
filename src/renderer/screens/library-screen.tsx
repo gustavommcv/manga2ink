@@ -6,7 +6,7 @@ import { hasItemOptions } from '@/domain/item-options';
 import { skippedLinksNotice } from '@/domain/library-links';
 import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
-import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay, useSentenceMarks } from '@/renderer/hooks/use-messages';
 import { Badge } from '@/renderer/components/shared/badge';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { ListRow } from '@/renderer/components/shared/list-row';
@@ -69,12 +69,16 @@ export function LibraryScreen({
 /** Series kept as links are not in the list below, and nothing else says so. */
 function SkippedLinks({ names }: { readonly names: readonly string[] }): React.JSX.Element {
   const { say } = useSay();
+  const { gap, stop } = useSentenceMarks();
   const notice = skippedLinksNotice(names);
   return (
     <InfoBanner
       message={
         <>
-          {say(notice.advice)} <strong className="text-foreground">{say(notice.names)}</strong>.
+          {say(notice.advice)}
+          {gap}
+          <strong className="text-foreground">{say(notice.names)}</strong>
+          {stop}
         </>
       }
       title={say(notice.title)}

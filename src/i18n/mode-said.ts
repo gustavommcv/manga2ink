@@ -20,4 +20,11 @@ export const modeSaid: Readonly<Record<Language, SaidFor<ModeMessageValues>>> = 
     'mode.singleBookLocked': () =>
       `Desligue “${queueMessages['pt-BR'].panel.singleBook.label}” para mudar isto.`,
   },
+  ja: {
+    'mode.cbzIsOneVolume': () => 'CBZ はすでに 1 巻なので、まとめる対象がありません。',
+    'mode.libraryGroupsFirst': () =>
+      'ライブラリは、まずタイトルごとに各話が巻にまとめられるため、巻をまとめる手順を省略できません。',
+    'mode.singleBookLocked': () =>
+      `これを変更するには、「${queueMessages.ja.panel.singleBook.label}」をオフにしてください。`,
+  },
 };

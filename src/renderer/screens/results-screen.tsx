@@ -17,7 +17,7 @@ import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { TwoColumns } from '@/renderer/components/shared/two-columns';
 import { Button } from '@/renderer/components/ui/button';
-import { useLanguage, useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { useLanguage, useMessages, useSay, useSentenceMarks } from '@/renderer/hooks/use-messages';
 import type { ArtifactSummary } from '@/shared/workflow-contract';
 
 /** What became of one queue item in a run. */
@@ -67,6 +67,7 @@ export function ResultsScreen({
   const words = useMessages().results;
   const language = useLanguage();
   const { say, sayAll } = useSay();
+  const { gap } = useSentenceMarks();
   const artifacts = outcomes.flatMap((outcome) => outcome.artifacts);
   const problems = outcomes.filter((outcome) => outcome.status !== 'done');
   const notices = warningNotices(artifacts);
@@ -181,7 +182,7 @@ export function ResultsScreen({
                 <Callout icon={TriangleAlert} title={say(notice.title)}>
                   {notice.where === undefined
                     ? say(notice.message)
-                    : `${say(notice.where)} ${say(notice.message)}`}
+                    : `${say(notice.where)}${gap}${say(notice.message)}`}
                 </Callout>
               </li>
             ))}

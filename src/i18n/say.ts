@@ -18,9 +18,12 @@ export function say(said: Said, message: AnyMessage): string {
   return write(message.values);
 }
 
-/** Writes several messages that follow one another as sentences of one note. */
-export function sayAll(said: Said, messages: readonly AnyMessage[]): string {
-  return messages.map((one) => say(said, one)).join(' ');
+/**
+ * Writes several messages that follow one another as sentences of one note, with `gap` between them:
+ * a space unless the language writes them one after another.
+ */
+export function sayAll(said: Said, messages: readonly AnyMessage[], gap = ' '): string {
+  return messages.map((one) => say(said, one)).join(gap);
 }
 
 /** How many names are spelled out before "and N more". */
@@ -28,9 +31,14 @@ const namedInANote = 3;
 
 /**
  * The names, as many as are spelled out, and what a language says of how many more there are (given
- * the number, since where it goes and how it is worded are the language's).
+ * the number, since where it goes and how it is worded are the language's). The names are joined as
+ * the language writes a list: with a comma and a space unless it says otherwise.
  */
-export function namesOf(names: readonly string[], more: (count: number) => string): string {
-  const shown = names.slice(0, namedInANote).join(', ');
+export function namesOf(
+  names: readonly string[],
+  more: (count: number) => string,
+  separator = ', ',
+): string {
+  const shown = names.slice(0, namedInANote).join(separator);
   return names.length > namedInANote ? `${shown}${more(names.length - namedInANote)}` : shown;
 }

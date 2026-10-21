@@ -11,6 +11,10 @@ const beforePortuguese: Readonly<Record<RunStep, string>> = {
   converting: 'converter',
   validating: 'validar o plano',
 };
+const beforeJapanese: Readonly<Record<RunStep, string>> = {
+  converting: '変換する',
+  validating: '計画を検証する',
+};
 
 /** Why the conversion workflow refused a request, in every language (ADR 0053). */
 export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValues>>> = {
@@ -66,5 +70,34 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
       'Nenhum arquivo de volume foi gerado. Revise o mapeamento dos capítulos e tente de novo.',
     'workflow.publishFailed': () =>
       'Não foi possível gravar um livro pronto no armazenamento pendente do Mangabound. Verifique o espaço disponível e as permissões de armazenamento.',
+  },
+  ja: {
+    'workflow.inputGone': () => 'この入力は、もう利用できません。もう一度選んでください。',
+    'workflow.titleGone': () =>
+      'そのタイトルは、ライブラリにありません。ライブラリを選び直してください。',
+    'workflow.notALibrary': () => 'この入力はライブラリではありません。',
+    'workflow.libraryNeedsTitle': () =>
+      'ライブラリはタイトルの集まりです。そのうちの 1 つを選んでください。',
+    'workflow.libraryByTitle': () =>
+      'ライブラリはタイトルごとに変換され、1 つの入力としては変換されません。',
+    'workflow.detailsNeedFolder': () =>
+      '著者と言語はフォルダーに保存されますが、この入力はフォルダーではありません。',
+    'workflow.mappingInvalid': () =>
+      '各話と巻の割り当てに、不明または不正な割り当てが含まれています。',
+    'workflow.mappingErrors': () => '変換する前に、各話と巻の割り当てのエラーを修正してください。',
+    'workflow.mappingNotSaved': () =>
+      '元のフォルダーに mangabind.json を保存できませんでした。フォルダーに書き込めることと、mangabind.json が正しい JSON であることを確認してください。',
+    'workflow.detailsNotSaved': () =>
+      '元のフォルダーに、著者と言語を保存できませんでした。フォルダーに書き込めることと、mangabind.json が正しいことを確認してください。',
+    'workflow.confirmMapping': ({ before }) =>
+      `${beforeJapanese[before]}前に、各話と巻の割り当てを確定してください。`,
+    'workflow.reviewSettings': ({ before }) =>
+      `${beforeJapanese[before]}前に、出力設定を確認してください。`,
+    'workflow.singleBookNeedsBoth': () =>
+      '1 冊にまとめるモードでは、巻にまとめる手順と変換する手順の両方が必要です。',
+    'workflow.noVolumes': () =>
+      '巻のファイルが作られませんでした。各話と巻の割り当てを確認して、もう一度お試しください。',
+    'workflow.publishFailed': () =>
+      '完成した本を、Mangabound の保留用の保存場所に書き込めませんでした。空き容量と、保存場所へのアクセス許可を確認してください。',
   },
 };

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Callout } from '@/renderer/components/shared/callout';
 import { Button } from '@/renderer/components/ui/button';
-import { useMessages } from '@/renderer/hooks/use-messages';
+import { useMessages, useSentenceMarks } from '@/renderer/hooks/use-messages';
 
 /**
  * Says, on the page of the queue's options, how many items are converted with options of their own,
@@ -22,6 +22,7 @@ export function ItemsWithOptionsNotice({
   readonly onClear: () => void;
 }): React.JSX.Element | null {
   const words = useMessages().options.overrides;
+  const { gap } = useSentenceMarks();
   const [cleared, setCleared] = useState<number | undefined>(undefined);
   const answer = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -60,7 +61,9 @@ export function ItemsWithOptionsNotice({
       role="group"
       tone="override"
     >
-      <span className="text-foreground font-medium">{words.some(count)}</span> {words.keep}
+      <span className="text-foreground font-medium">{words.some(count)}</span>
+      {gap}
+      {words.keep}
     </Callout>
   );
 }

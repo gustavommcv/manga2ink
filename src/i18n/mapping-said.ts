@@ -68,4 +68,34 @@ export const mappingSaid: Readonly<Record<Language, SaidFor<MappingMessageValues
     'mapping.issue.unassigned': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo não está atribuído', 'capítulos não estão atribuídos')} a um volume.`,
   },
+  ja: {
+    'mapping.invalidVolumeNumber': ({ value }) => `巻番号が正しくありません: ${value}`,
+    'mapping.chapterNotMappable': ({ name }) =>
+      `「${name}」には、mangabind が割り当てられる話の番号がありません。`,
+    'mapping.chapterBadSpecial': ({ name }) =>
+      `「${name}」には、対応していない特別話の接尾辞が付いています。`,
+    'mapping.unknownChapter': ({ id }) => `不明な話: ${id}`,
+    'mapping.unknownVolume': ({ id }) => `不明な巻: ${id}`,
+    'mapping.duplicateChapterId': ({ id }) => `話の ID が重複しています: ${id}`,
+    'mapping.duplicateVolumeId': ({ id }) => `巻の ID が重複しています: ${id}`,
+    'mapping.chooseOneChapter': () => '少なくとも 1 つの話を選んでください。',
+    'mapping.splitLeavesNone': () =>
+      '分割したあとも、各巻に少なくとも 1 つの話が残る必要があります。',
+    'mapping.chooseTwoVolumes': () => '統合する巻を、異なる 2 つ選んでください。',
+    'mapping.hasErrors': () =>
+      '各話と巻の割り当てにエラーがあります。保存する前に修正してください。',
+
+    'mapping.issue.invalidSource': () => '提案された割り当てには、提供元と作品の両方が必要です。',
+    'mapping.issue.emptyVolume': ({ number }) => `${number} 巻に話がありません。`,
+    'mapping.issue.unparseable': ({ name }) => `「${name}」は mangabind.json で表せません。`,
+    'mapping.issue.filenameConflict': ({ name, named, volume }) =>
+      `「${name}」は ${String(named)} 巻を示しているため、mangabind は ${volume} 巻ではなく ${String(named)} 巻に入れます。`,
+    'mapping.issue.duplicateVolume': ({ number }) => `巻番号 ${number} が複数の巻に付いています。`,
+    'mapping.issue.duplicateSources': ({ token }) =>
+      `${token} 話を表す元が複数あり、mangabind はどれかを選べません。`,
+    'mapping.issue.copiesInFolder': ({ token }) =>
+      `${token} 話がフォルダーに複数あります。mangabind はどのコピーを使うか選べず、すべてを本から除外します。1 つを残して、ほかをフォルダーから取り除いてください。`,
+    'mapping.issue.unassigned': ({ count }) =>
+      `${String(count)} 話が、どの巻にも割り当てられていません。`,
+  },
 };
