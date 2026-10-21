@@ -77,6 +77,11 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
       advice:
         'A page in a .cbz chapter says it expands to far more than a page can be (over 256 MiB, or over a thousand times its size in the archive), which is how a file made to fill the memory of a computer looks, so it is not in the book. If it is a real page, save it again as an ordinary image and convert again.',
     },
+    mapping_not_kept: {
+      title: 'The volumes you edited were not kept with the folder',
+      advice:
+        'The books follow your volumes, but they could not be saved in the folder’s mangabind.json: the folder cannot be written, or its mangabind.json is not valid JSON. The next time you add the folder, you will have to edit its volumes again.',
+    },
   },
   'pt-BR': {
     images_smaller_than_device: {
@@ -139,6 +144,11 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
       title: 'Páginas que se expandem demais ficaram de fora',
       advice:
         'Uma página de um capítulo .cbz diz que se expande para muito mais do que uma página pode ser (mais de 256 MiB, ou mais de mil vezes o seu tamanho no arquivo), que é a aparência de um arquivo feito para encher a memória de um computador, então não está no livro. Se for uma página de verdade, salve-a de novo como uma imagem comum e converta de novo.',
+    },
+    mapping_not_kept: {
+      title: 'Os volumes que você editou não foram guardados com a pasta',
+      advice:
+        'Os livros seguem os seus volumes, mas eles não puderam ser salvos no mangabind.json da pasta: a pasta não permite gravação, ou o mangabind.json dela não é um JSON válido. Da próxima vez que adicionar a pasta, você vai precisar editar os volumes de novo.',
     },
   },
 };
