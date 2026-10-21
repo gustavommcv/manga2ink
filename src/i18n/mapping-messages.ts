@@ -167,7 +167,7 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
       leftOut: 'Folders left out',
       singleBook: {
         title: 'Single book for the series',
-        text: 'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, as folders in a CBZ. A PDF keeps the pages in order, without a table of contents.',
+        text: 'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, in the bookmarks of a PDF, as folders in a CBZ.',
       },
       start: {
         text: 'Start by creating a volume, then assign chapters to it.',
@@ -320,7 +320,7 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
       leftOut: 'Pastas deixadas de fora',
       singleBook: {
         title: 'Um livro para a série',
-        text: 'Os volumes mapeados serão o primeiro nível do livro único, com os capítulos dentro deles: no sumário de um EPUB, em pastas num CBZ. Um PDF mantém as páginas em ordem, sem sumário.',
+        text: 'Os volumes mapeados serão o primeiro nível do livro único, com os capítulos dentro deles: no sumário de um EPUB, nos marcadores de um PDF, em pastas num CBZ.',
       },
       start: {
         text: 'Comece criando um volume e depois atribua capítulos a ele.',
