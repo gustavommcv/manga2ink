@@ -2,10 +2,11 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { LanguagePreference } from '@/domain/app-settings';
+import type { Language, LanguagePreference } from '@/domain/app-settings';
 import type { ThemePreference } from '@/domain/theme';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
+import { messagesFor } from '@/i18n/messages';
 import type { MangaboundBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
@@ -15,7 +16,7 @@ import { defaultAppSettings } from '@/domain/app-settings';
 const kept =
   (
     preference: LanguagePreference,
-    language: 'en' | 'pt-BR' = 'en',
+    language: Language = 'en',
   ): MangaboundBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
@@ -46,13 +47,14 @@ describe('the language in the general tab', () => {
       within(select)
         .getAllByRole('option')
         .map((option) => option.textContent),
-    ).toEqual(['Automatic (system language)', 'English', 'Português (Brasil)']);
+    ).toEqual(['Automatic (system language)', 'English', 'Português (Brasil)', '日本語']);
   });
 
   it.each([
     ['system', 'Automatic (system language)'],
     ['en', 'English'],
     ['pt-BR', 'Português (Brasil)'],
+    ['ja', '日本語'],
   ] as const)('shows the choice that was kept: %s', async (preference, shown) => {
     const select = await renderGeneral({ loadAppSettings: kept(preference) });
 
@@ -144,6 +146,85 @@ describe('the language in the general tab', () => {
     fireEvent.change(select, { target: { value: 'klingon' } });
 
     expect(saveAppSettings).not.toHaveBeenCalled();
+  });
+});
+
+describe('the note under the language', () => {
+  const noteOf = (language: Language): string => {
+    const note = messagesFor(language).appSettings.language.note;
+    if (note === null) throw new Error(`${language} has no note`);
+    return note;
+  };
+
+  async function renderIn(
+    language: Language,
+    overrides: Partial<MangaboundBridge> = {},
+  ): Promise<void> {
+    render(
+      <AppSettingsProvider
+        bridge={inertBridge({ loadAppSettings: kept(language, language), ...overrides })}
+      >
+        <InterfaceTab />
+      </AppSettingsProvider>,
+    );
+    await screen.findAllByRole('combobox');
+  }
+
+  it.each(['en', 'pt-BR'] as const)(
+    'is not there for %s, whose text has been read',
+    async (language) => {
+      await renderIn(language);
+
+      expect(screen.queryByRole('button', { name: /problem|problema/iu })).not.toBeInTheDocument();
+      expect(document.body.textContent).not.toContain('AI');
+    },
+  );
+
+  it('is there for Japanese, in Japanese, with the button that opens the page where a mistake is reported', async () => {
+    const user = userEvent.setup();
+    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+      Promise.resolve({ ok: true, value: undefined }),
+    );
+    await renderIn('ja', { openProjectLink });
+
+    expect(screen.getByText(noteOf('ja'))).toBeVisible();
+    await user.click(screen.getByRole('button', { name: '問題を報告' }));
+
+    expect(openProjectLink).toHaveBeenCalledExactlyOnceWith({ link: 'issues', language: 'ja' });
+    expect(
+      screen.queryByText('ページを開けませんでした。もう一度お試しください。'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('is there while the system is followed and the system comes to Japanese, since it is about the language in use', async () => {
+    render(
+      <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('system', 'ja') })}>
+        <InterfaceTab />
+      </AppSettingsProvider>,
+    );
+
+    expect(await screen.findByText(noteOf('ja'))).toBeVisible();
+  });
+
+  it('says in Japanese that the page could not be opened, and takes it away once one opens', async () => {
+    const user = userEvent.setup();
+    const openProjectLink = vi
+      .fn<MangaboundBridge['openProjectLink']>()
+      .mockResolvedValueOnce({ ok: false, error: { code: 'x', said: raw('No.') } })
+      .mockResolvedValueOnce({ ok: true, value: undefined });
+    await renderIn('ja', { openProjectLink });
+
+    await user.click(screen.getByRole('button', { name: '問題を報告' }));
+    expect(
+      await screen.findByText('ページを開けませんでした。もう一度お試しください。'),
+    ).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: '問題を報告' }));
+    await waitFor(() => {
+      expect(
+        screen.queryByText('ページを開けませんでした。もう一度お試しください。'),
+      ).not.toBeInTheDocument();
+    });
   });
 });
 

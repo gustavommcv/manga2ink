@@ -58,7 +58,7 @@ describe('the command that opens a place', () => {
     { language: 'en' },
     { link: 'https://example.com/', language: 'en' },
     { link: 'file:///etc/passwd', language: 'en' },
-    { link: 'guide', language: 'ja' },
+    { link: 'guide', language: 'fr' },
     { link: 'guide', language: '' },
     'guide',
     null,

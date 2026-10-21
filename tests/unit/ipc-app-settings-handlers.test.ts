@@ -78,7 +78,7 @@ describe('the command that keeps the app settings', () => {
     { parallelConversions: 'auto' },
     { parallelConversions: null },
     { parallelConversions: undefined },
-    { language: 'ja' },
+    { language: 'fr' },
     { language: 3 },
     { language: '' },
     { notifyWhenDone: 'yes' },

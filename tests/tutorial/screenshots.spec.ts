@@ -20,7 +20,8 @@ const screenInset = 24;
  * The languages the guide has pictures in: the app's own words, as the app says them. A language of
  * the guide that the app does not have yet (Japanese) uses the English pictures.
  */
-const tutorialLanguages: readonly Language[] = ['en', 'pt-BR'];
+const tutorialLanguages = ['en', 'pt-BR'] as const satisfies readonly Language[];
+type TutorialLanguage = (typeof tutorialLanguages)[number];
 /** English keeps the names it has always had; another language's pictures are in a folder named as its guide is. */
 const folderOf = (language: Language): string =>
   language === 'en' ? '' : `${language.toLowerCase()}/`;
@@ -29,7 +30,7 @@ const captures = new Map<
   string,
   {
     name: string;
-    language: Language;
+    language: TutorialLanguage;
     story: string;
     masterRatio: number;
     variants: CaptureVariant[];
@@ -51,7 +52,7 @@ interface Scenario {
   readonly open: (story: string) => Promise<void>;
   /** What the window says in that language: the catalogs of the app, not a copy of them. */
   readonly t: Messages;
-  readonly language: Language;
+  readonly language: TutorialLanguage;
 }
 
 /** A text that begins with these words, for a label that carries more after them. */
@@ -128,7 +129,7 @@ test.afterAll(async () => {
   );
 });
 
-async function openStory(page: Page, story: string, language: Language): Promise<void> {
+async function openStory(page: Page, story: string, language: TutorialLanguage): Promise<void> {
   await page.goto(`/iframe.html?id=${story}&viewMode=story&globals=language:${language}`);
   await expect(page.locator('#storybook-root')).toBeVisible();
 }
@@ -136,7 +137,7 @@ async function openStory(page: Page, story: string, language: Language): Promise
 async function capture(
   page: Page,
   name: string,
-  language: Language,
+  language: TutorialLanguage,
   story: string,
   requestedRatios: Set<number>,
   region?: Locator | [Locator, Locator],
@@ -560,7 +561,7 @@ const settingsStories = {
     updates: 'settings-app-settings-dialog--updates-in-portuguese',
     about: 'settings-app-settings-dialog--about-in-portuguese',
   },
-} as const satisfies Record<Language, Record<string, string>>;
+} as const satisfies Record<TutorialLanguage, Record<string, string>>;
 
 tutorial(
   'the app settings show each of their tabs, and the end of the longest',

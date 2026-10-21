@@ -123,6 +123,8 @@ describe('resolveLanguage', () => {
 
   it('gives a variety of a language the app has the one it has', () => {
     expect(resolveLanguage('system', ['pt-PT'])).toBe('pt-BR');
+    expect(resolveLanguage('system', ['ja-JP'])).toBe('ja');
+    expect(resolveLanguage('system', ['ja'])).toBe('ja');
     expect(resolveLanguage('system', ['pt'])).toBe('pt-BR');
     expect(resolveLanguage('system', ['en-GB'])).toBe('en');
   });

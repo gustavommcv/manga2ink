@@ -6,6 +6,7 @@ describe('the day of a release', () => {
   it('is written as the language writes dates', () => {
     expect(dayOf('en', '2026-10-20T10:00:00Z')).toBe('October 20, 2026');
     expect(dayOf('pt-BR', '2026-10-20T10:00:00Z')).toBe('20 de outubro de 2026');
+    expect(dayOf('ja', '2026-10-20T10:00:00Z')).toBe('2026年10月20日');
   });
 
   it('is the day the release says, whatever time zone the computer is in', () => {

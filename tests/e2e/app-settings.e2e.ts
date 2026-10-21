@@ -216,6 +216,41 @@ describe('packaged app settings', () => {
     await browser.keys('Escape');
   });
 
+  it('is in Japanese when that is chosen, and says under the choice that the text was written with the help of AI', async () => {
+    const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
+    const file = path.join(userData, 'app-settings.json');
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="App settings"]').click();
+    const dialog = $('[role="dialog"]');
+    await dialog.waitForDisplayed({ timeout: 30_000 });
+    // English has nothing to say about itself under the choice.
+    assert.equal(await dialog.$('button=Report a problem').isExisting(), false);
+
+    await chooseLanguage('ja');
+    await waitForDialogTitle('アプリの設定', file);
+    await browser.waitUntil(
+      async () => existsSync(file) && (await readKept(file)).language === 'ja',
+      { timeout: 30_000, timeoutMsg: 'the app settings file did not get Japanese' },
+    );
+    assert.equal(await $('html').getAttribute('lang'), 'ja');
+    // The note is in Japanese, and so is the button that goes to where a mistake is reported.
+    assert.ok((await dialog.getText()).includes('AI の支援を受けて作られていて'));
+    assert.equal(await dialog.$('button=問題を報告').isDisplayed(), true);
+    // The queue behind the dialog is in Japanese as well.
+    await $('h1=キュー').waitForDisplayed({ timeout: 30_000 });
+
+    // Following the system again puts the window back, and takes the note away.
+    await chooseLanguage('system');
+    await waitForDialogTitle('App settings', file);
+    await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
+    assert.equal(await dialog.$('button=Report a problem').isExisting(), false);
+    await browser.waitUntil(async () => (await readKept(file)).language === 'system', {
+      timeout: 30_000,
+      timeoutMsg: 'the app settings file did not go back to following the system',
+    });
+    await browser.keys('Escape');
+  });
+
   it('keeps what a queue does in the same file: telling and keeping awake are on until they are turned off', async () => {
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
     const file = path.join(userData, 'app-settings.json');
