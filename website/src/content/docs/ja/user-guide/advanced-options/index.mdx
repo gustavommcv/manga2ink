@@ -1,22 +1,22 @@
 ---
-title: '詳細な変換オプション（Advanced conversion options）'
+title: '詳細な変換オプション'
 description: 'Mangabound の変換設定にある詳細オプションが、ページに何をするかを、各オプションあり・なしで変換した実際のページで示します。'
 ---
 
-[変換設定](../output-profiles/)の **Advanced conversion options** は、本を作る変換ツール mangapress の設定です。そのほとんどは、ページのピクセルを変えます。これらのページは、その方法を示します。実際のページを 1 枚、2 通りに変換し、違うのはそのオプションだけです。
+[変換設定](../output-profiles/)の**詳細な変換オプション**は、本を作る変換ツール mangapress の設定です。そのほとんどは、ページのピクセルを変えます。これらのページは、その方法を示します。実際のページを 1 枚、2 通りに変換し、違うのはそのオプションだけです。
 
 ## オプションのグループごとのページ
 
-| ページ                                                | 示すもの                                                                                                                       |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [読み方（Reading）](reading/)                         | ウェブトゥーンの形をした 1 話を、ページとして変換した場合とストリップとして変換した場合、そして各本の形式が記録する読む方向    |
-| [クロップ（Cropping）](cropping/)                     | ページのどれだけが、ピクセル単位で切り落とされるか、そして、切ったあとに何が残るか                                             |
-| [色と階調（Color and tone）](color-and-tone/)         | 同じページを、グレースケールとカラー、明るく、暗くしたもの、そして変化の裏づけとなる数値                                       |
-| [見開き（Double-page spreads）](double-page-spreads/) | 見開きを、分割する、全体を残す、両方にする場合と、その順序、そして 2 ページ表示が EPUB に書き込むもの                          |
-| [サイズと枠（Size and borders）](size-and-borders/)   | ページを画面に合わせる、拡大する、引き伸ばす、画面を埋めるようクロップする方法と、画面と形が違うときにそのまわりにあるもの     |
-| [ページ画像（Page images）](page-images/)             | 各ページが保存されるファイル: JPEG か PNG か、グレーの階調の数、そして、それぞれがバイト数でどれだけかかるか                   |
-| [表紙（Cover）](cover/)                               | 本の表紙が最初の画像からどう作られるか、どの形式に表紙があるか、そして、幅の広い画像から切り出した表表紙                       |
-| [書籍メタデータ（Book metadata）](book-metadata/)     | 各形式がタイトル、著者、言語をどこに保存するか、ComicInfo.xml が何を変えるか、そして、Kobo 向けの本がいつ .kepub.epub になるか |
+| ページ                               | 示すもの                                                                                                                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [読み方](reading/)                   | ウェブトゥーンの形をした 1 話を、ページとして変換した場合とストリップとして変換した場合、そして各本の形式が記録する読む方向    |
+| [トリミング](cropping/)              | ページのどれだけが、ピクセル単位で切り落とされるか、そして、切ったあとに何が残るか                                             |
+| [カラーと階調](color-and-tone/)      | 同じページを、グレースケールとカラー、明るく、暗くしたもの、そして変化の裏づけとなる数値                                       |
+| [見開きページ](double-page-spreads/) | 見開きを、分割する、全体を残す、両方にする場合と、その順序、そして 2 ページ表示が EPUB に書き込むもの                          |
+| [サイズと縁](size-and-borders/)      | ページを画面に合わせる、拡大する、引き伸ばす、画面を埋めるようトリミングする方法と、画面と形が違うときにそのまわりにあるもの   |
+| [ページの画像](page-images/)         | 各ページが保存されるファイル: JPEG か PNG か、グレーの階調の数、そして、それぞれがバイト数でどれだけかかるか                   |
+| [表紙](cover/)                       | 本の表紙が最初の画像からどう作られるか、どの形式に表紙があるか、そして、幅の広い画像から切り出した表表紙                       |
+| [本のメタデータ](book-metadata/)     | 各形式がタイトル、著者、言語をどこに保存するか、ComicInfo.xml が何を変えるか、そして、Kobo 向けの本がいつ .kepub.epub になるか |
 
 ## すべてのオプション
 
@@ -24,79 +24,79 @@ description: 'Mangabound の変換設定にある詳細オプションが、ペ�
 
 ### 端末と出力
 
-- [Device、Book format、Custom width、Custom height](../output-profiles/#device-and-format): `--profile`（`-p`）、`--format`（`-f`）、`--customwidth`、`--customheight`。フラグの働きは、ツール自身の出力とともに、[mangapress の CLI](../../cli/mangapress/#choosing-the-device-and-the-format) にあります。
+- [端末、本の形式、幅の指定、高さの指定](../output-profiles/#device-and-format): `--profile`（`-p`）、`--format`（`-f`）、`--customwidth`、`--customheight`。フラグの働きは、ツール自身の出力とともに、[mangapress の CLI](../../cli/mangapress/#choosing-the-device-and-the-format) にあります。
 
 ### 読み方
 
-- [Content](reading/#content): `--webtoon`、または `-w`。
-- [Manga reading order](reading/#manga-reading-order): `--manga-style`、または `-m`。分割された見開きに何をするかは、[見開き](double-page-spreads/#manga-reading-order)にあります。
+- [内容](reading/#内容): `--webtoon`、または `-w`。
+- [マンガの読み順](reading/#マンガの読み順): `--manga-style`、または `-m`。分割された見開きに何をするかは、[見開きページ](double-page-spreads/#マンガの読み順)にあります。
 
-### 見開き
+### 見開きページ
 
-- [Wide pages](double-page-spreads/#wide-pages): `--splitter`、または `-r`。
-- [Whole spread first](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--rotatefirst`。
-- [Keep the whole spread upright](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--norotate`。
-- [Rotate clockwise](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--rotateright`。
-- [Restack 4-panel strips as 2×2](double-page-spreads/#restack-4-panel-strips-as-22): `--maximizestrips`。
-- [Start on the other side](double-page-spreads/#two-page-view): `--spreadshift`。
-- [Invert page turns](double-page-spreads/#two-page-view): `--invertdirection`。
-- [One page in landscape](double-page-spreads/#two-page-view): `--onepagelandscape`。
+- [横長のページ](double-page-spreads/#横長のページ): `--splitter`、または `-r`。
+- [見開き全体を先に](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--rotatefirst`。
+- [見開きを立てたままにする](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--norotate`。
+- [時計回りに回転](double-page-spreads/#the-whole-spread-first-upright-or-clockwise): `--rotateright`。
+- [4 コマのストリップを 2×2 に並べ直す](double-page-spreads/#4-コマのストリップを-22-に並べ直す): `--maximizestrips`。
+- [反対側から始める](double-page-spreads/#2-ページ表示): `--spreadshift`。
+- [ページめくりの向きを反転](double-page-spreads/#2-ページ表示): `--invertdirection`。
+- [横向きでは 1 ページ表示](double-page-spreads/#2-ページ表示): `--onepagelandscape`。
 
-### サイズと枠
+### サイズと縁
 
-- [Page size](size-and-borders/#page-size): **Fit, enlarging small pages** には `--upscale`（`-u`）、**Stretch to the screen** には `--stretch`（`-s`）、**Crop to fill the screen** には `--wallpaper`。
-- [Borders](size-and-borders/#borders): `--whiteborders` と `--blackborders`。
+- [ページのサイズ](size-and-borders/#ページのサイズ): **画面に合わせる（小さいページは拡大）**には `--upscale`（`-u`）、**画面に引き伸ばす**には `--stretch`（`-s`）、**画面を埋めるように切り取る**には `--wallpaper`。
+- [縁の色](size-and-borders/#縁の色): `--whiteborders` と `--blackborders`。
 
-### クロップ
+### トリミング
 
-- [Page cropping](cropping/#page-cropping): `--cropping`、または `-c`。
-- [Cropping power](cropping/#cropping-power): `--croppingpower`。
-- [Minimum retained area](cropping/#minimum-retained-area): `--croppingminimum`。
-- [Preserved margin](cropping/#preserved-margin): `--preservemargin`。
-- [Inter-panel cropping](cropping/#inter-panel-cropping): `--ipc`。
+- [ページのトリミング](cropping/#ページのトリミング): `--cropping`、または `-c`。
+- [トリミングの強さ](cropping/#トリミングの強さ): `--croppingpower`。
+- [最低限残す範囲](cropping/#最低限残す範囲): `--croppingminimum`。
+- [残す余白](cropping/#残す余白): `--preservemargin`。
+- [コマ間のトリミング](cropping/#コマ間のトリミング): `--ipc`。
 
-### 色と階調
+### カラーと階調
 
-- [Color pages](color-and-tone/#color-pages): `--forcecolor`。
-- [Autocontrast](color-and-tone/#autocontrast): `--colorautocontrast` と `--noautocontrast`。
-- [Auto-level black point](color-and-tone/#autocontrast): `--autolevel`。
-- [Gamma](color-and-tone/#gamma): `--gamma`、または `-g`。
-- [Reduce rainbow effect](color-and-tone/#reduce-rainbow-effect): `--eraserainbow`。
+- [カラーのページ](color-and-tone/#カラーのページ): `--forcecolor`。
+- [自動コントラスト](color-and-tone/#自動コントラスト): `--colorautocontrast` と `--noautocontrast`。
+- [黒点の自動調整](color-and-tone/#自動コントラスト): `--autolevel`。
+- [ガンマ](color-and-tone/#ガンマ): `--gamma`、または `-g`。
+- [レインボー効果を軽減](color-and-tone/#レインボー効果を軽減): `--eraserainbow`。
 
-### ページ画像
+### ページの画像
 
-- [Page format](page-images/#page-format): `--forcepng`。
-- [Keep all 256 grays](page-images/#keep-all-256-grays): `--noquantize`。
-- [8-bit PNG](page-images/#8-bit-png): `--pnglegacy`。
-- [Color pages as PNG too](page-images/#color-pages-as-png-too): `--force-png-rgb`。
-- [JPEG quality](page-images/#jpeg-quality): `--jpeg-quality`。
-- [Use the images as they are](page-images/#use-the-images-as-they-are): `--noprocessing`。
+- [ページの形式](page-images/#ページの形式): `--forcepng`。
+- [256 階調のグレーをすべて保持](page-images/#256-階調のグレーをすべて保持): `--noquantize`。
+- [8 ビット PNG](page-images/#8-ビット-png): `--pnglegacy`。
+- [カラーのページも PNG にする](page-images/#カラーのページも-png-にする): `--force-png-rgb`。
+- [JPEG の画質](page-images/#jpeg-の画質): `--jpeg-quality`。
+- [画像をそのまま使う](page-images/#画像をそのまま使う): `--noprocessing`。
 
 ### 表紙
 
-- [Cut the front cover from a wide image](cover/#cut-the-front-cover-from-a-wide-image): `--smartcovercrop`。
-- [Crop the cover to fill the screen](cover/#crop-the-cover-to-fill-the-screen): `--coverfill`。
+- [横長の画像から表紙の表面を切り出す](cover/#横長の画像から表紙の表面を切り出す): `--smartcovercrop`。
+- [表紙を切り取って画面を埋める](cover/#表紙を切り取って画面を埋める): `--coverfill`。
 
-### 書籍メタデータ
+### 本のメタデータ
 
 - [書名と著者](book-metadata/#book-title-and-author): `--title`（`-t`）と `--author`（`-a`）。
-- [ComicInfo title](book-metadata/#comicinfo-title): `--metadatatitle`。
-- [Keep ComicInfo.xml](book-metadata/#keep-comicinfoxml): `--keepcomicinfo`。
-- [EPUB language](book-metadata/#epub-language): `--language`。
-- [Name the book .epub](book-metadata/#name-the-book-epub): `--nokepub`。
+- [ComicInfo のタイトル](book-metadata/#comicinfo-のタイトル): `--metadatatitle`。
+- [ComicInfo.xml を保持](book-metadata/#comicinfoxml-を保持): `--keepcomicinfo`。
+- [EPUB の言語](book-metadata/#epub-の言語): `--language`。
+- [本の名前を .epub にする](book-metadata/#本の名前を-epub-にする): `--nokepub`。
 
 ### ツールの動作
 
-- [Quiet mode](../../cli/mangapress/#quieter-output): `--quiet`、または `-q`。
+- [出力を静かにする](../../cli/mangapress/#quieter-output): `--quiet`、または `-q`。
 - [変換のプレビュー](../../cli/mangapress/#previewing-a-conversion)は、コマンドラインだけのものです: `--dry-run`、または `-n`。
 
 ## 例の作り方
 
 - **例のページ**は、作者がコピーを許可している漫画から取っています。カラーの David Revoy の _Pepper&Carrot_、白黒の Kasuga の _Go Go! Encyclopedia Girls_、そして、背景が黒の Polylerus のページです。クレジットとライセンスは、このページの終わりと、すべての画像の下にあります。
-- **変換**は、Mangabound が同梱する mangapress で、Mangabound の初期設定から始めて行います。Kindle Paperwhite 6（1272 × 1696 ピクセル）、CBZ、マンガの読む順序、見開きは両方の形で残す、小さいページは拡大、余白とページ番号はクロップ、です。2 枚の画像の間で違うのは、キャプションにあるオプションだけです。
+- **変換**は、Mangabound が同梱する mangapress で、Mangabound の初期設定から始めて行います。Kindle Paperwhite 6（1272 × 1696 ピクセル）、CBZ、マンガの読む順序、見開きは両方の形で残す、小さいページは拡大、余白とページ番号はトリミング、です。2 枚の画像の間で違うのは、キャプションにあるオプションだけです。
 - **キャプション**には、アプリでの設定の名前、ターミナルから実行したときにその設定が mangapress に渡すフラグ（`フラグなし` が既定です）、そして、mangapress が書き出した各ページのサイズが書かれています（`変換なし` は入力の画像です）。画像をクリックすると、大きく開きます。
 - **値の表**は画像ではありません。表にあるタイトル、著者、言語、読む方向、ファイル名は、mangapress が書き出した本から読み戻したもので、行に別の指定がない限り、同じ初期設定で変換したものです。
-- **示していないもの。** 自由に使える白黒のマンガには、印刷されたスクリーントーンがほとんどないので、それに依存するもの、たとえばモアレは、画像ではなく説明で扱っています。画像が示すのは、あなたの画面上のピクセルで、リーダーの電子ペーパーの画面ではありません。
+- **示していないもの。**自由に使える白黒のマンガには、印刷されたスクリーントーンがほとんどないので、それに依存するもの、たとえばモアレは、画像ではなく説明で扱っています。画像が示すのは、あなたの画面上のピクセルで、リーダーの電子ペーパーの画面ではありません。
 
 ## クレジットとライセンス
 
@@ -104,6 +104,6 @@ description: 'Mangabound の変換設定にある詳細オプションが、ペ�
 - _Go Go! Encyclopedia Girls_ の 2、3、4 ページ、Kasuga 作、英語版は Masatami、[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)。出典: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_02.png)、[3 ページ](https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_03.png)、[4 ページ](https://commons.wikimedia.org/wiki/File:Go_Go!_Encyclopedia_Girls_-_English_04.png)。
 - _Wikipe-tan Battling a Wikitroll in the Darknesses of Ignorance_、Polylerus 作、[CC BY 2.5](https://creativecommons.org/licenses/by/2.5/)。このファイルは、GFDL、CC BY-SA 3.0、CC BY 2.5 から選べるようになっており、ここでは最後のものを使っています。出典: [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Wikipe-tan_Battling_a_Wikitroll_in_the_Darknesses_of_Ignorance.JPG)。
 
-これらのページの画像は、それらのページを加工したもの（変換、クロップ、リサイズ、そして、見開きのページの図では、番号と矢印のついた枠への配置）で、元のページのライセンスを引き継ぎます。_Go Go!_ から作ったものは CC BY-SA 4.0、_Pepper&Carrot_ から作ったものは CC BY 4.0、ウィキペたんのページから作ったものは CC BY 2.5 です。例がページをつなぐ場合、つまりストリップや見開きにする場合は、それを使うページがそう示しています。
+これらのページの画像は、それらのページを加工したもの（変換、トリミング、リサイズ、そして、見開きのページの図では、番号と矢印のついた枠への配置）で、元のページのライセンスを引き継ぎます。_Go Go!_ から作ったものは CC BY-SA 4.0、_Pepper&Carrot_ から作ったものは CC BY 4.0、ウィキペたんのページから作ったものは CC BY 2.5 です。例がページをつなぐ場合、つまりストリップや見開きにする場合は、それを使うページがそう示しています。
 
 画像の作り方と確認の方法は、[メンテナー向けのメモ](https://github.com/gustavommcv/mangabound/blob/main/website/MEDIA.md)（英語）にあります。

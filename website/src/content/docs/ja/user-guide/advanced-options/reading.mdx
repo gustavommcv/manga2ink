@@ -1,16 +1,16 @@
 ---
-title: '読み方（Reading）'
-description: 'Content と Manga reading order の働き。ウェブトゥーンの形をした 1 話を、ページとして変換した場合とストリップとして変換した場合の違いと、各本の形式が記録する読む方向を説明します。'
+title: '読み方'
+description: '内容とマンガの読み順の働き。ウェブトゥーンの形をした 1 話を、ページとして変換した場合とストリップとして変換した場合の違いと、各本の形式が記録する読む方向を説明します。'
 ---
 
 import OptionBook from '../../../../../components/OptionBook.astro';
 import OptionExample from '../../../../../components/OptionExample.astro';
 
-**Reading** のセクションは、[Advanced conversion options](../../output-profiles/#advanced-conversion-options) の中で、画像が何であるかと、どちら向きに読むかを決めます。コントロールは 2 つあります。各画像が 1 ページなのか、長いストリップの一部なのかを mangapress に伝える **Content** と、**Manga reading order** です。
+**読み方**のセクションは、[詳細な変換オプション](../../output-profiles/#詳細な変換オプション)の中で、画像が何であるかと、どちら向きに読むかを決めます。コントロールは 2 つあります。各画像が 1 ページなのか、長いストリップの一部なのかを mangapress に伝える**内容**と、**マンガの読み順**です。
 
-## Content
+## 内容
 
-**Manga or comic pages** が最初の選択で、各画像が 1 ページです。**Webtoon strips** はウェブトゥーン用です。ウェブトゥーンは、1 本の長い縦のストリップとして描かれますが、配布されるときは、ファイルが終わるところで切られた画像になっています。画像を 1 枚ずつ読むと、1 つのコマが 2 ページにまたがって分かれてしまうことがあります。**Webtoon strips** では、mangapress が各話の画像を 1 本のストリップにつなぎ、コマとコマの間で、もう一度ページに切り分けます。`--webtoon` でオンになり、短縮形は `-w` です。
+**マンガやコミックのページ**が最初の選択で、各画像が 1 ページです。**ウェブトゥーンの縦長ストリップ**はウェブトゥーン用です。ウェブトゥーンは、1 本の長い縦のストリップとして描かれますが、配布されるときは、ファイルが終わるところで切られた画像になっています。画像を 1 枚ずつ読むと、1 つのコマが 2 ページにまたがって分かれてしまうことがあります。**ウェブトゥーンの縦長ストリップ**では、mangapress が各話の画像を 1 本のストリップにつなぎ、コマとコマの間で、もう一度ページに切り分けます。`--webtoon` でオンになり、短縮形は `-w` です。
 
 _Pepper&Carrot_ はウェブトゥーンではありませんが、そのページを 3 枚、縦に重ねると、同じ形のストリップになります。992 × 4119 ピクセルで、コマの間に白い隙間があります。1500 ピクセルごとに 3 枚の画像へ切ると、ウェブトゥーンのサイトが配る画像のようになり、各切れ目は、コマの間ではなく、画像が終わるところに落ちます。1 行目は、この 3 枚の画像をページとして変換したものです。2 行目は、同じ 3 枚をストリップとして変換したものです。
 
@@ -35,43 +35,43 @@ _Pepper&Carrot_ はウェブトゥーンではありませんが、そのペー�
 <OptionBook
   id="reading-webtoon-pages"
   labels={{
-    pages: 'Content: Manga or comic pages',
-    webtoon: 'Content: Webtoon strips',
-    fill: 'Webtoon strips、Page size: Crop to fill the screen',
-    stretch: 'Webtoon strips、Page size: Stretch to the screen',
-    gutters: 'Webtoon strips、Inter-panel cropping: Horizontal gaps',
-    borders: 'Webtoon strips、Borders: Black',
-    cropping: 'Webtoon strips、Page cropping: Disabled',
-    untouched: 'Webtoon strips、Use the images as they are',
+    pages: '内容: マンガやコミックのページ',
+    webtoon: '内容: ウェブトゥーンの縦長ストリップ',
+    fill: 'ウェブトゥーンの縦長ストリップ、ページのサイズ: 画面を埋めるように切り取る',
+    stretch: 'ウェブトゥーンの縦長ストリップ、ページのサイズ: 画面に引き伸ばす',
+    gutters: 'ウェブトゥーンの縦長ストリップ、コマ間のトリミング: 横方向の隙間',
+    borders: 'ウェブトゥーンの縦長ストリップ、縁の色: 黒',
+    cropping: 'ウェブトゥーンの縦長ストリップ、ページのトリミング: 無効',
+    untouched: 'ウェブトゥーンの縦長ストリップ、画像をそのまま使う',
   }}
 />
 
-- **ページは拡大されません。** 2 行目は、小さいページを拡大する設定で変換しましたが、ページの幅は 992 ピクセルのままです。**Page size** の下で、アプリは「Webtoon strips are never enlarged.」と表示します。
-- **引き伸ばしと、画面を埋めるクロップは引き続き使えます。** 3 行目と 4 行目では、切ったページのそれぞれが画面のサイズになります。[サイズと枠](../size-and-borders/) と同じです。
-- **Inter-panel cropping も引き続き使えます。** 5 行目は、コマの間の隙間を詰めるので、2 ページ目と 3 ページ目が短くなります。[クロップ](../cropping/) と同じです。
-- **Borders と余白のクロップは使われません。** 6 行目と 7 行目は 2 行目と同じで、サイズも同じです。mangapress 自身のこのモードの説明は、白い枠を伴い、余白のクロップは行わないとしているため、**Webtoon strips** がオンの間は、**Borders**、**Page cropping**、その 3 つの数値が薄く表示されます。
-- **ウェブトゥーンは、分割も回転もされません。** **Wide pages**、全体の見開きに関する 3 つのオプション、**Restack 4-panel strips as 2×2** は薄く表示され、**Autocontrast** と、後述の **Manga reading order** も同様です。
-- **画像をそのままにしても、切り分けは行われます。** 最後の行は **Use the images as they are** をオンにしたもので、ページは再エンコードされませんが、ストリップは同じページに切り分けられます。
+- **ページは拡大されません。** 2 行目は、小さいページを拡大する設定で変換しましたが、ページの幅は 992 ピクセルのままです。**ページのサイズ**の下で、アプリは「ウェブトゥーンの縦長ストリップ are never enlarged.」と表示します。
+- **引き伸ばしと、画面を埋めるトリミングは引き続き使えます。** 3 行目と 4 行目では、切ったページのそれぞれが画面のサイズになります。[サイズと縁](../size-and-borders/)と同じです。
+- **コマ間のトリミングも引き続き使えます。** 5 行目は、コマの間の隙間を詰めるので、2 ページ目と 3 ページ目が短くなります。[トリミング](../cropping/)と同じです。
+- **縁の色と余白のトリミングは使われません。** 6 行目と 7 行目は 2 行目と同じで、サイズも同じです。mangapress 自身のこのモードの説明は、白い縁を伴い、余白のトリミングは行わないとしているため、**ウェブトゥーンの縦長ストリップ**がオンの間は、**縁の色**、**ページのトリミング**、その 3 つの数値が薄く表示されます。
+- **ウェブトゥーンは、分割も回転もされません。** **横長のページ**、全体の見開きに関する 3 つのオプション、**4 コマのストリップを 2×2 に並べ直す**は薄く表示され、**自動コントラスト**と、後述の**マンガの読み順**も同様です。
+- **画像をそのままにしても、切り分けは行われます。**最後の行は**画像をそのまま使う**をオンにしたもので、ページは再エンコードされませんが、ストリップは同じページに切り分けられます。
 
-これらはそれぞれ、アプリで理由とともに薄く表示され、**Manga or comic pages** に戻ると、選んでいた内容が戻ります。
+これらはそれぞれ、アプリで理由とともに薄く表示され、**マンガやコミックのページ**に戻ると、選んでいた内容が戻ります。
 
-## Manga reading order
+## マンガの読み順
 
-**Manga reading order** は、初期設定でオンです。本が右から左へ読まれるようになり、広いページを分割するときは、右半分が先に来ます。その画像は [見開き](../double-page-spreads/#manga-reading-order) にあります。`--manga-style` でオンになり、短縮形は `-m` です。
+**マンガの読み順**は、初期設定でオンです。本が右から左へ読まれるようになり、広いページを分割するときは、右半分が先に来ます。その画像は[見開きページ](../double-page-spreads/#マンガの読み順)にあります。`--manga-style` でオンになり、短縮形は `-m` です。
 
 本そのものが、どちらにめくるかを示すかどうかは、形式によって決まります。次の表は、同じ 3 ページから変換した本から読み戻したものです:
 
 <OptionBook
   id="reading-direction"
   labels={{
-    'epub-on': 'EPUB, Manga reading order: On',
-    'epub-off': 'EPUB, Manga reading order: Off',
-    'epub-webtoon': 'EPUB、Webtoon strips、Manga reading order はオン',
-    'pdf-on': 'PDF, Manga reading order: On',
-    'cbz-on': 'CBZ, Manga reading order: On',
+    'epub-on': 'EPUB, マンガの読み順: オン',
+    'epub-off': 'EPUB, マンガの読み順: オフ',
+    'epub-webtoon': 'EPUB、ウェブトゥーンの縦長ストリップ、マンガの読み順はオン',
+    'pdf-on': 'PDF, マンガの読み順: オン',
+    'cbz-on': 'CBZ, マンガの読み順: オン',
   }}
 />
 
-- **EPUB** は、方向をパッケージファイルに `page-progression-direction` として記録します。オンなら `rtl`、オフなら `ltr` です。ただし、[two-page view](../double-page-spreads/#two-page-view) の **Invert page turns** が、それを逆にします。本の方向に従うリーダーは、その向きにページをめくります。
-- **Webtoon strips** では、**Manga reading order** がオンでも、EPUB は左から右になります。mangapress のこのモードの説明は、左から右の順序を伴うとしています。そのため、このコントロールは薄く表示されます。
+- **EPUB** は、方向をパッケージファイルに `page-progression-direction` として記録します。オンなら `rtl`、オフなら `ltr` です。ただし、[2 ページ表示](../double-page-spreads/#2-ページ表示) の**ページめくりの向きを反転**が、それを逆にします。本の方向に従うリーダーは、その向きにページをめくります。
+- **ウェブトゥーンの縦長ストリップ**では、**マンガの読み順**がオンでも、EPUB は左から右になります。mangapress のこのモードの説明は、左から右の順序を伴うとしています。そのため、このコントロールは薄く表示されます。
 - mangapress が作る **PDF** と **CBZ** は、方向を記録しないので、どうめくるかは、リーダー自身の設定で決まります。[KOReader の設定](../../../koreader/recommended-settings/)のページに、右から左に読むために、タップの領域とスワイプを入れ替える例があります。

@@ -33,11 +33,11 @@ Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profil
 Error: resolved target resolution is 0x0 — profile 'OTHER' has no built-in resolution, pass both --customwidth and --customheight to set one
 ```
 
-カスタムサイズは、Kobo の EPUB の名前も変えます。[書籍メタデータ](../../user-guide/advanced-options/book-metadata/#name-the-book-epub) を参照してください。
+カスタムサイズは、Kobo の EPUB の名前も変えます。[本のメタデータ](../../user-guide/advanced-options/book-metadata/#本の名前を-epub-にする)を参照してください。
 
 `--format FORMAT`（短縮形は `-f`）は、`epub`、`cbz`、`pdf`、または既定値の `auto` です。`auto` は、Kindle には CBZ、reMarkable には PDF、そのほかの端末には EPUB を選びます。`-p KPW6` と `-p K11` は CBZ、`-p KoLC` は EPUB、`-p Rmk2` は PDF になります。本は、入力の名前に形式の拡張子を付けた名前になり、すでにあるファイルは上書きされません。本には別の名前が付けられ、どの名前かはレポートに出ます。
 
-Mangabound では、これらは[変換の設定](../../user-guide/output-profiles/)の **Device**、**Book format**、**Custom width**、**Custom height** です。アプリは、常に形式を指定し、`auto` は使いません。
+Mangabound では、これらは[変換の設定](../../user-guide/output-profiles/)の**端末**、**本の形式**、**幅の指定**、**高さの指定**です。アプリは、常に形式を指定し、`auto` は使いません。
 
 <span id="previewing-a-conversion"></span>
 
@@ -59,16 +59,16 @@ chapters: 1, pages: 4
 would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
 ```
 
-警告は、実際の実行で表示されるものと同じなので、ドライランは、それらを先に確認する手軽な方法です。サイズの警告は、[サイズと枠](../../user-guide/advanced-options/size-and-borders/) に関するものです。
+警告は、実際の実行で表示されるものと同じなので、ドライランは、それらを先に確認する手軽な方法です。サイズの警告は、[サイズと縁](../../user-guide/advanced-options/size-and-borders/)に関するものです。
 
 <span id="quieter-output"></span>
 
 ## 出力を静かにする
 
-`--quiet`（短縮形は `-q`）は、進み具合の行を省きます。何を変換しているかを示す行、各話とページの数、完了した各話、書き出した本のパスです。警告とエラーは引き続き表示されます。同じ変換は、既定では 6 行を表示し、`--quiet` を付けると、小さいページについての警告だけを表示します。Mangabound では、これは **Tool behavior** の下の **Quiet mode** です。アプリは mangapress 自身のイベントを読むので、この設定は、アプリで見えるものを変えません。
+`--quiet`（短縮形は `-q`）は、進み具合の行を省きます。何を変換しているかを示す行、各話とページの数、完了した各話、書き出した本のパスです。警告とエラーは引き続き表示されます。同じ変換は、既定では 6 行を表示し、`--quiet` を付けると、小さいページについての警告だけを表示します。Mangabound では、これは**ツールの動作**の下の**出力を静かにする**です。アプリは mangapress 自身のイベントを読むので、この設定は、アプリで見えるものを変えません。
 
 ## そのほかのオプション
 
-アプリに表示されるすべてのオプションには、それぞれ専用のページがあり、そのオプションあり・なしで同じページを変換して見せています。[Advanced conversion options](../../user-guide/advanced-options/) を参照してください。このツールの [README](https://github.com/gustavommcv/mangapress#readme) には、メタデータ、入れ子の目次、そのほかのコマンドラインの説明があります。
+アプリに表示されるすべてのオプションには、それぞれ専用のページがあり、そのオプションあり・なしで同じページを変換して見せています。[詳細な変換オプション](../../user-guide/advanced-options/)を参照してください。このツールの [README](https://github.com/gustavommcv/mangapress#readme) には、メタデータ、入れ子の目次、そのほかのコマンドラインの説明があります。
 
 連携については、[マシンプロトコル](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md)を参照してください。お使いのバージョンに合った参照先を選んでください。
