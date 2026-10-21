@@ -170,6 +170,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/*
+ * Japanese is written with no spaces between words, so a line may break between any two characters:
+ * break between phrases, and keep a small kana or a closing mark from starting a line (ADR 0084).
+ */
+:lang(ja) {
+  word-break: auto-phrase;
+  line-break: strict;
+}
+
 button,
 a,
 input,

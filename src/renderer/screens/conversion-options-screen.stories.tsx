@@ -173,3 +173,17 @@ export const InPortuguese: Story = {
     await expect(canvas.getByLabelText('Ordem de leitura de mangá')).toBeDisabled();
   },
 };
+
+/**
+ * The page of the conversion options in Japanese, for webtoon strips, so that the controls they leave
+ * without effect say why in the words of the language (ADR 0053, ADR 0084).
+ */
+export const InJapanese: Story = {
+  globals: { language: 'ja' },
+  args: InPortuguese.args ?? {},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('heading', { name: '変換オプション' })).toBeVisible();
+    await expect(canvas.getByLabelText('マンガの読み順')).toBeDisabled();
+  },
+};

@@ -54,6 +54,11 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const language = languageOf(context.globals);
+      // The page says which language it is in, as the app's does, so what is made for a language
+      // (the forms of the characters, how a line breaks) is made for it here too.
+      useEffect(() => {
+        document.documentElement.lang = language;
+      }, [language]);
       return (
         <I18nContext.Provider value={{ language, messages: messagesFor(language) }}>
           <Story />

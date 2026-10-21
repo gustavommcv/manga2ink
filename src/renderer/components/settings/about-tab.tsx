@@ -1,20 +1,22 @@
-import { ClipboardCopy, ExternalLink, FolderOpen, Heart, ScrollText } from 'lucide-react';
+import { ClipboardCopy, FolderOpen, Heart, ScrollText } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 
 import mark from '@/renderer/assets/mark-192.webp';
 import { Button } from '@/renderer/components/ui/button';
 import { useAppInfo } from '@/renderer/hooks/use-app-info';
-import { useMessages, useSay } from '@/renderer/hooks/use-messages';
+import { useMessages, useSay, useSentenceMarks } from '@/renderer/hooks/use-messages';
 import type { AnyMessage } from '@/domain/message';
 import type { ProjectLink } from '@/shared/project-links-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import { Note } from '@/renderer/components/shared/note';
+import { LinkButton } from './link-button';
 
 /** What the app says about itself (ADR 0054): what it is, who it is by, and where to go from here. */
 export function AboutTab(): React.JSX.Element {
   const { about: words } = useMessages();
   const { copyDiagnostics, openFolder, openLink, tools, version } = useAppInfo();
   const { say } = useSay();
+  const { gap } = useSentenceMarks();
   const [failed, setFailed] = useState(false);
   // What happened to the last thing asked for a report: it was copied, or what to say it was not.
   const [report, setReport] = useState<'copied' | AnyMessage>();
@@ -80,7 +82,9 @@ export function AboutTab(): React.JSX.Element {
 
       <Section title={words.troubleshooting.title}>
         <Note>
-          {words.troubleshooting.text} {words.troubleshooting.logsText}
+          {words.troubleshooting.text}
+          {gap}
+          {words.troubleshooting.logsText}
         </Note>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -208,35 +212,5 @@ function Section({
       <h3 className="text-sm font-medium">{title}</h3>
       {children}
     </section>
-  );
-}
-
-/**
- * A button that opens a place in the browser of the system: the arrow says it leaves the app. A
- * `plain` one is a name in a line of text, set back by its own padding so the name lines up.
- */
-function LinkButton({
-  label,
-  link,
-  open,
-  plain = false,
-}: {
-  readonly label: string;
-  readonly link: ProjectLink;
-  readonly open: (link: ProjectLink) => void;
-  readonly plain?: boolean;
-}): React.JSX.Element {
-  return (
-    <Button
-      flush={plain ? 'start' : undefined}
-      onClick={() => {
-        open(link);
-      }}
-      size="sm"
-      variant={plain ? 'ghost' : 'outline'}
-    >
-      {label}
-      <ExternalLink aria-hidden="true" />
-    </Button>
   );
 }
