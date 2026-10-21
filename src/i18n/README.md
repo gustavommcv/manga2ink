@@ -8,7 +8,8 @@ What the app says, in each of its languages (ADR 0052). Plain TypeScript with no
 - `dialog-messages.ts`: the titles and filters the main process gives the native dialogs, and what its notification says when a long queue ends (ADR 0065), in each language; `src/main/ipc/dialog-words.ts` picks the language the window is in.
 - `day.ts`: the day of a date, as the language writes dates and in UTC, for the day a release was published.
 - `size.ts`: how much room there is, in the unit that keeps the number small and as the language writes numbers.
-- `count.ts`: the form of a word that goes with a count (the singular for exactly one, the plural for the rest).
+- `count.ts`: the form of a word that goes with a count (the singular for exactly one, the plural for the rest). Japanese has no plural: it writes the same text for both forms, with the counter of what is counted (`docs/translation/ja.md`, ADR 0084).
+- `sentence-marks.ts` and the separator `namesOf` takes: how a language joins the sentences of a note, ends one the window ends itself and writes a list. Japanese is the app's third catalog (ADR 0084), written with the help of AI and open to correction, and it says so under the choice of language (`appSettings.language.note`).
 
 It is under the 100% unit gate. `tests/unit/i18n-messages.test.ts` says every message that is a function, in every language and in each form it has, and fails for one with no sample, so a message cannot be added without being said once in each language.
 

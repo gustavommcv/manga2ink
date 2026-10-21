@@ -96,4 +96,35 @@ export const runningMessages: Readonly<Record<Language, RunningMessages>> = {
     },
     cancel: 'Cancelar conversão',
   },
+  ja: {
+    stage: {
+      none: '処理中',
+      binding: 'まとめ中',
+      processing: '変換中',
+      saving: '保存中',
+    },
+    item: (index, total) => `${String(total)} 個中 ${String(index)} 個目`,
+    heading: {
+      binding: (name) => `${name}の巻ファイルを作成中`,
+      converting: (name) => `${name}を変換中`,
+      yourBooks: 'お使いの本',
+    },
+    percentComplete: (percentage) => `${String(percentage)}% 完了`,
+    pagesCopied: (completed, total) =>
+      `${String(total)} ページ中 ${String(completed)} ページをコピーしました`,
+    details: {
+      show: '詳細を表示',
+      hide: '詳細を隠す',
+      region: '巻の詳細',
+      volume: (number) => `${String(number)} 巻`,
+      volumeProgress: (number) => `${String(number)} 巻の進捗`,
+      status: {
+        waiting: '待機中',
+        processing: '変換中',
+        saving: '保存中',
+        done: '完了',
+      },
+    },
+    cancel: '変換をキャンセル',
+  },
 };

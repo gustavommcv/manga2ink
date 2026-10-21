@@ -17,7 +17,7 @@ test('the Portuguese site describes the application in the languages the app has
   });
   assert.equal(application['@type'], 'SoftwareApplication');
   assert.equal(application.url, home);
-  assert.deepEqual(application.inLanguage, ['en', 'pt-BR']);
+  assert.deepEqual(application.inLanguage, ['en', 'pt-BR', 'ja']);
   assert.equal(application.offers.price, '0');
 });
 

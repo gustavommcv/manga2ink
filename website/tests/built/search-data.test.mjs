@@ -54,7 +54,7 @@ for (const [source, lang] of [
     assert.equal(website.url, url);
     assert.equal(website.inLanguage, lang);
     assert.equal(application.url, url);
-    assert.deepEqual(application.inLanguage, ['en', 'pt-BR']);
+    assert.deepEqual(application.inLanguage, ['en', 'pt-BR', 'ja']);
     assert.equal(application.offers.price, '0');
     assert.equal(application.downloadUrl, 'https://github.com/gustavommcv/mangabound/releases');
     assert.equal($('html').attr('lang'), lang);

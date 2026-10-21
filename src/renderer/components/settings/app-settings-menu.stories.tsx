@@ -84,7 +84,10 @@ function bridgeFor(
 const keepsIt: AppSettingsBridge['saveAppSettings'] = (command) =>
   Promise.resolve({
     ok: true,
-    value: { language: command.language === 'pt-BR' ? 'pt-BR' : 'en' },
+    value: {
+      language:
+        command.language === undefined || command.language === 'system' ? 'en' : command.language,
+    },
   });
 
 /** The gear sits where it does in the window: on the right of the title bar, over a page. */
@@ -235,6 +238,25 @@ export const InPortuguese: Story = {
     await expect(within(dialog).getByRole('combobox', { name: 'Idioma' })).toHaveDisplayValue(
       'Português (Brasil)',
     );
+  },
+};
+
+/**
+ * The dialog in Japanese, which says under the choice of language that its text was written with the help
+ * of AI and has not been read by many people who speak it, and where to report a mistake (ADR 0084).
+ */
+export const InJapanese: Story = {
+  parameters: { bridge: bridgeFor('ja', 'ja', keepsIt) },
+  play: async ({ canvas, canvasElement }) => {
+    await userEvent.click(await canvas.findByRole('button', { name: 'アプリの設定' }));
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'アプリの設定',
+    });
+    await expect(within(dialog).getByRole('combobox', { name: '言語' })).toHaveDisplayValue(
+      '日本語',
+    );
+    await expect(within(dialog).getByText(/AI の支援を受けて作られていて/u)).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: '問題を報告' })).toBeVisible();
   },
 };
 

@@ -67,4 +67,23 @@ export const settingsMessages: Readonly<Record<Language, SettingsMessages>> = {
       done: 'Todas as opções voltaram ao padrão.',
     },
   },
+  ja: {
+    field: {
+      restoreDefault: (label) => `「${label}」を初期設定に戻す`,
+      useQueueValue: (label) => `「${label}」をキューの値にする`,
+      optional: '（任意）',
+    },
+    reset: {
+      button: '初期設定に戻す',
+      alreadyDefault: 'すべてのオプションがすでに初期設定です。',
+      confirmLabel: 'リセットを確認',
+      question: {
+        queue: '手順、端末、形式、mangapress のすべてのオプションを初期設定に戻しますか？',
+        options: '端末、形式、mangapress のすべてのオプションを初期設定に戻しますか？',
+      },
+      confirm: 'リセット',
+      cancel: 'キャンセル',
+      done: 'すべてのオプションを初期設定に戻しました。',
+    },
+  },
 };

@@ -7,4 +7,5 @@ import type { SaidFor } from './say';
 export const textSaid: Readonly<Record<Language, SaidFor<TextMessageValues>>> = {
   en: { 'text.raw': ({ text }) => text },
   'pt-BR': { 'text.raw': ({ text }) => text },
+  ja: { 'text.raw': ({ text }) => text },
 };

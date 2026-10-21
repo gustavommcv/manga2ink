@@ -39,7 +39,7 @@ describe('reading the file of the app settings', () => {
   });
 
   it.each([
-    ['a language this build does not have', 'ja'],
+    ['a language this build does not have', 'fr'],
     ['a language written another way', 'pt_br'],
     ['a number', 3],
     ['nothing', null],

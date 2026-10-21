@@ -113,4 +113,37 @@ export const sharingMessages: Readonly<Record<Language, SharingMessages>> = {
     },
     booksReady: 'Livros prontos para compartilhar',
   },
+  ja: {
+    menu: { share: '共有', sharing: '共有中', close: '共有を閉じる' },
+    send: {
+      title: 'KOReader に送信',
+      sharing: '共有中',
+      text: 'KOReader が、お使いの Wi-Fi を通じてこのパソコンから本をダウンロードします。',
+      show: '共有を表示',
+      share: 'これらの本を共有',
+    },
+    panel: {
+      title: '電子書籍リーダーに共有',
+      intro:
+        'ネットワーク上に、新しい順のカタログを公開します。KOReader などの OPDS リーダーから、変換した本を閲覧してダウンロードできます。',
+      addressLabel: 'カタログのアドレス',
+      copyAddress: 'アドレスをコピー',
+      copy: 'コピー',
+      copied: 'コピーしました',
+      inKoreader:
+        'KOReader では、「検索」→「OPDS カタログ」の順に開き、このアドレスを追加します。同期が終わるまで、Mangabound を開いたままにしてください。',
+      stop: '共有を停止',
+      chooseLibrary: '共有するライブラリを選択',
+      changeLibrary: '共有するライブラリを変更',
+      noInterfaces: 'ネットワークインターフェースが見つかりませんでした。',
+      networkInterface: 'ネットワークインターフェース',
+      username: 'ユーザー名',
+      noUsername: 'ユーザー名なし',
+      password: 'パスワード',
+      noPassword: 'パスワードなし',
+      blankHint: 'パスワードなしで共有するには、両方を空欄にしてください。',
+      start: '共有を開始',
+    },
+    booksReady: '共有できる本',
+  },
 };

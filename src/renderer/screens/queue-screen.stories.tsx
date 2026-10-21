@@ -409,3 +409,26 @@ export const InPortuguese: Story = {
     await expect(canvas.getByRole('button', { name: 'Processar 2 itens' })).toBeVisible();
   },
 };
+
+/** The screen in Japanese, while the queue is empty. */
+export const EmptyInJapanese: Story = {
+  globals: { language: 'ja' },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('heading', { name: 'キュー' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: '処理' })).toBeDisabled();
+  },
+};
+
+/**
+ * The screen in Japanese with items, a message about what was not added, books that are ready and a
+ * plan that was validated: the words of a language with no spaces between them still fit where the
+ * English ones did, and what the queue says about each row is written in Japanese too (ADR 0053, ADR 0084).
+ */
+export const InJapanese: Story = {
+  globals: { language: 'ja' },
+  args: InPortuguese.args ?? {},
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('heading', { name: '計画を検証しました' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: '2 個の項目を処理' })).toBeVisible();
+  },
+};

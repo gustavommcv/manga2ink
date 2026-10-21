@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { languages } from '@/domain/app-settings';
 import { languageNames, messagesFor } from '@/i18n/messages';
 
+/**
+ * The one message a language may leave unsaid: the note under the choice of language, for a language
+ * whose text few of its speakers have read (ADR 0084). It is `null` for the others.
+ */
+const languageNote = 'appSettings.language.note';
+
 /** Every message of a catalog with the path that names it, so one that is wrong can be found. */
 function messagePaths(value: unknown, path = ''): readonly (readonly [string, unknown])[] {
   if (typeof value === 'object' && value !== null) {
@@ -157,6 +163,7 @@ describe('the messages of the app', () => {
     for (const [path, message] of messagePaths(messagesFor(language))) {
       // A message is a text, or a function that makes one from its values (the tests of each part
       // of the app call those with values, since what they say depends on them).
+      if (path === languageNote && message === null) continue;
       expect(['string', 'function'], path).toContain(typeof message);
       if (typeof message === 'string') expect(message.trim(), path).not.toBe('');
     }
@@ -164,7 +171,9 @@ describe('the messages of the app', () => {
 
   it.each(languages)('say the same things in %s as in English, in the same way', (language) => {
     const shape = (messages: unknown): readonly string[] =>
-      messagePaths(messages).map(([path, message]) => `${path}: ${typeof message}`);
+      messagePaths(messages).map(
+        ([path, message]) => `${path}: ${path === languageNote ? 'note' : typeof message}`,
+      );
 
     expect(shape(messagesFor(language))).toEqual(shape(messagesFor('en')));
   });
@@ -195,10 +204,21 @@ describe('the messages of the app', () => {
 describe('the names of the languages', () => {
   it('have one for each language, written in the language itself', () => {
     expect(Object.keys(languageNames).sort()).toEqual([...languages].sort());
-    expect(languageNames).toEqual({ en: 'English', 'pt-BR': 'Português (Brasil)' });
+    expect(languageNames).toEqual({ en: 'English', 'pt-BR': 'Português (Brasil)', ja: '日本語' });
   });
 
   it('are different from one another, or a list of them could not be told apart', () => {
     expect(new Set(Object.values(languageNames)).size).toBe(languages.length);
+  });
+});
+
+describe('the note about a language', () => {
+  it('is said by a language whose text few of its speakers have read, in that language, and by no other', () => {
+    expect(messagesFor('en').appSettings.language.note).toBeNull();
+    expect(messagesFor('pt-BR').appSettings.language.note).toBeNull();
+
+    const japanese = messagesFor('ja').appSettings.language.note;
+    expect(japanese).toContain('AI');
+    expect(japanese).toMatch(/日本語/u);
   });
 });

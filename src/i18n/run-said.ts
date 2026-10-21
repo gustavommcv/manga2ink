@@ -16,6 +16,15 @@ const stagesInPortuguese: ReadonlyMap<string, string> = new Map([
   ['package', 'o empacotamento'],
 ]);
 
+/** The stages mangapress announces, in the words of Japanese; another stage is said as the tool names it. */
+const stagesInJapanese: ReadonlyMap<string, string> = new Map([
+  ['inspect', '読み込み'],
+  ['plan', '計画'],
+  ['process', '処理'],
+  ['metadata', 'メタデータの処理'],
+  ['package', 'パッケージ化'],
+]);
+
 const where = (title: string | undefined, separator = ' · '): string =>
   title === undefined ? '' : `${title}${separator}`;
 
@@ -29,6 +38,12 @@ const inPortugueseAfter: Readonly<Record<RunShape, string>> = {
   books: '',
   joined: ' · salvos como arquivos CBZ, mangapress não executado',
   series: ' · um só livro para a série',
+};
+
+const inJapaneseAfter: Readonly<Record<RunShape, string>> = {
+  books: '',
+  joined: ' · CBZ ファイルとして保存（mangapress は実行しません）',
+  series: ' · シリーズ全体で 1 冊',
 };
 
 /** What a run says while it goes on, what validating found and how the results began, in every language (ADR 0053). */
@@ -106,5 +121,45 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
     'summary.books': ({ device, format, ownOptions }) =>
       `${device} · ${format}${ownOptions === 0 ? '' : ` · ${String(ownOptions)} com opções próprias`}`,
     'summary.earlier': () => 'Pronto para salvar ou compartilhar',
+  },
+  ja: {
+    'progress.preparing': () => '準備中…',
+    'progress.inspecting': ({ title }) => `「${title}」を調べています…`,
+    'progress.organizing': ({ title }) => `「${title}」の各話を整理しています…`,
+    'progress.organizingChapters': ({ chapters }) =>
+      `${String(chapters)} 話を巻のファイルにまとめています…`,
+    'progress.bindingLibrary': () => 'ライブラリの巻ファイルを作成しています…',
+    'progress.buildingVolume': ({ volume, volumes }) =>
+      `${String(volumes)} 巻中 ${String(volume)} 巻目を作成しています…`,
+    'progress.converting': ({ title, volume }) =>
+      `${where(title)}${String(volume.count)} 巻中 ${String(volume.number)} 巻目を変換しています…`,
+    'progress.savingVolume': ({ title, volume }) =>
+      `${where(title)}${String(volume.count)} 巻中 ${String(volume.number)} 巻目を保存しています…`,
+    'progress.pageProcessed': ({ completed, total }) =>
+      `${String(total)} ページ中 ${String(completed)} ページを処理しました。`,
+    'progress.stageStarted': ({ stage }) => {
+      const name = stagesInJapanese.get(stage);
+      return name === undefined ? `${stage} を開始しています…` : `${name}を開始しています…`;
+    },
+    'progress.savingBook': () => '完成した本を保存しています…',
+    'progress.volumesConverted': ({ title, done, total }) =>
+      `${where(title)}${String(total)} 巻中 ${String(done)} 巻の変換が完了しました。`,
+    'progress.booksSaved': ({ count }) => `${String(count)} 冊を保存しました。`,
+
+    'plan.mangapress': ({ profile, width, height, chaptersNotGrouped }) =>
+      `mangapress の検証: ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · 1 冊、各話はまとめていません' : ''} · ライブラリのファイルは書き込まれていません`,
+    'plan.mangabind': ({ volumes, shape }) =>
+      `mangabind の検証: ${String(volumes)} 巻${inJapaneseAfter[shape]} · ライブラリのファイルは書き込まれていません`,
+    'plan.library': ({ titles, volumes, books, shape }) =>
+      `mangabind の検証: ${String(titles)} タイトル · ${String(volumes)} 巻${
+        shape === 'series'
+          ? ` · EPUB ${String(books)} 冊（シリーズごとに 1 冊）`
+          : inJapaneseAfter[shape]
+      } · ライブラリのファイルは書き込まれていません`,
+
+    'summary.joined': () => 'まとめた巻 · CBZ',
+    'summary.books': ({ device, format, ownOptions }) =>
+      `${device} · ${format}${ownOptions === 0 ? '' : ` · 専用のオプション ${String(ownOptions)} 個`}`,
+    'summary.earlier': () => '保存または共有できます',
   },
 };

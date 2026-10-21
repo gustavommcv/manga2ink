@@ -101,6 +101,7 @@ function build(language: Language): Messages {
 const catalogs: Readonly<Record<Language, Messages>> = {
   en: build('en'),
   'pt-BR': build('pt-BR'),
+  ja: build('ja'),
 };
 
 /** The messages of a language: always the same object, so a component can depend on it. */
@@ -115,4 +116,5 @@ export function messagesFor(language: Language): Messages {
 export const languageNames: Readonly<Record<Language, string>> = {
   en: 'English',
   'pt-BR': 'Português (Brasil)',
+  ja: '日本語',
 };

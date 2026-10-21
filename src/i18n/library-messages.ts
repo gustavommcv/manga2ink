@@ -74,4 +74,23 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
         ? 'Editar as opções de conversão deste título (definidas)'
         : 'Editar as opções de conversão deste título',
   },
+  ja: {
+    summary: (titles) =>
+      `${String(titles)} タイトル。巻のないタイトルは、まとめるまで処理の対象から外れます。`,
+    singleBook: {
+      title: '1 冊にまとめるモード',
+      text: 'ライブラリの各タイトルが、それぞれ 1 冊の本として作られます。',
+    },
+    titles: 'タイトル',
+    chips: {
+      saved: '保存済み',
+      failed: '失敗',
+      needsVolumes: '巻が必要',
+      volumes: (count) => `${String(count)} 巻`,
+    },
+    chapters: (chapters, leftOut) =>
+      `${String(chapters)} 話${leftOut > 0 ? ` · 対象外 ${String(leftOut)} 話` : ''}`,
+    editOptions: (set) =>
+      set ? 'このタイトルの変換オプションを編集（設定済み）' : 'このタイトルの変換オプションを編集',
+  },
 };

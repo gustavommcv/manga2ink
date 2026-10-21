@@ -117,4 +117,41 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       },
     },
   },
+  ja: {
+    chooseCover: { title: '表紙を選択', images: '画像' },
+    chooseCoversFolder: { title: '表紙のフォルダーを選択' },
+    chooseFolders: { title: 'マンガのフォルダーを選択' },
+    chooseFiles: { title: 'コミックのファイルを選択', archive: 'コミックブックアーカイブ' },
+    chooseLibrary: { title: '共有するライブラリを選択', button: 'このフォルダーを使う' },
+    chooseProcessingFolder: {
+      title: 'Mangabound が作業するフォルダーを選択',
+      button: 'このフォルダーを使う',
+    },
+    saveBook: { title: '本に名前を付けて保存' },
+    saveAll: { title: 'すべての本をフォルダーに保存' },
+    leaveWhileConverting: {
+      message: '変換がまだ実行中です。',
+      detail: '今 Mangabound を閉じると、実行中の変換は失われます。',
+      keep: '変換を続ける',
+      leave: 'このまま閉じる',
+    },
+    queueEnded: {
+      done: {
+        title: '本の準備ができました',
+        body: (books) => `${String(books)} 冊の本を、Mangabound で保存できます。`,
+      },
+      notes: {
+        title: '本の準備ができました（お知らせあり）',
+        body: (books) =>
+          `${String(books)} 冊の準備ができました。Mangabound を開いて、お知らせを確認してください。`,
+      },
+      failures: {
+        title: '失敗した変換があります',
+        body: (books, failures) =>
+          books === 0
+            ? '何も作成されませんでした。Mangabound を開いて、理由を確認してください。'
+            : `${String(books)} 冊の準備ができましたが、${String(failures)} 件が失敗しました。Mangabound を開いて、理由を確認してください。`,
+      },
+    },
+  },
 };

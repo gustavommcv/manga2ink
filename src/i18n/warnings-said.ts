@@ -151,6 +151,74 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
         'Os livros seguem os seus volumes, mas eles não puderam ser salvos no mangabind.json da pasta: a pasta não permite gravação, ou o mangabind.json dela não é um JSON válido. Da próxima vez que adicionar a pasta, você vai precisar editar os volumes de novo.',
     },
   },
+  ja: {
+    images_smaller_than_device: {
+      title: 'ページが画面より小さい',
+      advice:
+        '4 分の 1 を超えるページが画面より小さく、拡大されていません。「ページのサイズ」で「画面に合わせる（小さいページは拡大）」を選ぶと、読みやすくなります。',
+    },
+    source_already_converted: {
+      title: 'すでに一度変換されたページ',
+      advice:
+        'これらのページは、Kindle Comic Converter ですでに変換されたもののようです。もう一度変換すると、画質が下がります。元のファイルがあれば、そちらを使ってください。',
+    },
+    skipped_non_images: {
+      title: '画像ではないファイルを除外しました',
+      advice: '入力には、ページの画像ではないファイルが含まれています。それらは本に入りません。',
+    },
+    spread_labels_ignored: {
+      title: '本の隣にある .json ファイルは使われませんでした',
+      advice: '見開きのラベルの一覧ではなかったため、そのファイルなしで本を作成しました。',
+    },
+    spread_labels_skipped: {
+      title: 'ラベル付きの見開きの一部は、結合されませんでした',
+      advice:
+        'ラベルの付いた位置に、結合できるページがありませんでした。ほかの見開きは結合されています。',
+    },
+    output_collision: {
+      title: '別の名前で保存しました',
+      advice: 'このままでは、本が元のファイル自身を置き換えてしまうため、別の名前を付けました。',
+    },
+    page_truncated: {
+      title: '途中で終わっているページには空白があります',
+      advice:
+        'ページのファイルが、画像の途中で終わっています。多くの場合、ダウンロードが途中で止まったことが原因です。本には読み取れた部分が入り、そのページの残りは空白になります。ページ全体を取得するには、その話をもう一度ダウンロードしてください。',
+    },
+    chapter_conflict: {
+      title: 'コピーが複数ある話を除外しました',
+      advice:
+        'フォルダー内に同じ話が複数あると、コピーを見分けられないため、どのコピーも本に入りません。1 つを残してほかのコピーをフォルダーから取り除き、もう一度変換してください。',
+    },
+    chapter_gap: {
+      title: '巻の中で話が抜けています',
+      advice:
+        '巻の最初の話と最後の話の間に、抜けている話の番号があります。フォルダーにない場合、本はそれらの話なしで作られます。',
+    },
+    empty_chapter: {
+      title: 'ページのない話を除外しました',
+      advice: '入力の中に、ページが 1 つもない話があるため、本には入りません。',
+    },
+    link_skipped: {
+      title: 'フォルダーの外を指すリンクを除外しました',
+      advice:
+        'フォルダー内のファイルが、フォルダー内のファイルを指さないリンクです（フォルダーの外、フォルダー、または何もないものを指しています）。そのため本にはコピーしていません。ほかの人から受け取ったフォルダーを使って、お使いのパソコンのファイルが本に混ざるのを防ぐためです。そのページを入れたい場合は、ファイルのコピーをフォルダーに置いて、もう一度変換してください。',
+    },
+    unsupported_page_files: {
+      title: '話の中の、ページ画像ではないファイルを除外しました',
+      advice:
+        '話の中に、名前から画像（JPEG、PNG、WebP、GIF、BMP、AVIF、JPEG XL、TIFF）とわからないファイルがあるため、本のページには入りません。そのうちの 1 つがページなら、その形式の拡張子を付けて、もう一度変換してください。',
+    },
+    page_entries_too_large: {
+      title: '展開すると大きすぎるページを除外しました',
+      advice:
+        '.cbz の話の中のページが、1 ページとしてはあり得ないほど大きく展開される（256 MiB を超えるか、アーカイブ内のサイズの 1000 倍を超える）と示しています。これはコンピューターのメモリを埋め尽くすために作られたファイルの特徴なので、本には入りません。本物のページなら、通常の画像として保存し直して、もう一度変換してください。',
+    },
+    mapping_not_kept: {
+      title: '編集した巻は、フォルダーに保存されませんでした',
+      advice:
+        '本は編集した巻のとおりに作られますが、フォルダーの mangabind.json に保存できませんでした。フォルダーに書き込めないか、mangabind.json が正しい JSON ではありません。次にそのフォルダーを追加するときは、もう一度巻を編集する必要があります。',
+    },
+  },
 };
 
 /** What the results say of the warnings the tools gave the books, in every language (ADR 0053). */
@@ -173,5 +241,15 @@ export const warningSaid: Readonly<Record<Language, SaidFor<WarningMessageValues
     'warning.inOne': ({ first }) => `Em ${first}.`,
     'warning.inTwo': ({ first, second }) => `Em ${first} e ${second}.`,
     'warning.inMore': ({ first, second, more }) => `Em ${first}, ${second} e mais ${String(more)}.`,
+  },
+  ja: {
+    'warning.title': ({ code }) => warningWords.ja[code].title,
+    'warning.advice': ({ code }) => warningWords.ja[code].advice,
+    'warning.unknownTitle': () => 'mangapress からのお知らせ',
+    'warning.inAll': ({ count }) => `対象は全 ${String(count)} 冊です。`,
+    'warning.inOne': ({ first }) => `対象は ${first} です。`,
+    'warning.inTwo': ({ first, second }) => `対象は ${first} と ${second} です。`,
+    'warning.inMore': ({ first, second, more }) =>
+      `対象は ${first}、${second}、ほか ${String(more)} 冊です。`,
   },
 };

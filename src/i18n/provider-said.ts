@@ -38,4 +38,19 @@ export const providerSaid: Readonly<Record<Language, SaidFor<ProviderMessageValu
     'provider.unexpectedReleases': ({ service }) =>
       `${service} devolveu uma lista de versões inesperada.`,
   },
+  ja: {
+    'provider.catalogue': () => 'マンガのコミュニティカタログ（巻と話のデータ付き）',
+    'provider.timeout': ({ service }) =>
+      `${service} から時間内に応答がありませんでした。しばらくしてから、もう一度お試しください。`,
+    'provider.unreachable': ({ service }) => `${service} に接続できませんでした。`,
+    'provider.rateLimited': ({ service }) =>
+      `${service} がリクエストを制限しています。しばらくしてから、もう一度お試しください。`,
+    'provider.unexpectedStatus': ({ service, status }) =>
+      `${service} が予期しないステータス（${String(status)}）を返しました。`,
+    'provider.malformedJson': ({ service }) => `${service} が不正な形式の JSON を返しました。`,
+    'provider.unexpectedSearch': ({ service }) => `${service} が予期しない検索結果を返しました。`,
+    'provider.unexpectedVolumes': ({ service }) => `${service} が予期しない巻の情報を返しました。`,
+    'provider.unexpectedReleases': ({ service }) =>
+      `${service} が予期しないバージョンの一覧を返しました。`,
+  },
 };

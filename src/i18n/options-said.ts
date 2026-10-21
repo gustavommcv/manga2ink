@@ -67,4 +67,36 @@ export const optionsSaid: Readonly<Record<Language, SaidFor<OptionsMessageValues
     'options.issue.whole': ({ option, minimum, maximum }) =>
       `${optionFieldsMessages['pt-BR'].checked[option]} precisa ser um número inteiro de ${String(minimum)} a ${String(maximum)}.`,
   },
+  ja: {
+    'options.lock.webtoon': () => 'ウェブトゥーンのストリップでは使われません。',
+    'options.lock.strips': () => 'ストリップの並べ直しに置き換えられます。',
+    'options.lock.untouched': () => '画像をそのまま使う間は、使われません。',
+    'options.lock.pngOnly': () => 'PNG のページにのみ適用されます。',
+    'options.lock.epubOnly': () => 'EPUB だけが持つ設定です。',
+    'options.lock.bordersWebtoon': () => 'ウェブトゥーンのストリップでは、常に白です。',
+    'options.lock.bothVersions': () => '分割したページと全体の両方を作るときだけ使われます。',
+    'options.lock.wholeSpreadKept': () => '見開き全体を残すときだけ使われます。',
+    'options.lock.spreadUpright': () => '見開き全体を立てたままにする間は、何も回転されません。',
+    'options.lock.noJpeg': () => 'JPEG として保存されるものがありません。',
+    'options.lock.alreadyEightBit': () =>
+      '256 階調のグレーをすべて保持する間は、すでに 8 ビットです。',
+    'options.lock.alwaysEightBitPdf': () => 'PDF では、常に 8 ビットです。',
+    'options.lock.colorKept': () => 'カラーのページをカラーのまま残すときだけ使われます。',
+    'options.lock.pdfNoCover': () => 'PDF には表紙がありません。',
+    'options.lock.cbzCoverCut': () =>
+      'CBZ に表紙が付くのは、横長の画像から切り出したときだけです。',
+    'options.lock.koboEpub': () => 'Kobo 向けの EPUB にのみ適用されます。',
+    'options.lock.customNamesEpub': () =>
+      'サイズを指定している場合は、すでに本の名前が .epub になります。',
+
+    'options.issue.chooseDevice': () => '端末プロファイルを選択してください。',
+    'options.issue.customSizeBoth': () => '端末サイズを指定する場合は、幅と高さの両方が必要です。',
+    'options.issue.languageCode': () => 'EPUB の言語コードを入力してください。',
+    'options.issue.number': ({ option, minimum, maximum }) =>
+      `「${optionFieldsMessages.ja.checked[option]}」は、${String(minimum)} から ${String(maximum)} までの数値にしてください。`,
+    'options.issue.percent': ({ option }) =>
+      `「${optionFieldsMessages.ja.checked[option]}」は、0 から 100 の間にしてください。`,
+    'options.issue.whole': ({ option, minimum, maximum }) =>
+      `「${optionFieldsMessages.ja.checked[option]}」は、${String(minimum)} から ${String(maximum)} までの整数にしてください。`,
+  },
 };

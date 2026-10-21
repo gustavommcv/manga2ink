@@ -22,6 +22,7 @@ describe('how much room there is', () => {
 
   it('writes the number as the language does', () => {
     expect(sizeOf('pt-BR', 1.5 * GB)).toBe('1,5 GB');
+    expect(sizeOf('ja', 1.5 * GB)).toBe('1.5 GB');
   });
 
   it('does not go past terabytes, and takes a negative number for none', () => {

@@ -60,4 +60,26 @@ export const libraryCoversSaid: Readonly<
     'covers.fewImages': ({ images, books }) =>
       `Havia ${String(images)} ${countOf(images, 'imagem', 'imagens')} para ${String(books)} ${countOf(books, 'livro', 'livros')}; os outros livros não mudam.`,
   },
+  ja: {
+    'library.links.title': ({ count }) =>
+      `このライブラリの ${String(count)} 個のフォルダーが読み込まれませんでした`,
+    'library.links.advice': () =>
+      'これらはリンクで、mangabind はシリーズへのリンクをたどりません。実際のフォルダーをライブラリに置くか、それぞれを個別に追加してください:',
+    'library.links.names': ({ names }) =>
+      namesOf(names, (more) => ` ほか ${String(more)} 個`, '、'),
+
+    'covers.typesSentence': () => '表紙にできるのは、JPEG、PNG、WebP、GIF、BMP の画像です。',
+    'covers.unreadableFile': () =>
+      'そのファイルを画像として読み込めなかったため、使われませんでした。',
+    'covers.noImageFound': () => 'そこには画像が見つかりませんでした。',
+    'covers.kept': ({ count }) => `${String(count)} 冊の本は、選んだ表紙をそのまま使います。`,
+    'covers.imagesUnreadable': ({ count, names, more }) =>
+      `${String(count)} 個の画像を読み込めませんでした（${names.join('、')}${
+        more > 0 ? ` ほか ${String(more)} 個` : ''
+      }）。その画像が当たる本は、最初のページを表紙のままにします。`,
+    'covers.unused': ({ count, books }) =>
+      `${String(count)} 個の画像は使われませんでした。本は ${String(books)} 冊です。`,
+    'covers.fewImages': ({ images, books }) =>
+      `本 ${String(books)} 冊に対して画像は ${String(images)} 個でした。ほかの本は変わりません。`,
+  },
 };

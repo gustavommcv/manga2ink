@@ -33,4 +33,16 @@ export const toolchainSaid: Readonly<Record<Language, SaidFor<ToolchainMessageVa
     'toolchain.toolFailed': ({ tool }) =>
       `Não foi possível verificar ${tool}. Reinstale o Mangabound para restaurar as ferramentas incluídas.`,
   },
+  ja: {
+    'toolchain.ready': () => '同梱の変換ツールは検証済みで、使用できます。',
+    'toolchain.unavailable': () => '同梱のツールが復元されるまで、変換は利用できません。',
+    'toolchain.noTarget': ({ platform, arch }) =>
+      `Mangabound は ${platform}-${arch} 向けのツールを同梱していません。`,
+    'toolchain.manifestUnverified': () =>
+      '同梱ツールのマニフェストを検証できませんでした。Mangabound を再インストールしてください。',
+    'toolchain.checkFailed': () => '同梱の変換ツールを確認できませんでした。',
+    'toolchain.toolReady': ({ tool, release }) => `${tool} ${release} は検証済みです。`,
+    'toolchain.toolFailed': ({ tool }) =>
+      `${tool} を検証できませんでした。Mangabound を再インストールして、同梱のツールを復元してください。`,
+  },
 };

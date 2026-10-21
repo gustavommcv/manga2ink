@@ -12,10 +12,14 @@ Where KOReader has a Japanese word for something the readers meet there, this pa
 - **Natural, not word for word.** Rewrite the sentence as a Japanese application would say it. Leave out "you" and "your" (あなた, お使いの) unless the sentence is unclear without them.
 - **A failure** says what happened and what can be done, plainly: 「〜できませんでした。」 No apology, no exclamation mark.
 - **Punctuation.** Full-width parentheses （） and quotation marks 「」 (the name of a control in a sentence is in 「」), 、 and 。, and a single … where the English has one for a control that asks for more. Digits, Latin letters and symbols are half-width.
-- **Spaces.** One space between Latin letters or digits and the Japanese text next to them, as the guide writes it (Mangabound は, 3 冊). A number and its unit in Latin letters keep their space (12 GB), as `Intl` writes them.
+- **Colons.** A half-width colon and a space, as the guide writes it (最初: Ch.1).
+- **Spaces.** One space between Latin letters or digits and the Japanese text next to them, as the guide writes it (Mangabound は, 3 冊). A number and its unit in Latin letters keep their space (12 GB), as `Intl` writes them. A value the app puts into a sentence has a space beside it only where it is always in Latin letters (a language tag, the name of a service, a file extension): a name that a person chose is put in without one, since the app cannot know how it is written.
+- **A name in a sentence** is in 「」 where the place always holds a name (a book, a folder, an option): 「Berserk」を選択. Where the place can also hold a phrase of the catalog (the heading of a run that says 「お使いの本」 when it has no name to give), there are no marks, so the phrase does not look like a title.
 - **The long vowel mark** is kept where the platforms keep it: フォルダー, ユーザー, サーバー, エディター. A word the guide already writes without it keeps that (ライブラリ).
 - **Kana and kanji.** Everyday words in kanji (余白, 見開き, 表紙), loanwords that readers already use in katakana (キュー, カラー, ガンマ). Only common kanji; no furigana.
-- **Numbers, dates, sizes and lists** come from `Intl` for Japanese, not from the catalog.
+- **Numbers, dates, sizes and lists** come from `Intl` for Japanese, not from the catalog, and a list the catalog joins itself (the names of folders) is joined with 、.
+- **Sentences the window puts together** (two notes one after the other, a name and the end of the sentence) follow `sentenceMarks` in `src/i18n/sentence-marks.ts`: nothing between two sentences, and 。 to end one.
+- **Line breaks.** A line of Japanese may break between any two characters, so `styles.css` asks for breaks between phrases and keeps a small kana or a closing mark from starting a line (`:lang(ja)`). A text is not edited to fit a width.
 
 ### Counters
 
@@ -142,31 +146,36 @@ The name of the app, of the tools and of the services it works with (Mangabound,
 
 ## The conversion options
 
-| English                  | 日本語                         | Note                                                                                                            |
-| ------------------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| options, basic, advanced | オプション、基本、詳細設定     |                                                                                                                 |
-| profile                  | プロファイル                   |                                                                                                                 |
-| format                   | 形式                           | Of a book and of a page image.                                                                                  |
-| reading order            | 読み順                         | "Manga reading order": マンガの読み順. 右から左 and 左から右.                                                   |
-| page turn                | ページめくり                   | KOReader's word. Not ページ送り.                                                                                |
-| rotate, clockwise        | 回転、時計回り                 |                                                                                                                 |
-| wide page                | 横長のページ                   | The guide's words.                                                                                              |
-| fit, enlarge, stretch    | 合わせる、拡大、引き伸ばし     | "Fit, never enlarge": 画面に合わせる（拡大しない）.                                                             |
-| borders                  | 縁                             | The bars round a page that does not fill the screen: 縁の色, 自動、白、黒. Not 余白, the page's own white edge. |
-| margin                   | 余白                           |                                                                                                                 |
-| cropping                 | トリミング                     | KOReader's word. The guide's クロップ becomes this.                                                             |
-| preserved margin         | 残す余白                       |                                                                                                                 |
-| minimum retained area    | 最低限残す範囲                 |                                                                                                                 |
-| inter-panel gap          | コマ間の隙間                   |                                                                                                                 |
-| landscape, portrait      | 横向き、縦向き                 | "One page in landscape": 横向きでは 1 ページ表示. "Two-page view": 2 ページ表示.                                |
-| grayscale, color         | グレースケール、カラー         |                                                                                                                 |
-| tone                     | 階調                           | "Color and tone": カラーと階調.                                                                                 |
-| contrast, autocontrast   | コントラスト、自動コントラスト |                                                                                                                 |
-| gamma                    | ガンマ                         |                                                                                                                 |
-| black point              | 黒点                           |                                                                                                                 |
-| rainbow effect           | レインボー効果                 |                                                                                                                 |
-| quality                  | 画質                           | "JPEG quality": JPEG の画質.                                                                                    |
-| quiet mode               | 出力を静かにする               | The guide's words for the option.                                                                               |
+| English                      | 日本語                         | Note                                                                                                            |
+| ---------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| options, basic, advanced     | オプション、基本、詳細設定     |                                                                                                                 |
+| profile                      | プロファイル                   |                                                                                                                 |
+| format                       | 形式                           | Of a book and of a page image.                                                                                  |
+| reading order                | 読み順                         | "Manga reading order": マンガの読み順. 右から左 and 左から右.                                                   |
+| page turn                    | ページめくり                   | KOReader's word. Not ページ送り.                                                                                |
+| rotate, clockwise            | 回転、時計回り                 |                                                                                                                 |
+| wide page                    | 横長のページ                   | The guide's words.                                                                                              |
+| fit, enlarge, stretch        | 合わせる、拡大、引き伸ばし     | "Fit, never enlarge": 画面に合わせる（拡大しない）.                                                             |
+| borders                      | 縁                             | The bars round a page that does not fill the screen: 縁の色, 自動、白、黒. Not 余白, the page's own white edge. |
+| margin                       | 余白                           |                                                                                                                 |
+| cropping                     | トリミング                     | KOReader's word. The guide's クロップ becomes this.                                                             |
+| preserved margin             | 残す余白                       |                                                                                                                 |
+| minimum retained area        | 最低限残す範囲                 |                                                                                                                 |
+| inter-panel gap              | コマ間の隙間                   |                                                                                                                 |
+| landscape, portrait          | 横向き、縦向き                 | "One page in landscape": 横向きでは 1 ページ表示. "Two-page view": 2 ページ表示.                                |
+| grayscale, color             | グレースケール、カラー         |                                                                                                                 |
+| tone                         | 階調                           | "Color and tone": カラーと階調.                                                                                 |
+| contrast, autocontrast       | コントラスト、自動コントラスト |                                                                                                                 |
+| gamma                        | ガンマ                         |                                                                                                                 |
+| black point                  | 黒点                           |                                                                                                                 |
+| rainbow effect               | レインボー効果                 |                                                                                                                 |
+| quality                      | 画質                           | "JPEG quality": JPEG の画質.                                                                                    |
+| quiet mode                   | 出力を静かにする               | The guide's words for the option.                                                                               |
+| left out (of a run)          | 対象外                         | "3 話が対象外です". Taken out of the queue without deleting anything: キューから外す.                           |
+| table of contents, bookmarks | 目次、しおり                   | An EPUB's table of contents is 目次; a PDF's bookmarks are しおり, as Acrobat calls them; a CBZ has folders.    |
+| this computer                | このパソコン                   | The computer the app runs on. 端末 is the e-reader.                                                             |
+| default (a setting)          | 初期設定                       | "Reset to defaults": 初期設定に戻す. KOReader's デフォルト is not used.                                         |
+| process (the queue)          | 処理                           | The button that starts it: 処理, or 3 個の項目を処理.                                                           |
 
 ## Adding to this page
 

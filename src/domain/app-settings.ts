@@ -6,7 +6,7 @@ import { defaultThemePreference, type ThemePreference } from './theme';
  * in and the one a person gets when nothing else fits. A language is added here, with its catalog
  * (ADR 0052).
  */
-export const languages = ['en', 'pt-BR'] as const;
+export const languages = ['en', 'pt-BR', 'ja'] as const;
 
 export type Language = (typeof languages)[number];
 

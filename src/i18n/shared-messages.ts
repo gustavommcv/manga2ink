@@ -65,4 +65,20 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
       aBook: 'Um livro',
     },
   },
+  ja: {
+    notices: { label: 'お知らせ', dismiss: 'これらのお知らせを閉じる' },
+    infoBanner: { label: '情報' },
+    toolchain: { label: '同梱ツールの状態', title: '変換ツールの確認が必要です' },
+    startup: {
+      label: '起動エラー',
+      title: 'Mangabound を正しく起動できませんでした。',
+      text: 'アプリを再起動してください。問題が続く場合は、Mangabound を再インストールしてください。',
+    },
+    failure: {
+      label: 'ワークフローのエラー',
+      title: 'この手順を完了できませんでした',
+      technicalDetails: '技術的な詳細',
+      aBook: 'ある本',
+    },
+  },
 };

@@ -18,4 +18,10 @@ export const inputSaid: Readonly<Record<Language, SaidFor<InputMessageValues>>> 
     'input.overLimit': ({ left, limit }) =>
       `Só os primeiros ${String(limit)} itens são adicionados de uma vez; ${String(left)} ${countOf(left, 'ficou', 'ficaram')} de fora.`,
   },
+  ja: {
+    'input.unreadable': () => 'この項目を読み込めませんでした。',
+    'input.onlyFoldersAndCbz': () => '追加できるのは、フォルダーと .cbz ファイルだけです。',
+    'input.overLimit': ({ left, limit }) =>
+      `一度に追加できるのは最初の ${String(limit)} 個までで、${String(left)} 個は対象外になりました。`,
+  },
 };

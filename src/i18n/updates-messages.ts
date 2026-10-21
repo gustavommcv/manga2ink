@@ -80,4 +80,29 @@ export const updatesMessages: Readonly<Record<Language, UpdatesMessages>> = {
       prerelease: 'Estáveis e de pré-lançamento',
     },
   },
+  ja: {
+    notice: {
+      title: '更新は今のところ手動です',
+      text: 'アプリは、操作したときに新しいバージョンを確認します。まだアプリ自身でインストールすることはできません。新しいバージョンがあるときは、ボタンからブラウザーでダウンロードページを開けます。下のオプションは、アプリが自分で更新できるようになってから使えます。',
+    },
+    installed: 'インストール済みのバージョン',
+    check: '更新を確認',
+    checking: '確認中…',
+    upToDate: (version) => `最新のバージョン（${version}）をお使いです。`,
+    available: (version, day) =>
+      day === undefined
+        ? `新しいバージョン ${version} があります。`
+        : `新しいバージョン ${version} があります（${day}公開）。`,
+    download: '更新をダウンロード',
+    openFailed: 'ダウンロードページを開けませんでした。もう一度お試しください。',
+    automatic: {
+      label: '更新を自動的に確認',
+      help: 'アプリの起動時に、新しいバージョンがないか確認します。',
+    },
+    channel: {
+      label: '確認するバージョン',
+      stable: '安定版のみ',
+      prerelease: '安定版とプレリリース版',
+    },
+  },
 };

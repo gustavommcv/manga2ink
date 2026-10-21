@@ -18,6 +18,13 @@ const runningPortuguese: Readonly<Record<RunningThing, string>> = {
   lookup: 'Essa consulta já está em andamento.',
   conversion: 'Essa conversão já está em andamento.',
 };
+const runningJapanese: Readonly<Record<RunningThing, string>> = {
+  validation: 'その検証は、すでに実行中です。',
+  discovery: 'そのライブラリの読み込みは、すでに実行中です。',
+  search: 'その検索は、すでに実行中です。',
+  lookup: 'その照会は、すでに実行中です。',
+  conversion: 'その変換は、すでに実行中です。',
+};
 
 /** What the main process says when a request cannot be done, in every language (ADR 0053). */
 export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues>>> = {
@@ -148,5 +155,71 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
     'failure.diagnosticsNotCopied': () => 'Não foi possível copiar o diagnóstico.',
     'failure.folderNotOpened': () =>
       'Não foi possível abrir a pasta. Abra-a pelo gerenciador de arquivos.',
+  },
+  ja: {
+    'failure.cancelled': () => 'キャンセルしました。',
+    'failure.conversionCancelled': () => '変換をキャンセルしました。',
+    'failure.internal': () => 'Mangabound はその操作を完了できませんでした。',
+    'failure.invalidRequest': () => 'Mangabound は、無効なリクエストを拒否しました。',
+    'failure.untrustedSender': () =>
+      'Mangabound は、自身のウィンドウからのリクエストだけを受け付けます。',
+    'failure.fileAccessDenied': () =>
+      'Mangabound は、必要なファイルまたはフォルダーを使用する許可を得られませんでした。そのフォルダーのアクセス許可を確認して、もう一度お試しください。',
+    'failure.diskFull': () =>
+      'ドライブの空き容量がありません。空き容量を確保して、もう一度お試しください。',
+    'failure.settingsNotSaved': () => '設定を保存できませんでした。',
+    'failure.settingsNotLoaded': () => '保存された設定を読み込めませんでした。',
+    'failure.suggestionNotApplied': () => '提案を適用できませんでした。',
+    'failure.searchNotCompleted': () => '検索を完了できませんでした。',
+    'failure.catalogUnreadable': () => '出力ライブラリのカタログを読み込めませんでした。',
+    'failure.toolIncompatible': () =>
+      '同梱の変換ツールが、互換性のないデータを返しました。Mangabound を再インストールするか、診断情報を開いてください。',
+    'failure.bindingFailed': () => 'mangabind は、選ばれた巻を作成できませんでした。',
+    'failure.conversionFailed': () => 'mangapress は、この巻を変換できませんでした。',
+    'failure.titleNotConverted': () => '変換できませんでした。',
+    'failure.coverUnusable': ({ book }) =>
+      `「${book}」に選んだ表紙を使用できませんでした。本の詳細ページで、表紙を削除するか、別の画像を選んでください。`,
+    'failure.alreadyRunning': ({ what }) => runningJapanese[what],
+    'failure.conversionNotRunning': () => 'その変換は、もう実行されていません。',
+    'failure.sourceUnavailable': () => 'その情報源は利用できません。',
+    'failure.sourceUnsafeAddress': () => 'その情報源には、安全なアドレスがありません。',
+    'failure.savedBookGone': () => '保存された本は、もう利用できません。',
+    'failure.chooseInputAgain': () => '入力をもう一度選んでください。',
+    'failure.chooseLibraryAgain': () => '共有するライブラリを、もう一度選んでください。',
+    'failure.pendingConversionGone': () => '保留中の変換は、もう利用できません。',
+    'failure.pendingConversionBeingDeleted': () => '保留中の変換は、削除されているところです。',
+    'failure.pendingStillSaving': () =>
+      '保留中のこの変換を削除する前に、保存が終わるのを待ってください。',
+    'failure.pendingNotFound': () =>
+      'これらの保留中の本は、もう利用できません。Mangabound を開き直して、一覧を更新してください。',
+    'failure.pendingUnreadable': () =>
+      '保留中の本を読み込めませんでした。ファイルは削除されていません。保存場所のアクセス許可を確認して、Mangabound を再起動してみてください。',
+    'failure.pendingDeleteFailed': () =>
+      '保留中の本を削除できませんでした。保存場所のアクセス許可を確認して、もう一度お試しください。',
+    'failure.pendingNotDeleted': () =>
+      'Mangabound は、これらの保留中の本を削除できませんでした。もう一度お試しください。',
+    'failure.readyBooksShared': () =>
+      '完成した本は共有されています。保留中のコピーを削除する前に、共有を停止してください。',
+    'failure.waitForConversion': () =>
+      '保留中の本を削除する前に、実行中の変換が終わるのを待ってください。',
+    'failure.sharingAlreadyRunning': () => '共有はすでに実行中です。',
+    'failure.sharingNotRunning': () => '共有は実行されていません。',
+    'failure.sharingAddressUnavailable': () =>
+      'このネットワークアドレスは、このパソコンでは利用できません。一覧から選んでください。',
+    'failure.sharingPendingBeingDeleted': () =>
+      'これらの保留中の本は削除されているところで、共有できなくなりました。',
+    'failure.sharingPortInUse': ({ port }) =>
+      `ポート ${String(port)} は、このパソコンの別のプログラムがすでに使用しています。そのプログラムを閉じて、もう一度お試しください。`,
+    'failure.sharingAddressRefused': () =>
+      'そのネットワークアドレスでは、共有サーバーを起動できませんでした。',
+    'failure.processingFolderUnavailable': ({ folder }) =>
+      `作業フォルダー「${folder}」を利用できません。ドライブを接続し直すか、アプリの設定で別のフォルダーを選んでください。`,
+    'failure.processingFolderUnusable': ({ folder }) =>
+      `Mangabound は「${folder}」で作業できません。書き込めるフォルダーを選んでください。`,
+    'failure.processingBusy': () =>
+      '変換または共有が実行中です。終了または停止してから、もう一度お試しください。',
+    'failure.diagnosticsNotCopied': () => '診断情報をコピーできませんでした。',
+    'failure.folderNotOpened': () =>
+      'フォルダーを開けませんでした。代わりに、お使いのファイルマネージャーから開いてください。',
   },
 };

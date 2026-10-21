@@ -7,6 +7,7 @@ import { namesOf, type SaidFor } from './say';
 
 const english = queueMessages.en;
 const portuguese = queueMessages['pt-BR'];
+const japanese = queueMessages.ja;
 
 /** What the queue says about each of its rows, in every language (ADR 0053). */
 export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> = {
@@ -135,6 +136,66 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       return `${leftOutPt(folders)}: ${namesOf(where, (more) => ` e mais ${String(more)} títulos`)}. ${renameThemPt(folders)}, e depois adicione a biblioteca de novo.`;
     },
   },
+  ja: {
+    'queue.chip.checking': () => '確認中…',
+    'queue.chip.unreadable': () => '読み込めません',
+    'queue.chip.nothingToJoin': () => 'まとめる対象なし',
+    'queue.chip.ready': () => '準備完了',
+    'queue.chip.oneBook': () => '1 冊',
+    'queue.chip.notRecognized': () => '認識できません',
+    'queue.chip.needsVolumes': () => '巻が必要',
+    'queue.chip.needsGrouping': () => 'まとめが必要',
+    'queue.chip.saved': () => '保存済み',
+    'queue.chip.volumes': ({ count }) => `${String(count)} 巻`,
+    'queue.chip.titles': ({ count }) => `${String(count)} タイトル`,
+
+    'queue.detail.folderReading': () => 'フォルダー · 読み込み中',
+    'queue.detail.cbzChecking': () => 'CBZ · 確認中',
+    'queue.detail.folder': () => 'フォルダー',
+    'queue.detail.cbz': () => 'CBZ',
+    'queue.detail.cbzOneVolume': () => 'CBZ · すでに 1 巻',
+    'queue.detail.cbzStraight': () => 'CBZ · そのままリーダー向けの手順へ',
+    'queue.detail.folderNoChapters': () => 'フォルダー · 各話が見つかりません',
+    'queue.detail.folderChapters': ({ chapters, grouping }) =>
+      `フォルダー · ${String(chapters)} 話${
+        grouping === 'not-grouped'
+          ? ' · まとめていません'
+          : grouping === 'from-names'
+            ? ' · 名前からまとめ済み'
+            : ''
+      }`,
+    'queue.detail.library': ({ titles }) => `ライブラリ · ${String(titles)} タイトル`,
+    'queue.detail.libraryVolumes': ({ titles, volumes }) =>
+      `ライブラリ · ${String(titles)} タイトル · ${String(volumes)} 巻`,
+
+    'queue.note.noChapters': () =>
+      `mangabind はここで各話を見つけられませんでした。フォルダーを 1 冊の本として変換するには、「${japanese.steps.group}」をオフにしてください。`,
+    'queue.note.onlyLinks': ({ names }) =>
+      `この中のフォルダー ${String(names.length)} 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: ${namesOf(names, (more) => ` ほか ${String(more)} 個`, '、')}。実際のフォルダーをライブラリに置いて、もう一度追加してください。`,
+    'queue.note.noVolumesYet': () =>
+      `まだ巻がありません。「${japanese.row.editVolumes}」を開いて、各話をまとめてください。`,
+    'queue.note.unassigned': ({ count }) =>
+      `${String(count)} 話が、まだどの巻にも入っていません。「${japanese.row.editVolumes}」を開いて割り当てるか、抜けがあるまま進めることもできます。`,
+    'queue.note.chaptersLeftOut': ({ count }) => `${String(count)} 話が対象外です。`,
+    'queue.note.libraryEmpty': () =>
+      'このフォルダーに、mangabind はマンガを見つけられませんでした。',
+    'queue.note.titlesNeedVolumes': ({ count }) =>
+      `${String(count)} タイトルには、まだ巻がありません。この行の鉛筆アイコンから、まとめてください。`,
+    'queue.note.titlesLeftOut': ({ count }) =>
+      `${String(count)} タイトルは、巻ができるまで対象外です。`,
+    'queue.note.titlesFailed': ({ count }) =>
+      `${String(count)} タイトルは前回失敗したため、もう一度実行されます。`,
+    'queue.note.unrecognizedChapters': ({ names, again }) =>
+      `${leftOutJa(names.length)}: ${namesOf(names, (more) => ` ほか ${String(more)} 個`, '、')}。${renameThemJa}、${again === 'folder' ? 'フォルダー' : 'ライブラリ'}をもう一度追加してください。`,
+    'queue.note.unrecognizedInLibrary': ({ titles }) => {
+      const folders = titles.reduce((count, title) => count + title.names.length, 0);
+      const where = titles.map(
+        (title) =>
+          `${title.title}（${namesOf(title.names, (more) => ` ほか ${String(more)} 個`, '、')}）`,
+      );
+      return `${leftOutJa(folders)}: ${namesOf(where, (more) => ` ほか ${String(more)} タイトル`, '、')}。${renameThemJa}、ライブラリをもう一度追加してください。`;
+    },
+  },
 };
 
 function leftOutIn(count: number): string {
@@ -154,3 +215,9 @@ function leftOutPt(count: number): string {
 function renameThemPt(count: number): string {
   return `Renomeie-${count === 1 ? 'a' : 'as'} para incluir um número de capítulo (Ch.005, por exemplo)`;
 }
+
+function leftOutJa(count: number): string {
+  return `名前を各話として読み取れないフォルダーが ${String(count)} 個あり、本から除外されています`;
+}
+
+const renameThemJa = '各話の番号（たとえば Ch.005）を含む名前に変更してから';

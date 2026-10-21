@@ -89,4 +89,29 @@ export const optionsMessages: Readonly<Record<Language, OptionsMessages>> = {
         `${String(count)} ${countOf(count, 'item agora segue', 'itens agora seguem')} as opções da fila.`,
     },
   },
+  ja: {
+    back: '戻る',
+    advanced: '詳細設定',
+    page: {
+      title: '変換オプション',
+      description:
+        'キューにあるすべての項目について、ページのレイアウト、画像、メタデータ、出力を細かく調整します。選んだ内容は、次回のために保存されます。',
+    },
+    item: {
+      kicker: '詳細設定 · この項目のみ',
+      title: (name) => `「${name}」のオプション`,
+      description:
+        'ここで変更した内容は、この項目だけに使われ、色付きで表示されます。それ以外は、あとからキューで変更した内容も含め、キューの変換オプションに従います。変更したオプションの横の矢印を押すと、キューの値に戻ります。',
+      useQueue: 'キューのオプションを使う',
+      hasOwn: 'この項目には、専用のオプションがあります。',
+      followsQueue: 'この項目は、キューのオプションを使っています。',
+    },
+    overrides: {
+      label: '専用のオプションがある項目',
+      some: (count) => `キューの ${String(count)} 個の項目は、専用のオプションで変換されます。`,
+      keep: 'これらの項目は設定した内容を保ち、それ以外のオプションは、ここで選んだ内容に従います。',
+      clearAll: 'すべてキューのオプションにする',
+      cleared: (count) => `${String(count)} 個の項目が、キューのオプションに従うようになりました。`,
+    },
+  },
 };

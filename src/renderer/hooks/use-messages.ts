@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef } fr
 import { defaultLanguage, type Language } from '@/domain/app-settings';
 import type { AnyMessage } from '@/domain/message';
 import { type Messages, messagesFor } from '@/i18n/messages';
+import { type SentenceMarks, sentenceMarks } from '@/i18n/sentence-marks';
 import { say, sayAll } from '@/i18n/say';
 
 /** The language the window is in, and everything it says in it (ADR 0052). */
@@ -30,6 +31,11 @@ export function useLanguage(): Language {
   return useContext(I18nContext).language;
 }
 
+/** What the language of the window puts between sentences, and to end one that a screen puts together. */
+export function useSentenceMarks(): SentenceMarks {
+  return sentenceMarks[useLanguage()];
+}
+
 /** Writes what the domain, the workflows and the main process say by code (ADR 0053), in the language of the window. */
 export function useSay(): {
   /** One message as a sentence. */
@@ -37,13 +43,14 @@ export function useSay(): {
   /** Messages that follow one another as the sentences of one note. */
   readonly sayAll: (messages: readonly AnyMessage[]) => string;
 } {
-  const { said } = useMessages();
+  const { language, messages } = useContext(I18nContext);
+  const { said } = messages;
   return useMemo(
     () => ({
       say: (message) => say(said, message),
-      sayAll: (messages) => sayAll(said, messages),
+      sayAll: (many) => sayAll(said, many, sentenceMarks[language].gap),
     }),
-    [said],
+    [said, language],
   );
 }
 
