@@ -59,7 +59,11 @@ export interface MangapressRunArguments {
   readonly language?: string;
   readonly customWidth?: number;
   readonly customHeight?: number;
-  /** Build a nested volume/chapter table of contents instead of a flat one - EPUB only. */
+  /**
+   * The book is a whole series bound into one: give it a two-level table of contents, a volume and
+   * its chapters under it. Only an EPUB has one to give, and mangapress refuses the flag for a CBZ
+   * or a PDF, so for those it is not sent and the book is made without (ADR 0081).
+   */
   readonly nestedToc?: boolean;
 }
 
@@ -123,7 +127,7 @@ export function buildMangapressArguments(request: MangapressRunArguments): reado
     ...optionalValue('--language', request.language),
     ...optionalValue('--customwidth', request.customWidth),
     ...optionalValue('--customheight', request.customHeight),
-    ...enabled('--nested-toc', request.nestedToc),
+    ...enabled('--nested-toc', request.nestedToc === true && request.format === 'epub'),
     '--json-events',
   ];
 }

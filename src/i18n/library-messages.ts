@@ -29,7 +29,7 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
       `${String(titles)} ${countOf(titles, 'title', 'titles')}. A title with no volumes is left out of a run until you group it.`,
     singleBook: {
       title: 'Single book mode',
-      text: 'Each title in the library will be produced as its own single-series EPUB.',
+      text: 'Each title in the library will be produced as its own single book.',
     },
     titles: 'Titles',
     chips: {
@@ -54,7 +54,7 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
       `${String(titles)} ${countOf(titles, 'título', 'títulos')}. Um título sem volumes fica de fora do processamento até você agrupá-lo.`,
     singleBook: {
       title: 'Modo de livro único',
-      text: 'Cada título da biblioteca será gerado como um EPUB próprio, de uma série só.',
+      text: 'Cada título da biblioteca será gerado como um livro único próprio.',
     },
     titles: 'Títulos',
     chips: {

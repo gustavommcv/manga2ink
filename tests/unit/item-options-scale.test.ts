@@ -90,7 +90,7 @@ describe('options of their own at the size of a large library', () => {
         expect(title).not.toHaveProperty('options');
         return;
       }
-      const run = effectiveOptions(queue, title.options, false);
+      const run = effectiveOptions(queue, title.options);
       expect(run.format).toBe(own.format);
       expect(run.settings.jpegQuality).toBe(own.settings.jpegQuality);
       expect(run.settings.webtoon).toBe(own.settings.webtoon);

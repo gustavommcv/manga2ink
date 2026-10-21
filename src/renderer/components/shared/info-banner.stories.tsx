@@ -8,7 +8,7 @@ const meta = {
   args: {
     title: 'Single book for the series',
     message:
-      'Active from the queue: the series will be produced as a single EPUB with volumes and chapters in the table of contents.',
+      'Active from the queue: the series will be produced as a single book, in the format chosen here. The process steps are locked.',
   },
 } satisfies Meta<typeof InfoBanner>;
 

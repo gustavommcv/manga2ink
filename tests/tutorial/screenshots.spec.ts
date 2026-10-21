@@ -416,7 +416,7 @@ tutorial(
 );
 
 tutorial(
-  'single-book mode visibly locks the coupled process choices',
+  'single-book mode locks the process steps and leaves the format to choose',
   async ({ capture, open, page, t }) => {
     const story = 'workflows-queue--single-book-active';
     await open(story);
@@ -426,6 +426,7 @@ tutorial(
     await expect(
       page.getByRole('checkbox', { name: t.queue.steps.group, exact: true }),
     ).toBeDisabled();
+    await expect(page.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
     await capture(
       page,
       'single-book',

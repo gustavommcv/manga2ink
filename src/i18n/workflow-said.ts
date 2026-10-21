@@ -33,8 +33,6 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
     'workflow.reviewSettings': ({ before }) =>
       `Review the output settings before ${beforeEnglish[before]}.`,
     'workflow.singleBookNeedsBoth': () => 'Single book mode requires both binding and converting.',
-    'workflow.combineNeedsEpub': () =>
-      'Binding the whole series as one volume is only available for EPUB right now.',
     'workflow.noVolumes': () =>
       'No volume files were produced. Review the chapter mapping and try again.',
     'workflow.publishFailed': () =>
@@ -64,8 +62,6 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
       `Revise as configurações de saída antes de ${beforePortuguese[before]}.`,
     'workflow.singleBookNeedsBoth': () =>
       'O modo de livro único exige as duas etapas, agrupar e converter.',
-    'workflow.combineNeedsEpub': () =>
-      'Juntar a série inteira em um só volume só está disponível para EPUB por enquanto.',
     'workflow.noVolumes': () =>
       'Nenhum arquivo de volume foi gerado. Revise o mapeamento dos capítulos e tente de novo.',
     'workflow.publishFailed': () =>

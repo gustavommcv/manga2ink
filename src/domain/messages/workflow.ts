@@ -18,7 +18,6 @@ export interface WorkflowMessageValues {
   readonly 'workflow.confirmMapping': { readonly before: RunStep };
   readonly 'workflow.reviewSettings': { readonly before: RunStep };
   readonly 'workflow.singleBookNeedsBoth': NoValues;
-  readonly 'workflow.combineNeedsEpub': NoValues;
   readonly 'workflow.noVolumes': NoValues;
   readonly 'workflow.publishFailed': NoValues;
 }

@@ -335,7 +335,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     own?: ItemOptions,
   ): { readonly mode: M; readonly settings: MangapressSettings; readonly format: BookFormat } =>
     usesMangapress(resolved)
-      ? { mode: resolved, ...effectiveOptions(queueOptions, own, singleBookActive) }
+      ? { mode: resolved, ...effectiveOptions(queueOptions, own) }
       : { mode: resolved, settings: defaultMangapressSettings, format: 'cbz' };
   /** The command for one queue row. A folder sent straight to mangapress carries no volumes. */
   const planCommandFor = (
@@ -471,7 +471,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
                 ? [
                     {
                       title: title.title,
-                      ...effectiveOptions(queueOptions, title.options, singleBookActive),
+                      ...effectiveOptions(queueOptions, title.options),
                     },
                   ]
                 : [],
@@ -759,23 +759,13 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
     setSettings((prev) =>
       prev.combineIntoOneVolume ? { ...prev, combineIntoOneVolume: false } : prev,
     );
-    if (nextSingleBook) {
-      setMode('bind-and-convert');
-      setFormat('epub');
-    }
+    if (nextSingleBook) setMode('bind-and-convert');
   };
 
   const handleMode = (nextMode: ProcessMode): void => {
     if (!singleBookActive) {
       if (singleBook) setSingleBook(false);
       setMode(nextMode);
-    }
-  };
-
-  const handleFormat = (nextFormat: BookFormat): void => {
-    if (!singleBookActive) {
-      if (singleBook && nextFormat !== 'epub') setSingleBook(false);
-      setFormat(nextFormat);
     }
   };
 
@@ -992,7 +982,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             onEdit={openEditor}
             onEditDetails={openDetails}
             onEditOptions={openOptions}
-            onFormat={handleFormat}
+            onFormat={setFormat}
             onMode={handleMode}
             onOpenOptions={() => {
               setNavigation({ screen: 'options' });
@@ -1024,7 +1014,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             onClearItemOptions={() => {
               dispatch({ type: 'clear-options' });
             }}
-            onFormat={handleFormat}
+            onFormat={setFormat}
             onNotify={notify}
             onReset={resetMangapress}
             onSettings={setSettings}
@@ -1036,7 +1026,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
         {itemOptionsOpen !== undefined && (
           <ItemOptionsScreen
             backLabel={itemOptionsOpen.backLabel}
-            format={effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).format}
+            format={effectiveOptions(queueOptions, itemOptionsOpen.own).format}
             hasOwnOptions={hasItemOptions(itemOptionsOpen.own)}
             key={navigation.screen === 'item-options' ? JSON.stringify(navigation.target) : ''}
             name={itemOptionsOpen.name}
@@ -1044,7 +1034,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               setNavigation(itemOptionsOpen.back);
             }}
             onChange={(edited) => {
-              itemOptionsOpen.change(itemOptionsFor(queueOptions, edited, singleBookActive));
+              itemOptionsOpen.change(itemOptionsFor(queueOptions, edited));
             }}
             onNotify={notify}
             onUseQueueOptions={() => {
@@ -1052,9 +1042,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             }}
             profiles={profiles}
             queue={queueOptions}
-            settings={
-              effectiveOptions(queueOptions, itemOptionsOpen.own, singleBookActive).settings
-            }
+            settings={effectiveOptions(queueOptions, itemOptionsOpen.own).settings}
             singleBook={singleBookActive}
           />
         )}
@@ -1162,13 +1150,10 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
             <BookDetailsScreen
               backLabel={messages.queue.title}
               declaredLanguage={dominantLanguage(editingRow.mapping?.chapters ?? [])}
-              defaultLanguage={
-                effectiveOptions(queueOptions, editingRow.options, singleBookActive).settings
-                  .language
-              }
+              defaultLanguage={effectiveOptions(queueOptions, editingRow.options).settings.language}
               defaultTitle={editingRow.displayName.replace(/\.cbz$/iu, '')}
               details={editingRow.details ?? noBookDetails}
-              format={effectiveOptions(queueOptions, editingRow.options, singleBookActive).format}
+              format={effectiveOptions(queueOptions, editingRow.options).format}
               key={editingRow.id}
               lookup={authorLookup}
               {...(covers === undefined ? {} : { covers })}
@@ -1198,14 +1183,11 @@ export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): 
               backLabel={editingRow.displayName}
               declaredLanguage={dominantLanguage(editingTitleEntry.draft.chapters)}
               defaultLanguage={
-                effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).settings
-                  .language
+                effectiveOptions(queueOptions, editingTitleEntry.options).settings.language
               }
               defaultTitle={editingTitleEntry.title}
               details={editingTitleEntry.details ?? noBookDetails}
-              format={
-                effectiveOptions(queueOptions, editingTitleEntry.options, singleBookActive).format
-              }
+              format={effectiveOptions(queueOptions, editingTitleEntry.options).format}
               key={editingTitleEntry.title}
               lookup={authorLookup}
               {...(covers === undefined ? {} : { covers })}

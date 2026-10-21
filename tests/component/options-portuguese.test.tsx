@@ -194,18 +194,16 @@ describe('the fields of the conversion options, in Portuguese', () => {
     );
   });
 
-  it('says that cropping has to be on for its numbers, and the single book that locks the format', () => {
+  it('says that cropping has to be on for its numbers, and the single book that locks the steps', () => {
     render(editor({ cropping: 'disabled' }, 'epub', { singleBook: true }));
 
     expect(screen.getByLabelText('Intensidade do corte')).toHaveAccessibleDescription(
       'Ative o corte das páginas para ajustar isto.',
     );
     expect(screen.getByRole('status', { name: 'Um livro para a série' })).toHaveTextContent(
-      'Ativo na fila: a série será gerada como um único EPUB',
+      'Ativo na fila: a série será gerada como um único livro',
     );
-    expect(
-      screen.getByText('Desligue “Criar um livro para a série” para mudar isto.'),
-    ).toBeVisible();
+    expect(screen.getByLabelText('Formato do livro')).toBeEnabled();
   });
 
   it('says it is unavailable when the tools list no device', () => {

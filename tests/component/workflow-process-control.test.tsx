@@ -403,7 +403,7 @@ describe('process control in the queue', () => {
     expect(screen.getByText('Keep at least one step on.')).toBeVisible();
   });
 
-  it('locks steps and format when "Create one book for the series" is checked, and unlocks them when unchecked', async () => {
+  it('locks the steps, and not the format, when "Create one book for the series" is checked, and unlocks them when unchecked', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);
@@ -419,6 +419,8 @@ describe('process control in the queue', () => {
       expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
       expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
     });
+    const formatBefore = screen.getByRole('radio', { name: 'CBZ' });
+    expect(formatBefore).toBeChecked();
 
     await user.click(singleBookCheckbox);
 
@@ -427,11 +429,14 @@ describe('process control in the queue', () => {
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeDisabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeChecked();
+    // The format is still the person's own: it was not changed, and can be.
+    for (const format of ['CBZ', 'EPUB', 'PDF']) {
+      expect(screen.getByRole('radio', { name: format })).toBeEnabled();
+    }
+    expect(screen.getByRole('radio', { name: 'CBZ' })).toBeChecked();
     expect(
       screen.getAllByText('Turn off “Create one book for the series” to change this.'),
-    ).toHaveLength(3);
+    ).toHaveLength(2);
 
     // Individual restore for "Create one book for the series"
     await user.click(
@@ -445,6 +450,38 @@ describe('process control in the queue', () => {
     expect(
       screen.queryByText('Turn off “Create one book for the series” to change this.'),
     ).not.toBeInTheDocument();
+  });
+
+  it('keeps the series as one book when the format is changed, and says what each format gives', async () => {
+    const user = userEvent.setup();
+    installBridge(
+      bridge({
+        chooseInputs: () =>
+          Promise.resolve({ ok: true, value: { inputs: [folder(), cbz], rejected: [] } }),
+      }),
+    );
+    render(<App />);
+    await chooseToAdd(user, 'Files');
+    await waitFor(() => {
+      expect(screen.getByText('Ready')).toBeVisible();
+    });
+
+    const singleBookCheckbox = screen.getByRole('checkbox', {
+      name: 'Create one book for the series',
+    });
+    await user.click(singleBookCheckbox);
+
+    const notes = {
+      CBZ: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
+      EPUB: 'Produces a single EPUB with volumes and chapters in the table of contents.',
+      PDF: 'Produces a single PDF with the pages in order. It has no table of contents.',
+    };
+    for (const [format, note] of Object.entries(notes)) {
+      await user.click(screen.getByRole('radio', { name: format }));
+      expect(singleBookCheckbox).toBeChecked();
+      expect(screen.getByRole('radio', { name: format })).toBeChecked();
+      expect(screen.getByText(note)).toBeVisible();
+    }
   });
 
   it('disables "Create one book for the series" when only CBZ files are in the queue', async () => {
@@ -498,9 +535,8 @@ describe('process control in the queue', () => {
     await user.click(screen.getByRole('button', { name: 'Back' }));
 
     await user.click(screen.getByRole('radio', { name: 'PDF' }));
-    expect(
-      screen.getByRole('checkbox', { name: 'Create one book for the series' }),
-    ).not.toBeChecked();
+    // The format is its own choice: it no longer turns the saved one-book-per-series off.
+    expect(singleBookCheckbox).toBeChecked();
     expect(screen.getByRole('radio', { name: 'PDF' })).toBeChecked();
   });
 
@@ -527,7 +563,7 @@ describe('process control in the queue', () => {
     expect(singleBookCheckbox).toBeEnabled();
     expect(
       screen.getByText(
-        'Produces a single EPUB with volumes and chapters in the table of contents.',
+        'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
       ),
     ).toBeVisible();
   });

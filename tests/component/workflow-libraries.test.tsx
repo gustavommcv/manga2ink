@@ -466,7 +466,7 @@ describe('libraries in the queue', () => {
     expect(screen.queryByText('Broken Manga - Vol.01.cbz')).not.toBeInTheDocument();
   });
 
-  it('plans one EPUB per ready library title in single-book mode', async () => {
+  it('plans one book per ready library title in single-book mode', async () => {
     const user = userEvent.setup();
     installBridge(
       libraryBridge([goodTitle, looseTitle], {
@@ -486,7 +486,7 @@ describe('libraries in the queue', () => {
         'mangabind validated 1 title · 1 volume · 1 EPUB (one per series) · no library files written',
       ),
     ).toBeVisible();
-    expect(screen.getByText('One EPUB for Good Manga')).toBeVisible();
+    expect(screen.getByText('One book for Good Manga')).toBeVisible();
     expect(screen.queryByText('Good Manga - Vol.01.cbz')).not.toBeInTheDocument();
   });
 

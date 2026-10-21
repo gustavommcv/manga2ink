@@ -484,25 +484,23 @@ describe('mangapress settings editor', () => {
     );
   });
 
-  it('rules out CBZ and PDF and disables format selection when singleBook is active', () => {
+  it('shows that single-book mode is active and still lets the format be chosen', () => {
     const { rerender } = render(<StatefulEditor singleBook={false} />);
+
+    expect(screen.getByLabelText('Book format')).toBeEnabled();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    rerender(<StatefulEditor singleBook={true} />);
 
     const cbzOption: HTMLOptionElement = screen.getByRole('option', { name: 'CBZ' });
     const pdfOption: HTMLOptionElement = screen.getByRole('option', { name: 'PDF' });
     expect(cbzOption.disabled).toBe(false);
     expect(pdfOption.disabled).toBe(false);
     expect(screen.getByLabelText('Book format')).toBeEnabled();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-
-    rerender(<StatefulEditor singleBook={true} />);
-
-    expect(cbzOption.disabled).toBe(true);
-    expect(pdfOption.disabled).toBe(true);
-    expect(screen.getByLabelText('Book format')).toBeDisabled();
     expect(screen.getByRole('status')).toHaveTextContent('Single book for the series');
     expect(
-      screen.getByText('Turn off “Create one book for the series” to change this.'),
-    ).toBeVisible();
+      screen.queryByText('Turn off “Create one book for the series” to change this.'),
+    ).not.toBeInTheDocument();
   });
 
   it('marks changed fields and restores only the chosen select, toggle, text, or number', async () => {

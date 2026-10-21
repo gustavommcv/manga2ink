@@ -246,7 +246,7 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
     },
     singleBook: {
       title: 'Single book for the series',
-      text: 'Active from the queue: the series will be produced as a single EPUB with volumes and chapters in the table of contents. Book format and process steps are locked.',
+      text: 'Active from the queue: the series will be produced as a single book, in the format chosen here. The process steps are locked.',
     },
     eyebrow: { basic: 'Basic', advanced: 'Advanced', diagnostics: 'Diagnostics' },
     device: {
@@ -590,7 +590,7 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
     },
     singleBook: {
       title: 'Um livro para a série',
-      text: 'Ativo na fila: a série será gerada como um único EPUB, com volumes e capítulos no sumário. O formato do livro e as etapas do processo ficam travados.',
+      text: 'Ativo na fila: a série será gerada como um único livro, no formato escolhido aqui. As etapas do processo ficam travadas.',
     },
     eyebrow: { basic: 'Básico', advanced: 'Avançado', diagnostics: 'Diagnóstico' },
     device: {

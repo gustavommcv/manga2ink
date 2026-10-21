@@ -1,4 +1,5 @@
 import type { Language } from '@/domain/app-settings';
+import type { BookFormat } from '@/domain/conversion';
 
 import { countOf } from './count';
 
@@ -55,7 +56,8 @@ export interface QueueMessages {
       readonly label: string;
       readonly saved: string;
       readonly unavailable: string;
-      readonly produces: string;
+      /** What the one book is, by its format: only an EPUB has a table of contents (ADR 0081). */
+      readonly produces: Readonly<Record<BookFormat, string>>;
     };
     readonly device: string;
     readonly format: string;
@@ -139,7 +141,11 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
         label: 'Create one book for the series',
         saved: 'Saved for manga folders. A standalone CBZ is already one book.',
         unavailable: 'Not available for standalone .cbz files.',
-        produces: 'Produces a single EPUB with volumes and chapters in the table of contents.',
+        produces: {
+          epub: 'Produces a single EPUB with volumes and chapters in the table of contents.',
+          cbz: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
+          pdf: 'Produces a single PDF with the pages in order. It has no table of contents.',
+        },
       },
       device: 'Device',
       format: 'Format',
@@ -161,7 +167,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       validated: 'Plan validated',
       nothingWritten: 'No library files were written.',
       pages: (count) => `${String(count)} ${countOf(count, 'page', 'pages')}`,
-      oneBookFor: (series) => `One EPUB for ${series}`,
+      oneBookFor: (series) => `One book for ${series}`,
     },
     pending: {
       earlierBooks: 'Earlier books',
@@ -224,7 +230,11 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
         label: 'Criar um livro para a série',
         saved: 'Guardado para pastas de mangá. Um CBZ avulso já é um livro só.',
         unavailable: 'Indisponível para arquivos .cbz avulsos.',
-        produces: 'Gera um único EPUB com volumes e capítulos no sumário.',
+        produces: {
+          epub: 'Gera um único EPUB com volumes e capítulos no sumário.',
+          cbz: 'Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.',
+          pdf: 'Gera um único PDF com as páginas em ordem. Não tem sumário.',
+        },
       },
       device: 'Dispositivo',
       format: 'Formato',
@@ -246,7 +256,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       validated: 'Plano validado',
       nothingWritten: 'Nenhum arquivo da biblioteca foi gravado.',
       pages: (count) => `${String(count)} ${countOf(count, 'página', 'páginas')}`,
-      oneBookFor: (series) => `Um EPUB para ${series}`,
+      oneBookFor: (series) => `Um livro para ${series}`,
     },
     pending: {
       earlierBooks: 'Livros anteriores',

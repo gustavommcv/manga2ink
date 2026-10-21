@@ -223,7 +223,7 @@ describe('the editor of the mapping, in Portuguese', () => {
     );
 
     expect(screen.getByRole('status', { name: 'Um livro para a série' })).toHaveTextContent(
-      'Os volumes mapeados serão as entradas de primeiro nível do sumário do EPUB único',
+      'Os volumes mapeados serão o primeiro nível do livro único',
     );
     expect(screen.getByRole('button', { name: 'Pular o agrupamento' })).toBeDisabled();
     expect(

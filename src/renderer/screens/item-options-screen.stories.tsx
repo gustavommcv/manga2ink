@@ -118,7 +118,7 @@ export const TitleOfALibrary: Story = {
   },
 };
 
-/** One book per series is on for the whole queue, so the format cannot be set here. */
+/** One book per series is on for the whole queue; the item's format is still its own to set. */
 export const SingleBookActive: Story = {
   args: { format: 'epub', singleBook: true },
 };

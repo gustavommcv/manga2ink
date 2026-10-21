@@ -166,7 +166,7 @@ export function useKeptSettings(
   useEffect(() => {
     if (!restored) return;
     // A value that is half typed is not kept: the last valid options stay saved until it is fixed.
-    if (validateMangapressSettings(settings, format).length > 0) return;
+    if (validateMangapressSettings(settings).length > 0) return;
     const command = settingsToKeep({
       mode,
       format,

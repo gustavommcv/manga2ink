@@ -498,10 +498,11 @@ describe('the options kept between sessions', () => {
     });
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeDisabled();
+    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeChecked();
     expect(
       screen.getAllByText('Turn off “Create one book for the series” to change this.'),
-    ).toHaveLength(3);
+    ).toHaveLength(2);
 
     await user.click(singleBookCheckbox);
 

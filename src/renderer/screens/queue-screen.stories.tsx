@@ -331,12 +331,21 @@ export const ToolsNotReady: Story = {
   args: { disabled: true },
 };
 
+/** The whole series as one book: the steps are locked, the format is still the person's to choose. */
 export const SingleBookActive: Story = {
   args: {
     rows: rows.slice(0, 1),
-    // The whole series as one book needs an EPUB, and turning the mode on selects it.
-    format: 'epub',
+    format: 'cbz',
     singleBook: true,
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
+    await expect(canvas.getByRole('radio', { name: 'PDF' })).toBeEnabled();
+    await expect(
+      canvas.getByText(
+        'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
+      ),
+    ).toBeVisible();
   },
 };
 

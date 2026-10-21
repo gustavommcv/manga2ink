@@ -63,11 +63,10 @@ export class LibraryRun {
   ): Promise<readonly BatchTitleOutcome[]> {
     const mode = validateRunOptions(request, 'converting');
     const singleBook = Boolean(request.singleBook);
-    if (singleBook) assertSingleBook(mode, request.format);
+    if (singleBook) assertSingleBook(mode);
     // A title's own options are held to what the library's are, before anything is bound.
     for (const own of request.titleOptions ?? []) {
       validateRunOptions({ mode, settings: own.settings, format: own.format }, 'converting');
-      if (singleBook) assertSingleBook(mode, own.format);
     }
     const optionsOf = (title: string): RunOptions =>
       usesMangapress(mode)

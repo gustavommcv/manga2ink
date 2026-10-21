@@ -99,25 +99,27 @@ describe('the options a title of a library is made with', () => {
     expect(ports.bindBatch).not.toHaveBeenCalled();
   });
 
-  it('cannot take a title out of one book per series', async () => {
+  it('can give a title made into one book a format of its own', async () => {
     const ports = dependencies();
-    twoTitles(ports);
+    twoTitles(ports, true);
     const { workflow, sessionId } = await openLibrary(ports);
 
-    await expect(
-      workflow.convertLibrary(
-        {
-          sessionId,
-          libraryPath: '/output',
-          settings: defaultMangapressSettings,
-          format: 'epub',
-          singleBook: true,
-          titleOptions: [{ title: 'Good Manga', settings: own, format: 'pdf' }],
-        },
-        { onProgress: vi.fn() },
-      ),
-    ).rejects.toMatchObject({ code: 'invalid_settings' });
-    expect(ports.bindBatch).not.toHaveBeenCalled();
+    await workflow.convertLibrary(
+      {
+        sessionId,
+        libraryPath: '/output',
+        settings: defaultMangapressSettings,
+        format: 'epub',
+        singleBook: true,
+        titleOptions: [{ title: 'Other Manga', settings: own, format: 'pdf' }],
+      },
+      { onProgress: vi.fn() },
+    );
+
+    expect(madeWith(ports)).toEqual([
+      [defaultMangapressSettings, 'epub'],
+      [own, 'pdf'],
+    ]);
   });
 
   it('are not looked at when only joining, since mangapress is not run', async () => {

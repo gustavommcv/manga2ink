@@ -61,37 +61,20 @@ describe('shared run options', () => {
 });
 
 describe('shared single-book requirements', () => {
-  it('allows a combined EPUB when both tools run', () => {
+  it('allows a series made into one book when both tools run', () => {
     expect(() => {
-      assertSingleBook('bind-and-convert', 'epub');
+      assertSingleBook('bind-and-convert');
     }).not.toThrow();
   });
 
-  it.each(['bind-only', 'convert-only'] as const)(
-    'rejects %s before checking the format',
-    (mode) => {
-      expect(() => {
-        assertSingleBook(mode, 'pdf');
-      }).toThrowError(
-        expect.objectContaining({
-          code: 'invalid_settings',
-          said: message('workflow.singleBookNeedsBoth', {}),
-        }),
-      );
-    },
-  );
-
-  it.each(['cbz', 'pdf'] as const)(
-    'rejects a combined %s until that format is supported',
-    (format) => {
-      expect(() => {
-        assertSingleBook('bind-and-convert', format);
-      }).toThrowError(
-        expect.objectContaining({
-          code: 'invalid_settings',
-          said: message('workflow.combineNeedsEpub', {}),
-        }),
-      );
-    },
-  );
+  it.each(['bind-only', 'convert-only'] as const)('rejects %s', (mode) => {
+    expect(() => {
+      assertSingleBook(mode);
+    }).toThrowError(
+      expect.objectContaining({
+        code: 'invalid_settings',
+        said: message('workflow.singleBookNeedsBoth', {}),
+      }),
+    );
+  });
 });

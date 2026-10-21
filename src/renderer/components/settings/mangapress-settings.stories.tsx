@@ -303,17 +303,17 @@ export const ValidationError: Story = {
   },
 };
 
-/** When single-book mode is active from the queue, format is locked to EPUB and status shows active. */
+/** When single-book mode is active from the queue, the format stays a choice and the status shows active. */
 export const SingleBookActive: Story = {
   args: {
     singleBook: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('combobox', { name: 'Book format' })).toBeDisabled();
+    await expect(canvas.getByRole('combobox', { name: 'Book format' })).toBeEnabled();
     await expect(canvas.getByRole('status')).toHaveTextContent('Single book for the series');
     await expect(canvas.getByRole('status')).toHaveTextContent(
-      'Active from the queue: the series will be produced as a single EPUB',
+      'Active from the queue: the series will be produced as a single book',
     );
   },
 };
