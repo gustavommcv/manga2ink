@@ -17,11 +17,11 @@ export async function openFullSizeImage(page, name) {
 
 /**
  * The name a capture of the app has on a page of a language (`locale` is the folder of its address,
- * empty for English). The app has English and Portuguese, and a page of the guide shows the picture
- * in its own language; the Japanese pages, with no Japanese app yet, show the English one.
+ * empty for English). The app has English, Portuguese and Japanese, and a page of the guide shows the
+ * picture in its own language.
  */
 export function captureOn(locale, name) {
-  return locale === 'pt-br/' && name.startsWith('generated/')
-    ? `generated/pt-br/${name.slice('generated/'.length)}`
+  return locale !== '' && name.startsWith('generated/')
+    ? `generated/${locale}${name.slice('generated/'.length)}`
     : name;
 }

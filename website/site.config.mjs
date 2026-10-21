@@ -20,14 +20,6 @@ export const languages = [
 export const appLanguages = ['en', 'pt-BR', 'ja'];
 
 /**
- * The languages of the guide that still name the controls as the English application does, though the
- * app has them in its own words (ADR 0084). Their pages are switched in a change of their own, and
- * the language leaves this list with it, so that its guide is checked against the app's own words.
- * The names are the `id` of the languages above.
- */
-export const guideLabelsInEnglish = ['ja'];
-
-/**
  * The code Google Search Console gives for the "HTML tag" verification method: only the value of
  * the tag's `content` attribute. Empty until the owner supplies the value; see SEO.md.
  */

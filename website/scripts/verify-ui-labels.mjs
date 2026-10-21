@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { guideLabelsInEnglish, languages } from '../site.config.mjs';
+import { languages } from '../site.config.mjs';
 import { interfaceTextFor, missingLabels } from './ui-labels.mjs';
 
 /** The guides of the app itself. The other pages speak of other programs' menus, or of code. */
@@ -20,6 +20,10 @@ const allowed = new Map([
   ['Use pt-BR', 'the label is "Use {language}"'],
   ['Usar pt-BR', 'the label is "Usar {language}"'],
   ['Criar o volume 1', 'the label is "Criar o volume {number}"'],
+  ['pt-BR を使う', 'the label is "{language} を使う"'],
+  ['1 巻を作成', 'the label is "{number} 巻を作成"'],
+  ['N 個の項目を処理', 'the label counts the items in the queue'],
+  ['2 話がフォルダーに複数あります', 'an example of a problem the editor reports'],
   ['Processar N itens', 'the label counts the items in the queue'],
   // Emphasis on a column or a value of a table, or on a part of the page of options.
   ['The captions', 'emphasis on a part of the options page'],
@@ -68,17 +72,13 @@ const sources = sourceFolders
 const tags = languages.map(({ lang }) => lang);
 // What the interface says in each language of the guide, read once.
 const interfaceTexts = new Map(
-  languages.map(({ id, lang }) => [
-    id,
-    interfaceTextFor(guideLabelsInEnglish.includes(id) ? 'en' : lang, sources, tags),
-  ]),
+  languages.map(({ id, lang }) => [id, interfaceTextFor(lang, sources, tags)]),
 );
 
 const docs = path.resolve(import.meta.dirname, '..', 'src', 'content', 'docs');
 // The guide of a language names the controls as the interface does in that language: Portuguese by
-// the words of the app in Portuguese, and a language whose guide has not been switched yet (Japanese,
-// `guideLabelsInEnglish`) by the English ones. A page a language leaves in English is the English one,
-// already checked.
+// the words of the app in Portuguese, Japanese by its words in Japanese. A page a language leaves in
+// English is the English one, already checked.
 const pages = languages.flatMap(({ id, directory }) =>
   guides.flatMap((guide) => {
     const target = path.join(docs, directory, guide);

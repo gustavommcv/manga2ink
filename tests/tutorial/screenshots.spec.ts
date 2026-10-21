@@ -16,11 +16,8 @@ const displayedWidth = 720;
 const displayDensities = [1, 2, 3, 4];
 // Screens without their own panel padding include some existing Storybook background.
 const screenInset = 24;
-/**
- * The languages the guide has pictures in: the app's own words, as the app says them. A language of
- * the guide that the app does not have yet (Japanese) uses the English pictures.
- */
-const tutorialLanguages = ['en', 'pt-BR'] as const satisfies readonly Language[];
+/** The languages the guide has pictures in: the app's own words, as the app says them. */
+const tutorialLanguages = ['en', 'pt-BR', 'ja'] as const satisfies readonly Language[];
 type TutorialLanguage = (typeof tutorialLanguages)[number];
 /** English keeps the names it has always had; another language's pictures are in a folder named as its guide is. */
 const folderOf = (language: Language): string =>
@@ -60,6 +57,28 @@ function startingWith(text: string): RegExp {
   return new RegExp(`^${text.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}`, 'u');
 }
 
+/**
+ * Whether the machine that draws the pictures has a font with Japanese characters. A page drawn
+ * with none shows boxes, and a picture of boxes says nothing, so it is asked before the pictures
+ * are taken and not found in them (ADR 0084). U+10FFFD is a character no font has: it is drawn as
+ * the box that stands for what a font lacks, so a font that has 日 draws something else.
+ */
+async function hasJapaneseFont(page: Page): Promise<boolean> {
+  return await page.evaluate(() => {
+    const drawn = (text: string): string => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const context = canvas.getContext('2d');
+      if (context === null) return '';
+      context.font = '48px sans-serif';
+      context.fillText(text, 4, 52);
+      return canvas.toDataURL();
+    };
+    return drawn('日') !== drawn('\u{10FFFD}');
+  });
+}
+
 function tutorial(title: string, scenario: (scenario: Scenario) => Promise<void>): void {
   for (const language of tutorialLanguages) {
     test(`${title} (${language})`, async ({ browser }) => {
@@ -72,6 +91,13 @@ function tutorial(title: string, scenario: (scenario: Scenario) => Promise<void>
         });
         try {
           const page = await context.newPage();
+          if (language === 'ja') {
+            await page.goto('about:blank');
+            expect(
+              await hasJapaneseFont(page),
+              'This machine has no font with Japanese characters, so the pictures in Japanese would be boxes.',
+            ).toBe(true);
+          }
           await scenario({
             page,
             capture: (target, name, story, region, includeContext) =>
@@ -560,6 +586,12 @@ const settingsStories = {
     processing: 'settings-app-settings-dialog--processing-in-own-places-in-portuguese',
     updates: 'settings-app-settings-dialog--updates-in-portuguese',
     about: 'settings-app-settings-dialog--about-in-portuguese',
+  },
+  ja: {
+    interface: 'settings-app-settings-dialog--in-japanese',
+    processing: 'settings-app-settings-dialog--processing-in-own-places-in-japanese',
+    updates: 'settings-app-settings-dialog--updates-in-japanese',
+    about: 'settings-app-settings-dialog--about-in-japanese',
   },
 } as const satisfies Record<TutorialLanguage, Record<string, string>>;
 

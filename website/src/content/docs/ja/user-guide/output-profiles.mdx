@@ -9,7 +9,7 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## 端末と形式
 
-**Device** でお使いのモデルを選びます。ページサイズを自分で決めるには、**Advanced conversion options** を開き、**Custom width** と **Custom height** をピクセルで入力します。**Other** の端末では、両方が必須です。コマンドラインでは、これらの設定は `--profile`、`--format`、`--customwidth`、`--customheight` です。それぞれの働きは、[mangapress CLI](../../cli/mangapress/) のページで確認できます。
+**端末**でお使いのモデルを選びます。ページサイズを自分で決めるには、**詳細な変換オプション**を開き、**幅の指定**と**高さの指定**をピクセルで入力します。**Other** の端末では、両方が必須です。コマンドラインでは、これらの設定は `--profile`、`--format`、`--customwidth`、`--customheight` です。それぞれの働きは、[mangapress CLI](../../cli/mangapress/) のページで確認できます。
 
 | 形式 | 選ぶ場面                                                                                                                                |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -26,35 +26,35 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 これらの寸法は例です。お使いの画面に合ったサイズを使ってください。
 
-## Advanced conversion options
+## 詳細な変換オプション
 
-**Advanced conversion options** には、mangapress の設定が、目的ごとにまとめられています。**Reading**、**Double-page spreads**、**Size and borders**、**Cropping**、**Two-page view**、**Color and tone**、**Page images**、**Cover**、**Book metadata** です。まず端末の既定値から始め、設定を 1 つずつ変更して、できあがった本を確認してください。絵が切れる場合は、クロップを弱めるか、オフにしてください。
+**詳細な変換オプション**には、mangapress の設定が、目的ごとにまとめられています。**読み方**、**見開きページ**、**サイズと縁**、**トリミング**、**2 ページ表示**、**カラーと階調**、**ページの画像**、**表紙**、**本のメタデータ**です。まず端末の既定値から始め、設定を 1 つずつ変更して、できあがった本を確認してください。絵が切れる場合は、トリミングを弱めるか、オフにしてください。
 
 どのグループにも、[概要](../advanced-options/)に専用のページがあります。そこでは、同じページを各オプションあり・なしで変換して見せ、すべてのオプションを、それを設定するコマンドラインのフラグとともに一覧にしています。
 
 <TutorialImage
   name="generated/page-layout"
-  alt="Reading で Webtoon strips を選んだところ。Manga reading order と見開きページの操作が無効になり、その理由が表示されています。"
-  caption="Webtoon strips では、Manga reading order と、幅の広いページの操作は使われません。通常のマンガのページには、Manga or comic pages のままにしてください。"
+  alt="読み方でウェブトゥーンの縦長ストリップを選んだところ。マンガの読み順と見開きページの操作が無効になり、その理由が表示されています。"
+  caption="ウェブトゥーンの縦長ストリップでは、マンガの読み順と、幅の広いページの操作は使われません。通常のマンガのページには、マンガやコミックのページのままにしてください。"
 />
 
-あるオプションは、別のオプションがあって初めて意味を持ちます。たとえば、**Page format** が PNG でも、**Color pages as PNG too** をオンにするまでは、カラーのまま残るページは JPEG のままです。下の操作画面がこれを示し、[ページ画像](../advanced-options/page-images/) のページが、各選択のコストを測定しています。
+あるオプションは、別のオプションがあって初めて意味を持ちます。たとえば、**ページの形式**が PNG でも、**カラーのページも PNG にする**をオンにするまでは、カラーのまま残るページは JPEG のままです。下の操作画面がこれを示し、[ページの画像](../advanced-options/page-images/)のページが、各選択のコストを測定しています。
 
 <TutorialImage
   name="generated/page-images"
-  alt="カラー端末向けの Color and tone と Page images の操作。グレースケールのページは PNG、カラーのまま残すページは JPEG の品質を選べます。"
-  caption="この例では、カラーのページは JPEG のままです。Color pages as PNG too をオンにすると、代わりに PNG で保存されます。"
+  alt="カラー端末向けのカラーと階調とページの画像の操作。グレースケールのページは PNG、カラーのまま残すページは JPEG の品質を選べます。"
+  caption="この例では、カラーのページは JPEG のままです。カラーのページも PNG にするをオンにすると、代わりに PNG で保存されます。"
 />
 
-端末のそばに、2 つのオプションがあります。**Use the images as they are** は、ページをそのままパッケージ化します（[ページ画像](../advanced-options/page-images/#use-the-images-as-they-are)）。**Name the book .epub** は、Kobo の EPUB に `.kepub.epub` という名前が付くのを防ぎます（[書籍メタデータ](../advanced-options/book-metadata/#name-the-book-epub)）。
+端末のそばに、2 つのオプションがあります。**画像をそのまま使う**は、ページをそのままパッケージ化します（[ページの画像](../advanced-options/page-images/#画像をそのまま使う)）。**本の名前を .epub にする**は、Kobo の EPUB に `.kepub.epub` という名前が付くのを防ぎます（[本のメタデータ](../advanced-options/book-metadata/#本の名前を-epub-にする)）。
 
-別の選択のために意味のなくなったオプションは、薄く表示されたまま残り、その理由が表示されます。たとえば、**Webtoon strips** は、ウェブトゥーンでは使われないオプションをロックします（一覧は [読み方](../advanced-options/reading/#what-else-changes-with-it) にあります）。ページに戻すと、選んでいた内容も戻ります。
+別の選択のために意味のなくなったオプションは、薄く表示されたまま残り、その理由が表示されます。たとえば、**ウェブトゥーンの縦長ストリップ**は、ウェブトゥーンでは使われないオプションをロックします（一覧は[読み方](../advanced-options/reading/#what-else-changes-with-it)にあります）。ページに戻すと、選んでいた内容も戻ります。
 
-変更した項目を個別にリセットすることも、**Reset to defaults** ですべてをリセットすることもできます。設定は、起動をまたいで保持されます。
+変更した項目を個別にリセットすることも、**初期設定に戻す**ですべてをリセットすることもできます。設定は、起動をまたいで保持されます。
 
 ## シリーズを 1 冊にまとめる
 
-キューで **Create one book for the series** をオンにすると、その各話と各巻を 1 冊の本にまとめます。このモードはどの形式でも使え、2 つの処理ステップをオンのままにします。ステップを変えるには、オフにしてください。形式は自分で選べて、本に入るものは形式で決まります。
+キューで**シリーズを 1 冊の本にする**をオンにすると、その各話と各巻を 1 冊の本にまとめます。このモードはどの形式でも使え、2 つの処理ステップをオンのままにします。ステップを変えるには、オフにしてください。形式は自分で選べて、本に入るものは形式で決まります。
 
 - **EPUB** には目次があり、各話が各巻の下に並びます。
 - **CBZ** は、巻と各話をフォルダーとして保ちます。ページを名前順に並べるリーダー（KOReader もそうです）では、順番どおりに表示されます。目次はありません。
@@ -64,7 +64,7 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 <TutorialImage
   name="generated/single-book"
-  alt="Create one book for the series が有効で、処理ステップがロックされ、形式は変更できます。"
+  alt="シリーズを 1 冊の本にするが有効で、処理ステップがロックされ、形式は変更できます。"
 />
 
 コマンドラインのツールには独自の既定値があり、アプリのものとは異なります。ターミナルで使う場合は、[mangapress](../../cli/mangapress/) を参照してください。

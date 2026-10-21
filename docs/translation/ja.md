@@ -158,7 +158,7 @@ The name of the app, of the tools and of the services it works with (Mangabound,
 | fit, enlarge, stretch        | 合わせる、拡大、引き伸ばし     | "Fit, never enlarge": 画面に合わせる（拡大しない）.                                                             |
 | borders                      | 縁                             | The bars round a page that does not fill the screen: 縁の色, 自動、白、黒. Not 余白, the page's own white edge. |
 | margin                       | 余白                           |                                                                                                                 |
-| cropping                     | トリミング                     | KOReader's word. The guide's クロップ becomes this.                                                             |
+| cropping                     | トリミング                     | KOReader's word. The guide wrote クロップ before the app had Japanese.                                          |
 | preserved margin             | 残す余白                       |                                                                                                                 |
 | minimum retained area        | 最低限残す範囲                 |                                                                                                                 |
 | inter-panel gap              | コマ間の隙間                   |                                                                                                                 |
