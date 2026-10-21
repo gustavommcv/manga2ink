@@ -13,7 +13,7 @@ import { type QueueRow, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
 import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangapress } from '@/domain/preferences';
-import { defaultProcessMode, type ProcessMode, singleBookLockReason } from '@/domain/process-mode';
+import { defaultProcessMode, type ProcessMode } from '@/domain/process-mode';
 import { lowSpace, roomNeeded, type WorkingSpace } from '@/domain/working-space';
 import { DropTarget } from '@/renderer/components/queue/drop-target';
 import { QueueRowItem } from '@/renderer/components/queue/queue-row';
@@ -179,7 +179,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
               ? singleBook
                 ? words.panel.singleBook.saved
                 : words.panel.singleBook.unavailable
-              : words.panel.singleBook.produces}
+              : words.panel.singleBook.produces[format]}
           </Note>
         }
         onChange={onSingleBook}
@@ -223,17 +223,14 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
 
       <Field
         changed={format !== defaultFormat}
-        {...(singleBookActive ? { description: say(singleBookLockReason) } : {})}
-        disabled={!mangapressRuns || singleBookActive}
+        disabled={!mangapressRuns}
         label={words.panel.format}
         onReset={() => {
-          if (!singleBookActive) {
-            onFormat(defaultFormat);
-          }
+          onFormat(defaultFormat);
         }}
       >
         <SegmentedControl
-          disabled={!mangapressRuns || singleBookActive}
+          disabled={!mangapressRuns}
           label={words.panel.format}
           onChange={onFormat}
           options={formatOptions}

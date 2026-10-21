@@ -405,54 +405,58 @@ describe('library conversion workflow', () => {
     expect(ports.release).toHaveBeenLastCalledWith('batch-workspace');
   });
 
-  it('converts library in single-book mode: one EPUB per title with nested TOC and failure isolation', async () => {
-    const ports = dependencies();
-    const { workflow, sessionId } = await openLibrary(ports);
-    const onProgress = vi.fn();
+  it.each(['epub', 'cbz', 'pdf'] as const)(
+    'converts a library in single-book mode, one %s per title, with failure isolation',
+    async (format) => {
+      const ports = dependencies();
+      const { workflow, sessionId } = await openLibrary(ports);
+      const onProgress = vi.fn();
 
-    const outcomes = await workflow.convertLibrary(
-      {
-        sessionId,
-        libraryPath: '/output',
-        settings: defaultMangapressSettings,
-        format: 'epub',
-        singleBook: true,
-      },
-      { onProgress },
-    );
+      const outcomes = await workflow.convertLibrary(
+        {
+          sessionId,
+          libraryPath: '/output',
+          settings: defaultMangapressSettings,
+          format,
+          singleBook: true,
+        },
+        { onProgress },
+      );
 
-    expect(ports.bindBatch).toHaveBeenCalledExactlyOnceWith(
-      '/input/Library',
-      undefined,
-      true,
-      expect.any(Function),
-    );
-    // Good Manga was converted as 1 book with nestedToc: true
-    expect(ports.convert).toHaveBeenCalledTimes(1);
-    expect(ports.convert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        inputPath: '/work/batch/good-combined.cbz',
-        nestedToc: true,
-      }),
-      expect.anything(),
-    );
-    expect(onProgress).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Good Manga',
-        volume: { number: 1, count: 1 },
-      }),
-    );
-    expect(outcomes).toMatchObject([
-      {
-        title: 'Good Manga',
-        status: 'done',
-        artifacts: [{ id: 'artifact-/work/batch/good-combined.cbz' }],
-      },
-      { title: 'Broken Manga', status: 'failed', artifacts: [] },
-    ]);
-    expect(outcomes[1]!.error).toMatchObject({ code: 'binding_failed' });
-    expect(ports.release).toHaveBeenCalledWith('batch-workspace');
-  });
+      expect(ports.bindBatch).toHaveBeenCalledExactlyOnceWith(
+        '/input/Library',
+        undefined,
+        true,
+        expect.any(Function),
+      );
+      // Good Manga was converted as 1 book with nestedToc: true
+      expect(ports.convert).toHaveBeenCalledTimes(1);
+      expect(ports.convert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          inputPath: '/work/batch/good-combined.cbz',
+          format,
+          nestedToc: true,
+        }),
+        expect.anything(),
+      );
+      expect(onProgress).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Good Manga',
+          volume: { number: 1, count: 1 },
+        }),
+      );
+      expect(outcomes).toMatchObject([
+        {
+          title: 'Good Manga',
+          status: 'done',
+          artifacts: [{ id: 'artifact-/work/batch/good-combined.cbz' }],
+        },
+        { title: 'Broken Manga', status: 'failed', artifacts: [] },
+      ]);
+      expect(outcomes[1]!.error).toMatchObject({ code: 'binding_failed' });
+      expect(ports.release).toHaveBeenCalledWith('batch-workspace');
+    },
+  );
 
   it('isolates mangapress failure per title in library single-book mode', async () => {
     const ports = dependencies();
@@ -476,7 +480,7 @@ describe('library conversion workflow', () => {
     expect(ports.release).toHaveBeenCalledWith('batch-workspace');
   });
 
-  it('rejects invalid single-book mode settings in convertLibrary', async () => {
+  it('rejects single-book mode without both tools in convertLibrary', async () => {
     const ports = dependencies();
     const { workflow, sessionId } = await openLibrary(ports);
 
@@ -488,19 +492,6 @@ describe('library conversion workflow', () => {
           settings: defaultMangapressSettings,
           format: 'epub',
           mode: 'bind-only',
-          singleBook: true,
-        },
-        { onProgress: vi.fn() },
-      ),
-    ).rejects.toMatchObject({ code: 'invalid_settings' });
-
-    await expect(
-      workflow.convertLibrary(
-        {
-          sessionId,
-          libraryPath: '/output',
-          settings: defaultMangapressSettings,
-          format: 'cbz',
           singleBook: true,
         },
         { onProgress: vi.fn() },

@@ -224,7 +224,7 @@ export class SingleInputRun {
     if (unsupported !== undefined)
       throw new ConversionWorkflowError('unsupported_mode', unsupported);
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);
-    if (singleBook) assertSingleBook(mode, request.format);
+    if (singleBook) assertSingleBook(mode);
     return { session, mode, singleBook };
   }
 }

@@ -135,7 +135,7 @@ describe('the screen of a library, in Portuguese', () => {
     );
 
     expect(screen.getByRole('status', { name: 'Modo de livro único' })).toHaveTextContent(
-      'Cada título da biblioteca será gerado como um EPUB próprio, de uma série só.',
+      'Cada título da biblioteca será gerado como um livro único próprio.',
     );
     const links = screen.getByRole('status', {
       name: '5 pastas desta biblioteca não foram lidas',

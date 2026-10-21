@@ -34,16 +34,8 @@ export function hasItemOptions(options: ItemOptions | undefined): boolean {
   );
 }
 
-/**
- * The options an item is converted with: the queue's, with what the item set over them. One book
- * per series needs EPUB for the whole queue (ADR 0024), so under it the item keeps the queue's
- * format, and the queue's format is not one an item can change.
- */
-export function effectiveOptions(
-  queue: RunOptions,
-  item: ItemOptions | undefined,
-  singleBook: boolean,
-): RunOptions {
+/** The options an item is converted with: the queue's, with what the item set over them. */
+export function effectiveOptions(queue: RunOptions, item: ItemOptions | undefined): RunOptions {
   if (item === undefined || !hasItemOptions(item)) return queue;
   const merged: Record<string, unknown> = { ...queue.settings };
   for (const [field, value] of Object.entries(item.settings ?? {})) {
@@ -52,7 +44,7 @@ export function effectiveOptions(
   }
   return {
     settings: merged as unknown as MangapressSettings,
-    format: singleBook ? queue.format : (item.format ?? queue.format),
+    format: item.format ?? queue.format,
   };
 }
 
@@ -60,11 +52,7 @@ export function effectiveOptions(
  * What an item has to set for `edited` to be what it is converted with, given the queue's options:
  * only what differs, and nothing when it does not.
  */
-export function itemOptionsFor(
-  queue: RunOptions,
-  edited: RunOptions,
-  singleBook: boolean,
-): ItemOptions | undefined {
+export function itemOptionsFor(queue: RunOptions, edited: RunOptions): ItemOptions | undefined {
   const differing: Record<string, MangapressSettings[keyof MangapressSettings] | null> = {};
   const fields = new Set([...Object.keys(queue.settings), ...Object.keys(edited.settings)]) as Set<
     keyof MangapressSettings
@@ -73,7 +61,7 @@ export function itemOptionsFor(
     const value = edited.settings[field];
     if (value !== queue.settings[field]) differing[field] = value === undefined ? null : value;
   }
-  const format = singleBook || edited.format === queue.format ? undefined : edited.format;
+  const format = edited.format === queue.format ? undefined : edited.format;
   const options: ItemOptions = {
     ...(Object.keys(differing).length === 0 ? {} : { settings: differing }),
     ...(format === undefined ? {} : { format }),

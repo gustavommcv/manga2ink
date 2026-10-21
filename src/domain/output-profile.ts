@@ -79,15 +79,6 @@ export interface MangapressSettings {
   readonly combineIntoOneVolume: boolean;
 }
 
-/**
- * The formats "bind the whole series as one volume" is offered for. EPUB only, for now: mangapress
- * can build a nested volume/chapter table of contents in EPUB's own nav, but not yet in PDF (its
- * PDF library's bookmarks are a flat list, not a tree) or CBZ (no chapter-boundary metadata is
- * written into CBZ output at all today). Widening this later, once mangapress supports another
- * format, is exactly one edit: add it here. See docs/adr/0024-combine-into-one-volume-is-epub-only.md.
- */
-export const FORMATS_SUPPORTING_COMBINED_VOLUME: ReadonlySet<BookFormat> = new Set(['epub']);
-
 /** Mirrors the pinned mangapress profile default: Scribe/Colorsoft use 90, others 85. */
 export function defaultJpegQualityFor(deviceProfile: string): number {
   return deviceProfile.startsWith('KS') || deviceProfile === 'KCS' ? 90 : 85;
@@ -535,20 +526,10 @@ export const settingBounds = {
 
 export function validateMangapressSettings(
   settings: MangapressSettings,
-  format: BookFormat,
 ): readonly MangapressSettingIssue[] {
   const issues: MangapressSettingIssue[] = [];
   if (settings.deviceProfile.trim() === '') {
     issues.push({ field: 'deviceProfile', message: message('options.issue.chooseDevice', {}) });
-  }
-  // Belt and suspenders: the settings UI is expected to keep this combination from happening at
-  // all (switching to EPUB, or disabling the other formats, the moment the box is checked - see
-  // FORMATS_SUPPORTING_COMBINED_VOLUME), but the domain layer doesn't trust the UI alone.
-  if (settings.combineIntoOneVolume && !FORMATS_SUPPORTING_COMBINED_VOLUME.has(format)) {
-    issues.push({
-      field: 'combineIntoOneVolume',
-      message: message('workflow.combineNeedsEpub', {}),
-    });
   }
   numberInRange(issues, 'croppingPower', settings.croppingPower, settingBounds.croppingPower);
   percentage(issues, 'croppingMinimum', settings.croppingMinimum);

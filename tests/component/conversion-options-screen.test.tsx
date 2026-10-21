@@ -170,7 +170,7 @@ describe('the conversion options screen', () => {
     expect(trigger).toHaveFocus();
   });
 
-  it('keeps the single-book notice and format lock while other conversion choices remain editable', async () => {
+  it('keeps the single-book notice while the format and other conversion choices remain editable', async () => {
     const user = userEvent.setup();
     const onSettings = vi.fn();
     const onFormat = vi.fn();
@@ -181,12 +181,12 @@ describe('the conversion options screen', () => {
     );
 
     expect(screen.getByRole('status', { name: 'Single book for the series' })).toHaveTextContent(
-      'Book format and process steps are locked.',
+      'The process steps are locked.',
     );
-    expect(screen.getByLabelText('Book format')).toBeDisabled();
+    expect(screen.getByLabelText('Book format')).toBeEnabled();
     expect(screen.getByLabelText('Book format')).toHaveValue('epub');
     await user.selectOptions(screen.getByLabelText('Book format'), 'pdf');
-    expect(onFormat).not.toHaveBeenCalled();
+    expect(onFormat).toHaveBeenCalledExactlyOnceWith('pdf');
     await user.selectOptions(screen.getByLabelText('Page format'), 'png');
     expect(onSettings).toHaveBeenCalledExactlyOnceWith({
       ...defaultMangapressSettings,

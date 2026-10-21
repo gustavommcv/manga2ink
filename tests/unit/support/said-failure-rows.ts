@@ -409,13 +409,6 @@ export const failureRows: Rows<
       'O modo de livro único exige as duas etapas, agrupar e converter.',
     ],
   ],
-  'workflow.combineNeedsEpub': [
-    [
-      {},
-      'Binding the whole series as one volume is only available for EPUB right now.',
-      'Juntar a série inteira em um só volume só está disponível para EPUB por enquanto.',
-    ],
-  ],
   'workflow.noVolumes': [
     [
       {},

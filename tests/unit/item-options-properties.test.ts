@@ -62,8 +62,8 @@ describe('what an item sets over the options of the queue', () => {
       format: formats[Math.floor(next() * 3)] ?? 'cbz',
     };
 
-    const item = itemOptionsFor(queue, edited, false);
-    const made = effectiveOptions(queue, item, false);
+    const item = itemOptionsFor(queue, edited);
+    const made = effectiveOptions(queue, item);
 
     expect(normalized(made.settings)).toEqual(normalized(edited.settings));
     expect(made.format).toBe(edited.format);
@@ -74,35 +74,24 @@ describe('what an item sets over the options of the queue', () => {
     const queue: RunOptions = { settings: someSettings(next), format: 'cbz' };
     const edited: RunOptions = { settings: someSettings(next), format: 'epub' };
 
-    expect(itemOptionsFor(queue, queue, false)).toBeUndefined();
-    const item = itemOptionsFor(queue, edited, false);
+    expect(itemOptionsFor(queue, queue)).toBeUndefined();
+    const item = itemOptionsFor(queue, edited);
     for (const [field, value] of Object.entries(item?.settings ?? {})) {
       const queueValue = queue.settings[field as keyof MangapressSettings];
       expect(value === null ? undefined : value).not.toBe(queueValue);
     }
     // Setting back what the queue has is not a difference.
-    expect(itemOptionsFor(queue, effectiveOptions(queue, item, false), false)).toEqual(item);
+    expect(itemOptionsFor(queue, effectiveOptions(queue, item))).toEqual(item);
   });
 
   it.each(cases)('leaves the options of the queue as they were (seed %i)', (seed) => {
     const next = random(seed);
     const queue: RunOptions = { settings: someSettings(next), format: 'pdf' };
     const before = structuredClone(queue);
-    const item = itemOptionsFor(queue, { settings: someSettings(next), format: 'epub' }, false);
+    const item = itemOptionsFor(queue, { settings: someSettings(next), format: 'epub' });
 
-    effectiveOptions(queue, item, false);
+    effectiveOptions(queue, item);
 
     expect(queue).toEqual(before);
-  });
-
-  it.each(cases)('never changes the format under one book per series (seed %i)', (seed) => {
-    const next = random(seed);
-    const queue: RunOptions = { settings: someSettings(next), format: 'epub' };
-    const edited: RunOptions = { settings: someSettings(next), format: formats[seed % 3] ?? 'cbz' };
-
-    const item = itemOptionsFor(queue, edited, true);
-
-    expect(item?.format).toBeUndefined();
-    expect(effectiveOptions(queue, item, true).format).toBe('epub');
   });
 });

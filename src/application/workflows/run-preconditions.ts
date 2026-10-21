@@ -1,12 +1,5 @@
-import {
-  type BookFormat,
-  type ConversionRequest,
-  ConversionWorkflowError,
-} from '@/domain/conversion';
-import {
-  FORMATS_SUPPORTING_COMBINED_VOLUME,
-  validateMangapressSettings,
-} from '@/domain/output-profile';
+import { type ConversionRequest, ConversionWorkflowError } from '@/domain/conversion';
+import { validateMangapressSettings } from '@/domain/output-profile';
 import { type RunStep } from '@/domain/messages/workflow';
 import { message } from '@/domain/message';
 import { defaultProcessMode, type ProcessMode, usesMangapress } from '@/domain/process-mode';
@@ -23,10 +16,7 @@ export function validateRunOptions(
   action: RunAction,
 ): ProcessMode {
   const mode = request.mode ?? defaultProcessMode;
-  if (
-    usesMangapress(mode) &&
-    validateMangapressSettings(request.settings, request.format).length > 0
-  ) {
+  if (usesMangapress(mode) && validateMangapressSettings(request.settings).length > 0) {
     throw new ConversionWorkflowError(
       'invalid_settings',
       message('workflow.reviewSettings', { before: action }),
@@ -36,14 +26,11 @@ export function validateRunOptions(
 }
 
 /** Called only when combining applies: a loose CBZ remains a direct conversion. */
-export function assertSingleBook(mode: ProcessMode, format: BookFormat): void {
+export function assertSingleBook(mode: ProcessMode): void {
   if (mode !== 'bind-and-convert') {
     throw new ConversionWorkflowError(
       'invalid_settings',
       message('workflow.singleBookNeedsBoth', {}),
     );
-  }
-  if (!FORMATS_SUPPORTING_COMBINED_VOLUME.has(format)) {
-    throw new ConversionWorkflowError('invalid_settings', message('workflow.combineNeedsEpub', {}));
   }
 }

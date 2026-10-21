@@ -249,14 +249,16 @@ describe('the options that are set to start with', () => {
   });
 
   it('say which of the two sizes is missing for the custom device', () => {
-    const onlyHeight = validateMangapressSettings(
-      { ...defaultMangapressSettings, deviceProfile: 'OTHER', customHeight: 800 },
-      'cbz',
-    );
-    const onlyWidth = validateMangapressSettings(
-      { ...defaultMangapressSettings, deviceProfile: 'OTHER', customWidth: 600 },
-      'cbz',
-    );
+    const onlyHeight = validateMangapressSettings({
+      ...defaultMangapressSettings,
+      deviceProfile: 'OTHER',
+      customHeight: 800,
+    });
+    const onlyWidth = validateMangapressSettings({
+      ...defaultMangapressSettings,
+      deviceProfile: 'OTHER',
+      customWidth: 600,
+    });
 
     expect(onlyHeight.map((issue) => issue.field)).toEqual(['customWidth']);
     expect(onlyWidth.map((issue) => issue.field)).toEqual(['customHeight']);

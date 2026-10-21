@@ -136,12 +136,6 @@ describe('run precondition ordering', () => {
       code: 'invalid_settings',
       said: message('workflow.singleBookNeedsBoth', {}),
     });
-    await expect(
-      workflow.convertLibrary(libraryRequest, { onProgress: vi.fn() }),
-    ).rejects.toMatchObject({
-      code: 'invalid_settings',
-      said: message('workflow.combineNeedsEpub', {}),
-    });
     expect(ports.bindBatch).not.toHaveBeenCalled();
   });
 });

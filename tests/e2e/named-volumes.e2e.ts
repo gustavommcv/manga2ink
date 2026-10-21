@@ -5,7 +5,14 @@ import path from 'node:path';
 
 import { $, $$, browser } from '@wdio/globals';
 
-import { readZipEntry, resetQueue, saveAllBooks, saveBookAs, setFormat } from './support';
+import {
+  listZipEntryNames,
+  readZipEntry,
+  resetQueue,
+  saveAllBooks,
+  saveBookAs,
+  setFormat,
+} from './support';
 
 const temporaryDirectories: string[] = [];
 
@@ -127,7 +134,11 @@ describe('packaged folder whose names carry the volumes', () => {
     await assert.rejects(readFile(path.join(inputPath, 'mangabind.json'), 'utf8'));
   });
 
-  it('binds two volumes into one EPUB with chapters nested under each volume', async () => {
+  /**
+   * Makes the two volumes of the fixture one book in a format and saves it: the plan says it is one
+   * book, one book is ready and one file of the format is where it was saved. Returns that file.
+   */
+  async function bindTwoVolumesAs(format: 'CBZ' | 'EPUB' | 'PDF'): Promise<string> {
     const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-combined-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
@@ -143,12 +154,17 @@ describe('packaged folder whose names carry the volumes', () => {
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [inputPath] });
 
     await resetQueue();
+    await setFormat(format);
     await $('button=Folder').click();
     await $('span=2 volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('#combine-into-one-volume').click();
+    // The mode is kept for the rest of the session, so it is made sure to be on, not toggled.
+    const combine = $('#combine-into-one-volume');
+    if ((await combine.getAttribute('aria-checked')) !== 'true') await combine.click();
+    // The mode leaves the format as it was chosen.
+    assert.equal(await $(`[role="radio"][aria-checked="true"]`).getText(), format);
     await $('button=Validate plan').click();
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
-    assert.match(await $('main').getText(), /One EPUB for Named Volumes/u);
+    assert.match(await $('main').getText(), /One book for Named Volumes/u);
     assert.doesNotMatch(await $('[aria-labelledby="plans-title"]').getText(), /Vol\.01\.cbz/u);
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
@@ -161,9 +177,14 @@ describe('packaged folder whose names carry the volumes', () => {
     if (singleBookName === undefined) throw new Error('The single book has no save action.');
     await saveBookAs(singleBookName, path.join(libraryPath, singleBookName));
 
-    const books = (await readdir(libraryPath)).filter((name) => name.endsWith('.epub'));
-    assert.equal(books.length, 1, 'two input volumes should produce exactly one EPUB');
-    const bookPath = path.join(libraryPath, books[0]!);
+    const extension = `.${format.toLowerCase()}`;
+    const books = (await readdir(libraryPath)).filter((name) => name.endsWith(extension));
+    assert.equal(books.length, 1, `two input volumes should produce exactly one ${format}`);
+    return path.join(libraryPath, books[0]!);
+  }
+
+  it('binds two volumes into one EPUB with chapters nested under each volume', async () => {
+    const bookPath = await bindTwoVolumesAs('EPUB');
     assert.equal((await readFile(bookPath)).subarray(0, 2).toString('ascii'), 'PK');
 
     // Inspect the real EPUB XML. A flat list containing every label would not prove that a
@@ -216,5 +237,30 @@ describe('packaged folder whose names carry the volumes', () => {
     assert.equal(toc.ncx[0]!.chapters.length, 2);
     assert.equal(toc.ncx[1]!.chapters.length, 1);
     assert.deepEqual(toc.navChapterCounts, [2, 1]);
+  });
+
+  it('binds two volumes into one CBZ whose folders keep the volumes in the order a reader sorts them', async () => {
+    const bookPath = await bindTwoVolumesAs('CBZ');
+    assert.equal((await readFile(bookPath)).subarray(0, 2).toString('ascii'), 'PK');
+
+    // A reader that orders the pages by their names, as KOReader's does, must find the first
+    // volume before the second: so a chapter is in the folder of its volume, and the names that
+    // sort are the names in the order the pages were written.
+    const names = (await listZipEntryNames(bookPath)).filter((name) => /\.(jpg|png)$/u.test(name));
+    assert.ok(names.length > 0, 'the CBZ has pages');
+    assert.deepEqual(
+      [...names].sort(),
+      names,
+      `the names are not in the order they were written: ${names.join(', ')}`,
+    );
+    assert.match(names[0]!, /^v001 - Vol\.01\/c\d+/u);
+    assert.match(names.at(-1)!, /^v002 - Vol\.02\/c\d+/u);
+  });
+
+  it('binds two volumes into one PDF', async () => {
+    const bookPath = await bindTwoVolumesAs('PDF');
+    const bytes = await readFile(bookPath);
+    assert.equal(bytes.subarray(0, 5).toString('ascii'), '%PDF-');
+    assert.ok(bytes.length > 1_024);
   });
 });

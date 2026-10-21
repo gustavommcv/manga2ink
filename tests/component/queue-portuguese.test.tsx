@@ -126,7 +126,7 @@ describe('the queue screen in Portuguese', () => {
       within(panel).getByRole('checkbox', { name: 'Criar um livro para a série' }),
     ).not.toBeChecked();
     expect(
-      screen.getByText('Gera um único EPUB com volumes e capítulos no sumário.'),
+      screen.getByText('Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.'),
     ).toBeVisible();
     expect(within(panel).getByRole('combobox', { name: 'Dispositivo' })).toBeVisible();
     expect(within(panel).getByRole('radiogroup', { name: 'Formato' })).toBeVisible();
@@ -262,7 +262,7 @@ describe('the queue screen in Portuguese', () => {
         'mangabind validou 11 volumes · um só livro para a série · nenhum arquivo da biblioteca gravado',
       ),
     ).toBeVisible();
-    expect(screen.getByText('Um EPUB para Chainsaw Man')).toBeVisible();
+    expect(screen.getByText('Um livro para Chainsaw Man')).toBeVisible();
     expect(screen.getByText('1976 páginas')).toBeVisible();
   });
 

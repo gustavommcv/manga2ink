@@ -423,7 +423,7 @@ describe('conversion workflow', () => {
     expect(ports.convert).not.toHaveBeenCalled();
   });
 
-  it('enforces bind-and-convert and EPUB format for single-book mode in convert and plan', async () => {
+  it('enforces bind-and-convert for single-book mode in convert and plan', async () => {
     const ports = dependencies();
     const workflow = new ConversionWorkflow(
       ports.binding,
@@ -460,33 +460,37 @@ describe('conversion workflow', () => {
         mapping: mappedDraft(),
       }),
     ).rejects.toMatchObject({ code: 'invalid_settings' });
+  });
 
-    // format != epub
-    await expect(
-      workflow.convert(
-        {
-          sessionId: inspected.sessionId,
-          libraryPath: '/library',
-          settings: defaultMangapressSettings,
-          format: 'cbz',
-          singleBook: true,
-          mapping: mappedDraft(),
-        },
-        { onProgress: vi.fn() },
-      ),
-    ).rejects.toMatchObject({ code: 'invalid_settings' });
-
-    await expect(
-      workflow.plan({
+  it.each(['cbz', 'pdf'] as const)(
+    'makes a series into one book in %s too, in convert and plan',
+    async (format) => {
+      const ports = dependencies();
+      const workflow = new ConversionWorkflow(
+        ports.binding,
+        ports.conversion,
+        () => 'session',
+        ports.bookFiles,
+      );
+      const inspected = await workflow.inspect(folder);
+      const request = {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
         settings: defaultMangapressSettings,
-        format: 'pdf',
+        format,
         singleBook: true,
         mapping: mappedDraft(),
-      }),
-    ).rejects.toMatchObject({ code: 'invalid_settings' });
-  });
+      };
+
+      await expect(workflow.plan(request)).resolves.toMatchObject({ tool: 'mangabind' });
+      await workflow.convert(request, { onProgress: vi.fn() });
+
+      expect(ports.convert).toHaveBeenCalledWith(
+        expect.objectContaining({ inputPath: '/work/combined.cbz', format, nestedToc: true }),
+        expect.anything(),
+      );
+    },
+  );
 
   it('bypasses single-book mode for single .cbz input without error or nested TOC', async () => {
     const ports = dependencies();

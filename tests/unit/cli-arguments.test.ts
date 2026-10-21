@@ -89,6 +89,24 @@ describe('CLI argument builders', () => {
     expect(buildMangapressArguments({ ...request, dryRun: true })).toContain('--dry-run');
   });
 
+  it('asks for a nested table of contents only where the format has one', () => {
+    const series = {
+      inputPath: '/tmp/Series.cbz',
+      outputPath: '/library/Series',
+      profile: 'KPW5',
+      dryRun: false,
+      nestedToc: true,
+    };
+
+    expect(buildMangapressArguments({ ...series, format: 'epub' })).toContain('--nested-toc');
+    // mangapress refuses the flag for these two, so a whole series made into one is not sent it.
+    expect(buildMangapressArguments({ ...series, format: 'cbz' })).not.toContain('--nested-toc');
+    expect(buildMangapressArguments({ ...series, format: 'pdf' })).not.toContain('--nested-toc');
+    expect(buildMangapressArguments({ ...series, format: 'epub', nestedToc: false })).not.toContain(
+      '--nested-toc',
+    );
+  });
+
   it('maps the complete mangapress conversion surface to explicit arguments', () => {
     expect(
       buildMangapressArguments({

@@ -21,16 +21,15 @@ describe('item options', () => {
   });
 
   it('converts with the options of the queue when the item sets none', () => {
-    expect(effectiveOptions(queue, undefined, false)).toBe(queue);
-    expect(effectiveOptions(queue, {}, false)).toBe(queue);
+    expect(effectiveOptions(queue, undefined)).toBe(queue);
+    expect(effectiveOptions(queue, {})).toBe(queue);
   });
 
   it('lays what an item set over the options of the queue', () => {
-    const run = effectiveOptions(
-      queue,
-      { settings: { webtoon: true, deviceProfile: 'KoC' }, format: 'epub' },
-      false,
-    );
+    const run = effectiveOptions(queue, {
+      settings: { webtoon: true, deviceProfile: 'KoC' },
+      format: 'epub',
+    });
     expect(run.format).toBe('epub');
     expect(run.settings).toEqual({
       ...defaultMangapressSettings,
@@ -40,7 +39,7 @@ describe('item options', () => {
   });
 
   it('is only the format when that is all the item set', () => {
-    const run = effectiveOptions(queue, { format: 'pdf' }, false);
+    const run = effectiveOptions(queue, { format: 'pdf' });
     expect(run.format).toBe('pdf');
     expect(run.settings).toEqual(queue.settings);
   });
@@ -51,7 +50,7 @@ describe('item options', () => {
       settings: { ...defaultMangapressSettings, deviceProfile: 'KoC', jpegQuality: 70 },
       format: 'pdf',
     };
-    const run = effectiveOptions(later, item, false);
+    const run = effectiveOptions(later, item);
     expect(run.settings.webtoon).toBe(true);
     expect(run.settings.deviceProfile).toBe('KoC');
     expect(run.settings.jpegQuality).toBe(70);
@@ -63,18 +62,8 @@ describe('item options', () => {
       settings: { ...defaultMangapressSettings, jpegQuality: 70 },
       format: 'cbz',
     };
-    const run = effectiveOptions(withQuality, { settings: { jpegQuality: null } }, false);
+    const run = effectiveOptions(withQuality, { settings: { jpegQuality: null } });
     expect('jpegQuality' in run.settings).toBe(false);
-  });
-
-  it('keeps the format of the queue under one book per series', () => {
-    const run = effectiveOptions(
-      { settings: defaultMangapressSettings, format: 'epub' },
-      { format: 'pdf', settings: { webtoon: true } },
-      true,
-    );
-    expect(run.format).toBe('epub');
-    expect(run.settings.webtoon).toBe(true);
   });
 
   it('finds only what an edited set of options changes', () => {
@@ -82,17 +71,17 @@ describe('item options', () => {
       settings: withDeviceProfile({ ...defaultMangapressSettings, webtoon: true }, 'KoC'),
       format: 'epub',
     };
-    const item = itemOptionsFor(queue, edited, false);
+    const item = itemOptionsFor(queue, edited);
     expect(item?.format).toBe('epub');
     expect(item?.settings?.webtoon).toBe(true);
     expect(item?.settings?.deviceProfile).toBe('KoC');
     expect(item?.settings).not.toHaveProperty('mangaStyle');
     // What was found lays back over the queue to give the edited options again.
-    expect(effectiveOptions(queue, item, false)).toEqual(edited);
+    expect(effectiveOptions(queue, item)).toEqual(edited);
   });
 
   it('finds nothing to set when the edit is the queue again', () => {
-    expect(itemOptionsFor(queue, { ...queue }, false)).toBeUndefined();
+    expect(itemOptionsFor(queue, { ...queue })).toBeUndefined();
   });
 
   it('records an option cleared in the edit as unset', () => {
@@ -100,21 +89,11 @@ describe('item options', () => {
       settings: { ...defaultMangapressSettings, jpegQuality: 70 },
       format: 'cbz',
     };
-    const item = itemOptionsFor(
-      withQuality,
-      { settings: defaultMangapressSettings, format: 'cbz' },
-      false,
-    );
+    const item = itemOptionsFor(withQuality, {
+      settings: defaultMangapressSettings,
+      format: 'cbz',
+    });
     expect(item).toEqual({ settings: { jpegQuality: null } });
-  });
-
-  it('records no format under one book per series', () => {
-    const item = itemOptionsFor(
-      { settings: defaultMangapressSettings, format: 'epub' },
-      { settings: { ...defaultMangapressSettings, webtoon: true }, format: 'pdf' },
-      true,
-    );
-    expect(item).toEqual({ settings: { webtoon: true } });
   });
 
   describe('putting one field back to what the queue has', () => {

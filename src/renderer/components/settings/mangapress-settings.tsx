@@ -34,7 +34,6 @@ import {
 } from '@/domain/output-profile';
 import { withQueueValue } from '@/domain/item-options';
 import { defaultFormat } from '@/domain/preferences';
-import { singleBookLockReason } from '@/domain/process-mode';
 import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
@@ -77,7 +76,7 @@ export function MangapressSettingsEditor({
   const said = (reason: AnyMessage | undefined): string | undefined =>
     reason === undefined ? undefined : say(reason);
   const singleBookActive = Boolean(singleBook);
-  const issues = validateMangapressSettings(settings, format);
+  const issues = validateMangapressSettings(settings);
   const errorFor = (field: MangapressSettingField): string | undefined =>
     said(issues.find((issue) => issue.field === field)?.message);
   const selectedProfile = profiles.find((candidate) => candidate.code === settings.deviceProfile);
@@ -190,32 +189,23 @@ export function MangapressSettingsEditor({
         </SelectField>
         <SelectField
           changed={format !== formatBaseline}
-          description={singleBookActive ? say(singleBookLockReason) : undefined}
-          disabled={singleBookActive}
           id="output-format"
           label={words.device.format.label}
           onReset={() => {
-            if (!singleBookActive) {
-              onFormat(formatBaseline);
-            }
+            onFormat(formatBaseline);
           }}
           resetsTo={resetsTo}
         >
           <NativeSelect
-            disabled={singleBookActive}
             id="output-format"
             onChange={(event) => {
               onFormat(event.target.value as BookFormat);
             }}
             value={format}
           >
-            <option disabled={singleBookActive} value="cbz">
-              CBZ
-            </option>
+            <option value="cbz">CBZ</option>
             <option value="epub">EPUB</option>
-            <option disabled={singleBookActive} value="pdf">
-              PDF
-            </option>
+            <option value="pdf">PDF</option>
           </NativeSelect>
         </SelectField>
         <NumberField

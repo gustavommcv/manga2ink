@@ -115,7 +115,7 @@ export const SingleBookActive: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('status', { name: 'Single book for the series' })).toBeVisible();
-    await expect(canvas.getByLabelText('Book format')).toBeDisabled();
+    await expect(canvas.getByLabelText('Book format')).toBeEnabled();
   },
 };
 
