@@ -18,7 +18,7 @@ If the summary needs correcting, use **Edit chapter mapping** to open the manual
 1. Select **Manual**. If no volumes were found in names, this tab opens automatically.
 2. Use **Create volume 1** to add the first volume.
 3. Select chapters in the chapter list, choose the destination volume, and use **Assign selected**. For consecutive numbered chapters, use **Assign range**.
-4. Repeat for the other volumes. Assigning an already placed chapter moves it rather than duplicating it.
+4. Repeat for the other volumes. Assigning an already placed chapter moves it rather than duplicating it, unless its name gives its volume, as explained below.
 5. Resolve the listed issues, then use **Confirm mapping**.
 
 Use the editor's controls to change volume numbers or merge volumes. The undo and redo buttons reverse your changes.
@@ -46,6 +46,10 @@ Select chapters, choose the volume, then use **Assign selected**.
 />
 
 </details>
+
+## A chapter whose name gives its volume
+
+A chapter whose folder name gives a volume, such as `Vol.02 Ch.010`, stays in that volume: mangabind always keeps the volume a chapter's name gives, whatever the mapping says. The editor lets you move such a chapter, but then lists an error, for example **Vol.02 Ch.010 names volume 2, which mangabind will keep instead of volume 3.**, and **Confirm mapping** stays unavailable. Put the chapter back in its volume. If the volume in the name is wrong, rename the chapter's folder and add the manga folder again.
 
 ## The same chapter twice
 
