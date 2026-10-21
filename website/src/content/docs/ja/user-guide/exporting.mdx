@@ -44,6 +44,10 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 - **Files in a chapter that are not page images were left out**: これらのファイルの名前は、画像（JPEG、PNG、WebP、GIF、BMP、AVIF、JPEG XL、TIFF）であることを示していません。ページであれば、形式に合った拡張子を付けて、もう一度変換してください。`.DS_Store` のような隠しのシステムファイルは、警告なしで除外されます。
 - **Pages that expand to too much were left out**: CBZ 内のページが、どんなページよりもはるかに大きく展開されると主張しています（256 MiB を超える、またはアーカイブ内のサイズの 1000 倍を超える）。これは、コンピューターのメモリをあふれさせるために作られたファイルの特徴なので、除外されました。
 
+Mangabound 自身も、次の警告を追加します:
+
+- **The volumes you edited were not kept with the folder**: 本は、あなたが編集した巻に従って作られましたが、フォルダーに書き込めないか、そのファイルが正しい JSON でないため、マンガのフォルダーの `mangabind.json` に保存できませんでした。次にそのフォルダーを追加したときは、巻をもう一度編集してください。[巻の割り当て](../mapping-editor/)を参照してください。
+
 新しい mangapress が、このバージョンの知らない種類の警告を送ってきた場合は、**A note from mangapress** の下に、mangapress 自身の言葉で表示されます。警告は、それを出した変換の結果と一緒に表示されます。あとで **Ready books** から開き直した本は、警告なしで一覧に載ります。
 
 ## 開く・共有する

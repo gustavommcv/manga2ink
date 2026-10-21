@@ -123,6 +123,20 @@ describe('withBindingWarnings', () => {
     ]);
   });
 
+  it('tells every book that the volumes the person edited were not kept with the folder', () => {
+    const result = withBindingWarnings(
+      volumes,
+      [1, 2, 3],
+      [issue('mapping_not_kept', { tool: 'mangabound', stage: 'bind' })],
+    );
+
+    expect(result.map((entry) => entry.warnings?.map(({ code }) => code))).toEqual([
+      ['mapping_not_kept'],
+      ['mapping_not_kept'],
+      ['mapping_not_kept'],
+    ]);
+  });
+
   it('gives every note to a series bound as one book, whatever volume it names', () => {
     const result = withBindingWarnings(
       [book('Series')],

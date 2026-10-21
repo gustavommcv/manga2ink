@@ -74,6 +74,16 @@ export const workspaceFileSystem: WorkspaceFileSystem = {
 
 const metadataFileName = 'mangabind.json';
 
+/** The app's own note, said with the books, that the volumes a person edited stayed out of the folder. */
+const mappingNotKept: PipelineIssue = {
+  tool: 'mangabound',
+  severity: 'warning',
+  code: 'mapping_not_kept',
+  stage: 'bind',
+  recoverable: true,
+  message: "The edited volumes could not be saved in the folder's mangabind.json.",
+};
+
 export class MangabindBindingAdapter implements BindingPort {
   private readonly workspaces = new Map<string, Workspace>();
 
@@ -144,6 +154,7 @@ export class MangabindBindingAdapter implements BindingPort {
     // When the user accepted mangabind's own grouping unchanged, the folder names already say
     // everything: a mangabind.json next to them would record nothing new, and would make a
     // read-only or network folder fail for no reason. Any edit still gets saved.
+    const kept: PipelineIssue[] = [];
     if (workspace.seedSignature !== mappingSignature(mapping)) {
       try {
         const file = path.join(workspace.inputPath, metadataFileName);
@@ -151,12 +162,10 @@ export class MangabindBindingAdapter implements BindingPort {
           file,
           carryStoredDetails(await this.files.readText(file), metadata),
         );
-      } catch (error) {
-        throw new ConversionWorkflowError(
-          'mapping_save_failed',
-          message('workflow.mappingNotSaved', {}),
-          { cause: error },
-        );
+      } catch {
+        // mangabind is run with the scratch copy, so the books still follow the edited volumes:
+        // only remembering them with the folder failed, and that is told with the books (ADR 0082).
+        kept.push(mappingNotKept);
       }
     }
     const result = await this.cli.run(
@@ -187,7 +196,7 @@ export class MangabindBindingAdapter implements BindingPort {
       return {
         volumes: [],
         combinedOutputPath: checkedChildPath(workspace.volumesPath, combinedOutputPath),
-        issues: collectIssues(result),
+        issues: [...collectIssues(result), ...kept],
       };
     }
     const volumes = result.report.manga
@@ -198,7 +207,7 @@ export class MangabindBindingAdapter implements BindingPort {
         number: volume.number,
         path: checkedChildPath(workspace.volumesPath, volume.output_path),
       }));
-    return { volumes, issues: collectIssues(result) };
+    return { volumes, issues: [...collectIssues(result), ...kept] };
   }
 
   async plan(
