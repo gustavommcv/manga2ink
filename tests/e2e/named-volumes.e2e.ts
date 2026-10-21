@@ -257,10 +257,20 @@ describe('packaged folder whose names carry the volumes', () => {
     assert.match(names.at(-1)!, /^v002 - Vol\.02\/c\d+/u);
   });
 
-  it('binds two volumes into one PDF', async () => {
+  it('binds two volumes into one PDF with the volumes and their chapters as bookmarks', async () => {
     const bookPath = await bindTwoVolumesAs('PDF');
     const bytes = await readFile(bookPath);
     assert.equal(bytes.subarray(0, 5).toString('ascii'), '%PDF-');
     assert.ok(bytes.length > 1_024);
+
+    // The outline is written as plain objects, so it can be read from the bytes: a bookmark for
+    // each of the two volumes and the three chapters, and the document's own title makes six
+    // titles. A volume starts closed, with a negative count of the chapters under it: two in the
+    // first volume, one in the second.
+    const text = bytes.toString('latin1');
+    assert.match(text, /\/Outlines/u);
+    assert.equal(text.match(/\/Title/gu)?.length, 6);
+    assert.match(text, /\/Count -2\b/u);
+    assert.match(text, /\/Count -1\b/u);
   });
 });

@@ -1,5 +1,8 @@
 export type MangapressFormat = 'epub' | 'cbz' | 'pdf';
 
+/** The formats mangapress gives two levels of contents: an EPUB's table of contents, a PDF's bookmarks. */
+const formatsWithNestedContents: readonly MangapressFormat[] = ['epub', 'pdf'];
+
 import type {
   CroppingMode,
   InterPanelCropMode,
@@ -60,9 +63,10 @@ export interface MangapressRunArguments {
   readonly customWidth?: number;
   readonly customHeight?: number;
   /**
-   * The book is a whole series bound into one: give it a two-level table of contents, a volume and
-   * its chapters under it. Only an EPUB has one to give, and mangapress refuses the flag for a CBZ
-   * or a PDF, so for those it is not sent and the book is made without (ADR 0081).
+   * The book is a whole series bound into one: give it two levels of contents, a volume and its
+   * chapters under it. An EPUB has them in its table of contents and a PDF in its bookmarks
+   * (mangapress 0.8.2); a CBZ has neither, and mangapress refuses the flag for it, so for a CBZ it
+   * is not sent and the book is made without (ADR 0081, ADR 0083).
    */
   readonly nestedToc?: boolean;
 }
@@ -127,7 +131,10 @@ export function buildMangapressArguments(request: MangapressRunArguments): reado
     ...optionalValue('--language', request.language),
     ...optionalValue('--customwidth', request.customWidth),
     ...optionalValue('--customheight', request.customHeight),
-    ...enabled('--nested-toc', request.nestedToc === true && request.format === 'epub'),
+    ...enabled(
+      '--nested-toc',
+      request.nestedToc === true && formatsWithNestedContents.includes(request.format),
+    ),
     '--json-events',
   ];
 }

@@ -951,7 +951,7 @@ describe('mapping editor', () => {
       );
       expect(
         screen.getByText(
-          'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, as folders in a CBZ. A PDF keeps the pages in order, without a table of contents.',
+          'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, in the bookmarks of a PDF, as folders in a CBZ.',
         ),
       ).toBeVisible();
     });

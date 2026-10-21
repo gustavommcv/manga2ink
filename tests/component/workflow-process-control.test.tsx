@@ -474,7 +474,7 @@ describe('process control in the queue', () => {
     const notes = {
       CBZ: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
       EPUB: 'Produces a single EPUB with volumes and chapters in the table of contents.',
-      PDF: 'Produces a single PDF with the pages in order. It has no table of contents.',
+      PDF: 'Produces a single PDF with the pages in order and bookmarks for the volumes and chapters.',
     };
     for (const [format, note] of Object.entries(notes)) {
       await user.click(screen.getByRole('radio', { name: format }));

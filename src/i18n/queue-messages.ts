@@ -56,7 +56,7 @@ export interface QueueMessages {
       readonly label: string;
       readonly saved: string;
       readonly unavailable: string;
-      /** What the one book is, by its format: only an EPUB has a table of contents (ADR 0081). */
+      /** What the one book is, by its format: an EPUB has a table of contents, a PDF bookmarks, a CBZ neither (ADR 0083). */
       readonly produces: Readonly<Record<BookFormat, string>>;
     };
     readonly device: string;
@@ -144,7 +144,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
         produces: {
           epub: 'Produces a single EPUB with volumes and chapters in the table of contents.',
           cbz: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
-          pdf: 'Produces a single PDF with the pages in order. It has no table of contents.',
+          pdf: 'Produces a single PDF with the pages in order and bookmarks for the volumes and chapters.',
         },
       },
       device: 'Device',
@@ -233,7 +233,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
         produces: {
           epub: 'Gera um único EPUB com volumes e capítulos no sumário.',
           cbz: 'Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.',
-          pdf: 'Gera um único PDF com as páginas em ordem. Não tem sumário.',
+          pdf: 'Gera um único PDF com as páginas em ordem e marcadores para os volumes e capítulos.',
         },
       },
       device: 'Dispositivo',
