@@ -37,3 +37,13 @@ What there is to say is about 560 plain messages and about 300 that are function
 - The Japanese guide keeps its English labels until the change after the translation, so for a short while the guide and the app disagree in Japanese. The app is the one that is right.
 - The glossary is a document a reviewer can read without reading code. It is also the thing that makes a later translator, human or not, write the words that were chosen.
 - A language whose text a native speaker has not read is a new kind of language for the app. The sentence under the choice is how the app keeps saying so; it is not a promise that a reader will come.
+
+## Update 2026-10-21
+
+The catalogs, the window and the checks were written, and a few things were decided on the way.
+
+- **The note** is `appSettings.language.note` of each catalog, `null` for English and Portuguese, under the choice of language in the Interface tab, with the About tab's "Report a problem" button (now a component of its own, `LinkButton`). It is shown for the catalog in use, so it is there for Automatic on a system in Japanese.
+- **Sentences are not always joined as in English.** `sentenceMarks` of `src/i18n/sentence-marks.ts` says what a language puts between two sentences of a note and to end one the window ends itself (a space and `.`, and nothing and `。` for Japanese); `namesOf` takes the separator of a list (`、`). The text of a catalog is not edited to fit a width: `styles.css` asks Chromium to break lines of Japanese between phrases (`word-break: auto-phrase`, `line-break: strict` under `:lang(ja)`).
+- **Measured** with the stories in Japanese in a window 660 px wide, the width of a tile beside a reader: no sideways scroll in 30 stories of the screens, and the first screen, the queue and its panel, is 612 px tall at 1180 px wide, as it is in English.
+- **The site** has the app in Japanese in its structured data (`appLanguages`), and a list in `website/site.config.mjs`, `guideLabelsInEnglish`, of the guides that still name the controls in English; the Japanese guide is on it until the change that switches its pages, which takes it off, so that its labels are checked against the Japanese catalogs. The sentences of the guide that say which languages the app has were changed here.
+- **No Japanese baseline or tutorial picture is drawn yet.** The stories in Japanese are tests of what they say, not of how they look, until the machine that draws them is known to have a Japanese font (the change of the guide checks it).

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
-import { languages } from '../site.config.mjs';
+import { guideLabelsInEnglish, languages } from '../site.config.mjs';
 import { interfaceTextFor, missingLabels } from './ui-labels.mjs';
 
 /** The guides of the app itself. The other pages speak of other programs' menus, or of code. */
@@ -68,14 +68,17 @@ const sources = sourceFolders
 const tags = languages.map(({ lang }) => lang);
 // What the interface says in each language of the guide, read once.
 const interfaceTexts = new Map(
-  languages.map(({ id, lang }) => [id, interfaceTextFor(lang, sources, tags)]),
+  languages.map(({ id, lang }) => [
+    id,
+    interfaceTextFor(guideLabelsInEnglish.includes(id) ? 'en' : lang, sources, tags),
+  ]),
 );
 
 const docs = path.resolve(import.meta.dirname, '..', 'src', 'content', 'docs');
 // The guide of a language names the controls as the interface does in that language: Portuguese by
-// the words of the app in Portuguese, and a language the app does not have yet (Japanese) by the
-// English ones, which is what the app says until it is translated. A page a language leaves in
-// English is the English one, already checked.
+// the words of the app in Portuguese, and a language whose guide has not been switched yet (Japanese,
+// `guideLabelsInEnglish`) by the English ones. A page a language leaves in English is the English one,
+// already checked.
 const pages = languages.flatMap(({ id, directory }) =>
   guides.flatMap((guide) => {
     const target = path.join(docs, directory, guide);

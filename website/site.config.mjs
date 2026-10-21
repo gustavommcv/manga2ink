@@ -13,11 +13,19 @@ export const languages = [
 ];
 
 /**
- * The languages the application itself is in, as the structured data of the home pages says them. The
- * guide has a language the app does not have yet (Japanese), so this is not the list above; a test of the
+ * The languages the application itself is in, as the structured data of the home pages says them. It
+ * is not always the list above (a language of the guide can come before the app has it); a test of the
  * app says when it differs from the app's own list (`languages` of `src/domain/app-settings.ts`).
  */
-export const appLanguages = ['en', 'pt-BR'];
+export const appLanguages = ['en', 'pt-BR', 'ja'];
+
+/**
+ * The languages of the guide that still name the controls as the English application does, though the
+ * app has them in its own words (ADR 0084). Their pages are switched in a change of their own, and
+ * the language leaves this list with it, so that its guide is checked against the app's own words.
+ * The names are the `id` of the languages above.
+ */
+export const guideLabelsInEnglish = ['ja'];
 
 /**
  * The code Google Search Console gives for the "HTML tag" verification method: only the value of
