@@ -182,4 +182,58 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       saveFailed: 'Não foi possível salvar a mudança. Tente de novo.',
     },
   },
+  ja: {
+    description:
+      'Mangabound が変換中に巻を作る場所と、完成した本が保存されるまで待機する場所です。長いシリーズを変換するときは、空き容量の大きなドライブが役に立ちます。',
+    folder: '作業フォルダー',
+    automatic: 'Mangabound が選択',
+    scratch: '変換中の巻',
+    pending: '保存前の完成した本',
+    free: '空き容量',
+    choose: 'フォルダーを選択…',
+    useDefault: '初期設定のフォルダーを使う',
+    help: '選んだフォルダーの中に、Pending と Scratch を作ります。以降の変換ではそのフォルダーを使います。すでに待機している本は元の場所に残り、一覧にも表示され続けます。',
+    unavailable:
+      '作業フォルダーを利用できません。ドライブを接続し直すか、別のフォルダーを選んでください。それまでは何も変換できません。',
+    loading: 'Mangabound の作業場所を読み込んでいます…',
+    earlier: {
+      title: '以前のフォルダーで待機中',
+      help: 'これらの本は、キューのページの一覧から保存または削除できます。フォルダーに本が残っていなければ、Mangabound はそこを調べなくなります。',
+      books: (count) => `${String(count)} 冊`,
+    },
+    waiting: {
+      title: '保存待ちの本',
+      none: '待機中の本はありません。',
+      summary: (books, runs, size) => `${String(books)} 冊（変換 ${String(runs)} 件、${size}）`,
+      help: '本がすべて保存された変換は、Mangabound を閉じるときに削除されます。それ以外は、保存または削除するまで残ります。',
+      cleanUp: '次の期間を超えて手つかずのまま待機しているものを削除',
+      days: (days) => `${String(days)} 日`,
+      delete: '削除…',
+      nothingIdle: (days) => `${String(days)} 日を超えて待機しているものはありません。`,
+      question: (runs, books, size, days) =>
+        `${String(days)} 日を超えて操作されていない変換 ${String(runs)} 件（${String(books)} 冊、${size}）を削除しますか？ まだ保存されていない本は失われます。`,
+      confirm: '削除',
+      cancel: '残す',
+      deleted: (runs, size) => `変換 ${String(runs)} 件（${size}）を削除しました。`,
+      inUse: '見つかったものは保存中のため、何も削除しませんでした。',
+    },
+    queue: {
+      title: 'Mangabound の変換中',
+      notify: {
+        label: '長い変換が終わったら知らせる',
+        help: (seconds) =>
+          `システムの通知です。変換に ${String(seconds)} 秒を超える時間がかかり、Mangabound のウィンドウが前面にないときだけ表示されます。通知をクリックするとウィンドウに戻ります。`,
+      },
+      awake: {
+        label: '変換中はパソコンをスリープさせない',
+        help: '画面は消えることがありますが、パソコンがスリープして変換が止まることはありません。',
+      },
+      parallel: {
+        label: '並列変換',
+        automatic: (count) => `自動（このパソコンでは ${String(count)}）`,
+        help: '同じタイトルの本を、いくつ同時に変換するかを指定します。「自動」では、このパソコンのプロセッサーとメモリから決まり、3 を超えることはありません。選べる最大数も、このパソコンによって変わります。同時に変換する数を増やして効果があるのは、プロセッサーが多いパソコンだけで、そのぶんメモリも多く使います。次に「処理」を押したときから反映されます。',
+      },
+      saveFailed: '変更を保存できませんでした。もう一度お試しください。',
+    },
+  },
 };

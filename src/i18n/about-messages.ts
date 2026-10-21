@@ -155,4 +155,50 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     openFailed: 'Não foi possível abrir essa página. Tente de novo.',
   },
+  ja: {
+    tagline: 'マンガの各話を巻にまとめ、お使いの電子書籍リーダー向けの本に変換します。',
+    version: 'バージョン',
+    learnMore: {
+      title: '詳細',
+      guide: 'ユーザーガイド',
+      repository: 'GitHub',
+      issues: '問題を報告',
+      releaseNotes: 'リリースノート',
+    },
+    tools: {
+      title: '変換ツール',
+      verified: '検証済み',
+      failed: '検証に通りませんでした',
+      blocked: '同梱のツールを検証できませんでした。',
+      reading: '読み込み中…',
+      unknown: 'ツールの情報が報告されませんでした。',
+    },
+    troubleshooting: {
+      title: 'トラブルシューティング',
+      text: '問題を報告するときは、診断情報を添えてください。含まれるのはバージョンとシステムの情報だけで、パスや名前は含まれません。',
+      copy: '診断情報をコピー',
+      copied: 'コピーしました。報告に貼り付けてください。',
+      openData: 'データフォルダーを開く',
+      openLogs: 'ログフォルダーを開く',
+      logsText:
+        'ログファイルには問題の記録が残り、本やフォルダーのパスが含まれていることがあります。共有する前に内容を確認してください。',
+    },
+    support: {
+      title: '支援',
+      text: 'Mangabound は無料で、広告もありません。役に立ったと感じたら、開発を支援していただけます。',
+      button: 'プロジェクトを支援する',
+    },
+    credits: {
+      title: 'クレジット',
+      icon: 'アプリのアイコン',
+      online: 'オンラインで見つかる巻と著者',
+    },
+    license: {
+      title: 'ライセンス',
+      text: 'Mangabound は MIT ライセンスで公開されています。mangapress と mangabind は、それぞれの通知をアプリに同梱しています。',
+      mit: 'MIT ライセンス',
+      notices: 'サードパーティの通知',
+    },
+    openFailed: 'ページを開けませんでした。もう一度お試しください。',
+  },
 };

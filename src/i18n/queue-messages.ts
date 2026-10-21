@@ -276,4 +276,89 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       cancel: 'Cancelar',
     },
   },
+  ja: {
+    title: 'キュー',
+    items: 'キューの項目',
+    files: 'ファイル',
+    folder: 'フォルダー',
+    clear: 'クリア',
+    rejected: { wasNotAdded: 'は追加されませんでした。', dismiss: 'このメッセージを閉じる' },
+    drop: {
+      release: '離すと追加されます',
+      invitation:
+        'マンガのフォルダー、ライブラリ、.cbz ファイルをここにドロップするか、クリックして選択してください。',
+      more: 'ファイルまたはフォルダーをここにドロップするか、クリックして選択してください。',
+      chooseFiles: 'ファイルを選択',
+      chooseFolder: 'フォルダーを選択',
+      note: 'フォルダーは、各話が自動的に巻にまとめられます。単体の CBZ は 1 巻になります。各話が別々の CBZ になっている場合は、そのフォルダーを追加してください。',
+    },
+    row: {
+      editTitlesOf: (name) => `「${name}」のタイトルを編集`,
+      editVolumesFor: (name) => `「${name}」の巻を編集`,
+      editTitles: 'タイトルを編集',
+      editVolumes: '巻を編集',
+      editDetailsOf: (name) => `「${name}」の詳細を編集`,
+      editDetails: (set) =>
+        set ? 'タイトル、著者、言語を編集（設定済み）' : 'タイトル、著者、言語を編集',
+      editOptionsOf: (name) => `「${name}」の変換オプションを編集`,
+      editOptions: (set) =>
+        set ? 'この項目の変換オプションを編集（設定済み）' : 'この項目の変換オプションを編集',
+      remove: (name) => `「${name}」をキューから外す`,
+    },
+    steps: {
+      legend: '手順',
+      group: '各話を巻にまとめる',
+      convert: 'リーダー向けに変換',
+      keepOne: '少なくとも 1 つの手順をオンにしてください。',
+    },
+    panel: {
+      label: '変換オプション',
+      singleBook: {
+        label: 'シリーズを 1 冊の本にする',
+        saved: 'マンガのフォルダー用に保存されます。単体の CBZ は、すでに 1 冊の本です。',
+        unavailable: '単体の .cbz ファイルでは使えません。',
+        produces: {
+          epub: '各巻と各話が目次に入った、1 つの EPUB を作成します。',
+          cbz: '各巻と各話をフォルダーにした、1 つの CBZ を作成します。目次はありません。',
+          pdf: 'ページが順番に並び、各巻と各話のしおりが付いた、1 つの PDF を作成します。',
+        },
+      },
+      device: '端末',
+      format: '形式',
+      advanced: '詳細な変換オプション',
+    },
+    run: {
+      process: (items) => (items === 0 ? '処理' : `${String(items)} 個の項目を処理`),
+      validate: '計画を検証',
+      validating: '検証中…',
+      reading: (items) => `${String(items)} 個の項目を読み込み中…`,
+      nothingRuns: 'まだ実行できるものがありません。',
+      leftOut: (items) =>
+        `${String(items)} 個の項目が対象外になります。行の鉛筆アイコンから修正できます。`,
+      lowSpace: (free, needed) =>
+        `Mangabound の作業場所の空き容量は ${free} しかなく、このキューには約 ${needed} かかる可能性があります。空き容量を確保するか、アプリの設定の「処理」で別の作業フォルダーを選んでください。`,
+    },
+    plans: {
+      validated: '計画を検証しました',
+      nothingWritten: 'ライブラリのファイルは書き込まれていません。',
+      pages: (count) => `${String(count)} ページ`,
+      oneBookFor: (series) => `「${series}」全体で 1 冊`,
+    },
+    pending: {
+      earlierBooks: '以前の本',
+      readyBooks: '完成した本',
+      earlierConversion: '以前の変換',
+      andMore: (first, more) => `${first} ほか ${String(more)} 冊`,
+      viewBooksFrom: (first) => `「${first}」の本を表示`,
+      viewBooks: '本を表示',
+      deleteFrom: (first) => `「${first}」の保留中の本を削除`,
+      delete: '削除',
+      confirmDeletion: (first) => `「${first}」の削除を確認`,
+      question: (books) =>
+        `この変換の保留中の本 ${String(books)} 冊を完全に削除しますか？ 別の場所に保存した本は、そのまま残ります。`,
+      deleting: '削除中…',
+      deleteBooks: '本を削除',
+      cancel: 'キャンセル',
+    },
+  },
 };

@@ -10,6 +10,7 @@ const repository = 'https://github.com/gustavommcv/mangabound';
 const guide: Readonly<Record<Language, string>> = {
   en: 'https://gustavommcv.github.io/mangabound/',
   'pt-BR': 'https://gustavommcv.github.io/mangabound/pt-br/',
+  ja: 'https://gustavommcv.github.io/mangabound/ja/',
 };
 
 /**

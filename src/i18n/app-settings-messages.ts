@@ -24,6 +24,11 @@ export interface AppSettingsMessages {
     /** The choice that follows the system's language. */
     readonly system: string;
     readonly saveFailed: string;
+    /**
+     * Said under the choice while this language is the one in use, when few people who speak it have
+     * read its text (ADR 0084); null for a language that needs no such sentence.
+     */
+    readonly note: string | null;
   };
   /** How the app looks (ADR 0066). */
   readonly theme: {
@@ -57,6 +62,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
       help: 'Applies right away. Books, titles and the tools’ own messages are not translated.',
       system: 'Automatic (system language)',
       saveFailed: 'The language could not be saved. Try again.',
+      note: null,
     },
     theme: {
       label: 'Theme',
@@ -83,6 +89,7 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
       help: 'Vale na hora. Livros, títulos e as mensagens das próprias ferramentas não são traduzidos.',
       system: 'Automático (idioma do sistema)',
       saveFailed: 'Não foi possível guardar o idioma. Tente de novo.',
+      note: null,
     },
     theme: {
       label: 'Tema',
@@ -93,5 +100,32 @@ export const appSettingsMessages: Readonly<Record<Language, AppSettingsMessages>
     },
     unreadable:
       'As configurações do app guardadas não puderam ser lidas, então os padrões estão em uso.',
+  },
+  ja: {
+    open: 'アプリの設定',
+    openTip: (shortcut) => `アプリの設定（${shortcut}）`,
+    title: 'アプリの設定',
+    description: 'アプリ自体に関する設定です。変更は、行った時点で保存されます。',
+    close: 'アプリの設定を閉じる',
+    sections: 'アプリの設定のタブ',
+    interface: 'インターフェース',
+    processing: '処理',
+    updates: '更新',
+    about: 'このアプリについて',
+    language: {
+      label: '言語',
+      help: 'すぐに反映されます。本やタイトル、各ツール自身のメッセージは翻訳されません。',
+      system: '自動（システムの言語）',
+      saveFailed: '言語を保存できませんでした。もう一度お試しください。',
+      note: 'このアプリの日本語は AI の支援を受けて作られていて、日本語を話す方による確認はまだ十分ではありません。不自然な表現や誤りを見つけたら、ぜひお知らせください。',
+    },
+    theme: {
+      label: 'テーマ',
+      help: 'アプリの見た目です。「自動」では、システムのライト／ダークの設定に従い、設定が変わったときも合わせて切り替わります。すぐに反映されます。',
+      names: { dark: 'ダーク（グラファイト）', light: 'ライト（ペーパー）' },
+      system: '自動（システムのテーマ）',
+      saveFailed: 'テーマを保存できませんでした。もう一度お試しください。',
+    },
+    unreadable: '保存されたアプリの設定を読み込めなかったため、初期設定を使用しています。',
   },
 };

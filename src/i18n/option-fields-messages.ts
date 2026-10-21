@@ -880,4 +880,353 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       },
     },
   },
+  ja: {
+    names: {
+      deviceProfile: '端末プロファイル',
+      noProcessing: '画像をそのまま使う',
+      noKepub: '本の名前を .epub にする',
+      quiet: '出力を静かにする',
+      webtoon: 'ウェブトゥーン',
+      mangaStyle: 'マンガの読み順',
+      cropping: 'トリミング',
+      croppingPower: 'トリミングの強さ',
+      croppingMinimum: '最低限残す範囲',
+      preserveMargin: '残す余白',
+      splitter: '横長ページの扱い',
+      noRotate: '見開きを回転しない',
+      rotateFirst: '見開き全体を先に',
+      maximizeStrips: '4 コマの並べ直し',
+      upscale: 'ページの拡大',
+      stretch: '引き伸ばし',
+      wallpaper: 'ページ背景',
+      whiteBorders: '白い縁',
+      blackBorders: '黒い縁',
+      spreadShift: '見開きのずらし',
+      onePageLandscape: '横向きで 1 ページ表示',
+      invertDirection: 'ページめくりの向きの反転',
+      forceColor: 'カラーのまま保持',
+      forcePng: 'PNG を強制',
+      noQuantize: 'すべてのグレーを保持',
+      pngLegacy: '8 ビット PNG',
+      forcePngRgb: 'RGB の PNG を強制',
+      jpegQuality: 'JPEG の画質',
+      rotateRight: '時計回りに回転',
+      gamma: 'ガンマ',
+      autoLevel: '黒点の自動調整',
+      noAutoContrast: '自動コントラストなし',
+      colorAutoContrast: 'カラーの自動コントラスト',
+      interPanelCrop: 'コマ間のトリミング',
+      eraseRainbow: 'レインボー効果の軽減',
+      smartCoverCrop: '表紙のスマートトリミング',
+      coverFill: '表紙の全面表示',
+      metadataTitle: 'メタデータのタイトル',
+      keepComicInfo: 'ComicInfo の保持',
+      language: '言語',
+      customWidth: '幅の指定',
+      customHeight: '高さの指定',
+      combineIntoOneVolume: 'シリーズを 1 冊にまとめる',
+      customDeviceSize: '端末サイズの指定',
+      mode: 'モード',
+      format: '形式',
+      singleBook: '1 冊にまとめる',
+      providerId: 'オンラインの情報源',
+      outputFolder: '保存先フォルダー',
+      lastPickerFolder: '前回のフォルダー',
+      preferredNetworkInterface: '共有に使うネットワーク',
+    },
+    checked: {
+      croppingPower: 'トリミングの強さ',
+      croppingMinimum: '最低限残す範囲',
+      preserveMargin: '残す余白',
+      jpegQuality: 'JPEG の画質',
+      gamma: 'ガンマ',
+      customWidth: '幅の指定',
+      customHeight: '高さの指定',
+    },
+    singleBook: {
+      title: 'シリーズを 1 冊の本に',
+      text: 'キューから有効にします。シリーズは、ここで選んだ形式の 1 冊の本として作られます。処理の手順は固定されます。',
+    },
+    eyebrow: { basic: '基本', advanced: '詳細設定', diagnostics: '診断' },
+    device: {
+      title: '端末と出力',
+      description: 'リーダーの種類、本の形式、必要に応じて解像度の指定を選びます。',
+      profile: {
+        label: '端末プロファイル',
+        unavailable: 'プロファイルを利用できません',
+        detail: (width, height, grays) =>
+          `${String(width)} × ${String(height)} · グレー ${String(grays)} 階調`,
+      },
+      format: { label: '本の形式' },
+      customWidth: {
+        label: '幅の指定',
+        description:
+          'プロファイルの幅を上書きします。OTHER プロファイルでは、高さと合わせて必須です。',
+        placeholder: '幅を入力',
+      },
+      customHeight: {
+        label: '高さの指定',
+        description:
+          'プロファイルの高さを上書きします。OTHER プロファイルでは、幅と合わせて必須です。',
+        placeholder: '高さを入力',
+      },
+      noProcessing: {
+        label: '画像をそのまま使う',
+        description:
+          'ページを加工せずにまとめます。トリミング、サイズ変更、グレースケール化、再エンコードは行いません。',
+      },
+      noKepub: {
+        label: '本の名前を .epub にする',
+        description: 'Kobo 自身のリーダーが探す名前である .kepub.epub の代わりにします。',
+      },
+    },
+    reading: {
+      title: '読み方',
+      description: 'どんな画像か、どちら向きに読むかを指定します。',
+      content: {
+        label: '内容',
+        pages: 'マンガやコミックのページ',
+        webtoon: 'ウェブトゥーンの縦長ストリップ',
+        pagesHelp: '画像 1 枚が 1 ページになります。',
+        webtoonHelp: '各話をつなげて 1 本の縦長ストリップにし、コマの間でページに切り分けます。',
+      },
+      mangaStyle: {
+        label: 'マンガの読み順',
+        description: '右から左への読み順と、見開きを分割したときの順序を使います。',
+      },
+    },
+    spreads: {
+      title: '見開きページ',
+      description: '横に 2 ページ分の幅があるページの扱いです。',
+      wide: {
+        label: '横長のページ',
+        names: {
+          split: '2 ページに分割',
+          rotate: '分割せず、1 ページのままにする',
+          both: '両方（分割したページ、続けて全体）',
+        },
+        help: {
+          split: '分けたそれぞれが、1 ページになります。',
+          rotate: '見開きは、画面いっぱいになるよう横に倒されます。',
+          both: '分割した 2 ページのあとに、見開き全体がもう一度入ります。',
+        },
+      },
+      rotateFirst: {
+        label: '見開き全体を先に',
+        description: '分割した 2 ページの前に、見開き全体を置きます。',
+      },
+      noRotate: {
+        label: '見開きを立てたままにする',
+        description: '横に倒しません。端末を横向きにして読みます。',
+      },
+      rotateRight: {
+        label: '時計回りに回転',
+        description: '見開きを、反時計回りではなく時計回りに回転します。',
+      },
+      maximizeStrips: {
+        label: '4 コマのストリップを 2×2 に並べ直す',
+        description:
+          '縦長のストリップ 2 本でできたページで、各ページの 2 つの半分を重ねます。横長のページの扱いは、これに置き換わります。',
+      },
+    },
+    size: {
+      title: 'サイズと縁',
+      description: 'ページが画面をどう埋めるかと、その周りに何を置くかを指定します。',
+      pageSize: {
+        label: 'ページのサイズ',
+        webtoonEnlarge: 'ウェブトゥーンのストリップは拡大されません。',
+        names: {
+          fit: '画面に合わせる（拡大しない）',
+          enlarge: '画面に合わせる（小さいページは拡大）',
+          stretch: '画面に引き伸ばす',
+          fill: '画面を埋めるように切り取る',
+        },
+        help: {
+          fit: '大きいページは収まるよう縮小され、小さいページはそのままです。',
+          enlarge: 'すべてのページが画面に合わせられ、小さいページは拡大されます。',
+          stretch: 'ページの縦横比を保たずに、画面にぴったり合わせます。',
+          fill: '画面全体が埋まるまで、ページを切り取ります。',
+        },
+      },
+      borders: {
+        label: '縁の色',
+        names: { automatic: '自動', white: '白', black: '黒' },
+        epub: {
+          automatic: '各ページの端と同じ色の背景が付きます。',
+          white: 'すべてのページの後ろに白い背景を付けます。暗いページも同様です。',
+          black: 'すべてのページの後ろに黒い背景を付けます。',
+        },
+        padded: {
+          automatic: 'ページ自身の背景色で、画面の大きさまで埋めます。',
+          white: 'ページの背景色では埋めません。',
+          black: '黒で、画面の大きさまで埋めます。',
+        },
+      },
+    },
+    cropping: {
+      title: 'トリミング',
+      description: 'ページの周りの余白と、コマの間の空白を取り除きます。',
+      enableFirst: 'これを調整するには、ページのトリミングを有効にしてください。',
+      pages: {
+        label: 'ページのトリミング',
+        names: {
+          disabled: '無効',
+          margins: '余白',
+          'margins-and-page-numbers': '余白とページ番号',
+        },
+      },
+      power: { label: 'トリミングの強さ', description: '値が大きいほど、より深く切り取ります。' },
+      minimum: {
+        label: '最低限残す範囲（%）',
+        description: 'ページのこの割合が残る場合にだけ、トリミングします。',
+      },
+      preserve: {
+        label: '残す余白（%）',
+        description: '計算されたトリミングを少し戻して、余白を残します。',
+      },
+      interPanel: {
+        label: 'コマ間のトリミング',
+        description: 'ウェブトゥーン形式のページ内の、何もない隙間を取り除きます。',
+        names: {
+          disabled: '無効',
+          horizontal: '横方向の隙間',
+          both: '横方向と縦方向の隙間',
+        },
+      },
+    },
+    twoPage: {
+      title: '2 ページ表示',
+      description:
+        'Kobo や Kindle 自身のリーダーのように、2 ページを並べて表示するリーダー向けの設定です。KOReader では無視されます。',
+      spreadShift: {
+        label: '反対側から始める',
+        description: '見開きの位置を合わせるため、本を反対側から始めます。',
+      },
+      onePage: {
+        label: '横向きでは 1 ページ表示',
+        description: '2 ページではなく、中央に 1 ページだけ表示します。',
+      },
+      invert: {
+        label: 'ページめくりの向きを反転',
+        description: '読み順とは逆の向きにページをめくります。',
+      },
+    },
+    color: {
+      title: 'カラーと階調',
+      description: 'カラーを残すかどうかと、ページの階調をどう補正するかを指定します。',
+      pages: {
+        label: 'カラーのページ',
+        grayscale: 'グレースケールに変換',
+        color: 'カラーのままにする',
+        helpUntouched: 'ページはそのままで、表紙だけがこの設定に従います。',
+        helpColor: '本当にカラーのページはカラーのまま残り、それ以外はグレースケールになります。',
+        helpGray: 'すべてのページがグレースケールになります。',
+      },
+      autoContrast: {
+        label: '自動コントラスト',
+        turnOnFirst: '黒点のレベル補正を使うには、自動コントラストをオンにしてください。',
+        names: {
+          monochrome: '白黒のページのみ',
+          off: 'オフ',
+          all: 'カラーのページも',
+        },
+        help: {
+          monochrome: '階調を引き伸ばして完全な黒と白にします。カラーのページはそのままです。',
+          off: '階調はそのままです。',
+          all: 'カラーのページの階調も引き伸ばします。',
+        },
+      },
+      rainbow: {
+        label: 'レインボー効果を軽減',
+        description: 'カラー電子ペーパーで出る虹色の干渉を弱めます。',
+      },
+      autoLevel: {
+        label: '黒点の自動調整',
+        description: '最も多い暗いピクセルを、先に黒点として設定します。',
+      },
+      gamma: {
+        label: 'ガンマ',
+        description: '空欄ならプロファイルのガンマを使います。1.0 は階調を変えません。',
+        placeholder: '1.0',
+      },
+    },
+    images: {
+      title: 'ページの画像',
+      description: '各ページを保存するファイルの種類です。',
+      format: {
+        label: 'ページの形式',
+        jpeg: 'JPEG（階調そのまま）',
+        png: 'PNG（画面のグレーに減色）',
+        helpJpeg: 'なめらかな階調を、小さなファイルで保てます。通常はこちらを選びます。',
+        helpAllGrays: '256 階調のグレーをすべて、劣化なしで保存します。',
+        helpDithered: '画面で表示できるグレーにディザリングし、劣化なしで保存します。',
+      },
+      jpegQuality: {
+        label: 'JPEG の画質',
+        hint: (percent) => `空欄なら、端末プロファイルの初期値（${String(percent)}%）を使います。`,
+        forColorPages: 'JPEG のまま残るカラーのページ用です。',
+        coverOnly: '現在 JPEG になるのは表紙だけです。',
+      },
+      noQuantize: {
+        label: '256 階調のグレーをすべて保持',
+        description: '画面のグレーへの減色を行いません。ファイルが大きくなります。',
+      },
+      pngLegacy: {
+        label: '8 ビット PNG',
+        description:
+          'よりコンパクトな種類の PNG を開けないリーダー向けです。ファイルが大きくなります。',
+      },
+      forcePngRgb: {
+        label: 'カラーのページも PNG にする',
+        description:
+          'カラーのまま残すページも、劣化なしで保存します。ファイルがはるかに大きくなります。',
+      },
+    },
+    cover: {
+      title: '表紙',
+      description: 'リーダーのライブラリに表示される表紙で、各本の最初の画像から作られます。',
+      smartCrop: {
+        label: '横長の画像から表紙の表面を切り出す',
+        description: '最初の画像がカバー全体や見開きのときは、表紙の表面だけを使います。',
+      },
+      fill: {
+        label: '表紙を切り取って画面を埋める',
+        description: '画面に収める代わりに行います。小さい表紙は拡大されます。',
+      },
+    },
+    metadata: {
+      title: '本のメタデータ',
+      description:
+        '元のメタデータをどう適用するかと、本を作る言語を指定します。本ごとのタイトル、著者、言語は、キューのその項目で設定します。',
+      comicInfoTitle: {
+        label: 'ComicInfo のタイトル',
+        description: 'ComicInfo.xml の Title フィールドをどう適用するかを指定します。',
+        names: {
+          'series-only': 'シリーズ、巻、番号を使う',
+          combine: 'ComicInfo のタイトルを付け加える',
+          'title-only': 'ComicInfo のタイトルだけを使う',
+        },
+      },
+      language: {
+        label: 'EPUB の言語',
+        forEpub:
+          'EPUB の出力に使われます。ただし、本ごとの詳細で別の言語を指定している場合は、そちらが優先されます。',
+        stored: 'このプロファイルのために保存され、EPUB を選んだときに適用されます。',
+      },
+      keepComicInfo: {
+        label: 'ComicInfo.xml を保持',
+        cbz: '元の ComicInfo.xml を、変換後の CBZ にコピーします。',
+        onlyCbz: 'CBZ の出力でのみ使えます。',
+      },
+    },
+    tool: {
+      title: 'ツールの動作',
+      description: 'トラブルシューティングと、プロファイルの再現性を保つためのオプションです。',
+      quiet: {
+        label: '出力を静かにする',
+        description:
+          'GUI はすでに構造化イベントを使っていて、通常のコンソール出力は抑えられています。この設定は、保存されたプロファイルで --quiet と完全に同じ動作を保つためのものです。',
+      },
+    },
+  },
 };

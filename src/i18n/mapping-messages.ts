@@ -451,4 +451,156 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         } e busque de novo.`,
     },
   },
+  ja: {
+    editor: {
+      kicker: '各話と巻の割り当て',
+      origin: {
+        suggestedBy: (source) => `${source} からの提案`,
+        groupedByMangabind: 'mangabind によるまとめ · オフライン',
+        manual: '手動の割り当て · オフライン',
+      },
+      title: (manga) =>
+        manga === '' ? 'タイトルのないマンガを巻にまとめる' : `「${manga}」を巻にまとめる`,
+      introEditing:
+        '各話を選んで巻に割り当て、競合があれば解消してから進みます。すでに割り当て済みの話をもう一度割り当てると、その話は移動します。',
+      introReviewing:
+        '提案された巻を下で確認するか、エディターを開いて各話の割り当てを変更します。',
+      skipGrouping: {
+        button: 'まとめをスキップ',
+        singleBook: '1 冊にまとめるモードでは、各話を巻にまとめる必要があります。',
+        detail: '各話を巻にまとめずに、フォルダーを 1 冊の本として mangapress に渡します。',
+      },
+      showSummary: '割り当ての概要を表示',
+      history: {
+        label: '編集履歴',
+        undo: '直前の割り当ての編集を元に戻す',
+        redo: '割り当ての編集をやり直す',
+        reset: 'すべての割り当ての編集をリセット',
+      },
+      leftOut: '対象外のフォルダー',
+      singleBook: {
+        title: 'シリーズを 1 冊の本に',
+        text: '割り当てた巻は 1 冊の本の最上位になり、その下に各話が入ります。EPUB では目次、PDF ではしおり、CBZ ではフォルダーになります。',
+      },
+      start: {
+        text: 'まず巻を作成し、そこに各話を割り当てます。',
+        createFirst: '最初の巻を作成',
+        createVolume: (number) => `${number} 巻を作成`,
+      },
+      confirmed: '割り当てを確定しました。',
+      editFailed: 'その編集を適用できませんでした。何も変更されていません。',
+      saveFailed: '割り当てを保存できませんでした。',
+      chapters: {
+        title: '各話',
+        selected: (selected, total) => `${String(total)} 話中 ${String(selected)} 話を選択`,
+        clearAll: 'すべてクリア',
+        selectAll: 'すべて選択',
+        select: (name) => `「${name}」を選択`,
+        pages: (count) => `${String(count)} ページ`,
+        unassigned: '未割り当て',
+        volume: (number) => `${number} 巻`,
+        moveTo: '選択した各話の移動先',
+        createFirst: '先に巻を作成してください',
+        assignSelected: '選択した各話を割り当て',
+        unassign: '割り当てを解除',
+        range: {
+          legend: '各話の範囲を割り当てる',
+          note: '最初の話と最後の話も含まれます。',
+          from: '開始',
+          through: '終了',
+          volume: '巻',
+          assign: '範囲を割り当て',
+        },
+      },
+      volumes: {
+        title: '巻',
+        created: (count) => `${String(count)} 巻を作成済み`,
+        newNumber: '新しい巻の番号',
+        addLabel: '巻を追加',
+        add: '追加',
+        help: '「追加」を押すと、この番号で巻を作成します。次の番号は自動的に増えます。',
+        none: 'まだ巻がありません。',
+        number: '巻番号',
+        numberFor: (number) => `${number} 巻の巻番号`,
+        remove: (number) => `${number} 巻を削除`,
+        chapterCount: (count) => `${String(count)} 話`,
+        splitBefore: '次の話の前で分割',
+        splitLabel: (number) => `${number} 巻を分割`,
+        split: '分割',
+        splitHelp: 'この話と、それ以降のすべての話が、新しい巻に移ります。',
+        mergeInto: (number) => `${number} 巻に統合`,
+      },
+      check: {
+        title: '確定前のチェック',
+        ready: 'すべての話を巻にまとめる準備ができています。',
+        errorsLabel: '割り当てのエラー',
+        fixFirst: '修正してから進んでください',
+        warningsLabel: '割り当ての警告',
+        checkThese: 'これらの話を確認してください',
+        confirm: '割り当てを確定',
+      },
+    },
+    summary: {
+      title: '提案された各話の割り当て',
+      counts: (volumes, assigned, chapters) =>
+        `${String(volumes)} 巻 · ${String(chapters)} 話中 ${String(assigned)} 話を割り当て済み`,
+      edit: '各話の割り当てを編集',
+      volumeLine: (chapters, first, last) =>
+        `${String(chapters)} 話${
+          chapters === 1 ? ` · ${first}` : chapters > 1 ? ` · 最初: ${first} · 最後: ${last}` : ''
+        }`,
+      review: '進む前に、この提案を確認してください。',
+      confirm: '割り当てを確定',
+    },
+    chaptersFrom: {
+      title: '各話のまとめ方',
+      tabs: { names: 'ファイル名', online: 'オンラインの情報源', manual: '手動' },
+      names: {
+        none: (onlineAvailable) =>
+          `ここでは、ファイル名によるまとめを使えません。${
+            onlineAvailable
+              ? 'オンラインの情報源を使うか、各話を自分でまとめてください。'
+              : '各話を自分でまとめてください。'
+          }`,
+        read: (volumes, chapters) =>
+          `${String(chapters)} 話の名前から、オンラインを使わずに ${String(volumes)} 巻を読み取りました。`,
+        startOver: 'ファイル名からやり直す',
+      },
+      manual: {
+        noVolumesTitle: 'ファイル名から巻が見つかりませんでした',
+        buildHere: 'ここで巻を作成できます。オンラインの情報源は不要です。',
+        buildOrTry: (online) =>
+          `ここで作成するか、${online} で提案を試してください。自動で検索されることはありません。`,
+        text: '各話または範囲を選び、巻に割り当てます。あとから移動することもできます。手動の編集内容は、このパソコンにだけ保存されます。',
+      },
+      online: {
+        pick: 'どの話がどの巻に入るかを調べる情報源を選んでください。検索するまでは、何も送信されません。',
+        dataBy: '巻データの提供元',
+        open: (name) => `${name} をブラウザーで開く`,
+        search: (name) => `${name} で検索`,
+        placeholder: 'マンガのタイトル',
+        searchButton: '検索',
+        privacy: (name) =>
+          `検索すると、タイトルが ${name} に送信されます。使うのは巻と話の番号だけで、そこから何もダウンロードしません。`,
+        language: (language) => `巻は、フォルダーの言語である ${language} で検索されます。`,
+        searching: '検索中…',
+        matches: '一致',
+        applying: '適用中…',
+        use: 'この巻を使う',
+      },
+    },
+    providers: {
+      label: '情報源',
+      noneDetail: 'フォルダー名と編集内容だけ',
+      none: 'オンラインの情報源なし',
+      select: '情報源を選択',
+    },
+    noMatches: {
+      label: '一致なし',
+      text: (query, fix) =>
+        `「${query}」に一致するものはありません。${fix === 'title' ? 'タイトル' : '検索語'}に余分な文字があると、作品が見つからないことがあります。上の${
+          fix === 'title' ? 'タイトルをもっと簡単に' : '言葉をもっと簡単に'
+        }して、もう一度検索してください。`,
+    },
+  },
 };
