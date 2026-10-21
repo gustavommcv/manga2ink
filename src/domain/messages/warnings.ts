@@ -20,6 +20,8 @@ export const knownWarningCodes = [
   'link_skipped',
   'unsupported_page_files',
   'page_entries_too_large',
+  // The app's own: the books follow the volumes the person edited, but the folder could not keep them.
+  'mapping_not_kept',
 ] as const;
 
 export type KnownWarningCode = (typeof knownWarningCodes)[number];

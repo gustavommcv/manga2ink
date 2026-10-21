@@ -91,4 +91,10 @@ Mangabound は、各フォルダーの名前から、話の番号を探します
 
 **Skip grouping** は、Mangabound が再グループ化せずに変換できる場面で使えます。**Create one book for the series** モードではオフになります。このモードは、各話をそれぞれの巻の下に置くために、巻が必要だからです。EPUB では目次に、CBZ ではフォルダーとして並びます。
 
+## 巻が保存される場所
+
 エディターは、あなたの巻を、[文書化されたメタデータ形式](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md)で mangabind に渡します。そのファイルを自分で編集する必要はありません。
+
+mangabind が提案した巻を変更すると、Mangabound はその巻をマンガのフォルダーの `mangabind.json` にも保存します。次にそのフォルダーを追加したときに、同じ巻が使えるようにするためです。フォルダーに書き込めない場合や、その `mangabind.json` が正しい JSON でない場合でも、本はあなたの巻で作られます。その下に **The volumes you edited were not kept with the folder** という警告が出て、次回は巻をもう一度編集する必要があることを伝えます。正しい JSON でない `mangabind.json` は、そのまま残されます。
+
+ライブラリのタイトルは別です。mangabind はそのファイルから巻を受け取ります。保存できない場合は、**Confirm mapping** がそのことを伝え、フォルダーに書き込めるようになるまで、そのタイトルは巻が必要なままです。

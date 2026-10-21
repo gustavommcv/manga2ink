@@ -465,6 +465,23 @@ describe('mangabind binding port', () => {
         expect.stringContaining('"schema_version": 1'),
       );
     });
+
+    it('leaves a mangabind.json that is not valid JSON as it was, and still joins the edited volumes', async () => {
+      const root = path.join(os.tmpdir(), 'mangabound-broken-file');
+      const { adapter, files } = groupedAdapter(root);
+      files.readText.mockResolvedValue('{ not json');
+
+      const inspection = await adapter.inspect('/input/Chainsaw Man');
+      const firstChapterId = inspection.draft.volumes[0]!.chapterIds[0]!;
+      const bound = await adapter.bind(
+        inspection.workspaceId,
+        unassignChapters(inspection.draft, [firstChapterId]),
+      );
+
+      expect(files.writeTextAtomically).not.toHaveBeenCalled();
+      expect(bound.volumes.map((volume) => volume.number)).toEqual([1, 2]);
+      expect(bound.issues).toContainEqual(expect.objectContaining({ code: 'mapping_not_kept' }));
+    });
   });
 
   it('cleans up an inspection whose process fails and preserves its structured issue', async () => {
@@ -542,22 +559,31 @@ describe('mangabind binding port', () => {
     });
   });
 
-  it('reports an actionable error when the confirmed mapping cannot be persisted', async () => {
+  it('still joins the confirmed mapping when the folder cannot keep it, and says so', async () => {
     const root = path.join(os.tmpdir(), 'mangabound-save-failure');
     const files = fakeFiles(root);
     files.writeTextAtomically.mockRejectedValue(new Error('read only'));
-    const adapter = new MangabindBindingAdapter(
-      { run: () => Promise.resolve(result()) },
-      files,
-      os.tmpdir(),
-      () => 'save-failure',
-    );
+    const cli = { run: vi.fn<MangabindCliAdapter['run']>(() => Promise.resolve(result())) };
+    const adapter = new MangabindBindingAdapter(cli, files, os.tmpdir(), () => 'save-failure');
 
     await adapter.inspect('/input');
-    await expect(adapter.bind('save-failure', completeMapping())).rejects.toMatchObject({
-      code: 'mapping_save_failed',
-      said: message('workflow.mappingNotSaved', {}),
-    });
+    const bound = await adapter.bind('save-failure', completeMapping());
+
+    // mangabind is run with the scratch copy, which holds the mapping all the same.
+    expect(cli.run).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        dryRun: false,
+        metadataFilePath: path.join(root, 'mangabind.json'),
+      }),
+      {},
+    );
+    expect(bound.issues).toContainEqual(
+      expect.objectContaining({
+        tool: 'mangabound',
+        severity: 'warning',
+        code: 'mapping_not_kept',
+      }),
+    );
   });
 
   it('rejects stale workspaces and output paths outside the owned directory', async () => {
@@ -724,9 +750,8 @@ describe('mangabind binding port', () => {
     );
 
     await adapter.inspect(input);
-    await expect(adapter.bind('atomic-failure', completeMapping())).rejects.toMatchObject({
-      code: 'mapping_save_failed',
-    });
+    const bound = await adapter.bind('atomic-failure', completeMapping());
+    expect(bound.issues).toContainEqual(expect.objectContaining({ code: 'mapping_not_kept' }));
     expect((await fs.promises.readdir(input)).filter((name) => name.endsWith('.tmp'))).toEqual([]);
     await adapter.release('atomic-failure');
   });

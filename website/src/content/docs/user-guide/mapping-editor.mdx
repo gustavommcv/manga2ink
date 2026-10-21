@@ -97,4 +97,10 @@ Review the proposed volumes before confirming or editing the mapping.
 
 **Skip grouping** is available where Mangabound can convert without regrouping. It is turned off in **Create one book for the series** mode, because that mode needs the volumes to put each chapter under its volume: in the table of contents of an EPUB, or as folders in a CBZ.
 
+## Where your volumes are kept
+
 The editor passes your volumes to mangabind in a [documented metadata format](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md). You never need to edit that file yourself.
+
+When you change the volumes mangabind proposed, Mangabound also saves them in the manga folder, in its `mangabind.json`, so they are there the next time you add the folder. If the folder cannot be written, or its `mangabind.json` is not valid JSON, the books are still made with your volumes, and a warning under them, **The volumes you edited were not kept with the folder**, says that you will have to edit them again next time. A `mangabind.json` that is not valid JSON is left as it was.
+
+A title of a library is different: that file is how mangabind gets its volumes. If it cannot be saved, **Confirm mapping** says so, and the title still needs volumes until the folder can be written.

@@ -42,6 +42,10 @@ The step that joins the chapters into volumes, done by mangabind, adds notices o
 - **Files in a chapter that are not page images were left out**: the names of these files do not say they are images (JPEG, PNG, WebP, GIF, BMP, AVIF, JPEG XL or TIFF). If one is a page, give it the extension of its format and convert again. Hidden system files such as `.DS_Store` are left out without a warning.
 - **Pages that expand to too much were left out**: a page inside a CBZ claims to unpack to far more than any page could be (over 256 MiB, or over a thousand times its size in the archive). That is what a file built to fill a computer's memory looks like, so it was left out.
 
+Mangabound adds one of its own:
+
+- **The volumes you edited were not kept with the folder**: the books follow the volumes you edited, but they could not be saved in the manga folder's `mangabind.json`, because the folder cannot be written or that file is not valid JSON. The next time you add the folder, edit its volumes again. See [Volume mapping](../mapping-editor/).
+
 If a newer mangapress sends a kind of warning that this version does not know, it is shown in mangapress's own words, under **A note from mangapress**. Warnings appear with the results of the conversion that produced them. Books you reopen later from **Ready books** are listed without them.
 
 ## Open or share
