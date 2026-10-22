@@ -6,18 +6,20 @@ The current logo, icon and lettering are in [`branding/manga2ink/`](branding/man
 
 The exports are rendered from the SVGs and placed where they are used. `branding/manga2ink/exports/manifest.json` records each one's place, size and SHA-256:
 
-| Asset                                        | Use                                                                                                           |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `icons/manga2ink.png`                        | 1024 × 1024; Linux packages and non-Windows windows                                                           |
-| `icons/manga2ink.ico`                        | 16, 20, 24, 32, 40, 48, 64, 128 and 256 px; Windows executable, installer and window                          |
-| `icons/manga2ink.icns`                       | ICNS representations through 1024 px, with the macOS-specific outer padding; macOS bundle                     |
-| `../src/renderer/assets/mark-48.webp`        | 48 px, lossless; the title bar of the app, drawn at 20 px (2x screens get 40)                                 |
-| `../src/renderer/assets/mark-192.webp`       | 192 px, lossless; the About tab of the app settings, drawn at 96 px (2x screens get 192)                      |
-| `branding/manga2ink/exports/logo-4096.png`   | The complete logo on the guide's home page; Astro makes responsive lossless WebP images from it at build time |
-| `../website/src/assets/branding/header.webp` | 128 px, lossless; Starlight's compact header, beside the site title                                           |
-| `../website/public/favicon.ico`              | 16, 32, 48 and 64 px; browser icon                                                                            |
-| `../website/public/manga2ink.ico`            | Exact copy of `icons/manga2ink.ico`; the public address Squirrel's installed-program entry reads              |
-| `../website/public/social-preview.png`       | 1200 × 630; link previews                                                                                     |
+| Asset                                           | Use                                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `icons/manga2ink.png`                           | 1024 × 1024; Linux packages and non-Windows windows                                                          |
+| `icons/manga2ink.ico`                           | 16, 20, 24, 32, 40, 48, 64, 128 and 256 px; Windows executable, installer and window                         |
+| `icons/manga2ink.icns`                          | ICNS representations through 1024 px, with the macOS-specific outer padding; macOS bundle                    |
+| `../src/renderer/assets/mark-48.webp`           | 48 px, lossless; the title bar of the app, drawn at 20 px (2x screens get 40)                                |
+| `../src/renderer/assets/mark-192.webp`          | 192 px, lossless; the About tab of the app settings, drawn at 96 px (2x screens get 192)                     |
+| `branding/manga2ink/exports/character-4096.png` | The mascot alone on the guide's home page; Astro makes responsive lossless WebP images from it at build time |
+| `../website/src/assets/branding/header.webp`    | 128 px, lossless; Starlight's compact header, beside the site title                                          |
+| `../website/public/favicon.ico`                 | 16, 32, 48 and 64 px; browser icon                                                                           |
+| `../website/public/manga2ink.ico`               | Exact copy of `icons/manga2ink.ico`; the public address Squirrel's installed-program entry reads             |
+| `../website/public/social-preview.png`          | 1200 × 630; link previews                                                                                    |
+
+Each picture goes where it reads best. The icon, the badge without the name, stands for the app wherever it is small or sits beside the name: the system's icons, the title bar, the About tab, the site's header and the browser tab; there the mascot alone would blur into a smudge. The complete logo goes where it is the name itself: the README's title and link previews. The mascot alone illustrates the guide's home page, under a title that already names the app.
 
 Re-export them together when the artwork changes, then move each to its place and record it in the manifest. Do not enlarge a bitmap to manufacture resolution or remove the macOS padding.
 

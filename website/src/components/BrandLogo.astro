@@ -1,23 +1,15 @@
 ---
 import { getImage, Image } from 'astro:assets';
 
-import logo from '../../../assets/branding/manga2ink/exports/logo-4096.png';
+import mascot from '../../../assets/branding/manga2ink/exports/character-4096.png';
 import { stringsFor } from '../i18n/strings';
 
 const label = stringsFor(Astro.locals.starlightRoute).brandLogo.openFullSize;
-const fullSize = await getImage({ src: logo, format: 'webp', quality: 'max' });
+const fullSize = await getImage({ src: mascot, format: 'webp', quality: 'max' });
 ---
 
 <a class="brand-logo" href={fullSize.src} aria-label={label} title={label}>
-  <Image
-    src={logo}
-    alt=""
-    width={256}
-    height={256}
-    densities={[1, 2, 3, 4]}
-    format="webp"
-    quality="max"
-  />
+  <Image src={mascot} alt="" width={256} densities={[1, 2, 3, 4]} format="webp" quality="max" />
 </a>
 
 <style>

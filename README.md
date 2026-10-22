@@ -1,8 +1,6 @@
-# Manga2Ink
-
-<p align="center">
-  <img src="assets/branding/manga2ink/logo.svg" alt="Manga2Ink logo" width="256" height="256">
-</p>
+<h1 align="center">
+  <img src="assets/branding/manga2ink/logo.svg" alt="Manga2Ink" width="256" height="256">
+</h1>
 
 Manga2Ink is a desktop app for organizing manga chapters into volumes and converting them into books for your e-reader. Choose how chapters are grouped and fine-tune page size, margins, and image quality for your device. Once processed, save your books locally or share them directly with KOReader over your local network. Until version 0.1.0-alpha.17 it was called Mangabound.
 

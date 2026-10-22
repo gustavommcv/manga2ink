@@ -115,11 +115,11 @@ Commands are for PowerShell at the repository root.
 
 ## Logo placement
 
-The logo replaces the final `intro-logo` authoring marker in the introduction of each language. The unused placement plan and placeholder component were removed; all planned positions now contain real media. The README shows the vector logo (`assets/branding/manga2ink/logo.svg`) at 256 CSS pixels, centered under the title.
+The mascot replaces the final `intro-logo` authoring marker in the introduction of each language. The unused placement plan and placeholder component were removed; all planned positions now contain real media. The README's title is the complete vector logo (`assets/branding/manga2ink/logo.svg`) at 256 CSS pixels, centered, with the app's name as its text alternative.
 
 The logo is a vector adaptation, made with AI assistance, of the artwork JPmarquesbraga supplied; on 2026-10-11 the maintainer confirmed permission to distribute that artwork under MIT. [The asset guide](../assets/README.md) records the editable sources, the exports and where each is used, and the original artwork, kept unchanged.
 
-Starlight's [built-in logo configuration](https://starlight.astro.build/reference/configuration/#logo) displays a compact 128 px lossless WebP beside the visible site title. The introduction displays the logo's 4096 px render (`assets/branding/manga2ink/exports/logo-4096.png`) at 256 CSS pixels, with Astro-generated lossless WebP alternatives through 4× density and a link to the full-resolution image. The image is decorative beside the app name; the full-size link has a localized accessible label. It is not mixed into tutorial instructions or Storybook capture.
+Starlight's [built-in logo configuration](https://starlight.astro.build/reference/configuration/#logo) displays a compact 128 px lossless WebP of the icon, the badge without the name, beside the visible site title. The introduction, whose title already names the app, displays the mascot alone (`assets/branding/manga2ink/exports/character-4096.png`) 256 CSS pixels wide, with Astro-generated lossless WebP alternatives through 4× density and a link to the full-resolution image. The image is decorative beside the app name; the full-size link has a localized accessible label. It is not mixed into tutorial instructions or Storybook capture.
 
 The social preview card shown when a link to the guide is shared is `public/social-preview.png`, 1200 × 630 pixels: the complete logo at 630 px, centered on its own navy background, with no added text. It is set in `astro.config.mjs` and checked in the built pages; [the asset guide](../assets/README.md) records how it is exported.
 

@@ -55,9 +55,9 @@ The high-resolution files are rendered from SVG, not enlarged from a bitmap.
 WebPs are lossless. The PNG and ICO have transparent badge corners; ICNS also
 retains the existing macOS-specific outer padding.
 
-`exports/` keeps the large renders: `logo-4096.png`, which the website reads
-through its responsive image pipeline, and `character-4096.png` and
-`wordmark-4096.png`, the standalone illustration and lettering. The other
+`exports/` keeps the large renders: `character-4096.png`, the standalone
+mascot, which the guide's home page reads through its responsive image pipeline,
+and `logo-4096.png` and `wordmark-4096.png`, the complete logo and the lettering. The other
 exports were moved to where they are used; [`../../README.md`](../../README.md)
 lists each place, and the manifest records them by their path in the repository.
 

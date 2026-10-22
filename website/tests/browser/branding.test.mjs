@@ -8,9 +8,9 @@ import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 const root = base.replace(/\/?$/, '/');
 
 const fullSizeLabel = {
-  '': 'Open full-size logo',
-  'pt-br/': 'Abrir logo em tamanho original',
-  'ja/': 'ロゴを元のサイズで開く',
+  '': 'Open full-size illustration',
+  'pt-br/': 'Abrir ilustração em tamanho original',
+  'ja/': 'イラストを元のサイズで開く',
 };
 
 for (const locale of Object.keys(fullSizeLabel)) {
@@ -30,7 +30,8 @@ for (const locale of Object.keys(fullSizeLabel)) {
         await expect(image).toBeVisible();
         await expect.poll(() => image.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
         const dimensions = await image.boundingBox();
-        expect(Math.abs(dimensions.width - dimensions.height)).toBeLessThan(1);
+        const shape = await image.evaluate((img) => img.naturalWidth / img.naturalHeight);
+        expect(Math.abs(dimensions.width / dimensions.height - shape)).toBeLessThan(0.01);
       }
       await expect(page.locator('[data-media-slot]')).toHaveCount(0);
       expect(
@@ -75,7 +76,7 @@ test('high-density screens select a sharp, optimized introduction image', async 
     expect(response.ok()).toBe(true);
     expect(response.headers()['content-type']).toContain('image/webp');
     const png = readFileSync(
-      new URL('../../../assets/branding/manga2ink/exports/logo-4096.png', import.meta.url),
+      new URL('../../../assets/branding/manga2ink/exports/character-4096.png', import.meta.url),
     );
     expect((await response.body()).length).toBeLessThan(png.length);
     const decodedWidth = await page.evaluate(async () => {
