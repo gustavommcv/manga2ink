@@ -55,7 +55,7 @@ for (const locale of Object.keys(fullSizeLabel)) {
       const fullSizeUrl = await logo.getAttribute('href');
       await logo.click();
       await expect(page).toHaveURL(new URL(fullSizeUrl, page.url()).href);
-      await expect.poll(() => page.locator('img').evaluate((img) => img.naturalWidth)).toBe(1055);
+      await expect.poll(() => page.locator('img').evaluate((img) => img.naturalWidth)).toBe(4096);
     });
   }
 }
@@ -74,7 +74,9 @@ test('high-density screens select a sharp, optimized introduction image', async 
     const response = await context.request.get(await image.evaluate((img) => img.currentSrc));
     expect(response.ok()).toBe(true);
     expect(response.headers()['content-type']).toContain('image/webp');
-    const png = readFileSync(new URL('../../../assets/branding/manga2ink.png', import.meta.url));
+    const png = readFileSync(
+      new URL('../../../assets/branding/manga2ink/exports/logo-4096.png', import.meta.url),
+    );
     expect((await response.body()).length).toBeLessThan(png.length);
     const decodedWidth = await page.evaluate(async () => {
       const img = document.querySelector('.brand-logo img');

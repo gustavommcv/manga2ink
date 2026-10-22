@@ -4,6 +4,7 @@ import { base } from '../../site.config.mjs';
 import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
+// Until the first Manga2Ink release, the newest release carries Mangabound's file names (ADR 0085).
 const platforms = [
   {
     name: 'Windows',
@@ -12,13 +13,13 @@ const platforms = [
         en: 'Download installer (.exe)',
         pt: 'Baixar instalador (.exe)',
         ja: 'インストーラーをダウンロード (.exe)',
-        filename: /^Manga2Ink-.+\.Setup\.exe$/,
+        filename: /^(?:Manga2Ink|Mangabound)-.+\.Setup\.exe$/,
       },
       {
         en: 'Download portable (.zip)',
         pt: 'Baixar versão portátil (.zip)',
         ja: 'ポータブル版をダウンロード (.zip)',
-        filename: /^Manga2Ink-win32-x64-.+\.zip$/,
+        filename: /^(?:Manga2Ink|Mangabound)-win32-x64-.+\.zip$/,
       },
     ],
   },
@@ -29,7 +30,7 @@ const platforms = [
         en: 'Download for Apple Silicon (.zip)',
         pt: 'Baixar para Apple Silicon (.zip)',
         ja: 'Apple Silicon 版をダウンロード (.zip)',
-        filename: /^Manga2Ink-darwin-arm64-.+\.zip$/,
+        filename: /^(?:Manga2Ink|Mangabound)-darwin-arm64-.+\.zip$/,
       },
     ],
   },
