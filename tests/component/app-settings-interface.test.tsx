@@ -14,10 +14,7 @@ import { raw } from '@/domain/message';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 const kept =
-  (
-    preference: LanguagePreference,
-    language: Language = 'en',
-  ): Manga2InkBridge['loadAppSettings'] =>
+  (preference: LanguagePreference, language: Language = 'en'): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -28,9 +25,7 @@ const kept =
       },
     });
 
-async function renderGeneral(
-  overrides: Partial<Manga2InkBridge> = {},
-): Promise<HTMLSelectElement> {
+async function renderGeneral(overrides: Partial<Manga2InkBridge> = {}): Promise<HTMLSelectElement> {
   render(
     <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
       <InterfaceTab />
@@ -237,9 +232,7 @@ describe('the theme in the Interface tab', () => {
         value: { settings: { ...defaultAppSettings, theme }, language: 'en', unreadable: false },
       });
 
-  async function renderTheme(
-    overrides: Partial<Manga2InkBridge> = {},
-  ): Promise<HTMLSelectElement> {
+  async function renderTheme(overrides: Partial<Manga2InkBridge> = {}): Promise<HTMLSelectElement> {
     render(
       <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
         <InterfaceTab />

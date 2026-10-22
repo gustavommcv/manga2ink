@@ -18,9 +18,7 @@ const ready: ToolchainStatus = {
 const blocked: ToolchainStatus = {
   state: 'blocked',
   tools: [],
-  message: raw(
-    'A bundled conversion tool failed verification. Reinstall Manga2Ink to restore it.',
-  ),
+  message: raw('A bundled conversion tool failed verification. Reinstall Manga2Ink to restore it.'),
 };
 const paperwhite: DeviceProfileSummary = {
   code: 'KPW6',

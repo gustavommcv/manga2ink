@@ -12,7 +12,12 @@ import { FileLog } from '@/adapters/log/file-log';
 import { resolveTheme, type Theme } from '@/domain/theme';
 import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
-import { coversRoot, legacyStorageMove, pendingRoot } from '@/adapters/library/pending-path';
+import {
+  coversRoot,
+  formerStorageMove,
+  legacyStorageMove,
+  pendingRoot,
+} from '@/adapters/library/pending-path';
 import { GithubReleaseFeed } from '@/adapters/releases/github-release-feed';
 import { FsAppSettingsStore } from '@/adapters/settings/fs-app-settings-store';
 import { FsWindowStateStore } from '@/adapters/settings/fs-window-state-store';
@@ -45,6 +50,7 @@ import { registerProjectLinkHandlers } from './ipc/project-links';
 import { registerUpdateHandlers } from './ipc/updates';
 import { registerAppSettingsHandlers } from './ipc/app-settings';
 import { registerSettingsHandlers } from './ipc/settings';
+import { moveFormerUserData } from './former-user-data';
 import { machineCapacity } from './machine';
 import { bootstrapToolchain } from './toolchain-bootstrap';
 import {
@@ -55,6 +61,12 @@ import {
 } from './window';
 
 if (started) app.quit();
+
+// The app was Mangabound (ADR 0085): its settings folder moves to the new name the first time, before
+// anything here makes the new one, the single-instance lock below included.
+const formerUserDataProblem = started
+  ? undefined
+  : moveFormerUserData(app.getPath('appData'), app.getPath('userData'));
 
 // Electron accepts a new scheme's privileges only before the app is ready.
 registerRendererScheme();
@@ -96,12 +108,17 @@ void app.whenReady().then(async () => {
     { console, process },
     `Manga2Ink ${app.getVersion()} started (${app.isPackaged ? 'packaged' : 'development build'}, Electron ${process.versions.electron}, ${process.platform} ${process.arch}).`,
   );
-  // Before anything reads them: an earlier version kept these in the installer's own folder on
-  // Windows, which uninstalling the app empties.
-  const legacyMove = legacyStorageMove(process.platform, process.env, app.getPath('home'));
-  if (legacyMove !== undefined) {
+  if (formerUserDataProblem !== undefined) console.error(formerUserDataProblem);
+  // Before anything reads them: Mangabound kept the pending books and covers under its own name
+  // (ADR 0085), and an earlier version still kept them in the installer's own folder on Windows,
+  // which uninstalling the app empties.
+  for (const move of [
+    formerStorageMove(process.platform, process.env, app.getPath('home')),
+    legacyStorageMove(process.platform, process.env, app.getPath('home')),
+  ]) {
+    if (move === undefined) continue;
     await moveLegacyStorage({
-      ...legacyMove,
+      ...move,
       onProblem: (message, cause) => {
         console.error(message, cause);
       },

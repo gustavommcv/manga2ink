@@ -370,9 +370,7 @@ describe('the Processing tab in Portuguese', () => {
 });
 
 describe('what a queue does, chosen in the Processing tab', () => {
-  const kept = (
-    change: Partial<typeof defaultAppSettings>,
-  ): Manga2InkBridge['loadAppSettings'] => {
+  const kept = (change: Partial<typeof defaultAppSettings>): Manga2InkBridge['loadAppSettings'] => {
     return () =>
       Promise.resolve({
         ok: true,
@@ -499,9 +497,7 @@ describe('what a queue does, chosen in the Processing tab', () => {
 });
 
 describe('how many conversions run at once, chosen in the Processing tab', () => {
-  const kept = (
-    change: Partial<typeof defaultAppSettings>,
-  ): Manga2InkBridge['loadAppSettings'] => {
+  const kept = (change: Partial<typeof defaultAppSettings>): Manga2InkBridge['loadAppSettings'] => {
     return () =>
       Promise.resolve({
         ok: true,

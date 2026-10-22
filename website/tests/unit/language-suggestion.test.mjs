@@ -34,14 +34,11 @@ test('a reader whose languages the site does not have comes to none', () => {
 test('the same page is in each language under that language’s directory, and none for the default', () => {
   const site = { base: '/manga2ink/', languages };
 
-  assert.deepEqual(
-    pathsInEachLanguage({ ...site, pathname: '/manga2ink/user-guide/exporting/' }),
-    {
-      en: '/manga2ink/user-guide/exporting/',
-      'pt-BR': '/manga2ink/pt-br/user-guide/exporting/',
-      ja: '/manga2ink/ja/user-guide/exporting/',
-    },
-  );
+  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/manga2ink/user-guide/exporting/' }), {
+    en: '/manga2ink/user-guide/exporting/',
+    'pt-BR': '/manga2ink/pt-br/user-guide/exporting/',
+    ja: '/manga2ink/ja/user-guide/exporting/',
+  });
   assert.deepEqual(
     pathsInEachLanguage({ ...site, pathname: '/manga2ink/pt-br/user-guide/exporting/' }),
     {

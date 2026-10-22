@@ -83,11 +83,9 @@ describe('packaged process control', () => {
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Manga2Ink E2E');
     const libraryPath = path.join(testRoot, 'library');
-    await cp(
-      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'),
-      inputPath,
-      { recursive: true },
-    );
+    await cp(path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'), inputPath, {
+      recursive: true,
+    });
     await mkdir(libraryPath);
 
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');

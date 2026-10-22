@@ -72,19 +72,16 @@ for (const locale of Object.keys(languageOf)) {
         if (new URL(request.url()).hostname === 'api.github.com') apiRequests.push(request.url());
       });
       // Exercise real anchor clicks and browser downloads without downloading large installers.
-      await page.route(
-        'https://github.com/gustavommcv/manga2ink/releases/download/**',
-        (route) => {
-          const filename = decodeURIComponent(
-            new URL(route.request().url()).pathname.split('/').at(-1),
-          );
-          return route.fulfill({
-            contentType: 'application/octet-stream',
-            headers: { 'content-disposition': `attachment; filename="${filename}"` },
-            body: 'download response fixture',
-          });
-        },
-      );
+      await page.route('https://github.com/gustavommcv/manga2ink/releases/download/**', (route) => {
+        const filename = decodeURIComponent(
+          new URL(route.request().url()).pathname.split('/').at(-1),
+        );
+        return route.fulfill({
+          contentType: 'application/octet-stream',
+          headers: { 'content-disposition': `attachment; filename="${filename}"` },
+          body: 'download response fixture',
+        });
+      });
       await page.emulateMedia({ colorScheme });
       await page.goto(`${root}${locale}getting-started/installation/`);
       let selectedTag;

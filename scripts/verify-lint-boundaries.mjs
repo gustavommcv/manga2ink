@@ -127,12 +127,7 @@ const cases = [
     'domain-relative',
     "import type { MappingDraft } from '../domain/mapping';",
   ),
-  valid(
-    'preload',
-    'ts',
-    'shared',
-    "import type { Manga2InkBridge } from '@/shared/runtime-info';",
-  ),
+  valid('preload', 'ts', 'shared', "import type { Manga2InkBridge } from '@/shared/runtime-info';"),
   invalid(
     'preload',
     'ts',

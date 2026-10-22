@@ -81,9 +81,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'failure.conversionCancelled': ['変換をキャンセルしました。'],
   'failure.internal': ['Manga2Ink はその操作を完了できませんでした。'],
   'failure.invalidRequest': ['Manga2Ink は、無効なリクエストを拒否しました。'],
-  'failure.untrustedSender': [
-    'Manga2Ink は、自身のウィンドウからのリクエストだけを受け付けます。',
-  ],
+  'failure.untrustedSender': ['Manga2Ink は、自身のウィンドウからのリクエストだけを受け付けます。'],
   'failure.fileAccessDenied': [
     'Manga2Ink は、必要なファイルまたはフォルダーを使用する許可を得られませんでした。そのフォルダーのアクセス許可を確認して、もう一度お試しください。',
   ],

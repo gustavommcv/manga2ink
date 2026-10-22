@@ -412,10 +412,7 @@ export class MangabindBindingAdapter implements BindingPort {
     if (workspace === undefined) return;
     const expectedPrefix = path.resolve(workspace.temporaryRoot) + path.sep;
     const resolved = path.resolve(workspace.rootPath);
-    if (
-      !resolved.startsWith(expectedPrefix) ||
-      !path.basename(resolved).startsWith('manga2ink-')
-    ) {
+    if (!resolved.startsWith(expectedPrefix) || !path.basename(resolved).startsWith('manga2ink-')) {
       throw new Error('Refusing to remove an invalid temporary workspace path.');
     }
     await this.files.removeDirectory(resolved);

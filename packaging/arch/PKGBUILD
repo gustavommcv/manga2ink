@@ -19,6 +19,9 @@ pkgdesc="A desktop workflow for binding, converting, and delivering manga to e-r
 arch=('x86_64')
 url="https://github.com/gustavommcv/manga2ink"
 license=('MIT')
+# The app was Mangabound (ADR 0085): this package takes that one's place.
+conflicts=('mangabound')
+replaces=('mangabound')
 # The standard dependency set for a bundled-Electron app on Arch (the same libraries every
 # Chromium/Electron "-bin" AUR package declares) - this app does not use the system electron
 # package, so only Electron's own native library dependencies are needed, not electron itself.

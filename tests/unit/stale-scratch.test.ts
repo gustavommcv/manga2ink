@@ -122,10 +122,17 @@ describe('removeStaleScratch', () => {
     await treeChanged(path.join(root, 'manga2ink-aB3dE9'), 3 * day);
     await fileChanged(path.join(root, 'manga2ink-Zz09Yy', 'input', 'c1.png'), 2 * day);
     await treeChanged(path.join(root, 'manga2ink-Zz09Yy'), 2 * day);
+    // One left by a version from before the app's new name (ADR 0085).
+    await fileChanged(path.join(root, 'mangabound-Qq11Rr', 'v1.cbz'), 4 * day);
+    await treeChanged(path.join(root, 'mangabound-Qq11Rr'), 4 * day);
 
     const removed = await removeStaleScratch(root, day, now);
 
-    expect([...removed].sort()).toEqual(['manga2ink-Zz09Yy', 'manga2ink-aB3dE9']);
+    expect([...removed].sort()).toEqual([
+      'manga2ink-Zz09Yy',
+      'manga2ink-aB3dE9',
+      'mangabound-Qq11Rr',
+    ]);
     expect(await readdir(root)).toEqual([]);
   });
 

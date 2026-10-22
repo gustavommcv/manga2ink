@@ -1,13 +1,16 @@
 const repository = 'https://github.com/gustavommcv/manga2ink';
 const api = 'https://api.github.com/repos/gustavommcv/manga2ink/releases?per_page=100';
 
+// The releases from before the app's new name (up to 0.1.0-alpha.17) carry Mangabound's file names.
+// They are offered under the renamed repository until the first Manga2Ink release replaces them
+// (ADR 0085); GitHub gives their links under the new name.
 const packages = {
-  windowsInstaller: /^Manga2Ink-.+\.Setup\.exe$/,
-  windowsPortable: /^Manga2Ink-win32-x64-.+\.zip$/,
-  macOS: /^Manga2Ink-darwin-arm64-.+\.zip$/,
-  debian: /^manga2ink_.+_amd64\.deb$/,
-  fedora: /^manga2ink-.+\.x86_64\.rpm$/,
-  arch: /^manga2ink-.+-x86_64\.pkg\.tar\.zst$/,
+  windowsInstaller: /^(?:Manga2Ink|Mangabound)-.+\.Setup\.exe$/,
+  windowsPortable: /^(?:Manga2Ink|Mangabound)-win32-x64-.+\.zip$/,
+  macOS: /^(?:Manga2Ink|Mangabound)-darwin-arm64-.+\.zip$/,
+  debian: /^(?:manga2ink|mangabound)_.+_amd64\.deb$/,
+  fedora: /^(?:manga2ink|mangabound)-.+\.x86_64\.rpm$/,
+  arch: /^(?:manga2ink|mangabound)-.+-x86_64\.pkg\.tar\.zst$/,
   checksums: /^SHA256SUMS$/,
 };
 

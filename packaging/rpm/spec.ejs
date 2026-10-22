@@ -1,7 +1,7 @@
 %define _binary_payload w<%= compressionLevel %>.xzdio
 
-# This is electron-installer-redhat's own spec template with two lines added: the two global
-# definitions after this comment.
+# This is electron-installer-redhat's own spec template with three lines added: the two global
+# definitions after this comment, and the Obsoletes line after Requires.
 # Everything in the package is prebuilt, and the app checks the bundled mangabind and mangapress
 # against the SHA-256 pinned in toolchain.lock.json every time it starts. rpmbuild's default
 # post-install steps (stripping, removing the .comment section, debug-info extraction) rewrite
@@ -33,6 +33,8 @@ if (license || homepage) { print('\n') }
 
 %>Requires: <%= requires.join(', ') %>
 AutoReqProv: no
+# The app was Mangabound (ADR 0085): installing this package takes that one's place.
+Obsoletes: mangabound
 
 <% if (productDescription) {
 %>%description

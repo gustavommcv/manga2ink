@@ -190,3 +190,18 @@ test('invalid JSON and network failures prevent generating download links', asyn
     (error) => error === failure,
   );
 });
+
+test('a release from before the new name, with Mangabound file names, is still offered', () => {
+  const before = release();
+  const tag = encodeURIComponent(before.tag_name);
+  before.assets = before.assets.map((asset) => {
+    const name = asset.name
+      .replace(/^Manga2Ink/u, 'Mangabound')
+      .replace(/^manga2ink/u, 'mangabound');
+    const url = `${repository}/releases/download/${tag}/${encodeURIComponent(name)}`;
+    return { ...asset, name, browser_download_url: url };
+  });
+  const downloads = resolveReleaseDownloads([before]);
+  assert.match(downloads.assets.windowsInstaller, /\/Mangabound-0\.1\.0-alpha\.12\.Setup\.exe$/u);
+  assert.match(downloads.assets.debian, /\/mangabound_0\.1\.0\.alpha\.12_amd64\.deb$/u);
+});

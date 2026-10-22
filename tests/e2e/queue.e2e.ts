@@ -29,13 +29,9 @@ describe('packaged queue', () => {
       grouped,
       { recursive: true },
     );
-    await cp(
-      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'),
-      ungrouped,
-      {
-        recursive: true,
-      },
-    );
+    await cp(path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'), ungrouped, {
+      recursive: true,
+    });
     await mkdir(libraryPath);
 
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
