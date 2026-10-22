@@ -1,6 +1,6 @@
-# Mangabound v0.1.0-alpha.N
+# Manga2Ink v0.1.0-alpha.N
 
-An alpha: the installers are not code-signed. How to install, and what to expect from the system, is in the [installation guide](https://gustavommcv.github.io/mangabound/getting-started/installation/). `SHA256SUMS` checks the downloads.
+An alpha: the installers are not code-signed. How to install, and what to expect from the system, is in the [installation guide](https://gustavommcv.github.io/manga2ink/getting-started/installation/). `SHA256SUMS` checks the downloads.
 
 ## Before you update
 
@@ -24,4 +24,4 @@ An alpha: the installers are not code-signed. How to install, and what to expect
 
 - One line for each change that closes something. Delete the heading when it would be empty.
 
-Bundled: mangabind vX.Y.Z, mangapress vX.Y.Z. [Full changelog](<https://github.com/gustavommcv/mangabound/compare/v0.1.0-alpha.(N-1)...v0.1.0-alpha.N>)
+Bundled: mangabind vX.Y.Z, mangapress vX.Y.Z. [Full changelog](<https://github.com/gustavommcv/manga2ink/compare/v0.1.0-alpha.(N-1)...v0.1.0-alpha.N>)

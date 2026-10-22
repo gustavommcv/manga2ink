@@ -17,7 +17,7 @@ Manga2Ink orchestrates two bundled, version-pinned tools: **mangabind** groups c
 | `src/shared`              | Validated IPC contracts and shared bridge types                        | domain                                           |
 | `src/i18n`                | What the app says, in each of its languages (typed catalogs)           | domain                                           |
 | `src/main`                | Electron wiring, windows, trusted paths, ids, and command registration | all layers below it                              |
-| `src/preload`             | The typed `window.mangabound` bridge                                   | domain, shared                                   |
+| `src/preload`             | The typed `window.manga2ink` bridge                                    | domain, shared                                   |
 | `src/renderer`            | React screens, state, components, and UI helpers                       | domain, `shared`, `i18n`                         |
 
 The table lists allowed project layers; imports within a layer are always allowed. The renderer has no Node, filesystem, or process access. Domain code imports no React, Electron, Node, or adapters. ESLint enforces these boundaries; [CONTRIBUTING](../CONTRIBUTING.md#module-boundaries) explains the checks.

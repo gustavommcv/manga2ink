@@ -61,6 +61,37 @@ describe('moveFormerUserData', () => {
     expect(await readdir(root)).toEqual(['Mangabound']);
   });
 
+  it('does not move a folder onto itself, whatever the case of its name', () => {
+    const root = path.resolve('app-data');
+    const renames: string[] = [];
+    const fileSystem = {
+      exists: () => true,
+      rename: (from: string) => {
+        renames.push(from);
+      },
+    };
+
+    expect(moveFormerUserData(root, path.join(root, 'Mangabound'), fileSystem)).toBeUndefined();
+    expect(moveFormerUserData(root, path.join(root, 'MANGABOUND'), fileSystem)).toBeUndefined();
+
+    expect(renames).toEqual([]);
+  });
+
+  it('says what went wrong when the failure is not an error', () => {
+    const root = path.resolve('app-data');
+    const problem = moveFormerUserData(root, path.join(root, 'Manga2Ink'), {
+      exists: (target) => target === path.join(root, 'Mangabound'),
+      rename: () => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw 'busy';
+      },
+    });
+
+    expect(problem).toBe(
+      `Could not move ${path.join(root, 'Mangabound')} to ${path.join(root, 'Manga2Ink')}: busy`,
+    );
+  });
+
   it('says what went wrong, and lets the app start, when the folder cannot be moved', () => {
     const root = path.resolve('app-data');
     const problem = moveFormerUserData(root, path.join(root, 'Manga2Ink'), {
