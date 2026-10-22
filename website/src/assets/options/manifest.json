@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "mangapress": "0.8.2",
+  "mangapress": "0.8.3",
   "base": {
     "profile": "KPW6",
     "format": "cbz",
@@ -340,12 +340,12 @@
           "flags": [],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "file": "color-pages-grayscale.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 54792,
-          "sha256": "94d5198d4382a72bafddfeee37d935ef36e2f17287d81e36fba1dfdb0d459ecb"
+          "bytes": 54720,
+          "sha256": "db5819a12826ae7b8eeadf63a95a49b35e48be78dbc58dd7f404c267e343d0d0"
         },
         {
           "id": "color",
@@ -353,12 +353,12 @@
           "flags": ["--forcecolor"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 299560,
+          "pageBytes": 299563,
           "file": "color-pages-color.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 64110,
-          "sha256": "04cbc3bc8ab014961398e645c977747bf5b698d784cdded4bb279329bbb3daa9"
+          "bytes": 64258,
+          "sha256": "99c051214ebc0556fd056f86b83b13d08f91336b6b80d46fb4d9542ca9d22d03"
         }
       ]
     },
@@ -376,14 +376,14 @@
           "flags": ["--gamma", "0.6"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 216198,
-          "darkest": 31,
+          "pageBytes": 216193,
+          "darkest": 32,
           "mean": 141.6,
           "file": "gamma-0.6.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 12716,
-          "sha256": "f9370c548e12eca81664be9d49b6a55a41e4f4d9c9cefadfa93783fb9c7c9a6b"
+          "bytes": 12704,
+          "sha256": "f473688adde7b9d9e89f9a83296ef0d18d66e08c1c9588b439a4da3fe200e320"
         },
         {
           "id": "1",
@@ -391,14 +391,14 @@
           "flags": ["--gamma", "1.0"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 215518,
+          "pageBytes": 215464,
           "darkest": 5,
           "mean": 108.6,
           "file": "gamma-1.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 12008,
-          "sha256": "2056e3508d5fbaa736318e30a7391cf1d50d832eab9a7a61b14561e362b900a7"
+          "bytes": 12048,
+          "sha256": "9d0c5101c2bf162e8486ab5cc8b959e8a7ee65805992227d42217e4ee32cfc45"
         },
         {
           "id": "1.8",
@@ -406,14 +406,14 @@
           "flags": ["--gamma", "1.8"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 186932,
+          "pageBytes": 186915,
           "darkest": 0,
           "mean": 78.5,
           "file": "gamma-1.8.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 11330,
-          "sha256": "918bbb7314c049f4c3b35d61a6e329ab6b517b4f73b89c04e02a5ec3f70bf3ac"
+          "bytes": 11340,
+          "sha256": "b8d35da407a7a2bf26fe78f6be4682a01850a1e5516b88ebd03b51d0f64cb5ec"
         }
       ]
     },
@@ -431,14 +431,14 @@
           "flags": [],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 215518,
+          "pageBytes": 215464,
           "darkest": 5,
           "mean": 108.6,
           "file": "autocontrast-monochrome.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 12008,
-          "sha256": "2056e3508d5fbaa736318e30a7391cf1d50d832eab9a7a61b14561e362b900a7"
+          "bytes": 12048,
+          "sha256": "9d0c5101c2bf162e8486ab5cc8b959e8a7ee65805992227d42217e4ee32cfc45"
         },
         {
           "id": "all",
@@ -446,14 +446,14 @@
           "flags": ["--colorautocontrast"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 222647,
+          "pageBytes": 222620,
           "darkest": 0,
           "mean": 101.6,
           "file": "autocontrast-all.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 12540,
-          "sha256": "b88b1ed38ddb903ab79e8ff573e9048fb32a26455c6473573e3e73f272a98fb1"
+          "bytes": 12626,
+          "sha256": "e02f95445b153ff12aead1c145257dab262b6fdf41d5d2894317bf44c075e49b"
         },
         {
           "id": "all-autolevel",
@@ -461,14 +461,14 @@
           "flags": ["--colorautocontrast", "--autolevel"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 218379,
+          "pageBytes": 218317,
           "darkest": 0,
           "mean": 82.9,
           "file": "autocontrast-all-autolevel.webp",
           "pictureWidth": 800,
           "pictureHeight": 340,
-          "bytes": 12888,
-          "sha256": "213251e36567b714d546028251e3f77d05deaaac7c89107f8381e1f8afb1266f"
+          "bytes": 12722,
+          "sha256": "e06d1065536a302ccb7e97db7644db98ec02a199ac5bdc64c2c77e6882d214af"
         }
       ]
     },
@@ -819,12 +819,12 @@
           "flags": [],
           "width": 992,
           "height": 1373,
-          "pageBytes": 225634,
+          "pageBytes": 225603,
           "file": "size-fit-enlarge-fit.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 41594,
-          "sha256": "7b00966cc0d4b0ef740bc3aa756b7be95d5c868ea8b37b049a1cfe65463e9cb5"
+          "bytes": 41490,
+          "sha256": "2a9df79fb717d0ea727770b205ad2a2831864ee8a30f5cb1fbc692ada539244a"
         },
         {
           "id": "enlarge",
@@ -832,12 +832,12 @@
           "flags": ["--upscale"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "file": "size-fit-enlarge-enlarge.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 55900,
-          "sha256": "22f1b1653c8a6925aaa6508ae23bd29b24149d7766fed0d14cf8ee1e40a6d3ed"
+          "bytes": 56196,
+          "sha256": "83f2e5fa12da3724103e41ac01594f72b963bdbeb4d8794048d8bd5022fe9a7c"
         }
       ]
     },
@@ -857,12 +857,12 @@
           "flags": ["--upscale"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 189300,
+          "pageBytes": 189303,
           "file": "size-stretch-fill-enlarge.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 63656,
-          "sha256": "f6a26d27fd48164419d51cf0f9efc8b99b1463433bcd98f255241345ca28ff36"
+          "bytes": 63490,
+          "sha256": "bf460600da1d73deeead4c24ec4f0dd9f6140d63b16f89e8dc6a0c4f4b3b4b86"
         },
         {
           "id": "stretch",
@@ -870,12 +870,12 @@
           "flags": ["--stretch"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 223773,
+          "pageBytes": 223768,
           "file": "size-stretch-fill-stretch.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 77410,
-          "sha256": "eeec63a99abaa6a385ccd85f0967f8f3776dff4d02fb43ee40177932eeaffa4f"
+          "bytes": 77988,
+          "sha256": "8facb6a8a657d3cd02ea443a5175e810f58028d2537c7a98c8712087371273c9"
         },
         {
           "id": "fill",
@@ -883,12 +883,12 @@
           "flags": ["--wallpaper"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 237023,
+          "pageBytes": 236965,
           "file": "size-stretch-fill-fill.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 87790,
-          "sha256": "4e216cc25e99f2a3dfe0ac5ec7b5f0b427d3c6cb362516bac15891ddab727303"
+          "bytes": 86530,
+          "sha256": "6631942844ff9344fe7c97f9d2d1f2c71f0a0eacb09601c8b1ff1700bc725e40"
         }
       ]
     },
@@ -908,12 +908,12 @@
           "flags": [],
           "width": 954,
           "height": 1696,
-          "pageBytes": 189300,
+          "pageBytes": 189303,
           "file": "borders-light-page-automatic.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 63656,
-          "sha256": "f6a26d27fd48164419d51cf0f9efc8b99b1463433bcd98f255241345ca28ff36"
+          "bytes": 63490,
+          "sha256": "bf460600da1d73deeead4c24ec4f0dd9f6140d63b16f89e8dc6a0c4f4b3b4b86"
         },
         {
           "id": "white",
@@ -921,12 +921,12 @@
           "flags": ["--whiteborders"],
           "width": 954,
           "height": 1320,
-          "pageBytes": 186880,
+          "pageBytes": 186812,
           "file": "borders-light-page-white.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 63796,
-          "sha256": "3fddaa11955642cc90849e8b26af31b3a8c14bac228486ab91e548095a37b447"
+          "bytes": 63932,
+          "sha256": "cc43aabec4c755c1849a9fdde4c802877802c8029b275d7a670f9007f6d237ee"
         },
         {
           "id": "black",
@@ -934,12 +934,12 @@
           "flags": ["--blackborders"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 191409,
+          "pageBytes": 191471,
           "file": "borders-light-page-black.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 63488,
-          "sha256": "555d3683313e5e7bc3c6a3e30c275a83884419e81765cb4438a542c17897d519"
+          "bytes": 64012,
+          "sha256": "bef8ec1a641e0e5811aeaf11e786b4d0b2205585ad1f2f8d32ebab2b23a97d26"
         }
       ]
     },
@@ -959,12 +959,12 @@
           "flags": [],
           "width": 954,
           "height": 1696,
-          "pageBytes": 232278,
+          "pageBytes": 232271,
           "file": "borders-dark-page-automatic.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 89722,
-          "sha256": "19db9e457ebc69bd9b1ccaded469b038db2bcb964a9a38fc85ef0e12c9cbf7c4"
+          "bytes": 89806,
+          "sha256": "69ab1e4d6e6de334136872b17afa44099afc983f685974bf22de91ff43ade4ab"
         },
         {
           "id": "white",
@@ -972,12 +972,12 @@
           "flags": ["--whiteborders"],
           "width": 954,
           "height": 1471,
-          "pageBytes": 229944,
+          "pageBytes": 229946,
           "file": "borders-dark-page-white.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 89876,
-          "sha256": "0705a7da8ffd48dc8830e15a27a78d380be14a649b5a7744f849e3c42df33051"
+          "bytes": 89840,
+          "sha256": "39af34bbbb10b831f805d13058f9f63905f3689a6335530f6f4f9443eef1d36b"
         },
         {
           "id": "black",
@@ -985,12 +985,12 @@
           "flags": ["--blackborders"],
           "width": 954,
           "height": 1696,
-          "pageBytes": 232278,
+          "pageBytes": 232271,
           "file": "borders-dark-page-black.webp",
           "pictureWidth": 700,
           "pictureHeight": 1244,
-          "bytes": 89722,
-          "sha256": "19db9e457ebc69bd9b1ccaded469b038db2bcb964a9a38fc85ef0e12c9cbf7c4"
+          "bytes": 89806,
+          "sha256": "69ab1e4d6e6de334136872b17afa44099afc983f685974bf22de91ff43ade4ab"
         }
       ]
     },
@@ -1008,12 +1008,12 @@
           "flags": [],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "file": "format-zoom-jpeg.webp",
           "pictureWidth": 700,
           "pictureHeight": 700,
-          "bytes": 28130,
-          "sha256": "83f52e2ed973634719b4b744ed9879836848598e106692dfc660ca5209b48a27"
+          "bytes": 28080,
+          "sha256": "de7ed29b9e53d84bc3e7c66943f490ef1c941f0edf81105dbe1664187a9b54d7"
         },
         {
           "id": "png",
@@ -1021,12 +1021,12 @@
           "flags": ["--forcepng"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 343939,
+          "pageBytes": 344901,
           "file": "format-zoom-png.webp",
           "pictureWidth": 700,
           "pictureHeight": 700,
-          "bytes": 32658,
-          "sha256": "e372db87bd57a59e8ead845a9c8c7db3c5d573de41797d0029bcd20f69d8b28b"
+          "bytes": 32614,
+          "sha256": "db9261ba1b1a84a3eaa26d2e35366890dc6f8624bfab2038fa40de2fb3be95ac"
         },
         {
           "id": "png-256",
@@ -1034,12 +1034,12 @@
           "flags": ["--forcepng", "--noquantize"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 757716,
+          "pageBytes": 757657,
           "file": "format-zoom-png-256.webp",
           "pictureWidth": 700,
           "pictureHeight": 700,
-          "bytes": 27074,
-          "sha256": "422446f5c85b61a3bfb6733be48b817ba136d431973c98e0b669334ac8e157e4"
+          "bytes": 27042,
+          "sha256": "f685d7eaff6f26f665e6ba982163463a93ef55292190fa66324c56183dca4dfe"
         }
       ]
     },
@@ -1057,7 +1057,7 @@
           "flags": [],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1067,7 +1067,7 @@
           "flags": ["--forcepng"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 343939,
+          "pageBytes": 344901,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1077,7 +1077,7 @@
           "flags": ["--forcepng", "--pnglegacy"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 408488,
+          "pageBytes": 407485,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1087,7 +1087,7 @@
           "flags": ["--forcepng", "--noquantize"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 757716,
+          "pageBytes": 757657,
           "fileType": "PNG",
           "sameAsInput": false
         },
@@ -1097,7 +1097,7 @@
           "flags": ["--forcecolor"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 299560,
+          "pageBytes": 299563,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1107,7 +1107,7 @@
           "flags": ["--forcecolor", "--forcepng"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 299560,
+          "pageBytes": 299563,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1117,7 +1117,7 @@
           "flags": ["--forcecolor", "--forcepng", "--force-png-rgb"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 2090810,
+          "pageBytes": 2090888,
           "fileType": "PNG",
           "sameAsInput": false
         }
@@ -1137,7 +1137,7 @@
           "flags": ["--jpeg-quality", "100"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 767393,
+          "pageBytes": 767432,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1147,7 +1147,7 @@
           "flags": ["--jpeg-quality", "95"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 447358,
+          "pageBytes": 447401,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1157,7 +1157,7 @@
           "flags": ["--jpeg-quality", "90"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 323356,
+          "pageBytes": 323430,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1167,7 +1167,7 @@
           "flags": ["--jpeg-quality", "85"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1177,7 +1177,7 @@
           "flags": ["--jpeg-quality", "70"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 178793,
+          "pageBytes": 178806,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1187,7 +1187,7 @@
           "flags": ["--jpeg-quality", "50"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 131244,
+          "pageBytes": 131277,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1197,7 +1197,7 @@
           "flags": ["--jpeg-quality", "30"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 94209,
+          "pageBytes": 94184,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -1207,7 +1207,7 @@
           "flags": ["--jpeg-quality", "10"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 45633,
+          "pageBytes": 45641,
           "fileType": "JPEG",
           "sameAsInput": false
         }
@@ -1227,12 +1227,12 @@
           "flags": ["--jpeg-quality", "85"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "file": "jpeg-quality-zoom-quality-85.webp",
           "pictureWidth": 700,
           "pictureHeight": 438,
-          "bytes": 14204,
-          "sha256": "d74045394ac4462ec7f252d61961dd231bb12a8971f78478de5bbad384bc4f1d"
+          "bytes": 14352,
+          "sha256": "ade2f90ce7438a683f764987fc8f1ddbd71d537268f4f4c7602a520ee533958d"
         },
         {
           "id": "quality-30",
@@ -1240,12 +1240,12 @@
           "flags": ["--jpeg-quality", "30"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 94209,
+          "pageBytes": 94184,
           "file": "jpeg-quality-zoom-quality-30.webp",
           "pictureWidth": 700,
           "pictureHeight": 438,
-          "bytes": 14310,
-          "sha256": "8a179deeb77a71ead728d4c0d81a7bbee8f5c1a85825642f02c2dcb8082845b4"
+          "bytes": 14374,
+          "sha256": "dc572ac295e8928ed3d1a761de4a74cc4986c23a0fc579115d2f9290bde94bb6"
         },
         {
           "id": "quality-10",
@@ -1253,12 +1253,12 @@
           "flags": ["--jpeg-quality", "10"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 45633,
+          "pageBytes": 45641,
           "file": "jpeg-quality-zoom-quality-10.webp",
           "pictureWidth": 700,
           "pictureHeight": 438,
-          "bytes": 12624,
-          "sha256": "bfb4cdf8a8f4acdcd206ffcb94d972b7c935bf7f9e4c241eab98a513089be442"
+          "bytes": 12648,
+          "sha256": "d01693088c3a94a25c4519162ed13760a66d358b7108de77dea7c7a437c3d643"
         }
       ]
     },
@@ -1276,7 +1276,7 @@
           "flags": [],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 260931,
+          "pageBytes": 260893,
           "fileType": "JPEG",
           "sameAsInput": false
         },
@@ -2274,12 +2274,12 @@
           "flags": [],
           "width": 992,
           "height": 1373,
-          "pageBytes": 251548,
+          "pageBytes": 251489,
           "file": "cover-fit-fill-fit.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 43756,
-          "sha256": "fedb95d174dbd01891b990c9289670e72e08df83584484f8a5d30b2242e6e828"
+          "bytes": 43866,
+          "sha256": "a6c9d5dd41dad71e3a152f47009e577ae71f5fa8e45cc632bae922330c0aa47f"
         },
         {
           "id": "fill",
@@ -2287,12 +2287,12 @@
           "flags": ["--coverfill"],
           "width": 1272,
           "height": 1696,
-          "pageBytes": 314070,
+          "pageBytes": 314091,
           "file": "cover-fit-fill-fill.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 66510,
-          "sha256": "e56d45024cf0d9802295569eac8f38a96d86ddc12cdbf4331ea1fddce721de49"
+          "bytes": 66588,
+          "sha256": "e537c10e1f47d9eed89acd33d6759bcdacce7f816b80bad0b10c4110db0650d3"
         },
         {
           "id": "color",
@@ -2300,12 +2300,12 @@
           "flags": ["--forcecolor"],
           "width": 992,
           "height": 1373,
-          "pageBytes": 278780,
+          "pageBytes": 278709,
           "file": "cover-fit-fill-color.webp",
           "pictureWidth": 700,
           "pictureHeight": 933,
-          "bytes": 50374,
-          "sha256": "6e0f61fc6b8f94007f5dbdc5c0a193c4129ffd182009d4eb3533e192db996a9c"
+          "bytes": 50292,
+          "sha256": "8d7883dde3c37653f1c9a49f1031ff28665cbb4a8c2481f45e76da273ace88f3"
         }
       ]
     },
