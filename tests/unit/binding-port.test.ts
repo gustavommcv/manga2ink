@@ -154,7 +154,7 @@ function completeMapping() {
 
 describe('mangabind binding port', () => {
   it('owns a temporary workspace across inspect, bind, and release', async () => {
-    const root = path.join(os.tmpdir(), 'tests', 'mangabound-workspace');
+    const root = path.join(os.tmpdir(), 'tests', 'manga2ink-workspace');
     const files = fakeFiles(root);
     const cli = {
       run: vi.fn<MangabindCliAdapter['run']>((request, options) => {
@@ -340,7 +340,7 @@ describe('mangabind binding port', () => {
     }
 
     it('passes --combine and returns the one combined output path, not per-volume paths', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-combine');
+      const root = path.join(os.tmpdir(), 'manga2ink-combine');
       const combinedPath = path.join(root, 'volumes', 'Chainsaw Man.cbz');
       const { adapter, cli } = combinableAdapter(root, combinedPath);
 
@@ -353,7 +353,7 @@ describe('mangabind binding port', () => {
     });
 
     it('throws a clear error when a combined run reports no combined output path', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-combine-missing');
+      const root = path.join(os.tmpdir(), 'manga2ink-combine-missing');
       const { adapter } = combinableAdapter(root, undefined);
 
       const inspection = await adapter.inspect('/input/Chainsaw Man');
@@ -385,7 +385,7 @@ describe('mangabind binding port', () => {
     }
 
     it('opens on mangabind grouping and does not write mangabind.json into the source folder for it', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-unchanged-seed');
+      const root = path.join(os.tmpdir(), 'manga2ink-unchanged-seed');
       const { adapter, cli, files } = groupedAdapter(root);
 
       const inspection = await adapter.inspect('/input/Chainsaw Man');
@@ -412,7 +412,7 @@ describe('mangabind binding port', () => {
     });
 
     it('does not treat a renamed volume id as a change', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-renamed-ids');
+      const root = path.join(os.tmpdir(), 'manga2ink-renamed-ids');
       const { adapter, files } = groupedAdapter(root);
 
       const inspection = await adapter.inspect('/input/Chainsaw Man');
@@ -429,7 +429,7 @@ describe('mangabind binding port', () => {
     });
 
     it('keeps the author and language of the file it replaces when the grouping is saved', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-carried-details');
+      const root = path.join(os.tmpdir(), 'manga2ink-carried-details');
       const { adapter, files } = groupedAdapter(root);
       files.readText.mockResolvedValue(
         JSON.stringify({ schema_version: 1, manga: { author: 'Fujimoto Tatsuki' }, volumes: [] }),
@@ -450,7 +450,7 @@ describe('mangabind binding port', () => {
     });
 
     it('still saves mangabind.json once the user changes the grouping', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-edited-seed');
+      const root = path.join(os.tmpdir(), 'manga2ink-edited-seed');
       const { adapter, files } = groupedAdapter(root);
 
       const inspection = await adapter.inspect('/input/Chainsaw Man');
@@ -467,7 +467,7 @@ describe('mangabind binding port', () => {
     });
 
     it('leaves a mangabind.json that is not valid JSON as it was, and still joins the edited volumes', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-broken-file');
+      const root = path.join(os.tmpdir(), 'manga2ink-broken-file');
       const { adapter, files } = groupedAdapter(root);
       files.readText.mockResolvedValue('{ not json');
 
@@ -485,7 +485,7 @@ describe('mangabind binding port', () => {
   });
 
   it('cleans up an inspection whose process fails and preserves its structured issue', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-failure');
+    const root = path.join(os.tmpdir(), 'manga2ink-failure');
     const files = fakeFiles(root);
     const report = structuredClone(fixture);
     report.status = 'failed';
@@ -513,7 +513,7 @@ describe('mangabind binding port', () => {
   });
 
   it('is no success when the report says it failed, even though the tool exited cleanly', async () => {
-    const files = fakeFiles(path.join(os.tmpdir(), 'mangabound-failed-report'));
+    const files = fakeFiles(path.join(os.tmpdir(), 'manga2ink-failed-report'));
     const report = structuredClone(fixture);
     report.status = 'failed';
     const adapter = new MangabindBindingAdapter(
@@ -527,7 +527,7 @@ describe('mangabind binding port', () => {
   });
 
   it('uses an actionable fallback when a failed report has no structured error', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-generic');
+    const root = path.join(os.tmpdir(), 'manga2ink-generic');
     const files = fakeFiles(root);
     const report = structuredClone(fixture);
     report.status = 'failed';
@@ -547,7 +547,7 @@ describe('mangabind binding port', () => {
       issue: { code: 'process_failed', diagnostic: 'technical detail' },
     });
 
-    const noDiagnosticFiles = fakeFiles(path.join(os.tmpdir(), 'mangabound-no-diagnostic'));
+    const noDiagnosticFiles = fakeFiles(path.join(os.tmpdir(), 'manga2ink-no-diagnostic'));
     const noDiagnostic = new MangabindBindingAdapter(
       { run: () => Promise.resolve(result({ report, exitCode: 1, stderr: '' })) },
       noDiagnosticFiles,
@@ -560,7 +560,7 @@ describe('mangabind binding port', () => {
   });
 
   it('still joins the confirmed mapping when the folder cannot keep it, and says so', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-save-failure');
+    const root = path.join(os.tmpdir(), 'manga2ink-save-failure');
     const files = fakeFiles(root);
     files.writeTextAtomically.mockRejectedValue(new Error('read only'));
     const cli = { run: vi.fn<MangabindCliAdapter['run']>(() => Promise.resolve(result())) };
@@ -579,7 +579,7 @@ describe('mangabind binding port', () => {
     );
     expect(bound.issues).toContainEqual(
       expect.objectContaining({
-        tool: 'mangabound',
+        tool: 'manga2ink',
         severity: 'warning',
         code: 'mapping_not_kept',
       }),
@@ -587,7 +587,7 @@ describe('mangabind binding port', () => {
   });
 
   it('rejects stale workspaces and output paths outside the owned directory', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-path-check');
+    const root = path.join(os.tmpdir(), 'manga2ink-path-check');
     const files = fakeFiles(root);
     const report = structuredClone(fixture);
     report.mode = 'execute';
@@ -621,7 +621,7 @@ describe('mangabind binding port', () => {
   });
 
   it('rejects an incomplete dry-run plan', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-incomplete-plan');
+    const root = path.join(os.tmpdir(), 'manga2ink-incomplete-plan');
     const files = fakeFiles(root);
     let invocation = 0;
     const adapter = new MangabindBindingAdapter(
@@ -655,7 +655,7 @@ describe('mangabind binding port', () => {
     await expect(adapter.release('bad-name')).rejects.toThrow(/Refusing/u);
     await adapter.release('bad-name');
 
-    const outsideFiles = fakeFiles(path.join(safeRoot, '..', 'mangabound-outside'));
+    const outsideFiles = fakeFiles(path.join(safeRoot, '..', 'manga2ink-outside'));
     const outside = new MangabindBindingAdapter(
       { run: () => Promise.resolve(result()) },
       outsideFiles,
@@ -685,20 +685,20 @@ describe('mangabind binding port', () => {
     await adapter.inspect('/input');
 
     expect(files.createTemporaryDirectory.mock.calls.map(([prefix]) => prefix)).toEqual([
-      path.join(os.tmpdir(), 'first-place', 'mangabound-'),
-      path.join(os.tmpdir(), 'second-place', 'mangabound-'),
+      path.join(os.tmpdir(), 'first-place', 'manga2ink-'),
+      path.join(os.tmpdir(), 'second-place', 'manga2ink-'),
     ]);
     // The one made in the first place is still the first place's, though the app works in the second now.
     await adapter.release('early');
     await adapter.release('late');
     expect(files.removeDirectory.mock.calls.map(([folder]) => folder)).toEqual([
-      path.join(os.tmpdir(), 'first-place', 'mangabound-abc123'),
-      path.join(os.tmpdir(), 'second-place', 'mangabound-abc123'),
+      path.join(os.tmpdir(), 'first-place', 'manga2ink-abc123'),
+      path.join(os.tmpdir(), 'second-place', 'manga2ink-abc123'),
     ]);
   });
 
   it('uses the real filesystem adapter for an isolated workspace', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-port-test-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-port-test-'));
     temporaryDirectories.push(root);
     let workspaceOutput = '';
     const cli = {
@@ -737,7 +737,7 @@ describe('mangabind binding port', () => {
   });
 
   it('removes an atomic-save temporary file when replacement fails', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-atomic-test-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-atomic-test-'));
     temporaryDirectories.push(root);
     const input = path.join(root, 'input');
     await fs.promises.mkdir(path.join(input, 'mangabind.json'), { recursive: true });
@@ -757,7 +757,7 @@ describe('mangabind binding port', () => {
   });
 
   it('surfaces per-title status from a batch plan without gating on the top-level status', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-batch-plan');
+    const root = path.join(os.tmpdir(), 'manga2ink-batch-plan');
     const files = fakeFiles(root);
     const cli = {
       run: vi.fn<MangabindCliAdapter['run']>(() =>
@@ -806,7 +806,7 @@ describe('mangabind binding port', () => {
   });
 
   it('returns volume paths for a successful batch title and isolates a failed one', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-batch-bind');
+    const root = path.join(os.tmpdir(), 'manga2ink-batch-bind');
     const files = fakeFiles(root);
     const report = batchReport(path.join(root, 'volumes'));
     report.mode = 'execute';
@@ -861,7 +861,7 @@ describe('mangabind binding port', () => {
   });
 
   it('passes --combine to batch binding and returns combined output paths', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-batch-combine');
+    const root = path.join(os.tmpdir(), 'manga2ink-batch-combine');
     const files = fakeFiles(root);
     const report = batchReport(path.join(root, 'volumes'));
     report.mode = 'execute';
@@ -900,7 +900,7 @@ describe('mangabind binding port', () => {
     }
 
     it('runs mangabind once on each folder, not as a batch, into the one workspace', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-titles');
+      const root = path.join(os.tmpdir(), 'manga2ink-titles');
       const files = fakeFiles(root);
       const volumesPath = path.join(root, 'volumes');
       const cli = {
@@ -977,7 +977,7 @@ describe('mangabind binding port', () => {
     });
 
     it('asks for the series as one book, and runs nothing for no folder', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-titles-combine');
+      const root = path.join(os.tmpdir(), 'manga2ink-titles-combine');
       const volumesPath = path.join(root, 'volumes');
       const report = titleReport(volumesPath, 'Alpha');
       report.manga[0]!.combined_output_path = path.join(volumesPath, 'Alpha.cbz');
@@ -1003,7 +1003,7 @@ describe('mangabind binding port', () => {
     });
 
     it('releases the workspace when one of the runs fails, and runs no further', async () => {
-      const root = path.join(os.tmpdir(), 'mangabound-titles-crash');
+      const root = path.join(os.tmpdir(), 'manga2ink-titles-crash');
       const files = fakeFiles(root);
       const cli = {
         run: vi.fn<MangabindCliAdapter['run']>(() => Promise.reject(new Error('spawn failed'))),
@@ -1020,7 +1020,7 @@ describe('mangabind binding port', () => {
   });
 
   it('releases the batch workspace when the process itself fails', async () => {
-    const root = path.join(os.tmpdir(), 'mangabound-batch-crash');
+    const root = path.join(os.tmpdir(), 'manga2ink-batch-crash');
     const files = fakeFiles(root);
     const adapter = new MangabindBindingAdapter(
       { run: () => Promise.reject(new Error('spawn failed')) },
@@ -1224,7 +1224,7 @@ describe('the author and language kept with a folder', () => {
 
   describe('on the real file system', () => {
     async function realFolder(): Promise<string> {
-      const folder = await mkdtemp(path.join(os.tmpdir(), 'mangabound-kept-details-'));
+      const folder = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-kept-details-'));
       folders.push(folder);
       return folder;
     }

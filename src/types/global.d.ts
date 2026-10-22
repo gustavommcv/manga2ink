@@ -1,8 +1,8 @@
-import type { MangaboundBridge } from '../shared/runtime-info';
+import type { Manga2InkBridge } from '../shared/runtime-info';
 
 declare global {
   interface Window {
-    readonly mangabound?: MangaboundBridge;
+    readonly manga2ink?: Manga2InkBridge;
   }
 }
 

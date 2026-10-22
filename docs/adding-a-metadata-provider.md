@@ -11,7 +11,7 @@ A source is a module built into the app. It can do two things, and the port (`sr
 1. `search(title)`: the works that match a title, each with its authors and the year it began where the service says (`authors`, `year`; both optional, and a service that does not know them is still a fit).
 2. `suggestVolumes(workId, { language })`: for one work, each volume and the chapter numbers it holds.
 
-It cannot ask for chapters, pages, images or files, and it must never be extended to. Mangabound is not a downloader (ADR 0005).
+It cannot ask for chapters, pages, images or files, and it must never be extended to. Manga2Ink is not a downloader (ADR 0005).
 
 ## Rules
 

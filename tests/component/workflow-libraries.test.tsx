@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import {
   addFolder,
@@ -25,13 +25,13 @@ import {
 import { raw, message } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('libraries in the queue', () => {
   it('is added like any folder, read as a library, and converted title by title', async () => {
     const user = userEvent.setup();
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({ ok: true, value: [converted('Good Manga', 'good-1')] }),
     );
     installBridge(libraryBridge([goodTitle, looseTitle], { convertLibrary }));
@@ -69,13 +69,13 @@ describe('libraries in the queue', () => {
 
   it('has the volumes of a title that has none set in the editor, and is read again', async () => {
     const user = userEvent.setup();
-    const writeTitleMapping = vi.fn<MangaboundBridge['writeTitleMapping']>(() =>
+    const writeTitleMapping = vi.fn<Manga2InkBridge['writeTitleMapping']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
-    const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() =>
+    const planLibrary = vi.fn<Manga2InkBridge['planLibrary']>(() =>
       Promise.resolve({ ok: true, value: { titles: [goodTitle, groupedTitle], issues: [] } }),
     );
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({
         ok: true,
         value: [converted('Good Manga', 'good-1'), converted('Broken Manga', 'broken-1')],
@@ -128,7 +128,7 @@ describe('libraries in the queue', () => {
   it('keeps a title that failed for another try, and runs only what was not saved', async () => {
     const user = userEvent.setup();
     const convertLibrary = vi
-      .fn<MangaboundBridge['convertLibrary']>()
+      .fn<Manga2InkBridge['convertLibrary']>()
       .mockResolvedValueOnce({
         ok: true,
         value: [
@@ -165,11 +165,11 @@ describe('libraries in the queue', () => {
 
   it('shows a failed title’s partial books and retries that title without releasing the library early', async () => {
     const user = userEvent.setup();
-    const releaseInput = vi.fn<MangaboundBridge['releaseInput']>(() =>
+    const releaseInput = vi.fn<Manga2InkBridge['releaseInput']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     const convertLibrary = vi
-      .fn<MangaboundBridge['convertLibrary']>()
+      .fn<Manga2InkBridge['convertLibrary']>()
       .mockResolvedValueOnce({
         ok: true,
         value: [
@@ -228,7 +228,7 @@ describe('libraries in the queue', () => {
 
   it('stops the queue at a library that was cancelled', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({ ok: true, value: [] }),
     );
     installBridge(
@@ -296,7 +296,7 @@ describe('libraries in the queue', () => {
 
   it('joins a library without converting, sending defaults for what mangapress would need', async () => {
     const user = userEvent.setup();
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({
         ok: true,
         value: [
@@ -327,13 +327,13 @@ describe('libraries in the queue', () => {
 
   it('is left out, with the reason, next to a folder when the run does not group', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
       }),
     );
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({ ok: true, value: [] }),
     );
     installBridge(
@@ -383,8 +383,8 @@ describe('libraries in the queue', () => {
     /** Confirms the volumes of Broken Manga with the second reading of the library held back. */
     async function confirmWithTheRereadHeldBack() {
       const user = userEvent.setup();
-      const reread = deferred<Awaited<ReturnType<MangaboundBridge['planLibrary']>>>();
-      const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() => reread.promise);
+      const reread = deferred<Awaited<ReturnType<Manga2InkBridge['planLibrary']>>>();
+      const planLibrary = vi.fn<Manga2InkBridge['planLibrary']>(() => reread.promise);
       installBridge(libraryBridge([goodTitle, looseTitle], { planLibrary }));
       render(<App />);
       await addFolder(user);
@@ -447,7 +447,7 @@ describe('libraries in the queue', () => {
 
   it('shows what a library would make by reading it again, without writing anything', async () => {
     const user = userEvent.setup();
-    const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() =>
+    const planLibrary = vi.fn<Manga2InkBridge['planLibrary']>(() =>
       Promise.resolve({ ok: true, value: { titles: [goodTitle, looseTitle], issues: [] } }),
     );
     installBridge(libraryBridge([goodTitle, looseTitle], { planLibrary }));
@@ -514,7 +514,7 @@ describe('libraries in the queue', () => {
 
   it('stays in the title editor and says why when the mapping could not be saved', async () => {
     const user = userEvent.setup();
-    const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() =>
+    const planLibrary = vi.fn<Manga2InkBridge['planLibrary']>(() =>
       Promise.resolve({ ok: true, value: { titles: [goodTitle], issues: [] } }),
     );
     installBridge(

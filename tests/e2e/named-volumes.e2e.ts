@@ -26,7 +26,7 @@ after(async () => {
 
 describe('packaged folder whose names carry the volumes', () => {
   it('arrives already grouped, converts without touching the source folder, and searches nowhere unless asked', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-named-volumes-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-named-volumes-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');
@@ -139,7 +139,7 @@ describe('packaged folder whose names carry the volumes', () => {
    * book, one book is ready and one file of the format is where it was saved. Returns that file.
    */
   async function bindTwoVolumesAs(format: 'CBZ' | 'EPUB' | 'PDF'): Promise<string> {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-combined-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-combined-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');

@@ -3,14 +3,14 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { WorkingSpace } from '@/domain/working-space';
 import { useWorkingSpace } from '@/renderer/hooks/use-working-space';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import { raw } from '@/domain/message';
 
 const roomy: WorkingSpace = { scratchFreeBytes: 10, pendingFreeBytes: 20, sameDrive: false };
 const tight: WorkingSpace = { scratchFreeBytes: 1, pendingFreeBytes: 2, sameDrive: true };
 
 const answering =
-  (...spaces: WorkingSpace[]): MangaboundBridge['getWorkingSpace'] =>
+  (...spaces: WorkingSpace[]): Manga2InkBridge['getWorkingSpace'] =>
   () =>
     Promise.resolve({ ok: true, value: spaces.shift() ?? roomy });
 
@@ -59,7 +59,7 @@ describe('useWorkingSpace', () => {
     ['a call that does not reach the main process', () => Promise.reject(new Error('gone'))],
   ])('forgets what it knew after %s, and warns of nothing', async (_what, fails) => {
     const getWorkingSpace = vi
-      .fn<MangaboundBridge['getWorkingSpace']>()
+      .fn<Manga2InkBridge['getWorkingSpace']>()
       .mockImplementationOnce(answering(tight))
       .mockImplementation(fails);
     const bridge = { getWorkingSpace };
@@ -79,7 +79,7 @@ describe('useWorkingSpace', () => {
 
   it('uses no answer that comes after it is done with, and listens to the window no more', async () => {
     let answer: (value: { ok: true; value: WorkingSpace }) => void = () => undefined;
-    const getWorkingSpace = vi.fn<MangaboundBridge['getWorkingSpace']>(
+    const getWorkingSpace = vi.fn<Manga2InkBridge['getWorkingSpace']>(
       () => new Promise((resolve) => (answer = resolve)),
     );
     const bridge = { getWorkingSpace };

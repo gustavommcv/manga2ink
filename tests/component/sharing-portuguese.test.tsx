@@ -15,7 +15,7 @@ import { bridge, installBridge } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
   vi.restoreAllMocks();
 });
 
@@ -106,7 +106,7 @@ describe('the panel for sharing the books, in Portuguese', () => {
     expect(screen.getByLabelText('Endereço do catálogo')).toHaveValue('http://192.168.1.20:8080');
     expect(
       screen.getByText(
-        'No KOReader: Search, depois OPDS catalog, e adicione este endereço. Mantenha o Mangabound aberto enquanto ele sincroniza.',
+        'No KOReader: Search, depois OPDS catalog, e adicione este endereço. Mantenha o Manga2Ink aberto enquanto ele sincroniza.',
       ),
     ).toBeVisible();
     const copy = screen.getByRole('button', { name: 'Copiar o endereço' });
@@ -244,11 +244,11 @@ describe('the error of an app that could not start, in Portuguese', () => {
     const error = screen.getByRole('alert', { name: 'Erro na inicialização' });
     expect(
       within(error).getByRole('heading', {
-        name: 'O Mangabound não conseguiu iniciar corretamente.',
+        name: 'O Manga2Ink não conseguiu iniciar corretamente.',
       }),
     ).toBeVisible();
     expect(
-      within(error).getByText('Reinicie o app. Se o problema continuar, reinstale o Mangabound.'),
+      within(error).getByText('Reinicie o app. Se o problema continuar, reinstale o Manga2Ink.'),
     ).toBeVisible();
   });
 });

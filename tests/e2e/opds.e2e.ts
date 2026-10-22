@@ -20,17 +20,17 @@ after(async () => {
 
 describe('packaged OPDS delivery', () => {
   it('serves real converted books newest-first over a real HTTP server', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-e2e-'));
     temporaryDirectories.push(testRoot);
     const sourceFixture = path.resolve(
       'tests',
       'fixtures',
       'e2e',
       'manga-folder',
-      'Mangabound E2E',
+      'Manga2Ink E2E',
     );
-    const inputPath = path.join(testRoot, 'Mangabound E2E');
-    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const inputPath = path.join(testRoot, 'Manga2Ink E2E');
+    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const libraryPath = path.join(testRoot, 'library');
     await cp(sourceFixture, inputPath, { recursive: true });
     await mkdir(libraryPath);
@@ -47,8 +47,8 @@ describe('packaged OPDS delivery', () => {
     // conversion timestamp is deterministically the newest of the two.
     await $('button=Folder').click();
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Edit volumes for Mangabound E2E"]').click();
-    await $('h1=Organize Mangabound E2E into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="Edit volumes for Manga2Ink E2E"]').click();
+    await $('h1=Organize Manga2Ink E2E into volumes').waitForDisplayed({ timeout: 30_000 });
     await $('button=Select all').click();
     await $('button[aria-label="Add volume"]').click();
     await $('button=Assign selected').click();
@@ -59,8 +59,8 @@ describe('packaged OPDS delivery', () => {
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
     await saveBookAs(
-      'Mangabound E2E - Vol.01.epub',
-      path.join(libraryPath, 'Mangabound E2E - Vol.01.epub'),
+      'Manga2Ink E2E - Vol.01.epub',
+      path.join(libraryPath, 'Manga2Ink E2E - Vol.01.epub'),
     );
 
     await $('button=Convert more').click();
@@ -71,18 +71,18 @@ describe('packaged OPDS delivery', () => {
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
-    await saveBookAs('Mangabound Direct.epub', path.join(libraryPath, 'Mangabound Direct.epub'));
+    await saveBookAs('Manga2Ink Direct.epub', path.join(libraryPath, 'Manga2Ink Direct.epub'));
 
     assert.deepEqual((await readdir(libraryPath)).sort(), [
       '.mangabound',
-      'Mangabound Direct.epub',
-      'Mangabound E2E - Vol.01.epub',
+      'Manga2Ink Direct.epub',
+      'Manga2Ink E2E - Vol.01.epub',
     ]);
 
     // Simulates a file placed in the library some other way, never through this app: the
     // catalog (`.mangabound/library.json`) never learns about it (ADR 0020).
     await cp(
-      path.join(libraryPath, 'Mangabound Direct.epub'),
+      path.join(libraryPath, 'Manga2Ink Direct.epub'),
       path.join(libraryPath, 'Copied in.epub'),
     );
 
@@ -91,8 +91,8 @@ describe('packaged OPDS delivery', () => {
     // itself is driven directly through the same bridge the panel calls, bound to
     // loopback, so this spec can exercise the real server hermetically.
     const sharingStatus = await browser.execute(async () => {
-      const bridge = window.mangabound;
-      if (bridge === undefined) throw new Error('window.mangabound is unavailable.');
+      const bridge = window.manga2ink;
+      if (bridge === undefined) throw new Error('window.manga2ink is unavailable.');
       const chosen = await bridge.chooseLibrary();
       if (!chosen.ok || chosen.value === null) {
         throw new Error('Could not choose a library to share.');
@@ -146,8 +146,8 @@ describe('packaged OPDS delivery', () => {
       assert.match(recentResponse.headers.get('content-type') ?? '', /kind=acquisition/u);
       const recentBody = await recentResponse.text();
 
-      const directTitleIndex = recentBody.indexOf('<title>Mangabound Direct</title>');
-      const folderTitleIndex = recentBody.indexOf('<title>Mangabound E2E - Vol.01</title>');
+      const directTitleIndex = recentBody.indexOf('<title>Manga2Ink Direct</title>');
+      const folderTitleIndex = recentBody.indexOf('<title>Manga2Ink E2E - Vol.01</title>');
       assert.ok(directTitleIndex >= 0, 'Expected the direct CBZ conversion in the feed.');
       assert.ok(folderTitleIndex >= 0, 'Expected the folder conversion in the feed.');
       assert.ok(
@@ -155,7 +155,7 @@ describe('packaged OPDS delivery', () => {
         'Expected the more recently converted book first.',
       );
 
-      const directHref = `${url}/books/Mangabound%20Direct.epub`;
+      const directHref = `${url}/books/Manga2Ink%20Direct.epub`;
       assert.ok(
         recentBody.includes(`href="${directHref}" type="application/epub+zip"`),
         'Expected an acquisition link for the direct CBZ conversion with the epub MIME type.',
@@ -167,7 +167,7 @@ describe('packaged OPDS delivery', () => {
       assert.equal(acquisitionResponse.status, 200);
       assert.equal(acquisitionResponse.headers.get('content-type'), 'application/epub+zip');
       const downloaded = Buffer.from(await acquisitionResponse.arrayBuffer());
-      const onDisk = await readFile(path.join(libraryPath, 'Mangabound Direct.epub'));
+      const onDisk = await readFile(path.join(libraryPath, 'Manga2Ink Direct.epub'));
       assert.ok(downloaded.equals(onDisk));
 
       // The file copied in some other way shows up as "Other files," not "Recently converted."
@@ -185,7 +185,7 @@ describe('packaged OPDS delivery', () => {
         'Expected the loose file in the untracked feed.',
       );
       assert.ok(
-        !otherBody.includes('<title>Mangabound Direct</title>'),
+        !otherBody.includes('<title>Manga2Ink Direct</title>'),
         'A tracked book must not also appear in the untracked feed.',
       );
 
@@ -195,15 +195,15 @@ describe('packaged OPDS delivery', () => {
       assert.ok(Buffer.from(await otherDownload.arrayBuffer()).equals(onDisk));
     } finally {
       await browser.execute(async () => {
-        await window.mangabound?.stopSharing();
+        await window.manga2ink?.stopSharing();
       });
     }
   });
 
   it('records the real author mangapress used, and Unknown for an untracked copy of the same file', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-author-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-author-e2e-'));
     temporaryDirectories.push(testRoot);
-    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const libraryPath = path.join(testRoot, 'library');
     await mkdir(libraryPath);
 
@@ -216,14 +216,14 @@ describe('packaged OPDS delivery', () => {
     await $('button=Files').click();
     await $('span=Ready').waitForDisplayed({ timeout: 30_000 });
     // The author belongs to the item: it is typed on the item's own details page.
-    await $('button[aria-label="Edit details of Mangabound Direct.cbz"]').click();
-    await $('h1=Mangabound Direct.cbz').waitForDisplayed({ timeout: 10_000 });
+    await $('button[aria-label="Edit details of Manga2Ink Direct.cbz"]').click();
+    await $('h1=Manga2Ink Direct.cbz').waitForDisplayed({ timeout: 10_000 });
     await $('#details-author').setValue('A Real Author');
     await $('button=Queue').click();
     await $('h1=Queue').waitForDisplayed();
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
-    await saveBookAs('Mangabound Direct.epub', path.join(libraryPath, 'Mangabound Direct.epub'));
+    await saveBookAs('Manga2Ink Direct.epub', path.join(libraryPath, 'Manga2Ink Direct.epub'));
 
     const savedName = (await readdir(libraryPath)).find((name) => name !== '.mangabound');
     assert.ok(savedName !== undefined, 'Expected exactly one converted book in the library.');
@@ -233,8 +233,8 @@ describe('packaged OPDS delivery', () => {
     );
 
     const sharingStatus = await browser.execute(async () => {
-      const bridge = window.mangabound;
-      if (bridge === undefined) throw new Error('window.mangabound is unavailable.');
+      const bridge = window.manga2ink;
+      if (bridge === undefined) throw new Error('window.manga2ink is unavailable.');
       const chosen = await bridge.chooseLibrary();
       if (!chosen.ok || chosen.value === null) {
         throw new Error('Could not choose a library to share.');
@@ -270,13 +270,13 @@ describe('packaged OPDS delivery', () => {
       assert.match(otherBody, /<name>Unknown<\/name>/u);
     } finally {
       await browser.execute(async () => {
-        await window.mangabound?.stopSharing();
+        await window.manga2ink?.stopSharing();
       });
     }
   });
 
   it('refuses to start sharing a library whose catalog is corrupt, with a readable message', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-corrupt-start-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-corrupt-start-'));
     temporaryDirectories.push(testRoot);
     const libraryPath = path.join(testRoot, 'library');
     await mkdir(path.join(libraryPath, '.mangabound'), { recursive: true });
@@ -290,8 +290,8 @@ describe('packaged OPDS delivery', () => {
     // the shape of a failed WorkflowResult) as a WebDriver error response, fails the command
     // with "[object Object]", and retries it -- by which point the one-shot dialog mock is spent.
     const raw = await browser.execute(async () => {
-      const bridge = window.mangabound;
-      if (bridge === undefined) throw new Error('window.mangabound is unavailable.');
+      const bridge = window.manga2ink;
+      if (bridge === undefined) throw new Error('window.manga2ink is unavailable.');
       const chosen = await bridge.chooseLibrary();
       if (!chosen.ok || chosen.value === null) {
         throw new Error('Could not choose a library to share.');
@@ -310,12 +310,12 @@ describe('packaged OPDS delivery', () => {
     assert.equal(result.ok, false, 'Expected sharing to be refused for a corrupt catalog.');
     assert.equal(result.error?.code, 'malformed_json');
     assert.equal(result.error.said.id, 'failure.catalogUnreadable');
-    const status = await browser.execute(async () => window.mangabound?.getSharingStatus());
+    const status = await browser.execute(async () => window.manga2ink?.getSharingStatus());
     assert.ok(status?.ok === true && !status.value.active, 'Expected no sharing to be running.');
   });
 
   it('answers a generic error, not parser text, when the catalog corrupts while sharing', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-corrupt-live-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-corrupt-live-'));
     temporaryDirectories.push(testRoot);
     const libraryPath = path.join(testRoot, 'library');
     await mkdir(libraryPath);
@@ -325,8 +325,8 @@ describe('packaged OPDS delivery', () => {
 
     // A library with no catalog yet is valid (it reads as empty), so sharing starts fine.
     const sharingStatus = await browser.execute(async () => {
-      const bridge = window.mangabound;
-      if (bridge === undefined) throw new Error('window.mangabound is unavailable.');
+      const bridge = window.manga2ink;
+      if (bridge === undefined) throw new Error('window.manga2ink is unavailable.');
       const chosen = await bridge.chooseLibrary();
       if (!chosen.ok || chosen.value === null) {
         throw new Error('Could not choose a library to share.');
@@ -353,7 +353,7 @@ describe('packaged OPDS delivery', () => {
       assert.doesNotMatch(body, /JSON/u);
     } finally {
       await browser.execute(async () => {
-        await window.mangabound?.stopSharing();
+        await window.manga2ink?.stopSharing();
       });
     }
   });

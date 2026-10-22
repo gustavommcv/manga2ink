@@ -30,7 +30,7 @@ async function chooseItemFormat(value: 'cbz' | 'epub' | 'pdf'): Promise<void> {
 
 describe('packaged conversion options of one item', () => {
   it('make each item with its own format, in one run, without touching the queue’s options', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-item-options-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-item-options-e2e-'));
     temporaryDirectories.push(testRoot);
     const named = path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes');
     const alpha = path.join(testRoot, 'Alpha Series');
@@ -115,7 +115,7 @@ describe('packaged conversion options of one item', () => {
     await resetQueue();
   });
   it('keep every item to its own options in a large queue and a large library, with the real tools', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-item-options-many-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-item-options-many-e2e-'));
     temporaryDirectories.push(testRoot);
     const named = path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes');
     const resolved = path.resolve(
@@ -201,7 +201,7 @@ describe('packaged conversion options of one item', () => {
     await resetQueue();
   });
   it('keep the options of an item that failed, and make it with them when it is run again', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-item-options-fail-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-item-options-fail-e2e-'));
     temporaryDirectories.push(testRoot);
     const named = path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes');
     const alpha = path.join(testRoot, 'Alpha Series');

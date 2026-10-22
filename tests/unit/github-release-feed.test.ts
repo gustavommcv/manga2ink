@@ -17,9 +17,9 @@ function respond(status: number, body: string): Response {
 /** The shape of what the releases endpoint of GitHub answers, with the fields the check does not read. */
 const answer = JSON.stringify([
   {
-    url: 'https://api.github.com/repos/gustavommcv/mangabound/releases/1',
+    url: 'https://api.github.com/repos/gustavommcv/manga2ink/releases/1',
     tag_name: 'v0.1.0-alpha.16',
-    name: 'Mangabound v0.1.0-alpha.16',
+    name: 'Manga2Ink v0.1.0-alpha.16',
     draft: false,
     prerelease: true,
     published_at: '2026-10-20T10:00:00Z',
@@ -40,7 +40,7 @@ describe('the list of releases from GitHub', () => {
     expect(fetchImpl).toHaveBeenCalledOnce();
     expect(fetchImpl.mock.calls[0]?.[0]).toBe(releasesAddress);
     expect(releasesAddress).toMatch(
-      /^https:\/\/api\.github\.com\/repos\/gustavommcv\/mangabound\//u,
+      /^https:\/\/api\.github\.com\/repos\/gustavommcv\/manga2ink\//u,
     );
     expect(releases).toEqual([
       { tag: 'v0.1.0-alpha.16', prerelease: true, publishedAt: '2026-10-20T10:00:00Z' },

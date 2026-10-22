@@ -63,7 +63,7 @@ describe('copying the diagnostics', () => {
     expect(await call('app:copy-diagnostics')).toEqual({ ok: true, value: undefined });
 
     const text = electron.writeText.mock.calls[0]?.[0] ?? '';
-    expect(text).toContain('Mangabound 0.1.0-alpha.15 (packaged)');
+    expect(text).toContain('Manga2Ink 0.1.0-alpha.15 (packaged)');
     expect(text).toContain(`System: ${process.platform} ${process.arch}`);
     expect(text).toContain('Language of the window: pt-BR');
     expect(text).toContain('Working folder: the default');

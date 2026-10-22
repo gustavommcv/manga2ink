@@ -230,7 +230,7 @@ describe('NodeOpdsServer', () => {
   });
 
   it('downloads a book byte-for-byte and 404s for an unknown path', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-'));
     try {
       await mkdir(path.join(root, 'Manga'), { recursive: true });
       const content = Buffer.from('fake epub contents');
@@ -268,7 +268,7 @@ describe('NodeOpdsServer', () => {
   });
 
   it('never serves a file outside the library, whatever a catalog entry says', async () => {
-    const parent = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-outside-'));
+    const parent = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-outside-'));
     try {
       const library = path.join(parent, 'library');
       await mkdir(library);
@@ -302,7 +302,7 @@ describe('NodeOpdsServer', () => {
   });
 
   it('refuses a catalog on disk that names a file outside the library', async () => {
-    const parent = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-hostile-'));
+    const parent = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-hostile-'));
     try {
       const library = path.join(parent, 'library');
       await mkdir(path.join(library, '.mangabound'), { recursive: true });
@@ -369,7 +369,7 @@ describe('NodeOpdsServer', () => {
     }
 
     it('never leads to a file outside the library', async () => {
-      const parent = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-link-out-'));
+      const parent = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-link-out-'));
       try {
         const library = path.join(parent, 'library');
         const outside = path.join(parent, 'outside');
@@ -394,7 +394,7 @@ describe('NodeOpdsServer', () => {
     });
 
     it('still serves a file it leads to inside the library', async () => {
-      const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-link-in-'));
+      const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-link-in-'));
       try {
         const real = path.join(root, 'Real Shelf');
         await mkdir(real);
@@ -413,7 +413,7 @@ describe('NodeOpdsServer', () => {
   });
 
   it('serves a loose file in the "other" feed, and never lists it in "recent"', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-other-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-other-'));
     try {
       const tracked: LibraryBookEntry = {
         relativePath: 'Tracked.epub',
@@ -475,7 +475,7 @@ describe('NodeOpdsServer', () => {
       bytes: 1,
       convertedAt: '2026-09-16T10:00:00.000Z',
     };
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-missing-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-missing-'));
     try {
       const handle = await new NodeOpdsServer(memoryStore([entry])).start({
         libraryPath: root,
@@ -516,7 +516,7 @@ describe('NodeOpdsServer', () => {
   });
 
   it('answers 404 for a catalog entry that is not a file', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-eisdir-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-eisdir-'));
     try {
       await mkdir(path.join(root, 'a-directory'), { recursive: true });
       const entry: LibraryBookEntry = {
@@ -595,7 +595,7 @@ describe('NodeOpdsServer while a book is being downloaded', () => {
 
   /** A library with one book too large to be sent before the reader has read any of it. */
   async function startSharingBigBook(options?: NodeOpdsServerOptions): Promise<OpdsServerHandle> {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-opds-download-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-download-'));
     directories.push(root);
     await writeFile(path.join(root, bookName), Buffer.alloc(bookBytes, 1));
     const entry: LibraryBookEntry = {

@@ -60,7 +60,7 @@ describe('a line of the log', () => {
     log.write('info', 'Started.', when);
     await log.settled();
 
-    expect(files.get(at('mangabound.log'))).toBe(
+    expect(files.get(at('manga2ink.log'))).toBe(
       [
         '2026-10-16T21:04:05.123Z ERROR Something went wrong.',
         '2026-10-16T21:04:05.123Z WARN Look at this.',
@@ -77,7 +77,7 @@ describe('a line of the log', () => {
     log.write('info', 'Now.');
     await log.settled();
 
-    expect(files.get(at('mangabound.log'))).toMatch(/^\d{4}-\d\d-\d\dT[\d:.]+Z INFO Now\.\n$/u);
+    expect(files.get(at('manga2ink.log'))).toMatch(/^\d{4}-\d\d-\d\dT[\d:.]+Z INFO Now\.\n$/u);
   });
 
   it('keeps the lines it is given in the order they were asked for', async () => {
@@ -88,7 +88,7 @@ describe('a line of the log', () => {
     await log.settled();
 
     expect(
-      (files.get(at('mangabound.log')) ?? '')
+      (files.get(at('manga2ink.log')) ?? '')
         .trim()
         .split('\n')
         .map((line) => line.split(' ').at(-1)),
@@ -126,18 +126,18 @@ describe('the files of the log', () => {
     await log.settled();
 
     expect([...files.keys()].map((file) => path.basename(file)).sort()).toEqual([
-      'mangabound.log',
-      'mangabound.log.1',
-      'mangabound.log.2',
+      'manga2ink.log',
+      'manga2ink.log.1',
+      'manga2ink.log.2',
     ]);
-    expect(files.get(at('mangabound.log'))).toContain(line(7));
-    expect(files.get(at('mangabound.log.1'))).toContain(line(5));
-    expect(files.get(at('mangabound.log.2'))).toContain(line(3));
+    expect(files.get(at('manga2ink.log'))).toContain(line(7));
+    expect(files.get(at('manga2ink.log.1'))).toContain(line(5));
+    expect(files.get(at('manga2ink.log.2'))).toContain(line(3));
     // The oldest goes before the others take its place, and each moves up one.
     expect(calls.filter((call) => call !== `mkdir ${directory}`).slice(0, 3)).toEqual([
-      'remove mangabound.log.2',
-      'move mangabound.log.1 mangabound.log.2',
-      'move mangabound.log mangabound.log.1',
+      'remove manga2ink.log.2',
+      'move manga2ink.log.1 manga2ink.log.2',
+      'move manga2ink.log manga2ink.log.1',
     ]);
   });
 
@@ -148,9 +148,9 @@ describe('the files of the log', () => {
     for (let n = 1; n <= 4; n += 1) log.write('info', `line ${String(n)} ${'y'.repeat(40)}`, when);
     await log.settled();
 
-    expect([...files.keys()].map((file) => path.basename(file))).toEqual(['mangabound.log']);
-    expect(files.get(at('mangabound.log'))).toContain('line 4');
-    expect(files.get(at('mangabound.log'))).not.toContain('line 3');
+    expect([...files.keys()].map((file) => path.basename(file))).toEqual(['manga2ink.log']);
+    expect(files.get(at('manga2ink.log'))).toContain('line 4');
+    expect(files.get(at('manga2ink.log'))).not.toContain('line 3');
   });
 
   it('are at least one, whatever it is asked', async () => {
@@ -162,7 +162,7 @@ describe('the files of the log', () => {
     await log.settled();
 
     expect([...files.keys()]).toHaveLength(1);
-    expect(files.get(at('mangabound.log'))).toContain('and another one');
+    expect(files.get(at('manga2ink.log'))).toContain('and another one');
   });
 
   it('take a line longer than the size into an empty file instead of starting an empty one over', async () => {
@@ -172,7 +172,7 @@ describe('the files of the log', () => {
     log.write('info', 'z'.repeat(200), when);
     await log.settled();
 
-    expect(files.get(at('mangabound.log'))).toContain('z'.repeat(200));
+    expect(files.get(at('manga2ink.log'))).toContain('z'.repeat(200));
     expect(calls.filter((call) => call.startsWith('remove') || call.startsWith('move'))).toEqual(
       [],
     );
@@ -187,7 +187,7 @@ describe('the files of the log', () => {
     await log.settled();
 
     // A line is 35 letters and 37 bytes: two are 70 letters, which fit in 72, and 74 bytes, which do not.
-    expect(files.has(at('mangabound.log.1'))).toBe(true);
+    expect(files.has(at('manga2ink.log.1'))).toBe(true);
   });
 });
 
@@ -216,8 +216,8 @@ describe('a log that cannot be written', () => {
       'The log could not be written.',
       expect.objectContaining({ message: 'disk full' }),
     );
-    expect(files.get(at('mangabound.log'))).toContain('kept');
-    expect(files.get(at('mangabound.log'))).not.toContain('lost');
+    expect(files.get(at('manga2ink.log'))).toContain('kept');
+    expect(files.get(at('manga2ink.log'))).not.toContain('lost');
   });
 
   it('does not stop the app when nobody is listening', async () => {
@@ -238,31 +238,31 @@ describe('the log on a real disk', () => {
   afterEach(() => rm(root, { recursive: true, force: true }));
 
   it('is made with its folder, added to, and started over, leaving only the files it keeps', async () => {
-    root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-log-'));
+    root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-log-'));
     const folder = path.join(root, 'not', 'there', 'yet');
     const log = new FileLog({ directory: folder, maxBytes: 200, files: 2 });
 
     for (let n = 1; n <= 12; n += 1) log.write('warn', `line ${String(n)} ${'w'.repeat(40)}`, when);
     await log.settled();
 
-    expect((await readdir(folder)).sort()).toEqual(['mangabound.log', 'mangabound.log.1']);
-    expect(await readFile(path.join(folder, 'mangabound.log'), 'utf8')).toContain('line 12');
-    for (const name of ['mangabound.log', 'mangabound.log.1']) {
+    expect((await readdir(folder)).sort()).toEqual(['manga2ink.log', 'manga2ink.log.1']);
+    expect(await readFile(path.join(folder, 'manga2ink.log'), 'utf8')).toContain('line 12');
+    for (const name of ['manga2ink.log', 'manga2ink.log.1']) {
       expect((await readFile(path.join(folder, name), 'utf8')).length).toBeLessThanOrEqual(200);
     }
   });
 
   it('starts over when the first file is not there to move, as after someone removed one', async () => {
-    root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-log-'));
+    root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-log-'));
     const log = new FileLog({ directory: root, maxBytes: 80, files: 3 });
 
     for (let n = 1; n <= 6; n += 1) log.write('info', `line ${String(n)} ${'v'.repeat(30)}`, when);
     await log.settled();
-    await rm(path.join(root, 'mangabound.log.1'), { force: true });
+    await rm(path.join(root, 'manga2ink.log.1'), { force: true });
     for (let n = 7; n <= 9; n += 1) log.write('info', `line ${String(n)} ${'v'.repeat(30)}`, when);
     await log.settled();
 
-    expect(await readFile(path.join(root, 'mangabound.log'), 'utf8')).toContain('line 9');
+    expect(await readFile(path.join(root, 'manga2ink.log'), 'utf8')).toContain('line 9');
   });
 });
 

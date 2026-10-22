@@ -1,16 +1,16 @@
 import type { Language } from '@/domain/app-settings';
 import type { ProjectLink } from '@/shared/project-links-contract';
 
-const repository = 'https://github.com/gustavommcv/mangabound';
+const repository = 'https://github.com/gustavommcv/manga2ink';
 
 /**
  * The guide is the site's, and the site keeps each language under its own path. A language is
  * added here by one entry, and the compiler says so when it is missing.
  */
 const guide: Readonly<Record<Language, string>> = {
-  en: 'https://gustavommcv.github.io/mangabound/',
-  'pt-BR': 'https://gustavommcv.github.io/mangabound/pt-br/',
-  ja: 'https://gustavommcv.github.io/mangabound/ja/',
+  en: 'https://gustavommcv.github.io/manga2ink/',
+  'pt-BR': 'https://gustavommcv.github.io/manga2ink/pt-br/',
+  ja: 'https://gustavommcv.github.io/manga2ink/ja/',
 };
 
 /**

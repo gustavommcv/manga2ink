@@ -3,9 +3,9 @@
 // only root can enter, or a program only root can run, installs without a word and then does not
 // work: a bundled tool that cannot be opened keeps every conversion from starting.
 //
-//   dpkg-deb -c mangabound.deb | node scripts/verify-package-permissions.mjs mangabound.deb
-//   rpm -qlvp mangabound.rpm   | node scripts/verify-package-permissions.mjs mangabound.rpm
-//   tar --zstd -tvf mangabound.pkg.tar.zst | node scripts/verify-package-permissions.mjs mangabound.pkg.tar.zst
+//   dpkg-deb -c manga2ink.deb | node scripts/verify-package-permissions.mjs manga2ink.deb
+//   rpm -qlvp manga2ink.rpm   | node scripts/verify-package-permissions.mjs manga2ink.rpm
+//   tar --zstd -tvf manga2ink.pkg.tar.zst | node scripts/verify-package-permissions.mjs manga2ink.pkg.tar.zst
 //
 // The three listings begin every line the same way (`drwxr-xr-x`, then an owner and a size laid
 // out differently in each), and only that beginning is read.

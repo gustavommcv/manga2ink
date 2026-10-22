@@ -30,7 +30,7 @@ export interface MetadataSearchResult {
  * A source of chapter-to-volume data. This is all a provider can do: find a work by its title (and
  * say who wrote it and when it began, where it knows), and say which chapters of it belong to which
  * volume. There is deliberately no way to ask for
- * chapters, pages or images (ADR 0005: Mangabound is not a downloader).
+ * chapters, pages or images (ADR 0005: Manga2Ink is not a downloader).
  */
 export interface MetadataProviderPort {
   readonly descriptor: MetadataProviderDescriptor;

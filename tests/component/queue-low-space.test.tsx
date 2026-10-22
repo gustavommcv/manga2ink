@@ -10,7 +10,7 @@ import { QueueScreen, type QueueScreenProps } from '@/renderer/screens/queue-scr
 import { inLanguage } from './support/i18n';
 
 const GiB = 1024 ** 3;
-const warned = /free where Mangabound works/u;
+const warned = /free where Manga2Ink works/u;
 
 /** 3000 pages in one volume: about 2.9 GB for each of the two places. */
 const bigFolder: QueueRow = {
@@ -79,7 +79,7 @@ describe('the warning of too little room, before the queue is processed', () => 
 
     const warning = screen.getByText(warned);
     expect(warning).toHaveTextContent(
-      'Only 1.5 GB are free where Mangabound works, and this queue may take about 2.9 GB.',
+      'Only 1.5 GB are free where Manga2Ink works, and this queue may take about 2.9 GB.',
     );
     expect(warning).toHaveTextContent('App settings, under Processing');
   });
@@ -92,8 +92,8 @@ describe('the warning of too little room, before the queue is processed', () => 
       ),
     );
 
-    expect(screen.getByText(/livres onde o Mangabound trabalha/u)).toHaveTextContent(
-      'Só há 1,5 GB livres onde o Mangabound trabalha, e esta fila pode ocupar cerca de 2,9 GB.',
+    expect(screen.getByText(/livres onde o Manga2Ink trabalha/u)).toHaveTextContent(
+      'Só há 1,5 GB livres onde o Manga2Ink trabalha, e esta fila pode ocupar cerca de 2,9 GB.',
     );
   });
 

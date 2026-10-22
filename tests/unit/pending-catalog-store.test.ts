@@ -40,7 +40,7 @@ async function pendingFolder(): Promise<{
   readonly catalog: PendingCatalogStore;
   readonly addBook: (run: string, book: LibraryBookEntry) => Promise<void>;
 }> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-catalog-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-pending-catalog-'));
   folders.push(root);
   const inner = new FsLibraryStore();
   const catalog = new PendingCatalogStore(inner);
@@ -118,7 +118,7 @@ describe('the catalog of the pending folder', () => {
   it('follows the folder the pending conversions are in when that is a function', async () => {
     const { root, inner, addBook } = await pendingFolder();
     await addBook(firstRun, entry('Chainsaw Man - Vol.01', '2026-10-04T10:00:00.000Z'));
-    const other = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-other-'));
+    const other = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-pending-other-'));
     folders.push(other);
     let current = root;
     const store = new PendingCatalogStore(inner);
@@ -243,7 +243,7 @@ describe('sharing the pending folder with the OPDS server', () => {
   async function share(root: string, catalog: PendingCatalogStore): Promise<OpdsServerHandle> {
     const handle = await new NodeOpdsServer(catalog).start({
       libraryPath: root,
-      libraryTitle: 'Mangabound ready books',
+      libraryTitle: 'Manga2Ink ready books',
       interfaceAddress: '127.0.0.1',
       port: 0,
       auth: open,

@@ -16,7 +16,7 @@ npm run site:check
 npm run site:dev
 ```
 
-Open <http://localhost:4321/mangabound/>. The root `site:media` command generates the app captures, in each language the app has (the guide's pages in Portuguese show the Portuguese ones); `site:dev`, `site:build`, and `site:check` run it first. The resulting PNGs and `capture.json` are ignored build inputs under `website/src/assets/tutorial/generated/`, not committed media or visual baselines. After changing app UI/stories, rerun `site:media` (the website dev server does not rebuild Storybook). Direct website-package builds/checks require these inputs or the current CI artifact; a missing referenced capture deliberately fails the build.
+Open <http://localhost:4321/manga2ink/>. The root `site:media` command generates the app captures, in each language the app has (the guide's pages in Portuguese show the Portuguese ones); `site:dev`, `site:build`, and `site:check` run it first. The resulting PNGs and `capture.json` are ignored build inputs under `website/src/assets/tutorial/generated/`, not committed media or visual baselines. After changing app UI/stories, rerun `site:media` (the website dev server does not rebuild Storybook). Direct website-package builds/checks require these inputs or the current CI artifact; a missing referenced capture deliberately fails the build.
 
 `npm run site:build` generates `website/dist/`; `npm run site:preview` serves that production output, including the Pagefind search index. Search must be tested against a production build, not only the development server.
 
@@ -72,7 +72,7 @@ from the version tag or bypass the documentation checks. The existing manual wor
 can also refresh the site after a release is withdrawn. No scheduled job, personal access token,
 or client-side download service is required.
 
-`site.config.mjs` is the single source of the GitHub Pages base. Production obtains `BASE_PATH` from `actions/configure-pages`; local development defaults to `/mangabound/`. Keep links base-aware and test any hosting change.
+`site.config.mjs` is the single source of the GitHub Pages base. Production obtains `BASE_PATH` from `actions/configure-pages`; local development defaults to `/manga2ink/`. Keep links base-aware and test any hosting change.
 
 Before the first publication, a repository administrator must select **Settings → Pages → Build and deployment → Source → GitHub Actions** and review the `github-pages` environment's deployment rules. A local preview does not enable hosting or establish that production deployment succeeds.
 

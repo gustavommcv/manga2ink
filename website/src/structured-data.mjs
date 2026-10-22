@@ -2,11 +2,11 @@ import { appLanguages } from '../site.config.mjs';
 
 const application = {
   '@type': 'SoftwareApplication',
-  name: 'Mangabound',
+  name: 'Manga2Ink',
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Windows, macOS, Linux',
   inLanguage: appLanguages,
-  downloadUrl: 'https://github.com/gustavommcv/mangabound/releases',
+  downloadUrl: 'https://github.com/gustavommcv/manga2ink/releases',
   license: 'https://opensource.org/license/mit',
   isAccessibleForFree: true,
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -25,7 +25,7 @@ export function structuredData({ url, home, title, description, lang }) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Mangabound', item: home },
+        { '@type': 'ListItem', position: 1, name: 'Manga2Ink', item: home },
         { '@type': 'ListItem', position: 2, name: title, item: url },
       ],
     };
@@ -33,7 +33,7 @@ export function structuredData({ url, home, title, description, lang }) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebSite', name: 'Mangabound', url: home, inLanguage: lang, description },
+      { '@type': 'WebSite', name: 'Manga2Ink', url: home, inLanguage: lang, description },
       { ...application, url: home, description },
     ],
   };

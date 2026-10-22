@@ -12,7 +12,7 @@
 
 ## Before review
 
-- [ ] I followed [CONTRIBUTING.md](https://github.com/gustavommcv/mangabound/blob/main/CONTRIBUTING.md), including the required checks and behavior-focused regression tests where applicable.
+- [ ] I followed [CONTRIBUTING.md](https://github.com/gustavommcv/manga2ink/blob/main/CONTRIBUTING.md), including the required checks and behavior-focused regression tests where applicable.
 - [ ] I updated documentation where needed and did not rewrite accepted ADRs.
 - [ ] I removed sensitive information from screenshots and diagnostics.
 

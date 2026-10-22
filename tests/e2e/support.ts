@@ -222,7 +222,7 @@ export async function recordProgress(): Promise<void> {
   await browser.execute(() => {
     const seen: unknown[] = [];
     Reflect.set(window, 'progressSeen', seen);
-    window.mangabound?.onConversionProgress((progress) => seen.push(progress));
+    window.manga2ink?.onConversionProgress((progress) => seen.push(progress));
   });
 }
 

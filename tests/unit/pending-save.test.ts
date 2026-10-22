@@ -18,9 +18,9 @@ const collision = () => Object.assign(new Error('existing file'), { code: 'EEXIS
 
 describe('pending save names', () => {
   it('exports a real CBZ fixture repeatedly without replacing existing bytes', async () => {
-    const directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-save-names-'));
+    const directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-save-names-'));
     directories.push(directory);
-    const fixture = path.resolve('tests/fixtures/e2e/cbz/Mangabound Direct.cbz');
+    const fixture = path.resolve('tests/fixtures/e2e/cbz/Manga2Ink Direct.cbz');
     const original = await readFile(fixture);
     const save = async (candidate: string) => {
       await copyFile(fixture, path.join(directory, candidate), constants.COPYFILE_EXCL);

@@ -15,7 +15,7 @@ const serviceName = 'GitHub';
  * that runs is among the latest.
  */
 export const releasesAddress =
-  'https://api.github.com/repos/gustavommcv/mangabound/releases?per_page=30';
+  'https://api.github.com/repos/gustavommcv/manga2ink/releases?per_page=30';
 
 const releasesSchema = z.array(
   z.object({

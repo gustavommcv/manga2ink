@@ -45,14 +45,14 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     chooseFiles: { title: 'Choose comic files', archive: 'Comic book archive' },
     chooseLibrary: { title: 'Choose a library to share', button: 'Use this folder' },
     chooseProcessingFolder: {
-      title: 'Choose the folder Mangabound works in',
+      title: 'Choose the folder Manga2Ink works in',
       button: 'Use this folder',
     },
     saveBook: { title: 'Save book as' },
     saveAll: { title: 'Save all books to a folder' },
     leaveWhileConverting: {
       message: 'A conversion is still running.',
-      detail: 'If you close Mangabound now, it will be lost.',
+      detail: 'If you close Manga2Ink now, it will be lost.',
       keep: 'Keep converting',
       leave: 'Close anyway',
     },
@@ -60,19 +60,19 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       done: {
         title: 'Your books are ready',
         body: (books) =>
-          `${String(books)} ${countOf(books, 'book', 'books')} ready to save in Mangabound.`,
+          `${String(books)} ${countOf(books, 'book', 'books')} ready to save in Manga2Ink.`,
       },
       notes: {
         title: 'Your books are ready, with notes',
         body: (books) =>
-          `${String(books)} ${countOf(books, 'book', 'books')} ready. Open Mangabound to see the notes.`,
+          `${String(books)} ${countOf(books, 'book', 'books')} ready. Open Manga2Ink to see the notes.`,
       },
       failures: {
         title: 'Some conversions failed',
         body: (books, failures) =>
           books === 0
-            ? 'Nothing was made. Open Mangabound to see why.'
-            : `${String(books)} ${countOf(books, 'book', 'books')} ready, ${String(failures)} ${countOf(failures, 'failure', 'failures')}. Open Mangabound to see why.`,
+            ? 'Nothing was made. Open Manga2Ink to see why.'
+            : `${String(books)} ${countOf(books, 'book', 'books')} ready, ${String(failures)} ${countOf(failures, 'failure', 'failures')}. Open Manga2Ink to see why.`,
       },
     },
   },
@@ -86,14 +86,14 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       button: 'Usar esta pasta',
     },
     chooseProcessingFolder: {
-      title: 'Escolher a pasta em que o Mangabound trabalha',
+      title: 'Escolher a pasta em que o Manga2Ink trabalha',
       button: 'Usar esta pasta',
     },
     saveBook: { title: 'Salvar livro como' },
     saveAll: { title: 'Salvar todos os livros em uma pasta' },
     leaveWhileConverting: {
       message: 'Há uma conversão em andamento.',
-      detail: 'Se você fechar o Mangabound agora, ela será perdida.',
+      detail: 'Se você fechar o Manga2Ink agora, ela será perdida.',
       keep: 'Continuar convertendo',
       leave: 'Fechar mesmo',
     },
@@ -101,19 +101,19 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       done: {
         title: 'Seus livros estão prontos',
         body: (books) =>
-          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')} para salvar no Mangabound.`,
+          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')} para salvar no Manga2Ink.`,
       },
       notes: {
         title: 'Seus livros estão prontos, com observações',
         body: (books) =>
-          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}. Abra o Mangabound para ver as observações.`,
+          `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}. Abra o Manga2Ink para ver as observações.`,
       },
       failures: {
         title: 'Algumas conversões falharam',
         body: (books, failures) =>
           books === 0
-            ? 'Nada foi feito. Abra o Mangabound para ver o motivo.'
-            : `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}, ${String(failures)} ${countOf(failures, 'falha', 'falhas')}. Abra o Mangabound para ver o motivo.`,
+            ? 'Nada foi feito. Abra o Manga2Ink para ver o motivo.'
+            : `${String(books)} ${countOf(books, 'livro pronto', 'livros prontos')}, ${String(failures)} ${countOf(failures, 'falha', 'falhas')}. Abra o Manga2Ink para ver o motivo.`,
       },
     },
   },
@@ -124,33 +124,33 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
     chooseFiles: { title: 'コミックのファイルを選択', archive: 'コミックブックアーカイブ' },
     chooseLibrary: { title: '共有するライブラリを選択', button: 'このフォルダーを使う' },
     chooseProcessingFolder: {
-      title: 'Mangabound が作業するフォルダーを選択',
+      title: 'Manga2Ink が作業するフォルダーを選択',
       button: 'このフォルダーを使う',
     },
     saveBook: { title: '本に名前を付けて保存' },
     saveAll: { title: 'すべての本をフォルダーに保存' },
     leaveWhileConverting: {
       message: '変換がまだ実行中です。',
-      detail: '今 Mangabound を閉じると、実行中の変換は失われます。',
+      detail: '今 Manga2Ink を閉じると、実行中の変換は失われます。',
       keep: '変換を続ける',
       leave: 'このまま閉じる',
     },
     queueEnded: {
       done: {
         title: '本の準備ができました',
-        body: (books) => `${String(books)} 冊の本を、Mangabound で保存できます。`,
+        body: (books) => `${String(books)} 冊の本を、Manga2Ink で保存できます。`,
       },
       notes: {
         title: '本の準備ができました（お知らせあり）',
         body: (books) =>
-          `${String(books)} 冊の準備ができました。Mangabound を開いて、お知らせを確認してください。`,
+          `${String(books)} 冊の準備ができました。Manga2Ink を開いて、お知らせを確認してください。`,
       },
       failures: {
         title: '失敗した変換があります',
         body: (books, failures) =>
           books === 0
-            ? '何も作成されませんでした。Mangabound を開いて、理由を確認してください。'
-            : `${String(books)} 冊の準備ができましたが、${String(failures)} 件が失敗しました。Mangabound を開いて、理由を確認してください。`,
+            ? '何も作成されませんでした。Manga2Ink を開いて、理由を確認してください。'
+            : `${String(books)} 冊の準備ができましたが、${String(failures)} 件が失敗しました。Manga2Ink を開いて、理由を確認してください。`,
       },
     },
   },

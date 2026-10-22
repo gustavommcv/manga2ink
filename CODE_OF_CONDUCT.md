@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Mangabound welcomes participants of all backgrounds, identities, abilities, and experience levels. These rules apply to issues, pull requests, other project spaces, and anyone officially representing the project.
+Manga2Ink welcomes participants of all backgrounds, identities, abilities, and experience levels. These rules apply to issues, pull requests, other project spaces, and anyone officially representing the project.
 
 ## Participation
 
@@ -25,6 +25,6 @@ Depending on the situation, the maintainer may request a change in behavior, rem
 
 ## Attribution
 
-This is a condensed adaptation of [Contributor Covenant 3.0](https://www.contributor-covenant.org/version/3/0/), stewarded by the Organization for Ethical Source. The standards and response guidance have been shortened for Mangabound, and the project's reporting contact has been added.
+This is a condensed adaptation of [Contributor Covenant 3.0](https://www.contributor-covenant.org/version/3/0/), stewarded by the Organization for Ethical Source. The standards and response guidance have been shortened for Manga2Ink, and the project's reporting contact has been added.
 
-This document is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). This license applies only to the Code of Conduct; Mangabound's application code remains MIT-licensed.
+This document is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). This license applies only to the Code of Conduct; Manga2Ink's application code remains MIT-licensed.

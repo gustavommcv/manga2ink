@@ -64,7 +64,7 @@ describe('packaged About tab', () => {
       timeout: 30_000,
       timeoutMsg: 'The guide button did not open a page.',
     });
-    assert.deepEqual(openExternal.mock.calls[1], ['https://gustavommcv.github.io/mangabound/']);
+    assert.deepEqual(openExternal.mock.calls[1], ['https://gustavommcv.github.io/manga2ink/']);
 
     await panel.$('button=Release notes').click();
     await browser.waitUntil(() => openExternal.mock.calls.length === 3, {
@@ -72,7 +72,7 @@ describe('packaged About tab', () => {
       timeoutMsg: 'The release notes button did not open a page.',
     });
     assert.deepEqual(openExternal.mock.calls[2], [
-      `https://github.com/gustavommcv/mangabound/releases/tag/v${version}`,
+      `https://github.com/gustavommcv/manga2ink/releases/tag/v${version}`,
     ]);
 
     // The diagnostics are put on the clipboard, in English, with the versions and no path.
@@ -82,7 +82,7 @@ describe('packaged About tab', () => {
     const diagnostics = await browser.electron.execute((electron) => electron.clipboard.readText());
     assert.match(
       diagnostics,
-      new RegExp(`^Mangabound ${version.replaceAll('.', '\\.')} \\(packaged\\)`, 'u'),
+      new RegExp(`^Manga2Ink ${version.replaceAll('.', '\\.')} \\(packaged\\)`, 'u'),
     );
     assert.match(diagnostics, /^Working folder: the default$/mu);
     assert.match(diagnostics, /^ {2}mangabind v\d+\.\d+\.\d+: verified$/mu);

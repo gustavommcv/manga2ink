@@ -52,7 +52,7 @@ describe('opening a saved book', () => {
   let directory: string;
   let file: string;
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-artifact-handlers-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-artifact-handlers-'));
     file = path.join(directory, 'Manga - Vol.01.epub');
     await writeFile(file, 'book');
   });

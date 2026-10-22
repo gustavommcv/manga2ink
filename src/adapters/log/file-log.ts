@@ -85,7 +85,7 @@ export class FileLog {
   private tail: Promise<void> = Promise.resolve();
 
   constructor(private readonly options: FileLogOptions) {
-    this.name = options.name ?? 'mangabound.log';
+    this.name = options.name ?? 'manga2ink.log';
     this.maxBytes = options.maxBytes ?? defaultMaxBytes;
     this.files = Math.max(1, options.files ?? defaultFiles);
     this.io = options.io ?? diskLogIo;

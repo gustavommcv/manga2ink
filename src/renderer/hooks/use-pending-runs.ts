@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { message } from '@/domain/message';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { PendingRunSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
 /**
@@ -10,7 +10,7 @@ import type { PendingRunSummary, WorkflowFailure } from '@/shared/workflow-contr
  * `onFailure`, which is a dependency of all three, so pass a stable function (a state setter).
  */
 export function usePendingRuns(
-  bridge: MangaboundBridge,
+  bridge: Manga2InkBridge,
   onFailure: (failure: WorkflowFailure) => void,
 ): {
   readonly pendingRuns: readonly PendingRunSummary[];
@@ -41,7 +41,7 @@ export function usePendingRuns(
 
   const discard = useCallback(
     async (libraryId: string): Promise<boolean> => {
-      let result: Awaited<ReturnType<MangaboundBridge['discardPendingRun']>>;
+      let result: Awaited<ReturnType<Manga2InkBridge['discardPendingRun']>>;
       try {
         result = await bridge.discardPendingRun(libraryId);
       } catch {

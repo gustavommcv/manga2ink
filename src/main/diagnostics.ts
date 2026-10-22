@@ -34,7 +34,7 @@ function gibibytes(bytes: number): string {
  */
 export function diagnosticsText(input: DiagnosticsInput): string {
   const lines = [
-    `Mangabound ${input.version} (${input.packaged ? 'packaged' : 'development build'})`,
+    `Manga2Ink ${input.version} (${input.packaged ? 'packaged' : 'development build'})`,
     `Electron ${input.electron}, Chrome ${input.chrome}, Node ${input.node}`,
     `System: ${input.platform} ${input.arch}, ${input.system}`,
     `Machine: ${String(input.processors)} processors, ${gibibytes(input.memoryBytes)} of memory`,

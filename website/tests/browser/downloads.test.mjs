@@ -12,13 +12,13 @@ const platforms = [
         en: 'Download installer (.exe)',
         pt: 'Baixar instalador (.exe)',
         ja: 'インストーラーをダウンロード (.exe)',
-        filename: /^Mangabound-.+\.Setup\.exe$/,
+        filename: /^Manga2Ink-.+\.Setup\.exe$/,
       },
       {
         en: 'Download portable (.zip)',
         pt: 'Baixar versão portátil (.zip)',
         ja: 'ポータブル版をダウンロード (.zip)',
-        filename: /^Mangabound-win32-x64-.+\.zip$/,
+        filename: /^Manga2Ink-win32-x64-.+\.zip$/,
       },
     ],
   },
@@ -29,7 +29,7 @@ const platforms = [
         en: 'Download for Apple Silicon (.zip)',
         pt: 'Baixar para Apple Silicon (.zip)',
         ja: 'Apple Silicon 版をダウンロード (.zip)',
-        filename: /^Mangabound-darwin-arm64-.+\.zip$/,
+        filename: /^Manga2Ink-darwin-arm64-.+\.zip$/,
       },
     ],
   },
@@ -73,7 +73,7 @@ for (const locale of Object.keys(languageOf)) {
       });
       // Exercise real anchor clicks and browser downloads without downloading large installers.
       await page.route(
-        'https://github.com/gustavommcv/mangabound/releases/download/**',
+        'https://github.com/gustavommcv/manga2ink/releases/download/**',
         (route) => {
           const filename = decodeURIComponent(
             new URL(route.request().url()).pathname.split('/').at(-1),
@@ -100,11 +100,11 @@ for (const locale of Object.keys(languageOf)) {
         const notes = group.getByRole('link', { name: notesLabel[lang] });
         await expect(notes).toHaveAttribute(
           'href',
-          `https://github.com/gustavommcv/mangabound/releases/tag/${encodeURIComponent(tag)}`,
+          `https://github.com/gustavommcv/manga2ink/releases/tag/${encodeURIComponent(tag)}`,
         );
         await expect(group.getByRole('link', { name: 'SHA256SUMS', exact: true })).toHaveAttribute(
           'href',
-          `https://github.com/gustavommcv/mangabound/releases/download/${encodeURIComponent(tag)}/SHA256SUMS`,
+          `https://github.com/gustavommcv/manga2ink/releases/download/${encodeURIComponent(tag)}/SHA256SUMS`,
         );
         const first = group.getByRole('link', {
           name: platform.buttons[0][lang],
@@ -125,7 +125,7 @@ for (const locale of Object.keys(languageOf)) {
           expect(target.origin).toBe('https://github.com');
           const parts = target.pathname.split('/').map(decodeURIComponent);
           expect(parts.slice(0, -1).join('/')).toBe(
-            `/gustavommcv/mangabound/releases/download/${tag}`,
+            `/gustavommcv/manga2ink/releases/download/${tag}`,
           );
           const filename = parts.at(-1);
           expect(filename).toMatch(button.filename);

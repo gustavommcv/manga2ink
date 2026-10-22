@@ -1,13 +1,13 @@
 ---
 title: 'Installation'
-description: 'Download and install Mangabound on Windows, macOS or Linux (.deb, .rpm, Arch) from the official release page, and open the unsigned alpha safely.'
+description: 'Download and install Manga2Ink on Windows, macOS or Linux (.deb, .rpm, Arch) from the official release page, and open the unsigned alpha safely.'
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 import ReleaseDownloads from '../../../components/ReleaseDownloads.astro';
 
-Download the latest available version for your system below, or browse [all releases](https://github.com/gustavommcv/mangabound/releases).
+Download the latest available version for your system below, or browse [all releases](https://github.com/gustavommcv/manga2ink/releases).
 
 <Tabs>
 <TabItem label="Windows">
@@ -27,7 +27,7 @@ The alpha installer is not signed with a commercial certificate, so Windows Smar
 
 <ReleaseDownloads platform="macOS" />
 
-Extract the ZIP and move **Mangabound.app** to **Applications**. There is no package for Intel Macs yet.
+Extract the ZIP and move **Manga2Ink.app** to **Applications**. There is no package for Intel Macs yet.
 
 The alpha app is not notarized by Apple, so macOS may refuse to open it. If that happens, open **System Settings → Privacy & Security** and choose **Open Anyway**, if the button is there. [Apple explains the steps](https://support.apple.com/en-us/102445). Do not turn off Gatekeeper for this.
 
@@ -60,7 +60,7 @@ sudo dnf install ./package.rpm
 sudo pacman -U ./package.pkg.tar.zst
 ```
 
-Then open **Mangabound** from your application menu. Use `sudo` only to install it, not to run it.
+Then open **Manga2Ink** from your application menu. Use `sudo` only to install it, not to run it.
 
 </TabItem>
 </Tabs>
@@ -80,14 +80,14 @@ A matching checksum shows that the file is the one the release published and tha
 
 ## Updating
 
-Open **App settings** (the gear in the title bar), choose **Updates** and click **Check for updates**. If a newer version is out, Mangabound says which one and the day it was published, and **Download the update** opens the download page in your browser. The app does not install it for you yet: download the file for your system and install it as you did the first time, over the one you have. Nothing is checked unless you click.
+Open **App settings** (the gear in the title bar), choose **Updates** and click **Check for updates**. If a newer version is out, Manga2Ink says which one and the day it was published, and **Download the update** opens the download page in your browser. The app does not install it for you yet: download the file for your system and install it as you did the first time, over the one you have. Nothing is checked unless you click.
 
 ## If installation fails
 
-Check that you downloaded the package for your system and architecture. If Mangabound says that mangabind or mangapress “could not be verified”, reinstall Mangabound from the official release page. Do not replace the tools with files from another source.
+Check that you downloaded the package for your system and architecture. If Manga2Ink says that mangabind or mangapress “could not be verified”, reinstall Manga2Ink from the official release page. Do not replace the tools with files from another source.
 
 ## Reporting a problem
 
-[Open an issue](https://github.com/gustavommcv/mangabound/issues) and include the version, your operating system, what you were trying to do and what happened. In **App settings**, **About**, **Troubleshooting**, **Copy diagnostics** puts the versions and your system on the clipboard, with no paths and no names: paste it into the report. For a crash or a failed conversion, include the exact error message. If you attach a log file from **Open the logs folder**, look at it first: it may hold the paths of books and folders. See [App settings](../../user-guide/app-settings/#about).
+[Open an issue](https://github.com/gustavommcv/manga2ink/issues) and include the version, your operating system, what you were trying to do and what happened. In **App settings**, **About**, **Troubleshooting**, **Copy diagnostics** puts the versions and your system on the clipboard, with no paths and no names: paste it into the report. For a crash or a failed conversion, include the exact error message. If you attach a log file from **Open the logs folder**, look at it first: it may hold the paths of books and folders. See [App settings](../../user-guide/app-settings/#about).
 
 Ready? Follow the [quickstart](../quickstart/).

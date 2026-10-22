@@ -6,7 +6,7 @@ import { MetadataProviderError } from './errors';
  * Sent with every request. A service may insist on a real, identifiable user agent and forbid a
  * borrowed or generic one, so this says what the app is and where to find it.
  */
-export const userAgent = 'Mangabound (+https://github.com/gustavommcv/mangabound)';
+export const userAgent = 'Manga2Ink (+https://github.com/gustavommcv/manga2ink)';
 
 /**
  * How long a service has to answer before the request is given up. These are public catalogues that

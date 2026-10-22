@@ -24,7 +24,7 @@ async function isZip(filePath: string): Promise<boolean> {
 
 describe('packaged process control', () => {
   it('joins a folder into CBZ volumes and saves them without ever running mangapress', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-join-only-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-join-only-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');
@@ -79,12 +79,12 @@ describe('packaged process control', () => {
   });
 
   it('sends an ungrouped folder straight to mangapress as one book, with no mapping', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-convert-only-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-convert-only-e2e-'));
     temporaryDirectories.push(testRoot);
-    const inputPath = path.join(testRoot, 'Mangabound E2E');
+    const inputPath = path.join(testRoot, 'Manga2Ink E2E');
     const libraryPath = path.join(testRoot, 'library');
     await cp(
-      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Mangabound E2E'),
+      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'),
       inputPath,
       { recursive: true },
     );
@@ -112,10 +112,10 @@ describe('packaged process control', () => {
 
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
-    await saveBookAs('Mangabound E2E.epub', path.join(libraryPath, 'Mangabound E2E.epub'));
+    await saveBookAs('Manga2Ink E2E.epub', path.join(libraryPath, 'Manga2Ink E2E.epub'));
 
-    assert.deepEqual((await readdir(libraryPath)).sort(), ['.mangabound', 'Mangabound E2E.epub']);
-    assert.ok(await isZip(path.join(libraryPath, 'Mangabound E2E.epub')));
+    assert.deepEqual((await readdir(libraryPath)).sort(), ['.mangabound', 'Manga2Ink E2E.epub']);
+    assert.ok(await isZip(path.join(libraryPath, 'Manga2Ink E2E.epub')));
     // mangabind never ran, so it left nothing in the source folder either.
     await assert.rejects(readFile(path.join(inputPath, 'mangabind.json'), 'utf8'));
   });

@@ -76,7 +76,7 @@ const metadataFileName = 'mangabind.json';
 
 /** The app's own note, said with the books, that the volumes a person edited stayed out of the folder. */
 const mappingNotKept: PipelineIssue = {
-  tool: 'mangabound',
+  tool: 'manga2ink',
   severity: 'warning',
   code: 'mapping_not_kept',
   stage: 'bind',
@@ -106,7 +106,7 @@ export class MangabindBindingAdapter implements BindingPort {
     const temporaryRoot =
       typeof this.temporaryRoot === 'string' ? this.temporaryRoot : await this.temporaryRoot();
     const rootPath = await this.files.createTemporaryDirectory(
-      path.join(temporaryRoot, 'mangabound-'),
+      path.join(temporaryRoot, 'manga2ink-'),
     );
     return { rootPath, temporaryRoot };
   }
@@ -414,7 +414,7 @@ export class MangabindBindingAdapter implements BindingPort {
     const resolved = path.resolve(workspace.rootPath);
     if (
       !resolved.startsWith(expectedPrefix) ||
-      !path.basename(resolved).startsWith('mangabound-')
+      !path.basename(resolved).startsWith('manga2ink-')
     ) {
       throw new Error('Refusing to remove an invalid temporary workspace path.');
     }

@@ -41,7 +41,7 @@ export class ProcessStartError extends Error {
 
 export class ProcessOutputLimitError extends Error {
   constructor() {
-    super('The conversion tool returned more diagnostic output than Mangabound can safely retain.');
+    super('The conversion tool returned more diagnostic output than Manga2Ink can safely retain.');
     this.name = 'ProcessOutputLimitError';
   }
 }

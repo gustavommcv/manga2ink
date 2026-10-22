@@ -97,7 +97,7 @@ export const createMainWindow = (
   theme: Theme,
 ): BrowserWindow => {
   const { maximized, ...placement } = windowState.placement();
-  const iconName = process.platform === 'win32' ? 'mangabound.ico' : 'mangabound.png';
+  const iconName = process.platform === 'win32' ? 'manga2ink.ico' : 'manga2ink.png';
   const platformTitleBar: Pick<
     BrowserWindowConstructorOptions,
     'titleBarOverlay' | 'trafficLightPosition'
@@ -125,7 +125,7 @@ export const createMainWindow = (
     // down to this width (tests/visual/narrow-window.visual.spec.ts).
     minHeight: minimumWindowSize.height,
     minWidth: minimumWindowSize.width,
-    title: 'Mangabound',
+    title: 'Manga2Ink',
     titleBarStyle: 'hidden',
     ...platformTitleBar,
     webPreferences: {

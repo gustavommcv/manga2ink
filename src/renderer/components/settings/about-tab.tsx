@@ -59,7 +59,7 @@ export function AboutTab(): React.JSX.Element {
           width={96}
         />
         <div className="min-w-0 space-y-1">
-          <p className="text-lg font-semibold tracking-tight">Mangabound</p>
+          <p className="text-lg font-semibold tracking-tight">Manga2Ink</p>
           <Note>
             {words.version} {version}
           </Note>

@@ -1,4 +1,4 @@
-# Maintainer: Mangabound contributors
+# Maintainer: Manga2Ink contributors
 #
 # This is a "-bin" style package: it does not build anything from source. It packages the same
 # `electron-forge package` output the .deb and .rpm makers already consume (see forge.config.ts),
@@ -12,12 +12,12 @@
 # hand. pacman forbids hyphens in pkgver, so a SemVer prerelease like 0.1.0-alpha.2 becomes
 # 0.1.0_alpha.2 - the exact same reason electron-installer-debian/-redhat also transform this
 # project's version string for their own formats (see RELEASING.md).
-pkgname=mangabound
+pkgname=manga2ink
 pkgver=0.0.0
 pkgrel=1
 pkgdesc="A desktop workflow for binding, converting, and delivering manga to e-readers"
 arch=('x86_64')
-url="https://github.com/gustavommcv/mangabound"
+url="https://github.com/gustavommcv/manga2ink"
 license=('MIT')
 # The standard dependency set for a bundled-Electron app on Arch (the same libraries every
 # Chromium/Electron "-bin" AUR package declares) - this app does not use the system electron
@@ -43,44 +43,44 @@ sha256sums=()
 
 package() {
   local payload="$startdir/payload"
-  local desktop="$startdir/mangabound.desktop"
-  local icon="$startdir/mangabound.png"
+  local desktop="$startdir/manga2ink.desktop"
+  local icon="$startdir/manga2ink.png"
 
-  install -dm755 "$pkgdir/opt/mangabound"
-  cp -a "$payload/." "$pkgdir/opt/mangabound/"
+  install -dm755 "$pkgdir/opt/manga2ink"
+  cp -a "$payload/." "$pkgdir/opt/manga2ink/"
 
   # cp -a re-applied the source payload directory's own mode (700 - confirmed live with `stat`;
   # electron-forge's packaged output directory is not world-traversable) to
-  # $pkgdir/opt/mangabound itself even though install -dm755 above already set it correctly -
+  # $pkgdir/opt/manga2ink itself even though install -dm755 above already set it correctly -
   # cp -a's archive semantics cover the destination's own directory entry too, not just what is
   # inside it, when the two directories are copied contents-first. A non-root user cannot reach
   # any file under here at all without traverse (execute) permission on every directory in the
   # path, no matter what mode the files themselves have - confirmed live: the first real build's
-  # mangabound binary itself was already 755 and still could not be executed by a non-root user
+  # manga2ink binary itself was already 755 and still could not be executed by a non-root user
   # ("Permission denied") because of this. Reasserted after the copy, not just before it, and for
   # everything inside, not only the first two entries: the bundled tools sit two folders down
   # (resources/toolchain/<target>), and a folder there that only root can enter keeps every
   # conversion from starting. a+rX adds read to everything and execute to folders and to files
   # that already run, so nothing becomes runnable that was not meant to be.
-  chmod -R a+rX "$pkgdir/opt/mangabound"
+  chmod -R a+rX "$pkgdir/opt/manga2ink"
 
   # The setuid bit does not survive being written by a non-root build user; fakeroot (which
   # makepkg always runs package() under) records the chown/chmod below into the package's own
   # metadata correctly, and pacman applies them for real, as actual root, on install - the same
   # convention real AUR Electron packages use, confirmed by reading one directly. This is what
   # keeps Chromium's sandbox usable without ever falling back to --no-sandbox.
-  chown root "$pkgdir/opt/mangabound/chrome-sandbox"
-  chmod 4755 "$pkgdir/opt/mangabound/chrome-sandbox"
+  chown root "$pkgdir/opt/manga2ink/chrome-sandbox"
+  chmod 4755 "$pkgdir/opt/manga2ink/chrome-sandbox"
 
   install -dm755 "$pkgdir/usr/bin"
-  ln -s /opt/mangabound/mangabound "$pkgdir/usr/bin/mangabound"
+  ln -s /opt/manga2ink/manga2ink "$pkgdir/usr/bin/manga2ink"
 
-  install -Dm644 "$desktop" "$pkgdir/usr/share/applications/mangabound.desktop"
+  install -Dm644 "$desktop" "$pkgdir/usr/share/applications/manga2ink.desktop"
 
   # The app icon named by the desktop entry's Icon=, staged from the same PNG by
   # .github/workflows/arch-package.yml so every Linux package shows the same one. A single PNG
   # goes in pixmaps, where electron-installer-common puts it for the .deb, and where launchers
   # look after the icon theme. Without it the entry has nothing to show: rofi, GNOME and KDE draw
   # a blank or a generic icon in its place.
-  install -Dm644 "$icon" "$pkgdir/usr/share/pixmaps/mangabound.png"
+  install -Dm644 "$icon" "$pkgdir/usr/share/pixmaps/manga2ink.png"
 }

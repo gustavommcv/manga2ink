@@ -23,7 +23,7 @@ website/src/assets/tutorial/generated/
 website/.cache/
 
 # Copied in by the Arch package job, from the app's icon.
-packaging/arch/mangabound.png
+packaging/arch/manga2ink.png
 
 # Mutation testing: the work copy and its reports.
 .stryker-tmp/

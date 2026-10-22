@@ -19,30 +19,30 @@ describe('what the notification says', () => {
   it('says the books are ready when the queue was clean', () => {
     expect(noticeOf(summary(), english)).toEqual({
       title: 'Your books are ready',
-      body: '3 books ready to save in Mangabound.',
+      body: '3 books ready to save in Manga2Ink.',
     });
     expect(noticeOf(summary({ books: 1 }), english)?.body).toBe(
-      '1 book ready to save in Mangabound.',
+      '1 book ready to save in Manga2Ink.',
     );
   });
 
   it('says there are notes to see when something was left out or came with one', () => {
     expect(noticeOf(summary({ notes: 2 }), english)).toEqual({
       title: 'Your books are ready, with notes',
-      body: '3 books ready. Open Mangabound to see the notes.',
+      body: '3 books ready. Open Manga2Ink to see the notes.',
     });
   });
 
   it('says what failed, with the books that were made, or that nothing was', () => {
     expect(noticeOf(summary({ failures: 2 }), english)).toEqual({
       title: 'Some conversions failed',
-      body: '3 books ready, 2 failures. Open Mangabound to see why.',
+      body: '3 books ready, 2 failures. Open Manga2Ink to see why.',
     });
     expect(noticeOf(summary({ failures: 1, books: 1 }), english)?.body).toBe(
-      '1 book ready, 1 failure. Open Mangabound to see why.',
+      '1 book ready, 1 failure. Open Manga2Ink to see why.',
     );
     expect(noticeOf(summary({ failures: 4, books: 0 }), english)?.body).toBe(
-      'Nothing was made. Open Mangabound to see why.',
+      'Nothing was made. Open Manga2Ink to see why.',
     );
   });
 
@@ -54,24 +54,24 @@ describe('what the notification says', () => {
   it('says it in Portuguese for a window in Portuguese', () => {
     expect(noticeOf(summary(), portuguese)).toEqual({
       title: 'Seus livros estão prontos',
-      body: '3 livros prontos para salvar no Mangabound.',
+      body: '3 livros prontos para salvar no Manga2Ink.',
     });
     expect(noticeOf(summary({ books: 1 }), portuguese)?.body).toBe(
-      '1 livro pronto para salvar no Mangabound.',
+      '1 livro pronto para salvar no Manga2Ink.',
     );
     expect(noticeOf(summary({ notes: 1 }), portuguese)).toEqual({
       title: 'Seus livros estão prontos, com observações',
-      body: '3 livros prontos. Abra o Mangabound para ver as observações.',
+      body: '3 livros prontos. Abra o Manga2Ink para ver as observações.',
     });
     expect(noticeOf(summary({ failures: 1 }), portuguese)).toEqual({
       title: 'Algumas conversões falharam',
-      body: '3 livros prontos, 1 falha. Abra o Mangabound para ver o motivo.',
+      body: '3 livros prontos, 1 falha. Abra o Manga2Ink para ver o motivo.',
     });
     expect(noticeOf(summary({ failures: 2, books: 0 }), portuguese)?.body).toBe(
-      'Nada foi feito. Abra o Mangabound para ver o motivo.',
+      'Nada foi feito. Abra o Manga2Ink para ver o motivo.',
     );
     expect(noticeOf(summary({ failures: 2, books: 1 }), portuguese)?.body).toBe(
-      '1 livro pronto, 2 falhas. Abra o Mangabound para ver o motivo.',
+      '1 livro pronto, 2 falhas. Abra o Manga2Ink para ver o motivo.',
     );
   });
 });
@@ -102,7 +102,7 @@ describe('telling that a queue has ended', () => {
     announceQueueEnd(queue(), system);
 
     expect(system.show).toHaveBeenCalledExactlyOnceWith(
-      { title: 'Your books are ready', body: '3 books ready to save in Mangabound.' },
+      { title: 'Your books are ready', body: '3 books ready to save in Manga2Ink.' },
       system.bringWindowForward,
     );
   });

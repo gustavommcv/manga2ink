@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { deflateSync } from 'node:zlib';
 
-const fixtureRoot = path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Mangabound E2E');
+const fixtureRoot = path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E');
 const width = 600;
 const height = 800;
 
@@ -107,7 +107,7 @@ for (let chapter = 1; chapter <= 2; chapter += 1) {
 const cbzRoot = path.resolve('tests', 'fixtures', 'e2e', 'cbz');
 await mkdir(cbzRoot, { recursive: true });
 await writeFile(
-  path.join(cbzRoot, 'Mangabound Direct.cbz'),
+  path.join(cbzRoot, 'Manga2Ink Direct.cbz'),
   zip([
     { name: 'Chapter 1/001.png', contents: image(7) },
     { name: 'Chapter 1/002.png', contents: image(8) },

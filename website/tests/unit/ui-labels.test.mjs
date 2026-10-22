@@ -32,7 +32,7 @@ test('what is not the name of something in the interface is left alone', () => {
     '[mangabind](https://example.org)',
     'src/adapters/',
     'directory_defaults.lua',
-    'Mangabound.app',
+    'Manga2Ink.app',
     'A sentence that is emphasized.',
     'Is it?',
     '文が強調されています。',
@@ -81,11 +81,11 @@ test('a source with two catalogs keeps what a language says in both, and one wit
 
   assert.match(sections.get('en'), /Queue[\s\S]*Save/u);
   assert.match(sections.get('pt-BR'), /Fila[\s\S]*Salvar/u);
-  assert.equal(sectionsOf("const name = { other: 'Mangabound' };", tags).size, 0);
+  assert.equal(sectionsOf("const name = { other: 'Manga2Ink' };", tags).size, 0);
 });
 
 test('the interface says in a language what its catalogs say in it, and a name written in a component in all', () => {
-  const component = '<span>Mangabound</span>';
+  const component = '<span>Manga2Ink</span>';
   const sources = [catalog, component];
 
   assert.match(interfaceTextFor('pt-BR', sources, tags), /Fila/u);
@@ -93,7 +93,7 @@ test('the interface says in a language what its catalogs say in it, and a name w
   assert.match(interfaceTextFor('en', sources, tags), /Queue/u);
   assert.doesNotMatch(interfaceTextFor('en', sources, tags), /Fila/u);
   for (const tag of ['en', 'pt-BR']) {
-    assert.match(interfaceTextFor(tag, sources, tags), /Mangabound/u);
+    assert.match(interfaceTextFor(tag, sources, tags), /Manga2Ink/u);
   }
 });
 

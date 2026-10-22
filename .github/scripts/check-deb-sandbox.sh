@@ -28,7 +28,7 @@ if ! sudo dpkg -i "$deb_file" >"$log_file" 2>&1; then
 fi
 
 package_name=$(dpkg-deb --field "$deb_file" Package)
-binary_path=$(dpkg -L "$package_name" | grep -E '/(bin|opt)/.*mangabound$' | head -1)
+binary_path=$(dpkg -L "$package_name" | grep -E '/(bin|opt)/.*manga2ink$' | head -1)
 if [[ -z "$binary_path" || ! -x "$binary_path" ]]; then
   echo "RESULT: inconclusive - installed but could not find the executable via dpkg -L."
   dpkg -L "$package_name"

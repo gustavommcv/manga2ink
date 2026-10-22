@@ -95,7 +95,7 @@ describe('on a real disk', () => {
   });
 
   it('keeps what it is given in a folder that is not there yet, and gives it back, and leaves nothing else', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-window-state-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-window-state-'));
     folders.push(root);
     const where = path.join(root, 'not', 'there', 'window-state.json');
     const store = new FsWindowStateStore(where);

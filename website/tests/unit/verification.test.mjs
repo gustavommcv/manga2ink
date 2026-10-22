@@ -4,7 +4,7 @@ import test from 'node:test';
 
 import { auditLinks, auditSearchData, translationGaps } from '../../scripts/verification.mjs';
 
-const options = { site: 'https://example.org', base: '/mangabound/' };
+const options = { site: 'https://example.org', base: '/manga2ink/' };
 const page = (path, html) => ({ path, html });
 
 test('empty input cannot produce a false green verification', () => {
@@ -75,7 +75,7 @@ test('valid relative, project-root, query, and encoded-anchor URLs resolve', () 
     [
       page(
         'index.html',
-        '<a href="guide/?q=1&amp;x=2#ol%C3%A1">go</a><a href="/mangabound/guide/">go</a>',
+        '<a href="guide/?q=1&amp;x=2#ol%C3%A1">go</a><a href="/manga2ink/guide/">go</a>',
       ),
       page(
         'guide/index.html',
@@ -198,10 +198,10 @@ const indexed = (
       ? {
           '@context': 'https://schema.org',
           '@graph': [
-            { '@type': 'WebSite', name: 'Mangabound', url, description: text, inLanguage: lang },
+            { '@type': 'WebSite', name: 'Manga2Ink', url, description: text, inLanguage: lang },
             {
               '@type': 'SoftwareApplication',
-              name: 'Mangabound',
+              name: 'Manga2Ink',
               url,
               description: text,
               inLanguage: ['en', 'pt-BR', 'ja'],
@@ -212,7 +212,7 @@ const indexed = (
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Mangabound', item: home },
+            { '@type': 'ListItem', position: 1, name: 'Manga2Ink', item: home },
             { '@type': 'ListItem', position: 2, name: 'T', item: url },
           ],
         };
@@ -297,8 +297,8 @@ test('a page with nothing for a search engine reports each missing part', () => 
     [
       'No title',
       'No description',
-      'Canonical address is not https://example.org/mangabound/',
-      'Social preview image is not https://example.org/mangabound/social-preview.png',
+      'Canonical address is not https://example.org/manga2ink/',
+      'Social preview image is not https://example.org/manga2ink/social-preview.png',
       'Expected one h1, found 0',
       'Page language is not en',
       'No structured data',
@@ -324,7 +324,7 @@ test('a repeated title, a blank description, and broken structured data fail', (
 });
 
 test('a page whose social preview card is missing, or is another file, fails', () => {
-  const card = 'https://example.org/mangabound/social-preview.png';
+  const card = 'https://example.org/manga2ink/social-preview.png';
   const result = auditSearchData(
     [
       page('a/index.html', indexed('a/').replace(card, 'https://example.org/other.png')),

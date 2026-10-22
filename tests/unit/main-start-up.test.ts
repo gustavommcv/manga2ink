@@ -456,7 +456,7 @@ describe('starting the app', () => {
 
     expect(fake.context['log']).toBeDefined();
     expect(String(fake.context['logStarted'])).toMatch(
-      /^Mangabound \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
+      /^Manga2Ink \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
     );
     expect(fake.context['logTargets']).toMatchObject({ console, process });
   });

@@ -4,7 +4,7 @@ This page maps the code and the conversion flow. [ADR 0001](adr/0001-electron-re
 
 ## The idea in one paragraph
 
-Mangabound orchestrates two bundled, version-pinned tools: **mangabind** groups chapters and writes volumes; **mangapress** processes pages and creates books. The app handles choices, progress, saving, and sharing rather than reimplementing those algorithms. Dependencies point inward: adapters implement the application's ports, the application coordinates domain rules, and the domain has no framework or infrastructure dependencies.
+Manga2Ink orchestrates two bundled, version-pinned tools: **mangabind** groups chapters and writes volumes; **mangapress** processes pages and creates books. The app handles choices, progress, saving, and sharing rather than reimplementing those algorithms. Dependencies point inward: adapters implement the application's ports, the application coordinates domain rules, and the domain has no framework or infrastructure dependencies.
 
 ## Layers
 

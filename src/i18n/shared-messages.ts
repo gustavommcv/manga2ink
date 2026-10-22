@@ -36,8 +36,8 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
     toolchain: { label: 'Bundled tool status', title: 'Conversion tools need attention' },
     startup: {
       label: 'Startup error',
-      title: 'Mangabound could not start correctly.',
-      text: 'Restart the app. If the problem persists, reinstall Mangabound.',
+      title: 'Manga2Ink could not start correctly.',
+      text: 'Restart the app. If the problem persists, reinstall Manga2Ink.',
     },
     failure: {
       label: 'Workflow error',
@@ -55,8 +55,8 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
     },
     startup: {
       label: 'Erro na inicialização',
-      title: 'O Mangabound não conseguiu iniciar corretamente.',
-      text: 'Reinicie o app. Se o problema continuar, reinstale o Mangabound.',
+      title: 'O Manga2Ink não conseguiu iniciar corretamente.',
+      text: 'Reinicie o app. Se o problema continuar, reinstale o Manga2Ink.',
     },
     failure: {
       label: 'Erro no fluxo',
@@ -71,8 +71,8 @@ export const sharedMessages: Readonly<Record<Language, SharedMessages>> = {
     toolchain: { label: '同梱ツールの状態', title: '変換ツールの確認が必要です' },
     startup: {
       label: '起動エラー',
-      title: 'Mangabound を正しく起動できませんでした。',
-      text: 'アプリを再起動してください。問題が続く場合は、Mangabound を再インストールしてください。',
+      title: 'Manga2Ink を正しく起動できませんでした。',
+      text: 'アプリを再起動してください。問題が続く場合は、Manga2Ink を再インストールしてください。',
     },
     failure: {
       label: 'ワークフローのエラー',

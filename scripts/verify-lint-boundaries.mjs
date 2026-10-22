@@ -131,7 +131,7 @@ const cases = [
     'preload',
     'ts',
     'shared',
-    "import type { MangaboundBridge } from '@/shared/runtime-info';",
+    "import type { Manga2InkBridge } from '@/shared/runtime-info';",
   ),
   invalid(
     'preload',
@@ -154,7 +154,7 @@ const cases = [
     'renderer',
     'tsx',
     'shared',
-    "import type { MangaboundBridge } from '@/shared/runtime-info';",
+    "import type { Manga2InkBridge } from '@/shared/runtime-info';",
   ),
   invalid(
     'renderer',

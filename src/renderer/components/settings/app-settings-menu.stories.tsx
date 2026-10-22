@@ -29,7 +29,7 @@ const bundledTools: ToolchainStatus = {
 const ownPlaces: ProcessingFolderStatus = {
   chosen: null,
   scratch: '/tmp',
-  pending: '/home/reader/.local/share/mangabound/pending',
+  pending: '/home/reader/.local/share/manga2ink/pending',
   available: true,
   freeBytes: 38 * 1024 ** 3,
   waiting: { runs: 2, books: 5, bytes: 1.2 * 1024 ** 3 },
@@ -42,7 +42,7 @@ const onABigDrive: ProcessingFolderStatus = {
   available: true,
   freeBytes: 812 * 1024 ** 3,
   waiting: { runs: 1, books: 3, bytes: 480 * 1024 ** 2 },
-  earlier: [{ folder: '/home/reader/.local/share/mangabound/pending', books: 3 }],
+  earlier: [{ folder: '/home/reader/.local/share/manga2ink/pending', books: 3 }],
 };
 
 const noBooks: WaitingBooks = { runs: 0, books: 0, bytes: 0 };
@@ -304,7 +304,7 @@ export const ProcessingInOwnPlacesInJapanese: Story = {
     await userEvent.click(within(dialog).getByRole('tab', { name: '処理' }));
 
     const panel = within(dialog).getByRole('tabpanel', { name: '処理' });
-    await expect(await within(panel).findByText('Mangabound が選択')).toBeVisible();
+    await expect(await within(panel).findByText('Manga2Ink が選択')).toBeVisible();
     await expect(
       within(panel).getByRole('button', { name: '初期設定のフォルダーを使う' }),
     ).toBeDisabled();
@@ -565,7 +565,7 @@ export const Processing: Story = {
     await userEvent.click(within(dialog).getByRole('tab', { name: 'Processing' }));
 
     const panel = within(dialog).getByRole('tabpanel', { name: 'Processing' });
-    await expect(await within(panel).findByText('Chosen by Mangabound')).toBeVisible();
+    await expect(await within(panel).findByText('Chosen by Manga2Ink')).toBeVisible();
     await expect(
       within(panel).getByRole('button', { name: 'Use the default folder' }),
     ).toBeDisabled();
@@ -655,7 +655,7 @@ export const ProcessingInOwnPlacesInPortuguese: Story = {
     await userEvent.click(within(dialog).getByRole('tab', { name: 'Processamento' }));
 
     const panel = within(dialog).getByRole('tabpanel', { name: 'Processamento' });
-    await expect(await within(panel).findByText('Escolhida pelo Mangabound')).toBeVisible();
+    await expect(await within(panel).findByText('Escolhida pelo Manga2Ink')).toBeVisible();
     await expect(within(panel).getByRole('button', { name: 'Usar a pasta padrão' })).toBeDisabled();
     await expect(
       await within(panel).findByRole('combobox', { name: 'Conversões em paralelo' }),
@@ -776,7 +776,7 @@ export const WhenAFolderCannotBeUsed: Story = {
 
     await expect(
       await within(dialog).findByText(
-        'Mangabound cannot work in /read-only. Choose a folder it can write in.',
+        'Manga2Ink cannot work in /read-only. Choose a folder it can write in.',
       ),
     ).toBeVisible();
   },

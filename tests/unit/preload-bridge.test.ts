@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ConversionProgressPayload } from '@/shared/workflow-contract';
 
 const electron = vi.hoisted(() => ({
@@ -28,11 +28,11 @@ vi.mock('electron', () => ({
 }));
 
 /** Runs the preload again, as the window does once, and gives what it handed the page. */
-async function loadBridge(): Promise<MangaboundBridge> {
+async function loadBridge(): Promise<Manga2InkBridge> {
   vi.resetModules();
   electron.exposed.clear();
   await import('@/preload/index');
-  return electron.exposed.get('mangabound') as MangaboundBridge;
+  return electron.exposed.get('manga2ink') as Manga2InkBridge;
 }
 
 const originalArguments = [...process.argv];
@@ -56,7 +56,7 @@ const aFile = (name: string): File => ({ name }) as unknown as File;
 
 /** What each method of the bridge sends, and where: the whole of what the page can ask of main. */
 const forwarded: readonly (readonly [
-  keyof MangaboundBridge,
+  keyof Manga2InkBridge,
   readonly unknown[],
   string,
   unknown,
@@ -155,7 +155,7 @@ describe('what the page is handed', () => {
   it('is one frozen object under one name, with exactly the methods the app means to give', async () => {
     const bridge = await loadBridge();
 
-    expect([...electron.exposed.keys()]).toEqual(['mangabound']);
+    expect([...electron.exposed.keys()]).toEqual(['manga2ink']);
     expect(Object.isFrozen(bridge)).toBe(true);
     expect(Object.isFrozen(bridge.runtime)).toBe(true);
     // A new method is a new door into the main process: it has to be written down here, on purpose.

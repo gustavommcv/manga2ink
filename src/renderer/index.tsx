@@ -7,7 +7,7 @@ import './styles.css';
 const rootElement = document.querySelector<HTMLElement>('#root');
 
 if (rootElement === null) {
-  throw new Error('Mangabound could not find its renderer root.');
+  throw new Error('Manga2Ink could not find its renderer root.');
 }
 
 createRoot(rootElement).render(

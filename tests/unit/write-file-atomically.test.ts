@@ -155,7 +155,7 @@ describe('writeFileAtomically', () => {
 
 describe('writeFileAtomically on disk', () => {
   async function fixture(): Promise<string> {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-atomic-unit-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-atomic-unit-'));
     roots.push(root);
     return root;
   }

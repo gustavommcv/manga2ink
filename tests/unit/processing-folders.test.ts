@@ -242,7 +242,7 @@ describe('what is left on the drive', () => {
 describe('on a real disk', () => {
   let directory: string;
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-processing-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-processing-'));
   });
   afterEach(() => rm(directory, { recursive: true, force: true }));
 
@@ -412,7 +412,7 @@ describe('asking the disk', () => {
 
     await io.probeWrite(at('big'));
 
-    const probe = path.join(at('big'), '.mangabound-write-test-id');
+    const probe = path.join(at('big'), '.manga2ink-write-test-id');
     expect(calls).toEqual([`write ${probe}`, `rm ${probe}`]);
   });
 

@@ -161,7 +161,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       leftOut: (items) =>
         `${String(items)} ${countOf(items, 'item', 'items')} will be left out. Use the pencil on a row to fix it.`,
       lowSpace: (free, needed) =>
-        `Only ${free} are free where Mangabound works, and this queue may take about ${needed}. Make room, or choose another working folder in App settings, under Processing.`,
+        `Only ${free} are free where Manga2Ink works, and this queue may take about ${needed}. Make room, or choose another working folder in App settings, under Processing.`,
     },
     plans: {
       validated: 'Plan validated',
@@ -250,7 +250,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       leftOut: (items) =>
         `${String(items)} ${countOf(items, 'item ficará', 'itens ficarão')} de fora. Use o lápis na linha para corrigir.`,
       lowSpace: (free, needed) =>
-        `Só há ${free} livres onde o Mangabound trabalha, e esta fila pode ocupar cerca de ${needed}. Libere espaço ou escolha outra pasta de trabalho em Configurações do app, em Processamento.`,
+        `Só há ${free} livres onde o Manga2Ink trabalha, e esta fila pode ocupar cerca de ${needed}. Libere espaço ou escolha outra pasta de trabalho em Configurações do app, em Processamento.`,
     },
     plans: {
       validated: 'Plano validado',
@@ -336,7 +336,7 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       leftOut: (items) =>
         `${String(items)} 個の項目が対象外になります。行の鉛筆アイコンから修正できます。`,
       lowSpace: (free, needed) =>
-        `Mangabound の作業場所の空き容量は ${free} しかなく、このキューには約 ${needed} かかる可能性があります。空き容量を確保するか、アプリの設定の「処理」で別の作業フォルダーを選んでください。`,
+        `Manga2Ink の作業場所の空き容量は ${free} しかなく、このキューには約 ${needed} かかる可能性があります。空き容量を確保するか、アプリの設定の「処理」で別の作業フォルダーを選んでください。`,
     },
     plans: {
       validated: '計画を検証しました',

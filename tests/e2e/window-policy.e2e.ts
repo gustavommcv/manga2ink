@@ -31,7 +31,7 @@ describe('packaged window policy', () => {
     const seen = JSON.parse(
       await browser.execute(() => {
         const page = window as unknown as Record<string, unknown>;
-        const bridge = page.mangabound as Record<string, unknown>;
+        const bridge = page.manga2ink as Record<string, unknown>;
         // A frozen object refuses the addition (and says so, in strict mode, which a page is not).
         const changed = (() => {
           try {
@@ -79,7 +79,7 @@ describe('packaged window policy', () => {
   });
 
   it('does not let the page read a local file', async () => {
-    const directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-window-policy-'));
+    const directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-window-policy-'));
     temporaryDirectories.push(directory);
     const secretPath = path.join(directory, 'secret.txt');
     await writeFile(secretPath, 'a-secret-the-page-must-not-read', 'utf8');
@@ -222,14 +222,14 @@ describe('packaged window policy', () => {
   });
 
   it('does not start sharing on an address that is not one of the device’s own', async () => {
-    const directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-window-policy-'));
+    const directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-window-policy-'));
     temporaryDirectories.push(directory);
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [directory] });
 
     const outcomes = JSON.parse(
       await browser.execute(async () => {
-        const bridge = window.mangabound;
+        const bridge = window.manga2ink;
         if (bridge === undefined) throw new Error('The app bridge is unavailable.');
         const chosen = await bridge.chooseLibrary();
         if (!chosen.ok || chosen.value === null) throw new Error('Could not choose a library.');

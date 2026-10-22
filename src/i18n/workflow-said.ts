@@ -40,7 +40,7 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
     'workflow.noVolumes': () =>
       'No volume files were produced. Review the chapter mapping and try again.',
     'workflow.publishFailed': () =>
-      "Couldn't write a finished book to Mangabound's pending storage. Check available space and storage permissions.",
+      "Couldn't write a finished book to Manga2Ink's pending storage. Check available space and storage permissions.",
   },
   'pt-BR': {
     'workflow.inputGone': () => 'Este item não está mais disponível. Escolha-o de novo.',
@@ -69,7 +69,7 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
     'workflow.noVolumes': () =>
       'Nenhum arquivo de volume foi gerado. Revise o mapeamento dos capítulos e tente de novo.',
     'workflow.publishFailed': () =>
-      'Não foi possível gravar um livro pronto no armazenamento pendente do Mangabound. Verifique o espaço disponível e as permissões de armazenamento.',
+      'Não foi possível gravar um livro pronto no armazenamento pendente do Manga2Ink. Verifique o espaço disponível e as permissões de armazenamento.',
   },
   ja: {
     'workflow.inputGone': () => 'この入力は、もう利用できません。もう一度選んでください。',
@@ -98,6 +98,6 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
     'workflow.noVolumes': () =>
       '巻のファイルが作られませんでした。各話と巻の割り当てを確認して、もう一度お試しください。',
     'workflow.publishFailed': () =>
-      '完成した本を、Mangabound の保留用の保存場所に書き込めませんでした。空き容量と、保存場所へのアクセス許可を確認してください。',
+      '完成した本を、Manga2Ink の保留用の保存場所に書き込めませんでした。空き容量と、保存場所へのアクセス許可を確認してください。',
   },
 };

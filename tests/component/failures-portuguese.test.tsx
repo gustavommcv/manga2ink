@@ -5,16 +5,16 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { message } from '@/domain/message';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { bridge, installBridge } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
-const inPortugueseWith = (overrides: Partial<MangaboundBridge>): void => {
+const inPortugueseWith = (overrides: Partial<Manga2InkBridge>): void => {
   installBridge(
     bridge({
       loadAppSettings: () =>
@@ -52,7 +52,7 @@ describe('what the window says when something could not be done, in Portuguese',
     const box = await screen.findByRole('alert', { name: 'Erro no fluxo' });
     expect(box).toHaveTextContent('Não foi possível concluir esta etapa');
     expect(box).toHaveTextContent(
-      'O Mangabound não teve permissão para usar um arquivo ou pasta de que precisa.',
+      'O Manga2Ink não teve permissão para usar um arquivo ou pasta de que precisa.',
     );
   });
 

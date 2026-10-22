@@ -1,11 +1,11 @@
 import path from 'node:path';
 
 /**
- * Where the app's own folders are on Windows. Not `Mangabound`: the installer puts the app in
- * `%LOCALAPPDATA%\mangabound`, which Windows takes for the same name, and uninstalling removes
+ * Where the app's own folders are on Windows. Not `Manga2Ink`: the installer puts the app in
+ * `%LOCALAPPDATA%\manga2ink`, which Windows takes for the same name, and uninstalling removes
  * everything in that folder, a person's unsaved books with it.
  */
-const windowsStorageFolder = 'Mangabound Data';
+const windowsStorageFolder = 'Manga2Ink Data';
 
 function windowsLocalAppData(environment: NodeJS.ProcessEnv, home: string): string {
   const localAppData = environment.LOCALAPPDATA;
@@ -28,16 +28,16 @@ export function legacyStorageMove(
 ): { readonly from: string; readonly to: string; readonly folders: readonly string[] } | undefined {
   if (platform !== 'win32') return undefined;
   if (
-    environment.MANGABOUND_PENDING_ROOT !== undefined &&
-    path.isAbsolute(environment.MANGABOUND_PENDING_ROOT)
+    environment.MANGA2INK_PENDING_ROOT !== undefined &&
+    path.isAbsolute(environment.MANGA2INK_PENDING_ROOT)
   ) {
     return undefined;
   }
   const coversChosen =
-    environment.MANGABOUND_COVERS_ROOT !== undefined &&
-    path.isAbsolute(environment.MANGABOUND_COVERS_ROOT);
+    environment.MANGA2INK_COVERS_ROOT !== undefined &&
+    path.isAbsolute(environment.MANGA2INK_COVERS_ROOT);
   return {
-    from: path.join(windowsLocalAppData(environment, home), 'Mangabound'),
+    from: path.join(windowsLocalAppData(environment, home), 'Manga2Ink'),
     to: path.dirname(pendingRoot(platform, environment, home)),
     folders: coversChosen ? ['Pending'] : ['Pending', 'Covers'],
   };
@@ -50,23 +50,23 @@ export function pendingRoot(
   home: string,
 ): string {
   if (
-    environment.MANGABOUND_PENDING_ROOT !== undefined &&
-    path.isAbsolute(environment.MANGABOUND_PENDING_ROOT)
+    environment.MANGA2INK_PENDING_ROOT !== undefined &&
+    path.isAbsolute(environment.MANGA2INK_PENDING_ROOT)
   ) {
-    return environment.MANGABOUND_PENDING_ROOT;
+    return environment.MANGA2INK_PENDING_ROOT;
   }
   if (platform === 'win32') {
     return path.join(windowsLocalAppData(environment, home), windowsStorageFolder, 'Pending');
   }
   if (platform === 'darwin') {
-    return path.join(home, 'Library', 'Application Support', 'Mangabound', 'Pending');
+    return path.join(home, 'Library', 'Application Support', 'Manga2Ink', 'Pending');
   }
   const dataHome = environment.XDG_DATA_HOME;
   return path.join(
     dataHome !== undefined && path.isAbsolute(dataHome)
       ? dataHome
       : path.join(home, '.local', 'share'),
-    'mangabound',
+    'manga2ink',
     'pending',
   );
 }
@@ -81,14 +81,14 @@ export function coversRoot(
   home: string,
 ): string {
   if (
-    environment.MANGABOUND_COVERS_ROOT !== undefined &&
-    path.isAbsolute(environment.MANGABOUND_COVERS_ROOT)
+    environment.MANGA2INK_COVERS_ROOT !== undefined &&
+    path.isAbsolute(environment.MANGA2INK_COVERS_ROOT)
   ) {
-    return environment.MANGABOUND_COVERS_ROOT;
+    return environment.MANGA2INK_COVERS_ROOT;
   }
   // The same folder the pending books are in, whatever the platform calls it, without an
   // override of theirs moving the covers along.
-  const { MANGABOUND_PENDING_ROOT: ignored, ...rest } = environment;
+  const { MANGA2INK_PENDING_ROOT: ignored, ...rest } = environment;
   void ignored;
   const pending = pendingRoot(platform, rest, home);
   return path.join(

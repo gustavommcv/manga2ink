@@ -79,13 +79,13 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'text.raw': ['Not enough space on the disk.'],
   'failure.cancelled': ['キャンセルしました。'],
   'failure.conversionCancelled': ['変換をキャンセルしました。'],
-  'failure.internal': ['Mangabound はその操作を完了できませんでした。'],
-  'failure.invalidRequest': ['Mangabound は、無効なリクエストを拒否しました。'],
+  'failure.internal': ['Manga2Ink はその操作を完了できませんでした。'],
+  'failure.invalidRequest': ['Manga2Ink は、無効なリクエストを拒否しました。'],
   'failure.untrustedSender': [
-    'Mangabound は、自身のウィンドウからのリクエストだけを受け付けます。',
+    'Manga2Ink は、自身のウィンドウからのリクエストだけを受け付けます。',
   ],
   'failure.fileAccessDenied': [
-    'Mangabound は、必要なファイルまたはフォルダーを使用する許可を得られませんでした。そのフォルダーのアクセス許可を確認して、もう一度お試しください。',
+    'Manga2Ink は、必要なファイルまたはフォルダーを使用する許可を得られませんでした。そのフォルダーのアクセス許可を確認して、もう一度お試しください。',
   ],
   'failure.diskFull': [
     'ドライブの空き容量がありません。空き容量を確保して、もう一度お試しください。',
@@ -96,7 +96,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'failure.searchNotCompleted': ['検索を完了できませんでした。'],
   'failure.catalogUnreadable': ['出力ライブラリのカタログを読み込めませんでした。'],
   'failure.toolIncompatible': [
-    '同梱の変換ツールが、互換性のないデータを返しました。Mangabound を再インストールするか、診断情報を開いてください。',
+    '同梱の変換ツールが、互換性のないデータを返しました。Manga2Ink を再インストールするか、診断情報を開いてください。',
   ],
   'failure.bindingFailed': ['mangabind は、選ばれた巻を作成できませんでした。'],
   'failure.conversionFailed': ['mangapress は、この巻を変換できませんでした。'],
@@ -123,16 +123,16 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '保留中のこの変換を削除する前に、保存が終わるのを待ってください。',
   ],
   'failure.pendingNotFound': [
-    'これらの保留中の本は、もう利用できません。Mangabound を開き直して、一覧を更新してください。',
+    'これらの保留中の本は、もう利用できません。Manga2Ink を開き直して、一覧を更新してください。',
   ],
   'failure.pendingUnreadable': [
-    '保留中の本を読み込めませんでした。ファイルは削除されていません。保存場所のアクセス許可を確認して、Mangabound を再起動してみてください。',
+    '保留中の本を読み込めませんでした。ファイルは削除されていません。保存場所のアクセス許可を確認して、Manga2Ink を再起動してみてください。',
   ],
   'failure.pendingDeleteFailed': [
     '保留中の本を削除できませんでした。保存場所のアクセス許可を確認して、もう一度お試しください。',
   ],
   'failure.pendingNotDeleted': [
-    'Mangabound は、これらの保留中の本を削除できませんでした。もう一度お試しください。',
+    'Manga2Ink は、これらの保留中の本を削除できませんでした。もう一度お試しください。',
   ],
   'failure.readyBooksShared': [
     '完成した本は共有されています。保留中のコピーを削除する前に、共有を停止してください。',
@@ -158,7 +158,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '作業フォルダー「/mnt/books」を利用できません。ドライブを接続し直すか、アプリの設定で別のフォルダーを選んでください。',
   ],
   'failure.processingFolderUnusable': [
-    'Mangabound は「/mnt/books」で作業できません。書き込めるフォルダーを選んでください。',
+    'Manga2Ink は「/mnt/books」で作業できません。書き込めるフォルダーを選んでください。',
   ],
   'failure.diagnosticsNotCopied': ['診断情報をコピーできませんでした。'],
   'failure.folderNotOpened': [
@@ -218,7 +218,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '巻のファイルが作られませんでした。各話と巻の割り当てを確認して、もう一度お試しください。',
   ],
   'workflow.publishFailed': [
-    '完成した本を、Mangabound の保留用の保存場所に書き込めませんでした。空き容量と、保存場所へのアクセス許可を確認してください。',
+    '完成した本を、Manga2Ink の保留用の保存場所に書き込めませんでした。空き容量と、保存場所へのアクセス許可を確認してください。',
   ],
   'save.bookGone': ['この保留中の本は、もう利用できません。'],
   'save.bookBeingDeleted': ['この保留中の本は、削除されているところです。'],
@@ -228,7 +228,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '保存先がいっぱいです。空き容量を確保してから、もう一度お試しください。保留中の本は無事です。',
   ],
   'save.cannotWrite': [
-    'Mangabound はその保存先に書き込めません。書き込み可能なフォルダーを選ぶか、フォルダーのアクセス許可を確認してください。',
+    'Manga2Ink はその保存先に書き込めません。書き込み可能なフォルダーを選ぶか、フォルダーのアクセス許可を確認してください。',
   ],
   'save.folderGone': [
     '選んだ保存先のフォルダーは、もう利用できません。別のフォルダーを選んでください。',
@@ -240,7 +240,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '本はコピーされましたが、保存先のカタログを更新できませんでした。別のフォルダーを選ぶか、フォルダーのアクセス許可を確認してから、もう一度お試しください。保留中のコピーは無事です。',
   ],
   'save.copiedNotRecorded': [
-    '本はコピーされましたが、Mangabound は保存済みであることを記録できませんでした。保留中のコピーは残っているので、もう一度お試しいただけます。',
+    '本はコピーされましたが、Manga2Ink は保存済みであることを記録できませんでした。保留中のコピーは残っているので、もう一度お試しいただけます。',
   ],
   'provider.catalogue': ['マンガのコミュニティカタログ（巻と話のデータ付き）'],
   'provider.timeout': [
@@ -436,13 +436,13 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'warning.inMore': ['対象は One.epub、Two.epub、ほか 3 冊です。'],
   'toolchain.ready': ['同梱の変換ツールは検証済みで、使用できます。'],
   'toolchain.unavailable': ['同梱のツールが復元されるまで、変換は利用できません。'],
-  'toolchain.noTarget': ['Mangabound は linux-arm64 向けのツールを同梱していません。'],
+  'toolchain.noTarget': ['Manga2Ink は linux-arm64 向けのツールを同梱していません。'],
   'toolchain.manifestUnverified': [
-    '同梱ツールのマニフェストを検証できませんでした。Mangabound を再インストールしてください。',
+    '同梱ツールのマニフェストを検証できませんでした。Manga2Ink を再インストールしてください。',
   ],
   'toolchain.checkFailed': ['同梱の変換ツールを確認できませんでした。'],
   'toolchain.toolReady': ['mangabind v0.7.2 は検証済みです。'],
   'toolchain.toolFailed': [
-    'mangapress を検証できませんでした。Mangabound を再インストールして、同梱のツールを復元してください。',
+    'mangapress を検証できませんでした。Manga2Ink を再インストールして、同梱のツールを復元してください。',
   ],
 };

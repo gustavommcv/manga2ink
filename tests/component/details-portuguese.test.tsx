@@ -216,7 +216,7 @@ describe('the details of a book, in Portuguese', () => {
     const { rerender } = render(inPortuguese(<BookDetailsScreen {...props} format="cbz" />));
     expect(
       screen.getByText(
-        'Arquivos CBZ não guardam o autor. Ele só fica no catálogo que o Mangabound mostra.',
+        'Arquivos CBZ não guardam o autor. Ele só fica no catálogo que o Manga2Ink mostra.',
       ),
     ).toBeVisible();
     expect(screen.getByLabelText('Idioma')).toHaveAccessibleDescription(

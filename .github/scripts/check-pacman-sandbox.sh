@@ -24,7 +24,7 @@ if ! pacman -U --noconfirm "$pkg_file" >"$log_file" 2>&1; then
   exit 0
 fi
 
-binary_path="/opt/mangabound/mangabound"
+binary_path="/opt/manga2ink/manga2ink"
 if [[ ! -x "$binary_path" ]]; then
   echo "RESULT: inconclusive - installed but the executable is missing (or not executable) at $binary_path."
   exit 0

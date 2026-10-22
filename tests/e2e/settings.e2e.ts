@@ -124,7 +124,7 @@ describe('packaged saved settings', () => {
   it('ignores an unavailable legacy save location without blocking processing', async () => {
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
     const settingsPath = path.join(userData, 'settings.json');
-    const gone = path.join(os.tmpdir(), 'mangabound-settings-e2e-gone', 'library');
+    const gone = path.join(os.tmpdir(), 'manga2ink-settings-e2e-gone', 'library');
     const before = await readKept(settingsPath);
     await writeFile(settingsPath, JSON.stringify({ ...before, outputFolder: gone }));
 

@@ -10,7 +10,7 @@ import { WorkflowApp } from '@/renderer/workflow-app';
 
 /** Only the desktop entry reads the preload object; the workflow receives its interface. */
 export function App(): React.JSX.Element {
-  const bridge = window.mangabound;
+  const bridge = window.manga2ink;
   if (bridge !== undefined) {
     return (
       <AppSettingsProvider bridge={bridge}>

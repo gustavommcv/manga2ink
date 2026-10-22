@@ -81,7 +81,7 @@ import { LibraryScreen } from '@/renderer/screens/library-screen';
 import { QueueScreen, type RowPlan } from '@/renderer/screens/queue-screen';
 import { ResultsScreen, type RunOutcome } from '@/renderer/screens/results-screen';
 import { RunningScreen } from '@/renderer/screens/running-screen';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type {
   ConversionCommand,
@@ -143,7 +143,7 @@ const toQueueInput = (input: SelectedInput): QueueInput => ({
 });
 
 /** The workflow depends on the bridge interface, not on where its implementation comes from. */
-export function WorkflowApp({ bridge }: { readonly bridge: MangaboundBridge }): React.JSX.Element {
+export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): React.JSX.Element {
   const [failure, setFailure] = useState<WorkflowFailure>();
   const { toolchain, profiles } = useToolchain(bridge, setFailure);
   const [requestedNavigation, setNavigation] = useState<WorkflowNavigation>({ screen: 'queue' });

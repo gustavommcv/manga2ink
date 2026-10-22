@@ -1,14 +1,14 @@
-# Mangabound
+# Manga2Ink
 
 <p align="center">
-  <img src="assets/branding/mangabound.png" alt="Mangabound logo" width="256" height="256">
+  <img src="assets/branding/manga2ink.png" alt="Manga2Ink logo" width="256" height="256">
 </p>
 
-Mangabound is a desktop app for organizing manga chapters into volumes and converting them into books for your e-reader. Choose how chapters are grouped and fine-tune page size, margins, and image quality for your device. Once processed, save your books locally or share them directly with KOReader over your local network.
+Manga2Ink is a desktop app for organizing manga chapters into volumes and converting them into books for your e-reader. Choose how chapters are grouped and fine-tune page size, margins, and image quality for your device. Once processed, save your books locally or share them directly with KOReader over your local network.
 
-[Download](https://github.com/gustavommcv/mangabound/releases) · [User guide](https://gustavommcv.github.io/mangabound/) · [Guia em português](https://gustavommcv.github.io/mangabound/pt-br/) · [日本語ガイド](https://gustavommcv.github.io/mangabound/ja/) · [Contribute](CONTRIBUTING.md)
+[Download](https://github.com/gustavommcv/manga2ink/releases) · [User guide](https://gustavommcv.github.io/manga2ink/) · [Guia em português](https://gustavommcv.github.io/manga2ink/pt-br/) · [日本語ガイド](https://gustavommcv.github.io/manga2ink/ja/) · [Contribute](CONTRIBUTING.md)
 
-![Mangabound's queue with a validated volume plan, device settings, and EPUB, CBZ, and PDF format choices](tests/visual/__screenshots__/queue-plan-validated.png)
+![Manga2Ink's queue with a validated volume plan, device settings, and EPUB, CBZ, and PDF format choices](tests/visual/__screenshots__/queue-plan-validated.png)
 
 _Interface example with Storybook sample data. The guide and screenshots follow `main`, which may be ahead of the latest release._
 
@@ -20,7 +20,7 @@ _Interface example with Storybook sample data. The guide and screenshots follow 
 
 ## Download
 
-Choose your package from [GitHub Releases](https://github.com/gustavommcv/mangabound/releases). Alpha releases are listed as **Pre-release**.
+Choose your package from [GitHub Releases](https://github.com/gustavommcv/manga2ink/releases). Alpha releases are listed as **Pre-release**.
 
 | Platform                         | Package                                   |
 | -------------------------------- | ----------------------------------------- |
@@ -30,7 +30,7 @@ Choose your package from [GitHub Releases](https://github.com/gustavommcv/mangab
 | Linux, Fedora/RHEL family, x64   | `.rpm`                                    |
 | Linux, Arch, x64                 | `.pkg.tar.zst`                            |
 
-Mangabound is in **alpha**, and the installers are not yet code-signed. See the [installation guide](https://gustavommcv.github.io/mangabound/getting-started/installation/) for setup and download verification, and the [known limitations](https://gustavommcv.github.io/mangabound/getting-started/overview/#known-limitations) for current platform and feature restrictions.
+Manga2Ink is in **alpha**, and the installers are not yet code-signed. See the [installation guide](https://gustavommcv.github.io/manga2ink/getting-started/installation/) for setup and download verification, and the [known limitations](https://gustavommcv.github.io/manga2ink/getting-started/overview/#known-limitations) for current platform and feature restrictions.
 
 ## Get started
 
@@ -40,17 +40,17 @@ Mangabound is in **alpha**, and the installers are not yet code-signed. See the 
 
 Your conversion settings are remembered between sessions. Unsaved books remain under **Ready books**, where you can reopen or delete a pending conversion.
 
-See the [user guide](https://gustavommcv.github.io/mangabound/) for volume editing, single-book mode, custom dimensions, and sharing.
+See the [user guide](https://gustavommcv.github.io/manga2ink/) for volume editing, single-book mode, custom dimensions, and sharing.
 
 ## Local processing
 
-Mangabound accepts chapter folders and CBZ files. Finished books open in your system's default application.
+Manga2Ink accepts chapter folders and CBZ files. Finished books open in your system's default application.
 
 Organization, conversion, and saving run on your computer. Online searches for volumes or an author are optional and use the title and selected work's metadata, not your manga pages. Network sharing runs only when enabled and stops when the app closes.
 
 ## Contributing
 
-For bugs and suggestions, use the [issue templates](https://github.com/gustavommcv/mangabound/issues/new/choose). Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) before contributing. Report suspected vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+For bugs and suggestions, use the [issue templates](https://github.com/gustavommcv/manga2ink/issues/new/choose). Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md) before contributing. Report suspected vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 The [current priorities](docs/milestones.md#current-priorities) describe the remaining release and maintenance work, with a completion criterion for each item. Documentation, translations, reproducible bug reports, and platform testing are useful contributions too.
 
@@ -62,7 +62,7 @@ Development requirements:
 - npm 11+
 - `tar` (and `unzip` on Linux and macOS) for verified release extraction. On Windows run the npm scripts from PowerShell: the `tar` that ships with Git Bash breaks the toolchain step.
 
-`main` is the latest state and can be ahead of what a release shipped. To build what a given release contains, check out its tag first (`git checkout <tag>`, with the tag of that release from the [releases page](https://github.com/gustavommcv/mangabound/releases)).
+`main` is the latest state and can be ahead of what a release shipped. To build what a given release contains, check out its tag first (`git checkout <tag>`, with the tag of that release from the [releases page](https://github.com/gustavommcv/manga2ink/releases)).
 
 Install and run the development shell:
 
@@ -79,7 +79,7 @@ Development setup acquires and verifies the pinned converters under the ignored 
 
 | Read this                                                          | To learn                                                                                                 |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| [Documentation Website](https://gustavommcv.github.io/mangabound/) | Official user guides in English, Portuguese and Japanese, KOReader setup, and CLI reference (`website/`) |
+| [Documentation Website](https://gustavommcv.github.io/manga2ink/) | Official user guides in English, Portuguese and Japanese, KOReader setup, and CLI reference (`website/`) |
 | [Architecture overview](docs/architecture.md)                      | How the code is layered, how a conversion runs end to end, where to change what                          |
 | [Architecture decisions](docs/adr/README.md)                       | Why it is built this way, one short record per decision                                                  |
 | [Contributing](CONTRIBUTING.md)                                    | The gates, the kinds of tests, Storybook, and how to open a pull request                                 |
@@ -94,15 +94,15 @@ Bundled converters are pinned in `toolchain.lock.json`. Updating a pin is a sepa
 
 - **[mangabind](https://github.com/gustavommcv/mangabind)** handles chapter grouping and volume creation.
 - **[mangapress](https://github.com/gustavommcv/mangapress)** processes pages and creates the finished books.
-- **[MangaDex](https://mangadex.org)** provides optional volume and author metadata. Mangabound is free and ad-free; see the [provider guide](docs/adding-a-metadata-provider.md) for attribution and API requirements.
+- **[MangaDex](https://mangadex.org)** provides optional volume and author metadata. Manga2Ink is free and ad-free; see the [provider guide](docs/adding-a-metadata-provider.md) for attribution and API requirements.
 - **The comics the guide converts** to show what each option does: _Pepper&Carrot_ by David Revoy ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), _Go Go! Encyclopedia Girls_ by Kasuga, English version by Masatami ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)), and a page by Polylerus ([CC BY 2.5](https://creativecommons.org/licenses/by/2.5/)). Each picture is credited where it appears, and all are listed in [LICENSES.md](website/src/assets/options/LICENSES.md).
 - **[JPmarquesbraga](https://github.com/JPmarquesbraga)** drew the app icon ([the asset guide](assets/README.md)).
-- **[Kindle Comic Converter](https://github.com/ciromattia/kcc)** informs mangapress's conversion algorithms and Mangabound's default image settings ([ADR 0011](docs/adr/0011-kcc-default-options.md), [ADR 0015](docs/adr/0015-paperwhite-as-the-starting-device.md)).
+- **[Kindle Comic Converter](https://github.com/ciromattia/kcc)** informs mangapress's conversion algorithms and Manga2Ink's default image settings ([ADR 0011](docs/adr/0011-kcc-default-options.md), [ADR 0015](docs/adr/0015-paperwhite-as-the-starting-device.md)).
 
 ## AI disclosure
 
-Parts of Mangabound, including code, tests, and documentation, were written with the help of AI coding assistants. The maintainers direct, review, and test this work, but AI-assisted contributions can contain mistakes like any other. If you find a bug or an error in the documentation, please [open an issue](https://github.com/gustavommcv/mangabound/issues).
+Parts of Manga2Ink, including code, tests, and documentation, were written with the help of AI coding assistants. The maintainers direct, review, and test this work, but AI-assisted contributions can contain mistakes like any other. If you find a bug or an error in the documentation, please [open an issue](https://github.com/gustavommcv/manga2ink/issues).
 
 ## License
 
-Mangabound is released under the [MIT license](LICENSE). The bundled tools and third-party dependencies retain their own licenses, and so do the pictures of comics in `website/src/assets/options/`, which are adaptations of CC-licensed pages ([LICENSES.md](website/src/assets/options/LICENSES.md)), not MIT. Each package includes the converters' licenses and notices under `toolchain/<target>/licenses/` in the app's resources directory, alongside the [filename dependency notices](THIRD-PARTY-NOTICES.md).
+Manga2Ink is released under the [MIT license](LICENSE). The bundled tools and third-party dependencies retain their own licenses, and so do the pictures of comics in `website/src/assets/options/`, which are adaptations of CC-licensed pages ([LICENSES.md](website/src/assets/options/LICENSES.md)), not MIT. Each package includes the converters' licenses and notices under `toolchain/<target>/licenses/` in the app's resources directory, alongside the [filename dependency notices](THIRD-PARTY-NOTICES.md).

@@ -1,5 +1,5 @@
 import { createMappingDraft } from '@/domain/mapping';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 import { type SelectedInput } from '@/shared/workflow-contract';
 
 import { bridge } from './workflow';
@@ -61,8 +61,8 @@ export const libraryFolder: SelectedInput = {
 /** A bridge whose folder is a library holding these titles. */
 export function libraryBridge(
   titles: readonly (typeof goodTitle)[],
-  overrides: Partial<MangaboundBridge> = {},
-): MangaboundBridge {
+  overrides: Partial<Manga2InkBridge> = {},
+): Manga2InkBridge {
   return bridge({
     chooseInputs: () =>
       Promise.resolve({ ok: true, value: { inputs: [libraryFolder], rejected: [] } }),

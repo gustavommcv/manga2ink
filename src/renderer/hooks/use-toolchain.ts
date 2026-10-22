@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { message } from '@/domain/message';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
@@ -13,7 +13,7 @@ import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-co
  * again, so pass a stable function (a state setter).
  */
 export function useToolchain(
-  bridge: MangaboundBridge,
+  bridge: Manga2InkBridge,
   onFailure: (failure: WorkflowFailure) => void,
 ): {
   readonly toolchain: ToolchainStatus | undefined;

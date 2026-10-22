@@ -12,7 +12,7 @@ let pictures: string;
 const item = '/manga/A Quiet Journey';
 
 beforeEach(async () => {
-  work = await mkdtemp(path.join(os.tmpdir(), 'mangabound-covers-'));
+  work = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-covers-'));
   root = path.join(work, 'covers');
   pictures = path.join(work, 'pictures');
   await mkdir(pictures);

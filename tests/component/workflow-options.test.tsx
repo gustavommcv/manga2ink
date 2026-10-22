@@ -5,7 +5,7 @@ import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
 import { raw, message } from '@/domain/message';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import {
   addFolder,
@@ -18,7 +18,7 @@ import {
 } from './support/workflow';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('entering conversion options', () => {
@@ -62,7 +62,7 @@ describe('the options a run starts with', () => {
 
   it('sends what Kindle Comic Converter has on, and takes upscaling from the device chosen', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
@@ -70,7 +70,7 @@ describe('the options a run starts with', () => {
     );
     // Every pick registers under an id of its own, so the second add is a new item.
     const chooseInputs = vi
-      .fn<MangaboundBridge['chooseInputs']>()
+      .fn<Manga2InkBridge['chooseInputs']>()
       .mockResolvedValueOnce({ ok: true, value: { inputs: [folder()], rejected: [] } })
       .mockResolvedValueOnce({
         ok: true,
@@ -113,7 +113,7 @@ describe('the options a run starts with', () => {
 
   it('starts from the first device on offer, with its own upscaling, when the default one is missing', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
@@ -164,16 +164,16 @@ describe('the options kept between sessions', () => {
     grayLevels: 16,
     family: 'kindle',
   };
-  const twoDevices = (): MangaboundBridge['getDeviceProfiles'] => () =>
+  const twoDevices = (): Manga2InkBridge['getDeviceProfiles'] => () =>
     Promise.resolve({ ok: true, value: [paperwhite, scribe] });
 
   const saveCalls = (
-    saveSettings: ReturnType<typeof vi.fn<MangaboundBridge['saveSettings']>>,
-  ): readonly Parameters<MangaboundBridge['saveSettings']>[0][] =>
+    saveSettings: ReturnType<typeof vi.fn<Manga2InkBridge['saveSettings']>>,
+  ): readonly Parameters<Manga2InkBridge['saveSettings']>[0][] =>
     saveSettings.mock.calls.map(([command]) => command);
 
-  const okSave = (): ReturnType<typeof vi.fn<MangaboundBridge['saveSettings']>> =>
-    vi.fn<MangaboundBridge['saveSettings']>(() => Promise.resolve({ ok: true, value: undefined }));
+  const okSave = (): ReturnType<typeof vi.fn<Manga2InkBridge['saveSettings']>> =>
+    vi.fn<Manga2InkBridge['saveSettings']>(() => Promise.resolve({ ok: true, value: undefined }));
 
   it('opens with saved conversion options but no output-folder control', async () => {
     installBridge(
@@ -291,7 +291,7 @@ describe('the options kept between sessions', () => {
   it('saves nothing until what was kept has been read', async () => {
     const user = userEvent.setup();
     const saveSettings = okSave();
-    let release: (result: Awaited<ReturnType<MangaboundBridge['loadSettings']>>) => void = () =>
+    let release: (result: Awaited<ReturnType<Manga2InkBridge['loadSettings']>>) => void = () =>
       undefined;
     installBridge(
       bridge({
@@ -400,7 +400,7 @@ describe('the options kept between sessions', () => {
   it('tries a save again with the next change after one failed', async () => {
     const user = userEvent.setup();
     const saveSettings = vi
-      .fn<MangaboundBridge['saveSettings']>()
+      .fn<Manga2InkBridge['saveSettings']>()
       .mockResolvedValueOnce({
         ok: false,
         error: { code: 'settings_save_failed', said: message('failure.settingsNotSaved', {}) },

@@ -114,7 +114,7 @@ describe('the question', () => {
     expect(electron.showMessageBox).toHaveBeenCalledExactlyOnceWith(window, {
       type: 'warning',
       message: 'A conversion is still running.',
-      detail: 'If you close Mangabound now, it will be lost.',
+      detail: 'If you close Manga2Ink now, it will be lost.',
       buttons: ['Keep converting', 'Close anyway'],
       defaultId: 0,
       cancelId: 0,
@@ -142,7 +142,7 @@ describe('the question', () => {
   it('is said in Portuguese for a window in Portuguese', () => {
     expect(dialogMessages['pt-BR'].leaveWhileConverting).toEqual({
       message: 'Há uma conversão em andamento.',
-      detail: 'Se você fechar o Mangabound agora, ela será perdida.',
+      detail: 'Se você fechar o Manga2Ink agora, ela será perdida.',
       keep: 'Continuar convertendo',
       leave: 'Fechar mesmo',
     });

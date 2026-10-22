@@ -51,7 +51,7 @@ for (const locale of Object.keys(label)) {
     }
     const heart = page.locator(`a[href="${supportUrl}"]`).filter({ visible: true }).first();
     const github = page
-      .locator('a[href="https://github.com/gustavommcv/mangabound"]')
+      .locator('a[href="https://github.com/gustavommcv/manga2ink"]')
       .filter({ visible: true })
       .first();
     const [near, far] = [await heart.boundingBox(), await github.boundingBox()];

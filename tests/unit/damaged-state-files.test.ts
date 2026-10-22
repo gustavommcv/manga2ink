@@ -19,7 +19,7 @@ afterEach(async () => {
 
 describe('the record of which pending books were saved, when what is on disk is not one', () => {
   async function runWithRecord(record: string | undefined): Promise<FsPendingRuns> {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-damaged-pending-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-damaged-pending-'));
     roots.push(root);
     const library = new FsLibraryStore();
     const store = new FsPendingRuns(path.join(root, 'pending'), library);

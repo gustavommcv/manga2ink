@@ -19,9 +19,9 @@ afterEach(async () => {
 });
 
 async function scratch(): Promise<{ readonly from: string; readonly to: string }> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-legacy-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-legacy-'));
   directories.push(root);
-  return { from: path.join(root, 'Mangabound'), to: path.join(root, 'Mangabound Data') };
+  return { from: path.join(root, 'Manga2Ink'), to: path.join(root, 'Manga2Ink Data') };
 }
 
 async function put(file: string, text: string): Promise<void> {
@@ -60,7 +60,7 @@ describe('moveLegacyStorage', () => {
   it('leaves the rest of the old folder alone, the installer’s own files included', async () => {
     const { from, to } = await scratch();
     await put(path.join(from, 'Update.exe'), 'installer');
-    await put(path.join(from, 'app-0.1.0', 'mangabound.exe'), 'app');
+    await put(path.join(from, 'app-0.1.0', 'manga2ink.exe'), 'app');
     await put(path.join(from, 'Pending', 'run-1', 'Book.epub'), 'book');
 
     await moveLegacyStorage({ from, to, folders, onProblem: vi.fn() });

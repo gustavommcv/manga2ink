@@ -27,7 +27,7 @@ describe('packaged window closed during a conversion', () => {
   });
 
   it('asks first, and stays open when the person would rather keep converting', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-leaving-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-leaving-e2e-'));
     temporaryDirectories.push(testRoot);
     const fixture = path.resolve(
       'tests',
@@ -74,7 +74,7 @@ describe('packaged window closed during a conversion', () => {
         typeof argument === 'object' && argument !== null && 'message' in argument,
     );
     assert.equal(options?.message, 'A conversion is still running.');
-    assert.equal(options.detail, 'If you close Mangabound now, it will be lost.');
+    assert.equal(options.detail, 'If you close Manga2Ink now, it will be lost.');
     assert.deepEqual(options.buttons, ['Keep converting', 'Close anyway']);
     // They chose to keep converting: the window is still there, and the conversion goes on.
     assert.equal(await openWindows(), 1);

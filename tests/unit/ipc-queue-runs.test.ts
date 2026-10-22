@@ -259,7 +259,7 @@ describe('the signal that a queue has ended', () => {
     await call('queue:end', page, { token: (begun as { value: string }).value, summary: clean });
 
     expect(show).toHaveBeenCalledExactlyOnceWith(
-      { title: 'Your books are ready', body: '2 books ready to save in Mangabound.' },
+      { title: 'Your books are ready', body: '2 books ready to save in Manga2Ink.' },
       system.shell.bringWindowForward,
     );
   });
@@ -302,7 +302,7 @@ describe('the signal that a queue has ended', () => {
     expect(show).toHaveBeenCalledExactlyOnceWith(
       {
         title: 'Some conversions failed',
-        body: '2 books ready, 1 failure. Open Mangabound to see why.',
+        body: '2 books ready, 1 failure. Open Manga2Ink to see why.',
       },
       system.shell.bringWindowForward,
     );

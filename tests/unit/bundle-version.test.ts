@@ -8,13 +8,13 @@ const infoPlist = `<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0">
   <dict>
     <key>CFBundleName</key>
-    <string>Mangabound</string>
+    <string>Manga2Ink</string>
     <key>CFBundleShortVersionString</key>
     <string>0.1.0-alpha.11</string>
     <key>CFBundleVersion</key>
     <string>0.1.0-alpha.11</string>
     <key>CFBundleExecutable</key>
-    <string>mangabound</string>
+    <string>manga2ink</string>
   </dict>
 </plist>`;
 
@@ -42,7 +42,7 @@ describe('setting it in an Info.plist', () => {
     expect(result).toBe(infoPlist.replaceAll('0.1.0-alpha.11', '0.1.0'));
     expect(result).toContain('<key>CFBundleShortVersionString</key>\n    <string>0.1.0</string>');
     expect(result).toContain('<key>CFBundleVersion</key>\n    <string>0.1.0</string>');
-    expect(result).toContain('<string>Mangabound</string>');
+    expect(result).toContain('<string>Manga2Ink</string>');
   });
 
   it('does not take CFBundleVersion for the key it contains the name of, or the reverse', () => {

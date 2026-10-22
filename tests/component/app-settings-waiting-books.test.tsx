@@ -8,7 +8,7 @@ import type { WaitingBooks } from '@/domain/pending-cleanup';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { ProcessingTab } from '@/renderer/components/settings/processing-tab';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 import { defaultProcessingStatus } from './support/processing';
@@ -28,7 +28,7 @@ const waitingStatus: ProcessingFolderStatus = {
 const found: WaitingBooks = { runs: 1, books: 3, bytes: 480 * MiB };
 
 const speaking =
-  (language: Language): MangaboundBridge['loadAppSettings'] =>
+  (language: Language): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -36,17 +36,17 @@ const speaking =
     });
 
 const reading =
-  (...statuses: ProcessingFolderStatus[]): MangaboundBridge['getProcessingFolder'] =>
+  (...statuses: ProcessingFolderStatus[]): Manga2InkBridge['getProcessingFolder'] =>
   () =>
     Promise.resolve({ ok: true, value: statuses.shift() ?? waitingStatus });
 
 const counting =
-  (value: WaitingBooks): MangaboundBridge['countIdlePending'] =>
+  (value: WaitingBooks): Manga2InkBridge['countIdlePending'] =>
   () =>
     Promise.resolve({ ok: true, value });
 
 async function renderTab(
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
   language: Language = 'en',
 ): Promise<void> {
   render(
@@ -70,7 +70,7 @@ describe('the books that wait, in the Processing tab', () => {
     await renderTab();
 
     expect(screen.getByText('5 books in 2 conversions, 1.2 GB')).toBeVisible();
-    expect(screen.getByText(/removed when Mangabound closes/u)).toBeVisible();
+    expect(screen.getByText(/removed when Manga2Ink closes/u)).toBeVisible();
     const days = screen.getByRole('combobox', { name: /Delete what has waited, untouched/u });
     expect(days).toHaveValue('30');
     expect(
@@ -101,8 +101,8 @@ describe('the books that wait, in the Processing tab', () => {
 
   it('asks what the chosen number of days would delete, and deletes nothing yet', async () => {
     const user = userEvent.setup();
-    const countIdlePending = vi.fn<MangaboundBridge['countIdlePending']>(counting(found));
-    const deleteIdlePending = vi.fn<MangaboundBridge['deleteIdlePending']>();
+    const countIdlePending = vi.fn<Manga2InkBridge['countIdlePending']>(counting(found));
+    const deleteIdlePending = vi.fn<Manga2InkBridge['deleteIdlePending']>();
     await renderTab({ countIdlePending, deleteIdlePending });
 
     await user.selectOptions(screen.getByRole('combobox', { name: days }), '7');
@@ -121,7 +121,7 @@ describe('the books that wait, in the Processing tab', () => {
 
   it('deletes only when told to, says what went, and reads the books that wait again', async () => {
     const user = userEvent.setup();
-    const deleteIdlePending = vi.fn<MangaboundBridge['deleteIdlePending']>(() =>
+    const deleteIdlePending = vi.fn<Manga2InkBridge['deleteIdlePending']>(() =>
       Promise.resolve({ ok: true, value: found }),
     );
     await renderTab({
@@ -147,7 +147,7 @@ describe('the books that wait, in the Processing tab', () => {
 
   it('keeps the books when the question is answered with no, or with Escape, and gives the focus back', async () => {
     const user = userEvent.setup();
-    const deleteIdlePending = vi.fn<MangaboundBridge['deleteIdlePending']>();
+    const deleteIdlePending = vi.fn<Manga2InkBridge['deleteIdlePending']>();
     await renderTab({ countIdlePending: counting(found), deleteIdlePending });
 
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
@@ -169,7 +169,7 @@ describe('the books that wait, in the Processing tab', () => {
 
   it('does not let the question be closed, or asked twice, while it is deleting', async () => {
     const user = userEvent.setup();
-    const answer = deferred<Awaited<ReturnType<MangaboundBridge['deleteIdlePending']>>>();
+    const answer = deferred<Awaited<ReturnType<Manga2InkBridge['deleteIdlePending']>>>();
     await renderTab({
       countIdlePending: counting(found),
       deleteIdlePending: () => answer.promise,
@@ -284,7 +284,7 @@ describe('the books that wait, in the Processing tab', () => {
 
     await user.click(screen.getByRole('button', { name: 'Delete…' }));
 
-    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+    expect(await screen.findByText('Manga2Ink could not complete that action.')).toBeVisible();
   });
 
   it('is written in Portuguese when the window is', async () => {

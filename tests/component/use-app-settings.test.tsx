@@ -5,14 +5,14 @@ import { defaultAppSettings } from '@/domain/app-settings';
 import { useAppSettingsState } from '@/renderer/hooks/use-app-settings';
 import type { RestoredAppSettings } from '@/shared/app-settings-contract';
 import { raw } from '@/domain/message';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 
-type Loaded = Awaited<ReturnType<MangaboundBridge['loadAppSettings']>>;
+type Loaded = Awaited<ReturnType<Manga2InkBridge['loadAppSettings']>>;
 
 const restored =
-  (value: Partial<RestoredAppSettings> = {}): MangaboundBridge['loadAppSettings'] =>
+  (value: Partial<RestoredAppSettings> = {}): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -164,7 +164,7 @@ describe('useAppSettingsState', () => {
 
   describe('changing the language', () => {
     it('keeps the choice, and takes the language it comes to from the answer', async () => {
-      const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
         Promise.resolve({ ok: true, value: { language: 'pt-BR' } }),
       );
       const bridge = inertBridge({
@@ -219,7 +219,7 @@ describe('useAppSettingsState', () => {
 
   describe('changing the other choices', () => {
     it('sends only the choice that changed, and keeps every change that was kept, each on top of the last', async () => {
-      const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+      const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
         Promise.resolve({ ok: true, value: { language: 'en' } }),
       );
       const bridge = inertBridge({ loadAppSettings: restored(), saveAppSettings });

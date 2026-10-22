@@ -26,7 +26,7 @@ async function audit(
   t,
   { config = policy, advisories = fixture, packages = lock, status = 200, report } = {},
 ) {
-  const directory = await mkdtemp(path.join(tmpdir(), 'mangabound-audit-test-'));
+  const directory = await mkdtemp(path.join(tmpdir(), 'manga2ink-audit-test-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   await writeFile(path.join(directory, 'package.json'), JSON.stringify(packages.packages['']));
   await writeFile(path.join(directory, 'package-lock.json'), JSON.stringify(packages));

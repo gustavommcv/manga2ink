@@ -16,9 +16,9 @@ import { bundleVersionOf, withBundleVersion } from './scripts/lib/bundle-version
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
 
-const appIconBase = path.join(import.meta.dirname, 'assets', 'icons', 'mangabound');
+const appIconBase = path.join(import.meta.dirname, 'assets', 'icons', 'manga2ink');
 
-const buildForPackagedE2e = process.env.MANGABOUND_E2E === '1';
+const buildForPackagedE2e = process.env.MANGA2INK_E2E === '1';
 
 // electron-installer-redhat reads `specTemplate`, but Forge's MakerRpmConfigOptions does not list
 // it, so the options are built apart: only an object written inline is checked for extra keys.
@@ -54,7 +54,7 @@ const acquireToolchain = (platform: string, arch: string): Promise<void> =>
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    executableName: 'mangabound',
+    executableName: 'manga2ink',
     icon: appIconBase,
     extraResource: [
       path.join(import.meta.dirname, 'vendor', 'toolchain'),
@@ -96,7 +96,7 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       setupIcon: `${appIconBase}.ico`,
       // Squirrel's installed-program entry requires a public URL, not a local path.
-      iconUrl: 'https://gustavommcv.github.io/mangabound/mangabound.ico',
+      iconUrl: 'https://gustavommcv.github.io/manga2ink/manga2ink.ico',
     }),
     // win32 added alongside darwin: unzip-and-run, no installer, no admin rights needed - this
     // project's answer to a portable Windows build. Investigated a dedicated MSI wizard maker

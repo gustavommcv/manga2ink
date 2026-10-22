@@ -10,7 +10,7 @@ import { isInsideLibrary } from '@/library/paths';
  * from this scheme instead, by `app-protocol.ts`, out of the folder the build put it in.
  */
 export const rendererScheme = 'app';
-const rendererHost = 'mangabound';
+const rendererHost = 'manga2ink';
 
 const fileEntryPrefix = 'file://';
 

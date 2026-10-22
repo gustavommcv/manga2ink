@@ -19,10 +19,10 @@ after(async () => {
 
 describe('packaged queue', () => {
   it('takes several folders at once, runs the ones that are ready and reports the one that is not', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-queue-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-queue-e2e-'));
     temporaryDirectories.push(testRoot);
     const grouped = path.join(testRoot, 'Named Volumes');
-    const ungrouped = path.join(testRoot, 'Mangabound E2E');
+    const ungrouped = path.join(testRoot, 'Manga2Ink E2E');
     const libraryPath = path.join(testRoot, 'library');
     await cp(
       path.resolve('tests', 'fixtures', 'e2e', 'manga-named-volumes', 'Named Volumes'),
@@ -30,7 +30,7 @@ describe('packaged queue', () => {
       { recursive: true },
     );
     await cp(
-      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Mangabound E2E'),
+      path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'),
       ungrouped,
       {
         recursive: true,
@@ -61,12 +61,12 @@ describe('packaged queue', () => {
       'Named Volumes - Vol.02.epub',
     ]);
     const results = await $('main').getText();
-    assert.match(results, /Mangabound E2E was skipped/u);
+    assert.match(results, /Manga2Ink E2E was skipped/u);
     assert.match(results, /No volumes yet/u);
 
     // What was left out can be fixed from the results, and then it is still in the queue.
-    await $('button[aria-label="Fix Mangabound E2E"]').click();
-    await $('h1=Organize Mangabound E2E into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="Fix Manga2Ink E2E"]').click();
+    await $('h1=Organize Manga2Ink E2E into volumes').waitForDisplayed({ timeout: 30_000 });
     await $('button=Queue').click();
     await $('h1=Queue').waitForDisplayed();
     await $('span=Needs volumes').waitForDisplayed();
@@ -75,9 +75,9 @@ describe('packaged queue', () => {
   });
 
   it('registers files dropped on the window by their path, and says why others were not added', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-drop-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-drop-e2e-'));
     temporaryDirectories.push(testRoot);
-    const cbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const cbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const notesPath = path.join(testRoot, 'notes.txt');
     await writeFile(notesPath, 'not a comic');
 
@@ -113,7 +113,7 @@ describe('packaged queue', () => {
     });
     assert.equal(outcome, 'dropped 2');
 
-    await $('p=Mangabound Direct.cbz').waitForDisplayed({ timeout: 30_000 });
+    await $('p=Manga2Ink Direct.cbz').waitForDisplayed({ timeout: 30_000 });
     await $('span=Ready').waitForDisplayed({ timeout: 30_000 });
     assert.match(
       await $('main').getText(),
@@ -125,17 +125,17 @@ describe('packaged queue', () => {
   });
 
   it('does not let the page choose which paths it drops', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-drop-forged-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-drop-forged-e2e-'));
     temporaryDirectories.push(testRoot);
     const victim = path.join(testRoot, 'Not Chosen');
-    await cp(path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Mangabound E2E'), victim, {
+    await cp(path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E'), victim, {
       recursive: true,
     });
 
     // A page that is not what it should be passes an object with a `map` of its own, which would
     // make the bridge send whatever paths it returns. The bridge reads only a real array of files.
     const outcome = await browser.execute(async (forgedPath: string) => {
-      const bridge = window.mangabound;
+      const bridge = window.manga2ink;
       if (bridge === undefined) return 'no bridge';
       const forged = { map: () => [forgedPath] } as unknown as readonly File[];
       const registered = await bridge.registerDroppedFiles(forged);
@@ -151,11 +151,11 @@ describe('packaged queue', () => {
     assert.equal(registered.value, undefined);
     assert.equal(covers.ok, false);
     assert.equal(await $('p=Not Chosen').isExisting(), false);
-    assert.equal(await $('p=Mangabound E2E').isExisting(), false);
+    assert.equal(await $('p=Manga2Ink E2E').isExisting(), false);
   });
 
   it('opens a menu when the empty area is clicked, and adds the folder chosen', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-queue-click-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-queue-click-e2e-'));
     temporaryDirectories.push(testRoot);
     const grouped = path.join(testRoot, 'Named Volumes');
     await cp(

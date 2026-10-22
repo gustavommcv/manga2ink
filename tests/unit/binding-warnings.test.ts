@@ -127,7 +127,7 @@ describe('withBindingWarnings', () => {
     const result = withBindingWarnings(
       volumes,
       [1, 2, 3],
-      [issue('mapping_not_kept', { tool: 'mangabound', stage: 'bind' })],
+      [issue('mapping_not_kept', { tool: 'manga2ink', stage: 'bind' })],
     );
 
     expect(result.map((entry) => entry.warnings?.map(({ code }) => code))).toEqual([

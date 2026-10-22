@@ -1,13 +1,13 @@
-const repository = 'https://github.com/gustavommcv/mangabound';
-const api = 'https://api.github.com/repos/gustavommcv/mangabound/releases?per_page=100';
+const repository = 'https://github.com/gustavommcv/manga2ink';
+const api = 'https://api.github.com/repos/gustavommcv/manga2ink/releases?per_page=100';
 
 const packages = {
-  windowsInstaller: /^Mangabound-.+\.Setup\.exe$/,
-  windowsPortable: /^Mangabound-win32-x64-.+\.zip$/,
-  macOS: /^Mangabound-darwin-arm64-.+\.zip$/,
-  debian: /^mangabound_.+_amd64\.deb$/,
-  fedora: /^mangabound-.+\.x86_64\.rpm$/,
-  arch: /^mangabound-.+-x86_64\.pkg\.tar\.zst$/,
+  windowsInstaller: /^Manga2Ink-.+\.Setup\.exe$/,
+  windowsPortable: /^Manga2Ink-win32-x64-.+\.zip$/,
+  macOS: /^Manga2Ink-darwin-arm64-.+\.zip$/,
+  debian: /^manga2ink_.+_amd64\.deb$/,
+  fedora: /^manga2ink-.+\.x86_64\.rpm$/,
+  arch: /^manga2ink-.+-x86_64\.pkg\.tar\.zst$/,
   checksums: /^SHA256SUMS$/,
 };
 
@@ -35,11 +35,11 @@ export function resolveReleaseDownloads(releases) {
   }
   published.sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
   const release = published[0];
-  if (!release) throw new Error('No downloadable Mangabound release has been published.');
+  if (!release) throw new Error('No downloadable Manga2Ink release has been published.');
 
   const tag = encodeURIComponent(release.tag_name);
   if (release.html_url !== `${repository}/releases/tag/${tag}`) {
-    throw new Error('The release notes do not belong to the Mangabound repository.');
+    throw new Error('The release notes do not belong to the Manga2Ink repository.');
   }
 
   const assets = Object.fromEntries(
@@ -64,12 +64,12 @@ export async function fetchReleaseDownloads(request = fetch, token = '') {
   const headers = {
     Accept: 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2026-03-10',
-    'User-Agent': 'mangabound-website',
+    'User-Agent': 'manga2ink-website',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
   const response = await request(api, { headers });
   if (!response.ok) {
-    throw new Error(`Could not read Mangabound releases from GitHub (HTTP ${response.status}).`);
+    throw new Error(`Could not read Manga2Ink releases from GitHub (HTTP ${response.status}).`);
   }
   return resolveReleaseDownloads(await response.json());
 }

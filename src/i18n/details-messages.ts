@@ -75,7 +75,7 @@ export const detailsMessages: Readonly<Record<Language, DetailsMessages>> = {
       label: 'Author',
       placeholder: 'Leave blank if unknown',
       find: 'Find author',
-      cbzNote: 'CBZ files do not store an author. It is only kept in the catalog Mangabound shows.',
+      cbzNote: 'CBZ files do not store an author. It is only kept in the catalog Manga2Ink shows.',
     },
     language: {
       label: 'Language',
@@ -134,7 +134,7 @@ export const detailsMessages: Readonly<Record<Language, DetailsMessages>> = {
       label: 'Autor',
       placeholder: 'Deixe em branco se não souber',
       find: 'Buscar autor',
-      cbzNote: 'Arquivos CBZ não guardam o autor. Ele só fica no catálogo que o Mangabound mostra.',
+      cbzNote: 'Arquivos CBZ não guardam o autor. Ele só fica no catálogo que o Manga2Ink mostra.',
     },
     language: {
       label: 'Idioma',
@@ -195,7 +195,7 @@ export const detailsMessages: Readonly<Record<Language, DetailsMessages>> = {
       placeholder: '不明な場合は空欄のままにしてください',
       find: '著者を検索',
       cbzNote:
-        'CBZ ファイルには著者を保存できません。Mangabound が表示するカタログの中にだけ保持されます。',
+        'CBZ ファイルには著者を保存できません。Manga2Ink が表示するカタログの中にだけ保持されます。',
     },
     language: {
       label: '言語',

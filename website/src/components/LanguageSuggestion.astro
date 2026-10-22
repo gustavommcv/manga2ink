@@ -117,8 +117,8 @@ const offered = languages.filter(({ lang }) => lang !== route.lang);
   // What a reader decided is kept in the browser and nowhere else: `never` and `chosen` stay, `dismissed`
   // lasts for the visit. A browser that will not keep them (private windows, blocked storage) shows the
   // suggestion on each page, which is the cost of not remembering.
-  const key = 'mangabound-language-suggestion';
-  const chosenKey = 'mangabound-language-chosen';
+  const key = 'manga2ink-language-suggestion';
+  const chosenKey = 'manga2ink-language-chosen';
 
   const read = (store: () => Storage, name: string): string | undefined => {
     try {

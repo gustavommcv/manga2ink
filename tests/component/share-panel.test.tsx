@@ -129,7 +129,7 @@ describe('SharePanel', () => {
     expect(
       screen.getByText(/In KOReader: Search, then OPDS catalog, then add this address/u),
     ).toBeVisible();
-    expect(screen.getByText(/Keep Mangabound open while it syncs/u)).toBeVisible();
+    expect(screen.getByText(/Keep Manga2Ink open while it syncs/u)).toBeVisible();
   });
 
   it('copies the address, and says so', async () => {

@@ -23,21 +23,21 @@ export interface AcquisitionFeedInfo {
 }
 
 export const recentFeed: AcquisitionFeedInfo = {
-  id: 'urn:mangabound:recent',
+  id: 'urn:manga2ink:recent',
   title: 'Recently converted',
   summary: 'The most recently converted books, newest first.',
   path: '/recent',
 };
 
 export const otherFilesFeed: AcquisitionFeedInfo = {
-  id: 'urn:mangabound:other',
+  id: 'urn:manga2ink:other',
   title: 'Other files',
   summary: 'Comic and book files found in this folder that were not converted here.',
   path: '/other',
 };
 
 export function entryId(relativePath: string): string {
-  return `urn:mangabound:book:${encodeRelativePath(relativePath)}`;
+  return `urn:manga2ink:book:${encodeRelativePath(relativePath)}`;
 }
 
 export function buildNavigationFeed(config: OpdsCatalogConfig): string {
@@ -57,7 +57,7 @@ export function buildNavigationFeed(config: OpdsCatalogConfig): string {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opds="http://opds-spec.org/2010/catalog">',
-    '  <id>urn:mangabound:root</id>',
+    '  <id>urn:manga2ink:root</id>',
     `  <title>${escapeXml(config.libraryTitle)}</title>`,
     `  <updated>${escapeXml(config.updated)}</updated>`,
     `  <link rel="self" href="${escapeXml(rootHref)}" type="${navigationFeedType}"/>`,

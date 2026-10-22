@@ -50,7 +50,7 @@ export interface LibraryPlan {
 }
 
 export interface PipelineIssue {
-  readonly tool: 'mangabind' | 'mangapress' | 'mangabound';
+  readonly tool: 'mangabind' | 'mangapress' | 'manga2ink';
   readonly severity: 'warning' | 'error';
   readonly code: string;
   readonly stage: string;

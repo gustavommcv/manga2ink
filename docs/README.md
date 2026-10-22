@@ -1,6 +1,6 @@
 # Contributor documentation
 
-These documents explain how Mangabound is built, decided and released. They are plain Markdown that GitHub renders, and they change with the code, in the same pull request. The user guide (installing, using the app, connecting KOReader) is a website, in [`../website`](../website/README.md), published at <https://gustavommcv.github.io/mangabound/>.
+These documents explain how Manga2Ink is built, decided and released. They are plain Markdown that GitHub renders, and they change with the code, in the same pull request. The user guide (installing, using the app, connecting KOReader) is a website, in [`../website`](../website/README.md), published at <https://gustavommcv.github.io/manga2ink/>.
 
 Start with [current priorities](milestones.md#current-priorities) for pending work. The milestone sequence and audit findings retain their historical context; dated status updates describe later fixes, not a new audit of the whole codebase.
 

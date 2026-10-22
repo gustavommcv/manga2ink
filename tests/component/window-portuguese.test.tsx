@@ -10,7 +10,7 @@ import { bridge, installBridge } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 // The rule against text written in a component (ADR 0052) found these two, which no test said in

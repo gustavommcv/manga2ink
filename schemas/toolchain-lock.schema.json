@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/gustavommcv/mangabound/schemas/toolchain-lock.schema.json",
-  "title": "Mangabound toolchain lock",
+  "$id": "https://github.com/gustavommcv/manga2ink/schemas/toolchain-lock.schema.json",
+  "title": "Manga2Ink toolchain lock",
   "type": "object",
   "additionalProperties": false,
   "required": ["manifestVersion", "state", "supportedTargets", "tools"],

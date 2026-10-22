@@ -15,11 +15,11 @@ mangapress "Volume.cbz" --profile KV --manga-style --format epub
 
 Use `--list-profiles` para encontrar o código e a resolução do dispositivo. Por exemplo, Kobo Libra 2 usa **KoL** e reMarkable Paper Pro usa **RmkPP**.
 
-Adicione `--manga-style` para a leitura da direita para a esquerda e `--keepcomicinfo` para preservar os dados de ComicInfo compatíveis. Os padrões da CLI não são os do Mangabound, a começar pelo dispositivo (veja abaixo); ao comparar uma conversão do terminal com a do aplicativo, utilize opções equivalentes.
+Adicione `--manga-style` para a leitura da direita para a esquerda e `--keepcomicinfo` para preservar os dados de ComicInfo compatíveis. Os padrões da CLI não são os do Manga2Ink, a começar pelo dispositivo (veja abaixo); ao comparar uma conversão do terminal com a do aplicativo, utilize opções equivalentes.
 
 ## Escolhendo o dispositivo e o formato
 
-`--profile CÓDIGO`, ou `-p`, escolhe o dispositivo pelo código. `--list-profiles` imprime todos os códigos com o nome e o tamanho da tela do dispositivo: as primeiras linhas são `K1  Kindle 1  600x670`, `K2  Kindle 2  600x670` e `KDX  Kindle DX/DXG  824x1000`. Sem ele, a CLI usa **KV**, o Kindle Voyage (1072 × 1448), enquanto o Mangabound começa no Kindle Paperwhite 6 (**KPW6**, 1272 × 1696). Um código que ela não conhece é recusado com uma sugestão:
+`--profile CÓDIGO`, ou `-p`, escolhe o dispositivo pelo código. `--list-profiles` imprime todos os códigos com o nome e o tamanho da tela do dispositivo: as primeiras linhas são `K1  Kindle 1  600x670`, `K2  Kindle 2  600x670` e `KDX  Kindle DX/DXG  824x1000`. Sem ele, a CLI usa **KV**, o Kindle Voyage (1072 × 1448), enquanto o Manga2Ink começa no Kindle Paperwhite 6 (**KPW6**, 1272 × 1696). Um código que ela não conhece é recusado com uma sugestão:
 
 ```text
 Error: unknown device profile 'KPW66' -- did you mean 'KPW6'? (see --list-profiles)
@@ -35,7 +35,7 @@ Um tamanho personalizado também muda o nome do EPUB de um Kobo: veja [Metadados
 
 `--format FORMATO`, ou `-f`, é `epub`, `cbz`, `pdf` ou `auto`, que é o padrão. `auto` escolhe CBZ para um Kindle, PDF para um reMarkable e EPUB para os outros dispositivos: `-p KPW6` e `-p K11` dão um CBZ, `-p KoLC` um EPUB e `-p Rmk2` um PDF. O livro recebe o nome da entrada com a extensão do formato, e um arquivo que já existe nunca é sobrescrito: o livro ganha outro nome, e o relatório diz qual.
 
-No Mangabound, isso são **Dispositivo**, **Formato do livro**, **Largura personalizada** e **Altura personalizada** nas [Configurações de conversão](../../user-guide/output-profiles/). O app sempre nomeia o formato; ele não usa `auto`.
+No Manga2Ink, isso são **Dispositivo**, **Formato do livro**, **Largura personalizada** e **Altura personalizada** nas [Configurações de conversão](../../user-guide/output-profiles/). O app sempre nomeia o formato; ele não usa `auto`.
 
 ## Prévia de uma conversão
 
@@ -59,7 +59,7 @@ Os avisos são os mesmos que uma execução de verdade imprime, então a prévia
 
 ## Saída mais enxuta
 
-`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Mangabound isso é **Modo silencioso**, em **Comportamento das ferramentas**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
+`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Manga2Ink isso é **Modo silencioso**, em **Comportamento das ferramentas**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
 
 ## Outras opções
 

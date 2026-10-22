@@ -23,7 +23,7 @@ import type { IdleDaysCommand } from '../shared/pending-cleanup-contract';
 import type { ProcessingFolderStatus } from '../shared/processing-folder-contract';
 import type { EndQueueCommand } from '../shared/queue-run-contract';
 import type { OpenProjectLinkCommand } from '../shared/project-links-contract';
-import type { MangaboundBridge } from '../shared/runtime-info';
+import type { Manga2InkBridge } from '../shared/runtime-info';
 import type { RestoredSettings, SaveSettingsCommand } from '../shared/settings-contract';
 import type { ToolchainStatus } from '../shared/toolchain-status';
 import type {
@@ -77,7 +77,7 @@ function appVersion(): string {
   return flag?.slice('--app-version='.length) ?? '0.0.0';
 }
 
-const bridge: MangaboundBridge = Object.freeze({
+const bridge: Manga2InkBridge = Object.freeze({
   getToolchainStatus: async () => {
     const status: unknown = await ipcRenderer.invoke('toolchain:get-status');
     return status as ToolchainStatus;
@@ -190,4 +190,4 @@ const bridge: MangaboundBridge = Object.freeze({
   }),
 });
 
-contextBridge.exposeInMainWorld('mangabound', bridge);
+contextBridge.exposeInMainWorld('manga2ink', bridge);

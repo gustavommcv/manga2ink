@@ -25,11 +25,11 @@ export default defineConfig({
   },
   integrations: [
     starlight({
-      title: 'Mangabound',
+      title: 'Manga2Ink',
       logo: { src: './src/assets/branding/header.webp', alt: '', replacesTitle: false },
       favicon: '/favicon.ico',
       description:
-        'Mangabound organizes manga chapters into volumes, converts them into EPUB, CBZ or PDF for your e-reader, and shares books with KOReader over your local network.',
+        'Manga2Ink organizes manga chapters into volumes, converts them into EPUB, CBZ or PDF for your e-reader, and shares books with KOReader over your local network.',
       routeMiddleware: './src/routeData.ts',
       components: {
         Banner: './src/components/Banner.astro',
@@ -39,11 +39,11 @@ export default defineConfig({
         { tag: 'meta', attrs: { property: 'og:image', content: socialPreview } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
-        { tag: 'meta', attrs: { property: 'og:image:alt', content: 'Mangabound logo' } },
+        { tag: 'meta', attrs: { property: 'og:image:alt', content: 'Manga2Ink logo' } },
         { tag: 'meta', attrs: { name: 'twitter:image', content: socialPreview } },
       ],
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/gustavommcv/mangabound' },
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/gustavommcv/manga2ink' },
       ],
       defaultLocale: 'root',
       locales: Object.fromEntries(languages.map(({ key, label, lang }) => [key, { label, lang }])),

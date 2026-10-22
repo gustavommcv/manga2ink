@@ -18,7 +18,7 @@ afterEach(async () => {
 });
 
 async function workspace(): Promise<{ readonly source: string; readonly library: string }> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-book-store-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-book-store-'));
   temporaryDirectories.push(root);
   const source = path.join(root, 'scratch');
   const library = path.join(root, 'library');

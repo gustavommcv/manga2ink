@@ -21,29 +21,29 @@ export const failureRows: Rows<
   'failure.internal': [
     [
       {},
-      'Mangabound could not complete that action.',
-      'O Mangabound não conseguiu concluir essa ação.',
+      'Manga2Ink could not complete that action.',
+      'O Manga2Ink não conseguiu concluir essa ação.',
     ],
   ],
   'failure.invalidRequest': [
     [
       {},
-      'Mangabound rejected an invalid workflow request.',
-      'O Mangabound recusou um pedido inválido.',
+      'Manga2Ink rejected an invalid workflow request.',
+      'O Manga2Ink recusou um pedido inválido.',
     ],
   ],
   'failure.untrustedSender': [
     [
       {},
-      'Mangabound only takes requests from its own window.',
-      'O Mangabound só aceita pedidos da própria janela.',
+      'Manga2Ink only takes requests from its own window.',
+      'O Manga2Ink só aceita pedidos da própria janela.',
     ],
   ],
   'failure.fileAccessDenied': [
     [
       {},
-      'Mangabound was not allowed to use a file or folder it needs. Check the permissions of that folder and try again.',
-      'O Mangabound não teve permissão para usar um arquivo ou pasta de que precisa. Verifique as permissões dessa pasta e tente de novo.',
+      'Manga2Ink was not allowed to use a file or folder it needs. Check the permissions of that folder and try again.',
+      'O Manga2Ink não teve permissão para usar um arquivo ou pasta de que precisa. Verifique as permissões dessa pasta e tente de novo.',
     ],
   ],
   'failure.diskFull': [
@@ -79,8 +79,8 @@ export const failureRows: Rows<
   'failure.toolIncompatible': [
     [
       {},
-      'A bundled conversion tool returned incompatible data. Reinstall Mangabound or open Diagnostics.',
-      'Uma das ferramentas de conversão incluídas devolveu dados incompatíveis. Reinstale o Mangabound ou abra o Diagnóstico.',
+      'A bundled conversion tool returned incompatible data. Reinstall Manga2Ink or open Diagnostics.',
+      'Uma das ferramentas de conversão incluídas devolveu dados incompatíveis. Reinstale o Manga2Ink ou abra o Diagnóstico.',
     ],
   ],
   'failure.bindingFailed': [
@@ -160,15 +160,15 @@ export const failureRows: Rows<
   'failure.pendingNotFound': [
     [
       {},
-      'These pending books are no longer available. Reopen Mangabound to refresh the list.',
-      'Estes livros pendentes não estão mais disponíveis. Reabra o Mangabound para atualizar a lista.',
+      'These pending books are no longer available. Reopen Manga2Ink to refresh the list.',
+      'Estes livros pendentes não estão mais disponíveis. Reabra o Manga2Ink para atualizar a lista.',
     ],
   ],
   'failure.pendingUnreadable': [
     [
       {},
-      'Pending books could not be loaded. Their files were not deleted; check storage permissions and try restarting Mangabound.',
-      'Não foi possível carregar os livros pendentes. Os arquivos não foram apagados; verifique as permissões de armazenamento e tente reiniciar o Mangabound.',
+      'Pending books could not be loaded. Their files were not deleted; check storage permissions and try restarting Manga2Ink.',
+      'Não foi possível carregar os livros pendentes. Os arquivos não foram apagados; verifique as permissões de armazenamento e tente reiniciar o Manga2Ink.',
     ],
   ],
   'failure.pendingDeleteFailed': [
@@ -181,8 +181,8 @@ export const failureRows: Rows<
   'failure.pendingNotDeleted': [
     [
       {},
-      'Mangabound could not delete these pending books. Please try again.',
-      'O Mangabound não conseguiu apagar estes livros pendentes. Tente de novo.',
+      'Manga2Ink could not delete these pending books. Please try again.',
+      'O Manga2Ink não conseguiu apagar estes livros pendentes. Tente de novo.',
     ],
   ],
   'failure.readyBooksShared': [
@@ -243,8 +243,8 @@ export const failureRows: Rows<
   'failure.processingFolderUnusable': [
     [
       { folder: '/mnt/books' },
-      'Mangabound cannot work in /mnt/books. Choose a folder it can write in.',
-      'O Mangabound não consegue trabalhar em /mnt/books. Escolha uma pasta em que ele possa gravar.',
+      'Manga2Ink cannot work in /mnt/books. Choose a folder it can write in.',
+      'O Manga2Ink não consegue trabalhar em /mnt/books. Escolha uma pasta em que ele possa gravar.',
     ],
   ],
   'failure.diagnosticsNotCopied': [
@@ -419,8 +419,8 @@ export const failureRows: Rows<
   'workflow.publishFailed': [
     [
       {},
-      "Couldn't write a finished book to Mangabound's pending storage. Check available space and storage permissions.",
-      'Não foi possível gravar um livro pronto no armazenamento pendente do Mangabound. Verifique o espaço disponível e as permissões de armazenamento.',
+      "Couldn't write a finished book to Manga2Ink's pending storage. Check available space and storage permissions.",
+      'Não foi possível gravar um livro pronto no armazenamento pendente do Manga2Ink. Verifique o espaço disponível e as permissões de armazenamento.',
     ],
   ],
 
@@ -458,8 +458,8 @@ export const failureRows: Rows<
   'save.cannotWrite': [
     [
       {},
-      'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.',
-      'O Mangabound não consegue gravar nesse destino. Escolha uma pasta com permissão de gravação ou verifique as permissões dela.',
+      'Manga2Ink cannot write to that destination. Choose a writable folder or check its permissions.',
+      'O Manga2Ink não consegue gravar nesse destino. Escolha uma pasta com permissão de gravação ou verifique as permissões dela.',
     ],
   ],
   'save.folderGone': [
@@ -486,8 +486,8 @@ export const failureRows: Rows<
   'save.copiedNotRecorded': [
     [
       {},
-      'The book was copied, but Mangabound could not remember that it was saved. Its pending copy remains available to retry.',
-      'O livro foi copiado, mas o Mangabound não conseguiu registrar que ele foi salvo. A cópia pendente continua disponível para tentar de novo.',
+      'The book was copied, but Manga2Ink could not remember that it was saved. Its pending copy remains available to retry.',
+      'O livro foi copiado, mas o Manga2Ink não conseguiu registrar que ele foi salvo. A cópia pendente continua disponível para tentar de novo.',
     ],
   ],
 

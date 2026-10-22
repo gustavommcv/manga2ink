@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an improvement to Mangabound or its user guide.
+description: Suggest an improvement to Manga2Ink or its user guide.
 body:
   - type: markdown
     attributes:

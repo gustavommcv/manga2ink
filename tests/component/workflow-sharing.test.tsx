@@ -3,7 +3,7 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import {
   addFolder,
@@ -16,7 +16,7 @@ import {
 import { raw } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('sharing to an e-reader', () => {
@@ -29,10 +29,10 @@ describe('sharing to an e-reader', () => {
     interfaceAddress: '192.168.1.24',
     port: 8080,
   };
-  const okStart = (): ReturnType<typeof vi.fn<MangaboundBridge['startSharing']>> =>
-    vi.fn<MangaboundBridge['startSharing']>(() => Promise.resolve({ ok: true, value: sharingOn }));
-  const okStop = (): ReturnType<typeof vi.fn<MangaboundBridge['stopSharing']>> =>
-    vi.fn<MangaboundBridge['stopSharing']>(() => Promise.resolve({ ok: true, value: undefined }));
+  const okStart = (): ReturnType<typeof vi.fn<Manga2InkBridge['startSharing']>> =>
+    vi.fn<Manga2InkBridge['startSharing']>(() => Promise.resolve({ ok: true, value: sharingOn }));
+  const okStop = (): ReturnType<typeof vi.fn<Manga2InkBridge['stopSharing']>> =>
+    vi.fn<Manga2InkBridge['stopSharing']>(() => Promise.resolve({ ok: true, value: undefined }));
 
   /** Adds a folder, converts it, and waits on the results screen. */
   async function convertOne(user: UserEvent): Promise<void> {
@@ -44,7 +44,7 @@ describe('sharing to an e-reader', () => {
 
   it('remembers an explicitly chosen interface when the panel closes and the app reopens', async () => {
     const user = userEvent.setup();
-    const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+    const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(
@@ -191,7 +191,7 @@ describe('sharing to an e-reader', () => {
         listNetworkInterfaces: () => Promise.resolve({ ok: true, value: [wifi] }),
         // The first pick is for sharing, the next is the folder the books are saved to.
         chooseLibrary: vi
-          .fn<MangaboundBridge['chooseLibrary']>()
+          .fn<Manga2InkBridge['chooseLibrary']>()
           .mockResolvedValueOnce({
             ok: true,
             value: { libraryId: 'elsewhere', displayPath: 'D:\\Elsewhere' },

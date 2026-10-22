@@ -3,7 +3,7 @@ title: 'マシン向けインターフェース'
 description: 'mangabind と mangapress のバージョン付き JSON マシンプロトコルと、記録されたフィクスチャの在りか。ツールを自分のプログラムに組み込むときに使います。'
 ---
 
-Mangabound は、同梱のツールをサブプロセスとして実行し、その構造化された出力を検証します。`--protocol-version` を使うと、ツールのバージョン、プロトコル、機能を読み取れます。
+Manga2Ink は、同梱のツールをサブプロセスとして実行し、その構造化された出力を検証します。`--protocol-version` を使うと、ツールのバージョン、プロトコル、機能を読み取れます。
 
 ## 規範となる契約
 
@@ -14,6 +14,6 @@ Mangabound は、同梱のツールをサブプロセスとして実行し、そ
 
 ## アプリでの動作例
 
-アプリの[記録されたプロトコルのフィクスチャ](https://github.com/gustavommcv/mangabound/tree/main/tests/fixtures/protocol)と[アダプターのパーサー](https://github.com/gustavommcv/mangabound/tree/main/src/adapters)が、実際に受け付けるペイロードを示しています。[ツールチェーンのロック](https://github.com/gustavommcv/mangabound/blob/main/toolchain.lock.json)は、同梱のバージョンを記録しています。
+アプリの[記録されたプロトコルのフィクスチャ](https://github.com/gustavommcv/manga2ink/tree/main/tests/fixtures/protocol)と[アダプターのパーサー](https://github.com/gustavommcv/manga2ink/tree/main/src/adapters)が、実際に受け付けるペイロードを示しています。[ツールチェーンのロック](https://github.com/gustavommcv/manga2ink/blob/main/toolchain.lock.json)は、同梱のバージョンを記録しています。
 
 連携をテストするときは、対象のリリースのフィクスチャを使ってください。

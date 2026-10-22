@@ -24,19 +24,19 @@ describe('the addresses the About tab can open', () => {
 
   it('are the ones a person expects', () => {
     expect(projectLinkAddress('repository', 'en', version)).toBe(
-      'https://github.com/gustavommcv/mangabound',
+      'https://github.com/gustavommcv/manga2ink',
     );
     expect(projectLinkAddress('issues', 'en', version)).toBe(
-      'https://github.com/gustavommcv/mangabound/issues',
+      'https://github.com/gustavommcv/manga2ink/issues',
     );
     expect(projectLinkAddress('license', 'en', version)).toBe(
-      'https://github.com/gustavommcv/mangabound/blob/main/LICENSE',
+      'https://github.com/gustavommcv/manga2ink/blob/main/LICENSE',
     );
     expect(projectLinkAddress('third-party-notices', 'en', version)).toBe(
-      'https://github.com/gustavommcv/mangabound/blob/main/THIRD-PARTY-NOTICES.md',
+      'https://github.com/gustavommcv/manga2ink/blob/main/THIRD-PARTY-NOTICES.md',
     );
     expect(projectLinkAddress('releases', 'pt-BR', version)).toBe(
-      'https://github.com/gustavommcv/mangabound/releases',
+      'https://github.com/gustavommcv/manga2ink/releases',
     );
     expect(projectLinkAddress('mangadex', 'en', version)).toBe('https://mangadex.org/');
     expect(projectLinkAddress('support', 'en', version)).toBe(supportAddress);
@@ -44,10 +44,10 @@ describe('the addresses the About tab can open', () => {
 
   it('send the release notes to the page of the version that is running, whatever the language', () => {
     expect(projectLinkAddress('release-notes', 'en', '0.1.0-alpha.15')).toBe(
-      'https://github.com/gustavommcv/mangabound/releases/tag/v0.1.0-alpha.15',
+      'https://github.com/gustavommcv/manga2ink/releases/tag/v0.1.0-alpha.15',
     );
     expect(projectLinkAddress('release-notes', 'pt-BR', '1.2.3')).toBe(
-      'https://github.com/gustavommcv/mangabound/releases/tag/v1.2.3',
+      'https://github.com/gustavommcv/manga2ink/releases/tag/v1.2.3',
     );
   });
 
@@ -55,17 +55,17 @@ describe('the addresses the About tab can open', () => {
     const address = new URL(projectLinkAddress('release-notes', 'en', '1.0/../../issues?x=1#y'));
 
     expect(address.origin).toBe('https://github.com');
-    expect(address.pathname.startsWith('/gustavommcv/mangabound/releases/tag/v')).toBe(true);
+    expect(address.pathname.startsWith('/gustavommcv/manga2ink/releases/tag/v')).toBe(true);
     expect(address.search).toBe('');
     expect(address.hash).toBe('');
   });
 
   it('send the guide to the site in the language of the window', () => {
     expect(projectLinkAddress('guide', 'en', version)).toBe(
-      'https://gustavommcv.github.io/mangabound/',
+      'https://gustavommcv.github.io/manga2ink/',
     );
     expect(projectLinkAddress('guide', 'pt-BR', version)).toBe(
-      'https://gustavommcv.github.io/mangabound/pt-br/',
+      'https://gustavommcv.github.io/manga2ink/pt-br/',
     );
   });
 

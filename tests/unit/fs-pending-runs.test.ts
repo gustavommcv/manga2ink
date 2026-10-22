@@ -26,7 +26,7 @@ import type { LibraryBookEntry } from '@/library/manifest';
 const roots: string[] = [];
 
 async function fixture(): Promise<{ root: string; store: FsPendingRuns; library: FsLibraryStore }> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-unit-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-pending-unit-'));
   roots.push(root);
   const library = new FsLibraryStore();
   return { root, store: new FsPendingRuns(path.join(root, 'pending'), library), library };
@@ -577,7 +577,7 @@ describe('FsPendingRuns in more than one folder (ADR 0056)', () => {
     readonly use: (name: string) => void;
     readonly prepared: string[];
   }> {
-    const base = await mkdtemp(path.join(os.tmpdir(), 'mangabound-pending-roots-'));
+    const base = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-pending-roots-'));
     roots.push(base);
     const paths = names.map((name) => path.join(base, name));
     let current = paths[0] ?? '';

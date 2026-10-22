@@ -1,6 +1,6 @@
 import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import { message, raw } from '@/domain/message';
 
 import { defaultProcessingStatus, roomyWorkingSpace, sixCoreCapacity } from './processing';
@@ -11,7 +11,7 @@ const nothing = Promise.resolve({ ok: true as const, value: undefined });
  * A complete bridge whose every call answers with nothing in it, so a test names only the calls it
  * is about. The app calls the whole bridge, and a missing method is an error there, not an option.
  */
-export function inertBridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBridge {
+export function inertBridge(overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridge {
   return {
     listCovers: () => Promise.resolve({ ok: true, value: [] }),
     chooseCover: () => Promise.resolve({ ok: true, value: null }),

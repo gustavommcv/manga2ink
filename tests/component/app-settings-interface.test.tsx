@@ -7,7 +7,7 @@ import type { ThemePreference } from '@/domain/theme';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { InterfaceTab } from '@/renderer/components/settings/interface-tab';
 import { messagesFor } from '@/i18n/messages';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 import { raw } from '@/domain/message';
@@ -17,7 +17,7 @@ const kept =
   (
     preference: LanguagePreference,
     language: Language = 'en',
-  ): MangaboundBridge['loadAppSettings'] =>
+  ): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -29,7 +29,7 @@ const kept =
     });
 
 async function renderGeneral(
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
 ): Promise<HTMLSelectElement> {
   render(
     <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
@@ -71,7 +71,7 @@ describe('the language in the general tab', () => {
 
   it('keeps the choice, and the whole window is in the language at once', async () => {
     const user = userEvent.setup();
-    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+    const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'pt-BR' } }),
     );
     const select = await renderGeneral({ saveAppSettings });
@@ -117,7 +117,7 @@ describe('the language in the general tab', () => {
   it('stops saying so once a choice is kept', async () => {
     const user = userEvent.setup();
     const saveAppSettings = vi
-      .fn<MangaboundBridge['saveAppSettings']>()
+      .fn<Manga2InkBridge['saveAppSettings']>()
       .mockResolvedValueOnce({
         ok: false,
         error: { code: 'settings_save_failed', said: raw('No.') },
@@ -140,7 +140,7 @@ describe('the language in the general tab', () => {
   });
 
   it('keeps nothing for a choice it does not offer', async () => {
-    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>();
+    const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>();
     const select = await renderGeneral({ saveAppSettings });
 
     fireEvent.change(select, { target: { value: 'klingon' } });
@@ -158,7 +158,7 @@ describe('the note under the language', () => {
 
   async function renderIn(
     language: Language,
-    overrides: Partial<MangaboundBridge> = {},
+    overrides: Partial<Manga2InkBridge> = {},
   ): Promise<void> {
     render(
       <AppSettingsProvider
@@ -182,7 +182,7 @@ describe('the note under the language', () => {
 
   it('is there for Japanese, in Japanese, with the button that opens the page where a mistake is reported', async () => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderIn('ja', { openProjectLink });
@@ -209,7 +209,7 @@ describe('the note under the language', () => {
   it('says in Japanese that the page could not be opened, and takes it away once one opens', async () => {
     const user = userEvent.setup();
     const openProjectLink = vi
-      .fn<MangaboundBridge['openProjectLink']>()
+      .fn<Manga2InkBridge['openProjectLink']>()
       .mockResolvedValueOnce({ ok: false, error: { code: 'x', said: raw('No.') } })
       .mockResolvedValueOnce({ ok: true, value: undefined });
     await renderIn('ja', { openProjectLink });
@@ -230,7 +230,7 @@ describe('the note under the language', () => {
 
 describe('the theme in the Interface tab', () => {
   const keptTheme =
-    (theme: ThemePreference): MangaboundBridge['loadAppSettings'] =>
+    (theme: ThemePreference): Manga2InkBridge['loadAppSettings'] =>
     () =>
       Promise.resolve({
         ok: true,
@@ -238,7 +238,7 @@ describe('the theme in the Interface tab', () => {
       });
 
   async function renderTheme(
-    overrides: Partial<MangaboundBridge> = {},
+    overrides: Partial<Manga2InkBridge> = {},
   ): Promise<HTMLSelectElement> {
     render(
       <AppSettingsProvider bridge={inertBridge({ loadAppSettings: kept('en'), ...overrides })}>
@@ -280,7 +280,7 @@ describe('the theme in the Interface tab', () => {
 
   it('keeps the choice, naming only the theme, shows it at once, and says nothing when it is kept', async () => {
     const user = userEvent.setup();
-    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+    const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'en' } }),
     );
     const select = await renderTheme({ saveAppSettings });
@@ -298,7 +298,7 @@ describe('the theme in the Interface tab', () => {
 
   it('keeps the choice to look as the system does, naming only the theme', async () => {
     const user = userEvent.setup();
-    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+    const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'en' } }),
     );
     const select = await renderTheme({ saveAppSettings, loadAppSettings: keptTheme('dark') });

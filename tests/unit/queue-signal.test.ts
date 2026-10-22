@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { QueueRunSummary } from '@/domain/queue-run';
 import { beginQueue, endQueue } from '@/renderer/lib/queue-signal';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
-type QueueBridge = Pick<MangaboundBridge, 'beginQueue' | 'endQueue'>;
+type QueueBridge = Pick<Manga2InkBridge, 'beginQueue' | 'endQueue'>;
 
 const summary: QueueRunSummary = { books: 2, failures: 1, notes: 0, cancelled: false };
 

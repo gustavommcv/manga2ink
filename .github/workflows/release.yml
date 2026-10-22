@@ -123,7 +123,7 @@ jobs:
         # produces a .zip (portable, unzip-and-run, no installer/no admin needed) alongside the
         # Squirrel .exe; filenames already carry platform/arch/version, so the Windows and macOS
         # .zip files never collide once copied flat into release-assets/. Arch's .pkg.tar.zst is
-        # named just "mangabound-<pkgver>-<pkgrel>-x86_64.pkg.tar.zst" by makepkg with no OS/distro
+        # named just "manga2ink-<pkgver>-<pkgrel>-x86_64.pkg.tar.zst" by makepkg with no OS/distro
         # marker in it (unlike the .deb/.rpm filenames), but the extension alone is already unique
         # among everything else here.
         run: |

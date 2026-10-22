@@ -6,7 +6,7 @@ import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract
 export const defaultProcessingStatus: ProcessingFolderStatus = {
   chosen: null,
   scratch: '/tmp',
-  pending: '/home/reader/.local/share/mangabound/pending',
+  pending: '/home/reader/.local/share/manga2ink/pending',
   available: true,
   freeBytes: 120 * 1024 ** 3,
   waiting: { runs: 0, books: 0, bytes: 0 },

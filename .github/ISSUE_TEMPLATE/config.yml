@@ -1,8 +1,8 @@
 blank_issues_enabled: true
 contact_links:
   - name: User guide
-    url: https://gustavommcv.github.io/mangabound/
+    url: https://gustavommcv.github.io/manga2ink/
     about: Installation, conversion, saving, and KOReader sharing instructions in English and Portuguese.
   - name: Report a security vulnerability privately
-    url: https://github.com/gustavommcv/mangabound/security/advisories/new
+    url: https://github.com/gustavommcv/manga2ink/security/advisories/new
     about: Use this private channel for suspected vulnerabilities, not a public issue.

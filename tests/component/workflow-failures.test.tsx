@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 import { raw } from '@/domain/message';
 import { type PendingRunSummary, type WorkflowResult } from '@/shared/workflow-contract';
 
 import { addFolder, bridge, installBridge, runButton } from './support/workflow';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 const refusal = (code: string, message: string): WorkflowResult<never> => ({
@@ -32,7 +32,7 @@ const recovered: readonly PendingRunSummary[] = [
 describe('what the person is told when the main process refuses', () => {
   it('says why a run could not start, and starts no conversion', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>();
+    const convert = vi.fn<Manga2InkBridge['convert']>();
     installBridge(
       bridge({
         convert,
@@ -55,7 +55,7 @@ describe('what the person is told when the main process refuses', () => {
 
   it('says why a book could not be saved, and leaves it unsaved', async () => {
     const user = userEvent.setup();
-    const saveArtifactAs = vi.fn<MangaboundBridge['saveArtifactAs']>(() =>
+    const saveArtifactAs = vi.fn<Manga2InkBridge['saveArtifactAs']>(() =>
       Promise.resolve(refusal('save_failed', 'There is no room left on that disk.')),
     );
     installBridge(
@@ -76,7 +76,7 @@ describe('what the person is told when the main process refuses', () => {
 
   it('says why the books could not be saved together, and leaves every one unsaved', async () => {
     const user = userEvent.setup();
-    const saveAllArtifacts = vi.fn<MangaboundBridge['saveAllArtifacts']>(() =>
+    const saveAllArtifacts = vi.fn<Manga2InkBridge['saveAllArtifacts']>(() =>
       Promise.resolve(refusal('save_failed', 'The folder cannot be written to.')),
     );
     installBridge(

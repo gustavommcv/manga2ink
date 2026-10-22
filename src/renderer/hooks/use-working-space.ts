@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { WorkingSpace } from '@/domain/working-space';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 /**
  * What is left on the drives the app works on (ADR 0060), asked each time `active` becomes true and
@@ -10,7 +10,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
  * which is what it would have had before the question was asked.
  */
 export function useWorkingSpace(
-  bridge: Pick<MangaboundBridge, 'getWorkingSpace'>,
+  bridge: Pick<Manga2InkBridge, 'getWorkingSpace'>,
   active: boolean,
 ): WorkingSpace | null {
   const [space, setSpace] = useState<WorkingSpace | null>(null);

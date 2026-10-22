@@ -2,7 +2,7 @@
 
 The vocabulary and the style the app's Japanese is written by ([ADR 0084](../adr/0084-the-app-is-also-in-japanese-written-to-read-naturally-and-open-to-correction.md)). A message that disagrees with this page is a mistake in the message or in the page: say which, and change it.
 
-The app's Japanese is written with the help of AI and has not yet been read by many people who speak the language. Corrections are welcome as an [issue](https://github.com/gustavommcv/mangabound/issues) or a pull request. A term that changes is changed here in the same pull request that changes its uses, and the guide's Japanese pages follow it.
+The app's Japanese is written with the help of AI and has not yet been read by many people who speak the language. Corrections are welcome as an [issue](https://github.com/gustavommcv/manga2ink/issues) or a pull request. A term that changes is changed here in the same pull request that changes its uses, and the guide's Japanese pages follow it.
 
 Where KOReader has a Japanese word for something the readers meet there, this page takes it unless the note says otherwise. Where the guide has a word, this page keeps it.
 
@@ -13,7 +13,7 @@ Where KOReader has a Japanese word for something the readers meet there, this pa
 - **A failure** says what happened and what can be done, plainly: 「〜できませんでした。」 No apology, no exclamation mark.
 - **Punctuation.** Full-width parentheses （） and quotation marks 「」 (the name of a control in a sentence is in 「」), 、 and 。, and a single … where the English has one for a control that asks for more. Digits, Latin letters and symbols are half-width.
 - **Colons.** A half-width colon and a space, as the guide writes it (最初: Ch.1).
-- **Spaces.** One space between Latin letters or digits and the Japanese text next to them, as the guide writes it (Mangabound は, 3 冊). A number and its unit in Latin letters keep their space (12 GB), as `Intl` writes them. A value the app puts into a sentence has a space beside it only where it is always in Latin letters (a language tag, the name of a service, a file extension): a name that a person chose is put in without one, since the app cannot know how it is written.
+- **Spaces.** One space between Latin letters or digits and the Japanese text next to them, as the guide writes it (Manga2Ink は, 3 冊). A number and its unit in Latin letters keep their space (12 GB), as `Intl` writes them. A value the app puts into a sentence has a space beside it only where it is always in Latin letters (a language tag, the name of a service, a file extension): a name that a person chose is put in without one, since the app cannot know how it is written.
 - **A name in a sentence** is in 「」 where the place always holds a name (a book, a folder, an option): 「Berserk」を選択. Where the place can also hold a phrase of the catalog (the heading of a run that says 「お使いの本」 when it has no name to give), there are no marks, so the phrase does not look like a title.
 - **The long vowel mark** is kept where the platforms keep it: フォルダー, ユーザー, サーバー, エディター. A word the guide already writes without it keeps that (ライブラリ).
 - **Kana and kanji.** Everyday words in kanji (余白, 見開き, 表紙), loanwords that readers already use in katakana (キュー, カラー, ガンマ). Only common kanji; no furigana.
@@ -36,7 +36,7 @@ There is no plural, so a count is written with the counter of what is counted, w
 
 ### What stays in Latin letters
 
-The name of the app, of the tools and of the services it works with (Mangabound, KOReader, Kindle, Kobo, reMarkable, MangaDex), the names of formats and standards (EPUB, CBZ, PDF, PNG, JPEG, OPDS, ComicInfo.xml), and what a person typed or a folder or a file is called. The report of diagnostics, the log and the name of the catalog served to an e-reader stay in English in every language.
+The name of the app, of the tools and of the services it works with (Manga2Ink, KOReader, Kindle, Kobo, reMarkable, MangaDex), the names of formats and standards (EPUB, CBZ, PDF, PNG, JPEG, OPDS, ComicInfo.xml), and what a person typed or a folder or a file is called. The report of diagnostics, the log and the name of the catalog served to an e-reader stay in English in every language.
 
 ## The things the app handles
 

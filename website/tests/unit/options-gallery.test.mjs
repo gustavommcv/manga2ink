@@ -308,7 +308,7 @@ test('pictures with no licence in the manifest, or not in the licences file, are
 test('pictures made with another mangapress than the one shipped are a problem', () => {
   const problems = checkGallery(gallery({ pin: '0.8.0' }));
   assert.deepEqual(problems, [
-    'The pictures were made with mangapress 0.7.3, and Mangabound ships 0.8.0. Run npm run site:options.',
+    'The pictures were made with mangapress 0.7.3, and Manga2Ink ships 0.8.0. Run npm run site:options.',
   ]);
 });
 

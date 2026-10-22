@@ -65,7 +65,7 @@ export const sharingMessages: Readonly<Record<Language, SharingMessages>> = {
       copy: 'Copy',
       copied: 'Copied',
       inKoreader:
-        'In KOReader: Search, then OPDS catalog, then add this address. Keep Mangabound open while it syncs.',
+        'In KOReader: Search, then OPDS catalog, then add this address. Keep Manga2Ink open while it syncs.',
       stop: 'Stop sharing',
       chooseLibrary: 'Choose a library to share',
       changeLibrary: 'Change shared library',
@@ -98,7 +98,7 @@ export const sharingMessages: Readonly<Record<Language, SharingMessages>> = {
       copy: 'Copiar',
       copied: 'Copiado',
       inKoreader:
-        'No KOReader: Search, depois OPDS catalog, e adicione este endereço. Mantenha o Mangabound aberto enquanto ele sincroniza.',
+        'No KOReader: Search, depois OPDS catalog, e adicione este endereço. Mantenha o Manga2Ink aberto enquanto ele sincroniza.',
       stop: 'Parar de compartilhar',
       chooseLibrary: 'Escolher uma biblioteca para compartilhar',
       changeLibrary: 'Trocar a biblioteca compartilhada',
@@ -131,7 +131,7 @@ export const sharingMessages: Readonly<Record<Language, SharingMessages>> = {
       copy: 'コピー',
       copied: 'コピーしました',
       inKoreader:
-        'KOReader では、「検索」→「OPDS カタログ」の順に開き、このアドレスを追加します。同期が終わるまで、Mangabound を開いたままにしてください。',
+        'KOReader では、「検索」→「OPDS カタログ」の順に開き、このアドレスを追加します。同期が終わるまで、Manga2Ink を開いたままにしてください。',
       stop: '共有を停止',
       chooseLibrary: '共有するライブラリを選択',
       changeLibrary: '共有するライブラリを変更',

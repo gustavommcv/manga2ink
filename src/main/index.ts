@@ -94,7 +94,7 @@ void app.whenReady().then(async () => {
   installLog(
     context.log,
     { console, process },
-    `Mangabound ${app.getVersion()} started (${app.isPackaged ? 'packaged' : 'development build'}, Electron ${process.versions.electron}, ${process.platform} ${process.arch}).`,
+    `Manga2Ink ${app.getVersion()} started (${app.isPackaged ? 'packaged' : 'development build'}, Electron ${process.versions.electron}, ${process.platform} ${process.arch}).`,
   );
   // Before anything reads them: an earlier version kept these in the installer's own folder on
   // Windows, which uninstalling the app empties.

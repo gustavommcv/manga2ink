@@ -37,7 +37,7 @@ export function Titlebar({ children, platform, version }: TitlebarProps): React.
           src={mark}
           width={20}
         />
-        <span className="text-sm font-semibold tracking-tight">Mangabound</span>
+        <span className="text-sm font-semibold tracking-tight">Manga2Ink</span>
         {/* The first to go when the window is narrow: its buttons take the space from the bar. The
             name, the version, the Share button and the gear need about 390px, and the window's own
             buttons take up to 140px of the width, so 600px is where all of them still fit. */}

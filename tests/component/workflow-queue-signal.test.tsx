@@ -4,22 +4,22 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { message } from '@/domain/message';
 import { App } from '@/renderer/app';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { addFolder, bridge, installBridge, runButton } from './support/workflow';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 /** Everything the window tells the main process about the queue and the run, in the order it did. */
-function recorded(overrides: Partial<MangaboundBridge> = {}): {
+function recorded(overrides: Partial<Manga2InkBridge> = {}): {
   readonly calls: string[];
-  readonly endQueue: ReturnType<typeof vi.fn<MangaboundBridge['endQueue']>>;
-  readonly bridge: MangaboundBridge;
+  readonly endQueue: ReturnType<typeof vi.fn<Manga2InkBridge['endQueue']>>;
+  readonly bridge: Manga2InkBridge;
 } {
   const calls: string[] = [];
-  const endQueue = vi.fn<MangaboundBridge['endQueue']>(() => {
+  const endQueue = vi.fn<Manga2InkBridge['endQueue']>(() => {
     calls.push('end');
     return Promise.resolve({ ok: true, value: undefined });
   });

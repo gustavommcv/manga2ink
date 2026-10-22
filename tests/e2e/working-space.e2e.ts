@@ -17,14 +17,14 @@ describe('packaged working space', () => {
 
     const reply = await browser.execute(() =>
       (
-        window as unknown as { mangabound: { getWorkingSpace: () => Promise<Reply> } }
-      ).mangabound.getWorkingSpace(),
+        window as unknown as { manga2ink: { getWorkingSpace: () => Promise<Reply> } }
+      ).manga2ink.getWorkingSpace(),
     );
 
     assert.equal(reply.ok, true);
     assert.ok((reply.value?.scratchFreeBytes ?? 0) > 0, 'the volumes folder should have room');
     assert.ok((reply.value?.pendingFreeBytes ?? 0) > 0, 'the books folder should have room');
     assert.equal(typeof reply.value?.sameDrive, 'boolean');
-    assert.ok(!(await $('p*=free where Mangabound works').isExisting()));
+    assert.ok(!(await $('p*=free where Manga2Ink works').isExisting()));
   });
 });

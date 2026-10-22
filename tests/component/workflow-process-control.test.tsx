@@ -5,7 +5,7 @@ import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import {
   addFolder,
@@ -24,13 +24,13 @@ import {
 import { message, raw } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('process control in the queue', () => {
   it('joins the volumes only: mangapress is not run, its controls lock, and only defaults are sent', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work - Vol.01.cbz', bytes: 4096, format: 'cbz' }],
@@ -66,7 +66,7 @@ describe('process control in the queue', () => {
 
   it('sends a folder straight to mangapress as one book, without its volumes', async () => {
     const user = userEvent.setup();
-    const planConversion = vi.fn<MangaboundBridge['planConversion']>(() =>
+    const planConversion = vi.fn<Manga2InkBridge['planConversion']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -83,7 +83,7 @@ describe('process control in the queue', () => {
         },
       }),
     );
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
@@ -134,7 +134,7 @@ describe('process control in the queue', () => {
 
   it('leaves a CBZ out of a join-only run and says so, with nothing to fix', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work - Vol.01.cbz', bytes: 4096, format: 'cbz' }],
@@ -177,7 +177,7 @@ describe('process control in the queue', () => {
   it('runs the queue one item at a time and keeps the ones that failed for another try', async () => {
     const user = userEvent.setup();
     const convert = vi
-      .fn<MangaboundBridge['convert']>()
+      .fn<Manga2InkBridge['convert']>()
       .mockResolvedValueOnce({
         ok: true,
         value: [{ id: 'a1', name: 'First.epub', bytes: 2048, format: 'epub' }],
@@ -221,7 +221,7 @@ describe('process control in the queue', () => {
 
   it('stops the queue at the item that was cancelled', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: false,
         error: { code: 'cancelled', said: raw('The conversion was cancelled.') },
@@ -253,9 +253,9 @@ describe('process control in the queue', () => {
 
   it('keeps a user cancellation requested while the active input finishes successfully', async () => {
     const user = userEvent.setup();
-    const completion = deferred<Awaited<ReturnType<MangaboundBridge['convert']>>>();
-    const convert = vi.fn<MangaboundBridge['convert']>(() => completion.promise);
-    const releaseInput = vi.fn<MangaboundBridge['releaseInput']>(() =>
+    const completion = deferred<Awaited<ReturnType<Manga2InkBridge['convert']>>>();
+    const convert = vi.fn<Manga2InkBridge['convert']>(() => completion.promise);
+    const releaseInput = vi.fn<Manga2InkBridge['releaseInput']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(
@@ -293,12 +293,12 @@ describe('process control in the queue', () => {
 
   it('cancels the item that is running when Cancel is pressed the instant the next one starts', async () => {
     const user = userEvent.setup();
-    const first = deferred<Awaited<ReturnType<MangaboundBridge['convert']>>>();
-    const second = deferred<Awaited<ReturnType<MangaboundBridge['convert']>>>();
-    const cancelConversion = vi.fn<MangaboundBridge['cancelConversion']>(() =>
+    const first = deferred<Awaited<ReturnType<Manga2InkBridge['convert']>>>();
+    const second = deferred<Awaited<ReturnType<Manga2InkBridge['convert']>>>();
+    const cancelConversion = vi.fn<Manga2InkBridge['cancelConversion']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
-    const convert = vi.fn<MangaboundBridge['convert']>(() => {
+    const convert = vi.fn<Manga2InkBridge['convert']>(() => {
       if (convert.mock.calls.length === 2) {
         // The screen has not been drawn again for this item yet, so the button is still the one
         // of the item before it: Cancel is pressed in the instant between the two.

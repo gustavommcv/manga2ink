@@ -23,10 +23,10 @@ export function sharingTarget(
 ): SharingTarget {
   const parent = path.dirname(path.resolve(libraryPath));
   if (pendingRoot !== undefined && parent === path.resolve(pendingRoot)) {
-    return { path: pendingRoot, title: 'Mangabound ready books', readyBooks: true };
+    return { path: pendingRoot, title: 'Manga2Ink ready books', readyBooks: true };
   }
   if (earlierRoots.some((root) => path.resolve(root) === parent)) {
-    return { path: libraryPath, title: 'Mangabound ready books', readyBooks: false };
+    return { path: libraryPath, title: 'Manga2Ink ready books', readyBooks: false };
   }
   return { path: libraryPath, title: path.basename(libraryPath), readyBooks: false };
 }

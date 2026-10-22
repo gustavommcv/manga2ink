@@ -82,7 +82,7 @@ describe('opening a place', () => {
     await call({ link: 'guide', language: 'pt-BR' });
 
     expect(electron.openExternal).toHaveBeenCalledExactlyOnceWith(
-      'https://gustavommcv.github.io/mangabound/pt-br/',
+      'https://gustavommcv.github.io/manga2ink/pt-br/',
     );
   });
 
@@ -90,7 +90,7 @@ describe('opening a place', () => {
     await call({ link: 'release-notes', language: 'pt-BR' });
 
     expect(electron.openExternal).toHaveBeenCalledExactlyOnceWith(
-      'https://github.com/gustavommcv/mangabound/releases/tag/v0.1.0-alpha.15',
+      'https://github.com/gustavommcv/manga2ink/releases/tag/v0.1.0-alpha.15',
     );
   });
 

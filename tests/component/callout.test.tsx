@@ -21,7 +21,7 @@ describe('a callout', () => {
   });
 
   it('has a title of the first level when it is all a page says', () => {
-    render(<Callout level={1} title="Mangabound could not start correctly." tone="failed" />);
+    render(<Callout level={1} title="Manga2Ink could not start correctly." tone="failed" />);
 
     expect(screen.getByRole('heading', { level: 1 })).toBeVisible();
   });

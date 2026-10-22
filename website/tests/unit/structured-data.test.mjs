@@ -3,14 +3,14 @@ import test from 'node:test';
 
 import { scriptJson, structuredData } from '../../src/structured-data.mjs';
 
-const home = 'https://example.org/mangabound/pt-br/';
+const home = 'https://example.org/manga2ink/pt-br/';
 const page = { home, title: 'Instalação', description: 'Baixe o pacote.', lang: 'pt-BR' };
 
 test('the Portuguese site describes the application in the languages the app has, not only its own', () => {
   const [website, application] = structuredData({ ...page, url: home })['@graph'];
   assert.deepEqual(website, {
     '@type': 'WebSite',
-    name: 'Mangabound',
+    name: 'Manga2Ink',
     url: home,
     inLanguage: 'pt-BR',
     description: 'Baixe o pacote.',
@@ -24,7 +24,7 @@ test('the Portuguese site describes the application in the languages the app has
 test("an inner page leads back to its own language's home page", () => {
   const url = `${home}getting-started/installation/`;
   assert.deepEqual(structuredData({ ...page, url }).itemListElement, [
-    { '@type': 'ListItem', position: 1, name: 'Mangabound', item: home },
+    { '@type': 'ListItem', position: 1, name: 'Manga2Ink', item: home },
     { '@type': 'ListItem', position: 2, name: 'Instalação', item: url },
   ]);
 });

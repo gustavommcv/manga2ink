@@ -3,7 +3,7 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import {
   addFolder,
@@ -18,7 +18,7 @@ import { converted, goodTitle, libraryBridge, looseTitle } from './support/libra
 import { message, raw } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('the title, author and language typed for an item', () => {
@@ -29,7 +29,7 @@ describe('the title, author and language typed for an item', () => {
 
   it('are typed on a page of their own, kept when going back, and sent with the conversion', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(bridge({ convert }));
     render(<App />);
     await addFolder(user);
@@ -64,7 +64,7 @@ describe('the title, author and language typed for an item', () => {
 
   it('send nothing for an item that has none, and clearing them again sends nothing either', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(bridge({ convert }));
     render(<App />);
     await addFolder(user);
@@ -142,7 +142,7 @@ describe('the title, author and language typed for an item', () => {
 
   it('are typed per title in a library, and sent for the titles they were typed for', async () => {
     const user = userEvent.setup();
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({ ok: true, value: [converted('Good Manga', 'good-1')] }),
     );
     installBridge(libraryBridge([goodTitle, looseTitle], { convertLibrary }));
@@ -197,11 +197,11 @@ describe('looking up the author from the details of an item', () => {
   };
 
   const saveCalls = (
-    saveSettings: ReturnType<typeof vi.fn<MangaboundBridge['saveSettings']>>,
-  ): readonly Parameters<MangaboundBridge['saveSettings']>[0][] =>
+    saveSettings: ReturnType<typeof vi.fn<Manga2InkBridge['saveSettings']>>,
+  ): readonly Parameters<Manga2InkBridge['saveSettings']>[0][] =>
     saveSettings.mock.calls.map(([command]) => command);
-  const okSave = (): ReturnType<typeof vi.fn<MangaboundBridge['saveSettings']>> =>
-    vi.fn<MangaboundBridge['saveSettings']>(() => Promise.resolve({ ok: true, value: undefined }));
+  const okSave = (): ReturnType<typeof vi.fn<Manga2InkBridge['saveSettings']>> =>
+    vi.fn<Manga2InkBridge['saveSettings']>(() => Promise.resolve({ ok: true, value: undefined }));
 
   const openLookup = async (user: UserEvent): Promise<void> => {
     await user.click(await screen.findByRole('button', { name: 'Edit details of Offline Work' }));
@@ -210,10 +210,10 @@ describe('looking up the author from the details of an item', () => {
 
   it('searches the title in the source chosen there, fills the author, and sends it with the conversion', async () => {
     const user = userEvent.setup();
-    const searchMetadata = vi.fn<MangaboundBridge['searchMetadata']>(() =>
+    const searchMetadata = vi.fn<Manga2InkBridge['searchMetadata']>(() =>
       Promise.resolve({ ok: true, value: [found] }),
     );
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(
       bridge({
         convert,
@@ -250,7 +250,7 @@ describe('looking up the author from the details of an item', () => {
 
   it('searches with the title typed there, and shows the failure when the source cannot be reached', async () => {
     const user = userEvent.setup();
-    const searchMetadata = vi.fn<MangaboundBridge['searchMetadata']>(() =>
+    const searchMetadata = vi.fn<Manga2InkBridge['searchMetadata']>(() =>
       Promise.resolve({
         ok: false,
         error: {
@@ -319,12 +319,12 @@ describe('looking up the author from the details of an item', () => {
 
 describe('keeping the author and language with the folder', () => {
   const saveBookDetails = () =>
-    vi.fn<MangaboundBridge['saveBookDetails']>(() =>
+    vi.fn<Manga2InkBridge['saveBookDetails']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
 
   const inspectedWith =
-    (details: { author?: string; language?: string }): MangaboundBridge['inspectInput'] =>
+    (details: { author?: string; language?: string }): Manga2InkBridge['inspectInput'] =>
     (id) => {
       const base = inspection(id);
       return Promise.resolve(base.ok ? { ok: true, value: { ...base.value, details } } : base);
@@ -390,7 +390,7 @@ describe('keeping the author and language with the folder', () => {
 
   it('come back with the folder, colored on its row and sent with the conversion', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(
       bridge({
         convert,
@@ -430,7 +430,7 @@ describe('keeping the author and language with the folder', () => {
 
   it('say so when they could not be saved, and stay for the session', async () => {
     const user = userEvent.setup();
-    const save = vi.fn<MangaboundBridge['saveBookDetails']>(() =>
+    const save = vi.fn<Manga2InkBridge['saveBookDetails']>(() =>
       Promise.resolve({
         ok: false,
         error: {
@@ -493,16 +493,16 @@ describe('the covers a person gives the books of an item', () => {
 
   it('are read when the details open, and follow what each change answers with', async () => {
     const user = userEvent.setup();
-    const listCovers = vi.fn<MangaboundBridge['listCovers']>(() =>
+    const listCovers = vi.fn<Manga2InkBridge['listCovers']>(() =>
       Promise.resolve({ ok: true, value: [{ slot: 1, name: 'kept.jpg', origin: 'folder' }] }),
     );
-    const chooseCover = vi.fn<MangaboundBridge['chooseCover']>(() =>
+    const chooseCover = vi.fn<Manga2InkBridge['chooseCover']>(() =>
       Promise.resolve({
         ok: true,
         value: { covers: [{ slot: 1, name: 'mine.png', origin: 'chosen' }] },
       }),
     );
-    const removeCover = vi.fn<MangaboundBridge['removeCover']>(() =>
+    const removeCover = vi.fn<Manga2InkBridge['removeCover']>(() =>
       Promise.resolve({ ok: true, value: { covers: [] } }),
     );
     installBridge(bridge({ listCovers, chooseCover, removeCover }));
@@ -525,7 +525,7 @@ describe('the covers a person gives the books of an item', () => {
 
   it('take a folder for the books in order, and say what it left to say', async () => {
     const user = userEvent.setup();
-    const chooseCoversFolder = vi.fn<MangaboundBridge['chooseCoversFolder']>(() =>
+    const chooseCoversFolder = vi.fn<Manga2InkBridge['chooseCoversFolder']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -551,7 +551,7 @@ describe('the covers a person gives the books of an item', () => {
 
   it('take what is dropped on a book, handing over the files themselves', async () => {
     const user = userEvent.setup();
-    const dropCovers = vi.fn<MangaboundBridge['dropCovers']>(() =>
+    const dropCovers = vi.fn<Manga2InkBridge['dropCovers']>(() =>
       Promise.resolve({
         ok: true,
         value: { covers: [{ slot: 1, name: 'dropped.jpg', origin: 'chosen' }] },
@@ -580,7 +580,7 @@ describe('the covers a person gives the books of an item', () => {
   it('stay as they were when nothing was picked, and when a change fails, which is said', async () => {
     const user = userEvent.setup();
     const chooseCover = vi
-      .fn<MangaboundBridge['chooseCover']>()
+      .fn<Manga2InkBridge['chooseCover']>()
       .mockResolvedValueOnce({ ok: true, value: null })
       .mockResolvedValueOnce({
         ok: false,
@@ -634,8 +634,8 @@ describe('the covers a person gives the books of an item', () => {
 
   it('are one cover for an item that makes a single book', async () => {
     const user = userEvent.setup();
-    const chooseCover = vi.fn<MangaboundBridge['chooseCover']>(bridge().chooseCover);
-    const chooseCoversFolder = vi.fn<MangaboundBridge['chooseCoversFolder']>(
+    const chooseCover = vi.fn<Manga2InkBridge['chooseCover']>(bridge().chooseCover);
+    const chooseCoversFolder = vi.fn<Manga2InkBridge['chooseCoversFolder']>(
       bridge().chooseCoversFolder,
     );
     installBridge(
@@ -660,8 +660,8 @@ describe('the covers a person gives the books of an item', () => {
 
   it('are kept for each title of a library, by the title’s name', async () => {
     const user = userEvent.setup();
-    const listCovers = vi.fn<MangaboundBridge['listCovers']>(bridge().listCovers);
-    const removeCover = vi.fn<MangaboundBridge['removeCover']>(bridge().removeCover);
+    const listCovers = vi.fn<Manga2InkBridge['listCovers']>(bridge().listCovers);
+    const removeCover = vi.fn<Manga2InkBridge['removeCover']>(bridge().removeCover);
     installBridge(
       libraryBridge([goodTitle, looseTitle], {
         listCovers: (target) => {

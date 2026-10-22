@@ -137,7 +137,7 @@ describe('a file the page asks for on the app scheme', () => {
   it('is a file inside the folder that serves the page, or none at all', () => {
     fc.assert(
       fc.property(pathname, tail, (requested, end) => {
-        const file = rendererFile(root, `app://mangabound/${requested}${end}`);
+        const file = rendererFile(root, `app://manga2ink/${requested}${end}`);
 
         if (file !== undefined) {
           expect(path.isAbsolute(file)).toBe(true);
@@ -152,7 +152,7 @@ describe('a file the page asks for on the app scheme', () => {
   it('is never a file named with a backslash or a NUL, written plainly or encoded', () => {
     fc.assert(
       fc.property(pathname, (requested) => {
-        const url = `app://mangabound/${requested}`;
+        const url = `app://manga2ink/${requested}`;
         const decoded = (() => {
           try {
             return decodeURIComponent(new URL(url).pathname);
@@ -173,7 +173,7 @@ describe('a file the page asks for on the app scheme', () => {
     fc.assert(
       fc.property(
         fc.constantFrom('file', 'http', 'https', 'app2', 'ftp'),
-        fc.constantFrom('mangabound', 'elsewhere', 'mangabound.evil', 'localhost', ''),
+        fc.constantFrom('manga2ink', 'elsewhere', 'manga2ink.evil', 'localhost', ''),
         (scheme, host) => {
           expect(rendererFile(root, `${scheme}://${host}/main_window/index.html`)).toBeUndefined();
         },
@@ -182,7 +182,7 @@ describe('a file the page asks for on the app scheme', () => {
     fc.assert(
       fc.property(
         fc.constantFrom('app', 'app'),
-        fc.constantFrom('elsewhere', 'mangabound.evil', 'localhost', 'MANGABOUND2'),
+        fc.constantFrom('elsewhere', 'manga2ink.evil', 'localhost', 'MANGA2INK2'),
         (scheme, host) => {
           expect(rendererFile(root, `${scheme}://${host}/main_window/index.html`)).toBeUndefined();
         },
@@ -193,7 +193,7 @@ describe('a file the page asks for on the app scheme', () => {
   it('is the file that was named, for every plain name below the folder', () => {
     fc.assert(
       fc.property(fc.array(names, { minLength: 1, maxLength: 5 }), (segments) => {
-        const url = `app://mangabound/${segments.map(encodeURIComponent).join('/')}`;
+        const url = `app://manga2ink/${segments.map(encodeURIComponent).join('/')}`;
 
         expect(rendererFile(root, url)).toBe(path.resolve(root, ...segments));
       }),

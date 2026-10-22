@@ -1,13 +1,13 @@
 ---
 title: 'Instalação'
-description: 'Baixe e instale o Mangabound no Windows, macOS ou Linux (.deb, .rpm, Arch) pela página oficial de versões e abra com segurança o alfa ainda não assinado.'
+description: 'Baixe e instale o Manga2Ink no Windows, macOS ou Linux (.deb, .rpm, Arch) pela página oficial de versões e abra com segurança o alfa ainda não assinado.'
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 import ReleaseDownloads from '../../../../components/ReleaseDownloads.astro';
 
-Baixe a última versão disponível para o seu sistema abaixo ou veja [todas as versões](https://github.com/gustavommcv/mangabound/releases).
+Baixe a última versão disponível para o seu sistema abaixo ou veja [todas as versões](https://github.com/gustavommcv/manga2ink/releases).
 
 <Tabs>
 <TabItem label="Windows">
@@ -27,7 +27,7 @@ O instalador alfa não é assinado com um certificado comercial, então o Window
 
 <ReleaseDownloads platform="macOS" />
 
-Extraia o ZIP e mova **Mangabound.app** para **Applications**. Ainda não há pacote para Mac Intel.
+Extraia o ZIP e mova **Manga2Ink.app** para **Applications**. Ainda não há pacote para Mac Intel.
 
 O aplicativo alfa não é notarizado pela Apple, então o macOS pode se recusar a abri-lo. Se isso acontecer, abra **Ajustes do Sistema → Privacidade e Segurança** e escolha **Abrir Mesmo Assim**, se o botão aparecer. [A Apple explica os passos](https://support.apple.com/pt-br/102445). Não desative o Gatekeeper por causa disso.
 
@@ -60,7 +60,7 @@ sudo dnf install ./package.rpm
 sudo pacman -U ./package.pkg.tar.zst
 ```
 
-Depois, abra **Mangabound** pelo menu de aplicativos. Use `sudo` apenas para instalar, não para abri-lo.
+Depois, abra **Manga2Ink** pelo menu de aplicativos. Use `sudo` apenas para instalar, não para abri-lo.
 
 </TabItem>
 </Tabs>
@@ -80,14 +80,14 @@ Um checksum que confere mostra que o arquivo é o que a versão publicou e que c
 
 ## Atualizar
 
-Abra **Configurações do app** (a engrenagem na barra de título), escolha **Atualizações** e clique em **Buscar atualizações**. Se houver uma versão mais nova, o Mangabound diz qual é e o dia em que foi publicada, e **Baixar a atualização** abre a página de download no seu navegador. O app ainda não a instala por você: baixe o arquivo do seu sistema e instale como na primeira vez, por cima da versão que você tem. Nada é verificado se você não clicar.
+Abra **Configurações do app** (a engrenagem na barra de título), escolha **Atualizações** e clique em **Buscar atualizações**. Se houver uma versão mais nova, o Manga2Ink diz qual é e o dia em que foi publicada, e **Baixar a atualização** abre a página de download no seu navegador. O app ainda não a instala por você: baixe o arquivo do seu sistema e instale como na primeira vez, por cima da versão que você tem. Nada é verificado se você não clicar.
 
 ## Se a instalação falhar
 
-Confira se você baixou o pacote do seu sistema e da sua arquitetura. Se o Mangabound disser que não foi possível verificar o mangabind ou o mangapress, reinstale o Mangabound pela página oficial de versões. Não troque as ferramentas por arquivos de outra origem.
+Confira se você baixou o pacote do seu sistema e da sua arquitetura. Se o Manga2Ink disser que não foi possível verificar o mangabind ou o mangapress, reinstale o Manga2Ink pela página oficial de versões. Não troque as ferramentas por arquivos de outra origem.
 
 ## Relatar um problema
 
-[Abra uma issue](https://github.com/gustavommcv/mangabound/issues) e inclua a versão do aplicativo, o sistema operacional, o que você tentava fazer e o que aconteceu. Em **Configurações do app**, **Sobre**, **Solução de problemas**, **Copiar diagnóstico** coloca as versões e o seu sistema na área de transferência, sem caminhos nem nomes: cole no relato. Para uma falha ou conversão que não terminou, inclua a mensagem de erro exata. Se anexar um arquivo de log aberto por **Abrir a pasta de logs**, veja-o antes: ele pode ter os caminhos de livros e pastas. Veja as [Configurações do app](../../user-guide/app-settings/#sobre).
+[Abra uma issue](https://github.com/gustavommcv/manga2ink/issues) e inclua a versão do aplicativo, o sistema operacional, o que você tentava fazer e o que aconteceu. Em **Configurações do app**, **Sobre**, **Solução de problemas**, **Copiar diagnóstico** coloca as versões e o seu sistema na área de transferência, sem caminhos nem nomes: cole no relato. Para uma falha ou conversão que não terminou, inclua a mensagem de erro exata. Se anexar um arquivo de log aberto por **Abrir a pasta de logs**, veja-o antes: ele pode ter os caminhos de livros e pastas. Veja as [Configurações do app](../../user-guide/app-settings/#sobre).
 
 Tudo pronto? Siga o [guia rápido](../quickstart/).

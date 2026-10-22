@@ -160,7 +160,7 @@ export async function downloadFile(url, destination) {
   const response = await fetch(url, {
     headers: {
       Accept: 'application/octet-stream',
-      'User-Agent': 'Mangabound-toolchain',
+      'User-Agent': 'Manga2Ink-toolchain',
     },
     redirect: 'follow',
     signal: AbortSignal.timeout(10 * 60 * 1000),
@@ -204,7 +204,7 @@ async function githubJson(url) {
   const response = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github+json',
-      'User-Agent': 'Mangabound-toolchain',
+      'User-Agent': 'Manga2Ink-toolchain',
       'X-GitHub-Api-Version': '2022-11-28',
     },
     signal: AbortSignal.timeout(60 * 1000),
@@ -247,7 +247,7 @@ export async function buildReleasePin(toolName, tag) {
     throw new Error(`${toolName} ${tag} does not publish checksums.txt`);
   }
 
-  const temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'mangabound-pin-'));
+  const temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'manga2ink-pin-'));
   const resolvedTemporaryDirectory = path.resolve(temporaryDirectory);
   const resolvedSystemTemp = `${path.resolve(tmpdir())}${path.sep}`;
   if (!resolvedTemporaryDirectory.startsWith(resolvedSystemTemp)) {

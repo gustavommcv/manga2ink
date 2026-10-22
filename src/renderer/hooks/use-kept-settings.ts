@@ -18,7 +18,7 @@ import { defaultProcessMode, type ProcessMode } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 import { useSayLater } from '@/renderer/hooks/use-messages';
 import type { NetworkInterfaceOption } from '@/shared/opds-contract';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { SaveSettingsCommand } from '@/shared/settings-contract';
 
 /** What is kept of the choices on screen. */
@@ -52,7 +52,7 @@ function settingsToKeep(values: {
  * know about; it is a dependency of both effects, so pass a stable function.
  */
 export function useKeptSettings(
-  bridge: MangaboundBridge,
+  bridge: Manga2InkBridge,
   notify: (message: string) => void,
 ): {
   readonly mode: ProcessMode;

@@ -13,7 +13,7 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.destinationFull': () =>
       'The destination is full. Free some space and try again; the pending book is safe.',
     'save.cannotWrite': () =>
-      'Mangabound cannot write to that destination. Choose a writable folder or check its permissions.',
+      'Manga2Ink cannot write to that destination. Choose a writable folder or check its permissions.',
     'save.folderGone': () =>
       'The chosen destination folder is no longer available. Choose another folder.',
     'save.failed': () =>
@@ -21,7 +21,7 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.copiedCatalogFailed': () =>
       'The book was copied, but its destination catalog could not be updated. Choose another folder or check its permissions, then retry; the pending copy is safe.',
     'save.copiedNotRecorded': () =>
-      'The book was copied, but Mangabound could not remember that it was saved. Its pending copy remains available to retry.',
+      'The book was copied, but Manga2Ink could not remember that it was saved. Its pending copy remains available to retry.',
   },
   'pt-BR': {
     'save.bookGone': () => 'Este livro pendente não está mais disponível.',
@@ -31,7 +31,7 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.destinationFull': () =>
       'O destino está cheio. Libere espaço e tente de novo; o livro pendente está seguro.',
     'save.cannotWrite': () =>
-      'O Mangabound não consegue gravar nesse destino. Escolha uma pasta com permissão de gravação ou verifique as permissões dela.',
+      'O Manga2Ink não consegue gravar nesse destino. Escolha uma pasta com permissão de gravação ou verifique as permissões dela.',
     'save.folderGone': () =>
       'A pasta de destino escolhida não está mais disponível. Escolha outra pasta.',
     'save.failed': () =>
@@ -39,7 +39,7 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.copiedCatalogFailed': () =>
       'O livro foi copiado, mas o catálogo do destino não pôde ser atualizado. Escolha outra pasta ou verifique as permissões dela e tente de novo; a cópia pendente está segura.',
     'save.copiedNotRecorded': () =>
-      'O livro foi copiado, mas o Mangabound não conseguiu registrar que ele foi salvo. A cópia pendente continua disponível para tentar de novo.',
+      'O livro foi copiado, mas o Manga2Ink não conseguiu registrar que ele foi salvo. A cópia pendente continua disponível para tentar de novo.',
   },
   ja: {
     'save.bookGone': () => 'この保留中の本は、もう利用できません。',
@@ -49,7 +49,7 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.destinationFull': () =>
       '保存先がいっぱいです。空き容量を確保してから、もう一度お試しください。保留中の本は無事です。',
     'save.cannotWrite': () =>
-      'Mangabound はその保存先に書き込めません。書き込み可能なフォルダーを選ぶか、フォルダーのアクセス許可を確認してください。',
+      'Manga2Ink はその保存先に書き込めません。書き込み可能なフォルダーを選ぶか、フォルダーのアクセス許可を確認してください。',
     'save.folderGone': () =>
       '選んだ保存先のフォルダーは、もう利用できません。別のフォルダーを選んでください。',
     'save.failed': () =>
@@ -57,6 +57,6 @@ export const saveSaid: Readonly<Record<Language, SaidFor<SaveMessageValues>>> = 
     'save.copiedCatalogFailed': () =>
       '本はコピーされましたが、保存先のカタログを更新できませんでした。別のフォルダーを選ぶか、フォルダーのアクセス許可を確認してから、もう一度お試しください。保留中のコピーは無事です。',
     'save.copiedNotRecorded': () =>
-      '本はコピーされましたが、Mangabound は保存済みであることを記録できませんでした。保留中のコピーは残っているので、もう一度お試しいただけます。',
+      '本はコピーされましたが、Manga2Ink は保存済みであることを記録できませんでした。保留中のコピーは残っているので、もう一度お試しいただけます。',
   },
 };

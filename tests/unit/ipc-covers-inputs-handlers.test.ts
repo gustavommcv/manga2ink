@@ -173,7 +173,7 @@ describe('what a person chooses to convert', () => {
   let archive: string;
   let notes: string;
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-input-handlers-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-input-handlers-'));
     folder = path.join(directory, 'Manga');
     archive = path.join(directory, 'Vagabond.cbz');
     notes = path.join(directory, 'notes.txt');
