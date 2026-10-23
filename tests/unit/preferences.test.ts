@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import {
   defaultFormat,
   defaultPreferences,
-  isDefaultMangapress,
+  isDefaultMangaprep,
   sameSettings,
 } from '@/domain/preferences';
 import { defaultProcessMode } from '@/domain/process-mode';
@@ -15,7 +15,7 @@ describe('the defaults everything starts from', () => {
       mode: defaultProcessMode,
       format: 'cbz',
       singleBook: false,
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
     });
     expect(defaultFormat).toBe('cbz');
     expect(defaultPreferences.providerId).toBeUndefined();
@@ -28,39 +28,39 @@ describe('the defaults everything starts from', () => {
 
 describe('sameSettings', () => {
   it('is true for the same options, however they were built', () => {
-    expect(sameSettings(defaultMangapressSettings, { ...defaultMangapressSettings })).toBe(true);
+    expect(sameSettings(defaultMangaprepSettings, { ...defaultMangaprepSettings })).toBe(true);
   });
 
   it('is false when any one option differs', () => {
     expect(
-      sameSettings(defaultMangapressSettings, { ...defaultMangapressSettings, quiet: true }),
+      sameSettings(defaultMangaprepSettings, { ...defaultMangaprepSettings, quiet: true }),
     ).toBe(false);
     expect(
-      sameSettings(defaultMangapressSettings, { ...defaultMangapressSettings, jpegQuality: 90 }),
+      sameSettings(defaultMangaprepSettings, { ...defaultMangaprepSettings, jpegQuality: 90 }),
     ).toBe(false);
     expect(
-      sameSettings({ ...defaultMangapressSettings, jpegQuality: 90 }, defaultMangapressSettings),
+      sameSettings({ ...defaultMangaprepSettings, jpegQuality: 90 }, defaultMangaprepSettings),
     ).toBe(false);
   });
 
   it('counts an option that was cleared as one that was never set', () => {
     expect(
-      sameSettings(defaultMangapressSettings, { ...defaultMangapressSettings, gamma: undefined }),
+      sameSettings(defaultMangaprepSettings, { ...defaultMangaprepSettings, gamma: undefined }),
     ).toBe(true);
   });
 });
 
-describe('isDefaultMangapress', () => {
+describe('isDefaultMangaprep', () => {
   it('is true for the format and options a fresh start has', () => {
-    expect(isDefaultMangapress('cbz', defaultMangapressSettings)).toBe(true);
+    expect(isDefaultMangaprep('cbz', defaultMangaprepSettings)).toBe(true);
   });
 
   it('is false once the format or an option was changed', () => {
-    expect(isDefaultMangapress('pdf', defaultMangapressSettings)).toBe(false);
-    expect(isDefaultMangapress('epub', { ...defaultMangapressSettings, splitter: 'split' })).toBe(
+    expect(isDefaultMangaprep('pdf', defaultMangaprepSettings)).toBe(false);
+    expect(isDefaultMangaprep('epub', { ...defaultMangaprepSettings, splitter: 'split' })).toBe(
       false,
     );
-    expect(isDefaultMangapress('epub', { ...defaultMangapressSettings, language: 'pt-br' })).toBe(
+    expect(isDefaultMangaprep('epub', { ...defaultMangaprepSettings, language: 'pt-br' })).toBe(
       false,
     );
   });

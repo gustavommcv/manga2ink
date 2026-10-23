@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { Notices } from '@/renderer/components/shared/notices';
@@ -79,7 +79,7 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     ],
     rejected: [],
     rows: [],
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     singleBook: false,
     validating: false,
     ...overrides,
@@ -463,7 +463,7 @@ describe('the controls the conversion options share, in Portuguese', () => {
 
     const question = screen.getByRole('group', { name: 'Confirmar a restauração' });
     expect(question).toHaveTextContent(
-      'Voltar as etapas, o dispositivo, o formato e todas as opções do mangapress aos padrões?',
+      'Voltar as etapas, o dispositivo, o formato e todas as opções do mangaprep aos padrões?',
     );
     await user.click(within(question).getByRole('button', { name: 'Restaurar' }));
     expect(onReset).toHaveBeenCalledOnce();

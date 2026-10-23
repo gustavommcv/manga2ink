@@ -154,8 +154,7 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
       skipGrouping: {
         button: 'Skip grouping',
         singleBook: 'Single book mode requires grouping chapters into volumes.',
-        detail:
-          'Send the folder to mangapress as one book, without grouping chapters into volumes.',
+        detail: 'Send the folder to mangaprep as one book, without grouping chapters into volumes.',
       },
       showSummary: 'Show mapping summary',
       history: {
@@ -308,7 +307,7 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         button: 'Pular o agrupamento',
         singleBook: 'O modo de livro único exige agrupar os capítulos em volumes.',
         detail:
-          'Enviar a pasta ao mangapress como um livro só, sem agrupar os capítulos em volumes.',
+          'Enviar a pasta ao mangaprep como um livro só, sem agrupar os capítulos em volumes.',
       },
       showSummary: 'Mostrar o resumo do mapeamento',
       history: {
@@ -468,7 +467,7 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
       skipGrouping: {
         button: 'まとめをスキップ',
         singleBook: '1 冊にまとめるモードでは、各話を巻にまとめる必要があります。',
-        detail: '各話を巻にまとめずに、フォルダーを 1 冊の本として mangapress に渡します。',
+        detail: '各話を巻にまとめずに、フォルダーを 1 冊の本として mangaprep に渡します。',
       },
       showSummary: '割り当ての概要を表示',
       history: {

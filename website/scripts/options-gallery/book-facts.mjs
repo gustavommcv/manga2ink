@@ -49,7 +49,7 @@ function decodeHexString(hex) {
 /**
  * The title, author, language and reading direction a PDF states, or null where it states none. The
  * title and author are in the document properties; the language and the direction are optional
- * entries (`/Lang`, and `/Direction` among the viewer preferences) that mangapress does not write.
+ * entries (`/Lang`, and `/Direction` among the viewer preferences) that mangaprep does not write.
  */
 export function pdfFacts(bytes) {
   const text = Buffer.from(bytes).toString('latin1');
@@ -80,7 +80,7 @@ export function pdfPictures(bytes) {
 
 const lastPart = (name) => name.split('/').pop();
 
-/** Whether an entry of a CBZ is its cover, which mangapress stores as `##cover.jpg` ahead of the pages. */
+/** Whether an entry of a CBZ is its cover, which mangaprep stores as `##cover.jpg` ahead of the pages. */
 export const isCover = (name) => lastPart(name) === '##cover.jpg';
 
 /** Whether an entry of a CBZ is a page. */

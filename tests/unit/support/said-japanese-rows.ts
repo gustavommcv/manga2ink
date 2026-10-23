@@ -97,7 +97,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '同梱の変換ツールが、互換性のないデータを返しました。Manga2Ink を再インストールするか、診断情報を開いてください。',
   ],
   'failure.bindingFailed': ['mangabind は、選ばれた巻を作成できませんでした。'],
-  'failure.conversionFailed': ['mangapress は、この巻を変換できませんでした。'],
+  'failure.conversionFailed': ['mangaprep は、この巻を変換できませんでした。'],
   'failure.titleNotConverted': ['変換できませんでした。'],
   'failure.coverUnusable': [
     '「Vol.01.epub」に選んだ表紙を使用できませんでした。本の詳細ページで、表紙を削除するか、別の画像を選んでください。',
@@ -377,18 +377,18 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     'Good Manga · 2 巻中 2 巻の変換が完了しました。',
   ],
   'progress.booksSaved': ['1 冊を保存しました。', '2 冊を保存しました。'],
-  'plan.mangapress': [
-    'mangapress の検証: KV · 1072 × 1448 · ライブラリのファイルは書き込まれていません',
-    'mangapress の検証: KV · 1072 × 1448 · 1 冊、各話はまとめていません · ライブラリのファイルは書き込まれていません',
+  'plan.mangaprep': [
+    'mangaprep の検証: KV · 1072 × 1448 · ライブラリのファイルは書き込まれていません',
+    'mangaprep の検証: KV · 1072 × 1448 · 1 冊、各話はまとめていません · ライブラリのファイルは書き込まれていません',
   ],
   'plan.mangabind': [
     'mangabind の検証: 1 巻 · ライブラリのファイルは書き込まれていません',
-    'mangabind の検証: 2 巻 · CBZ ファイルとして保存（mangapress は実行しません） · ライブラリのファイルは書き込まれていません',
+    'mangabind の検証: 2 巻 · CBZ ファイルとして保存（mangaprep は実行しません） · ライブラリのファイルは書き込まれていません',
     'mangabind の検証: 2 巻 · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません',
   ],
   'plan.library': [
     'mangabind の検証: 1 タイトル · 1 巻 · ライブラリのファイルは書き込まれていません',
-    'mangabind の検証: 2 タイトル · 5 巻 · CBZ ファイルとして保存（mangapress は実行しません） · ライブラリのファイルは書き込まれていません',
+    'mangabind の検証: 2 タイトル · 5 巻 · CBZ ファイルとして保存（mangaprep は実行しません） · ライブラリのファイルは書き込まれていません',
     'mangabind の検証: 1 タイトル · 3 巻 · EPUB 1 冊（シリーズごとに 1 冊） · ライブラリのファイルは書き込まれていません',
     'mangabind の検証: 2 タイトル · 5 巻 · EPUB 2 冊（シリーズごとに 1 冊） · ライブラリのファイルは書き込まれていません',
   ],
@@ -427,7 +427,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '.cbz の話の中のページが、1 ページとしてはあり得ないほど大きく展開される（256 MiB を超えるか、アーカイブ内のサイズの 1000 倍を超える）と示しています。これはコンピューターのメモリを埋め尽くすために作られたファイルの特徴なので、本には入りません。本物のページなら、通常の画像として保存し直して、もう一度変換してください。',
     '本は編集した巻のとおりに作られますが、フォルダーの mangabind.json に保存できませんでした。フォルダーに書き込めないか、mangabind.json が正しい JSON ではありません。次にそのフォルダーを追加するときは、もう一度巻を編集する必要があります。',
   ],
-  'warning.unknownTitle': ['mangapress からのお知らせ'],
+  'warning.unknownTitle': ['mangaprep からのお知らせ'],
   'warning.inAll': ['対象は全 3 冊です。'],
   'warning.inOne': ['対象は One.epub です。'],
   'warning.inTwo': ['対象は One.epub と Two.epub です。'],
@@ -441,6 +441,6 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'toolchain.checkFailed': ['同梱の変換ツールを確認できませんでした。'],
   'toolchain.toolReady': ['mangabind v0.7.2 は検証済みです。'],
   'toolchain.toolFailed': [
-    'mangapress を検証できませんでした。Manga2Ink を再インストールして、同梱のツールを復元してください。',
+    'mangaprep を検証できませんでした。Manga2Ink を再インストールして、同梱のツールを復元してください。',
   ],
 };

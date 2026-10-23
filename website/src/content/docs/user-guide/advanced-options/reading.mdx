@@ -6,11 +6,11 @@ description: 'What Content and Manga reading order do: a webtoon-shaped chapter 
 import OptionBook from '../../../../components/OptionBook.astro';
 import OptionExample from '../../../../components/OptionExample.astro';
 
-The **Reading** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options) says what the images are and which way they are read. It has two controls: **Content**, which tells mangapress whether each image is a page or a piece of a long strip, and **Manga reading order**.
+The **Reading** section of [Advanced conversion options](../../output-profiles/#advanced-conversion-options) says what the images are and which way they are read. It has two controls: **Content**, which tells mangaprep whether each image is a page or a piece of a long strip, and **Manga reading order**.
 
 ## Content
 
-**Manga or comic pages** is the starting choice: each image is one page. **Webtoon strips** is for a webtoon. A webtoon is drawn as one long vertical strip, but it is handed out cut into images wherever a file ended. Read one image at a time, a panel can end up split between two pages. With **Webtoon strips**, mangapress joins the images of each chapter into one strip and cuts it again into pages between panels. `--webtoon` turns it on, and `-w` is its short form.
+**Manga or comic pages** is the starting choice: each image is one page. **Webtoon strips** is for a webtoon. A webtoon is drawn as one long vertical strip, but it is handed out cut into images wherever a file ended. Read one image at a time, a panel can end up split between two pages. With **Webtoon strips**, mangaprep joins the images of each chapter into one strip and cuts it again into pages between panels. `--webtoon` turns it on, and `-w` is its short form.
 
 _Pepper&Carrot_ is not a webtoon, but three of its pages one under the other make a strip of the same shape: 992 × 4119 pixels, with white gaps between the panels. Cut every 1500 pixels into three images, it looks like what a webtoon site hands out: each cut falls wherever an image ends, not between panels. The first row converts those three images as pages. The second converts the same three as strips.
 
@@ -28,14 +28,14 @@ As pages, the three images give three pages of 1272 × 1696 pixels, the size of 
 
 ### What else changes with it
 
-The table gives the size of every page that mangapress wrote for the same three images. Every row was converted with Manga2Ink's starting settings, which include enlarging small pages and manga reading order, and the flags named are what the row adds.
+The table gives the size of every page that mangaprep wrote for the same three images. Every row was converted with Manga2Ink's starting settings, which include enlarging small pages and manga reading order, and the flags named are what the row adds.
 
 <OptionBook id="reading-webtoon-pages" />
 
 - **Pages are not enlarged.** The second row was converted with the setting that enlarges small pages, and its pages are still 992 pixels wide. Under **Page size** the app says it: "Webtoon strips are never enlarged."
 - **Stretching and cropping to fill still work.** In the third and fourth rows each cut page is made the size of the screen, as in [Size and borders](../size-and-borders/).
 - **Inter-panel cropping still works.** The fifth row closes the gaps between panels, so the second and third pages are shorter, as in [Cropping](../cropping/).
-- **Borders and margin cropping are not used.** The sixth and seventh rows are the second row again, with the same sizes. Mangapress's own description of the mode says it implies white borders and no margin cropping, so **Borders**, **Page cropping** and its three numbers are dimmed while **Webtoon strips** is on.
+- **Borders and margin cropping are not used.** The sixth and seventh rows are the second row again, with the same sizes. Mangaprep's own description of the mode says it implies white borders and no margin cropping, so **Borders**, **Page cropping** and its three numbers are dimmed while **Webtoon strips** is on.
 - **A webtoon is never split or turned.** **Wide pages**, the three whole-spread options and **Restack 4-panel strips as 2×2** are dimmed, and so are **Autocontrast** and **Manga reading order**, described below.
 - **The cut still happens when the images are left as they are.** The last row turns on **Use the images as they are**: the pages are not recoded, and the strip is still cut into the same pages.
 
@@ -50,5 +50,5 @@ Whether the book itself says which way it turns depends on the format. The table
 <OptionBook id="reading-direction" />
 
 - An **EPUB** records the direction in its package file, as `page-progression-direction`: `rtl` with the option on and `ltr` with it off, unless **Invert page turns** in the [two-page view](../double-page-spreads/#two-page-view) reverses it. A reader that follows the direction of the book turns the pages that way.
-- With **Webtoon strips** an EPUB is left to right even when **Manga reading order** is on: mangapress's description of the mode says it implies left-to-right order. That is why the control is dimmed.
-- A **PDF** and a **CBZ** made by mangapress record no direction, so the reader's own setting decides how they turn. The [KOReader settings](../../../koreader/recommended-settings/) page has an example that swaps the tap zones and swipes for right-to-left reading.
+- With **Webtoon strips** an EPUB is left to right even when **Manga reading order** is on: mangaprep's description of the mode says it implies left-to-right order. That is why the control is dimmed.
+- A **PDF** and a **CBZ** made by mangaprep record no direction, so the reader's own setting decides how they turn. The [KOReader settings](../../../koreader/recommended-settings/) page has an example that swaps the tap zones and swipes for right-to-left reading.

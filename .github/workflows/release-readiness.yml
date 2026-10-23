@@ -18,4 +18,4 @@ jobs:
       - name: Verify the manifest is release-eligible
         run: |
           npm run toolchain:check
-          node -e "const lock=require('./toolchain.lock.json'); if(lock.state!=='locked') throw new Error('Release blocked until structured mangabind and mangapress releases are pinned')"
+          node -e "const lock=require('./toolchain.lock.json'); if(lock.state!=='locked') throw new Error('Release blocked until structured mangabind and mangaprep releases are pinned')"

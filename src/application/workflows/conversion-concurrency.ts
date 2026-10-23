@@ -13,7 +13,7 @@ export interface MachineCapacity {
 
 const gibibyte = 1024 ** 3;
 
-/** A conservative limit for independent mangapress processes, each of which uses its own threads. */
+/** A conservative limit for independent mangaprep processes, each of which uses its own threads. */
 export function conversionConcurrency(processors: number, memoryBytes: number): number {
   const perCpu = Math.max(1, Math.floor(processors / 4));
   const perMemory = Math.max(1, Math.floor(memoryBytes / (4 * gibibyte)));

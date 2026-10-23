@@ -3,9 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BookFormat } from '@/domain/conversion';
 import { message } from '@/domain/message';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
-import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import { MangaprepSettingsEditor } from '@/renderer/components/settings/mangaprep-settings';
 import { App } from '@/renderer/app';
 
 import { inPortuguese } from './support/i18n';
@@ -32,18 +32,18 @@ const profiles = [
 ];
 
 function editor(
-  settings: Partial<MangapressSettings> = {},
+  settings: Partial<MangaprepSettings> = {},
   format: BookFormat = 'epub',
   extra: { readonly singleBook?: boolean } = {},
 ): React.JSX.Element {
   return inPortuguese(
-    <MangapressSettingsEditor
+    <MangaprepSettingsEditor
       format={format}
       onFormat={vi.fn()}
       onNotify={vi.fn()}
       onSettings={vi.fn()}
       profiles={profiles}
-      settings={{ ...defaultMangapressSettings, ...settings }}
+      settings={{ ...defaultMangaprepSettings, ...settings }}
       {...extra}
     />,
   );
@@ -209,13 +209,13 @@ describe('the fields of the conversion options, in Portuguese', () => {
   it('says it is unavailable when the tools list no device', () => {
     render(
       inPortuguese(
-        <MangapressSettingsEditor
+        <MangaprepSettingsEditor
           format="epub"
           onFormat={vi.fn()}
           onNotify={vi.fn()}
           onSettings={vi.fn()}
           profiles={[]}
-          settings={defaultMangapressSettings}
+          settings={defaultMangaprepSettings}
         />,
       ),
     );
@@ -245,7 +245,7 @@ describe('the notice of a device that is no longer offered, in Portuguese', () =
             value: {
               preferences: {
                 ...defaultPreferences,
-                settings: { ...defaultMangapressSettings, deviceProfile: 'GONE' },
+                settings: { ...defaultMangaprepSettings, deviceProfile: 'GONE' },
               },
               notices: [message('notice.settingsUnreadable', {})],
             },

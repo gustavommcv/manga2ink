@@ -103,7 +103,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'License',
-      text: 'Manga2Ink is released under the MIT License. mangapress and mangabind bring their own notices with the app.',
+      text: 'Manga2Ink is released under the MIT License. mangaprep and mangabind bring their own notices with the app.',
       mit: 'MIT License',
       notices: 'Third-party notices',
     },
@@ -149,7 +149,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'Licença',
-      text: 'O Manga2Ink é distribuído sob a Licença MIT. mangapress e mangabind levam seus próprios avisos junto com o app.',
+      text: 'O Manga2Ink é distribuído sob a Licença MIT. mangaprep e mangabind levam seus próprios avisos junto com o app.',
       mit: 'Licença MIT',
       notices: 'Avisos de terceiros',
     },
@@ -195,7 +195,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'ライセンス',
-      text: 'Manga2Ink は MIT ライセンスで公開されています。mangapress と mangabind は、それぞれの通知をアプリに同梱しています。',
+      text: 'Manga2Ink は MIT ライセンスで公開されています。mangaprep と mangabind は、それぞれの通知をアプリに同梱しています。',
       mit: 'MIT ライセンス',
       notices: 'サードパーティの通知',
     },

@@ -1,7 +1,7 @@
 import type { NoValues } from './values';
 
 /**
- * What the app says of its bundled tools (mangabind and mangapress) once it has checked them, in
+ * What the app says of its bundled tools (mangabind and mangaprep) once it has checked them, in
  * the words of a code (ADR 0053). The window shows one only when something is wrong; the others are
  * kept with the status so that a report of a problem can carry them.
  */

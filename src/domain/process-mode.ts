@@ -33,7 +33,7 @@ export function stepsFromMode(mode: ProcessMode): ProcessSteps {
   return { group: mode !== 'convert-only', convert: mode !== 'bind-only' };
 }
 
-export function usesMangapress(mode: ProcessMode): boolean {
+export function usesMangaprep(mode: ProcessMode): boolean {
   return mode !== 'bind-only';
 }
 
@@ -51,7 +51,7 @@ export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): AnyM
 /**
  * Why the interface should not offer this mode for this kind of input, or undefined when it can.
  * Stricter than what a run refuses: a CBZ has only one meaningful process, going straight to
- * mangapress, though asking it to "bind and convert" still just does that.
+ * mangaprep, though asking it to "bind and convert" still just does that.
  */
 export function blockedModeReason(input: ModeInput, mode: ProcessMode): AnyMessage | undefined {
   if (input === 'cbz' && mode !== 'convert-only') return cbzReason;

@@ -21,7 +21,7 @@ function advertisedFlags(help) {
   return sorted(new Set(help.match(/(?<!\S)-{1,2}[A-Za-z][\w-]*/gu) ?? []));
 }
 
-for (const toolName of ['mangabind', 'mangapress']) {
+for (const toolName of ['mangabind', 'mangaprep']) {
   const executablePath = path.join(
     repositoryRoot,
     'vendor',

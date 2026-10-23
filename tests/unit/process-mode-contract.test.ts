@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { processModes } from '@/domain/process-mode';
 import {
   conversionCommandSchema,
@@ -11,7 +11,7 @@ const single = {
   jobId: 'job-1',
   sessionId: 'session-1',
   libraryId: 'library-1',
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'epub',
 } as const;
 
@@ -19,7 +19,7 @@ const library = {
   jobId: 'job-1',
   sessionId: 'session-1',
   libraryId: 'library-1',
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'epub',
 } as const;
 

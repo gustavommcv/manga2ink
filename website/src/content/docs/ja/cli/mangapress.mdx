@@ -1,16 +1,16 @@
 ---
-title: 'mangapress CLI'
-description: 'mangapress コマンドラインツールを使って、ターミナルから、マンガの巻を電子書籍リーダーのプロファイル向けに EPUB・CBZ・PDF へ変換します。右から左へ読む順序にも対応します。'
+title: 'mangaprep CLI'
+description: 'mangaprep コマンドラインツールを使って、ターミナルから、マンガの巻を電子書籍リーダーのプロファイル向けに EPUB・CBZ・PDF へ変換します。右から左へ読む順序にも対応します。'
 ---
 
-ターミナルから使うには、[GitHub Releases](https://github.com/gustavommcv/mangapress/releases) から mangapress をダウンロードしてください。
+ターミナルから使うには、[GitHub Releases](https://github.com/gustavommcv/mangaprep/releases) から mangaprep をダウンロードしてください。
 
 ## 試してみる
 
 ```sh
-mangapress --help
-mangapress --list-profiles
-mangapress "Volume.cbz" --profile KV --manga-style --format epub
+mangaprep --help
+mangaprep --list-profiles
+mangaprep "Volume.cbz" --profile KV --manga-style --format epub
 ```
 
 `--list-profiles` で、お使いの端末のコードと解像度を調べられます。たとえば、Kobo Libra 2 は **KoL**、reMarkable Paper Pro は **RmkPP** です。
@@ -46,17 +46,17 @@ Manga2Ink では、これらは[変換の設定](../../user-guide/output-profile
 `--dry-run`（短縮形は `-n`）は、入力を読み、ページを処理したりファイルを書いたりせずに、何が作られるかを報告します。次は、4 ページの CBZ に対して表示された内容です（パスは短縮しています）:
 
 ```text
-mangapress: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
+mangaprep: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
 warning: 4 of 4 pages are smaller than the device's 1072x1448 screen. Consider --upscale (or --stretch) to make them easier to read.
 found 1 chapter(s), 4 page(s) total
-warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangapress).cbz
+warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangaprep).cbz
 dry run -- no pages will be processed, nothing will be written
 title: Pepper and Carrot - Episode 01
 author: Unknown
 format: cbz
 device: Kindle Voyage (1072x1448)
 chapters: 1, pages: 4
-would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
+would write: …\Pepper and Carrot - Episode 01 (mangaprep).cbz
 ```
 
 警告は、実際の実行で表示されるものと同じなので、ドライランは、それらを先に確認する手軽な方法です。サイズの警告は、[サイズと縁](../../user-guide/advanced-options/size-and-borders/)に関するものです。
@@ -65,10 +65,10 @@ would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
 
 ## 出力を静かにする
 
-`--quiet`（短縮形は `-q`）は、進み具合の行を省きます。何を変換しているかを示す行、各話とページの数、完了した各話、書き出した本のパスです。警告とエラーは引き続き表示されます。同じ変換は、既定では 6 行を表示し、`--quiet` を付けると、小さいページについての警告だけを表示します。Manga2Ink では、これは**ツールの動作**の下の**出力を静かにする**です。アプリは mangapress 自身のイベントを読むので、この設定は、アプリで見えるものを変えません。
+`--quiet`（短縮形は `-q`）は、進み具合の行を省きます。何を変換しているかを示す行、各話とページの数、完了した各話、書き出した本のパスです。警告とエラーは引き続き表示されます。同じ変換は、既定では 6 行を表示し、`--quiet` を付けると、小さいページについての警告だけを表示します。Manga2Ink では、これは**ツールの動作**の下の**出力を静かにする**です。アプリは mangaprep 自身のイベントを読むので、この設定は、アプリで見えるものを変えません。
 
 ## そのほかのオプション
 
-アプリに表示されるすべてのオプションには、それぞれ専用のページがあり、そのオプションあり・なしで同じページを変換して見せています。[詳細な変換オプション](../../user-guide/advanced-options/)を参照してください。このツールの [README](https://github.com/gustavommcv/mangapress#readme) には、メタデータ、入れ子の目次、そのほかのコマンドラインの説明があります。
+アプリに表示されるすべてのオプションには、それぞれ専用のページがあり、そのオプションあり・なしで同じページを変換して見せています。[詳細な変換オプション](../../user-guide/advanced-options/)を参照してください。このツールの [README](https://github.com/gustavommcv/mangaprep#readme) には、メタデータ、入れ子の目次、そのほかのコマンドラインの説明があります。
 
-連携については、[マシンプロトコル](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md)を参照してください。お使いのバージョンに合った参照先を選んでください。
+連携については、[マシンプロトコル](https://github.com/gustavommcv/mangaprep/blob/main/docs/machine-protocol-v1.md)を参照してください。お使いのバージョンに合った参照先を選んでください。

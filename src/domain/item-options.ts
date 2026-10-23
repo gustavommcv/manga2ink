@@ -1,9 +1,9 @@
 import type { BookFormat } from './conversion';
-import type { MangapressSettings } from './output-profile';
+import type { MangaprepSettings } from './output-profile';
 
-/** The format and the mangapress options a book is made with. */
+/** The format and the mangaprep options a book is made with. */
 export interface RunOptions {
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly format: BookFormat;
 }
 
@@ -13,7 +13,7 @@ export interface RunOptions {
  * custom size) while the queue's options have them set.
  */
 export type SettingsOverride = {
-  readonly [Field in keyof MangapressSettings]?: MangapressSettings[Field] | null;
+  readonly [Field in keyof MangaprepSettings]?: MangaprepSettings[Field] | null;
 };
 
 /**
@@ -43,7 +43,7 @@ export function effectiveOptions(queue: RunOptions, item: ItemOptions | undefine
     else merged[field] = value;
   }
   return {
-    settings: merged as unknown as MangapressSettings,
+    settings: merged as unknown as MangaprepSettings,
     format: item.format ?? queue.format,
   };
 }
@@ -53,9 +53,9 @@ export function effectiveOptions(queue: RunOptions, item: ItemOptions | undefine
  * only what differs, and nothing when it does not.
  */
 export function itemOptionsFor(queue: RunOptions, edited: RunOptions): ItemOptions | undefined {
-  const differing: Record<string, MangapressSettings[keyof MangapressSettings] | null> = {};
+  const differing: Record<string, MangaprepSettings[keyof MangaprepSettings] | null> = {};
   const fields = new Set([...Object.keys(queue.settings), ...Object.keys(edited.settings)]) as Set<
-    keyof MangapressSettings
+    keyof MangaprepSettings
   >;
   for (const field of fields) {
     const value = edited.settings[field];
@@ -75,17 +75,17 @@ export function itemOptionsFor(queue: RunOptions, edited: RunOptions): ItemOptio
  * those two back with it, as choosing it did. A field the queue leaves unset is left unset.
  */
 export function withQueueValue(
-  settings: MangapressSettings,
-  queue: MangapressSettings,
-  field: keyof MangapressSettings,
-): MangapressSettings {
+  settings: MangaprepSettings,
+  queue: MangaprepSettings,
+  field: keyof MangaprepSettings,
+): MangaprepSettings {
   const next: Record<string, unknown> = { ...settings };
-  const fields: readonly (keyof MangapressSettings)[] =
+  const fields: readonly (keyof MangaprepSettings)[] =
     field === 'deviceProfile' ? ['deviceProfile', 'upscale', 'forceColor'] : [field];
   for (const name of fields) {
     const value = queue[name];
     if (value === undefined) delete next[name];
     else next[name] = value;
   }
-  return next as unknown as MangapressSettings;
+  return next as unknown as MangaprepSettings;
 }

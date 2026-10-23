@@ -24,8 +24,8 @@ export const toolSpecs = {
     repository: 'gustavommcv/mangabind',
     versionArguments: ['--version'],
   },
-  mangapress: {
-    executableName: (target) => (target.startsWith('win32-') ? 'mangapress.exe' : 'mangapress'),
+  mangaprep: {
+    executableName: (target) => (target.startsWith('win32-') ? 'mangaprep.exe' : 'mangaprep'),
     licenseFiles: [
       'LICENSE-MIT',
       'LICENSE-APACHE',
@@ -33,12 +33,12 @@ export const toolSpecs = {
       'DEPENDENCY-LICENSES.txt',
     ],
     releaseAssetName: {
-      'win32-x64': 'mangapress-x86_64-pc-windows-msvc.zip',
-      'linux-x64': 'mangapress-x86_64-unknown-linux-musl.tar.gz',
-      'darwin-x64': 'mangapress-x86_64-apple-darwin.tar.gz',
-      'darwin-arm64': 'mangapress-aarch64-apple-darwin.tar.gz',
+      'win32-x64': 'mangaprep-x86_64-pc-windows-msvc.zip',
+      'linux-x64': 'mangaprep-x86_64-unknown-linux-musl.tar.gz',
+      'darwin-x64': 'mangaprep-x86_64-apple-darwin.tar.gz',
+      'darwin-arm64': 'mangaprep-aarch64-apple-darwin.tar.gz',
     },
-    repository: 'gustavommcv/mangapress',
+    repository: 'gustavommcv/mangaprep',
     versionArguments: ['--version'],
   },
 };
@@ -139,7 +139,7 @@ export async function alreadyAcquired(targetDirectory, target, lock) {
       await readFile(path.join(targetDirectory, 'manifest.json'), 'utf8'),
     );
     if (manifest?.target !== target) return false;
-    for (const toolName of ['mangabind', 'mangapress']) {
+    for (const toolName of ['mangabind', 'mangaprep']) {
       const pin = lock.tools[toolName].pin;
       if (JSON.stringify(manifest.tools?.[toolName]?.pin) !== JSON.stringify(pin)) return false;
       const executable = path.join(targetDirectory, toolSpecs[toolName].executableName(target));

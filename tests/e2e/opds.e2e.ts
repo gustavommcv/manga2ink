@@ -194,7 +194,7 @@ describe('packaged OPDS delivery', () => {
     }
   });
 
-  it('records the real author mangapress used, and Unknown for an untracked copy of the same file', async () => {
+  it('records the real author mangaprep used, and Unknown for an untracked copy of the same file', async () => {
     const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-opds-author-e2e-'));
     temporaryDirectories.push(testRoot);
     const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');

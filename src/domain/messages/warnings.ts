@@ -12,7 +12,7 @@ export const knownWarningCodes = [
   'spread_labels_skipped',
   'output_collision',
   'page_truncated',
-  // From mangabind, which joins the chapters, not from mangapress: the notes it gives when it had
+  // From mangabind, which joins the chapters, not from mangaprep: the notes it gives when it had
   // to leave something out of a book.
   'chapter_conflict',
   'chapter_gap',

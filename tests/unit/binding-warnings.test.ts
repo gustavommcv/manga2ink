@@ -150,7 +150,7 @@ describe('withBindingWarnings', () => {
     ]);
   });
 
-  it('adds to what the book already carries from mangapress, after it', () => {
+  it('adds to what the book already carries from mangaprep, after it', () => {
     const withOwn = [
       book('Vol.01', { warnings: [{ code: 'images_smaller_than_device', message: 'Small.' }] }),
     ];

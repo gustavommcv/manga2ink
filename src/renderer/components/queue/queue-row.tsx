@@ -12,7 +12,7 @@ import {
 import { hasBookDetails } from '@/domain/book-details';
 import { describeRow, type QueueRow, rowMode } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
-import { type ProcessMode, usesMangapress } from '@/domain/process-mode';
+import { type ProcessMode, usesMangaprep } from '@/domain/process-mode';
 import { Badge } from '@/renderer/components/shared/badge';
 import { ListRow } from '@/renderer/components/shared/list-row';
 import { Button } from '@/renderer/components/ui/button';
@@ -43,16 +43,16 @@ export function QueueRowItem({
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
   // A folder or a library has volumes to edit, and only while volumes are in play.
   const editable = row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only';
-  // A book's own title, author and language matter where mangapress makes the book. A library
+  // A book's own title, author and language matter where mangaprep makes the book. A library
   // has them per title, from the screen that lists its titles.
   const process = rowMode(row.kind, mode);
   const detailsEditable =
     row.state === 'inspected' &&
     row.kind !== 'library' &&
     process !== 'skip' &&
-    usesMangapress(process);
+    usesMangaprep(process);
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
-  // Its conversion options matter wherever mangapress makes the book; a library has them per title.
+  // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
   return (
     <ListRow

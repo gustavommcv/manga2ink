@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
 import {
   ConversionOptionsScreen,
@@ -32,7 +32,7 @@ const props = (
   onReset: vi.fn(),
   onSettings: vi.fn(),
   profiles,
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   singleBook: false,
   ...overrides,
 });
@@ -114,23 +114,23 @@ describe('the conversion options screen', () => {
     expect(onFormat).toHaveBeenCalledExactlyOnceWith('cbz');
     const quality = screen.getByLabelText(/^JPEG quality/u);
     await user.type(quality, '8');
-    expect(onSettings).toHaveBeenLastCalledWith({ ...defaultMangapressSettings, jpegQuality: 8 });
+    expect(onSettings).toHaveBeenLastCalledWith({ ...defaultMangaprepSettings, jpegQuality: 8 });
     rerender(
       <ConversionOptionsScreen
         {...initial}
         format="cbz"
-        settings={{ ...defaultMangapressSettings, jpegQuality: 8 }}
+        settings={{ ...defaultMangaprepSettings, jpegQuality: 8 }}
       />,
     );
     expect(quality).toHaveFocus();
     await user.type(quality, '0');
-    expect(onSettings).toHaveBeenLastCalledWith({ ...defaultMangapressSettings, jpegQuality: 80 });
+    expect(onSettings).toHaveBeenLastCalledWith({ ...defaultMangaprepSettings, jpegQuality: 80 });
 
     rerender(
       <ConversionOptionsScreen
         {...initial}
         format="cbz"
-        settings={{ ...defaultMangapressSettings, jpegQuality: 80 }}
+        settings={{ ...defaultMangaprepSettings, jpegQuality: 80 }}
       />,
     );
     expect(quality).toHaveValue(80);
@@ -151,7 +151,7 @@ describe('the conversion options screen', () => {
     await user.click(trigger);
     const confirmation = screen.getByRole('group', { name: 'Confirm reset' });
     expect(confirmation).toHaveTextContent(
-      'Put the device, format and every mangapress option back to their defaults?',
+      'Put the device, format and every mangaprep option back to their defaults?',
     );
     expect(onReset).not.toHaveBeenCalled();
     await user.click(within(confirmation).getByRole('button', { name: 'Cancel' }));
@@ -189,7 +189,7 @@ describe('the conversion options screen', () => {
     expect(onFormat).toHaveBeenCalledExactlyOnceWith('pdf');
     await user.selectOptions(screen.getByLabelText('Page format'), 'png');
     expect(onSettings).toHaveBeenCalledExactlyOnceWith({
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       forcePng: true,
     });
   });
@@ -204,7 +204,7 @@ describe('the conversion options screen', () => {
       <ConversionOptionsScreen
         {...initial}
         profiles={profiles}
-        settings={{ ...defaultMangapressSettings, jpegQuality: 500 }}
+        settings={{ ...defaultMangaprepSettings, jpegQuality: 500 }}
       />,
     );
     expect(screen.getByLabelText('Device profile')).toBeEnabled();

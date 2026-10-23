@@ -1,4 +1,4 @@
-import type { MangapressSettingField } from '../output-profile';
+import type { MangaprepSettingField } from '../output-profile';
 
 import type { NoValues } from './values';
 
@@ -7,7 +7,7 @@ import type { NoValues } from './values';
  * options, and the choices around them. A sentence about one says it with the name a language gives it.
  */
 export type OptionName =
-  | MangapressSettingField
+  | MangaprepSettingField
   | 'customDeviceSize'
   | 'mode'
   | 'format'

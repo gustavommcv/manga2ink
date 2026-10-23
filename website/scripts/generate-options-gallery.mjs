@@ -1,4 +1,4 @@
-// Makes the pictures and the manifest of the advanced-options pages: runs the mangapress that
+// Makes the pictures and the manifest of the advanced-options pages: runs the mangaprep that
 // Manga2Ink ships on pages from open-licensed comics, once for each variant of each example.
 //
 //   npm run site:options            every example
@@ -59,25 +59,25 @@ const sources = JSON.parse(
   readFileSync(path.join(website, 'media-src', 'options', 'sources.json'), 'utf8'),
 ).sources;
 const lock = JSON.parse(readFileSync(path.join(root, 'toolchain.lock.json'), 'utf8'));
-const pinned = lock.tools.mangapress.pin.releaseTag.replace(/^v/, '');
+const pinned = lock.tools.mangaprep.pin.releaseTag.replace(/^v/, '');
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-function mangapressPath() {
+function mangaprepPath() {
   const target = `${process.platform}-${process.arch}`;
   const file = path.join(
     root,
     'vendor',
     'toolchain',
     target,
-    process.platform === 'win32' ? 'mangapress.exe' : 'mangapress',
+    process.platform === 'win32' ? 'mangaprep.exe' : 'mangaprep',
   );
   if (!existsSync(file))
     throw new Error(
-      `No mangapress at ${file}. Run npm run toolchain:acquire at the repository root.`,
+      `No mangaprep at ${file}. Run npm run toolchain:acquire at the repository root.`,
     );
   const version = execFileSync(file, ['--version'], { encoding: 'utf8' }).trim();
-  if (version !== `mangapress ${pinned}`)
+  if (version !== `mangaprep ${pinned}`)
     throw new Error(
       `${file} says "${version}", the pin is ${pinned}. Run npm run toolchain:acquire.`,
     );
@@ -175,7 +175,7 @@ function comicInfoXml(fields) {
 }
 
 /**
- * The input of an example as a folder mangapress can read: one page; several pages as they are
+ * The input of an example as a folder mangaprep can read: one page; several pages as they are
  * (`pages`); pages joined into a tall strip (`stack`); pages joined side by side into a spread
  * (`beside`, left to right); or a tall strip cut into images of `every` pixels (`slices`), the way a
  * webtoon is handed out. A ComicInfo.xml goes in the folder when the example has one. Returns the
@@ -241,12 +241,12 @@ async function writeOwnCover(spec, directory) {
   return { file, name };
 }
 
-/** Runs mangapress on a folder and gives the book it wrote: its file name and bytes. */
-function makeBook(mangapress, input, flags, work, profile, format) {
+/** Runs mangaprep on a folder and gives the book it wrote: its file name and bytes. */
+function makeBook(mangaprep, input, flags, work, profile, format) {
   rmSync(work, { recursive: true, force: true });
   mkdirSync(work, { recursive: true });
   execFileSync(
-    mangapress,
+    mangaprep,
     [input, '--profile', profile, '--format', format, '-o', work, '--quiet', ...flags],
     { stdio: 'pipe' },
   );
@@ -264,14 +264,14 @@ function pagesOf(bytes) {
   return pages;
 }
 
-function convert(mangapress, input, flags, work, profile) {
-  return pagesOf(makeBook(mangapress, input, flags, work, profile, base.format).bytes);
+function convert(mangaprep, input, flags, work, profile) {
+  return pagesOf(makeBook(mangaprep, input, flags, work, profile, base.format).bytes);
 }
 
 /** A page converted without enlarging and without loss, so that a crop of it is a piece of it. */
-function nativePage(mangapress, input, flags, work, profile, index) {
+function nativePage(mangaprep, input, flags, work, profile, index) {
   const all = combine(base.flags, [...flags, '--forcepng', '--noquantize'], ['--upscale']);
-  return pagesOf(makeBook(mangapress, input, all, work, profile, base.format).bytes)[index];
+  return pagesOf(makeBook(mangaprep, input, all, work, profile, base.format).bytes)[index];
 }
 
 /** Writes the picture of a variant as a WebP in the assets folder and records it in the entry. */
@@ -288,7 +288,7 @@ async function savePicture(entry, example, variant, picture) {
 }
 
 /**
- * What a book says about itself, for the example kind `book`: the values mangapress wrote into it,
+ * What a book says about itself, for the example kind `book`: the values mangaprep wrote into it,
  * read back from the file. A value the format has no place for is null.
  */
 async function bookFacts(format, book, sourceComicInfo, first) {
@@ -375,7 +375,7 @@ async function row(pages) {
 
 /**
  * The flags of a run: Manga2Ink's starting ones, without those the example or variant takes out and
- * without those the variant sets again (mangapress refuses a flag given twice), then the variant's.
+ * without those the variant sets again (mangaprep refuses a flag given twice), then the variant's.
  */
 function combine(shared, own, without) {
   const groups = [];
@@ -440,7 +440,7 @@ async function prepareInput(example, scratch, withInfo) {
   return { directory, ...(await writeInput(example, directory, withInfo && example.comicInfo)) };
 }
 
-async function runExample(mangapress, example, scratch) {
+async function runExample(mangaprep, example, scratch) {
   const withInfo = example.comicInfo !== undefined;
   const sourceSize = await prepareInput(example, scratch, withInfo);
   const withoutInfo = example.variants.some((variant) => variant.noComicInfo)
@@ -453,7 +453,7 @@ async function runExample(mangapress, example, scratch) {
   const cropping = example.crop ?? example.boxes;
   const native = (name, flags) =>
     nativePage(
-      mangapress,
+      mangaprep,
       sourceSize.directory,
       flags,
       path.join(scratch, 'native', example.id, name),
@@ -486,7 +486,7 @@ async function runExample(mangapress, example, scratch) {
   // tones of it as well.
   const toneReference = example.histogram
     ? convert(
-        mangapress,
+        mangaprep,
         sourceSize.directory,
         combine(base.flags, example.histogram.reference, example.without ?? []),
         path.join(scratch, 'output', example.id, 'reference'),
@@ -557,7 +557,7 @@ async function runExample(mangapress, example, scratch) {
     if (example.reader) {
       // One picture of the book's pages in the screens of a two-page view, as its package file places them.
       const work = path.join(scratch, 'output', example.id, variant.id);
-      const opf = readZip(makeBook(mangapress, input, flags, work, profile, 'epub').bytes)
+      const opf = readZip(makeBook(mangaprep, input, flags, work, profile, 'epub').bytes)
         .get('OEBPS/content.opf')
         .toString('utf8');
       const { direction } = epubFacts(opf);
@@ -578,7 +578,7 @@ async function runExample(mangapress, example, scratch) {
     }
     if (example.kind === 'book') {
       const work = path.join(scratch, 'output', example.id, variant.id);
-      const book = makeBook(mangapress, input, flags, work, profile, format);
+      const book = makeBook(mangaprep, input, flags, work, profile, format);
       const given = withInfo && !variant.noComicInfo ? comicInfoXml(example.comicInfo) : undefined;
       entry.format = format;
       entry.profile = profile;
@@ -597,7 +597,7 @@ async function runExample(mangapress, example, scratch) {
         coverOf(
           format,
           makeBook(
-            mangapress,
+            mangaprep,
             input,
             flags,
             path.join(scratch, 'output', example.id, variant.id),
@@ -609,7 +609,7 @@ async function runExample(mangapress, example, scratch) {
       pages.extensions = ['jpg'];
     } else {
       pages = convert(
-        mangapress,
+        mangaprep,
         input,
         flags,
         path.join(scratch, 'output', example.id, variant.id),
@@ -620,7 +620,7 @@ async function runExample(mangapress, example, scratch) {
     const picked = all ? pages : [pages[example.show ?? 0]];
     if (picked.some((bytes) => !bytes))
       throw new Error(
-        `${example.id}/${variant.id}: mangapress made ${pages.length} pages, no page ${example.show}.`,
+        `${example.id}/${variant.id}: mangaprep made ${pages.length} pages, no page ${example.show}.`,
       );
     const sizes = await Promise.all(picked.map((bytes) => sharp(bytes).metadata()));
     entry.width = sizes[0].width;
@@ -729,8 +729,8 @@ function licencesFile(manifest) {
     '',
     'The pictures in this folder are adaptations of pages of comics whose authors allow them to be copied and adapted.',
     'Each keeps the licence of the page it was made from, **not the MIT licence of this repository**, and must be',
-    'credited as below wherever it is shared. They were converted, resized and saved again by mangapress',
-    `${manifest.mangapress}; some are magnified details, some join several pages side by side or one under the other, and on the spreads page the pages are placed in frames with numbers and arrows drawn for the guide.`,
+    'credited as below wherever it is shared. They were converted, resized and saved again by mangaprep',
+    `${manifest.mangaprep}; some are magnified details, some join several pages side by side or one under the other, and on the spreads page the pages are placed in frames with numbers and arrows drawn for the guide.`,
     'The pages are listed with their download addresses and checksums in `website/media-src/options/sources.json`.',
     'This file is written by `npm run site:options`.',
     '',
@@ -748,14 +748,14 @@ const manifestFile = path.join(output, 'manifest.json');
 const previous = existsSync(manifestFile)
   ? JSON.parse(readFileSync(manifestFile, 'utf8'))
   : { examples: {} };
-const mangapress = mangapressPath();
+const mangaprep = mangaprepPath();
 mkdirSync(output, { recursive: true });
 const scratch = mkdtempSync(path.join(tmpdir(), 'options-gallery-'));
 try {
   const made = {};
   for (const example of wanted) {
     console.log(example.id);
-    made[example.id] = await runExample(mangapress, example, scratch);
+    made[example.id] = await runExample(mangaprep, example, scratch);
   }
   // Examples that were not asked for keep their entries, so a partial run leaves the rest alone.
   const kept = Object.fromEntries(
@@ -765,7 +765,7 @@ try {
   );
   const manifest = {
     schema: 1,
-    mangapress: pinned,
+    mangaprep: pinned,
     base: { profile: base.profile, format: base.format, flags: base.flags },
     examples: Object.fromEntries(
       examples.map((e) => [e.id, made[e.id] ?? kept[e.id]]).filter(([, value]) => value),
@@ -790,7 +790,7 @@ try {
       if (name.endsWith('.webp') && !listed.has(name)) rmSync(path.join(output, name));
     }
   }
-  console.log(`Wrote ${path.relative(root, manifestFile)} for mangapress ${pinned}.`);
+  console.log(`Wrote ${path.relative(root, manifestFile)} for mangaprep ${pinned}.`);
 } finally {
   rmSync(scratch, { recursive: true, force: true });
 }

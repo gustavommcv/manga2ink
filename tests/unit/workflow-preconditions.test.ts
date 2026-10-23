@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionRequest } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 
 import { dependencies, cbz, openLibrary } from './support/conversion-workflow';
@@ -10,7 +10,7 @@ describe('run precondition ordering', () => {
   const request: ConversionRequest = {
     sessionId: 'missing',
     libraryPath: '/output',
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     format: 'epub',
   };
 
@@ -26,7 +26,7 @@ describe('run precondition ordering', () => {
       );
       await expect(
         workflow[action](
-          { ...request, settings: { ...defaultMangapressSettings, jpegQuality: 101 } },
+          { ...request, settings: { ...defaultMangaprepSettings, jpegQuality: 101 } },
           { onProgress: vi.fn() },
         ),
       ).rejects.toMatchObject({
@@ -123,7 +123,7 @@ describe('run precondition ordering', () => {
     } as const;
     await expect(
       workflow.convertLibrary(
-        { ...libraryRequest, settings: { ...defaultMangapressSettings, jpegQuality: 101 } },
+        { ...libraryRequest, settings: { ...defaultMangaprepSettings, jpegQuality: 101 } },
         { onProgress: vi.fn() },
       ),
     ).rejects.toMatchObject({

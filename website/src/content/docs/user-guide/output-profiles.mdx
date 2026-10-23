@@ -7,7 +7,7 @@ import TutorialImage from '../../../components/TutorialImage.astro';
 
 ## Device and format
 
-Choose your model under **Device**. To set the page size yourself, open **Advanced conversion options** and fill in **Custom width** and **Custom height**, in pixels. With the **Other** device, both are required. On the command line these settings are `--profile`, `--format`, `--customwidth` and `--customheight`. The [mangapress CLI](../../cli/mangapress/) page shows what each does.
+Choose your model under **Device**. To set the page size yourself, open **Advanced conversion options** and fill in **Custom width** and **Custom height**, in pixels. With the **Other** device, both are required. On the command line these settings are `--profile`, `--format`, `--customwidth` and `--customheight`. The [mangaprep CLI](../../cli/mangapress/) page shows what each does.
 
 | Format | When to choose it                                                                                                 |
 | ------ | ----------------------------------------------------------------------------------------------------------------- |
@@ -16,6 +16,8 @@ Choose your model under **Device**. To set the page size yourself, open **Advanc
 | PDF    | Fixed pages for a reader or tablet that supports PDF                                                              |
 
 What works depends on the reading app as well as the device. A Kindle's own reader does not open an EPUB directly: send the file with a service that converts it, such as Amazon's Send to Kindle, or read it in an app you installed, such as KOReader. KOReader treats an EPUB differently from a CBZ or PDF. It lays the EPUB out like text, with its own margins and status bar around each page, so a page can come out smaller than the screen. See [reader settings](../../koreader/recommended-settings/).
+
+For Kobo EPUBs, special characters such as `!` and `%` in the filename become `_`; the title inside the book stays as you typed it. When you copy books to the Kobo, also avoid special characters in the names of its destination folders.
 
 <TutorialImage
   name="generated/device-settings"
@@ -26,7 +28,7 @@ These dimensions are an example; use the size appropriate for your screen.
 
 ## Advanced conversion options
 
-**Advanced conversion options** has the settings of mangapress, grouped by purpose: **Reading**, **Double-page spreads**, **Size and borders**, **Cropping**, **Two-page view**, **Color and tone**, **Page images**, **Cover** and **Book metadata**. Start with the defaults of your device, change one setting at a time and check the book you get. If artwork is cut off, reduce cropping or turn it off.
+**Advanced conversion options** has the settings of mangaprep, grouped by purpose: **Reading**, **Double-page spreads**, **Size and borders**, **Cropping**, **Two-page view**, **Color and tone**, **Page images**, **Cover** and **Book metadata**. Start with the defaults of your device, change one setting at a time and check the book you get. If artwork is cut off, reduce cropping or turn it off.
 
 Every group has its own page in the [overview](../advanced-options/). There, the same page is converted with and without each option, and every option is listed with the command-line flag that sets it.
 
@@ -65,4 +67,4 @@ To jump between the chapters of a long series, choose EPUB or PDF. A large combi
   alt="Create one book for the series enabled, with the process steps locked and the format free to change."
 />
 
-The command-line tool has its own defaults, which are not the app's. For terminal use, see [mangapress](../../cli/mangapress/).
+The command-line tool has its own defaults, which are not the app's. For terminal use, see [mangaprep](../../cli/mangapress/).

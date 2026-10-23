@@ -19,10 +19,10 @@
     "tools": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mangabind", "mangapress"],
+      "required": ["mangabind", "mangaprep"],
       "properties": {
         "mangabind": { "$ref": "#/$defs/tool" },
-        "mangapress": { "$ref": "#/$defs/tool" }
+        "mangaprep": { "$ref": "#/$defs/tool" }
       }
     }
   },

@@ -16,7 +16,7 @@ const guide: Readonly<Record<Language, string>> = {
 /**
  * Where the page that supports the project is. It is also the `supportUrl` of the website
  * (`website/site.config.mjs`) and the `buy_me_a_coffee` of `.github/FUNDING.yml`, here and in
- * mangabind and mangapress: to change service, change all of them (a test says when this repository's
+ * mangabind and mangaprep: to change service, change all of them (a test says when this repository's
  * two differ).
  */
 export const supportAddress = 'https://buymeacoffee.com/gusmonnerat';

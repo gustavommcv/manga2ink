@@ -20,13 +20,13 @@ import {
   defaultValueForSetting,
   imageLocks,
   jpegUseOf,
-  type MangapressSettingField,
-  type MangapressSettings,
+  type MangaprepSettingField,
+  type MangaprepSettings,
   pageLayoutLocks,
   type PageSizeMode,
   pageSizeOf,
   restoreSettingDefault,
-  validateMangapressSettings,
+  validateMangaprepSettings,
   withAutoContrast,
   withBorderMode,
   withDeviceProfile,
@@ -45,23 +45,23 @@ import { NativeSelect } from '@/renderer/components/ui/native-select';
 import type { DeviceProfileSummary } from '@/shared/workflow-contract';
 import { Note } from '@/renderer/components/shared/note';
 
-interface MangapressSettingsProps {
+interface MangaprepSettingsProps {
   readonly format: BookFormat;
   readonly onFormat: (format: BookFormat) => void;
   /** A short message shown to the person, the same mechanism used for saved-setting fallbacks. */
   readonly onNotify?: (message: string) => void;
-  readonly onSettings: (settings: MangapressSettings) => void;
+  readonly onSettings: (settings: MangaprepSettings) => void;
   readonly profiles: readonly DeviceProfileSummary[];
   /**
    * The options of the queue, when these are the options of one item (ADR 0046): a field is then
    * changed when it differs from them, not from the app's defaults, and its reset puts theirs back.
    */
-  readonly queue?: { readonly settings: MangapressSettings; readonly format: BookFormat };
-  readonly settings: MangapressSettings;
+  readonly queue?: { readonly settings: MangaprepSettings; readonly format: BookFormat };
+  readonly settings: MangaprepSettings;
   readonly singleBook?: boolean;
 }
 
-export function MangapressSettingsEditor({
+export function MangaprepSettingsEditor({
   format,
   onFormat,
   onSettings,
@@ -69,28 +69,28 @@ export function MangapressSettingsEditor({
   queue,
   settings,
   singleBook,
-}: MangapressSettingsProps): React.JSX.Element {
+}: MangaprepSettingsProps): React.JSX.Element {
   const { say } = useSay();
   const words = useMessages().fields;
   /** Why a control has no effect, or what is wrong with a value, said in the language of the window. */
   const said = (reason: AnyMessage | undefined): string | undefined =>
     reason === undefined ? undefined : say(reason);
   const singleBookActive = Boolean(singleBook);
-  const issues = validateMangapressSettings(settings);
-  const errorFor = (field: MangapressSettingField): string | undefined =>
+  const issues = validateMangaprepSettings(settings);
+  const errorFor = (field: MangaprepSettingField): string | undefined =>
     said(issues.find((issue) => issue.field === field)?.message);
   const selectedProfile = profiles.find((candidate) => candidate.code === settings.deviceProfile);
   const jpegQualityDefault = defaultJpegQualityFor(settings.deviceProfile);
-  const update = <K extends keyof MangapressSettings>(
+  const update = <K extends keyof MangaprepSettings>(
     field: K,
-    value: MangapressSettings[K],
+    value: MangaprepSettings[K],
   ): void => {
     onSettings({ ...settings, [field]: value });
   };
   // What a field is compared with, and put back to: the app's defaults, or the queue's options.
   const resetsTo = queue === undefined ? undefined : ('queue' as const);
   const resetProps = (
-    field: keyof MangapressSettings,
+    field: keyof MangaprepSettings,
   ): {
     readonly changed: boolean;
     readonly onReset: () => void;
@@ -322,7 +322,7 @@ export function MangapressSettingsEditor({
             disabled={locks.splitter !== undefined}
             id="splitter"
             onChange={(event) => {
-              update('splitter', event.target.value as MangapressSettings['splitter']);
+              update('splitter', event.target.value as MangaprepSettings['splitter']);
             }}
             value={settings.splitter}
           >
@@ -460,7 +460,7 @@ export function MangapressSettingsEditor({
             disabled={locks.marginCropping !== undefined}
             id="cropping"
             onChange={(event) => {
-              update('cropping', event.target.value as MangapressSettings['cropping']);
+              update('cropping', event.target.value as MangaprepSettings['cropping']);
             }}
             value={settings.cropping}
           >
@@ -526,7 +526,7 @@ export function MangapressSettingsEditor({
             disabled={locks.interPanelCropping !== undefined}
             id="inter-panel-crop"
             onChange={(event) => {
-              update('interPanelCrop', event.target.value as MangapressSettings['interPanelCrop']);
+              update('interPanelCrop', event.target.value as MangaprepSettings['interPanelCrop']);
             }}
             value={settings.interPanelCrop}
           >
@@ -793,7 +793,7 @@ export function MangapressSettingsEditor({
             aria-describedby="metadata-title-message"
             id="metadata-title"
             onChange={(event) => {
-              update('metadataTitle', event.target.value as MangapressSettings['metadataTitle']);
+              update('metadataTitle', event.target.value as MangaprepSettings['metadataTitle']);
             }}
             value={settings.metadataTitle}
           >

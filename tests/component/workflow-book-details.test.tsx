@@ -111,7 +111,7 @@ describe('the title, author and language typed for an item', () => {
     expect(screen.getByText('The book will be titled')).toBeVisible();
   });
 
-  it('are not offered when only joining, because mangapress makes no book then', async () => {
+  it('are not offered when only joining, because mangaprep makes no book then', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);

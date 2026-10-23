@@ -6,7 +6,7 @@ import type {
   StoredSettings,
 } from '@/application/ports/settings-store';
 import { PreferencesWorkflow } from '@/application/workflows/preferences';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 import { defaultPreferences } from '@/domain/preferences';
 
@@ -14,7 +14,7 @@ const kept: StoredSettings = {
   mode: 'convert-only',
   format: 'pdf',
   singleBook: false,
-  settings: { ...defaultMangapressSettings, deviceProfile: 'KS' },
+  settings: { ...defaultMangaprepSettings, deviceProfile: 'KS' },
   providerId: 'mangadex',
   outputFolder: '/books',
   preferredNetworkInterface: { name: 'Ethernet', address: '192.168.18.39' },

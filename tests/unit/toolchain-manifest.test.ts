@@ -8,8 +8,8 @@ describe('toolchain manifest', () => {
 
     expect(manifest.state).toBe('locked');
     expect(manifest.tools.mangabind.pin.releaseTag).toBe('v0.8.0');
-    expect(manifest.tools.mangapress.pin.releaseTag).toBe('v0.8.3');
-    expect(Object.keys(manifest.tools.mangapress.pin.artifacts)).toHaveLength(4);
+    expect(manifest.tools.mangaprep.pin.releaseTag).toBe('v0.9.0');
+    expect(Object.keys(manifest.tools.mangaprep.pin.artifacts)).toHaveLength(4);
   });
 
   it('rejects pending or malformed manifests before runtime verification', () => {

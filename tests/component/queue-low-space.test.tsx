@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import type { WorkingSpace } from '@/domain/working-space';
 import { QueueScreen, type QueueScreenProps } from '@/renderer/screens/queue-screen';
 
@@ -60,7 +60,7 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     profiles: [],
     rejected: [],
     rows: [bigFolder],
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     singleBook: false,
     space: room(),
     validating: false,

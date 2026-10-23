@@ -1,6 +1,6 @@
 ---
 title: 'Metadados do livro'
-description: 'Onde um livro guarda o título, o autor e o idioma, o que o ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub, com valores lidos de volta dos livros que o mangapress gravou.'
+description: 'Onde um livro guarda o título, o autor e o idioma, o que o ComicInfo.xml muda e quando um livro para Kobo se chama .kepub.epub, com valores lidos de volta dos livros que o mangaprep gravou.'
 ---
 
 import OptionBook from '../../../../../components/OptionBook.astro';
@@ -27,8 +27,8 @@ As três linhas foram convertidas com o mesmo título, autor e idioma: `--title`
 <OptionBook id="metadata-formats" labels={{ epub: 'EPUB', pdf: 'PDF', cbz: 'CBZ' }} />
 
 - Um **EPUB** guarda os três no arquivo de pacote.
-- Um **PDF** guarda o título e o autor nas propriedades do documento, e o mangapress não grava idioma nele.
-- Um **CBZ** feito pelo mangapress contém só as páginas, e um ComicInfo.xml quando você pede, como abaixo. O título, o autor e o idioma não estão nele, então o livro é conhecido pelo nome do arquivo.
+- Um **PDF** guarda o título e o autor nas propriedades do documento, e o mangaprep não grava idioma nele.
+- Um **CBZ** feito pelo mangaprep contém só as páginas, e um ComicInfo.xml quando você pede, como abaixo. O título, o autor e o idioma não estão nele, então o livro é conhecido pelo nome do arquivo.
 
 ## Título e autor do livro
 
@@ -68,7 +68,7 @@ Sem ComicInfo.xml na entrada não há título a aplicar, e a última linha é o 
 
 ## Manter o ComicInfo.xml
 
-Um CBZ feito pelo mangapress não tem ComicInfo.xml, a menos que isto esteja ligado. Com `--keepcomicinfo`, o da entrada é copiado como está, sem ser reescrito, mesmo quando você dá um título e um autor. Uma entrada sem ele não ganha nenhum. A opção vale para um CBZ e para mais nada, e o app a esmaece para um EPUB e um PDF; as duas últimas linhas dão a flag mesmo assim, para mostrar que ela não acrescenta nada a eles.
+Um CBZ feito pelo mangaprep não tem ComicInfo.xml, a menos que isto esteja ligado. Com `--keepcomicinfo`, o da entrada é copiado como está, sem ser reescrito, mesmo quando você dá um título e um autor. Uma entrada sem ele não ganha nenhum. A opção vale para um CBZ e para mais nada, e o app a esmaece para um EPUB e um PDF; as duas últimas linhas dão a flag mesmo assim, para mostrar que ela não acrescenta nada a eles.
 
 <OptionBook
   id="metadata-keep-comicinfo"
@@ -101,7 +101,7 @@ A configuração pede um código que não esteja vazio, e os detalhes de um livr
 
 ## Nomear o livro como .epub
 
-O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangapress dá esse nome ao EPUB que faz para um perfil Kobo, quando monta o nome a partir da entrada. **Nomear o livro como .epub**, `--nokepub`, mantém o `.epub` simples. Só o nome muda: o livro por dentro é o mesmo arquivo. Um tamanho de tela personalizado faz o mangapress deixar de tratar o dispositivo como um Kobo, um livro para qualquer outro dispositivo já se chama `.epub`, e um CBZ é sempre `.cbz`.
+O leitor próprio de um Kobo procura o nome `.kepub.epub`, então o mangaprep dá esse nome ao EPUB que faz para um perfil Kobo, quando monta o nome a partir da entrada. **Nomear o livro como .epub**, `--nokepub`, mantém o `.epub` simples. Só o nome muda: o livro por dentro é o mesmo arquivo. Um tamanho de tela personalizado faz o mangaprep deixar de tratar o dispositivo como um Kobo, um livro para qualquer outro dispositivo já se chama `.epub`, e um CBZ é sempre `.cbz`.
 
 <OptionBook
   id="metadata-kepub"

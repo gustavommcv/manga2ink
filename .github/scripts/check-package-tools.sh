@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fails when a Linux package carries a bundled tool that is not the one pinned in
-# toolchain.lock.json. The app hashes mangabind and mangapress on every start and refuses to
+# toolchain.lock.json. The app hashes mangabind and mangaprep on every start and refuses to
 # convert when either differs, and a package builder that edits them (rpmbuild does by default)
 # installs without a word and then keeps every conversion from starting. The package file itself
 # is unpacked, so what is checked is what would be installed.

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import { ItemOptionsScreen, type ItemOptionsScreenProps } from './item-options-screen';
 
@@ -20,7 +20,7 @@ function Stateful(props: ItemOptionsScreenProps): React.JSX.Element {
         setOwn(true);
       }}
       onUseQueueOptions={() => {
-        setRun({ format: 'cbz', settings: defaultMangapressSettings });
+        setRun({ format: 'cbz', settings: defaultMangaprepSettings });
         setOwn(false);
       }}
       settings={run.settings}
@@ -69,8 +69,8 @@ const meta = {
         family: 'kobo',
       },
     ],
-    queue: { format: 'cbz', settings: defaultMangapressSettings },
-    settings: defaultMangapressSettings,
+    queue: { format: 'cbz', settings: defaultMangaprepSettings },
+    settings: defaultMangaprepSettings,
     singleBook: false,
   },
 } satisfies Meta<typeof ItemOptionsScreen>;
@@ -106,7 +106,7 @@ export const WithOptionsOfItsOwn: Story = {
   args: {
     hasOwnOptions: true,
     format: 'epub',
-    settings: { ...defaultMangapressSettings, deviceProfile: 'KoC', webtoon: true },
+    settings: { ...defaultMangaprepSettings, deviceProfile: 'KoC', webtoon: true },
   },
 };
 

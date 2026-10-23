@@ -1,8 +1,8 @@
 import type { BookFormat } from '@/domain/conversion';
-import type { MangapressSettings } from '@/domain/output-profile';
-import { isDefaultMangapress } from '@/domain/preferences';
+import type { MangaprepSettings } from '@/domain/output-profile';
+import { isDefaultMangaprep } from '@/domain/preferences';
 import { ItemsWithOptionsNotice } from '@/renderer/components/settings/items-with-options-notice';
-import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import { MangaprepSettingsEditor } from '@/renderer/components/settings/mangaprep-settings';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -21,9 +21,9 @@ export interface ConversionOptionsScreenProps {
   readonly onNotify: (message: string) => void;
   /** The workflow owns resetting and persisting the choices; this screen asks for confirmation. */
   readonly onReset: () => void;
-  readonly onSettings: (settings: MangapressSettings) => void;
+  readonly onSettings: (settings: MangaprepSettings) => void;
   readonly profiles: readonly DeviceProfileSummary[];
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly singleBook: boolean;
 }
 
@@ -48,7 +48,7 @@ export function ConversionOptionsScreen({
         actions={
           <div className="w-72 shrink-0">
             <ResetOptions
-              changed={!isDefaultMangapress(format, settings)}
+              changed={!isDefaultMangaprep(format, settings)}
               onReset={onReset}
               scope="options"
             />
@@ -61,7 +61,7 @@ export function ConversionOptionsScreen({
         title={words.page.title}
       />
       <ItemsWithOptionsNotice count={itemsWithOptions} onClear={onClearItemOptions} />
-      <MangapressSettingsEditor
+      <MangaprepSettingsEditor
         format={format}
         onFormat={onFormat}
         onNotify={onNotify}

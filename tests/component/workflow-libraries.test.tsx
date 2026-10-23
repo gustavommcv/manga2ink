@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
 import { type Manga2InkBridge } from '@/shared/runtime-info';
 
@@ -52,7 +52,7 @@ describe('libraries in the queue', () => {
       sessionId: 'library-session',
       libraryId: 'pending-run',
       mode: 'bind-and-convert',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
       // Only the title that has volumes goes; the other waits.
       titles: ['Good Manga'],
@@ -137,7 +137,7 @@ describe('libraries in the queue', () => {
             title: 'Broken Manga',
             status: 'failed',
             artifacts: [],
-            failure: { code: 'process_failed', said: raw('mangapress crashed.') },
+            failure: { code: 'process_failed', said: raw('mangaprep crashed.') },
           },
         ],
       })
@@ -151,7 +151,7 @@ describe('libraries in the queue', () => {
 
     expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
     expect(screen.getByText('Manga Library · Broken Manga could not be converted')).toBeVisible();
-    expect(screen.getByText('mangapress crashed.')).toBeVisible();
+    expect(screen.getByText('mangaprep crashed.')).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Convert more' }));
     expect(screen.getByText('1 title failed last time and will run again.')).toBeVisible();
@@ -294,7 +294,7 @@ describe('libraries in the queue', () => {
     ).toBeVisible();
   });
 
-  it('joins a library without converting, sending defaults for what mangapress would need', async () => {
+  it('joins a library without converting, sending defaults for what mangaprep would need', async () => {
     const user = userEvent.setup();
     const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({
@@ -320,7 +320,7 @@ describe('libraries in the queue', () => {
     expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
     expect(convertLibrary.mock.calls[0]?.[0]).toMatchObject({
       mode: 'bind-only',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
     });
   });

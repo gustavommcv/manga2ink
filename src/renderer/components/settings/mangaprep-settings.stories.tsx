@@ -4,9 +4,9 @@ import { expect, within } from 'storybook/test';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
-import { MangapressSettingsEditor } from './mangapress-settings';
+import { MangaprepSettingsEditor } from './mangaprep-settings';
 
 const profiles = [
   {
@@ -53,7 +53,7 @@ const profiles = [
 
 const meta = {
   title: 'Workflows/Output settings',
-  component: MangapressSettingsEditor,
+  component: MangaprepSettingsEditor,
   decorators: [
     (Story) => (
       <div className="bg-background text-foreground min-h-screen p-8">
@@ -70,9 +70,9 @@ const meta = {
     onNotify: () => undefined,
     onSettings: () => undefined,
     profiles,
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
   },
-} satisfies Meta<typeof MangapressSettingsEditor>;
+} satisfies Meta<typeof MangaprepSettingsEditor>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -138,7 +138,7 @@ export const ChoicesLineUpInPortuguese: Story = {
 
 /** A changed choice shows its reset button on the row of its box, not above or below it. */
 export const ChangedChoiceLinesUp: Story = {
-  args: { settings: { ...defaultMangapressSettings, mangaStyle: false } },
+  args: { settings: { ...defaultMangaprepSettings, mangaStyle: false } },
   play: async () => {
     const reset = within(document.body).getByRole('button', {
       name: /Manga reading order/u,
@@ -153,7 +153,7 @@ export const ModifiedOptions: Story = {
   args: {
     format: 'cbz',
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       deviceProfile: 'KS',
       upscale: false,
       mangaStyle: false,
@@ -169,7 +169,7 @@ export const ConditionalControls: Story = {
   args: {
     format: 'cbz',
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       forcePng: true,
       noAutoContrast: true,
       wallpaper: true,
@@ -178,12 +178,12 @@ export const ConditionalControls: Story = {
 };
 
 /**
- * Webtoon strips lock what mangapress never does to them; each locked control says so. A locked choice,
+ * Webtoon strips lock what mangaprep never does to them; each locked control says so. A locked choice,
  * dimmed and with the reason where its description is, stays where it is: in line with its neighbour.
  */
 export const WebtoonStrips: Story = {
   args: {
-    settings: { ...defaultMangapressSettings, webtoon: true },
+    settings: { ...defaultMangaprepSettings, webtoon: true },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -213,7 +213,7 @@ export const WebtoonStrips: Story = {
 export const SpreadsAndBorders: Story = {
   args: {
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       splitter: 'rotate',
       noRotate: true,
       blackBorders: true,
@@ -235,7 +235,7 @@ export const SpreadsAndBorders: Story = {
 export const ColorAndPng: Story = {
   args: {
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       deviceProfile: 'KCS',
       forceColor: true,
       colorAutoContrast: true,
@@ -257,7 +257,7 @@ export const ColorAndPng: Story = {
 /** Images left as they are: what would change them is locked, what the book still takes is not. */
 export const UntouchedImages: Story = {
   args: {
-    settings: { ...defaultMangapressSettings, noProcessing: true },
+    settings: { ...defaultMangaprepSettings, noProcessing: true },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -276,7 +276,7 @@ export const UntouchedImages: Story = {
 export const KoboCover: Story = {
   args: {
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       deviceProfile: 'KoC',
       noKepub: true,
       smartCoverCrop: true,
@@ -299,7 +299,7 @@ export const KoboCover: Story = {
 
 export const ValidationError: Story = {
   args: {
-    settings: { ...defaultMangapressSettings, deviceProfile: 'OTHER' },
+    settings: { ...defaultMangaprepSettings, deviceProfile: 'OTHER' },
   },
 };
 

@@ -1,26 +1,27 @@
 import path from 'node:path';
 
+import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { MangapressCliAdapter, MangapressRunResult } from '@/adapters/mangapress/cli';
-import { MangapressConversionAdapter } from '@/adapters/mangapress/conversion-port';
+import type { MangaprepCliAdapter, MangaprepRunResult } from '@/adapters/mangaprep/cli';
+import { MangaprepConversionAdapter } from '@/adapters/mangaprep/conversion-port';
 import {
-  isMangapressResultEvent,
-  isMangapressWarningEvent,
-  parseMangapressEventLine,
-  type MangapressErrorEvent,
-  type MangapressEvent,
-  type MangapressResultEvent,
-} from '@/adapters/mangapress/protocol';
+  isMangaprepResultEvent,
+  isMangaprepWarningEvent,
+  parseMangaprepEventLine,
+  type MangaprepErrorEvent,
+  type MangaprepEvent,
+  type MangaprepResultEvent,
+} from '@/adapters/mangaprep/protocol';
 import type { ToolExecutionError } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 
-function event(fields: Record<string, unknown>): MangapressEvent {
-  return parseMangapressEventLine(
+function event(fields: Record<string, unknown>): MangaprepEvent {
+  return parseMangaprepEventLine(
     JSON.stringify({
       protocol_version: 1,
-      tool: 'mangapress',
+      tool: 'mangaprep',
       tool_version: '0.5.0',
       sequence: 1,
       type: 'future',
@@ -29,7 +30,7 @@ function event(fields: Record<string, unknown>): MangapressEvent {
   );
 }
 
-function resultEvent(fields: Record<string, unknown> = {}): MangapressResultEvent {
+function resultEvent(fields: Record<string, unknown> = {}): MangaprepResultEvent {
   const parsed = event({
     type: 'result',
     status: 'completed',
@@ -48,11 +49,11 @@ function resultEvent(fields: Record<string, unknown> = {}): MangapressResultEven
     written: true,
     ...fields,
   });
-  if (!isMangapressResultEvent(parsed)) throw new Error('Invalid result fixture.');
+  if (!isMangaprepResultEvent(parsed)) throw new Error('Invalid result fixture.');
   return parsed;
 }
 
-function runResult(overrides: Partial<MangapressRunResult> = {}): MangapressRunResult {
+function runResult(overrides: Partial<MangaprepRunResult> = {}): MangaprepRunResult {
   const result = resultEvent();
   return {
     events: overrides.events ?? [result],
@@ -67,11 +68,73 @@ function runResult(overrides: Partial<MangapressRunResult> = {}): MangapressRunR
 const request = {
   inputPath: path.resolve('/input', 'Volume 01.cbz'),
   outputDirectory: path.resolve('/library'),
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'epub' as const,
 };
 
-describe('mangapress conversion port', () => {
+describe('mangaprep conversion port', () => {
+  it.each([
+    ['KoLC', 'epub', {}, 'Dr. Stone_ Vol.01 100_.kepub.epub'],
+    ['KoC', 'epub', { noKepub: true }, 'Dr. Stone_ Vol.01 100_.epub'],
+    ['KoLC', 'epub', { customWidth: 0, customHeight: 0 }, 'Dr. Stone_ Vol.01 100_.kepub.epub'],
+    ['KoLC', 'epub', { customWidth: 800 }, 'Dr. Stone! Vol.01 100%.epub'],
+    ['KoLC', 'epub', { customHeight: 1200 }, 'Dr. Stone! Vol.01 100%.epub'],
+    ['KPW6', 'epub', {}, 'Dr. Stone! Vol.01 100%.epub'],
+    ['OTHER', 'epub', {}, 'Dr. Stone! Vol.01 100%.epub'],
+    ['KoLC', 'cbz', {}, 'Dr. Stone! Vol.01 100%.cbz'],
+    ['KoLC', 'pdf', {}, 'Dr. Stone! Vol.01 100%.pdf'],
+  ] as const)(
+    'makes the Kobo filename for %s %s %j, in plan and conversion',
+    async (deviceProfile, format, settings, name) => {
+      const title = 'Dr. Stone! Vol.01 100%';
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
+      const titled = {
+        ...request,
+        book: { title },
+        format,
+        settings: { ...defaultMangaprepSettings, deviceProfile, ...settings },
+      };
+      await adapter.convert(titled, { onProgress: vi.fn() });
+      run.mockResolvedValueOnce(
+        runResult({ result: resultEvent({ dry_run: true, written: false }) }),
+      );
+      await adapter.plan(titled);
+      for (const [sent] of run.mock.calls) {
+        expect(sent).toMatchObject({ title, outputPath: path.join(request.outputDirectory, name) });
+      }
+    },
+  );
+
+  it('replaces every Kobo-unsafe character once, retaining runs, spaces, dots and the metadata', async () => {
+    const unsafe = [...'/\\?%*:;|"\'><$!'];
+    await fc.assert(
+      fc.asyncProperty(
+        fc.array(fc.constantFrom(...unsafe), { minLength: 1, maxLength: 100 }),
+        async (characters) => {
+          const title = `日本語. ${characters.join('')} Vol.01`;
+          const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+          const adapter = new MangaprepConversionAdapter({ run });
+          await adapter.convert(
+            {
+              ...request,
+              book: { title },
+              settings: { ...defaultMangaprepSettings, deviceProfile: 'KoLC' },
+            },
+            { onProgress: vi.fn() },
+          );
+          expect(run.mock.calls[0]?.[0]).toMatchObject({
+            title,
+            outputPath: path.join(
+              request.outputDirectory,
+              `日本語. ${'_'.repeat(characters.length)} Vol.01.kepub.epub`,
+            ),
+          });
+        },
+      ),
+    );
+  });
+
   it.each([
     ['Kindle', 'KPW6', 'epub', {}, 'epub'],
     ['Kobo', 'KoLC', 'epub', {}, 'kepub.epub'],
@@ -90,13 +153,13 @@ describe('mangapress conversion port', () => {
   ] as const)(
     'uses a typed title in the explicit output for %s, in both plan and conversion',
     async (_label, deviceProfile, format, options, extension) => {
-      const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-      const adapter = new MangapressConversionAdapter({ run });
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
       const titled = {
         ...request,
         book: { title: 'My Series - Vol.01' },
         format,
-        settings: { ...defaultMangapressSettings, deviceProfile, ...options },
+        settings: { ...defaultMangaprepSettings, deviceProfile, ...options },
       };
       await adapter.convert(titled, { onProgress: vi.fn() });
       run.mockResolvedValueOnce(
@@ -120,8 +183,8 @@ describe('mangapress conversion port', () => {
     ['日本語', '日本語'],
     ['', 'Book'],
   ])('uses a portable filename for %s without changing its metadata title', async (title, stem) => {
-    const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-    const adapter = new MangapressConversionAdapter({ run });
+    const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+    const adapter = new MangaprepConversionAdapter({ run });
     await adapter.convert({ ...request, book: { title } }, { onProgress: vi.fn() });
     expect(run.mock.calls[0]?.[0]).toMatchObject({
       title,
@@ -131,7 +194,7 @@ describe('mangapress conversion port', () => {
 
   it('is no success when the tool exits with an error even though it printed a result', async () => {
     const run = vi.fn(() => Promise.resolve(runResult({ exitCode: 1 })));
-    const adapter = new MangapressConversionAdapter({ run });
+    const adapter = new MangaprepConversionAdapter({ run });
 
     await expect(adapter.convert(request, { onProgress: vi.fn() })).rejects.toMatchObject({
       exitCode: 1,
@@ -139,7 +202,7 @@ describe('mangapress conversion port', () => {
     });
   });
 
-  it('returns a no-output plan from a complete mangapress dry run', async () => {
+  it('returns a no-output plan from a complete mangaprep dry run', async () => {
     const planned = resultEvent({
       dry_run: true,
       written: false,
@@ -149,7 +212,7 @@ describe('mangapress conversion port', () => {
     });
     const run = vi.fn(() => Promise.resolve(runResult({ result: planned })));
     const controller = new AbortController();
-    const adapter = new MangapressConversionAdapter({ run });
+    const adapter = new MangaprepConversionAdapter({ run });
 
     await expect(adapter.plan(request, { signal: controller.signal })).resolves.toEqual({
       title: 'Book',
@@ -160,12 +223,12 @@ describe('mangapress conversion port', () => {
       height: 1448,
     });
     expect(run).toHaveBeenCalledWith(
-      expect.objectContaining({ dryRun: true, profile: defaultMangapressSettings.deviceProfile }),
+      expect.objectContaining({ dryRun: true, profile: defaultMangaprepSettings.deviceProfile }),
       { signal: controller.signal },
     );
   });
 
-  it('keeps what mangapress noticed with the book, as a code and its own sentence', async () => {
+  it('keeps what mangaprep noticed with the book, as a code and its own sentence', async () => {
     const warning = event({
       type: 'warning',
       severity: 'warning',
@@ -175,8 +238,8 @@ describe('mangapress conversion port', () => {
       message: '3 of 4 pages are smaller than the screen.',
       path: path.resolve('/scratch', 'Volume 01.cbz'),
     });
-    if (!isMangapressWarningEvent(warning)) throw new Error('Invalid warning fixture.');
-    const adapter = new MangapressConversionAdapter(
+    if (!isMangaprepWarningEvent(warning)) throw new Error('Invalid warning fixture.');
+    const adapter = new MangaprepConversionAdapter(
       { run: () => Promise.resolve(runResult({ warnings: [warning] })) },
       () => 'artifact-1',
     );
@@ -189,9 +252,9 @@ describe('mangapress conversion port', () => {
     ]);
   });
 
-  it('hands mangapress the cover a book was given, and none when it has none', async () => {
-    const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-    const adapter = new MangapressConversionAdapter({ run }, () => 'artifact-1');
+  it('hands mangaprep the cover a book was given, and none when it has none', async () => {
+    const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+    const adapter = new MangaprepConversionAdapter({ run }, () => 'artifact-1');
 
     await adapter.convert(
       { ...request, cover: path.resolve('/covers', '1-front.jpg') },
@@ -204,7 +267,7 @@ describe('mangapress conversion port', () => {
   });
 
   describe('a cover that stops the book', () => {
-    const coverFailure = (code: string): MangapressErrorEvent =>
+    const coverFailure = (code: string): MangaprepErrorEvent =>
       event({
         type: 'error',
         severity: 'error',
@@ -213,9 +276,9 @@ describe('mangapress conversion port', () => {
         recoverable: true,
         message: "Couldn't make the cover from that image.",
         diagnostic: 'decoder failed',
-      }) as MangapressErrorEvent;
+      }) as MangaprepErrorEvent;
     const failing = (code: string) =>
-      new MangapressConversionAdapter({
+      new MangaprepConversionAdapter({
         run: () =>
           Promise.resolve(
             runResult({ exitCode: 1, errors: [coverFailure(code)], result: undefined }),
@@ -286,7 +349,7 @@ describe('mangapress conversion port', () => {
   });
 
   it('adds no warnings to a book made without any', async () => {
-    const adapter = new MangapressConversionAdapter(
+    const adapter = new MangaprepConversionAdapter(
       { run: () => Promise.resolve(runResult()) },
       () => 'artifact-1',
     );
@@ -299,7 +362,7 @@ describe('mangapress conversion port', () => {
   it("takes a Kobo profile's .kepub.epub as the EPUB it is", async () => {
     const outputPath = path.resolve('/library', 'Book.kepub.epub');
     const converted = resultEvent({ profile: 'KoC', output_path: outputPath });
-    const adapter = new MangapressConversionAdapter(
+    const adapter = new MangaprepConversionAdapter(
       { run: () => Promise.resolve(runResult({ result: converted })) },
       () => 'artifact-1',
     );
@@ -315,9 +378,9 @@ describe('mangapress conversion port', () => {
     });
   });
 
-  it('refuses a format that is not one of the three, as mangapress 0.7.0 and 0.7.1 sent', () => {
+  it('refuses a format that is not one of the three, as mangaprep 0.7.0 and 0.7.1 sent', () => {
     expect(() => resultEvent({ format: 'kepub.epub' })).toThrow(
-      'mangapress returned an invalid result event.',
+      'mangaprep returned an invalid result event.',
     );
   });
 
@@ -333,7 +396,7 @@ describe('mangapress conversion port', () => {
     { source_pages: undefined },
   ])('rejects an incomplete dry-run conversion plan: %j', async (fields) => {
     const incomplete = resultEvent({ dry_run: true, written: false, ...fields });
-    const adapter = new MangapressConversionAdapter({
+    const adapter = new MangaprepConversionAdapter({
       run: () => Promise.resolve(runResult({ result: incomplete })),
     });
 
@@ -341,7 +404,7 @@ describe('mangapress conversion port', () => {
   });
 
   it('maps streaming page and stage events into contextual progress and a library artifact', async () => {
-    const run = vi.fn<MangapressCliAdapter['run']>((_request, options = {}) => {
+    const run = vi.fn<MangaprepCliAdapter['run']>((_request, options = {}) => {
       options.onEvent?.(event({ type: 'stage', stage: 'inspect', state: 'started' }));
       options.onEvent?.(
         event({
@@ -361,7 +424,7 @@ describe('mangapress conversion port', () => {
       return Promise.resolve(runResult());
     });
     const onProgress = vi.fn();
-    const adapter = new MangapressConversionAdapter({ run }, () => 'artifact-id');
+    const adapter = new MangaprepConversionAdapter({ run }, () => 'artifact-id');
     const artifact = await adapter.convert(request, { onProgress });
 
     expect(artifact).toEqual({
@@ -386,7 +449,7 @@ describe('mangapress conversion port', () => {
       message: message('progress.savingBook', {}),
     });
     expect(run.mock.calls[0]?.[0]).toMatchObject({
-      profile: defaultMangapressSettings.deviceProfile,
+      profile: defaultMangaprepSettings.deviceProfile,
       cropping: 'margins-and-page-numbers',
       croppingPower: 1,
       croppingMinimum: 0,
@@ -403,8 +466,8 @@ describe('mangapress conversion port', () => {
     expect(run.mock.calls[0]?.[1]?.signal).toBeUndefined();
   });
 
-  it('falls back to the output filename and Unknown when mangapress omits title and author', async () => {
-    const adapter = new MangapressConversionAdapter({
+  it('falls back to the output filename and Unknown when mangaprep omits title and author', async () => {
+    const adapter = new MangaprepConversionAdapter({
       run: () =>
         Promise.resolve(
           runResult({
@@ -438,19 +501,19 @@ describe('mangapress conversion port', () => {
       page: 17,
       path: '/input.cbz',
     });
-    const error = parsed as MangapressErrorEvent;
+    const error = parsed as MangaprepErrorEvent;
     const run = vi.fn(() =>
       Promise.resolve(runResult({ exitCode: 1, errors: [error], result: undefined })),
     );
     const controller = new AbortController();
-    const adapter = new MangapressConversionAdapter({ run });
+    const adapter = new MangaprepConversionAdapter({ run });
 
     await expect(
       adapter.convert(request, { signal: controller.signal, onProgress: vi.fn() }),
     ).rejects.toMatchObject({
       exitCode: 1,
       issue: {
-        tool: 'mangapress',
+        tool: 'mangaprep',
         code: 'page_processing_failed',
         diagnostic: 'decoder failed',
         manga: 'Work',
@@ -467,7 +530,7 @@ describe('mangapress conversion port', () => {
   });
 
   it('provides a safe fallback for failures without a structured error', async () => {
-    const withDiagnostic = new MangapressConversionAdapter({
+    const withDiagnostic = new MangaprepConversionAdapter({
       run: () =>
         Promise.resolve(
           runResult({ exitCode: null, errors: [], result: undefined, stderr: 'technical detail' }),
@@ -477,7 +540,7 @@ describe('mangapress conversion port', () => {
       issue: { code: 'process_failed', diagnostic: 'technical detail' },
     });
 
-    const withoutDiagnostic = new MangapressConversionAdapter({
+    const withoutDiagnostic = new MangaprepConversionAdapter({
       run: () =>
         Promise.resolve(runResult({ exitCode: 1, errors: [], result: undefined, stderr: '' })),
     });
@@ -496,7 +559,7 @@ describe('mangapress conversion port', () => {
     { format: undefined },
   ])('rejects an incomplete successful conversion result: %j', async (fields) => {
     const incomplete = resultEvent(fields);
-    const adapter = new MangapressConversionAdapter({
+    const adapter = new MangaprepConversionAdapter({
       run: () => Promise.resolve(runResult({ result: incomplete })),
     });
 
@@ -508,7 +571,7 @@ describe('mangapress conversion port', () => {
       request.outputDirectory,
       path.resolve(request.outputDirectory, '..', 'outside.epub'),
     ]) {
-      const adapter = new MangapressConversionAdapter({
+      const adapter = new MangaprepConversionAdapter({
         run: () => Promise.resolve(runResult({ result: resultEvent({ output_path: outputPath }) })),
       });
       await expect(adapter.convert(request, { onProgress: vi.fn() })).rejects.toThrow(/outside/u);
@@ -524,8 +587,8 @@ describe('mangapress conversion port', () => {
       recoverable: true,
       message: 'The input is empty.',
       diagnostic: 'empty',
-    }) as MangapressErrorEvent;
-    const adapter = new MangapressConversionAdapter({
+    }) as MangaprepErrorEvent;
+    const adapter = new MangaprepConversionAdapter({
       run: () => Promise.resolve(runResult({ exitCode: 1, errors: [parsed], result: undefined })),
     });
 
@@ -539,9 +602,9 @@ describe('mangapress conversion port', () => {
     const argumentsOf = (run: { mock: { calls: unknown[][] } }) =>
       run.mock.calls[0]?.[0] as Record<string, unknown>;
 
-    it('are sent to mangapress when converting, over the language chosen in the options', async () => {
-      const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-      const adapter = new MangapressConversionAdapter({ run });
+    it('are sent to mangaprep when converting, over the language chosen in the options', async () => {
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
 
       await adapter.convert({ ...request, book }, { onProgress: vi.fn() });
 
@@ -550,10 +613,10 @@ describe('mangapress conversion port', () => {
 
     it('are sent when planning too, so the plan names the book that would be made', async () => {
       const planned = resultEvent({ dry_run: true, written: false, bytes: undefined });
-      const run = vi.fn<MangapressCliAdapter['run']>(() =>
+      const run = vi.fn<MangaprepCliAdapter['run']>(() =>
         Promise.resolve(runResult({ result: planned })),
       );
-      const adapter = new MangapressConversionAdapter({ run });
+      const adapter = new MangaprepConversionAdapter({ run });
 
       await adapter.plan({ ...request, book });
 
@@ -561,11 +624,11 @@ describe('mangapress conversion port', () => {
     });
 
     it('leave the title and the author out when none was typed, and use the language of the options', async () => {
-      const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-      const adapter = new MangapressConversionAdapter({ run });
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
 
       await adapter.convert(
-        { ...request, settings: { ...defaultMangapressSettings, language: 'ja' }, book: {} },
+        { ...request, settings: { ...defaultMangaprepSettings, language: 'ja' }, book: {} },
         { onProgress: vi.fn() },
       );
       await adapter.convert(request, { onProgress: vi.fn() });
@@ -579,11 +642,11 @@ describe('mangapress conversion port', () => {
     });
 
     it('are written with the casing BCP 47 recommends, from the book or from the options', async () => {
-      const run = vi.fn<MangapressCliAdapter['run']>(() => Promise.resolve(runResult()));
-      const adapter = new MangapressConversionAdapter({ run });
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
       const withOptionsLanguage = (language: string) => ({
         ...request,
-        settings: { ...defaultMangapressSettings, language },
+        settings: { ...defaultMangaprepSettings, language },
         book: {},
       });
 

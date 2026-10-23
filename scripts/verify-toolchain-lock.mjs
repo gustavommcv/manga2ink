@@ -17,14 +17,14 @@ if (JSON.stringify(actualTargets) !== JSON.stringify(expectedTargets)) {
   fail(`supportedTargets must be exactly ${expectedTargets.join(', ')}`);
 }
 
-for (const toolName of ['mangabind', 'mangapress']) {
+for (const toolName of ['mangabind', 'mangaprep']) {
   if (!manifest.tools?.[toolName]?.sourceRepo?.startsWith('https://github.com/')) {
     fail(`${toolName} must declare its sourceRepo`);
   }
 }
 
 if (manifest.state === 'awaiting-structured-releases') {
-  for (const toolName of ['mangabind', 'mangapress']) {
+  for (const toolName of ['mangabind', 'mangaprep']) {
     if (manifest.tools[toolName].pin !== null) {
       fail(`${toolName} pin must remain null while structured releases are pending`);
     }
@@ -40,7 +40,7 @@ if (manifest.state !== 'locked') {
   fail('state must be awaiting-structured-releases or locked');
 }
 
-for (const toolName of ['mangabind', 'mangapress']) {
+for (const toolName of ['mangabind', 'mangaprep']) {
   const tool = manifest.tools?.[toolName];
   const pin = tool?.pin;
   if (pin === null || pin === undefined) {

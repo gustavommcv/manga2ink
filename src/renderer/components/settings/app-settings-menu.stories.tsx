@@ -21,7 +21,7 @@ const bundledTools: ToolchainStatus = {
   message: message('toolchain.ready', {}),
   tools: [
     { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
-    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
+    { name: 'mangaprep', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
   ],
 };
 

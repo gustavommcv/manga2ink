@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { assertSingleBook, validateRunOptions } from '@/application/workflows/run-preconditions';
 import { ConversionWorkflowError } from '@/domain/conversion';
 import { message } from '@/domain/message';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
-const options = { settings: defaultMangapressSettings, format: 'epub' } as const;
+const options = { settings: defaultMangaprepSettings, format: 'epub' } as const;
 
 describe('shared run options', () => {
   it('defaults to binding and converting when no mode was chosen', () => {
@@ -20,14 +20,14 @@ describe('shared run options', () => {
   );
 
   it.each(['converting', 'validating'] as const)(
-    'does not validate unused mangapress settings before %s',
+    'does not validate unused mangaprep settings before %s',
     (action) => {
       expect(
         validateRunOptions(
           {
             ...options,
             mode: 'bind-only',
-            settings: { ...defaultMangapressSettings, jpegQuality: 101 },
+            settings: { ...defaultMangaprepSettings, jpegQuality: 101 },
           },
           action,
         ),
@@ -46,7 +46,7 @@ describe('shared run options', () => {
         {
           ...options,
           mode,
-          settings: { ...defaultMangapressSettings, jpegQuality: 101 },
+          settings: { ...defaultMangaprepSettings, jpegQuality: 101 },
         },
         action,
       );

@@ -65,7 +65,7 @@ function turnArrow(clockwise, x, y) {
 
 /**
  * @param source the spread as it came, an image
- * @param pages the pages mangapress made from it, in order
+ * @param pages the pages mangaprep made from it, in order
  * @param flow for each page, `from`: the part of the spread it is made of (`left`, `right`, `whole`, or
  *   a list of parts from top to bottom for a page that stacks two), and, for a page turned on its side,
  *   `turned` (`left` or `right`). Each part gets a number in the order they are named, which is the
@@ -74,7 +74,7 @@ function turnArrow(clockwise, x, y) {
  */
 export async function flowPicture({ source, pages, flow, screen }) {
   if (pages.length !== flow.length)
-    throw new Error(`The flow names ${flow.length} pages and mangapress made ${pages.length}.`);
+    throw new Error(`The flow names ${flow.length} pages and mangaprep made ${pages.length}.`);
   const parts = [];
   for (const [page, item] of flow.entries()) {
     for (const region of Array.isArray(item.from) ? item.from : [item.from])

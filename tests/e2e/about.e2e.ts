@@ -42,7 +42,7 @@ describe('packaged About tab', () => {
     };
     const tools = $('dl*=mangabind');
     await tools.waitForDisplayed({ timeout: 30_000 });
-    for (const name of ['mangabind', 'mangapress']) {
+    for (const name of ['mangabind', 'mangaprep']) {
       const tag = lock.tools[name]?.pin.releaseTag.replace(/^v/u, '');
       assert.match(
         await tools.getText(),
@@ -86,7 +86,7 @@ describe('packaged About tab', () => {
     );
     assert.match(diagnostics, /^Working folder: the default$/mu);
     assert.match(diagnostics, /^ {2}mangabind v\d+\.\d+\.\d+: verified$/mu);
-    assert.match(diagnostics, /^ {2}mangapress v\d+\.\d+\.\d+: verified$/mu);
+    assert.match(diagnostics, /^ {2}mangaprep v\d+\.\d+\.\d+: verified$/mu);
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
     assert.ok(!diagnostics.includes(userData), 'the diagnostics should not say where the data is');
     assert.ok(

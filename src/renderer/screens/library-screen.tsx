@@ -18,9 +18,9 @@ export interface LibraryScreenProps {
   readonly name: string;
   readonly onBack: () => void;
   readonly onEdit: (title: string) => void;
-  /** Absent when the run does not make books with mangapress, so there is nothing to edit. */
+  /** Absent when the run does not make books with mangaprep, so there is nothing to edit. */
   readonly onEditDetails?: (title: string) => void;
-  /** Absent when the run does not make books with mangapress, so there are no options to set. */
+  /** Absent when the run does not make books with mangaprep, so there are no options to set. */
   readonly onEditOptions?: (title: string) => void;
   readonly singleBook?: boolean;
   /** Links in the library folder that were not followed: series that are not in the list. */

@@ -226,7 +226,7 @@ export const warningSaid: Readonly<Record<Language, SaidFor<WarningMessageValues
   en: {
     'warning.title': ({ code }) => warningWords.en[code].title,
     'warning.advice': ({ code }) => warningWords.en[code].advice,
-    'warning.unknownTitle': () => 'A note from mangapress',
+    'warning.unknownTitle': () => 'A note from mangaprep',
     'warning.inAll': ({ count }) => `In all ${String(count)} books.`,
     'warning.inOne': ({ first }) => `In ${first}.`,
     'warning.inTwo': ({ first, second }) => `In ${first} and ${second}.`,
@@ -236,7 +236,7 @@ export const warningSaid: Readonly<Record<Language, SaidFor<WarningMessageValues
   'pt-BR': {
     'warning.title': ({ code }) => warningWords['pt-BR'][code].title,
     'warning.advice': ({ code }) => warningWords['pt-BR'][code].advice,
-    'warning.unknownTitle': () => 'Uma observação do mangapress',
+    'warning.unknownTitle': () => 'Uma observação do mangaprep',
     'warning.inAll': ({ count }) => `Em todos os ${String(count)} livros.`,
     'warning.inOne': ({ first }) => `Em ${first}.`,
     'warning.inTwo': ({ first, second }) => `Em ${first} e ${second}.`,
@@ -245,7 +245,7 @@ export const warningSaid: Readonly<Record<Language, SaidFor<WarningMessageValues
   ja: {
     'warning.title': ({ code }) => warningWords.ja[code].title,
     'warning.advice': ({ code }) => warningWords.ja[code].advice,
-    'warning.unknownTitle': () => 'mangapress からのお知らせ',
+    'warning.unknownTitle': () => 'mangaprep からのお知らせ',
     'warning.inAll': ({ count }) => `対象は全 ${String(count)} 冊です。`,
     'warning.inOne': ({ first }) => `対象は ${first} です。`,
     'warning.inTwo': ({ first, second }) => `対象は ${first} と ${second} です。`,

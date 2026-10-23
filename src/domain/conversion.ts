@@ -2,7 +2,7 @@ import { type BookDetails, volumeBookTitle } from './book-details';
 import type { MappingDraft } from './mapping';
 import type { AnyMessage } from './message';
 import type { VolumePosition } from './messages/run';
-import type { MangapressSettings } from './output-profile';
+import type { MangaprepSettings } from './output-profile';
 import type { ProcessMode } from './process-mode';
 
 export type InputKind = 'folder' | 'cbz';
@@ -50,7 +50,7 @@ export interface LibraryPlan {
 }
 
 export interface PipelineIssue {
-  readonly tool: 'mangabind' | 'mangapress' | 'manga2ink';
+  readonly tool: 'mangabind' | 'mangaprep' | 'manga2ink';
   readonly severity: 'warning' | 'error';
   readonly code: string;
   readonly stage: string;
@@ -64,7 +64,7 @@ export interface PipelineIssue {
   readonly path?: string;
 }
 
-/** Something mangapress noticed about a book and went on from: the book was still made. */
+/** Something mangaprep noticed about a book and went on from: the book was still made. */
 export interface BookWarning {
   /** The tool's stable code; what is shown is chosen by it, never by the English text. */
   readonly code: string;
@@ -91,7 +91,7 @@ export interface PlannedBook {
 }
 
 /**
- * The name of the book mangapress makes of one joined volume, which is not the name of the CBZ
+ * The name of the book mangaprep makes of one joined volume, which is not the name of the CBZ
  * mangabind joined it into: the typed title and the number of the volume if there is a title, else
  * the file's own name, and the extension of the format chosen. (A Kobo's EPUB has another
  * extension, which this does not know.)
@@ -118,7 +118,7 @@ export function plannedSingleBook(title: string, volumes: readonly PlannedBook[]
 }
 
 export interface WorkflowPlan {
-  readonly tool: 'mangabind' | 'mangapress';
+  readonly tool: 'mangabind' | 'mangaprep';
   readonly title: string;
   /** What validating found, said by the window in its language. */
   readonly message: AnyMessage;
@@ -161,7 +161,7 @@ export interface ConversionProgress {
 export interface ConversionRequest {
   readonly sessionId: string;
   readonly libraryPath: string;
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly format: BookFormat;
   readonly mapping?: MappingDraft;
   /** Defaults to running both tools when omitted. */

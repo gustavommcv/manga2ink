@@ -349,7 +349,7 @@ describe('FsBookFileStore.stageBook', () => {
 
   it('publishes nothing and removes the folder when the tool fails', async () => {
     const { library } = await workspace();
-    const failure = new Error('mangapress exited with code 1');
+    const failure = new Error('mangaprep exited with code 1');
 
     await expect(
       new FsBookFileStore().stageBook({ libraryPath: library }, async (stagingPath) => {

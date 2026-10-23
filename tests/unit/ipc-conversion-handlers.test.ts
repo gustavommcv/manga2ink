@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ToolExecutionError } from '@/domain/conversion';
 import type { ConversionArtifact } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { registerConversionHandlers } from '@/main/ipc/conversion';
 import { PendingRunActivity } from '@/main/pending-run-activity';
 import type { WorkflowResult } from '@/shared/workflow-contract';
@@ -47,13 +47,13 @@ const command = {
   jobId: 'job',
   sessionId: 'session',
   libraryId: 'run',
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'cbz',
 };
 
 function build(workflow: Record<string, unknown>) {
   const context = {
-    mangapressCli: undefined,
+    mangaprepCli: undefined,
     selectedLibraries: new Map([['run', libraryPath]]),
     activeJobs: new Map<string, AbortController>(),
     conversions: new Set<string>(),
@@ -78,9 +78,9 @@ afterEach(() => {
 });
 
 describe('the device list', () => {
-  it('is what mangapress lists, in the names the screen uses', async () => {
+  it('is what mangaprep lists, in the names the screen uses', async () => {
     const context = build({});
-    (context as { mangapressCli: unknown }).mangapressCli = {
+    (context as { mangaprepCli: unknown }).mangaprepCli = {
       listProfiles: () =>
         Promise.resolve({
           profiles: [
@@ -112,7 +112,7 @@ describe('the device list', () => {
     });
   });
 
-  it('is a failure the screen can say when mangapress is not there', async () => {
+  it('is a failure the screen can say when mangaprep is not there', async () => {
     build({});
 
     const result = await call('workflow:get-device-profiles');
@@ -143,7 +143,7 @@ describe('validating a plan', () => {
       {
         sessionId: 'session',
         libraryPath,
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'cbz',
         mapping,
         mode: 'bind-and-convert',
@@ -264,12 +264,12 @@ describe('converting a library', () => {
             artifacts: [],
             error: new ToolExecutionError(
               {
-                tool: 'mangapress',
+                tool: 'mangaprep',
                 severity: 'error',
                 code: 'process_failed',
                 stage: 'processing',
                 recoverable: false,
-                message: 'mangapress crashed.',
+                message: 'mangaprep crashed.',
               },
               1,
             ),
@@ -280,7 +280,7 @@ describe('converting a library', () => {
     build({ convertLibrary });
     const own = {
       title: 'Good',
-      settings: { ...defaultMangapressSettings, webtoon: true },
+      settings: { ...defaultMangaprepSettings, webtoon: true },
       format: 'epub',
     };
 
@@ -310,7 +310,7 @@ describe('converting a library', () => {
           title: 'Bad',
           status: 'failed',
           artifacts: [],
-          failure: { code: 'process_failed', said: raw('mangapress crashed.') },
+          failure: { code: 'process_failed', said: raw('mangaprep crashed.') },
         },
       ],
     });

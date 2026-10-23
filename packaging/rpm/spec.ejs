@@ -2,7 +2,7 @@
 
 # This is electron-installer-redhat's own spec template with three lines added: the two global
 # definitions after this comment, and the Obsoletes line after Requires.
-# Everything in the package is prebuilt, and the app checks the bundled mangabind and mangapress
+# Everything in the package is prebuilt, and the app checks the bundled mangabind and mangaprep
 # against the SHA-256 pinned in toolchain.lock.json every time it starts. rpmbuild's default
 # post-install steps (stripping, removing the .comment section, debug-info extraction) rewrite
 # ELF files, so the installed tools no longer matched their pin and the app refused every

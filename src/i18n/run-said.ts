@@ -7,7 +7,7 @@ import type { SaidFor } from './say';
 const plural = (count: number, one: string, other: string): string =>
   `${String(count)} ${countOf(count, one, other)}`;
 
-/** The stages mangapress announces, in the words of Portuguese; another stage is said as the tool names it. */
+/** The stages mangaprep announces, in the words of Portuguese; another stage is said as the tool names it. */
 const stagesInPortuguese: ReadonlyMap<string, string> = new Map([
   ['inspect', 'a leitura'],
   ['plan', 'o planejamento'],
@@ -16,7 +16,7 @@ const stagesInPortuguese: ReadonlyMap<string, string> = new Map([
   ['package', 'o empacotamento'],
 ]);
 
-/** The stages mangapress announces, in the words of Japanese; another stage is said as the tool names it. */
+/** The stages mangaprep announces, in the words of Japanese; another stage is said as the tool names it. */
 const stagesInJapanese: ReadonlyMap<string, string> = new Map([
   ['inspect', '読み込み'],
   ['plan', '計画'],
@@ -30,19 +30,19 @@ const where = (title: string | undefined, separator = ' · '): string =>
 
 const inEnglishAfter: Readonly<Record<RunShape, string>> = {
   books: '',
-  joined: ' · saved as CBZ files, mangapress not run',
+  joined: ' · saved as CBZ files, mangaprep not run',
   series: ' · single book for the series',
 };
 
 const inPortugueseAfter: Readonly<Record<RunShape, string>> = {
   books: '',
-  joined: ' · salvos como arquivos CBZ, mangapress não executado',
+  joined: ' · salvos como arquivos CBZ, mangaprep não executado',
   series: ' · um só livro para a série',
 };
 
 const inJapaneseAfter: Readonly<Record<RunShape, string>> = {
   books: '',
-  joined: ' · CBZ ファイルとして保存（mangapress は実行しません）',
+  joined: ' · CBZ ファイルとして保存（mangaprep は実行しません）',
   series: ' · シリーズ全体で 1 冊',
 };
 
@@ -69,8 +69,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `${where(title)}${String(done)} of ${String(total)} volumes converted.`,
     'progress.booksSaved': ({ count }) => `${plural(count, 'book', 'books')} saved.`,
 
-    'plan.mangapress': ({ profile, width, height, chaptersNotGrouped }) =>
-      `mangapress validated ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · one book, chapters not grouped' : ''} · no library files written`,
+    'plan.mangaprep': ({ profile, width, height, chaptersNotGrouped }) =>
+      `mangaprep validated ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · one book, chapters not grouped' : ''} · no library files written`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind validated ${plural(volumes, 'volume', 'volumes')}${inEnglishAfter[shape]} · no library files written`,
     'plan.library': ({ titles, volumes, books, shape }) =>
@@ -106,8 +106,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `${where(title)}${String(done)} de ${String(total)} volumes convertidos.`,
     'progress.booksSaved': ({ count }) => `${plural(count, 'livro salvo', 'livros salvos')}.`,
 
-    'plan.mangapress': ({ profile, width, height, chaptersNotGrouped }) =>
-      `mangapress validou ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · um livro, capítulos sem agrupar' : ''} · nenhum arquivo da biblioteca gravado`,
+    'plan.mangaprep': ({ profile, width, height, chaptersNotGrouped }) =>
+      `mangaprep validou ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · um livro, capítulos sem agrupar' : ''} · nenhum arquivo da biblioteca gravado`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind validou ${plural(volumes, 'volume', 'volumes')}${inPortugueseAfter[shape]} · nenhum arquivo da biblioteca gravado`,
     'plan.library': ({ titles, volumes, books, shape }) =>
@@ -146,8 +146,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `${where(title)}${String(total)} 巻中 ${String(done)} 巻の変換が完了しました。`,
     'progress.booksSaved': ({ count }) => `${String(count)} 冊を保存しました。`,
 
-    'plan.mangapress': ({ profile, width, height, chaptersNotGrouped }) =>
-      `mangapress の検証: ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · 1 冊、各話はまとめていません' : ''} · ライブラリのファイルは書き込まれていません`,
+    'plan.mangaprep': ({ profile, width, height, chaptersNotGrouped }) =>
+      `mangaprep の検証: ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · 1 冊、各話はまとめていません' : ''} · ライブラリのファイルは書き込まれていません`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind の検証: ${String(volumes)} 巻${inJapaneseAfter[shape]} · ライブラリのファイルは書き込まれていません`,
     'plan.library': ({ titles, volumes, books, shape }) =>

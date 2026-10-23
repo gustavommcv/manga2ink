@@ -4,8 +4,8 @@ import { pathToFileURL } from 'node:url';
 
 import sanitizeFilename from 'sanitize-filename';
 
-import type { MangapressCliAdapter } from './cli';
-import { isMangapressPageEvent, type MangapressErrorEvent, type MangapressEvent } from './protocol';
+import type { MangaprepCliAdapter } from './cli';
+import { isMangaprepPageEvent, type MangaprepErrorEvent, type MangaprepEvent } from './protocol';
 
 import type { ConversionPort } from '@/application/ports/conversion-tools';
 import { type BookDetails, canonicalLanguageTag } from '@/domain/book-details';
@@ -16,14 +16,14 @@ import {
   type PipelineIssue,
   ToolExecutionError,
 } from '@/domain/conversion';
-import type { MangapressSettings } from '@/domain/output-profile';
+import type { MangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
 
-export class MangapressConversionAdapter implements ConversionPort {
+export class MangaprepConversionAdapter implements ConversionPort {
   constructor(
-    private readonly cli: Pick<MangapressCliAdapter, 'run'>,
+    private readonly cli: Pick<MangaprepCliAdapter, 'run'>,
     private readonly createId: () => string = randomUUID,
   ) {}
 
@@ -31,7 +31,7 @@ export class MangapressConversionAdapter implements ConversionPort {
     request: {
       readonly inputPath: string;
       readonly outputDirectory: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       readonly book?: BookDetails;
       readonly format: BookFormat;
       readonly nestedToc?: boolean;
@@ -66,7 +66,7 @@ export class MangapressConversionAdapter implements ConversionPort {
       result.height === undefined ||
       result.source_pages === undefined
     ) {
-      throw new Error('Mangapress returned an incomplete conversion plan.');
+      throw new Error('Mangaprep returned an incomplete conversion plan.');
     }
     const outputPath = checkedChildPath(request.outputDirectory, result.output_path);
     return {
@@ -83,7 +83,7 @@ export class MangapressConversionAdapter implements ConversionPort {
     request: {
       readonly inputPath: string;
       readonly outputDirectory: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       readonly book?: BookDetails;
       readonly cover?: string;
       readonly format: BookFormat;
@@ -130,7 +130,7 @@ export class MangapressConversionAdapter implements ConversionPort {
       result.bytes === undefined ||
       result.format === undefined
     ) {
-      throw new Error('Mangapress returned an incomplete conversion result.');
+      throw new Error('Mangaprep returned an incomplete conversion result.');
     }
     const outputPath = checkedChildPath(request.outputDirectory, result.output_path);
     return {
@@ -150,13 +150,13 @@ export class MangapressConversionAdapter implements ConversionPort {
   }
 }
 
-/** The codes with which mangapress says the cover it was given could not be used. */
+/** The codes with which mangaprep says the cover it was given could not be used. */
 const coverErrorCodes: ReadonlySet<string> = new Set(['cover_build_failed', 'cover_read_failed']);
 
 function requireSuccessfulResult(
-  run: Awaited<ReturnType<MangapressCliAdapter['run']>>,
+  run: Awaited<ReturnType<MangaprepCliAdapter['run']>>,
   cover?: { readonly book: string },
-): NonNullable<Awaited<ReturnType<MangapressCliAdapter['run']>>['result']> {
+): NonNullable<Awaited<ReturnType<MangaprepCliAdapter['run']>>['result']> {
   if (run.exitCode === 0 && run.result !== undefined) return run.result;
   const error = run.errors[0];
   if (error === undefined) {
@@ -164,7 +164,7 @@ function requireSuccessfulResult(
     const said = message('failure.conversionFailed', {});
     throw new ToolExecutionError(
       {
-        tool: 'mangapress',
+        tool: 'mangaprep',
         severity: 'error',
         code: 'process_failed',
         stage: 'conversion',
@@ -205,9 +205,9 @@ function aboutTheCover(
   );
 }
 
-function issueFromError(error: MangapressErrorEvent): PipelineIssue {
+function issueFromError(error: MangaprepErrorEvent): PipelineIssue {
   return {
-    tool: 'mangapress',
+    tool: 'mangaprep',
     severity: 'error',
     code: error.code,
     stage: error.stage,
@@ -222,8 +222,8 @@ function issueFromError(error: MangapressErrorEvent): PipelineIssue {
   };
 }
 
-function progressFromEvent(event: MangapressEvent): ConversionProgress | undefined {
-  if (isMangapressPageEvent(event)) {
+function progressFromEvent(event: MangaprepEvent): ConversionProgress | undefined {
+  if (isMangaprepPageEvent(event)) {
     return {
       stage: 'processing',
       message: message('progress.pageProcessed', {
@@ -253,32 +253,36 @@ function checkedChildPath(parentPath: string, childPath: string): string {
   const child = path.resolve(childPath);
   const parentUrl = pathToFileURL(`${parent}${path.sep}`).href;
   if (!pathToFileURL(child).href.startsWith(parentUrl)) {
-    throw new Error('Mangapress reported an output outside the selected library.');
+    throw new Error('Mangaprep reported an output outside the selected library.');
   }
   return child;
 }
 
 /**
- * Since mangapress 0.7.3, --title changes metadata only. Use its existing explicit-file output
+ * Since mangapress 0.7.3 (now mangaprep), --title changes metadata only. Use explicit-file output
  * for a typed title, leaving validation, collision handling and publication to the tool.
  */
 function conversionOutputPath(request: {
   readonly outputDirectory: string;
   readonly book?: BookDetails;
   readonly format: BookFormat;
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
 }): string {
   if (request.book?.title === undefined) return request.outputDirectory;
-  // Reuse portable filename sanitization; the metadata still receives the original title.
-  const stem = sanitizeFilename(request.book.title, { replacement: '-' }) || 'Book';
-  // This is the pinned tool's profile-code convention and --nokepub/custom-size rule, not a
-  // separate list of devices. Explicit output files retain the extension we ask for.
-  const kepub =
+  // Custom dimensions remove the tool's device family. --nokepub changes only the extension:
+  // plain Kobo EPUB filenames need the same replacements as .kepub.epub (KCC 12.1.1).
+  const koboEpub =
     request.format === 'epub' &&
     request.settings.deviceProfile.startsWith('Ko') &&
-    !request.settings.noKepub &&
     (request.settings.customWidth ?? 0) === 0 &&
     (request.settings.customHeight ?? 0) === 0;
+  // The CLI sanitizes derived names only; the app supplies an explicit filename for typed titles.
+  // Replace each Kobo-unsafe character separately, then apply portable filename rules.
+  const title = koboEpub
+    ? request.book.title.replace(/[/\\?%*:;|"'><$!]/gu, '_')
+    : request.book.title;
+  const stem = sanitizeFilename(title, { replacement: '-' }) || 'Book';
+  const kepub = koboEpub && !request.settings.noKepub;
   return path.join(request.outputDirectory, `${stem}.${kepub ? 'kepub.epub' : request.format}`);
 }
 

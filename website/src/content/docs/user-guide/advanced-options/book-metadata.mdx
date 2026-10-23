@@ -1,6 +1,6 @@
 ---
 title: 'Book metadata'
-description: 'Where a book keeps its title, author and language, what ComicInfo.xml changes, and when a Kobo book is named .kepub.epub, with values read back from the books mangapress wrote.'
+description: 'Where a book keeps its title, author and language, what ComicInfo.xml changes, and when a Kobo book is named .kepub.epub, with values read back from the books mangaprep wrote.'
 ---
 
 import OptionBook from '../../../../components/OptionBook.astro';
@@ -27,8 +27,8 @@ The three rows were converted with the same title, author and language: `--title
 <OptionBook id="metadata-formats" />
 
 - An **EPUB** keeps all three in its package file.
-- A **PDF** keeps the title and the author in its document properties, and mangapress writes no language in it.
-- A **CBZ** made by mangapress holds only the pages, and a ComicInfo.xml when you ask for one, as below. The title, the author and the language are not in it, so the book is known by its file name.
+- A **PDF** keeps the title and the author in its document properties, and mangaprep writes no language in it.
+- A **CBZ** made by mangaprep holds only the pages, and a ComicInfo.xml when you ask for one, as below. The title, the author and the language are not in it, so the book is known by its file name.
 
 ## Book title and author
 
@@ -48,7 +48,7 @@ With no ComicInfo.xml in the input there is no title to apply, and the last row 
 
 ## Keep ComicInfo.xml
 
-A CBZ made by mangapress has no ComicInfo.xml unless this is on. With `--keepcomicinfo` the one of the input is copied in as it is, not rewritten, even when you give a title and an author. An input without one gets none. The option applies to a CBZ and nothing else, and the app dims it for an EPUB and a PDF; the last two rows give the flag anyway, to show that it adds nothing to them.
+A CBZ made by mangaprep has no ComicInfo.xml unless this is on. With `--keepcomicinfo` the one of the input is copied in as it is, not rewritten, even when you give a title and an author. An input without one gets none. The option applies to a CBZ and nothing else, and the app dims it for an EPUB and a PDF; the last two rows give the flag anyway, to show that it adds nothing to them.
 
 <OptionBook id="metadata-keep-comicinfo" />
 
@@ -62,6 +62,6 @@ The setting asks for a code that is not empty, and a book's own details name a l
 
 ## Name the book .epub
 
-A Kobo's own reader looks for the name `.kepub.epub`, so mangapress names the EPUB it makes for a Kobo profile that way, when it makes the name from the input. **Name the book .epub**, `--nokepub`, keeps the plain `.epub`. Only the name changes: the book inside is the same file. A custom screen size stops mangapress from treating the device as a Kobo, a book for any other device is named `.epub` anyway, and a CBZ is always `.cbz`.
+A Kobo's own reader looks for the name `.kepub.epub`, so mangaprep names the EPUB it makes for a Kobo profile that way, when it makes the name from the input. **Name the book .epub**, `--nokepub`, keeps the plain `.epub`. Only the name changes: the book inside is the same file. A custom screen size stops mangaprep from treating the device as a Kobo, a book for any other device is named `.epub` anyway, and a CBZ is always `.cbz`.
 
 <OptionBook id="metadata-kepub" />

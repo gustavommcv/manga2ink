@@ -23,7 +23,7 @@ describe('the package permission check', () => {
         '-rwxr-xr-x root/root  12345678 2026-10-04 10:00 ./opt/manga2ink/manga2ink',
         '-rw-r--r-- root/root      1234 2026-10-04 10:00 ./opt/manga2ink/resources/app.asar',
         'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/',
-        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/mangapress',
+        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/mangaprep',
         '-rwsr-xr-x root/root    123456 2026-10-04 10:00 ./opt/manga2ink/chrome-sandbox',
         'lrwxrwxrwx root/root         0 2026-10-04 10:00 ./usr/bin/manga2ink -> /opt/manga2ink/manga2ink',
       ),
@@ -37,7 +37,7 @@ describe('the package permission check', () => {
       debListing(
         'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/',
         'drwx------ root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/linux-x64/',
-        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/linux-x64/mangapress',
+        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/linux-x64/mangaprep',
       ),
     );
     expect(run.status).toBe(1);

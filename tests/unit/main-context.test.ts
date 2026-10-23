@@ -50,7 +50,7 @@ describe('the context the handlers of the main process share', () => {
     const context = createMainContext();
 
     expect(context.workflow).toBeUndefined();
-    expect(context.mangapressCli).toBeUndefined();
+    expect(context.mangaprepCli).toBeUndefined();
     expect(context.preferences).toBeUndefined();
     expect(context.pendingRuns).toBeUndefined();
     expect(context.coverStore).toBeUndefined();

@@ -97,7 +97,7 @@ export const WithDetails: Story = {
   },
 };
 
-/** Only joining volumes: mangapress makes no book, so there are no details to edit. */
+/** Only joining volumes: mangaprep makes no book, so there are no details to edit. */
 export const JoinOnly: Story = {
   args: {
     mode: 'bind-only',

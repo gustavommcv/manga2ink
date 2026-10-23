@@ -7,16 +7,16 @@ export type SplitterMode = 'split' | 'rotate' | 'both';
 export type InterPanelCropMode = 'disabled' | 'horizontal' | 'both';
 export type MetadataTitleMode = 'series-only' | 'combine' | 'title-only';
 
-/** How a page fills the screen: one choice, where mangapress has three flags of which one wins. */
+/** How a page fills the screen: one choice, where mangaprep has three flags of which one wins. */
 export type PageSizeMode = 'fit' | 'enlarge' | 'stretch' | 'fill';
 /** What surrounds a page: the color of its own background, or one that is forced. */
 export type BorderMode = 'automatic' | 'white' | 'black';
 /** Which pages have their tones stretched to full black and white. */
 export type AutoContrastMode = 'monochrome' | 'off' | 'all';
-/** What the JPEG quality still applies to: mangapress saves a JPEG in fewer places as PNG is chosen. */
+/** What the JPEG quality still applies to: mangaprep saves a JPEG in fewer places as PNG is chosen. */
 export type JpegUse = 'pages' | 'color-pages' | 'cover' | 'nothing';
 
-export interface MangapressSettings {
+export interface MangaprepSettings {
   readonly deviceProfile: string;
   /** Every image is packaged exactly as it is: nothing is cropped, resized or saved again. */
   readonly noProcessing: boolean;
@@ -79,27 +79,27 @@ export interface MangapressSettings {
   readonly combineIntoOneVolume: boolean;
 }
 
-/** Mirrors the pinned mangapress profile default: Scribe/Colorsoft use 90, others 85. */
+/** Mirrors the pinned mangaprep profile default: Scribe/Colorsoft use 90, others 85. */
 export function defaultJpegQualityFor(deviceProfile: string): number {
   return deviceProfile.startsWith('KS') || deviceProfile === 'KCS' ? 90 : 85;
 }
 
-export type MangapressSettingField = keyof MangapressSettings;
+export type MangaprepSettingField = keyof MangaprepSettings;
 
-export interface MangapressSettingIssue {
-  readonly field: MangapressSettingField;
+export interface MangaprepSettingIssue {
+  readonly field: MangaprepSettingField;
   /** What to tell the person, as a code the window writes in its language (ADR 0053). */
   readonly message: AnyMessage;
 }
 
 /**
  * The state the settings start in. It is the state Kindle Comic Converter's own window opens in
- * (ADR 0011, ADR 0015), not the state the mangapress command line starts in: a Kindle Paperwhite,
+ * (ADR 0011, ADR 0015), not the state the mangaprep command line starts in: a Kindle Paperwhite,
  * manga reading order, spreads both split and rotated, upscaling, and cropping of margins and page
  * numbers are on; everything else is off or automatic. The format stays EPUB, which is the one
  * option that still differs from KCC's window.
  */
-export const defaultMangapressSettings: MangapressSettings = Object.freeze({
+export const defaultMangaprepSettings: MangaprepSettings = Object.freeze({
   deviceProfile: 'KPW6',
   noProcessing: false,
   noKepub: false,
@@ -196,9 +196,9 @@ export function defaultForceColorFor(deviceProfile: string): boolean {
  * change resets.
  */
 export function withDeviceProfile(
-  settings: MangapressSettings,
+  settings: MangaprepSettings,
   deviceProfile: string,
-): MangapressSettings {
+): MangaprepSettings {
   return {
     ...settings,
     deviceProfile,
@@ -208,37 +208,37 @@ export function withDeviceProfile(
 }
 
 /** The current device owns where upscaling and color start; all other fields use the app defaults. */
-export function defaultValueForSetting<K extends keyof MangapressSettings>(
-  settings: MangapressSettings,
+export function defaultValueForSetting<K extends keyof MangaprepSettings>(
+  settings: MangaprepSettings,
   field: K,
-): MangapressSettings[K] {
+): MangaprepSettings[K] {
   if (field === 'upscale') {
-    return defaultUpscaleFor(settings.deviceProfile) as MangapressSettings[K];
+    return defaultUpscaleFor(settings.deviceProfile) as MangaprepSettings[K];
   }
   if (field === 'forceColor') {
-    return defaultForceColorFor(settings.deviceProfile) as MangapressSettings[K];
+    return defaultForceColorFor(settings.deviceProfile) as MangaprepSettings[K];
   }
-  return defaultMangapressSettings[field];
+  return defaultMangaprepSettings[field];
 }
 
 /** Restoring a device follows the same coupled rule as choosing that device normally. */
-export function restoreSettingDefault<K extends keyof MangapressSettings>(
-  settings: MangapressSettings,
+export function restoreSettingDefault<K extends keyof MangaprepSettings>(
+  settings: MangaprepSettings,
   field: K,
-): MangapressSettings {
+): MangaprepSettings {
   if (field === 'deviceProfile') {
-    return withDeviceProfile(settings, defaultMangapressSettings.deviceProfile);
+    return withDeviceProfile(settings, defaultMangaprepSettings.deviceProfile);
   }
   return { ...settings, [field]: defaultValueForSetting(settings, field) };
 }
 
 /**
- * The one choice the three size flags amount to. mangapress lets all three be set and then lets
+ * The one choice the three size flags amount to. mangaprep lets all three be set and then lets
  * one win: stretching over cropping to fill, cropping to fill over enlarging. That is the order of
- * Kindle Comic Converter's `resizeImage` and of mangapress's `resize.rs`; ADR 0050.
+ * Kindle Comic Converter's `resizeImage` and of mangaprep's `resize.rs`; ADR 0050.
  */
 export function pageSizeOf(
-  settings: Pick<MangapressSettings, 'upscale' | 'stretch' | 'wallpaper'>,
+  settings: Pick<MangaprepSettings, 'upscale' | 'stretch' | 'wallpaper'>,
 ): PageSizeMode {
   if (settings.stretch) return 'stretch';
   if (settings.wallpaper) return 'fill';
@@ -246,7 +246,7 @@ export function pageSizeOf(
 }
 
 /** The settings with exactly the flag that choice needs, so the three never disagree. */
-export function withPageSize(settings: MangapressSettings, mode: PageSizeMode): MangapressSettings {
+export function withPageSize(settings: MangaprepSettings, mode: PageSizeMode): MangaprepSettings {
   return {
     ...settings,
     upscale: mode === 'enlarge',
@@ -260,40 +260,40 @@ export function defaultPageSizeFor(deviceProfile: string): PageSizeMode {
   return defaultUpscaleFor(deviceProfile) ? 'enlarge' : 'fit';
 }
 
-/** Black wins when both are set, as it does in mangapress. */
+/** Black wins when both are set, as it does in mangaprep. */
 export function borderModeOf(
-  settings: Pick<MangapressSettings, 'whiteBorders' | 'blackBorders'>,
+  settings: Pick<MangaprepSettings, 'whiteBorders' | 'blackBorders'>,
 ): BorderMode {
   if (settings.blackBorders) return 'black';
   return settings.whiteBorders ? 'white' : 'automatic';
 }
 
-export function withBorderMode(settings: MangapressSettings, mode: BorderMode): MangapressSettings {
+export function withBorderMode(settings: MangaprepSettings, mode: BorderMode): MangaprepSettings {
   return { ...settings, whiteBorders: mode === 'white', blackBorders: mode === 'black' };
 }
 
-/** Off wins when both flags are set, as it does in mangapress. */
+/** Off wins when both flags are set, as it does in mangaprep. */
 export function autoContrastOf(
-  settings: Pick<MangapressSettings, 'noAutoContrast' | 'colorAutoContrast'>,
+  settings: Pick<MangaprepSettings, 'noAutoContrast' | 'colorAutoContrast'>,
 ): AutoContrastMode {
   if (settings.noAutoContrast) return 'off';
   return settings.colorAutoContrast ? 'all' : 'monochrome';
 }
 
 export function withAutoContrast(
-  settings: MangapressSettings,
+  settings: MangaprepSettings,
   mode: AutoContrastMode,
-): MangapressSettings {
+): MangaprepSettings {
   return { ...settings, noAutoContrast: mode === 'off', colorAutoContrast: mode === 'all' };
 }
 
 /**
- * What mangapress still saves as JPEG. The cover of an EPUB is always one, made from the first
+ * What mangaprep still saves as JPEG. The cover of an EPUB is always one, made from the first
  * image whatever is done to the pages; pages kept in color stay JPEG among PNG pages unless they
  * are asked for as PNG too.
  */
 export function jpegUseOf(
-  settings: Pick<MangapressSettings, 'noProcessing' | 'forcePng' | 'forceColor' | 'forcePngRgb'>,
+  settings: Pick<MangaprepSettings, 'noProcessing' | 'forcePng' | 'forceColor' | 'forcePngRgb'>,
   format: BookFormat,
 ): JpegUse {
   const coverOnly = format === 'epub' ? 'cover' : 'nothing';
@@ -335,7 +335,7 @@ export const pngOnlyLockReason: AnyMessage = message('options.lock.pngOnly', {})
 
 /**
  * Why each page-layout control has no effect with the current choices; a control that is not
- * named can be used. A locked control keeps its value and stays visible (ADR 0005): mangapress
+ * named can be used. A locked control keeps its value and stays visible (ADR 0005): mangaprep
  * ignores it, and it applies again as soon as the choice that locked it is undone.
  *
  * Webtoon strips are never read right to left, split, bordered in anything but white, cropped at
@@ -347,7 +347,7 @@ export const pngOnlyLockReason: AnyMessage = message('options.lock.pngOnly', {})
  * still written into the book, and webtoon strips are still cut into pages.
  */
 export function pageLayoutLocks(
-  settings: MangapressSettings,
+  settings: MangaprepSettings,
   format: BookFormat,
 ): Partial<Record<PageLayoutControl, AnyMessage>> {
   const locks: Partial<Record<PageLayoutControl, AnyMessage>> = {};
@@ -414,7 +414,7 @@ export function pageLayoutLocks(
  * from the first image, so whether color is kept and the JPEG quality still decide the cover.
  */
 export function imageLocks(
-  settings: MangapressSettings,
+  settings: MangaprepSettings,
   format: BookFormat,
 ): Partial<Record<ImageControl, AnyMessage>> {
   const locks: Partial<Record<ImageControl, AnyMessage>> = {};
@@ -460,16 +460,16 @@ export type CoverAndNameControl = 'smartCoverCrop' | 'coverFill' | 'noKepub';
  * Why each cover or file-name control has no effect with the current choices, on the same terms
  * as {@link pageLayoutLocks}.
  *
- * mangapress makes a cover for every EPUB, for a CBZ only when the front is cut out of a wide
+ * mangaprep makes a cover for every EPUB, for a CBZ only when the front is cut out of a wide
  * image, and never for a PDF. The cover is made apart from the pages, so images left as they are
  * lock neither option.
  *
  * Only a Kobo's EPUB is named `.kepub.epub`, and only at the device's own size: with a custom one
- * mangapress no longer treats the device as a Kobo. The family is the one mangapress reports for
+ * mangaprep no longer treats the device as a Kobo. The family is the one mangaprep reports for
  * the chosen profile; while it is not known, the name is not offered.
  */
 export function coverAndNameLocks(
-  settings: Pick<MangapressSettings, 'smartCoverCrop' | 'customWidth' | 'customHeight'>,
+  settings: Pick<MangaprepSettings, 'smartCoverCrop' | 'customWidth' | 'customHeight'>,
   format: BookFormat,
   deviceFamily: string | undefined,
 ): Partial<Record<CoverAndNameControl, AnyMessage>> {
@@ -506,13 +506,13 @@ export function resolveDeviceProfileFallback(
   if (availableProfiles.length === 0) return undefined;
   if (availableProfiles.some((profile) => profile.code === deviceProfile)) return undefined;
   return (
-    availableProfiles.find((profile) => profile.code === defaultMangapressSettings.deviceProfile) ??
+    availableProfiles.find((profile) => profile.code === defaultMangaprepSettings.deviceProfile) ??
     availableProfiles[0]
   );
 }
 
 /**
- * What a typed value may be for the options that a typo can ruin. mangapress takes any number for
+ * What a typed value may be for the options that a typo can ruin. mangaprep takes any number for
  * these, so a gamma of 18 for 1.8 made every page almost black and the run still ended as a success.
  * The bounds are wide: they refuse a slip of a key, not a choice. Below 0.1 a gamma means "the
  * device's own", which is leaving it empty.
@@ -524,10 +524,10 @@ export const settingBounds = {
   customSize: { minimum: 1, maximum: 20_000 },
 } as const;
 
-export function validateMangapressSettings(
-  settings: MangapressSettings,
-): readonly MangapressSettingIssue[] {
-  const issues: MangapressSettingIssue[] = [];
+export function validateMangaprepSettings(
+  settings: MangaprepSettings,
+): readonly MangaprepSettingIssue[] {
+  const issues: MangaprepSettingIssue[] = [];
   if (settings.deviceProfile.trim() === '') {
     issues.push({ field: 'deviceProfile', message: message('options.issue.chooseDevice', {}) });
   }
@@ -574,10 +574,10 @@ export function validateMangapressSettings(
 }
 
 /** The options whose typed value is checked: the ones a sentence about a value names. */
-type Checked = MangapressSettingField & CheckedOption;
+type Checked = MangaprepSettingField & CheckedOption;
 
 function numberInRange(
-  issues: MangapressSettingIssue[],
+  issues: MangaprepSettingIssue[],
   field: Checked,
   value: number,
   bounds: { readonly minimum: number; readonly maximum: number },
@@ -594,14 +594,14 @@ function numberInRange(
   }
 }
 
-function percentage(issues: MangapressSettingIssue[], field: Checked, value: number): void {
+function percentage(issues: MangaprepSettingIssue[], field: Checked, value: number): void {
   if (!Number.isFinite(value) || value < 0 || value > 100) {
     issues.push({ field, message: message('options.issue.percent', { option: field }) });
   }
 }
 
 function integerRange(
-  issues: MangapressSettingIssue[],
+  issues: MangaprepSettingIssue[],
   field: Checked,
   value: number,
   minimum: number,

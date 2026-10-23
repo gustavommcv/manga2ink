@@ -23,7 +23,7 @@ async function isZip(filePath: string): Promise<boolean> {
 }
 
 describe('packaged process control', () => {
-  it('joins a folder into CBZ volumes and saves them without ever running mangapress', async () => {
+  it('joins a folder into CBZ volumes and saves them without ever running mangaprep', async () => {
     const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-join-only-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
@@ -50,7 +50,7 @@ describe('packaged process control', () => {
 
     await $('button=Validate plan').click();
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
-    assert.match(await $('main').getText(), /saved as CBZ files, mangapress not run/u);
+    assert.match(await $('main').getText(), /saved as CBZ files, mangaprep not run/u);
     assert.deepEqual(await readdir(libraryPath), []);
 
     await $('button=Process 1 item').click();
@@ -78,7 +78,7 @@ describe('packaged process control', () => {
     await assert.rejects(readFile(path.join(inputPath, 'mangabind.json'), 'utf8'));
   });
 
-  it('sends an ungrouped folder straight to mangapress as one book, with no mapping', async () => {
+  it('sends an ungrouped folder straight to mangaprep as one book, with no mapping', async () => {
     const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-convert-only-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Manga2Ink E2E');
@@ -97,7 +97,7 @@ describe('packaged process control', () => {
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
 
     // The join-only choice of the test before is still in force: only converting remains. The
-    // format can be chosen only while mangapress runs, so it comes after the steps.
+    // format can be chosen only while mangaprep runs, so it comes after the steps.
     await setSteps({ group: false, convert: true });
     await setFormat('EPUB');
     await $('span=One book').waitForDisplayed({ timeout: 10_000 });

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionRequest } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   cbz,
@@ -37,7 +37,7 @@ describe('workflow session lifetimes across inputs and runs', () => {
     const request: ConversionRequest = {
       sessionId: manga.sessionId,
       libraryPath: '/pending',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       mapping: mappedDraft(),
     };
@@ -109,7 +109,7 @@ describe('workflow session lifetimes across inputs and runs', () => {
       workflow.plan({
         sessionId: manga.sessionId,
         libraryPath: '/pending',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       }),
@@ -118,10 +118,10 @@ describe('workflow session lifetimes across inputs and runs', () => {
       workflow.plan({
         sessionId: direct.sessionId,
         libraryPath: '/pending',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       }),
-    ).resolves.toMatchObject({ tool: 'mangapress' });
+    ).resolves.toMatchObject({ tool: 'mangaprep' });
     await workflow.release(manga.sessionId);
     await workflow.releaseAll();
     expect(ports.release).toHaveBeenCalledExactlyOnceWith('workspace-1');

@@ -58,7 +58,7 @@ export function warningNotices(books: readonly BookWithWarnings[]): readonly War
   }
   return [...groups.values()].map(({ code, message: sentence, names }) => {
     const known = knownWarning(code);
-    // For a code a later mangapress adds: its own sentence, under a heading that says whose it is.
+    // For a code a later mangaprep adds: its own sentence, under a heading that says whose it is.
     const text =
       known === undefined
         ? { title: message('warning.unknownTitle', {}), message: raw(sentence) }

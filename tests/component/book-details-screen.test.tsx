@@ -563,7 +563,7 @@ describe('looking up the author of a work', () => {
     ).toBeVisible();
   });
 
-  it('says a PDF has no cover, and offers no covers at all where mangapress makes no book', () => {
+  it('says a PDF has no cover, and offers no covers at all where mangaprep makes no book', () => {
     const { rerender } = render(
       <BookDetailsScreen {...base} covers={coverControls} format="pdf" volumes={[1]} />,
     );

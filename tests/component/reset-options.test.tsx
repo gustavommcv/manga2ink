@@ -38,7 +38,7 @@ describe('ResetOptions', () => {
     const confirm = screen.getByRole('group', { name: 'Confirm reset' });
     expect(trigger).toHaveAttribute('aria-controls', confirm.id);
     expect(confirm).toHaveTextContent(
-      'Put the device, format and every mangapress option back to their defaults?',
+      'Put the device, format and every mangaprep option back to their defaults?',
     );
   });
 

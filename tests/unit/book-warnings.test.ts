@@ -106,7 +106,7 @@ describe('the warnings of a run, as the results show them', () => {
       ]);
 
       expect(notices).toEqual([
-        { code, title: 'A note from mangapress', message: 'The tool’s sentence.' },
+        { code, title: 'A note from mangaprep', message: 'The tool’s sentence.' },
       ]);
     },
   );
@@ -121,13 +121,13 @@ describe('the warnings of a run, as the results show them', () => {
     expect(notices).toEqual([
       {
         code: 'added_in_a_later_release',
-        title: 'A note from mangapress',
+        title: 'A note from mangaprep',
         message: 'Something new was noticed.',
         where: 'In all 2 books.',
       },
       {
         code: 'added_in_a_later_release',
-        title: 'A note from mangapress',
+        title: 'A note from mangaprep',
         message: 'Something else.',
         where: 'In Two.epub.',
       },

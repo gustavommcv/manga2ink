@@ -207,7 +207,7 @@ describe('input queue reducer', () => {
 });
 
 describe('what a mode does for each kind of row', () => {
-  it('leaves a CBZ alone when a run only joins volumes, and sends it straight to mangapress otherwise', () => {
+  it('leaves a CBZ alone when a run only joins volumes, and sends it straight to mangaprep otherwise', () => {
     expect(rowMode('cbz', 'bind-only')).toBe('skip');
     expect(rowMode('cbz', 'bind-and-convert')).toBe('convert-only');
     expect(rowMode('cbz', 'convert-only')).toBe('convert-only');
@@ -337,7 +337,7 @@ describe('describing a row', () => {
     });
   });
 
-  it('sends a folder straight to mangapress as one book when the run does not group', () => {
+  it('sends a folder straight to mangaprep as one book when the run does not group', () => {
     expect(describeRow(inspectedFolder(ungrouped), 'convert-only')).toEqual({
       chip: 'One book',
       tone: 'neutral',
@@ -434,7 +434,7 @@ function libraryRow(...titles: ReadTitle[]): InspectedRow {
 }
 
 const saved = { status: 'done' } as const;
-const crashed = { status: 'failed', message: raw('mangapress crashed.') } as const;
+const crashed = { status: 'failed', message: raw('mangaprep crashed.') } as const;
 
 describe('a library in the queue', () => {
   it('is what a folder becomes when it is read as one, with the titles it holds', () => {

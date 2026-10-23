@@ -1,4 +1,4 @@
-/** The extension mangapress gives a Kobo profile's EPUB; Kobo's own reader tells it by this ending. */
+/** The extension mangaprep gives a Kobo profile's EPUB; Kobo's own reader tells it by this ending. */
 const kepubExtension = '.kepub.epub';
 
 /**

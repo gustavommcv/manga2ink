@@ -6,12 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { MangabindBindingAdapter } from '@/adapters/mangabind/binding-port';
 import { MangabindCliAdapter } from '@/adapters/mangabind/cli';
-import { MangapressCliAdapter } from '@/adapters/mangapress/cli';
-import { MangapressConversionAdapter } from '@/adapters/mangapress/conversion-port';
+import { MangaprepCliAdapter } from '@/adapters/mangaprep/cli';
+import { MangaprepConversionAdapter } from '@/adapters/mangaprep/conversion-port';
 import { createNodeProcessRunner } from '@/adapters/process/node-process-runner';
 import { resolveToolchainTarget } from '@/adapters/toolchain/verification';
 import { skippedLinkNames } from '@/domain/library-links';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 /**
  * The pinned tools are the ones that will ship, and what they print is read with the app's own
@@ -47,22 +47,25 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
     'uses the custom filename for %s with the real converter, without changing its title',
     async (_label, deviceProfile, settings, format, extension) => {
       const output = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-custom-name-'));
-      const adapter = new MangapressConversionAdapter(
-        new MangapressCliAdapter(executable('mangapress'), runner),
+      const adapter = new MangaprepConversionAdapter(
+        new MangaprepCliAdapter(executable('mangaprep'), runner),
       );
       const request = {
         inputPath: path.join(fixtures, 'cbz', 'Manga2Ink Direct.cbz'),
         outputDirectory: output,
-        book: { title: 'Custom: Book' },
+        book: { title: 'Dr. Stone! Vol.01 100%: Book' },
         format,
-        settings: { ...defaultMangapressSettings, deviceProfile, noProcessing: true, ...settings },
+        settings: { ...defaultMangaprepSettings, deviceProfile, noProcessing: true, ...settings },
       };
       try {
         const plan = await adapter.plan(request);
         const artifact = await adapter.convert(request, { onProgress: () => undefined });
-        expect(plan.name).toBe(`Custom- Book.${extension}`);
+        const kobo = deviceProfile === 'KoLC' && !('customWidth' in settings);
+        expect(plan.name).toBe(
+          `${kobo ? 'Dr. Stone_ Vol.01 100__ Book' : 'Dr. Stone! Vol.01 100%- Book'}.${extension}`,
+        );
         expect(artifact.name).toBe(plan.name);
-        expect(artifact.title).toBe('Custom: Book');
+        expect(artifact.title).toBe('Dr. Stone! Vol.01 100%: Book');
       } finally {
         await rm(output, { force: true, recursive: true });
       }
@@ -75,8 +78,8 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
     const input = path.join(scratch, 'Partial pages');
     const chapter = path.join(input, 'Chapter 1');
     const output = path.join(scratch, 'books');
-    const adapter = new MangapressConversionAdapter(
-      new MangapressCliAdapter(executable('mangapress'), runner),
+    const adapter = new MangaprepConversionAdapter(
+      new MangaprepCliAdapter(executable('mangaprep'), runner),
     );
     try {
       await mkdir(chapter, { recursive: true });
@@ -94,7 +97,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
         {
           inputPath: input,
           outputDirectory: output,
-          settings: { ...defaultMangapressSettings, deviceProfile: 'K11' },
+          settings: { ...defaultMangaprepSettings, deviceProfile: 'K11' },
           format: 'epub',
         },
         { onProgress: () => undefined },
@@ -253,26 +256,26 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
     }
   }, 60_000);
 
-  it('reads the event stream of mangapress for a plan, a conversion and its list of devices', async () => {
-    const mangapress = new MangapressCliAdapter(executable('mangapress'), runner);
+  it('reads the event stream of mangaprep for a plan, a conversion and its list of devices', async () => {
+    const mangaprep = new MangaprepCliAdapter(executable('mangaprep'), runner);
     const input = path.join(fixtures, 'cbz', 'Manga2Ink Direct.cbz');
     const output = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-'));
     try {
-      const plan = await mangapress.run({
+      const plan = await mangaprep.run({
         inputPath: input,
         outputPath: output,
         profile: 'KV',
         format: 'epub',
         dryRun: true,
       });
-      const conversion = await mangapress.run({
+      const conversion = await mangaprep.run({
         inputPath: input,
         outputPath: output,
         profile: 'KV',
         format: 'epub',
         dryRun: false,
       });
-      const devices = await mangapress.listProfiles();
+      const devices = await mangaprep.listProfiles();
 
       expect(plan.exitCode).toBe(0);
       expect(plan.result).toMatchObject({ operation: 'convert', written: false });

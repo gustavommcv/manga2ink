@@ -3,7 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
 
@@ -154,7 +154,7 @@ const base: QueueScreenProps = {
   ],
   rejected: [],
   rows: [],
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   singleBook: false,
   validating: false,
 };
@@ -288,7 +288,7 @@ export const OptionsChanged: Story = {
   args: {
     rows,
     format: 'pdf',
-    settings: { ...defaultMangapressSettings, deviceProfile: 'KoAO', upscale: false },
+    settings: { ...defaultMangaprepSettings, deviceProfile: 'KoAO', upscale: false },
   },
 };
 

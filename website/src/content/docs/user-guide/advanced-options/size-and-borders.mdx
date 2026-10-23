@@ -1,6 +1,6 @@
 ---
 title: 'Size and borders'
-description: 'What Page size and Borders do to a page that is not the shape of the screen: fit, enlarge, stretch, crop to fill, and white, black or automatic borders, shown on real pages with the sizes mangapress wrote.'
+description: 'What Page size and Borders do to a page that is not the shape of the screen: fit, enlarge, stretch, crop to fill, and white, black or automatic borders, shown on real pages with the sizes mangaprep wrote.'
 ---
 
 import OptionExample from '../../../../components/OptionExample.astro';
@@ -11,7 +11,7 @@ The pictures show each page on the screen it was made for, in gray: the gray is 
 
 ## How a page is fitted
 
-mangapress decides in this order, and the first rule that applies wins:
+mangaprep decides in this order, and the first rule that applies wins:
 
 1. **Stretch to the screen** is chosen: the page is resized to the exact screen.
 2. **Crop to fill the screen** is chosen: the page is scaled until it covers the screen and the rest is cut off.
@@ -62,7 +62,7 @@ With **Webtoon strips**, pages are never enlarged and borders are always white, 
 
 When a page does not have the screen's shape, the room around it is the borders. In a CBZ or PDF they are part of the page, padding added to it. In an EPUB there is no padding: the page is centered and what shows around it is the page's background.
 
-- **Automatic**: each page gets the background its own edges have. mangapress looks at the page and takes it as white or as dark, and pads with white or with black.
+- **Automatic**: each page gets the background its own edges have. mangaprep looks at the page and takes it as white or as dark, and pads with white or with black.
 - **White**: in a CBZ or PDF, pages are not padded: the file is the page alone, as small as it comes out. In an EPUB, a white background behind every page, dark ones included. `--whiteborders`.
 - **Black**: pages are padded to the screen with black; in an EPUB, a black background behind every page. `--blackborders`, which wins if `--whiteborders` is given too.
 

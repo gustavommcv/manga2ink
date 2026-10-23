@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { keepsNoCovers } from '@/application/workflows/book-covers';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   cbz,
@@ -32,7 +32,7 @@ function workflowWith(
 
 const run = {
   libraryPath: '/library',
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'epub',
 } as const;
 const coversSent = (ports: ReturnType<typeof dependencies>) =>
@@ -54,7 +54,7 @@ describe('the covers a person gives the books of an item', () => {
     expect([...covers.kept.keys()]).toEqual(['/input/Trusted Manga']);
   });
 
-  it('refuses a file that is not an image mangapress reads, and says which kinds are', async () => {
+  it('refuses a file that is not an image mangaprep reads, and says which kinds are', async () => {
     const ports = dependencies();
     const covers = memoryCovers();
     const workflow = workflowWith(ports, covers);
@@ -249,7 +249,7 @@ describe('the covers a person gives the books of an item', () => {
   });
 });
 
-describe('the covers a run hands to mangapress', () => {
+describe('the covers a run hands to mangaprep', () => {
   it('gives each volume the cover kept for its number, and none to the others', async () => {
     const ports = dependencies();
     const covers = memoryCovers();

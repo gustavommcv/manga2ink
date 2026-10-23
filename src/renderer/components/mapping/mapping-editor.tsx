@@ -65,7 +65,7 @@ export interface MappingEditorProps {
   /** The editor is of a title of a library, so a name is fixed by adding the library again. */
   readonly inLibrary?: boolean;
   readonly onConfirm?: (metadata: string, draft: MappingDraft) => void;
-  /** Offered when the folder can skip grouping and go straight to mangapress as one book. */
+  /** Offered when the folder can skip grouping and go straight to mangaprep as one book. */
   readonly onSkipGrouping?: () => void;
   /** Online sources that can suggest volumes. The "Online source" tab only appears when there is one. */
   readonly metadataProviders?: readonly MetadataProviderDescriptor[];

@@ -97,7 +97,7 @@ const cases = [
   invalid('preload', 'ts', 'i18n', "import { messagesFor } from '../i18n/messages';"),
 
   // adapters: everything but main, preload, renderer - proven at a nested depth too, since a real
-  // adapter (e.g. mangabind/, mangapress/) is never at the top level of src/adapters.
+  // adapter (e.g. mangabind/, mangaprep/) is never at the top level of src/adapters.
   valid(
     'adapters',
     'ts',
@@ -107,7 +107,7 @@ const cases = [
   valid('adapters', 'ts', 'library', "import { publishBook } from '@/library/publish';"),
   valid('adapters', 'ts', 'node-fs', "import fs from 'node:fs';"),
   // A relative import to a sibling folder within the same layer is never restricted, at any depth.
-  valid('adapters/mangabind', 'ts', 'sibling-adapter', "import { x } from '../mangapress/cli';"),
+  valid('adapters/mangabind', 'ts', 'sibling-adapter', "import { x } from '../mangaprep/cli';"),
   invalid('adapters', 'ts', 'renderer-alias', "import { App } from '@/renderer/app';"),
   invalid('adapters', 'ts', 'main-alias', "import '@/main/index';"),
   invalid('adapters/mangabind', 'ts', 'renderer-alias', "import { App } from '@/renderer/app';"),

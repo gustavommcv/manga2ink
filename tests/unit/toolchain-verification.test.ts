@@ -6,12 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { FsCoverStore } from '@/adapters/covers/fs-cover-store';
-import { MangapressCliAdapter } from '@/adapters/mangapress/cli';
-import { MangapressConversionAdapter } from '@/adapters/mangapress/conversion-port';
+import { MangaprepCliAdapter } from '@/adapters/mangaprep/cli';
+import { MangaprepConversionAdapter } from '@/adapters/mangaprep/conversion-port';
 import { createNodeProcessRunner } from '@/adapters/process/node-process-runner';
 import { loadToolchainManifest } from '@/adapters/toolchain/manifest';
 import { resolveToolchainTarget, verifyBundledToolchain } from '@/adapters/toolchain/verification';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -21,8 +21,8 @@ type Runner = (
   arguments_: readonly string[],
 ) => Promise<{ readonly stderr: string; readonly stdout: string }>;
 
-function toolFromPath(executablePath: string): 'mangabind' | 'mangapress' {
-  return path.basename(executablePath).startsWith('mangabind') ? 'mangabind' : 'mangapress';
+function toolFromPath(executablePath: string): 'mangabind' | 'mangaprep' {
+  return path.basename(executablePath).startsWith('mangabind') ? 'mangabind' : 'mangaprep';
 }
 
 function targetFromPath(
@@ -33,7 +33,7 @@ function targetFromPath(
   return target;
 }
 
-function protocolFor(tool: 'mangabind' | 'mangapress', overrides = {}): string {
+function protocolFor(tool: 'mangabind' | 'mangaprep', overrides = {}): string {
   const version = manifest.tools[tool].pin.releaseTag.slice(1);
   return tool === 'mangabind'
     ? JSON.stringify({
@@ -97,7 +97,7 @@ describe('bundled toolchain verification', () => {
       target: 'win32-x64',
       tools: [
         { name: 'mangabind', state: 'ready' },
-        { name: 'mangapress', state: 'ready' },
+        { name: 'mangaprep', state: 'ready' },
       ],
     });
     expect(status.tools.find((tool) => tool.name === 'mangabind')?.capabilities).toEqual([
@@ -183,7 +183,7 @@ describe('bundled toolchain verification', () => {
     expect(status.tools.every((tool) => tool.state === 'failed')).toBe(true);
     expect(status.tools.map((tool) => tool.message)).toEqual([
       message('toolchain.toolFailed', { tool: 'mangabind' }),
-      message('toolchain.toolFailed', { tool: 'mangapress' }),
+      message('toolchain.toolFailed', { tool: 'mangaprep' }),
     ]);
   });
 
@@ -203,7 +203,7 @@ describe('bundled toolchain verification', () => {
     /** Answers like the real tools, except where `change` says otherwise for one tool and one flag. */
     const answering =
       (
-        tool: 'mangabind' | 'mangapress',
+        tool: 'mangabind' | 'mangaprep',
         flag: '--version' | '--protocol-version',
         change: (normal: string) => string,
       ): Runner =>
@@ -215,8 +215,8 @@ describe('bundled toolchain verification', () => {
       };
 
     it('blocks the toolchain when one tool fails its hash and the other passes, naming the one', async () => {
-      const onlyMangapressTampered = await verify(successfulDependencies.run, (executablePath) =>
-        toolFromPath(executablePath) === 'mangapress'
+      const onlyMangaprepTampered = await verify(successfulDependencies.run, (executablePath) =>
+        toolFromPath(executablePath) === 'mangaprep'
           ? Promise.resolve('tampered')
           : successfulDependencies.hashFile(executablePath),
       );
@@ -226,19 +226,19 @@ describe('bundled toolchain verification', () => {
           : successfulDependencies.hashFile(executablePath),
       );
 
-      expect(onlyMangapressTampered.state).toBe('blocked');
-      expect(onlyMangapressTampered.tools.map(({ name, state }) => [name, state])).toEqual([
+      expect(onlyMangaprepTampered.state).toBe('blocked');
+      expect(onlyMangaprepTampered.tools.map(({ name, state }) => [name, state])).toEqual([
         ['mangabind', 'ready'],
-        ['mangapress', 'failed'],
+        ['mangaprep', 'failed'],
       ]);
       expect(onlyMangabindTampered.state).toBe('blocked');
       expect(onlyMangabindTampered.tools.map(({ name, state }) => [name, state])).toEqual([
         ['mangabind', 'failed'],
-        ['mangapress', 'ready'],
+        ['mangaprep', 'ready'],
       ]);
     });
 
-    it.each(['mangabind', 'mangapress'] as const)(
+    it.each(['mangabind', 'mangaprep'] as const)(
       'blocks %s when its version is wrong while its handshake is right',
       async (tool) => {
         const status = await verify(
@@ -269,25 +269,25 @@ describe('bundled toolchain verification', () => {
           JSON.stringify({ ...(JSON.parse(normal) as object), protocol_version: 2 }),
       ],
       [
-        'mangapress',
+        'mangaprep',
         'that does not list the events capability',
         (normal: string) =>
           JSON.stringify({ ...(JSON.parse(normal) as object), capabilities: ['profiles'] }) + '\n',
       ],
       [
-        'mangapress',
+        'mangaprep',
         'that does not list the profiles capability',
         (normal: string) =>
           JSON.stringify({ ...(JSON.parse(normal) as object), capabilities: ['events'] }) + '\n',
       ],
       [
-        'mangapress',
+        'mangaprep',
         'on another protocol version',
         (normal: string) =>
           JSON.stringify({ ...(JSON.parse(normal) as object), protocol_version: 2 }) + '\n',
       ],
       [
-        'mangapress',
+        'mangaprep',
         'that is not the protocol event',
         (normal: string) =>
           JSON.stringify({ ...(JSON.parse(normal) as object), type: 'progress' }) + '\n',
@@ -337,7 +337,7 @@ describe('bundled toolchain verification', () => {
     }
   });
 
-  it('rejects a mangapress handshake containing more than one event', async () => {
+  it('rejects a mangaprep handshake containing more than one event', async () => {
     const status = await verifyBundledToolchain({
       arch: 'x64',
       dependencies: {
@@ -348,7 +348,7 @@ describe('bundled toolchain verification', () => {
           const normal = arguments_[0] === '--version' ? `${tool} ${version}` : protocolFor(tool);
           const extra = JSON.stringify({
             protocol_version: 1,
-            tool: 'mangapress',
+            tool: 'mangaprep',
             tool_version: version,
             sequence: 2,
             type: 'future',
@@ -356,7 +356,7 @@ describe('bundled toolchain verification', () => {
           return Promise.resolve({
             stderr: '',
             stdout:
-              tool === 'mangapress' && arguments_[0] !== '--version'
+              tool === 'mangaprep' && arguments_[0] !== '--version'
                 ? `${normal}${extra}\n`
                 : normal,
           });
@@ -369,7 +369,7 @@ describe('bundled toolchain verification', () => {
 
     expect(status.tools).toMatchObject([
       { name: 'mangabind', state: 'ready' },
-      { name: 'mangapress', state: 'failed' },
+      { name: 'mangaprep', state: 'failed' },
     ]);
   });
 
@@ -400,14 +400,14 @@ describe('bundled toolchain verification', () => {
     expect(status.state).toBe('ready');
   });
 
-  // The profiles the other tests convert for are Kindles. mangapress names a Kobo's EPUB
+  // The profiles the other tests convert for are Kindles. mangaprep names a Kobo's EPUB
   // `.kepub.epub`, and 0.7.0 and 0.7.1 also reported that as the book's format, which the adapter
   // refuses: it only showed when the real tool was run for a Kobo (ADR 0035).
-  it('converts for a Kobo profile with the real pinned mangapress', async () => {
+  it('converts for a Kobo profile with the real pinned mangaprep', async () => {
     const target = resolveToolchainTarget(process.platform, process.arch)!;
-    const executableName = target.startsWith('win32-') ? 'mangapress.exe' : 'mangapress';
-    const conversion = new MangapressConversionAdapter(
-      new MangapressCliAdapter(
+    const executableName = target.startsWith('win32-') ? 'mangaprep.exe' : 'mangaprep';
+    const conversion = new MangaprepConversionAdapter(
+      new MangaprepCliAdapter(
         path.join(repositoryRoot, 'vendor', 'toolchain', target, executableName),
         createNodeProcessRunner(),
       ),
@@ -425,7 +425,7 @@ describe('bundled toolchain verification', () => {
             'Manga2Ink Direct.cbz',
           ),
           outputDirectory,
-          settings: { ...defaultMangapressSettings, deviceProfile: 'KoC' },
+          settings: { ...defaultMangaprepSettings, deviceProfile: 'KoC' },
           format: 'epub',
         },
         { onProgress: () => undefined },
@@ -448,7 +448,7 @@ describe('bundled toolchain verification', () => {
           ),
           outputDirectory,
           settings: {
-            ...defaultMangapressSettings,
+            ...defaultMangaprepSettings,
             deviceProfile: 'KoC',
             noKepub: true,
             smartCoverCrop: true,
@@ -468,11 +468,11 @@ describe('bundled toolchain verification', () => {
 
   // The fixture's pages are 600x800, smaller than a Paperwhite's screen. With nothing enlarging
   // them the real tool says so, and the book carries what it said (ADR 0039).
-  it('keeps the warning the real pinned mangapress gives for pages smaller than the screen', async () => {
+  it('keeps the warning the real pinned mangaprep gives for pages smaller than the screen', async () => {
     const target = resolveToolchainTarget(process.platform, process.arch)!;
-    const executableName = target.startsWith('win32-') ? 'mangapress.exe' : 'mangapress';
-    const conversion = new MangapressConversionAdapter(
-      new MangapressCliAdapter(
+    const executableName = target.startsWith('win32-') ? 'mangaprep.exe' : 'mangaprep';
+    const conversion = new MangaprepConversionAdapter(
+      new MangaprepCliAdapter(
         path.join(repositoryRoot, 'vendor', 'toolchain', target, executableName),
         createNodeProcessRunner(),
       ),
@@ -491,7 +491,7 @@ describe('bundled toolchain verification', () => {
         {
           inputPath,
           outputDirectory,
-          settings: { ...defaultMangapressSettings, upscale: false },
+          settings: { ...defaultMangaprepSettings, upscale: false },
           format: 'epub',
         },
         { onProgress: () => undefined },
@@ -502,7 +502,7 @@ describe('bundled toolchain verification', () => {
 
       // Enlarging is where the options start, and with it there is nothing to warn about.
       const enlarged = await conversion.convert(
-        { inputPath, outputDirectory, settings: defaultMangapressSettings, format: 'cbz' },
+        { inputPath, outputDirectory, settings: defaultMangaprepSettings, format: 'cbz' },
         { onProgress: () => undefined },
       );
       expect(enlarged).not.toHaveProperty('warnings');
@@ -513,11 +513,11 @@ describe('bundled toolchain verification', () => {
 
   // A cover of the person's own is an image from anywhere, under any name, copied by the app and
   // handed over with --cover (ADR 0040). The real tool has to take it and still make the book.
-  it('makes a book with a cover of the person’s own with the real pinned mangapress', async () => {
+  it('makes a book with a cover of the person’s own with the real pinned mangaprep', async () => {
     const target = resolveToolchainTarget(process.platform, process.arch)!;
-    const executableName = target.startsWith('win32-') ? 'mangapress.exe' : 'mangapress';
-    const conversion = new MangapressConversionAdapter(
-      new MangapressCliAdapter(
+    const executableName = target.startsWith('win32-') ? 'mangaprep.exe' : 'mangaprep';
+    const conversion = new MangaprepConversionAdapter(
+      new MangaprepCliAdapter(
         path.join(repositoryRoot, 'vendor', 'toolchain', target, executableName),
         createNodeProcessRunner(),
       ),
@@ -543,7 +543,7 @@ describe('bundled toolchain verification', () => {
         {
           inputPath,
           outputDirectory: path.join(work, 'with'),
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           cover: cover!.path,
           format: 'epub',
         },
@@ -553,7 +553,7 @@ describe('bundled toolchain verification', () => {
         {
           inputPath,
           outputDirectory: path.join(work, 'without'),
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
         },
         { onProgress: () => undefined },
@@ -569,11 +569,11 @@ describe('bundled toolchain verification', () => {
 
   // The capability check knows the pinned tool has these flags; only a run shows it takes them
   // together, and that it still makes a book when told to leave the images alone.
-  it('converts with every image option, and with none applied, with the real pinned mangapress', async () => {
+  it('converts with every image option, and with none applied, with the real pinned mangaprep', async () => {
     const target = resolveToolchainTarget(process.platform, process.arch)!;
-    const executableName = target.startsWith('win32-') ? 'mangapress.exe' : 'mangapress';
-    const conversion = new MangapressConversionAdapter(
-      new MangapressCliAdapter(
+    const executableName = target.startsWith('win32-') ? 'mangaprep.exe' : 'mangaprep';
+    const conversion = new MangaprepConversionAdapter(
+      new MangaprepCliAdapter(
         path.join(repositoryRoot, 'vendor', 'toolchain', target, executableName),
         createNodeProcessRunner(),
       ),
@@ -590,7 +590,7 @@ describe('bundled toolchain verification', () => {
     try {
       for (const settings of [
         {
-          ...defaultMangapressSettings,
+          ...defaultMangaprepSettings,
           deviceProfile: 'KCS',
           forceColor: true,
           colorAutoContrast: true,
@@ -599,7 +599,7 @@ describe('bundled toolchain verification', () => {
           pngLegacy: true,
           forcePngRgb: true,
         },
-        { ...defaultMangapressSettings, noProcessing: true },
+        { ...defaultMangaprepSettings, noProcessing: true },
       ]) {
         const book = await conversion.convert(
           { inputPath, outputDirectory, settings, format: 'epub' },

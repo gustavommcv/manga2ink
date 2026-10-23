@@ -4,7 +4,7 @@ import type { CheckedOption } from '@/domain/messages/options';
 import type {
   AutoContrastMode,
   BorderMode,
-  MangapressSettings,
+  MangaprepSettings,
   PageSizeMode,
 } from '@/domain/output-profile';
 
@@ -64,7 +64,7 @@ export interface OptionFieldsMessages {
   readonly spreads: {
     readonly title: string;
     readonly description: string;
-    readonly wide: { readonly label: string } & Choices<MangapressSettings['splitter']>;
+    readonly wide: { readonly label: string } & Choices<MangaprepSettings['splitter']>;
     readonly rotateFirst: Described;
     readonly noRotate: Described;
     readonly rotateRight: Described;
@@ -91,7 +91,7 @@ export interface OptionFieldsMessages {
     readonly enableFirst: string;
     readonly pages: {
       readonly label: string;
-      readonly names: Readonly<Record<MangapressSettings['cropping'], string>>;
+      readonly names: Readonly<Record<MangaprepSettings['cropping'], string>>;
     };
     readonly power: Described;
     readonly minimum: Described;
@@ -99,7 +99,7 @@ export interface OptionFieldsMessages {
     readonly interPanel: {
       readonly label: string;
       readonly description: string;
-      readonly names: Readonly<Record<MangapressSettings['interPanelCrop'], string>>;
+      readonly names: Readonly<Record<MangaprepSettings['interPanelCrop'], string>>;
     };
   };
   readonly twoPage: {
@@ -159,7 +159,7 @@ export interface OptionFieldsMessages {
     readonly title: string;
     readonly description: string;
     readonly comicInfoTitle: Described & {
-      readonly names: Readonly<Record<MangapressSettings['metadataTitle'], string>>;
+      readonly names: Readonly<Record<MangaprepSettings['metadataTitle'], string>>;
     };
     readonly language: {
       readonly label: string;

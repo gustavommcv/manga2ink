@@ -64,10 +64,10 @@ describe('the words of the queue screen in English, which are what the app has a
     expect(en.settings.field.restoreDefault('Device')).toBe('Restore default for Device');
     expect(en.settings.field.useQueueValue('Device')).toBe('Use the queue’s value for Device');
     expect(en.settings.reset.question.queue).toBe(
-      'Put the steps, device, format and every mangapress option back to their defaults?',
+      'Put the steps, device, format and every mangaprep option back to their defaults?',
     );
     expect(en.settings.reset.question.options).toBe(
-      'Put the device, format and every mangapress option back to their defaults?',
+      'Put the device, format and every mangaprep option back to their defaults?',
     );
   });
 });

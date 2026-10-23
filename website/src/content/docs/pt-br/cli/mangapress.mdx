@@ -1,16 +1,16 @@
 ---
-title: 'CLI mangapress'
-description: 'Use a ferramenta de linha de comando mangapress para converter volumes de mangá em EPUB, CBZ ou PDF para um perfil de e-reader, pelo terminal.'
+title: 'CLI mangaprep'
+description: 'Use a ferramenta de linha de comando mangaprep para converter volumes de mangá em EPUB, CBZ ou PDF para um perfil de e-reader, pelo terminal.'
 ---
 
-Baixe o mangapress nas [releases do GitHub](https://github.com/gustavommcv/mangapress/releases) para usá-lo no terminal.
+Baixe o mangaprep nas [releases do GitHub](https://github.com/gustavommcv/mangaprep/releases) para usá-lo no terminal.
 
 ## Experimente
 
 ```sh
-mangapress --help
-mangapress --list-profiles
-mangapress "Volume.cbz" --profile KV --manga-style --format epub
+mangaprep --help
+mangaprep --list-profiles
+mangaprep "Volume.cbz" --profile KV --manga-style --format epub
 ```
 
 Use `--list-profiles` para encontrar o código e a resolução do dispositivo. Por exemplo, Kobo Libra 2 usa **KoL** e reMarkable Paper Pro usa **RmkPP**.
@@ -42,27 +42,27 @@ No Manga2Ink, isso são **Dispositivo**, **Formato do livro**, **Largura persona
 `--dry-run`, ou `-n`, lê a entrada e relata o que seria feito, sem processar uma página nem gravar um arquivo. Isto foi o que ele imprimiu para um CBZ de quatro páginas, com o caminho encurtado:
 
 ```text
-mangapress: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
+mangaprep: converting 'Pepper and Carrot - Episode 01.cbz' for Kindle Voyage (1072x1448, 16 gray levels), manga_style=false, format=Cbz
 warning: 4 of 4 pages are smaller than the device's 1072x1448 screen. Consider --upscale (or --stretch) to make them easier to read.
 found 1 chapter(s), 4 page(s) total
-warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangapress).cbz
+warning: The requested output would overwrite the input, so a safe alternate filename will be used. Writing to …\Pepper and Carrot - Episode 01 (mangaprep).cbz
 dry run -- no pages will be processed, nothing will be written
 title: Pepper and Carrot - Episode 01
 author: Unknown
 format: cbz
 device: Kindle Voyage (1072x1448)
 chapters: 1, pages: 4
-would write: …\Pepper and Carrot - Episode 01 (mangapress).cbz
+would write: …\Pepper and Carrot - Episode 01 (mangaprep).cbz
 ```
 
 Os avisos são os mesmos que uma execução de verdade imprime, então a prévia é um jeito barato de vê-los antes. O aviso de tamanho trata do assunto de [Tamanho e bordas](../../user-guide/advanced-options/size-and-borders/).
 
 ## Saída mais enxuta
 
-`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Manga2Ink isso é **Modo silencioso**, em **Comportamento das ferramentas**; o app lê os eventos do próprio mangapress, então a opção não muda nada do que você vê ali.
+`--quiet`, ou `-q`, tira as linhas de andamento: a que diz o que está sendo convertido, a contagem de capítulos e páginas, cada capítulo concluído e o caminho do livro gravado. Avisos e erros continuam saindo. A mesma conversão imprime seis linhas por padrão e, com `--quiet`, só o aviso sobre as páginas pequenas. No Manga2Ink isso é **Modo silencioso**, em **Comportamento das ferramentas**; o app lê os eventos do próprio mangaprep, então a opção não muda nada do que você vê ali.
 
 ## Outras opções
 
-Toda opção que o app mostra tem uma página própria, com a mesma página convertida com e sem ela, em [Opções avançadas de conversão](../../user-guide/advanced-options/). O [README da ferramenta](https://github.com/gustavommcv/mangapress#readme) descreve metadados, índice aninhado e o resto da linha de comando.
+Toda opção que o app mostra tem uma página própria, com a mesma página convertida com e sem ela, em [Opções avançadas de conversão](../../user-guide/advanced-options/). O [README da ferramenta](https://github.com/gustavommcv/mangaprep#readme) descreve metadados, índice aninhado e o resto da linha de comando.
 
-Para integrações, consulte o [protocolo de máquina](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md). Use a referência correspondente à versão instalada.
+Para integrações, consulte o [protocolo de máquina](https://github.com/gustavommcv/mangaprep/blob/main/docs/machine-protocol-v1.md). Use a referência correspondente à versão instalada.

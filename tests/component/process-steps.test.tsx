@@ -44,7 +44,7 @@ describe('process steps', () => {
     expect(group()).toBeEnabled();
     expect(convert()).toBeEnabled();
     expect(group()).toHaveAccessibleDescription('mangabind');
-    expect(convert()).toHaveAccessibleDescription('mangapress');
+    expect(convert()).toHaveAccessibleDescription('mangaprep');
   });
 
   it('lets a folder turn either step off, and never both, explaining why the last one is locked', async () => {

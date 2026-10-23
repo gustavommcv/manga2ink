@@ -27,7 +27,7 @@ The default is **Margins and page numbers**.
 The page is the same shape as the screen, so with cropping **Disabled** the margin stays and the drawing is smaller. With cropping on, the margin goes and the drawing grows to take its place.
 
 - **Disabled**: the page goes to the screen as it is.
-- **Margins**: mangapress looks for where the drawing is. It turns the page gray (and inverts it when the background is dark), stretches its tones, blurs it slightly, and counts as paper everything lighter than a threshold. The box around what is left is the drawing, and the page is cut to it. No page is cut by more than 10% of its width or height on each side, so a scan with a very wide border keeps what is beyond that.
+- **Margins**: mangaprep looks for where the drawing is. It turns the page gray (and inverts it when the background is dark), stretches its tones, blurs it slightly, and counts as paper everything lighter than a threshold. The box around what is left is the drawing, and the page is cut to it. No page is cut by more than 10% of its width or height on each side, so a scan with a very wide border keeps what is beyond that.
 - **Margins and page numbers**: the same, then one more look at a thin strip just above the bottom edge of the box. If it holds exactly one small dark shape, about the size of a number of one to three digits, the page is cut from just above it. Two or more shapes, or one that is too large, are taken for drawing and left alone.
 
 The page above has no page number, so **Margins** gives the same result as **Margins and page numbers**. `--cropping` takes `disabled`, `margins` or `margins-and-page-numbers`; `-c` is its short form.
@@ -48,13 +48,13 @@ The picture outlines the part of one page that is kept at each power, with the p
 
 <OptionSizes id="cropping-power-sizes" />
 
-Higher is not always more. At 3.75 the threshold is 0: only pure black still counts as drawing, so the crop hugs the blackest lines and cuts into the page, down to 887 pixels wide here. A power of 3.76 or more puts the threshold below zero. Nothing counts as drawing, mangapress finds none, and the page is left uncropped. A power above 3.75 therefore turns cropping off instead of strengthening it. If a scan has gray margins, try 2 before going higher.
+Higher is not always more. At 3.75 the threshold is 0: only pure black still counts as drawing, so the crop hugs the blackest lines and cuts into the page, down to 887 pixels wide here. A power of 3.76 or more puts the threshold below zero. Nothing counts as drawing, mangaprep finds none, and the page is left uncropped. A power above 3.75 therefore turns cropping off instead of strengthening it. If a scan has gray margins, try 2 before going higher.
 
 `--croppingpower` sets it.
 
 ## Minimum retained area
 
-The default is 0%, and the app accepts 0 to 100%. mangapress crops only when the cropped page keeps at least this share of the page's area, and leaves the page as it is otherwise.
+The default is 0%, and the app accepts 0 to 100%. mangaprep crops only when the cropped page keeps at least this share of the page's area, and leaves the page as it is otherwise.
 
 <OptionSizes id="cropping-minimum-sizes" />
 
@@ -93,6 +93,6 @@ It is meant for webtoon-style pages that have long empty stretches. The example 
   }}
 />
 
-In the last picture the strip along the right edge goes too, and that is not a gutter between panels. For columns, the 1% of the border is measured against the page's height, not its width, which is how KCC does it and mangapress follows it. On a page taller than it is wide, a white strip along the right edge is therefore removed as if it were a gutter, while the one along the left edge stays.
+In the last picture the strip along the right edge goes too, and that is not a gutter between panels. For columns, the 1% of the border is measured against the page's height, not its width, which is how KCC does it and mangaprep follows it. On a page taller than it is wide, a white strip along the right edge is therefore removed as if it were a gutter, while the one along the left edge stays.
 
 `--ipc` takes `disabled`, `horizontal` or `both`.

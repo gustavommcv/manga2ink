@@ -201,7 +201,7 @@ const overview = 'Lists --cropping, --quiet and --invented.';
 function gallery(changes = {}) {
   const base = {
     manifest: {
-      mangapress: '0.7.3',
+      mangaprep: '0.7.3',
       examples: {
         crop: {
           license: 'CC BY 4.0',
@@ -305,10 +305,10 @@ test('pictures with no licence in the manifest, or not in the licences file, are
   ]);
 });
 
-test('pictures made with another mangapress than the one shipped are a problem', () => {
+test('pictures made with another mangaprep than the one shipped are a problem', () => {
   const problems = checkGallery(gallery({ pin: '0.8.0' }));
   assert.deepEqual(problems, [
-    'The pictures were made with mangapress 0.7.3, and Manga2Ink ships 0.8.0. Run npm run site:options.',
+    'The pictures were made with mangaprep 0.7.3, and Manga2Ink ships 0.8.0. Run npm run site:options.',
   ]);
 });
 
@@ -360,8 +360,8 @@ test('an option that no page covers, or that does not exist, is a problem', () =
   );
   assert.deepEqual(problems, [
     '--quiet is listed under the page reading and under cli/mangapress.',
-    '--gamma is a mangapress option and no page covers it.',
-    '--invented is covered, but mangapress has no such option.',
+    '--gamma is a mangaprep option and no page covers it.',
+    '--invented is covered, but mangaprep has no such option.',
     'en/cropping does not mention --invented.',
     'pt-br/cropping does not mention --invented.',
   ]);

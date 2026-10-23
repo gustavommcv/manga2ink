@@ -32,7 +32,7 @@ const manifestSchema = z.object({
   supportedTargets: z.array(toolchainTargetSchema).length(4),
   tools: z.object({
     mangabind: z.object({ sourceRepo: z.url(), pin: pinSchema }),
-    mangapress: z.object({ sourceRepo: z.url(), pin: pinSchema }),
+    mangaprep: z.object({ sourceRepo: z.url(), pin: pinSchema }),
   }),
 });
 

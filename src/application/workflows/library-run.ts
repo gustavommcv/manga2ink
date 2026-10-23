@@ -20,8 +20,8 @@ import type {
 } from '@/domain/conversion';
 import type { RunOptions } from '@/domain/item-options';
 import { message } from '@/domain/message';
-import type { MangapressSettings } from '@/domain/output-profile';
-import { type BatchProcessMode, usesMangapress } from '@/domain/process-mode';
+import type { MangaprepSettings } from '@/domain/output-profile';
+import { type BatchProcessMode, usesMangaprep } from '@/domain/process-mode';
 
 /** Bind what is asked for, convert titles sequentially, retain partial outcomes and release the scratch. */
 export class LibraryRun {
@@ -37,7 +37,7 @@ export class LibraryRun {
     request: {
       readonly sessionId: string;
       readonly libraryPath: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       readonly format: BookFormat;
       readonly titles?: readonly string[];
       readonly mode?: BatchProcessMode;
@@ -47,7 +47,7 @@ export class LibraryRun {
       /** The options and format a title is made with where they are not the library's (ADR 0046). */
       readonly titleOptions?: readonly {
         readonly title: string;
-        readonly settings: MangapressSettings;
+        readonly settings: MangaprepSettings;
         readonly format: BookFormat;
       }[];
     },
@@ -69,7 +69,7 @@ export class LibraryRun {
       validateRunOptions({ mode, settings: own.settings, format: own.format }, 'converting');
     }
     const optionsOf = (title: string): RunOptions =>
-      usesMangapress(mode)
+      usesMangaprep(mode)
         ? (request.titleOptions?.find((entry) => entry.title === title) ?? request)
         : request;
     const { session, library } = this.sessions.librarySession(request.sessionId);
@@ -107,14 +107,14 @@ export class LibraryRun {
         : bound.titles.filter((title) => request.titles?.includes(title.title) === true);
 
     const detailsOf = (title: string): BookDetails =>
-      usesMangapress(mode)
+      usesMangaprep(mode)
         ? (request.titleDetails?.find((entry) => entry.title === title)?.details ?? noBookDetails)
         : noBookDetails;
 
     // Each title's covers are kept under its own folder, which the library was read with.
     const coversOf = async (title: string): Promise<ReadonlyMap<CoverSlot, string>> => {
       const folder = library.titles.find((known) => known.title === title)?.inputPath;
-      return folder === undefined || !usesMangapress(mode)
+      return folder === undefined || !usesMangaprep(mode)
         ? new Map()
         : this.covers.pathsFor(folder);
     };

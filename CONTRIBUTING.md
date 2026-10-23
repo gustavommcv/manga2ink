@@ -36,7 +36,7 @@ The user guide is the independent Astro/Starlight package under `website/`; `doc
 
 `npm run site:dev` generates the tutorial images and starts the guide. The guide and automatic app captures follow `main`, which may be ahead of the latest release; KOReader captures are supplied manually. Update every language together (a page that a language has not translated yet is on its list in `website/i18n-gaps.json`), and never use images as the only instructions. See [website/README.md](website/README.md) for development and checks, and [MEDIA.md](website/MEDIA.md) for illustrations.
 
-The pictures and measured tables of the advanced-options pages are made from open-licensed comic pages with the mangapress that Manga2Ink ships, by `npm run site:options`, and committed ([ADR 0048](docs/adr/0048-option-examples-from-open-pages.md)). The pictures keep the licences of the pages they come from, listed in `website/src/assets/options/LICENSES.md`, and are not under the repository's MIT licence.
+The pictures and measured tables of the advanced-options pages are made from open-licensed comic pages with the mangaprep that Manga2Ink ships, by `npm run site:options`, and committed ([ADR 0048](docs/adr/0048-option-examples-from-open-pages.md)). The pictures keep the licences of the pages they come from, listed in `website/src/assets/options/LICENSES.md`, and are not under the repository's MIT licence.
 
 ## The gates, and what each is for
 
@@ -71,7 +71,7 @@ Follow the [layer table](docs/architecture.md#layers). `npm run lint` enforces i
 - Use React Testing Library for what users see and do, not component internals.
 - Cover relevant normal, loading, empty, disabled, warning, and error states in Storybook, with interaction, accessibility, and visual checks where applicable.
 - Cover critical workflows with WebdriverIO against the packaged app and real tools. A manual check does not replace an automated regression test.
-- Use recorded real responses for online providers. Changes to mangabind or mangapress follow those repositories' fixture and test conventions.
+- Use recorded real responses for online providers. Changes to mangabind or mangaprep follow those repositories' fixture and test conventions.
 
 Tests should detect a broken behavior, not merely confirm the current implementation or increase a coverage number. See [the provider guide](docs/adding-a-metadata-provider.md) for adding and testing another online source.
 
@@ -97,12 +97,12 @@ The README reuses the queue's committed baseline. Tutorial captures are separate
 
 ## Updating the bundled tools
 
-mangabind and mangapress are updated deliberately through `toolchain.lock.json` ([ADR 0017](docs/adr/0017-bundled-tools-are-updated-by-hand.md)):
+mangabind and mangaprep are updated deliberately through `toolchain.lock.json` ([ADR 0017](docs/adr/0017-bundled-tools-are-updated-by-hand.md)):
 
-1. Run `npm run toolchain:update -- --tool mangabind` or `--tool mangapress`. With no tool argument it updates both. To choose a specific release, add `--mangabind v<version>` or `--mangapress v<version>`. The script verifies upstream checksums and GitHub digests, then pins each platform's archive and executable hashes.
+1. Run `npm run toolchain:update -- --tool mangabind` or `--tool mangaprep`. With no tool argument it updates both. To choose a specific release, add `--mangabind v<version>` or `--mangaprep v<version>`. The script verifies upstream checksums and GitHub digests, then pins each platform's archive and executable hashes.
 2. Optionally add `--pr-body pr.md` for a one-tool update to generate a PR description. The update script does not run a protocol handshake; it retains protocol version `1`. Acquisition and tests check the actual binaries and protocol, including their real JSON output.
 3. Run the full checks above. Review `capabilities:check`; explicitly deferred flags belong in `schemas/cli-capabilities.json`, with the reason recorded as in [ADR 0035](docs/adr/0035-mangapress-0-7-first-its-options-in-steps.md).
-4. For mangapress, run `npm run site:options`: the website's tests fail while its option pictures were made with another version than the pin. Then read the advanced-options pages again, since a number written in their text does not follow the pictures. A flag that is new to a person (the `user` list of `schemas/cli-capabilities.json`) also needs a place on those pages and a line in the overview's "Every option" list, or the same tests fail.
+4. For mangaprep, run `npm run site:options`: the website's tests fail while its option pictures were made with another version than the pin. Then read the advanced-options pages again, since a number written in their text does not follow the pictures. A flag that is new to a person (the `user` list of `schemas/cli-capabilities.json`) also needs a place on those pages and a line in the overview's "Every option" list, or the same tests fail.
 5. Open a focused PR. A protocol change needs adapter changes, not just a new pin.
 
 Acquisition also preserves each tool's upstream licenses and notices under `vendor/toolchain/<target>/licenses/<tool>/`. Cached copies are rechecked; incomplete caches are downloaded again. The packaged-shell tests verify these documents reach the app's resources unchanged.

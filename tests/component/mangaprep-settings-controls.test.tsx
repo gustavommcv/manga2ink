@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BookFormat } from '@/domain/conversion';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
-import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
+import { MangaprepSettingsEditor } from '@/renderer/components/settings/mangaprep-settings';
 
 const profiles = [
   {
@@ -30,9 +30,9 @@ interface Control {
   readonly label: string;
   readonly change: Change;
   /** What the settings become, beside what they were. */
-  readonly sets: Partial<MangapressSettings>;
+  readonly sets: Partial<MangaprepSettings>;
   /** The settings it starts from, where the control only works with another choice made. */
-  readonly from?: Partial<MangapressSettings>;
+  readonly from?: Partial<MangaprepSettings>;
   readonly format?: BookFormat;
 }
 
@@ -180,10 +180,10 @@ describe('every control of the conversion options page', () => {
     '$label changes its own setting, and no other',
     async ({ label, change, sets, from, format = 'epub' }) => {
       const user = userEvent.setup();
-      const onSettings = vi.fn<(settings: MangapressSettings) => void>();
-      const settings = { ...defaultMangapressSettings, ...from };
+      const onSettings = vi.fn<(settings: MangaprepSettings) => void>();
+      const settings = { ...defaultMangaprepSettings, ...from };
       render(
-        <MangapressSettingsEditor
+        <MangaprepSettingsEditor
           format={format}
           onFormat={vi.fn()}
           onNotify={vi.fn()}
@@ -221,7 +221,7 @@ describe('every control of the conversion options page', () => {
       'colorAutoContrast',
       'combineIntoOneVolume',
     ];
-    const missing = Object.keys(defaultMangapressSettings).filter(
+    const missing = Object.keys(defaultMangaprepSettings).filter(
       (key) => !covered.has(key) && !elsewhere.includes(key),
     );
     expect(missing).toEqual([]);

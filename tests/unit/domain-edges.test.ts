@@ -20,9 +20,9 @@ import {
   undoMappingCommand,
 } from '@/domain/mapping-editor';
 import {
-  defaultMangapressSettings,
+  defaultMangaprepSettings,
   resolveDeviceProfileFallback,
-  validateMangapressSettings,
+  validateMangaprepSettings,
 } from '@/domain/output-profile';
 import { finishRunReport } from '@/domain/run-report';
 import { raw } from '@/domain/message';
@@ -230,8 +230,8 @@ describe('going back and forth through the editor’s history', () => {
 
 describe('the options that are set to start with', () => {
   it('start with the compact PNG and the cover as it is', () => {
-    expect(defaultMangapressSettings.pngLegacy).toBe(false);
-    expect(defaultMangapressSettings.coverFill).toBe(false);
+    expect(defaultMangaprepSettings.pngLegacy).toBe(false);
+    expect(defaultMangaprepSettings.coverFill).toBe(false);
   });
 
   it('give no other device while no device is offered, and the default or the first when one is', () => {
@@ -249,13 +249,13 @@ describe('the options that are set to start with', () => {
   });
 
   it('say which of the two sizes is missing for the custom device', () => {
-    const onlyHeight = validateMangapressSettings({
-      ...defaultMangapressSettings,
+    const onlyHeight = validateMangaprepSettings({
+      ...defaultMangaprepSettings,
       deviceProfile: 'OTHER',
       customHeight: 800,
     });
-    const onlyWidth = validateMangapressSettings({
-      ...defaultMangapressSettings,
+    const onlyWidth = validateMangaprepSettings({
+      ...defaultMangaprepSettings,
       deviceProfile: 'OTHER',
       customWidth: 600,
     });

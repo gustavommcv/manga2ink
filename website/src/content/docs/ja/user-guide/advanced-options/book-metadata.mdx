@@ -1,6 +1,6 @@
 ---
 title: '本のメタデータ'
-description: '本がタイトル・著者・言語をどこに保存するか、ComicInfo.xml が何を変えるか、Kobo 向けの本がいつ .kepub.epub という名前になるかを、mangapress が書き出した本から読み戻した値で説明します。'
+description: '本がタイトル・著者・言語をどこに保存するか、ComicInfo.xml が何を変えるか、Kobo 向けの本がいつ .kepub.epub という名前になるかを、mangaprep が書き出した本から読み戻した値で説明します。'
 ---
 
 import OptionBook from '../../../../../components/OptionBook.astro';
@@ -27,8 +27,8 @@ import OptionBook from '../../../../../components/OptionBook.astro';
 <OptionBook id="metadata-formats" labels={{ epub: 'EPUB', pdf: 'PDF', cbz: 'CBZ' }} />
 
 - **EPUB** は、3 つともパッケージファイルに保存します。
-- **PDF** は、タイトルと著者をドキュメントのプロパティに保存し、mangapress は言語を書き込みません。
-- mangapress が作る **CBZ** には、ページだけが入り、頼んだ場合は ComicInfo.xml も入ります（後述）。タイトル、著者、言語は入らないので、本はファイル名で識別されます。
+- **PDF** は、タイトルと著者をドキュメントのプロパティに保存し、mangaprep は言語を書き込みません。
+- mangaprep が作る **CBZ** には、ページだけが入り、頼んだ場合は ComicInfo.xml も入ります（後述）。タイトル、著者、言語は入らないので、本はファイル名で識別されます。
 
 <span id="book-title-and-author"></span>
 
@@ -70,7 +70,7 @@ ComicInfo.xml がどのタイトルを与えるかは、**ComicInfo のタイト
 
 ## ComicInfo.xml を保持
 
-mangapress が作る CBZ には、これをオンにしない限り、ComicInfo.xml は入りません。`--keepcomicinfo` を付けると、入力のものが、書き換えられずにそのままコピーされます。タイトルと著者を指定していても同じです。入力に ComicInfo.xml がなければ、何も入りません。このオプションが効くのは CBZ だけで、アプリは EPUB と PDF では薄く表示します。最後の 2 行は、それらに何も加わらないことを示すために、あえてフラグを付けています。
+mangaprep が作る CBZ には、これをオンにしない限り、ComicInfo.xml は入りません。`--keepcomicinfo` を付けると、入力のものが、書き換えられずにそのままコピーされます。タイトルと著者を指定していても同じです。入力に ComicInfo.xml がなければ、何も入りません。このオプションが効くのは CBZ だけで、アプリは EPUB と PDF では薄く表示します。最後の 2 行は、それらに何も加わらないことを示すために、あえてフラグを付けています。
 
 <OptionBook
   id="metadata-keep-comicinfo"
@@ -103,7 +103,7 @@ mangapress が作る CBZ には、これをオンにしない限り、ComicInfo.
 
 ## 本の名前を .epub にする
 
-Kobo 自身のリーダーは `.kepub.epub` という名前を探すため、mangapress は、入力から名前を作るとき、Kobo のプロファイル向けに作る EPUB を、その名前にします。**本の名前を .epub にする**（`--nokepub`）は、普通の `.epub` のままにします。変わるのは名前だけで、中身の本は同じファイルです。カスタムの画面サイズにすると、mangapress はその端末を Kobo として扱わなくなります。ほかの端末向けの本は、もともと `.epub` という名前で、CBZ は常に `.cbz` です。
+Kobo 自身のリーダーは `.kepub.epub` という名前を探すため、mangaprep は、入力から名前を作るとき、Kobo のプロファイル向けに作る EPUB を、その名前にします。**本の名前を .epub にする**（`--nokepub`）は、普通の `.epub` のままにします。変わるのは名前だけで、中身の本は同じファイルです。カスタムの画面サイズにすると、mangaprep はその端末を Kobo として扱わなくなります。ほかの端末向けの本は、もともと `.epub` という名前で、CBZ は常に `.cbz` です。
 
 <OptionBook
   id="metadata-kepub"

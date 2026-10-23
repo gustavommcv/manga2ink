@@ -7,7 +7,7 @@ import TutorialImage from '../../../../components/TutorialImage.astro';
 
 ## Dispositivo e formato
 
-Escolha o seu modelo em **Dispositivo**. Para definir o tamanho das páginas, abra **Opções avançadas de conversão** e preencha **Largura personalizada** e **Altura personalizada**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangapress](../../cli/mangapress/) mostra o que cada uma faz.
+Escolha o seu modelo em **Dispositivo**. Para definir o tamanho das páginas, abra **Opções avançadas de conversão** e preencha **Largura personalizada** e **Altura personalizada**, em pixels. Com o dispositivo **Other**, as duas medidas são obrigatórias. Na linha de comando, essas configurações são `--profile`, `--format`, `--customwidth` e `--customheight`. A página do [CLI mangaprep](../../cli/mangapress/) mostra o que cada uma faz.
 
 | Formato | Quando escolher                                                                                                        |
 | ------- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -16,6 +16,8 @@ Escolha o seu modelo em **Dispositivo**. Para definir o tamanho das páginas, ab
 | PDF     | Páginas fixas para leitores ou tablets com suporte a PDF                                                               |
 
 O que funciona depende do aplicativo de leitura, e não só do dispositivo. O leitor do próprio Kindle não abre EPUB diretamente: envie o arquivo por um serviço que o converta, como o Send to Kindle da Amazon, ou leia em um aplicativo instalado, como o KOReader. O KOReader trata o EPUB de um jeito diferente de CBZ e PDF. Ele monta o EPUB como texto, com margens e barra de status próprias em volta de cada página, então a página pode ficar menor que a tela. Veja [configurações do leitor](../../koreader/recommended-settings/).
+
+Nos EPUBs para Kobo, caracteres especiais como `!` e `%` no nome do arquivo viram `_`; o título dentro do livro continua como você digitou. Ao copiar os livros para o Kobo, evite também caracteres especiais nos nomes das pastas de destino.
 
 <TutorialImage
   name="generated/device-settings"
@@ -26,7 +28,7 @@ Essas dimensões são apenas um exemplo; use o tamanho adequado à sua tela.
 
 ## Opções avançadas de conversão
 
-**Opções avançadas de conversão** reúne os ajustes do mangapress, agrupados por finalidade: **Leitura**, **Páginas duplas**, **Tamanho e bordas**, **Corte**, **Visão de duas páginas**, **Cor e tom**, **Imagens das páginas**, **Capa** e **Metadados do livro**. Comece pelos padrões do seu dispositivo, altere um ajuste de cada vez e confira o livro que sai. Se a arte for cortada, reduza o recorte ou desative-o.
+**Opções avançadas de conversão** reúne os ajustes do mangaprep, agrupados por finalidade: **Leitura**, **Páginas duplas**, **Tamanho e bordas**, **Corte**, **Visão de duas páginas**, **Cor e tom**, **Imagens das páginas**, **Capa** e **Metadados do livro**. Comece pelos padrões do seu dispositivo, altere um ajuste de cada vez e confira o livro que sai. Se a arte for cortada, reduza o recorte ou desative-o.
 
 Cada grupo tem uma página própria na [visão geral](../advanced-options/). Lá, a mesma página é convertida com e sem cada opção, e toda opção é listada com a flag de linha de comando que a define.
 
@@ -67,4 +69,4 @@ Esse modo usa EPUB e mantém as duas etapas ligadas. Desative-o para mudar o for
   alt="Criar um livro para a série ativado, com as etapas bloqueadas e o formato livre para mudar."
 />
 
-A ferramenta de linha de comando tem padrões próprios, que não são os do aplicativo. Para uso no terminal, veja [mangapress](../../cli/mangapress/).
+A ferramenta de linha de comando tem padrões próprios, que não são os do aplicativo. Para uso no terminal, veja [mangaprep](../../cli/mangapress/).

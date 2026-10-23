@@ -258,7 +258,7 @@ describe('the screen of the books a run made, in Portuguese', () => {
       'Em todos os 2 livros. Mais de um quarto das páginas é menor que a tela',
     );
     expect(notices[0]).not.toHaveTextContent('--upscale');
-    expect(notices[1]).toHaveTextContent('Uma observação do mangapress');
+    expect(notices[1]).toHaveTextContent('Uma observação do mangaprep');
     expect(notices[1]).toHaveTextContent('Em Work 02.epub. Something new was noticed.');
   });
 

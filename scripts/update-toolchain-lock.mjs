@@ -20,14 +20,14 @@ const current = JSON.parse(
   await readFile(new URL('../toolchain.lock.json', import.meta.url), 'utf8'),
 );
 const selectedTool = valueAfter('--tool');
-if (selectedTool !== undefined && selectedTool !== 'mangabind' && selectedTool !== 'mangapress') {
-  throw new Error(`--tool must be mangabind or mangapress, received ${selectedTool}`);
+if (selectedTool !== undefined && selectedTool !== 'mangabind' && selectedTool !== 'mangaprep') {
+  throw new Error(`--tool must be mangabind or mangaprep, received ${selectedTool}`);
 }
 
-const toolsToUpdate = selectedTool === undefined ? ['mangabind', 'mangapress'] : [selectedTool];
+const toolsToUpdate = selectedTool === undefined ? ['mangabind', 'mangaprep'] : [selectedTool];
 const requestedTags = {
   mangabind: valueAfter('--mangabind'),
-  mangapress: valueAfter('--mangapress'),
+  mangaprep: valueAfter('--mangaprep'),
 };
 const nextTools = structuredClone(current.tools);
 const changes = [];

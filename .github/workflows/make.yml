@@ -44,7 +44,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Cache the pinned mangabind/mangapress binaries
+      - name: Cache the pinned mangabind/mangaprep binaries
         # Keyed on the lock file's own hash plus OS, so a change to either pin is a cache miss, not
         # a stale hit - acquire-toolchain.mjs itself re-verifies every byte against the lock before
         # trusting a cache restore, so a corrupted or tampered cache still falls back to a real
@@ -83,7 +83,7 @@ jobs:
           fi
           .github/scripts/check-package-permissions.sh "${packages[@]}"
       - name: Check that the bundled tools in the Linux packages are the pinned ones
-        # A gate: the app hashes mangabind and mangapress on every start and refuses to convert
+        # A gate: the app hashes mangabind and mangaprep on every start and refuses to convert
         # when either is not byte for byte the file in toolchain.lock.json. rpmbuild strips and
         # edits ELF files unless told not to (packaging/rpm/spec.ejs), and an edited tool installs
         # without a word. Unpacks each finished package, so it checks what would be installed.

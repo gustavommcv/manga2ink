@@ -49,7 +49,7 @@ const titles: readonly LibraryTitle[] = [
     title: 'Monster',
     draft: grouped,
     volumes: [{ name: 'Monster - Vol.01.cbz', pageCount: 72 }],
-    outcome: { status: 'failed', message: raw('mangapress crashed while processing pages.') },
+    outcome: { status: 'failed', message: raw('mangaprep crashed while processing pages.') },
   },
 ];
 
@@ -74,7 +74,7 @@ type Story = StoryObj<typeof meta>;
 
 export const EveryState: Story = {};
 
-/** Where mangapress makes the books, each title has its own details; a colored button is set. */
+/** Where mangaprep makes the books, each title has its own details; a colored button is set. */
 export const WithDetails: Story = {
   args: {
     onEditDetails: () => undefined,
@@ -84,7 +84,7 @@ export const WithDetails: Story = {
   },
 };
 
-/** Where mangapress makes the books, a title can have conversion options of its own. */
+/** Where mangaprep makes the books, a title can have conversion options of its own. */
 export const WithOptions: Story = {
   args: {
     onEditDetails: () => undefined,

@@ -6,8 +6,8 @@ import {
   serializeStoredSettings,
   settingsFileVersion,
 } from '@/adapters/settings/stored-settings';
-import { defaultMangapressSettings } from '@/domain/output-profile';
-import { mangapressSettingsSchema } from '@/shared/workflow-contract';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
+import { mangaprepSettingsSchema } from '@/shared/workflow-contract';
 
 /** Something that was a settings file once: the right version with whatever else got into it. */
 const damaged = fc
@@ -37,7 +37,7 @@ describe('a settings file that was edited by hand, or damaged, or written by ano
       fc.property(damaged, (raw) => {
         const parsed = parseStoredSettings(raw);
         if (parsed === undefined) return;
-        expect(mangapressSettingsSchema.safeParse(parsed.settings.settings).success).toBe(true);
+        expect(mangaprepSettingsSchema.safeParse(parsed.settings.settings).success).toBe(true);
         expect(['cbz', 'epub', 'pdf']).toContain(parsed.settings.format);
       }),
       { numRuns: 400 },
@@ -59,12 +59,12 @@ describe('a settings file that was edited by hand, or damaged, or written by ano
   });
 
   it('keeps every option that was fine when only one of them was not', () => {
-    const fields = Object.keys(defaultMangapressSettings);
+    const fields = Object.keys(defaultMangaprepSettings);
     fc.assert(
       fc.property(fc.constantFrom(...fields), fc.anything(), (field, junk) => {
         const raw = JSON.stringify({
           version: settingsFileVersion,
-          settings: { ...defaultMangapressSettings, deviceProfile: 'KS', [field]: junk },
+          settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', [field]: junk },
         });
         const parsed = parseStoredSettings(raw);
         if (parsed === undefined) return;

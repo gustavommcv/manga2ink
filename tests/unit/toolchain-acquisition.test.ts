@@ -11,12 +11,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 const libraryUrl = pathToFileURL(path.resolve('scripts/lib/toolchain.mjs')).href;
 const notices = {
   mangabind: ['LICENSE'],
-  mangapress: [
-    'LICENSE-MIT',
-    'LICENSE-APACHE',
-    'THIRD-PARTY-NOTICES.md',
-    'DEPENDENCY-LICENSES.txt',
-  ],
+  mangaprep: ['LICENSE-MIT', 'LICENSE-APACHE', 'THIRD-PARTY-NOTICES.md', 'DEPENDENCY-LICENSES.txt'],
 };
 const target = 'win32-x64';
 let workspace: string;
@@ -94,17 +89,17 @@ afterEach(async () => {
 
 describe('acquiring upstream licenses with the executable', () => {
   it('extracts only the required root files, preserving their bytes', async () => {
-    const packed = await archive(['mangapress', ...notices.mangapress, 'nested/README']);
+    const packed = await archive(['mangaprep', ...notices.mangaprep, 'nested/README']);
     const destination = path.join(workspace, 'extracted');
     const run = callHelper('extractExecutable', [
       packed,
       destination,
-      'mangapress',
-      notices.mangapress,
+      'mangaprep',
+      notices.mangaprep,
     ]);
     expect(run.status, run.error).toBe(0);
-    expect(run.output).toBe(JSON.stringify(path.join(destination, 'mangapress')));
-    for (const file of ['mangapress', ...notices.mangapress]) {
+    expect(run.output).toBe(JSON.stringify(path.join(destination, 'mangaprep')));
+    for (const file of ['mangaprep', ...notices.mangaprep]) {
       expect(await readFile(path.join(destination, file))).toEqual(
         await readFile(path.join(workspace, 'source', file)),
       );
@@ -171,7 +166,7 @@ describe('revalidating an acquired toolchain cache', () => {
 
   it.each(['missing', 'modified'])('does not reuse a cache with a %s notice', async (kind) => {
     const manifest = await cachedToolchain();
-    const file = path.join(workspace, 'licenses', 'mangapress', 'DEPENDENCY-LICENSES.txt');
+    const file = path.join(workspace, 'licenses', 'mangaprep', 'DEPENDENCY-LICENSES.txt');
     if (kind === 'missing') await rm(file);
     else await writeFile(file, 'Different license text');
     expect(callHelper('alreadyAcquired', [workspace, target, manifest]).output).toBe('false');
