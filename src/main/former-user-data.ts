@@ -1,12 +1,4 @@
-import {
-  closeSync,
-  existsSync,
-  mkdirSync,
-  openSync,
-  readdirSync,
-  renameSync,
-  rmdirSync,
-} from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, renameSync, rmdirSync } from 'node:fs';
 import path from 'node:path';
 
 import { formerName } from '@/adapters/library/pending-path';
@@ -19,17 +11,6 @@ export interface FormerUserDataFileSystem {
   readonly removeEmptyFolder: (folder: string) => void;
   readonly makeFolder: (folder: string) => void;
   readonly rename: (from: string, to: string) => void;
-  /** Whether a running app holds this file open, as Chromium holds its `lockfile` on Windows. */
-  readonly held: (file: string) => boolean;
-}
-
-function held(file: string): boolean {
-  try {
-    closeSync(openSync(file, 'r+'));
-    return false;
-  } catch (error) {
-    return (error as NodeJS.ErrnoException).code === 'EBUSY';
-  }
 }
 
 /** The disk itself. */
@@ -43,21 +24,18 @@ export const diskFileSystem: FormerUserDataFileSystem = {
     mkdirSync(folder, { recursive: true });
   },
   rename: renameSync,
-  held,
 };
 
+/** The files the app keeps its settings in; one of them there means it has started before. */
+const settingsFiles = ['app-settings.json', 'settings.json', 'window-state.json'];
+
 /**
- * What came of it: nothing left to move (moved now, before, or never there), Mangabound still open,
- * or what went wrong, for the log once it is open.
+ * What the app keeps in its settings folder: the settings, the logs and, on macOS, the books not
+ * yet saved and their covers. Everything else in the folder is Electron's own.
  */
-export type FormerUserDataMove =
-  | { readonly kind: 'settled' }
-  | { readonly kind: 'former-open' }
-  | { readonly kind: 'failed'; readonly problem: string };
+const ownEntries = [...settingsFiles, 'logs', 'Pending', 'Covers'];
 
-const settled: FormerUserDataMove = { kind: 'settled' };
-
-function isEmpty(folder: string, fileSystem: FormerUserDataFileSystem): boolean {
+function isEmptyFolder(folder: string, fileSystem: FormerUserDataFileSystem): boolean {
   try {
     return fileSystem.entries(folder).length === 0;
   } catch {
@@ -66,51 +44,47 @@ function isEmpty(folder: string, fileSystem: FormerUserDataFileSystem): boolean 
 }
 
 /**
- * Moves the folder Mangabound kept its settings, window state and logs in (and, on macOS, its
- * pending books and covers) to the one Manga2Ink uses, the first time Manga2Ink starts (ADR 0085).
- * It runs before anything puts something in the new folder, the single-instance lock included, so
- * the folder moves whole, in one rename beside itself.
+ * Moves what Mangabound kept in its settings folder (its settings, window state and logs and, on
+ * macOS, its pending books and covers) to Manga2Ink's, the first time Manga2Ink starts (ADR 0085,
+ * ADR 0087). Returns what could not be moved, for the log once it is open.
  *
- * Electron makes the new folder, empty, the first time its path is asked for, so an empty one is
- * still a first start; one with anything in it is Manga2Ink's own, and nothing is moved. Only the
- * app's own folder is filled this way: a settings folder chosen on the command line (a test's, for
- * one) is never filled with a person's.
+ * The first time is told by Manga2Ink's own settings files: as long as none is there, Manga2Ink has
+ * not started before. The folder itself says nothing, since Electron makes it and puts its caches
+ * in it, and the installer's own runs of the app leave them there before the app first opens. So
+ * what Mangabound kept moves one entry at a time, beside Electron's: an entry already there stays,
+ * unless it is an empty folder, which Mangabound's replaces. Files that are not open can be moved
+ * while Mangabound runs, so nothing waits for it to close.
  *
- * On Windows a running Mangabound holds its folder, and a move that failed would never be tried
- * again, since the app would then fill the new folder. So the move waits: the caller says so and
- * quits before anything is put in the new folder, and the next start moves it.
+ * Only the app's own folder is filled this way: a settings folder chosen on the command line (a
+ * test's, for one) is never filled with a person's.
  */
 export function moveFormerUserData(
   appData: string,
   userData: string,
-  platform: NodeJS.Platform = process.platform,
   fileSystem: FormerUserDataFileSystem = diskFileSystem,
-): FormerUserDataMove {
-  if (path.relative(path.resolve(appData), path.dirname(path.resolve(userData))) !== '') {
-    return settled;
-  }
+): readonly string[] {
+  if (path.relative(path.resolve(appData), path.dirname(path.resolve(userData))) !== '') return [];
   const former = path.join(appData, formerName);
-  if (path.resolve(former).toLowerCase() === path.resolve(userData).toLowerCase()) return settled;
-  if (!fileSystem.exists(former)) return settled;
-  const made = fileSystem.exists(userData);
-  if (made && !isEmpty(userData, fileSystem)) return settled;
-  if (platform === 'win32' && fileSystem.held(path.join(former, 'lockfile'))) {
-    return { kind: 'former-open' };
-  }
-  try {
-    if (made) fileSystem.removeEmptyFolder(userData);
-    fileSystem.rename(former, userData);
-    return settled;
-  } catch (error) {
-    // Electron expects the folder it made to be there.
+  if (path.resolve(former).toLowerCase() === path.resolve(userData).toLowerCase()) return [];
+  if (!fileSystem.exists(former)) return [];
+  if (settingsFiles.some((name) => fileSystem.exists(path.join(userData, name)))) return [];
+  const problems: string[] = [];
+  for (const name of ownEntries) {
+    const from = path.join(former, name);
+    const to = path.join(userData, name);
+    if (!fileSystem.exists(from)) continue;
     try {
+      if (fileSystem.exists(to)) {
+        if (!isEmptyFolder(to, fileSystem)) continue;
+        fileSystem.removeEmptyFolder(to);
+      }
       fileSystem.makeFolder(userData);
-    } catch {
-      // The problem below is the one to tell.
+      fileSystem.rename(from, to);
+    } catch (error) {
+      problems.push(
+        `Could not move ${from} to ${to}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
-    return {
-      kind: 'failed',
-      problem: `Could not move ${former} to ${userData}: ${error instanceof Error ? error.message : String(error)}`,
-    };
   }
+  return problems;
 }
