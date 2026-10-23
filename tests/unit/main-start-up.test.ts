@@ -3,8 +3,6 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { dialogMessages } from '@/i18n/dialog-messages';
-
 type Handler = (...args: never[]) => unknown;
 const fake = vi.hoisted(() => {
   const calls: string[] = [];
@@ -20,7 +18,6 @@ const fake = vi.hoisted(() => {
     legacyMove: undefined as undefined | Record<string, unknown>,
     moves: [] as Record<string, unknown>[],
     locked: false,
-    errorBoxes: [] as { title: string; text: string }[],
     formerUserData: undefined as
       undefined | { appData: string; userData: string; beforeLock: boolean },
     context: undefined as unknown as Record<string, unknown>,
@@ -37,9 +34,6 @@ vi.mock('electron', () => ({
     },
     quit: () => {
       fake.calls.push('quit');
-    },
-    exit: (code: number) => {
-      fake.calls.push(`exit:${String(code)}`);
     },
     requestSingleInstanceLock: () => {
       fake.locked = true;
@@ -59,11 +53,6 @@ vi.mock('electron', () => ({
     getPreferredSystemLanguages: () => ['pt-BR', 'en-US'],
   },
   BrowserWindow: { getAllWindows: () => fake.windows },
-  dialog: {
-    showErrorBox: (title: string, text: string) => {
-      fake.errorBoxes.push({ title, text });
-    },
-  },
   nativeTheme: fake.nativeTheme,
   screen: {
     getPrimaryDisplay: () => ({ id: 2, workArea: { x: 0, y: 0, width: 1920, height: 1040 } }),
@@ -180,7 +169,7 @@ vi.mock('@/adapters/library/pending-path', () => ({
 vi.mock('@/main/former-user-data', () => ({
   moveFormerUserData: (appData: string, userData: string) => {
     fake.formerUserData = { appData, userData, beforeLock: !fake.locked };
-    return fake.context['formerMove'] ?? { kind: 'settled' };
+    return fake.context['formerProblems'] ?? [];
   },
 }));
 vi.mock('@/adapters/settings/fs-settings-store', () => ({
@@ -385,7 +374,6 @@ beforeEach(() => {
   fake.legacyMove = undefined;
   fake.moves = [];
   fake.locked = false;
-  fake.errorBoxes = [];
   fake.formerUserData = undefined;
   fake.context = {
     theme: 'dark',
@@ -568,7 +556,7 @@ describe('starting the app', () => {
     expect(console.error).toHaveBeenCalledWith('Could not move it.', expect.any(Error));
   });
 
-  it('moves Mangabound’s settings folder to the new name before the single-instance lock makes it', async () => {
+  it('moves what Mangabound kept in its settings folder before the single-instance lock', async () => {
     await start();
 
     expect(fake.formerUserData).toEqual({
@@ -586,34 +574,20 @@ describe('starting the app', () => {
   });
 
   it('tells the log when Mangabound’s settings folder could not be moved', async () => {
-    fake.context['formerMove'] = {
-      kind: 'failed',
-      problem: 'Could not move /home/appData/Mangabound: busy',
-    };
+    fake.context['formerProblems'] = [
+      'Could not move /home/appData/Mangabound/logs: in use',
+      'Could not move /home/appData/Mangabound/settings.json: busy',
+    ];
     const ready = await start();
 
     await ready();
 
-    expect(console.error).toHaveBeenCalledWith('Could not move /home/appData/Mangabound: busy');
-  });
-
-  it('with Mangabound still open, says so in the system’s language and leaves before the lock', async () => {
-    fake.context['formerMove'] = { kind: 'former-open' };
-    const ready = await start();
-
-    expect(fake.errorBoxes).toEqual([dialogMessages['pt-BR'].formerAppOpen]);
-    expect(fake.calls).toContain('exit:0');
-    expect(fake.locked).toBe(false);
-    await ready();
-    expect(console.error).not.toHaveBeenCalled();
-  });
-
-  it('opens without a word when Mangabound’s folder has moved or was never there', async () => {
-    await start();
-
-    expect(fake.errorBoxes).toEqual([]);
-    expect(fake.calls).not.toContain('exit:0');
-    expect(fake.locked).toBe(true);
+    expect(console.error).toHaveBeenCalledWith(
+      'Could not move /home/appData/Mangabound/logs: in use',
+    );
+    expect(console.error).toHaveBeenCalledWith(
+      'Could not move /home/appData/Mangabound/settings.json: busy',
+    );
   });
 
   it('moves Mangabound’s pending books before what the installer’s folder kept', async () => {
@@ -851,6 +825,17 @@ describe('an installer that is still running', () => {
     await start();
 
     expect(fake.calls).toContain('quit');
+  });
+
+  it('takes no lock and starts nothing, so it leaves nothing in the new settings folder', async () => {
+    fake.started = true;
+    const ready = await start();
+
+    await ready();
+
+    expect(fake.locked).toBe(false);
+    expect(fake.calls).not.toContain('legacy-move');
+    expect(fake.calls).not.toContain('cover-store:/covers');
   });
 });
 

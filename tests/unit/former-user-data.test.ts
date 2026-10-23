@@ -22,77 +22,102 @@ async function appData(): Promise<string> {
   return folder;
 }
 
-/** An app-data folder with Mangabound's settings in it. */
+/** An app-data folder with what Mangabound kept, its settings and logs beside Electron's caches. */
 async function withFormer(): Promise<string> {
   const root = await appData();
-  await mkdir(path.join(root, 'Mangabound', 'logs'), { recursive: true });
-  await writeFile(path.join(root, 'Mangabound', 'settings.json'), '{"kept":true}');
+  const former = path.join(root, 'Mangabound');
+  await mkdir(path.join(former, 'logs'), { recursive: true });
+  await mkdir(path.join(former, 'GPUCache'));
+  await writeFile(path.join(former, 'logs', 'mangabound.log'), 'kept log');
+  await writeFile(path.join(former, 'app-settings.json'), '{"theme":"dark"}');
+  await writeFile(path.join(former, 'settings.json'), '{"kept":true}');
+  await writeFile(path.join(former, 'window-state.json'), '{"width":900}');
+  await writeFile(path.join(former, 'Local State'), 'Mangabound’s');
   return root;
 }
 
-async function expectMoved(root: string): Promise<void> {
-  expect(await readdir(root)).toEqual(['Manga2Ink']);
-  expect((await readdir(path.join(root, 'Manga2Ink'))).sort()).toEqual(['logs', 'settings.json']);
-  expect(await readFile(path.join(root, 'Manga2Ink', 'settings.json'), 'utf8')).toBe(
-    '{"kept":true}',
-  );
+const read = (root: string, ...names: string[]): Promise<string> =>
+  readFile(path.join(root, ...names), 'utf8');
+const names = async (folder: string): Promise<string[]> => (await readdir(folder)).sort();
+
+async function expectSettingsMoved(root: string): Promise<void> {
+  expect(await read(root, 'Manga2Ink', 'app-settings.json')).toBe('{"theme":"dark"}');
+  expect(await read(root, 'Manga2Ink', 'settings.json')).toBe('{"kept":true}');
+  expect(await read(root, 'Manga2Ink', 'window-state.json')).toBe('{"width":900}');
 }
 
-const settled = { kind: 'settled' };
-
 describe('moveFormerUserData', () => {
-  it('moves Mangabound’s settings folder whole to Manga2Ink’s, the first time', async () => {
+  it('moves Mangabound’s settings and logs to Manga2Ink’s folder, and leaves Electron’s things', async () => {
     const root = await withFormer();
 
-    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux')).toEqual(settled);
+    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'))).toEqual([]);
 
-    await expectMoved(root);
+    await expectSettingsMoved(root);
+    expect(await read(root, 'Manga2Ink', 'logs', 'mangabound.log')).toBe('kept log');
+    expect(await names(path.join(root, 'Mangabound'))).toEqual(['GPUCache', 'Local State']);
   });
 
-  it('moves it into the empty folder Electron makes when the app first asks for its path', async () => {
+  it('moves them beside what Electron and the installer’s own runs left in the new folder', async () => {
+    const root = await withFormer();
+    const fresh = path.join(root, 'Manga2Ink');
+    await mkdir(path.join(fresh, 'GPUPersistentCache'), { recursive: true });
+    await mkdir(path.join(fresh, 'logs'));
+    await writeFile(path.join(fresh, 'Local State'), 'Manga2Ink’s');
+
+    expect(moveFormerUserData(root, fresh)).toEqual([]);
+
+    await expectSettingsMoved(root);
+    expect(await read(root, 'Manga2Ink', 'logs', 'mangabound.log')).toBe('kept log');
+    expect(await read(root, 'Manga2Ink', 'Local State')).toBe('Manga2Ink’s');
+  });
+
+  it('keeps what the new folder already has, unless it is an empty folder', async () => {
+    const root = await withFormer();
+    const fresh = path.join(root, 'Manga2Ink');
+    await mkdir(path.join(fresh, 'logs'), { recursive: true });
+    await writeFile(path.join(fresh, 'logs', 'manga2ink.log'), 'new log');
+
+    expect(moveFormerUserData(root, fresh)).toEqual([]);
+
+    await expectSettingsMoved(root);
+    expect(await names(path.join(fresh, 'logs'))).toEqual(['manga2ink.log']);
+    expect(await read(root, 'Mangabound', 'logs', 'mangabound.log')).toBe('kept log');
+  });
+
+  it('moves the pending books and covers kept in the settings folder on macOS', async () => {
+    const root = await appData();
+    await mkdir(path.join(root, 'Mangabound', 'Pending', 'run-1'), { recursive: true });
+    await mkdir(path.join(root, 'Mangabound', 'Covers'));
+
+    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'))).toEqual([]);
+
+    expect(await names(path.join(root, 'Manga2Ink'))).toEqual(['Covers', 'Pending']);
+    expect(await names(path.join(root, 'Manga2Ink', 'Pending'))).toEqual(['run-1']);
+  });
+
+  it('leaves everything once Manga2Ink has settings of its own', async () => {
     const root = await withFormer();
     await mkdir(path.join(root, 'Manga2Ink'));
+    await writeFile(path.join(root, 'Manga2Ink', 'window-state.json'), '{"width":1200}');
 
-    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'win32')).toEqual(settled);
+    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'))).toEqual([]);
 
-    await expectMoved(root);
-  });
-
-  it('leaves both alone when Manga2Ink’s folder has anything of its own in it', async () => {
-    const root = await withFormer();
-    await mkdir(path.join(root, 'Manga2Ink'));
-    await writeFile(path.join(root, 'Manga2Ink', 'settings.json'), '{"own":true}');
-
-    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux')).toEqual(settled);
-
-    expect((await readdir(root)).sort()).toEqual(['Manga2Ink', 'Mangabound']);
-    expect(await readFile(path.join(root, 'Manga2Ink', 'settings.json'), 'utf8')).toBe(
-      '{"own":true}',
-    );
-  });
-
-  it('leaves both alone when Manga2Ink’s settings place is not a folder it can read', async () => {
-    const root = await withFormer();
-    await writeFile(path.join(root, 'Manga2Ink'), 'not a folder');
-
-    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux')).toEqual(settled);
-
-    expect((await readdir(root)).sort()).toEqual(['Manga2Ink', 'Mangabound']);
+    expect(await names(path.join(root, 'Manga2Ink'))).toEqual(['window-state.json']);
+    expect(await read(root, 'Mangabound', 'settings.json')).toBe('{"kept":true}');
   });
 
   it('does nothing when there is no former folder', async () => {
     const root = await appData();
 
-    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux')).toEqual(settled);
+    expect(moveFormerUserData(root, path.join(root, 'Manga2Ink'))).toEqual([]);
 
     expect(await readdir(root)).toEqual([]);
   });
 
   it('never fills a settings folder chosen elsewhere, a test’s for one, with a person’s', async () => {
     const root = await withFormer();
-    const chosen = path.join(root, 'elsewhere', 'profile');
 
-    expect(moveFormerUserData(root, chosen, 'linux')).toEqual(settled);
+    expect(moveFormerUserData(root, path.join(root, 'elsewhere', 'profile'))).toEqual([]);
 
     expect(await readdir(root)).toEqual(['Mangabound']);
   });
@@ -109,115 +134,58 @@ describe('moveFormerUserData', () => {
     };
 
     for (const name of ['Mangabound', 'MANGABOUND']) {
-      expect(moveFormerUserData(root, path.join(root, name), 'win32', fileSystem)).toEqual(settled);
+      expect(moveFormerUserData(root, path.join(root, name), fileSystem)).toEqual([]);
     }
     expect(renames).toEqual([]);
   });
 
-  describe('with Mangabound still open', () => {
-    const open = (root: string, touched: string[]): FormerUserDataFileSystem => ({
-      ...diskFileSystem,
-      held: (file) => file === path.join(root, 'Mangabound', 'lockfile'),
-      removeEmptyFolder: (folder) => {
-        touched.push(`remove ${folder}`);
-      },
-      rename: (from) => {
-        touched.push(`rename ${from}`);
-      },
-    });
-
-    it('on Windows, where it holds its folder, waits and leaves the empty new folder empty', async () => {
+  describe('when an entry cannot be moved', () => {
+    it('says which, for the log, and still moves the others', async () => {
       const root = await withFormer();
-      await mkdir(path.join(root, 'Manga2Ink'));
-      const touched: string[] = [];
+      const fresh = path.join(root, 'Manga2Ink');
+      const held = path.join(root, 'Mangabound', 'logs');
 
-      expect(
-        moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'win32', open(root, touched)),
-      ).toEqual({ kind: 'former-open' });
-
-      expect(touched).toEqual([]);
-      expect(await readdir(path.join(root, 'Manga2Ink'))).toEqual([]);
-    });
-
-    it('elsewhere, where a folder in use can still be renamed, moves it', async () => {
-      const root = await withFormer();
-      await mkdir(path.join(root, 'Manga2Ink'));
-      const touched: string[] = [];
-
-      expect(
-        moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'darwin', open(root, touched)),
-      ).toEqual(settled);
-
-      expect(touched).toEqual([
-        `remove ${path.join(root, 'Manga2Ink')}`,
-        `rename ${path.join(root, 'Mangabound')}`,
-      ]);
-    });
-  });
-
-  describe('when the folder cannot be moved', () => {
-    const failing = (thrown: unknown): FormerUserDataFileSystem => ({
-      ...diskFileSystem,
-      rename: () => {
-        throw thrown;
-      },
-    });
-
-    it('says what went wrong for the log, and puts back the empty folder Electron made', async () => {
-      const root = await withFormer();
-      await mkdir(path.join(root, 'Manga2Ink'));
-
-      expect(
-        moveFormerUserData(
-          root,
-          path.join(root, 'Manga2Ink'),
-          'win32',
-          failing(new Error('denied')),
-        ),
-      ).toEqual({
-        kind: 'failed',
-        problem: `Could not move ${path.join(root, 'Mangabound')} to ${path.join(root, 'Manga2Ink')}: denied`,
-      });
-
-      expect((await readdir(root)).sort()).toEqual(['Manga2Ink', 'Mangabound']);
-      expect(await readdir(path.join(root, 'Manga2Ink'))).toEqual([]);
-    });
-
-    it('says what went wrong when the failure is not an error', async () => {
-      const root = await withFormer();
-
-      expect(
-        moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux', failing('busy')),
-      ).toEqual({
-        kind: 'failed',
-        problem: `Could not move ${path.join(root, 'Mangabound')} to ${path.join(root, 'Manga2Ink')}: busy`,
-      });
-    });
-
-    it('tells the move’s failure even when the empty folder cannot be put back', async () => {
-      const root = await withFormer();
-
-      const move = moveFormerUserData(root, path.join(root, 'Manga2Ink'), 'linux', {
-        ...failing(new Error('denied')),
-        makeFolder: () => {
-          throw new Error('no room');
+      const problems = moveFormerUserData(root, fresh, {
+        ...diskFileSystem,
+        rename: (from, to) => {
+          if (from === held) throw new Error('in use');
+          diskFileSystem.rename(from, to);
         },
       });
 
-      expect(move).toEqual({
-        kind: 'failed',
-        problem: `Could not move ${path.join(root, 'Mangabound')} to ${path.join(root, 'Manga2Ink')}: denied`,
-      });
+      expect(problems).toEqual([`Could not move ${held} to ${path.join(fresh, 'logs')}: in use`]);
+      await expectSettingsMoved(root);
+      expect(await read(root, 'Mangabound', 'logs', 'mangabound.log')).toBe('kept log');
     });
-  });
 
-  describe('on disk', () => {
-    it('sees a file nobody holds, and one that is not there, as free', async () => {
+    it('says what went wrong when the failure is not an error', async () => {
       const root = await appData();
-      await writeFile(path.join(root, 'lockfile'), '');
+      await mkdir(path.join(root, 'Mangabound'));
+      await writeFile(path.join(root, 'Mangabound', 'settings.json'), '{}');
 
-      expect(diskFileSystem.held(path.join(root, 'lockfile'))).toBe(false);
-      expect(diskFileSystem.held(path.join(root, 'absent'))).toBe(false);
+      const problems = moveFormerUserData(root, path.join(root, 'Manga2Ink'), {
+        ...diskFileSystem,
+        rename: () => {
+          // eslint-disable-next-line @typescript-eslint/only-throw-error
+          throw 'busy';
+        },
+      });
+
+      expect(problems).toEqual([
+        `Could not move ${path.join(root, 'Mangabound', 'settings.json')} to ${path.join(root, 'Manga2Ink', 'settings.json')}: busy`,
+      ]);
+    });
+
+    it('leaves a new entry it cannot read as a folder', async () => {
+      const root = await withFormer();
+      const fresh = path.join(root, 'Manga2Ink');
+      await mkdir(fresh);
+      await writeFile(path.join(fresh, 'logs'), 'a file where the logs go');
+
+      expect(moveFormerUserData(root, fresh)).toEqual([]);
+
+      expect(await read(root, 'Manga2Ink', 'logs')).toBe('a file where the logs go');
+      await expectSettingsMoved(root);
     });
   });
 });

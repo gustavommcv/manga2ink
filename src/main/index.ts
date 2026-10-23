@@ -1,7 +1,7 @@
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeTheme, screen } from 'electron';
 import started from 'electron-squirrel-startup';
 
 import { directoryExists } from '@/adapters/library/directory-exists';
@@ -9,9 +9,7 @@ import { FsCoverStore } from '@/adapters/covers/fs-cover-store';
 import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
 import { FileLog } from '@/adapters/log/file-log';
-import { resolveLanguage } from '@/domain/app-settings';
 import { resolveTheme, type Theme } from '@/domain/theme';
-import { messagesFor } from '@/i18n/messages';
 import { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { moveLegacyStorage } from '@/adapters/library/legacy-storage';
 import {
@@ -64,28 +62,19 @@ import {
 
 if (started) app.quit();
 
-// The app was Mangabound (ADR 0085): its settings folder moves to the new name the first time, before
-// anything here puts something in the new one, the single-instance lock below included.
-const formerUserData = started
-  ? undefined
+// The app was Mangabound (ADR 0085, ADR 0087): what it kept in its settings folder moves to the new
+// one the first time, before anything here reads it.
+const formerUserDataProblems = started
+  ? []
   : moveFormerUserData(app.getPath('appData'), app.getPath('userData'));
-// A Mangabound still open holds its folder. The app says so, in the system's language since the
-// settings are not here yet, and leaves the new folder empty, so that the next start moves it.
-const waitsForFormer = formerUserData?.kind === 'former-open';
-if (waitsForFormer) {
-  const words = messagesFor(resolveLanguage('system', app.getPreferredSystemLanguages())).dialogs
-    .formerAppOpen;
-  dialog.showErrorBox(words.title, words.text);
-  app.exit(0);
-}
 
 // Electron accepts a new scheme's privileges only before the app is ready.
 registerRendererScheme();
 
 // A second copy would share the settings and the pending books with the first, and its start-up
 // cleanup could remove the folder the first has just made for a conversion. The second one asks the
-// first to come forward and quits.
-const holdsTheLock = !waitsForFormer && app.requestSingleInstanceLock();
+// first to come forward and quits. A run of the installer's own (ADR 0087) starts nothing either.
+const holdsTheLock = !started && app.requestSingleInstanceLock();
 if (!holdsTheLock) app.quit();
 app.on('second-instance', () => {
   const [window] = BrowserWindow.getAllWindows();
@@ -119,7 +108,7 @@ void app.whenReady().then(async () => {
     { console, process },
     `Manga2Ink ${app.getVersion()} started (${app.isPackaged ? 'packaged' : 'development build'}, Electron ${process.versions.electron}, ${process.platform} ${process.arch}).`,
   );
-  if (formerUserData?.kind === 'failed') console.error(formerUserData.problem);
+  for (const problem of formerUserDataProblems) console.error(problem);
   // Before anything reads them: Mangabound kept the pending books and covers under its own name
   // (ADR 0085), and an earlier version still kept them in the installer's own folder on Windows,
   // which uninstalling the app empties.
