@@ -167,6 +167,49 @@ for (const [index, name] of namedVolumeChapters.entries()) {
   await writeFile(path.join(chapterPath, '001.png'), image(index + 30));
 }
 
+// A manga kept as one folder for each volume, the way a collection scanned from the printed books
+// is named. Each volume is a volume with one chapter, and both are chapter 1.
+const volumeUnitsRoot = path.resolve(
+  'tests',
+  'fixtures',
+  'e2e',
+  'manga-volume-units',
+  'Volume Units',
+);
+for (const [index, name] of [
+  '(一般コミック) [作者] テスト 第01巻',
+  '(一般コミック) [作者] テスト 第02巻',
+].entries()) {
+  const volumePath = path.join(volumeUnitsRoot, name);
+  await mkdir(volumePath, { recursive: true });
+  for (let page = 1; page <= 2; page += 1) {
+    await writeFile(
+      path.join(volumePath, `${String(page).padStart(3, '0')}.png`),
+      image(index * 2 + page + 40),
+    );
+  }
+}
+
+// A manga with a folder for each volume and the chapters in it, numbered again in each volume.
+const volumeFoldersRoot = path.resolve(
+  'tests',
+  'fixtures',
+  'e2e',
+  'manga-volume-folders',
+  'Volume Folders',
+);
+for (let volume = 1; volume <= 2; volume += 1) {
+  for (let chapter = 1; chapter <= 2; chapter += 1) {
+    const chapterPath = path.join(
+      volumeFoldersRoot,
+      `第${String(volume)}巻`,
+      `第${String(chapter)}話`,
+    );
+    await mkdir(chapterPath, { recursive: true });
+    await writeFile(path.join(chapterPath, '001.png'), image(volume * 2 + chapter + 50));
+  }
+}
+
 console.log(`Generated copyright-safe E2E fixture at ${fixtureRoot}`);
 console.log(`Generated copyright-safe batch E2E fixture at ${batchLibraryRoot}`);
 console.log(`Generated copyright-safe named-volumes E2E fixture at ${namedVolumesRoot}`);
