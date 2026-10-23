@@ -67,7 +67,7 @@
       "--customwidth",
       "--customheight"
     ],
-    "cli/mangaprep": ["--dry-run", "-n", "--quiet", "-q"]
+    "cli/mangapress": ["--dry-run", "-n", "--quiet", "-q"]
   },
   "planned": []
 }

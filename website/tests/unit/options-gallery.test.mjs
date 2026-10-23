@@ -222,7 +222,7 @@ function gallery(changes = {}) {
     userFlags: ['--cropping', '-c', '--quiet'],
     coverage: {
       pages: { cropping: ['--cropping', '-c'], reading: [] },
-      elsewhere: { 'cli/mangaprep': ['--quiet'] },
+      elsewhere: { 'cli/mangapress': ['--quiet'] },
       planned: ['reading'],
     },
     pages: {
@@ -238,8 +238,8 @@ function gallery(changes = {}) {
       },
     },
     guides: {
-      en: { 'cli/mangaprep': 'Use `--quiet` or `-q`.' },
-      'pt-br': { 'cli/mangaprep': 'Use `--quiet`.' },
+      en: { 'cli/mangapress': 'Use `--quiet` or `-q`.' },
+      'pt-br': { 'cli/mangapress': 'Use `--quiet`.' },
     },
   };
   return { ...base, ...changes };
@@ -258,13 +258,13 @@ test('a language may leave pages out on purpose, and the pages it does not leave
   assert.ok(problems.includes('The example crop is on no page in ja.'));
   assert.ok(problems.includes('The overview page of the options does not exist in ja.'));
   assert.ok(
-    problems.includes('ja/cli/mangaprep is where options are covered, and it does not exist.'),
+    problems.includes('ja/cli/mangapress is where options are covered, and it does not exist.'),
   );
   // All of it listed: nothing is missing, and the examples only those pages show need not be there.
   const all = [
     'user-guide/advanced-options/cropping',
     'user-guide/advanced-options/index',
-    'cli/mangaprep',
+    'cli/mangapress',
   ];
   assert.deepEqual(checkGallery({ ...withoutJapanese, untranslated: { ja: all } }), []);
   // Only the overview listed: the rest is still needed, and the list of one language excuses no other.
@@ -276,7 +276,7 @@ test('a language may leave pages out on purpose, and the pages it does not leave
     'The example crop is on no page in ja.',
     'The example sizes is on no page in ja.',
     'The page cropping has no ja version.',
-    'ja/cli/mangaprep is where options are covered, and it does not exist.',
+    'ja/cli/mangapress is where options are covered, and it does not exist.',
   ]);
 });
 
@@ -353,13 +353,13 @@ test('an option that no page covers, or that does not exist, is a problem', () =
       userFlags: ['--cropping', '-c', '--quiet', '--gamma'],
       coverage: {
         pages: { cropping: ['--cropping', '-c', '--invented'], reading: ['--quiet'] },
-        elsewhere: { 'cli/mangaprep': ['--quiet'] },
+        elsewhere: { 'cli/mangapress': ['--quiet'] },
         planned: ['reading'],
       },
     }),
   );
   assert.deepEqual(problems, [
-    '--quiet is listed under the page reading and under cli/mangaprep.',
+    '--quiet is listed under the page reading and under cli/mangapress.',
     '--gamma is a mangaprep option and no page covers it.',
     '--invented is covered, but mangaprep has no such option.',
     'en/cropping does not mention --invented.',
@@ -372,7 +372,7 @@ test('a page that is promised must exist, and one that exists is no longer promi
     gallery({
       coverage: {
         pages: { cropping: ['--cropping', '-c'], reading: [] },
-        elsewhere: { 'cli/mangaprep': ['--quiet'] },
+        elsewhere: { 'cli/mangapress': ['--quiet'] },
         planned: [],
       },
     }),
@@ -383,7 +383,7 @@ test('a page that is promised must exist, and one that exists is no longer promi
     gallery({
       coverage: {
         pages: { cropping: ['--cropping', '-c'] },
-        elsewhere: { 'cli/mangaprep': ['--quiet'] },
+        elsewhere: { 'cli/mangapress': ['--quiet'] },
         planned: ['cropping', 'nothing'],
       },
     }),
@@ -437,19 +437,19 @@ test('the overview page must list every long option, in each language', () => {
 
 test('the other pages that cover options must exist in both languages and name every long option', () => {
   const missing = checkGallery(
-    gallery({ guides: { en: {}, 'pt-br': { 'cli/mangaprep': 'Use `--quiet`.' } } }),
+    gallery({ guides: { en: {}, 'pt-br': { 'cli/mangapress': 'Use `--quiet`.' } } }),
   );
   assert.deepEqual(missing, [
-    'en/cli/mangaprep is where options are covered, and it does not exist.',
+    'en/cli/mangapress is where options are covered, and it does not exist.',
   ]);
 
   const silent = checkGallery(
     gallery({
       guides: {
-        en: { 'cli/mangaprep': 'Nothing about it.' },
-        'pt-br': { 'cli/mangaprep': 'Use `--quiet`.' },
+        en: { 'cli/mangapress': 'Nothing about it.' },
+        'pt-br': { 'cli/mangapress': 'Use `--quiet`.' },
       },
     }),
   );
-  assert.deepEqual(silent, ['en/cli/mangaprep does not mention --quiet.']);
+  assert.deepEqual(silent, ['en/cli/mangapress does not mention --quiet.']);
 });

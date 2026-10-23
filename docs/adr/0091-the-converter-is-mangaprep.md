@@ -10,7 +10,7 @@ mangapress was renamed to mangaprep in release 0.9.0, which also follows KCC 12.
 
 ## Decision
 
-Pin the published mangaprep 0.9.0 for all four supported targets, checking archive and executable hashes through the existing update script. Rename the adapter, tool manifest key, scripts, diagnostics, interface text and guide together. Require `tool: "mangaprep"` and protocol version 1; do not accept both identities, since the app ships and verifies one exact converter release. Historical records keep the former name, and the old guide URLs redirect to the new ones.
+Pin the published mangaprep 0.9.0 for all four supported targets, checking archive and executable hashes through the existing update script. Rename the adapter, tool manifest key, scripts, diagnostics, interface text and guide together. Require `tool: "mangaprep"` and protocol version 1; do not accept both identities, since the app ships and verifies one exact converter release. Historical records keep the former name, and the guide keeps its existing CLI page URLs.
 
 For a Kobo EPUB without custom dimensions, replace each of `/ \\ ? % * : ; | " ' > < $ !` in a typed filename with `_` before portable filename sanitization. Preserve runs, internal spaces and dots. This also applies with `--nokepub`; that option changes the extension only. Other formats and custom dimensions retain their current portable filename behavior. Book metadata receives the original title. Untitled output names remain the converter's responsibility.
 

@@ -12,11 +12,6 @@ export default defineConfig({
   site,
   base,
   trailingSlash: 'always',
-  redirects: {
-    '/cli/mangapress/': '/cli/mangaprep/',
-    '/pt-br/cli/mangapress/': '/pt-br/cli/mangaprep/',
-    '/ja/cli/mangapress/': '/ja/cli/mangaprep/',
-  },
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
@@ -106,7 +101,7 @@ export default defineConfig({
           translations: { 'pt-BR': 'Referência das CLIs', ja: 'CLI リファレンス（上級者向け）' },
           items: [
             { slug: 'cli/mangabind' },
-            { slug: 'cli/mangaprep' },
+            { slug: 'cli/mangapress' },
             { slug: 'cli/machine-protocol' },
           ],
         },
