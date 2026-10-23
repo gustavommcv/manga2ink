@@ -9,7 +9,7 @@ import { removeStaleScratch } from '@/adapters/fs/stale-scratch';
 import { classifyInputPaths, maxInputsPerAdd } from '@/adapters/input/classify-input-paths';
 import { moveLegacyStorage, type LegacyStorageFileSystem } from '@/adapters/library/legacy-storage';
 import { buildMangabindArguments } from '@/adapters/mangabind/arguments';
-import { MangapressEventDecoder, parseMangapressEventLine } from '@/adapters/mangapress/protocol';
+import { MangaprepEventDecoder, parseMangaprepEventLine } from '@/adapters/mangaprep/protocol';
 import { isLibraryRelativePath } from '@/library/manifest';
 import { fromTheMainFrame } from '@/main/ipc/handle';
 import { isOwnHost } from '@/opds/host';
@@ -179,18 +179,18 @@ describe('the arguments mangabind is started with', () => {
   });
 });
 
-describe('the events of mangapress as they arrive', () => {
+describe('the events of mangaprep as they arrive', () => {
   const line = (sequence: number): string =>
     JSON.stringify({
       protocol_version: 1,
-      tool: 'mangapress',
+      tool: 'mangaprep',
       tool_version: '0.5.0',
       sequence,
       type: 'future',
     });
 
   it('are read from lines that end the way Windows ends them, one carriage return and no more', () => {
-    const decoder = new MangapressEventDecoder();
+    const decoder = new MangaprepEventDecoder();
 
     const events = decoder.push(`${line(1)}\r\n${line(2)}\r\n`);
 
@@ -198,7 +198,7 @@ describe('the events of mangapress as they arrive', () => {
   });
 
   it('are read from a last line that has no end of line, carriage return or not', () => {
-    const decoder = new MangapressEventDecoder();
+    const decoder = new MangaprepEventDecoder();
     decoder.push(`${line(1)}\r\n${line(2)}\r`);
 
     expect(decoder.finish().map((event) => event.sequence)).toEqual([2]);
@@ -206,7 +206,7 @@ describe('the events of mangapress as they arrive', () => {
 
   it('are refused as empty, and not as malformed, when a line holds only white space', () => {
     for (const blank of ['', '   ', '\t']) {
-      expect(() => parseMangapressEventLine(blank)).toThrowError(
+      expect(() => parseMangaprepEventLine(blank)).toThrowError(
         expect.objectContaining({ code: 'invalid_payload' }),
       );
     }

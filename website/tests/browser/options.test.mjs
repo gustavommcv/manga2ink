@@ -102,7 +102,7 @@ test('every table of values says which row it is, the flags given and that it wa
     const tables = page.locator('[data-option-book] table');
     expect(await tables.count()).toBeGreaterThan(0);
     for (const table of await tables.all()) {
-      await expect(table.locator('caption')).toContainText('Measured with mangapress');
+      await expect(table.locator('caption')).toContainText('Measured with mangaprep');
       await expect(table.locator('thead th').nth(1)).toHaveText('On the command line');
       for (const flags of await table.locator('tbody tr td:nth-child(2) code').all()) {
         await expect(flags).toHaveText(/^(--?[a-z-]+.*|no flag)$/);
@@ -130,9 +130,9 @@ test('the captions, tables and credits of the examples are in Portuguese on the 
     'title',
     'Abrir imagem em tamanho maior',
   );
-  await expect(page.locator('.credit').first()).toContainText('Convertida com o mangapress');
+  await expect(page.locator('.credit').first()).toContainText('Convertida com o mangaprep');
   const table = page.locator('[data-option-book] table').first();
-  await expect(table.locator('caption')).toContainText('Medido com o mangapress');
+  await expect(table.locator('caption')).toContainText('Medido com o mangaprep');
   await expect(table.locator('thead th').nth(1)).toHaveText('No terminal');
   await expect(table.locator('tbody tr').first().locator('td code')).toHaveText('sem flag');
 

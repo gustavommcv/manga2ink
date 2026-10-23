@@ -9,9 +9,9 @@ import {
 
 import { type BookFormat } from '@/domain/conversion';
 import {
-  defaultMangapressSettings,
-  type MangapressSettings,
-  validateMangapressSettings,
+  defaultMangaprepSettings,
+  type MangaprepSettings,
+  validateMangaprepSettings,
 } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
 import { defaultProcessMode, type ProcessMode } from '@/domain/process-mode';
@@ -25,7 +25,7 @@ import type { SaveSettingsCommand } from '@/shared/settings-contract';
 function settingsToKeep(values: {
   readonly mode: ProcessMode;
   readonly format: BookFormat;
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly singleBook: boolean;
   readonly providerId: string | undefined;
   readonly preferredNetworkInterface: NetworkInterfaceOption | undefined;
@@ -59,8 +59,8 @@ export function useKeptSettings(
   readonly setMode: Dispatch<SetStateAction<ProcessMode>>;
   readonly format: BookFormat;
   readonly setFormat: Dispatch<SetStateAction<BookFormat>>;
-  readonly settings: MangapressSettings;
-  readonly setSettings: Dispatch<SetStateAction<MangapressSettings>>;
+  readonly settings: MangaprepSettings;
+  readonly setSettings: Dispatch<SetStateAction<MangaprepSettings>>;
   readonly singleBook: boolean;
   readonly setSingleBook: Dispatch<SetStateAction<boolean>>;
   /** No online source is chosen until a person chooses one; it is then kept for the next title. */
@@ -72,7 +72,7 @@ export function useKeptSettings(
   >;
 } {
   const say = useSayLater();
-  const [settings, setSettingsNow] = useState<MangapressSettings>(defaultMangapressSettings);
+  const [settings, setSettingsNow] = useState<MangaprepSettings>(defaultMangaprepSettings);
   const [format, setFormatNow] = useState<BookFormat>(defaultFormat);
   const [mode, setModeNow] = useState<ProcessMode>(defaultProcessMode);
   const [singleBook, setSingleBookNow] = useState(false);
@@ -166,7 +166,7 @@ export function useKeptSettings(
   useEffect(() => {
     if (!restored) return;
     // A value that is half typed is not kept: the last valid options stay saved until it is fixed.
-    if (validateMangapressSettings(settings).length > 0) return;
+    if (validateMangaprepSettings(settings).length > 0) return;
     const command = settingsToKeep({
       mode,
       format,

@@ -56,7 +56,7 @@ const settle = (): Promise<void> => new Promise((resolve) => setImmediate(resolv
 
 describe('cancelling a job that was started', () => {
   const conversionContext = (workflow: unknown) => ({
-    mangapressCli: undefined,
+    mangaprepCli: undefined,
     selectedLibraries: new Map<string, string>(),
     activeJobs: new Map<string, AbortController>(),
     conversions: new Set<string>(),

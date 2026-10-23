@@ -10,7 +10,7 @@ const tools: ToolchainStatus = {
   message: message('toolchain.ready', {}),
   tools: [
     { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
-    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
+    { name: 'mangaprep', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
   ],
 };
 
@@ -42,7 +42,7 @@ describe('the diagnostics a person copies for a report', () => {
         'Working folder: the default',
         'Conversion tools: ready',
         '  mangabind v0.7.2: verified',
-        '  mangapress v0.8.0: verified',
+        '  mangaprep v0.8.0: verified',
         '',
       ].join('\n'),
     );
@@ -82,17 +82,17 @@ describe('the diagnostics a person copies for a report', () => {
         message: raw('No.'),
         tools: [
           {
-            name: 'mangapress',
+            name: 'mangaprep',
             releaseTag: 'v0.8.0',
             state: 'failed',
-            message: raw('The hash of /opt/manga2ink/toolchain/mangapress is wrong.'),
+            message: raw('The hash of /opt/manga2ink/toolchain/mangaprep is wrong.'),
           },
         ],
       },
     });
 
     expect(text).toContain('Conversion tools: blocked');
-    expect(text).toContain('  mangapress v0.8.0: failed the check');
+    expect(text).toContain('  mangaprep v0.8.0: failed the check');
     expect(text).not.toContain('/opt');
   });
 

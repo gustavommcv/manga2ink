@@ -971,7 +971,7 @@ describe('mapping editor', () => {
       expect(skipButton).toBeEnabled();
       expect(
         screen.getByText(
-          'Send the folder to mangapress as one book, without grouping chapters into volumes.',
+          'Send the folder to mangaprep as one book, without grouping chapters into volumes.',
         ),
       ).toBeVisible();
       expect(

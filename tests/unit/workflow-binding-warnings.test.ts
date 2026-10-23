@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { PipelineIssue } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   dependencies,
@@ -26,7 +26,7 @@ describe('what the joining step left out of the books', () => {
   const request = (sessionId: string) => ({
     sessionId,
     libraryPath: '/pending',
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     format: 'epub' as const,
   });
 

@@ -11,8 +11,8 @@ import { useRef, useState } from 'react';
 
 import { type QueueRow, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
-import { defaultFormat, isDefaultMangapress } from '@/domain/preferences';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
+import { defaultFormat, isDefaultMangaprep } from '@/domain/preferences';
 import { defaultProcessMode, type ProcessMode } from '@/domain/process-mode';
 import { lowSpace, roomNeeded, type WorkingSpace } from '@/domain/working-space';
 import { DropTarget } from '@/renderer/components/queue/drop-target';
@@ -70,7 +70,7 @@ export interface QueueScreenProps {
   readonly onMode: (mode: ProcessMode) => void;
   readonly onOpenOptions: () => void;
   readonly onRemove: (id: string) => void;
-  /** Puts the steps, device, format and every mangapress option back to their defaults. */
+  /** Puts the steps, device, format and every mangaprep option back to their defaults. */
   readonly onReset: () => void;
   readonly onSingleBook: (singleBook: boolean) => void;
   readonly onValidate: () => void;
@@ -79,7 +79,7 @@ export interface QueueScreenProps {
   /** Items the last add could not use, with the reason for each. */
   readonly rejected: readonly RejectedInput[];
   readonly rows: readonly QueueRow[];
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly singleBook: boolean;
   /** What is left on the drives the app works on, or null while it is not known (ADR 0060). */
   readonly space: WorkingSpace | null;
@@ -140,7 +140,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const summary = summarizeQueue(rows, mode);
-  const mangapressRuns = mode !== 'bind-only';
+  const mangaprepRuns = mode !== 'bind-only';
   const canRun = !disabled && summary.inspecting === 0 && summary.runnable > 0;
   const hint =
     summary.inspecting > 0
@@ -198,16 +198,16 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
       />
 
       <Field
-        changed={settings.deviceProfile !== defaultMangapressSettings.deviceProfile}
-        disabled={!mangapressRuns || profiles.length === 0}
+        changed={settings.deviceProfile !== defaultMangaprepSettings.deviceProfile}
+        disabled={!mangaprepRuns || profiles.length === 0}
         id="queue-device"
         label={words.panel.device}
         onReset={() => {
-          onDeviceProfile(defaultMangapressSettings.deviceProfile);
+          onDeviceProfile(defaultMangaprepSettings.deviceProfile);
         }}
       >
         <NativeSelect
-          disabled={!mangapressRuns || profiles.length === 0}
+          disabled={!mangaprepRuns || profiles.length === 0}
           id="queue-device"
           onChange={(event) => {
             onDeviceProfile(event.target.value);
@@ -224,14 +224,14 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
 
       <Field
         changed={format !== defaultFormat}
-        disabled={!mangapressRuns}
+        disabled={!mangaprepRuns}
         label={words.panel.format}
         onReset={() => {
           onFormat(defaultFormat);
         }}
       >
         <SegmentedControl
-          disabled={!mangapressRuns}
+          disabled={!mangaprepRuns}
           label={words.panel.format}
           onChange={onFormat}
           options={formatOptions}
@@ -240,7 +240,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
       </Field>
 
       <div>
-        {mangapressRuns && (
+        {mangaprepRuns && (
           <button
             className="border-border hover:text-foreground focus-visible:ring-ring text-muted-foreground flex w-full items-center justify-between border-t py-2.5 text-sm outline-none focus-visible:ring-2"
             onClick={onOpenOptions}
@@ -253,7 +253,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         <div className="border-border border-t pt-3">
           <ResetOptions
             changed={
-              mode !== defaultProcessMode || singleBook || !isDefaultMangapress(format, settings)
+              mode !== defaultProcessMode || singleBook || !isDefaultMangaprep(format, settings)
             }
             onReset={onReset}
             scope="queue"

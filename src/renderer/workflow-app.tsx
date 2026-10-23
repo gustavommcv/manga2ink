@@ -28,8 +28,8 @@ import {
 } from '@/domain/item-options';
 import { dominantLanguage, type MappingDraft, mappingSignature } from '@/domain/mapping';
 import {
-  defaultMangapressSettings,
-  type MangapressSettings,
+  defaultMangaprepSettings,
+  type MangaprepSettings,
   resolveDeviceProfileFallback,
   withDeviceProfile,
 } from '@/domain/output-profile';
@@ -39,7 +39,7 @@ import {
   defaultProcessMode,
   type ProcessMode,
   resolveMode,
-  usesMangapress,
+  usesMangaprep,
 } from '@/domain/process-mode';
 import {
   describeRun,
@@ -326,18 +326,18 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
   };
 
   /**
-   * What a run sends for the chosen process. When mangapress is not run its settings are
+   * What a run sends for the chosen process. When mangaprep is not run its settings are
    * irrelevant, so defaults go instead of whatever half-edited values are on screen: they would
    * otherwise fail validation for a step that never happens.
    */
   const withRunSettings = <M extends ProcessMode>(
     resolved: M,
     own?: ItemOptions,
-  ): { readonly mode: M; readonly settings: MangapressSettings; readonly format: BookFormat } =>
-    usesMangapress(resolved)
+  ): { readonly mode: M; readonly settings: MangaprepSettings; readonly format: BookFormat } =>
+    usesMangaprep(resolved)
       ? { mode: resolved, ...effectiveOptions(queueOptions, own) }
-      : { mode: resolved, settings: defaultMangapressSettings, format: 'cbz' };
-  /** The command for one queue row. A folder sent straight to mangapress carries no volumes. */
+      : { mode: resolved, settings: defaultMangaprepSettings, format: 'cbz' };
+  /** The command for one queue row. A folder sent straight to mangaprep carries no volumes. */
   const planCommandFor = (
     row: InspectedRow,
     rowProcess: ProcessMode,
@@ -348,8 +348,8 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     singleBook: row.kind === 'cbz' ? false : singleBook,
     ...withRunSettings(rowProcess, row.options),
     ...(row.mapping === undefined || rowProcess === 'convert-only' ? {} : { mapping: row.mapping }),
-    // What was typed only matters where mangapress makes the book.
-    ...(usesMangapress(rowProcess) && row.details !== undefined && hasBookDetails(row.details)
+    // What was typed only matters where mangaprep makes the book.
+    ...(usesMangaprep(rowProcess) && row.details !== undefined && hasBookDetails(row.details)
       ? { details: row.details }
       : {}),
   });
@@ -457,7 +457,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       if (row.kind === 'library') {
         const libraryProcess = resolveMode('library', rowProcess);
         const pendingTitles = (row.titles ?? []).filter(isPendingTitle);
-        const titleDetails = usesMangapress(libraryProcess)
+        const titleDetails = usesMangaprep(libraryProcess)
           ? pendingTitles.flatMap((title) =>
               title.details !== undefined && hasBookDetails(title.details)
                 ? [{ title: title.title, details: title.details }]
@@ -465,7 +465,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             )
           : [];
         // A title's own options reach it by its name, as what was typed for it does.
-        const titleOptions = usesMangapress(libraryProcess)
+        const titleOptions = usesMangaprep(libraryProcess)
           ? pendingTitles.flatMap((title) =>
               hasItemOptions(title.options)
                 ? [
@@ -505,7 +505,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       if (
         result.ok &&
         result.value.length > 0 &&
-        usesMangapress(rowProcess) &&
+        usesMangaprep(rowProcess) &&
         hasItemOptions(row.options)
       ) {
         withOwnOptions += 1;
@@ -743,15 +743,15 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     await refreshPendingRuns();
   };
 
-  const resetMangapress = (): void => {
+  const resetMangaprep = (): void => {
     setFormat(defaultFormat);
-    setSettings(defaultMangapressSettings);
+    setSettings(defaultMangaprepSettings);
   };
 
   const resetAll = (): void => {
     setMode(defaultProcessMode);
     setSingleBook(false);
-    resetMangapress();
+    resetMangaprep();
   };
 
   const handleSingleBook = (nextSingleBook: boolean): void => {
@@ -817,14 +817,14 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       : editingTarget !== undefined
         ? rows.find((row) => row.id === editingTarget.rowId)
         : undefined;
-  // A library's titles can have their own details only where mangapress makes their books.
+  // A library's titles can have their own details only where mangaprep makes their books.
   const libraryProcess = rowMode('library', mode);
-  const libraryMakesBooks = libraryProcess !== 'skip' && usesMangapress(libraryProcess);
+  const libraryMakesBooks = libraryProcess !== 'skip' && usesMangaprep(libraryProcess);
   const editingTitleEntry =
     editingTarget?.kind === 'title' && editingRow?.state === 'inspected'
       ? editingRow.titles?.find((title) => title.title === editingTarget.title)
       : undefined;
-  // The covers of the item whose details are open, where mangapress makes its books: a cover is
+  // The covers of the item whose details are open, where mangaprep makes its books: a cover is
   // its to make, so a run that stops at the joined volumes has none to set.
   const inputProcess =
     editingRow === undefined || editingRow.kind === 'library'
@@ -837,7 +837,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
         ? editingTitleEntry !== undefined && libraryMakesBooks
           ? { sessionId: editingRow.sessionId, title: editingTitleEntry.title }
           : undefined
-        : inputProcess !== 'skip' && usesMangapress(inputProcess)
+        : inputProcess !== 'skip' && usesMangaprep(inputProcess)
           ? { sessionId: editingRow.sessionId }
           : undefined;
   // The books the item makes, in order: its volumes, or the one book it is.
@@ -1016,7 +1016,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             }}
             onFormat={setFormat}
             onNotify={notify}
-            onReset={resetMangapress}
+            onReset={resetMangaprep}
             onSettings={setSettings}
             profiles={profiles}
             settings={settings}

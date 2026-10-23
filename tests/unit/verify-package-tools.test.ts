@@ -10,14 +10,14 @@ const script = path.resolve('scripts/verify-package-tools.mjs');
 
 const sha256 = (content: string): string => createHash('sha256').update(content).digest('hex');
 
-const pinned = { mangabind: 'the pinned mangabind', mangapress: 'the pinned mangapress' };
+const pinned = { mangabind: 'the pinned mangabind', mangaprep: 'the pinned mangaprep' };
 
-function lockFor(contents: Record<'mangabind' | 'mangapress', string>): string {
-  const tool = (name: 'mangabind' | 'mangapress'): unknown => ({
+function lockFor(contents: Record<'mangabind' | 'mangaprep', string>): string {
+  const tool = (name: 'mangabind' | 'mangaprep'): unknown => ({
     pin: { artifacts: { 'linux-x64': { executableSha256: sha256(contents[name]) } } },
   });
   return JSON.stringify({
-    tools: { mangabind: tool('mangabind'), mangapress: tool('mangapress') },
+    tools: { mangabind: tool('mangabind'), mangaprep: tool('mangaprep') },
   });
 }
 
@@ -38,7 +38,7 @@ describe('the package tool check', () => {
   });
 
   async function install(
-    tools: Partial<Record<'mangabind' | 'mangapress', string>>,
+    tools: Partial<Record<'mangabind' | 'mangaprep', string>>,
     root = 'usr/lib/manga2ink/resources/toolchain/linux-x64',
   ): Promise<void> {
     const folder = path.join(unpacked, root);
@@ -62,7 +62,7 @@ describe('the package tool check', () => {
     await install(pinned);
     const run = verify(lock);
     expect(run.status).toBe(0);
-    expect(run.output).toContain('manga2ink.rpm: mangabind and mangapress are byte for byte');
+    expect(run.output).toContain('manga2ink.rpm: mangabind and mangaprep are byte for byte');
   });
 
   it('finds the tools wherever the package puts its resources folder', async () => {
@@ -71,14 +71,14 @@ describe('the package tool check', () => {
   });
 
   it('refuses a tool a package builder edited, which is what rpmbuild does to ELF files', async () => {
-    await install({ ...pinned, mangapress: 'the pinned mangapress without its .comment section' });
+    await install({ ...pinned, mangaprep: 'the pinned mangaprep without its .comment section' });
     const run = verify(lock);
     expect(run.status).toBe(1);
     expect(run.output).toContain('the app would refuse to convert');
     // The script names the file as the operating system writes its path: backslashes on Windows.
     const edited = path.join('usr', 'lib', 'manga2ink', 'resources', 'toolchain', 'linux-x64');
-    expect(run.output).toContain(`mangapress: ${path.join(edited, 'mangapress')}`);
-    expect(run.output).toContain(sha256(pinned.mangapress));
+    expect(run.output).toContain(`mangaprep: ${path.join(edited, 'mangaprep')}`);
+    expect(run.output).toContain(sha256(pinned.mangaprep));
     expect(run.output).not.toContain('mangabind:');
   });
 
@@ -86,7 +86,7 @@ describe('the package tool check', () => {
     await install({ mangabind: pinned.mangabind });
     const run = verify(lock);
     expect(run.status).toBe(1);
-    expect(run.output).toContain('mangapress: not in the package');
+    expect(run.output).toContain('mangaprep: not in the package');
   });
 
   it('refuses a package that has no toolchain folder at all', async () => {
@@ -95,7 +95,7 @@ describe('the package tool check', () => {
     const run = verify(lock);
     expect(run.status).toBe(1);
     expect(run.output).toContain('mangabind: not in the package');
-    expect(run.output).toContain('mangapress: not in the package');
+    expect(run.output).toContain('mangaprep: not in the package');
   });
 
   it('says how to run it when it is given nothing to check', () => {

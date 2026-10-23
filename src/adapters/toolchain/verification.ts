@@ -6,7 +6,7 @@ import { pipeline } from 'node:stream/promises';
 import { promisify } from 'node:util';
 
 import { parseMangabindProtocolInfo } from '@/adapters/mangabind/protocol';
-import { parseMangapressEventStream } from '@/adapters/mangapress/protocol';
+import { parseMangaprepEventStream } from '@/adapters/mangaprep/protocol';
 import { loadToolchainManifest, type ToolchainManifest } from '@/adapters/toolchain/manifest';
 import { message } from '@/domain/message';
 import type {
@@ -38,7 +38,7 @@ interface VerificationOptions {
 
 const executableNames: Record<ToolName, { readonly windows: string; readonly unix: string }> = {
   mangabind: { windows: 'mangabind.exe', unix: 'mangabind' },
-  mangapress: { windows: 'mangapress.exe', unix: 'mangapress' },
+  mangaprep: { windows: 'mangaprep.exe', unix: 'mangaprep' },
 };
 
 export function resolveToolchainTarget(
@@ -100,7 +100,7 @@ function verifyProtocolOutput(
     return handshake.capabilities;
   }
 
-  const events = parseMangapressEventStream(stdout);
+  const events = parseMangaprepEventStream(stdout);
   const handshake = events.length === 1 ? events[0] : undefined;
   if (
     handshake?.type !== 'protocol' ||
@@ -110,7 +110,7 @@ function verifyProtocolOutput(
     !handshake.capabilities.includes('events') ||
     !handshake.capabilities.includes('profiles')
   ) {
-    throw new Error('mangapress reports an incompatible machine protocol.');
+    throw new Error('mangaprep reports an incompatible machine protocol.');
   }
   // The known protocol event was already validated against z.array(z.string()) by its parser.
   return handshake.capabilities as string[];
@@ -176,7 +176,7 @@ export async function verifyBundledToolchain({
   }
 
   const tools = await Promise.all(
-    (['mangabind', 'mangapress'] as const).map((toolName) =>
+    (['mangabind', 'mangaprep'] as const).map((toolName) =>
       verifyTool(toolName, target, toolchainRoot, manifest, dependencies),
     ),
   );

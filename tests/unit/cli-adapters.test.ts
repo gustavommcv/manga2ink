@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 
 import { MangabindCliAdapter } from '@/adapters/mangabind/cli';
-import { MangapressCliAdapter } from '@/adapters/mangapress/cli';
-import { isMangapressErrorEvent, parseMangapressEventLine } from '@/adapters/mangapress/protocol';
+import { MangaprepCliAdapter } from '@/adapters/mangaprep/cli';
+import { isMangaprepErrorEvent, parseMangaprepEventLine } from '@/adapters/mangaprep/protocol';
 import type { ProcessRunner } from '@/application/ports/process-runner';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -14,8 +14,8 @@ const mangabindFixture = fs.readFileSync(
   path.join(repositoryRoot, 'tests', 'fixtures', 'protocol', 'mangabind-v1-plan.json'),
   'utf8',
 );
-const mangapressFixture = fs.readFileSync(
-  path.join(repositoryRoot, 'tests', 'fixtures', 'protocol', 'mangapress-v1-events.jsonl'),
+const mangaprepFixture = fs.readFileSync(
+  path.join(repositoryRoot, 'tests', 'fixtures', 'protocol', 'mangaprep-v1-events.jsonl'),
   'utf8',
 );
 const mangabindProgressFixture = fs.readFileSync(
@@ -152,10 +152,10 @@ describe('CLI process adapters', () => {
     );
   });
 
-  it('decodes mangapress progress while it runs and returns its final result', async () => {
+  it('decodes mangaprep progress while it runs and returns its final result', async () => {
     const onEvent = vi.fn();
-    const runner = runnerReturning(mangapressFixture);
-    const adapter = new MangapressCliAdapter('/tools/mangapress', runner.runner);
+    const runner = runnerReturning(mangaprepFixture);
+    const adapter = new MangaprepCliAdapter('/tools/mangaprep', runner.runner);
     const controller = new AbortController();
     const result = await adapter.run(
       {
@@ -168,23 +168,26 @@ describe('CLI process adapters', () => {
       { onEvent, signal: controller.signal },
     );
 
-    expect(onEvent).toHaveBeenCalledTimes(18);
+    expect(onEvent).toHaveBeenCalledTimes(19);
     expect(result.result).toMatchObject({ type: 'result', written: true });
     expect(result.errors).toEqual([]);
     // A run that succeeds can still have noticed something; that is kept, not dropped.
-    expect(result.warnings).toMatchObject([{ code: 'skipped_non_images', severity: 'warning' }]);
+    expect(result.warnings).toMatchObject([
+      { code: 'skipped_non_images', severity: 'warning' },
+      { code: 'images_smaller_than_device', severity: 'warning' },
+    ]);
     expect(runner.run).toHaveBeenCalledWith(
-      expect.objectContaining({ executablePath: '/tools/mangapress' }),
+      expect.objectContaining({ executablePath: '/tools/mangaprep' }),
       expect.objectContaining({ signal: controller.signal }),
     );
   });
 
   it('retains structured errors and partial progress after a nonzero exit', async () => {
-    const lines = mangapressFixture.trimEnd().split('\n').slice(0, 2);
+    const lines = mangaprepFixture.trimEnd().split('\n').slice(0, 2);
     lines.push(
       JSON.stringify({
         protocol_version: 1,
-        tool: 'mangapress',
+        tool: 'mangaprep',
         tool_version: 'candidate',
         sequence: 3,
         type: 'error',
@@ -200,8 +203,8 @@ describe('CLI process adapters', () => {
         diagnostic: 'decoder detail',
       }),
     );
-    const adapter = new MangapressCliAdapter(
-      'mangapress',
+    const adapter = new MangaprepCliAdapter(
+      'mangaprep',
       runnerReturning(`${lines.join('\n')}\n`, 1).runner,
     );
     const result = await adapter.run({
@@ -219,17 +222,17 @@ describe('CLI process adapters', () => {
   });
 
   it('takes the result only from the last event, so a result followed by anything is not a result', async () => {
-    const lines = mangapressFixture.trimEnd().split('\n');
+    const lines = mangaprepFixture.trimEnd().split('\n');
     const future = JSON.stringify({
       protocol_version: 1,
-      tool: 'mangapress',
+      tool: 'mangaprep',
       tool_version: 'candidate',
       sequence: lines.length + 1,
       type: 'future',
     });
 
     await expect(
-      new MangapressCliAdapter(
+      new MangaprepCliAdapter(
         'tool',
         runnerReturning(`${lines.join('\n')}\n${future}\n`).runner,
       ).run({
@@ -252,36 +255,36 @@ describe('CLI process adapters', () => {
     };
 
     await expect(
-      new MangapressCliAdapter('tool', runnerReturning('').runner).run(request),
+      new MangaprepCliAdapter('tool', runnerReturning('').runner).run(request),
     ).rejects.toMatchObject({
       code: 'empty_stream',
     });
     await expect(
-      new MangapressCliAdapter('tool', runnerReturning('{').runner).run(request),
+      new MangaprepCliAdapter('tool', runnerReturning('{').runner).run(request),
     ).rejects.toMatchObject({
       code: 'incomplete_line',
     });
     await expect(
-      new MangapressCliAdapter(
+      new MangaprepCliAdapter(
         'tool',
-        runnerReturning(mangapressFixture.split('\n')[0] + '\n').runner,
+        runnerReturning(mangaprepFixture.split('\n')[0] + '\n').runner,
       ).run(request),
     ).rejects.toMatchObject({ code: 'invalid_payload' });
   });
 
   it('distinguishes error events from additive future events', () => {
-    const future = parseMangapressEventLine(
-      '{"protocol_version":1,"tool":"mangapress","tool_version":"x","sequence":1,"type":"future"}',
+    const future = parseMangaprepEventLine(
+      '{"protocol_version":1,"tool":"mangaprep","tool_version":"x","sequence":1,"type":"future"}',
     );
 
-    expect(isMangapressErrorEvent(future)).toBe(false);
+    expect(isMangaprepErrorEvent(future)).toBe(false);
   });
 
-  it('loads device profiles from mangapress structured output', async () => {
+  it('loads device profiles from mangaprep structured output', async () => {
     const stream = [
       {
         protocol_version: 1,
-        tool: 'mangapress',
+        tool: 'mangaprep',
         tool_version: '0.5.0',
         sequence: 1,
         type: 'profile',
@@ -294,7 +297,7 @@ describe('CLI process adapters', () => {
       },
       {
         protocol_version: 1,
-        tool: 'mangapress',
+        tool: 'mangaprep',
         tool_version: '0.5.0',
         sequence: 2,
         type: 'result',
@@ -305,7 +308,7 @@ describe('CLI process adapters', () => {
       .map((event) => JSON.stringify(event))
       .join('\n');
     const returning = runnerReturning(`${stream}\n`);
-    const profiles = await new MangapressCliAdapter('mangapress', returning.runner).listProfiles();
+    const profiles = await new MangaprepCliAdapter('mangaprep', returning.runner).listProfiles();
 
     expect(profiles.profiles).toMatchObject([{ code: 'KV', name: 'Kindle Voyage' }]);
     expect(returning.run.mock.calls[0]?.[0].arguments).toEqual([
@@ -320,7 +323,7 @@ describe('CLI process adapters', () => {
   ])('rejects an invalid profile listing: %j', async ({ exitCode, operation }) => {
     const stream = `${JSON.stringify({
       protocol_version: 1,
-      tool: 'mangapress',
+      tool: 'mangaprep',
       tool_version: '0.5.0',
       sequence: 1,
       type: 'result',
@@ -329,10 +332,7 @@ describe('CLI process adapters', () => {
     })}\n`;
 
     await expect(
-      new MangapressCliAdapter(
-        'mangapress',
-        runnerReturning(stream, exitCode).runner,
-      ).listProfiles(),
+      new MangaprepCliAdapter('mangaprep', runnerReturning(stream, exitCode).runner).listProfiles(),
     ).rejects.toMatchObject({ code: 'invalid_payload' });
   });
 });

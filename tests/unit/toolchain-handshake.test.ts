@@ -7,12 +7,12 @@ import { verifyBundledToolchain } from '@/adapters/toolchain/verification';
 import type { ToolchainTarget } from '@/shared/toolchain-status';
 
 const manifest = loadToolchainManifest();
-type Tool = 'mangabind' | 'mangapress';
-const tools: readonly Tool[] = ['mangabind', 'mangapress'];
+type Tool = 'mangabind' | 'mangaprep';
+const tools: readonly Tool[] = ['mangabind', 'mangaprep'];
 
 const versionOf = (tool: Tool): string => manifest.tools[tool].pin.releaseTag.slice(1);
 const toolOf = (executable: string): Tool =>
-  path.basename(executable).startsWith('mangabind') ? 'mangabind' : 'mangapress';
+  path.basename(executable).startsWith('mangabind') ? 'mangabind' : 'mangaprep';
 
 /** What each tool answers to `--protocol-version`, with a change for one of them. */
 function handshake(tool: Tool, change: Record<string, unknown> = {}): string {
@@ -80,7 +80,7 @@ describe('the two answers a bundled tool gives before it is trusted', () => {
     expect(status.state).toBe('ready');
     expect(status.tools.map((tool) => [tool.name, tool.state, tool.capabilities])).toEqual([
       ['mangabind', 'ready', ['report']],
-      ['mangapress', 'ready', ['events', 'profiles']],
+      ['mangaprep', 'ready', ['events', 'profiles']],
     ]);
   });
 
@@ -112,8 +112,8 @@ describe('the two answers a bundled tool gives before it is trusted', () => {
 
   it.each([
     ['mangabind', 'report'],
-    ['mangapress', 'events'],
-    ['mangapress', 'profiles'],
+    ['mangaprep', 'events'],
+    ['mangaprep', 'profiles'],
   ] as const)('refuse %s that cannot do %s', async (tool, missing) => {
     const all = tool === 'mangabind' ? ['report'] : ['events', 'profiles'];
     const { status } = await verifyWith({
@@ -125,15 +125,15 @@ describe('the two answers a bundled tool gives before it is trusted', () => {
     expect(stateOf(status, tool)).toBe('failed');
   });
 
-  it('refuses a mangapress that answers with more than its one handshake, or with another event', async () => {
-    const two = `${handshake('mangapress')}${handshake('mangapress')}`;
-    const other = handshake('mangapress', { type: 'stage' });
+  it('refuses a mangaprep that answers with more than its one handshake, or with another event', async () => {
+    const two = `${handshake('mangaprep')}${handshake('mangaprep')}`;
+    const other = handshake('mangaprep', { type: 'stage' });
 
+    expect(stateOf((await verifyWith({ mangaprep: { protocol: two } })).status, 'mangaprep')).toBe(
+      'failed',
+    );
     expect(
-      stateOf((await verifyWith({ mangapress: { protocol: two } })).status, 'mangapress'),
-    ).toBe('failed');
-    expect(
-      stateOf((await verifyWith({ mangapress: { protocol: other } })).status, 'mangapress'),
+      stateOf((await verifyWith({ mangaprep: { protocol: other } })).status, 'mangaprep'),
     ).toBe('failed');
   });
 
@@ -159,7 +159,7 @@ describe('which executable of the bundle is looked at', () => {
       expect(hashed.sort()).toEqual(
         [
           path.join(path.sep, 'bundle', 'toolchain', folder, `mangabind${extension}`),
-          path.join(path.sep, 'bundle', 'toolchain', folder, `mangapress${extension}`),
+          path.join(path.sep, 'bundle', 'toolchain', folder, `mangaprep${extension}`),
         ].sort(),
       );
     },

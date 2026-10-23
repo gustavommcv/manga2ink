@@ -83,7 +83,7 @@ describe('packaged application shell', () => {
     };
     const required = {
       mangabind: ['LICENSE'],
-      mangapress: [
+      mangaprep: [
         'LICENSE-MIT',
         'LICENSE-APACHE',
         'THIRD-PARTY-NOTICES.md',

@@ -29,7 +29,7 @@ import {
   plannedVolumeBookName,
   type WorkflowPlan,
 } from '@/domain/conversion';
-import { type ProcessMode, unsupportedModeReason, usesMangapress } from '@/domain/process-mode';
+import { type ProcessMode, unsupportedModeReason, usesMangaprep } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 
 /** Plan or convert one folder or CBZ; successful conversions spend their inspected session. */
@@ -57,11 +57,11 @@ export class SingleInputRun {
   ): Promise<readonly ConversionArtifact[]> {
     const { session, mode, singleBook } = this.assertRunnable(request, 'converting');
 
-    const details = usesMangapress(mode) ? (request.details ?? noBookDetails) : noBookDetails;
+    const details = usesMangaprep(mode) ? (request.details ?? noBookDetails) : noBookDetails;
     let inputs: readonly BookInput[];
     let bindingIssues: readonly PipelineIssue[] = [];
     if (session.selection.kind === 'cbz' || mode === 'convert-only') {
-      // Already one book (or explicitly not grouped): straight to mangapress, no mapping needed.
+      // Already one book (or explicitly not grouped): straight to mangaprep, no mapping needed.
       inputs = [{ path: session.selection.inputPath }];
     } else {
       if (
@@ -102,8 +102,8 @@ export class SingleInputRun {
       }
     }
 
-    // A cover is for mangapress to make; a run that stops at the joined volumes has no use for one.
-    if (usesMangapress(mode)) {
+    // A cover is for mangaprep to make; a run that stops at the joined volumes has no use for one.
+    if (usesMangaprep(mode)) {
       inputs = withCovers(inputs, await this.covers.pathsFor(session.selection.inputPath));
     }
 
@@ -165,9 +165,9 @@ export class SingleInputRun {
         signal === undefined ? {} : { signal },
       );
       return {
-        tool: 'mangapress',
+        tool: 'mangaprep',
         title: plan.title,
-        message: message('plan.mangapress', {
+        message: message('plan.mangaprep', {
           profile: plan.profile,
           width: plan.width,
           height: plan.height,
@@ -198,7 +198,7 @@ export class SingleInputRun {
       }),
       books: singleBook
         ? [plannedSingleBook(plan.title, plan.volumes)]
-        : usesMangapress(mode)
+        : usesMangaprep(mode)
           ? plan.volumes.map((volume) => ({
               name: plannedVolumeBookName(
                 volume,

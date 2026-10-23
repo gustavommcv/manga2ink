@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildMangabindArguments } from '@/adapters/mangabind/arguments';
-import { buildMangapressArguments } from '@/adapters/mangapress/arguments';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { buildMangaprepArguments } from '@/adapters/mangaprep/arguments';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 describe('CLI argument builders', () => {
   it('builds a mangabind plan without shell-escaping path values', () => {
@@ -67,7 +67,7 @@ describe('CLI argument builders', () => {
     ).toEqual(['--input', '/manga/work', '--output', '/tmp/volumes', '--combine', '--json']);
   });
 
-  it('builds mangapress plan and execution arguments deterministically', () => {
+  it('builds mangaprep plan and execution arguments deterministically', () => {
     const request = {
       inputPath: '/tmp/Vol. 01.cbz',
       outputPath: '/library/Vol. 01.epub',
@@ -76,7 +76,7 @@ describe('CLI argument builders', () => {
       dryRun: false,
     };
 
-    expect(buildMangapressArguments(request)).toEqual([
+    expect(buildMangaprepArguments(request)).toEqual([
       '/tmp/Vol. 01.cbz',
       '--profile',
       'KPW5',
@@ -86,7 +86,7 @@ describe('CLI argument builders', () => {
       '/library/Vol. 01.epub',
       '--json-events',
     ]);
-    expect(buildMangapressArguments({ ...request, dryRun: true })).toContain('--dry-run');
+    expect(buildMangaprepArguments({ ...request, dryRun: true })).toContain('--dry-run');
   });
 
   it('asks for nested contents only where the format has them: an EPUB and a PDF', () => {
@@ -98,18 +98,18 @@ describe('CLI argument builders', () => {
       nestedToc: true,
     };
 
-    expect(buildMangapressArguments({ ...series, format: 'epub' })).toContain('--nested-toc');
-    expect(buildMangapressArguments({ ...series, format: 'pdf' })).toContain('--nested-toc');
-    // mangapress refuses the flag for a CBZ, so a whole series made into one is not sent it.
-    expect(buildMangapressArguments({ ...series, format: 'cbz' })).not.toContain('--nested-toc');
-    expect(buildMangapressArguments({ ...series, format: 'epub', nestedToc: false })).not.toContain(
+    expect(buildMangaprepArguments({ ...series, format: 'epub' })).toContain('--nested-toc');
+    expect(buildMangaprepArguments({ ...series, format: 'pdf' })).toContain('--nested-toc');
+    // mangaprep refuses the flag for a CBZ, so a whole series made into one is not sent it.
+    expect(buildMangaprepArguments({ ...series, format: 'cbz' })).not.toContain('--nested-toc');
+    expect(buildMangaprepArguments({ ...series, format: 'epub', nestedToc: false })).not.toContain(
       '--nested-toc',
     );
   });
 
-  it('maps the complete mangapress conversion surface to explicit arguments', () => {
+  it('maps the complete mangaprep conversion surface to explicit arguments', () => {
     expect(
-      buildMangapressArguments({
+      buildMangaprepArguments({
         inputPath: '/tmp/source.cbz',
         outputPath: '/library',
         profile: 'OTHER',
@@ -218,7 +218,7 @@ describe('CLI argument builders', () => {
   });
 
   it('keeps a title or an author that starts with a hyphen attached to its flag', () => {
-    const args = buildMangapressArguments({
+    const args = buildMangaprepArguments({
       inputPath: '/tmp/source.cbz',
       outputPath: '/library',
       profile: 'KPW6',
@@ -233,11 +233,11 @@ describe('CLI argument builders', () => {
     expect(args).not.toContain('--help');
   });
 
-  it('keeps the settings that are not on by default aligned with mangapress defaults', () => {
+  it('keeps the settings that are not on by default aligned with mangaprep defaults', () => {
     // A Paperwhite, manga order, both spread modes and upscaling start on, as in Kindle Comic
-    // Converter's window (ADR 0011, ADR 0015); every value mangapress has a default for besides
+    // Converter's window (ADR 0011, ADR 0015); every value mangaprep has a default for besides
     // those is left at it.
-    expect(defaultMangapressSettings).toMatchObject({
+    expect(defaultMangaprepSettings).toMatchObject({
       deviceProfile: 'KPW6',
       cropping: 'margins-and-page-numbers',
       croppingPower: 1,
@@ -247,19 +247,19 @@ describe('CLI argument builders', () => {
       metadataTitle: 'series-only',
       language: 'en-US',
     });
-    expect(Object.isFrozen(defaultMangapressSettings)).toBe(true);
+    expect(Object.isFrozen(defaultMangaprepSettings)).toBe(true);
   });
 
-  it('sends the on-by-default options to mangapress when a run uses the defaults', () => {
-    const args = buildMangapressArguments({
+  it('sends the on-by-default options to mangaprep when a run uses the defaults', () => {
+    const args = buildMangaprepArguments({
       inputPath: 'C:\\Manga\\Work',
       outputPath: 'C:\\Out',
-      profile: defaultMangapressSettings.deviceProfile,
+      profile: defaultMangaprepSettings.deviceProfile,
       format: 'epub',
       dryRun: false,
-      mangaStyle: defaultMangapressSettings.mangaStyle,
-      splitter: defaultMangapressSettings.splitter,
-      upscale: defaultMangapressSettings.upscale,
+      mangaStyle: defaultMangaprepSettings.mangaStyle,
+      splitter: defaultMangaprepSettings.splitter,
+      upscale: defaultMangaprepSettings.upscale,
     });
 
     expect(args).toEqual(expect.arrayContaining(['--manga-style', '--upscale']));

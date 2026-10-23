@@ -13,7 +13,7 @@ import {
   type ConversionProgress,
   ConversionWorkflowError,
 } from '@/domain/conversion';
-import type { MangapressSettings } from '@/domain/output-profile';
+import type { MangaprepSettings } from '@/domain/output-profile';
 import type { ProcessMode } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 import type { VolumePosition } from '@/domain/messages/run';
@@ -54,7 +54,7 @@ export class BookProduction {
     mode: ProcessMode,
     request: {
       readonly libraryPath: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       /** What was typed for the series or book these files make. */
       readonly details: BookDetails;
       readonly format: BookFormat;
@@ -92,7 +92,7 @@ export class BookProduction {
   }
 
   /**
-   * Turns one joined volume into a book: converted by mangapress, or, when the run stops after
+   * Turns one joined volume into a book: converted by mangaprep, or, when the run stops after
    * joining, saved as the CBZ mangabind made.
    */
   async produceBook(
@@ -100,7 +100,7 @@ export class BookProduction {
     request: {
       readonly inputPath: string;
       readonly libraryPath: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       /** The title, author and language this book is made with. */
       readonly book: BookDetails;
       /** The image of the person's own its cover is made from, when there is one. */

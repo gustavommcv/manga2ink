@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import { dependencies, numbered, openLibrary } from './support/conversion-workflow';
 
-const own = { ...defaultMangapressSettings, webtoon: true, deviceProfile: 'KoC' };
+const own = { ...defaultMangaprepSettings, webtoon: true, deviceProfile: 'KoC' };
 
 describe('the options a title of a library is made with', () => {
   function twoTitles(ports: ReturnType<typeof dependencies>, combined = false): void {
@@ -40,7 +40,7 @@ describe('the options a title of a library is made with', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'cbz',
         titleOptions: [{ title: 'Good Manga', settings: own, format: 'epub' }],
       },
@@ -50,7 +50,7 @@ describe('the options a title of a library is made with', () => {
     expect(madeWith(ports)).toEqual([
       [own, 'epub'],
       [own, 'epub'],
-      [defaultMangapressSettings, 'cbz'],
+      [defaultMangaprepSettings, 'cbz'],
     ]);
   });
 
@@ -63,7 +63,7 @@ describe('the options a title of a library is made with', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         singleBook: true,
         titleOptions: [{ title: 'Other Manga', settings: own, format: 'epub' }],
@@ -72,7 +72,7 @@ describe('the options a title of a library is made with', () => {
     );
 
     expect(madeWith(ports)).toEqual([
-      [defaultMangapressSettings, 'epub'],
+      [defaultMangaprepSettings, 'epub'],
       [own, 'epub'],
     ]);
   });
@@ -87,7 +87,7 @@ describe('the options a title of a library is made with', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'cbz',
           titleOptions: [
             { title: 'Good Manga', settings: { ...own, deviceProfile: 'OTHER' }, format: 'cbz' },
@@ -108,7 +108,7 @@ describe('the options a title of a library is made with', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         singleBook: true,
         titleOptions: [{ title: 'Other Manga', settings: own, format: 'pdf' }],
@@ -117,12 +117,12 @@ describe('the options a title of a library is made with', () => {
     );
 
     expect(madeWith(ports)).toEqual([
-      [defaultMangapressSettings, 'epub'],
+      [defaultMangaprepSettings, 'epub'],
       [own, 'pdf'],
     ]);
   });
 
-  it('are not looked at when only joining, since mangapress is not run', async () => {
+  it('are not looked at when only joining, since mangaprep is not run', async () => {
     const ports = dependencies();
     twoTitles(ports);
     const { workflow, sessionId } = await openLibrary(ports);
@@ -131,7 +131,7 @@ describe('the options a title of a library is made with', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'cbz',
         mode: 'bind-only',
         titleOptions: [

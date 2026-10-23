@@ -1,7 +1,7 @@
-export type MangapressFormat = 'epub' | 'cbz' | 'pdf';
+export type MangaprepFormat = 'epub' | 'cbz' | 'pdf';
 
-/** The formats mangapress gives two levels of contents: an EPUB's table of contents, a PDF's bookmarks. */
-const formatsWithNestedContents: readonly MangapressFormat[] = ['epub', 'pdf'];
+/** The formats mangaprep gives two levels of contents: an EPUB's table of contents, a PDF's bookmarks. */
+const formatsWithNestedContents: readonly MangaprepFormat[] = ['epub', 'pdf'];
 
 import type {
   CroppingMode,
@@ -10,11 +10,11 @@ import type {
   SplitterMode,
 } from '@/domain/output-profile';
 
-export interface MangapressRunArguments {
+export interface MangaprepRunArguments {
   readonly inputPath: string;
   readonly outputPath: string;
   readonly profile: string;
-  readonly format: MangapressFormat;
+  readonly format: MangaprepFormat;
   readonly dryRun: boolean;
   readonly noProcessing?: boolean;
   readonly quiet?: boolean;
@@ -65,15 +65,15 @@ export interface MangapressRunArguments {
   /**
    * The book is a whole series bound into one: give it two levels of contents, a volume and its
    * chapters under it. An EPUB has them in its table of contents and a PDF in its bookmarks
-   * (mangapress 0.8.2); a CBZ has neither, and mangapress refuses the flag for it, so for a CBZ it
+   * (mangaprep 0.8.2); a CBZ has neither, and mangaprep refuses the flag for it, so for a CBZ it
    * is not sent and the book is made without (ADR 0081, ADR 0083).
    */
   readonly nestedToc?: boolean;
 }
 
-export function buildMangapressArguments(request: MangapressRunArguments): readonly string[] {
+export function buildMangaprepArguments(request: MangaprepRunArguments): readonly string[] {
   // A value is attached to its flag (`--title=-Hidden`) and never sent as an argument of its own:
-  // mangapress reads a separate argument that starts with a hyphen as an option and refuses the run.
+  // mangaprep reads a separate argument that starts with a hyphen as an option and refuses the run.
   const optionalValue = (flag: string, value: string | number | undefined): readonly string[] =>
     value === undefined ? [] : [`${flag}=${String(value)}`];
   const enabled = (flag: string, value: boolean | undefined): readonly string[] =>

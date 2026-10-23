@@ -2,7 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
 import { I18nContext } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
@@ -30,7 +30,7 @@ function Stateful(props: ConversionOptionsScreenProps): React.JSX.Element {
       onFormat={setFormat}
       onReset={() => {
         setFormat(defaultFormat);
-        setSettings(defaultMangapressSettings);
+        setSettings(defaultMangaprepSettings);
         props.onReset();
       }}
       onSettings={setSettings}
@@ -72,7 +72,7 @@ const meta = {
         family: 'kindle',
       },
     ],
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     singleBook: false,
   },
 } satisfies Meta<typeof ConversionOptionsScreen>;
@@ -95,7 +95,7 @@ export const Normal: Story = {
 export const ModifiedOptions: Story = {
   args: {
     format: 'pdf',
-    settings: { ...defaultMangapressSettings, gamma: 1.2, jpegQuality: 80 },
+    settings: { ...defaultMangaprepSettings, gamma: 1.2, jpegQuality: 80 },
   },
 };
 
@@ -105,7 +105,7 @@ export const AskingToReset: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Reset to defaults' }));
     await expect(canvas.getByRole('group', { name: 'Confirm reset' })).toHaveTextContent(
-      'Put the device, format and every mangapress option back to their defaults?',
+      'Put the device, format and every mangaprep option back to their defaults?',
     );
   },
 };
@@ -127,7 +127,7 @@ export const ProfilesUnavailable: Story = {
 };
 
 export const ValidationError: Story = {
-  args: { settings: { ...defaultMangapressSettings, jpegQuality: 500 } },
+  args: { settings: { ...defaultMangaprepSettings, jpegQuality: 500 } },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByLabelText(/^JPEG quality/u)).toHaveAttribute(
       'aria-invalid',
@@ -165,7 +165,7 @@ export const InPortuguese: Story = {
   decorators: [inPortuguese],
   args: {
     itemsWithOptions: 2,
-    settings: { ...defaultMangapressSettings, webtoon: true },
+    settings: { ...defaultMangaprepSettings, webtoon: true },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

@@ -1,6 +1,6 @@
 ---
 title: 'Interfaces de máquina'
-description: 'Onde encontrar os protocolos JSON versionados do mangabind e do mangapress, e os exemplos gravados, para integrar as ferramentas ao seu programa.'
+description: 'Onde encontrar os protocolos JSON versionados do mangabind e do mangaprep, e os exemplos gravados, para integrar as ferramentas ao seu programa.'
 ---
 
 O Manga2Ink executa as ferramentas incluídas como subprocessos e valida sua saída estruturada. Use `--protocol-version` para consultar versão, protocolo e capacidades de uma ferramenta.
@@ -8,7 +8,7 @@ O Manga2Ink executa as ferramentas incluídas como subprocessos e valida sua sa�
 ## Contratos oficiais
 
 - [Protocolo v1 do mangabind](https://github.com/gustavommcv/mangabind/blob/main/docs/machine-protocol-v1.md): `--json` retorna um relatório final no stdout. A opção `--progress-json` acrescenta progresso no stderr sem alterar o relatório final.
-- [Protocolo v1 do mangapress](https://github.com/gustavommcv/mangapress/blob/main/docs/machine-protocol-v1.md): `--json-events` emite JSON Lines com sequência no stdout.
+- [Protocolo v1 do mangaprep](https://github.com/gustavommcv/mangaprep/blob/main/docs/machine-protocol-v1.md): `--json-events` emite JSON Lines com sequência no stdout.
 
 Cada contrato define os campos das mensagens, o canal de progresso, os erros e os códigos de saída.
 

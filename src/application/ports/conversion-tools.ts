@@ -6,7 +6,7 @@ import type {
   PipelineIssue,
 } from '@/domain/conversion';
 import type { MappingDraft } from '@/domain/mapping';
-import type { MangapressSettings } from '@/domain/output-profile';
+import type { MangaprepSettings } from '@/domain/output-profile';
 
 export interface BindingInspection {
   readonly workspaceId: string;
@@ -136,7 +136,7 @@ export interface ConversionPort {
     request: {
       readonly inputPath: string;
       readonly outputDirectory: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       /** The title, author and language of this book, where they were set for it. */
       readonly book?: BookDetails;
       readonly format: BookFormat;
@@ -155,7 +155,7 @@ export interface ConversionPort {
     request: {
       readonly inputPath: string;
       readonly outputDirectory: string;
-      readonly settings: MangapressSettings;
+      readonly settings: MangaprepSettings;
       /** The title, author and language of this book, where they were set for it. */
       readonly book?: BookDetails;
       /** An image of the person's own to make this book's cover from, in the place of its first. */

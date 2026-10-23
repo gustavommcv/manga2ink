@@ -8,7 +8,7 @@ export interface VolumePosition {
 
 /**
  * How a plan or a run treats the books: made from each volume, saved as the joined volumes without
- * running mangapress, or one book for the whole series.
+ * running mangaprep, or one book for the whole series.
  */
 export type RunShape = 'books' | 'joined' | 'series';
 
@@ -45,7 +45,7 @@ export interface RunMessageValues {
   readonly 'progress.booksSaved': { readonly count: number };
 
   /** What validating one book or folder found, by the tool that read it. */
-  readonly 'plan.mangapress': {
+  readonly 'plan.mangaprep': {
     readonly profile: string;
     readonly width: number;
     readonly height: number;

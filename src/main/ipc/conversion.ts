@@ -36,7 +36,7 @@ function toArtifactSummary({
 }
 type ConversionContext = Pick<
   MainContext,
-  | 'mangapressCli'
+  | 'mangaprepCli'
   | 'selectedLibraries'
   | 'activeJobs'
   | 'conversions'
@@ -58,8 +58,8 @@ export function registerConversionHandlers(context: ConversionContext): void {
     'workflow:get-device-profiles',
     ignoredPayloadSchema,
     async (): Promise<WorkflowResult<readonly DeviceProfileSummary[]>> => {
-      if (context.mangapressCli === undefined) throw new Error('mangapress is unavailable.');
-      const list = await context.mangapressCli.listProfiles();
+      if (context.mangaprepCli === undefined) throw new Error('mangaprep is unavailable.');
+      const list = await context.mangaprepCli.listProfiles();
       return ok(
         list.profiles.map((profile) => ({
           code: profile.code,

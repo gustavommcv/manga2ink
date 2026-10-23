@@ -16,7 +16,7 @@ function manifestWith(path: readonly string[], value: unknown): unknown {
   return manifest;
 }
 const refusal = 'The bundled-tool manifest is incomplete or invalid.';
-const pin = (tool: 'mangabind' | 'mangapress') => ['tools', tool, 'pin'] as const;
+const pin = (tool: 'mangabind' | 'mangaprep') => ['tools', tool, 'pin'] as const;
 
 describe('the manifest of the bundled tools', () => {
   it('is the one the app ships, and is accepted whole', () => {
@@ -36,7 +36,7 @@ describe('the manifest of the bundled tools', () => {
     'does not take %j for the name of a release',
     (releaseTag) => {
       expect(() =>
-        parseToolchainManifest(manifestWith([...pin('mangapress'), 'releaseTag'], releaseTag)),
+        parseToolchainManifest(manifestWith([...pin('mangaprep'), 'releaseTag'], releaseTag)),
       ).toThrow(refusal);
     },
   );
@@ -56,7 +56,7 @@ describe('the manifest of the bundled tools', () => {
       ),
     ).toThrow(refusal);
     expect(() =>
-      parseToolchainManifest(manifestWith([...pin('mangapress'), 'checksums', 'sha256'], value)),
+      parseToolchainManifest(manifestWith([...pin('mangaprep'), 'checksums', 'sha256'], value)),
     ).toThrow(refusal);
   });
 
@@ -64,15 +64,15 @@ describe('the manifest of the bundled tools', () => {
     ['an unlocked state', ['state'], 'unlocked'],
     ['another manifest version', ['manifestVersion'], 2],
     ['another protocol', [...pin('mangabind'), 'protocolVersion'], '2'],
-    ['no checksums', [...pin('mangapress'), 'checksums'], remove],
+    ['no checksums', [...pin('mangaprep'), 'checksums'], remove],
     [
       'a checksums file by another name',
-      [...pin('mangapress'), 'checksums', 'assetName'],
+      [...pin('mangaprep'), 'checksums', 'assetName'],
       'sums.txt',
     ],
     [
       'checksums from another host',
-      [...pin('mangapress'), 'checksums', 'url'],
+      [...pin('mangaprep'), 'checksums', 'url'],
       'https://example.com/c.txt',
     ],
     ['no artifacts', [...pin('mangabind'), 'artifacts'], remove],
@@ -88,7 +88,7 @@ describe('the manifest of the bundled tools', () => {
       'http://github.com/a.zip',
     ],
     ['no mangabind', ['tools', 'mangabind'], remove],
-    ['a source that is not an address', ['tools', 'mangapress', 'sourceRepo'], 'mangapress'],
+    ['a source that is not an address', ['tools', 'mangaprep', 'sourceRepo'], 'mangaprep'],
     ['three targets', ['supportedTargets'], ['win32-x64', 'linux-x64', 'darwin-x64']],
   ] as const)('is refused for %s', (_what, path, value) => {
     expect(() => parseToolchainManifest(manifestWith(path, value))).toThrow(refusal);

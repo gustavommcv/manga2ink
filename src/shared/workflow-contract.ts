@@ -20,7 +20,7 @@ import {
 } from '@/domain/book-details';
 import type { MappingDraft } from '@/domain/mapping';
 import type { AnyMessage } from '@/domain/message';
-import { type MangapressSettings, settingBounds } from '@/domain/output-profile';
+import { type MangaprepSettings, settingBounds } from '@/domain/output-profile';
 import {
   batchProcessModes,
   type BatchProcessMode,
@@ -72,8 +72,8 @@ export const registerInputsCommandSchema = z.object({
   paths: z.array(pathSchema).max(1000),
 });
 export const identifierSchema = z.string().min(1).max(200);
-/** The mangapress options a person keeps between sessions (ADR 0014). */
-export const mangapressSettingFields = {
+/** The mangaprep options a person keeps between sessions (ADR 0014). */
+export const mangaprepSettingFields = {
   deviceProfile: z.string().trim().min(1).max(40),
   // An option added after a release starts with a default: the settings file of someone who
   // updates has no such key, and must still be read (ADR 0014).
@@ -151,9 +151,9 @@ const customProfileNeedsASize = {
   message: 'The custom device profile needs both a width and height.',
 };
 
-/** The mangapress options, as a run is sent them and as the settings file holds them. */
-export const mangapressSettingsSchema = z
-  .object(mangapressSettingFields)
+/** The mangaprep options, as a run is sent them and as the settings file holds them. */
+export const mangaprepSettingsSchema = z
+  .object(mangaprepSettingFields)
   .refine(customProfileNeedsASize.check, { message: customProfileNeedsASize.message });
 
 /** A language tag such as "en" or "pt-br": letters and digits in short groups joined by dashes. */
@@ -183,7 +183,7 @@ export const conversionCommandSchema = z.object({
   jobId: identifierSchema,
   sessionId: identifierSchema,
   libraryId: identifierSchema,
-  settings: mangapressSettingsSchema,
+  settings: mangaprepSettingsSchema,
   format: z.enum(['epub', 'cbz', 'pdf']),
   mapping: mappingDraftSchema.optional(),
   mode: z.enum(processModes).optional(),
@@ -203,7 +203,7 @@ export const libraryConversionCommandSchema = z.object({
   jobId: identifierSchema,
   sessionId: identifierSchema,
   libraryId: identifierSchema,
-  settings: mangapressSettingsSchema,
+  settings: mangaprepSettingsSchema,
   format: z.enum(['epub', 'cbz', 'pdf']),
   titles: z.array(titleNameSchema).max(maxTitles).optional(),
   mode: z.enum(batchProcessModes).optional(),
@@ -218,7 +218,7 @@ export const libraryConversionCommandSchema = z.object({
     .array(
       z.object({
         title: titleNameSchema,
-        settings: mangapressSettingsSchema,
+        settings: mangaprepSettingsSchema,
         format: z.enum(['epub', 'cbz', 'pdf']),
       }),
     )
@@ -387,7 +387,7 @@ export interface ArtifactSummary {
   readonly name: string;
   readonly bytes: number;
   readonly format: BookFormat;
-  /** What mangapress noticed while making this book; absent when it noticed nothing. */
+  /** What mangaprep noticed while making this book; absent when it noticed nothing. */
   readonly warnings?: readonly BookWarning[];
 }
 
@@ -407,7 +407,7 @@ export interface SaveAllResult {
 }
 
 export interface PlanSummary {
-  readonly tool: 'mangabind' | 'mangapress';
+  readonly tool: 'mangabind' | 'mangaprep';
   readonly title: string;
   /** What validating found, said by the window in its language. */
   readonly message: AnyMessage;
@@ -419,7 +419,7 @@ export interface ConversionCommand {
   readonly jobId: string;
   readonly sessionId: string;
   readonly libraryId: string;
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly format: BookFormat;
   readonly mapping?: MappingDraft;
   readonly mode?: ProcessMode;
@@ -442,7 +442,7 @@ export interface LibraryConversionCommand {
   readonly jobId: string;
   readonly sessionId: string;
   readonly libraryId: string;
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly format: BookFormat;
   readonly titles?: readonly string[];
   readonly mode?: BatchProcessMode;
@@ -452,7 +452,7 @@ export interface LibraryConversionCommand {
   /** The options and format a title is made with where they are not the library's (ADR 0046). */
   readonly titleOptions?: readonly {
     readonly title: string;
-    readonly settings: MangapressSettings;
+    readonly settings: MangaprepSettings;
     readonly format: BookFormat;
   }[];
 }

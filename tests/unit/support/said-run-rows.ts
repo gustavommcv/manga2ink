@@ -77,16 +77,16 @@ export const runRows: Rows<RunMessageValues> = {
     [{ count: 2 }, '2 books saved.', '2 livros salvos.'],
   ],
 
-  'plan.mangapress': [
+  'plan.mangaprep': [
     [
       { profile: 'KV', width: 1072, height: 1448, chaptersNotGrouped: false },
-      'mangapress validated KV · 1072 × 1448 · no library files written',
-      'mangapress validou KV · 1072 × 1448 · nenhum arquivo da biblioteca gravado',
+      'mangaprep validated KV · 1072 × 1448 · no library files written',
+      'mangaprep validou KV · 1072 × 1448 · nenhum arquivo da biblioteca gravado',
     ],
     [
       { profile: 'KV', width: 1072, height: 1448, chaptersNotGrouped: true },
-      'mangapress validated KV · 1072 × 1448 · one book, chapters not grouped · no library files written',
-      'mangapress validou KV · 1072 × 1448 · um livro, capítulos sem agrupar · nenhum arquivo da biblioteca gravado',
+      'mangaprep validated KV · 1072 × 1448 · one book, chapters not grouped · no library files written',
+      'mangaprep validou KV · 1072 × 1448 · um livro, capítulos sem agrupar · nenhum arquivo da biblioteca gravado',
     ],
   ],
   'plan.mangabind': [
@@ -97,8 +97,8 @@ export const runRows: Rows<RunMessageValues> = {
     ],
     [
       { volumes: 2, shape: 'joined' },
-      'mangabind validated 2 volumes · saved as CBZ files, mangapress not run · no library files written',
-      'mangabind validou 2 volumes · salvos como arquivos CBZ, mangapress não executado · nenhum arquivo da biblioteca gravado',
+      'mangabind validated 2 volumes · saved as CBZ files, mangaprep not run · no library files written',
+      'mangabind validou 2 volumes · salvos como arquivos CBZ, mangaprep não executado · nenhum arquivo da biblioteca gravado',
     ],
     [
       { volumes: 2, shape: 'series' },
@@ -114,8 +114,8 @@ export const runRows: Rows<RunMessageValues> = {
     ],
     [
       { titles: 2, volumes: 5, books: 5, shape: 'joined' },
-      'mangabind validated 2 titles · 5 volumes · saved as CBZ files, mangapress not run · no library files written',
-      'mangabind validou 2 títulos · 5 volumes · salvos como arquivos CBZ, mangapress não executado · nenhum arquivo da biblioteca gravado',
+      'mangabind validated 2 titles · 5 volumes · saved as CBZ files, mangaprep not run · no library files written',
+      'mangabind validou 2 títulos · 5 volumes · salvos como arquivos CBZ, mangaprep não executado · nenhum arquivo da biblioteca gravado',
     ],
     [
       { titles: 1, volumes: 3, books: 1, shape: 'series' },

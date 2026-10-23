@@ -10,22 +10,22 @@ import {
 import type { BookFormat } from '@/domain/conversion';
 import { effectiveOptions, type RunOptions } from '@/domain/item-options';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { libraryConversionCommandSchema } from '@/shared/workflow-contract';
 
 import { dependencies, numbered, openLibrary } from './support/conversion-workflow';
 
-const queue: RunOptions = { settings: defaultMangapressSettings, format: 'cbz' };
+const queue: RunOptions = { settings: defaultMangaprepSettings, format: 'cbz' };
 const pad = (index: number): string => String(index).padStart(4, '0');
 
 /** What title `index` sets for itself, or nothing for most: a different value in each. */
 function ownOf(
   index: number,
-): { settings: typeof defaultMangapressSettings; format: 'epub' | 'pdf' } | undefined {
+): { settings: typeof defaultMangaprepSettings; format: 'epub' | 'pdf' } | undefined {
   if (index % 3 !== 0) return undefined;
   return {
     settings: {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       jpegQuality: 40 + (index % 60),
       webtoon: index % 6 === 0,
     },
@@ -96,7 +96,7 @@ describe('options of their own at the size of a large library', () => {
       expect(run.settings.webtoon).toBe(own.settings.webtoon);
       // Everything else is the queue's.
       expect({ ...run.settings, jpegQuality: undefined, webtoon: false }).toEqual({
-        ...defaultMangapressSettings,
+        ...defaultMangaprepSettings,
         jpegQuality: undefined,
         webtoon: false,
       });
@@ -108,7 +108,7 @@ describe('options of their own at the size of a large library', () => {
   it('are accepted by the contract for as many titles as a library can hold, with every field', () => {
     const titleOptions = Array.from({ length: 1000 }, (_, index) => ({
       title: `Title ${pad(index)}`,
-      settings: { ...defaultMangapressSettings, jpegQuality: 40 + (index % 60) },
+      settings: { ...defaultMangaprepSettings, jpegQuality: 40 + (index % 60) },
       format: 'epub' as const,
     }));
     const started = performance.now();
@@ -117,7 +117,7 @@ describe('options of their own at the size of a large library', () => {
       jobId: 'job',
       sessionId: 'session',
       libraryId: 'library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
       titleOptions,
     });
@@ -141,12 +141,12 @@ describe('options of their own at the size of a large library', () => {
       issues: [],
     });
     const { workflow, sessionId } = await openLibrary(ports, 4);
-    const titleOptions: { title: string; settings: MangapressSettings; format: BookFormat }[] =
+    const titleOptions: { title: string; settings: MangaprepSettings; format: BookFormat }[] =
       Array.from({ length: count }, (_, index) => ({ index, own: ownOf(index) }))
         .filter((entry) => entry.own !== undefined)
         .map(({ index, own }) => ({
           title: `Title ${pad(index)}`,
-          settings: own?.settings ?? defaultMangapressSettings,
+          settings: own?.settings ?? defaultMangaprepSettings,
           format: own?.format ?? 'cbz',
         }));
 
@@ -154,7 +154,7 @@ describe('options of their own at the size of a large library', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'cbz',
         titleOptions,
       },
@@ -169,7 +169,7 @@ describe('options of their own at the size of a large library', () => {
       const index = Number(/t(\d{4})-/u.exec(request.inputPath)?.[1]);
       const own = ownOf(index);
       expect(request.format).toBe(own?.format ?? 'cbz');
-      expect(request.settings).toEqual(own?.settings ?? defaultMangapressSettings);
+      expect(request.settings).toEqual(own?.settings ?? defaultMangaprepSettings);
     }
   });
 });

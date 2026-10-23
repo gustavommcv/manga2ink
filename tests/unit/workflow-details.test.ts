@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   mappedDraft,
@@ -43,7 +43,7 @@ describe('the title, author and language typed for a book', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
         details: typed,
@@ -65,7 +65,7 @@ describe('the title, author and language typed for a book', () => {
     const folderSession = await workflow.inspect(folder);
     const request = {
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       details: typed,
     } as const;
@@ -91,7 +91,7 @@ describe('the title, author and language typed for a book', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         singleBook: true,
         mapping: mappedDraft(),
@@ -112,7 +112,7 @@ describe('the title, author and language typed for a book', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       },
@@ -122,7 +122,7 @@ describe('the title, author and language typed for a book', () => {
     expect(booksOf(ports)).toEqual([{}, {}]);
   });
 
-  it('ignores them when only joining, because no book is made by mangapress', async () => {
+  it('ignores them when only joining, because no book is made by mangaprep', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -131,7 +131,7 @@ describe('the title, author and language typed for a book', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
         mode: 'bind-only',
@@ -153,7 +153,7 @@ describe('the title, author and language typed for a book', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         details: typed,
       },
@@ -192,7 +192,7 @@ describe('the title, author and language typed for a book', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           titleDetails,
         },
@@ -214,7 +214,7 @@ describe('the title, author and language typed for a book', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           singleBook: true,
           titleDetails,
@@ -233,7 +233,7 @@ describe('the title, author and language typed for a book', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mode: 'bind-only',
           titleDetails,

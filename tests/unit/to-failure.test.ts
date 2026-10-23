@@ -31,18 +31,18 @@ afterEach(() => {
 describe('toFailure', () => {
   it('says what the tool said, as it said it, with its issue, and logs nothing', () => {
     const issue = {
-      tool: 'mangapress',
+      tool: 'mangaprep',
       severity: 'error',
       code: 'conversion_failed',
       stage: 'convert',
       recoverable: false,
-      message: 'mangapress could not read the page.',
+      message: 'mangaprep could not read the page.',
       diagnostic: 'page 3 is not an image',
     } as const;
 
     expect(toFailure(new ToolExecutionError(issue, 2))).toEqual({
       code: 'conversion_failed',
-      said: raw('mangapress could not read the page.'),
+      said: raw('mangaprep could not read the page.'),
       issue,
     });
     expect(logged).not.toHaveBeenCalled();
@@ -50,7 +50,7 @@ describe('toFailure', () => {
 
   it('says what the app says of a tool failure when the tool’s own words are not what to tell', () => {
     const issue = {
-      tool: 'mangapress',
+      tool: 'mangaprep',
       severity: 'error',
       code: 'cover_read_failed',
       stage: 'convert',

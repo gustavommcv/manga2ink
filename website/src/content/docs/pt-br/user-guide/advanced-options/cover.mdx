@@ -10,7 +10,7 @@ A seção **Capa** das [Opções avançadas de conversão](../../output-profiles
 
 ## Como a capa é feita
 
-A capa não é uma página. O mangapress a faz a partir da primeira imagem do livro, como ela veio, à parte das páginas: o que quer que aconteça com a primeira página, como as margens cortadas, uma página larga dividida em duas ou uma página girada, a capa é a imagem inteira, em pé. A capa é cinza, a menos que **Páginas coloridas** mantenha a cor, nunca é ampliada, só reduzida para caber dentro da tela, e é gravada como JPEG, na qualidade das páginas.
+A capa não é uma página. O mangaprep a faz a partir da primeira imagem do livro, como ela veio, à parte das páginas: o que quer que aconteça com a primeira página, como as margens cortadas, uma página larga dividida em duas ou uma página girada, a capa é a imagem inteira, em pé. A capa é cinza, a menos que **Páginas coloridas** mantenha a cor, nunca é ampliada, só reduzida para caber dentro da tela, e é gravada como JPEG, na qualidade das páginas.
 
 As imagens mostram a capa de um EPUB feita com a primeira página de _Pepper&Carrot_, episódio 6, que tem 992 × 1373 pixels, na tela do Kindle Paperwhite 6, de 1272 × 1696. O cinza é a tela em volta da capa.
 
@@ -55,7 +55,7 @@ Um EPUB sempre tem uma. Um CBZ só tem quando a capa da frente foi cortada de um
 
 Por padrão a capa é ajustada para caber dentro da tela, com a tela aparecendo em volta quando os formatos diferem, e uma capa pequena não é ampliada. Com a opção ligada, ela é cortada no tamanho exato da tela, e uma capa pequena é ampliada até ele: a primeira página do episódio, de 992 × 1373, vira uma capa de 1272 × 1696 na segunda imagem acima, e a borda que não cabe é cortada. `--coverfill` a liga.
 
-Ela só importa para um livro que tem capa: um EPUB, ou um CBZ com uma capa sua ou uma cortada de uma imagem larga. O app a esmaece para um PDF, e para um CBZ a menos que a capa da frente seja cortada de uma imagem larga. Ele olha só as configurações, não as capas que você escolheu para os livros, então para um CBZ com uma capa sua a opção fica esmaecida embora o mangapress a aplicasse, como mostram as linhas com uma capa sua.
+Ela só importa para um livro que tem capa: um EPUB, ou um CBZ com uma capa sua ou uma cortada de uma imagem larga. O app a esmaece para um PDF, e para um CBZ a menos que a capa da frente seja cortada de uma imagem larga. Ele olha só as configurações, não as capas que você escolheu para os livros, então para um CBZ com uma capa sua a opção fica esmaecida embora o mangaprep a aplicasse, como mostram as linhas com uma capa sua.
 
 ## Recortar a capa frontal de uma imagem larga
 
@@ -83,7 +83,7 @@ O exemplo não tem sobrecapa, então uma página dupla faz o papel dela: duas p�
 
 ### Quanto da imagem é tomado
 
-O mangapress decide pelo formato da imagem, em faixas, de uma página dupla simples até uma sobrecapa com orelhas; são as faixas do Kindle Comic Converter, que o mangapress segue. Uma imagem que não é mais larga que alta já é uma capa e fica inteira. A tabela corta uma imagem de cada faixa das mesmas três páginas, com Ordem de leitura de mangá ligada: a largura da capa é a parte da imagem que foi tomada.
+O mangaprep decide pelo formato da imagem, em faixas, de uma página dupla simples até uma sobrecapa com orelhas; são as faixas do Kindle Comic Converter, que o mangaprep segue. Uma imagem que não é mais larga que alta já é uma capa e fica inteira. A tabela corta uma imagem de cada faixa das mesmas três páginas, com Ordem de leitura de mangá ligada: a largura da capa é a parte da imagem que foi tomada.
 
 <OptionBook
   id="cover-smart-bands"

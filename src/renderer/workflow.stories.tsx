@@ -44,7 +44,7 @@ export const Error: Story = {
         code: 'page_processing_failed',
         said: raw("Couldn't process page 17 in chapter 'Chapter 4'."),
         issue: {
-          tool: 'mangapress',
+          tool: 'mangaprep',
           severity: 'error',
           code: 'page_processing_failed',
           stage: 'process',

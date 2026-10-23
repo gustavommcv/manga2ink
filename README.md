@@ -91,11 +91,11 @@ Bundled converters are pinned in `toolchain.lock.json`. Updating a pin is a sepa
 ## Credits
 
 - **[mangabind](https://github.com/gustavommcv/mangabind)** handles chapter grouping and volume creation.
-- **[mangapress](https://github.com/gustavommcv/mangapress)** processes pages and creates the finished books.
+- **[mangaprep](https://github.com/gustavommcv/mangaprep)** processes pages and creates the finished books.
 - **[MangaDex](https://mangadex.org)** provides optional volume and author metadata. Manga2Ink is free and ad-free; see the [provider guide](docs/adding-a-metadata-provider.md) for attribution and API requirements.
 - **The comics the guide converts** to show what each option does: _Pepper&Carrot_ by David Revoy ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), _Go Go! Encyclopedia Girls_ by Kasuga, English version by Masatami ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)), and a page by Polylerus ([CC BY 2.5](https://creativecommons.org/licenses/by/2.5/)). Each picture is credited where it appears, and all are listed in [LICENSES.md](website/src/assets/options/LICENSES.md).
 - **[JPmarquesbraga](https://github.com/JPmarquesbraga)** supplied the artwork the logo is drawn from ([the asset guide](assets/README.md)). The lettering is set in [Grenze](https://github.com/Omnibus-Type/Grenze), under the SIL Open Font License.
-- **[Kindle Comic Converter](https://github.com/ciromattia/kcc)** informs mangapress's conversion algorithms and Manga2Ink's default image settings ([ADR 0011](docs/adr/0011-kcc-default-options.md), [ADR 0015](docs/adr/0015-paperwhite-as-the-starting-device.md)).
+- **[Kindle Comic Converter](https://github.com/ciromattia/kcc)** informs mangaprep's conversion algorithms and Manga2Ink's default image settings ([ADR 0011](docs/adr/0011-kcc-default-options.md), [ADR 0015](docs/adr/0015-paperwhite-as-the-starting-device.md)).
 
 ## AI disclosure
 

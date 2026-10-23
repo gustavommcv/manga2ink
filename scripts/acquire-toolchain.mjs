@@ -102,7 +102,7 @@ if (!resolvedWorkspace.startsWith(`${path.resolve(tmpdir())}${path.sep}`)) {
 
 try {
   const licenses = {};
-  for (const toolName of ['mangabind', 'mangapress']) {
+  for (const toolName of ['mangabind', 'mangaprep']) {
     const spec = toolSpecs[toolName];
     const pin = lock.tools[toolName].pin;
     const artifact = pin.artifacts[target];

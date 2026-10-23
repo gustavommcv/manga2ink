@@ -3,7 +3,7 @@ title: 'Advanced conversion options'
 description: 'What the advanced options of Manga2Ink’s conversion settings do to a page, shown on real pages converted with and without each option.'
 ---
 
-**Advanced conversion options** in [Conversion settings](../output-profiles/) are the settings of mangapress, the converter that makes the books. Most of them change the pixels of a page. These pages show how: one real page, converted twice, with only that option different.
+**Advanced conversion options** in [Conversion settings](../output-profiles/) are the settings of mangaprep, the converter that makes the books. Most of them change the pixels of a page. These pages show how: one real page, converted twice, with only that option different.
 
 ## Pages about one group of options each
 
@@ -24,7 +24,7 @@ Each option as the app names it, the flags that set it on the command line, and 
 
 ### Device and output
 
-- [Device, Book format, Custom width and Custom height](../output-profiles/#device-and-format): `--profile` (`-p`), `--format` (`-f`), `--customwidth` and `--customheight`. What the flags do, with the tool's own output, is in [the mangapress CLI](../../cli/mangapress/#choosing-the-device-and-the-format).
+- [Device, Book format, Custom width and Custom height](../output-profiles/#device-and-format): `--profile` (`-p`), `--format` (`-f`), `--customwidth` and `--customheight`. What the flags do, with the tool's own output, is in [the mangaprep CLI](../../cli/mangaprep/#choosing-the-device-and-the-format).
 
 ### Reading
 
@@ -87,15 +87,15 @@ Each option as the app names it, the flags that set it on the command line, and 
 
 ### Tool behavior
 
-- [Quiet mode](../../cli/mangapress/#quieter-output): `--quiet`, or `-q`.
-- [Previewing a conversion](../../cli/mangapress/#previewing-a-conversion), on the command line only: `--dry-run`, or `-n`.
+- [Quiet mode](../../cli/mangaprep/#quieter-output): `--quiet`, or `-q`.
+- [Previewing a conversion](../../cli/mangaprep/#previewing-a-conversion), on the command line only: `--dry-run`, or `-n`.
 
 ## How the examples were made
 
 - **The pages** come from comics whose authors allow copying: _Pepper&Carrot_ by David Revoy, in color, _Go Go! Encyclopedia Girls_ by Kasuga, in black and white, and a page by Polylerus with a black background. The credits and licences are at the end of this page, and under every picture.
-- **The conversion** is the mangapress that Manga2Ink ships, started from Manga2Ink's starting settings: Kindle Paperwhite 6 (1272 × 1696 pixels), CBZ, manga reading order, double-page spreads kept both ways, small pages enlarged, margins and page numbers cropped. Only the option named in the caption is different between two pictures.
-- **The captions** give the setting as the app names it, the flag that setting passes to mangapress when you run it from a terminal (`no flag` is the default), and the size of each page mangapress wrote (`not converted` is a picture of the input). Click a picture to open it larger.
-- **The tables of values** are not pictures: the title, author, language, reading direction and file name in them were read back from the book mangapress wrote, converted with the same starting settings unless a row says otherwise.
+- **The conversion** is the mangaprep that Manga2Ink ships, started from Manga2Ink's starting settings: Kindle Paperwhite 6 (1272 × 1696 pixels), CBZ, manga reading order, double-page spreads kept both ways, small pages enlarged, margins and page numbers cropped. Only the option named in the caption is different between two pictures.
+- **The captions** give the setting as the app names it, the flag that setting passes to mangaprep when you run it from a terminal (`no flag` is the default), and the size of each page mangaprep wrote (`not converted` is a picture of the input). Click a picture to open it larger.
+- **The tables of values** are not pictures: the title, author, language, reading direction and file name in them were read back from the book mangaprep wrote, converted with the same starting settings unless a row says otherwise.
 - **What is not shown.** The free black-and-white manga there is has little printed screentone, so what depends on it, such as moiré, is described and not pictured. Pictures show pixels on your screen, not the e-ink screen of a reader.
 
 ## Credits and licences

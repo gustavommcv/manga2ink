@@ -103,7 +103,7 @@ const smallPages = {
   message: 'Pages are smaller than the screen.',
 };
 
-/** Books made with something mangapress noticed: one notice per kind, naming the books. */
+/** Books made with something mangaprep noticed: one notice per kind, naming the books. */
 export const WithWarnings: Story = {
   args: {
     outcomes: [
@@ -186,7 +186,7 @@ export const NothingSaved: Story = {
         name: 'Late Bloomer',
         status: 'failed',
         artifacts: [],
-        message: [raw('mangapress crashed while processing pages.')],
+        message: [raw('mangaprep crashed while processing pages.')],
       },
     ],
   },

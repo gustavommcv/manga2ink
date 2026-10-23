@@ -5,7 +5,7 @@ description: 'O que Páginas coloridas, Contraste automático, Nivelar o ponto p
 
 import OptionExample from '../../../../../components/OptionExample.astro';
 
-A seção **Cor e tom** das [Opções avançadas de conversão](../../output-profiles/#opções-avançadas-de-conversão) decide se uma página mantém a cor e como seus tons são corrigidos. Os exemplos são páginas de _Pepper&Carrot_, desenhado em cores. Onde uma legenda traz números, eles foram medidos na página que o mangapress gravou: o pixel mais escuro (0 é preto) e o brilho médio da página inteira (255 é branco).
+A seção **Cor e tom** das [Opções avançadas de conversão](../../output-profiles/#opções-avançadas-de-conversão) decide se uma página mantém a cor e como seus tons são corrigidos. Os exemplos são páginas de _Pepper&Carrot_, desenhado em cores. Onde uma legenda traz números, eles foram medidos na página que o mangaprep gravou: o pixel mais escuro (0 é preto) e o brilho médio da página inteira (255 é branco).
 
 ## Páginas coloridas
 
@@ -68,8 +68,8 @@ Cada página tem o histograma ao lado, lido como em [Contraste automático](#con
 
 ## Reduzir o efeito arco-íris
 
-**Reduzir o efeito arco-íris** é o jeito do mangapress de apagar o efeito arco-íris das telas e-ink coloridas, atenuando as frequências que interferem. Ela muda os pixels de toda página em que é aplicada, também as cinza: as páginas que o mangapress grava com e sem ela não são iguais. Deixe desligada, a menos que sua tela seja e-ink colorida. `--eraserainbow`.
+**Reduzir o efeito arco-íris** é o jeito do mangaprep de apagar o efeito arco-íris das telas e-ink coloridas, atenuando as frequências que interferem. Ela muda os pixels de toda página em que é aplicada, também as cinza: as páginas que o mangaprep grava com e sem ela não são iguais. Deixe desligada, a menos que sua tela seja e-ink colorida. `--eraserainbow`.
 
-A tela de um computador não mostra esta opção. O efeito que ela combate é da tela do leitor, não do arquivo, então nada na página convertida parece diferente num monitor. Uma fotografia da tela mostra, e o README do KCC tem uma, tirada num Kobo Clara Colour: [a imagem dele do eraser do arco-íris](https://github.com/ciromattia/kcc/blob/master/images/rainbow720.jpeg). O mesmo painel aparece três vezes: com franjas coloridas de arco-íris na tela, depois de um desfoque simples, como o que a opção do próprio Kobo aplica, que apaga as franjas junto com os detalhes, e depois do eraser do KCC, que deixa uma textura diagonal fina e nenhuma franja colorida. O KCC diz que o eraser dele funciona sem desfoque, e o mangapress o segue: as verificações dele contra o KCC 12.0.0 incluem esta opção.
+A tela de um computador não mostra esta opção. O efeito que ela combate é da tela do leitor, não do arquivo, então nada na página convertida parece diferente num monitor. Uma fotografia da tela mostra, e o README do KCC tem uma, tirada num Kobo Clara Colour: [a imagem dele do eraser do arco-íris](https://github.com/ciromattia/kcc/blob/master/images/rainbow720.jpeg). O mesmo painel aparece três vezes: com franjas coloridas de arco-íris na tela, depois de um desfoque simples, como o que a opção do próprio Kobo aplica, que apaga as franjas junto com os detalhes, e depois do eraser do KCC, que deixa uma textura diagonal fina e nenhuma franja colorida. O KCC diz que o eraser dele funciona sem desfoque, e o mangaprep o segue: as verificações dele contra o KCC 12.0.0 incluem esta opção.
 
 O que a opção muda no arquivo é muito pouco: numa página de 1272 × 1696 pixels, convertida para o Kindle Paperwhite 6 e gravada sem perdas, cerca de 60% dos valores dos pixels ficam diferentes com a opção ligada, em média por cerca de um nível de 255 e por 33 a 52 no máximo, tanto numa página colorida quanto numa em preto e branco. Para julgá-la no seu leitor, converta uma página dos dois jeitos e compare lá.

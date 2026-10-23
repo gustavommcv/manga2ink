@@ -227,7 +227,7 @@ describe('the conversion options of one item', () => {
     ).toHaveAttribute('title', 'Edit conversion options for this item');
   });
 
-  it('are not offered when only joining, because mangapress is not run then', async () => {
+  it('are not offered when only joining, because mangaprep is not run then', async () => {
     const user = userEvent.setup();
     installBridge(twoFolders());
     render(<App />);
@@ -623,7 +623,7 @@ describe('the conversion options of an item that failed', () => {
       if (command.sessionId === 'session-second' && !secondWorks) {
         return Promise.resolve({
           ok: false as const,
-          error: { code: 'process_failed', said: raw('mangapress crashed.') },
+          error: { code: 'process_failed', said: raw('mangaprep crashed.') },
         });
       }
       return Promise.resolve(artifactOf(command.sessionId, command.format));
@@ -702,7 +702,7 @@ describe('the conversion options of an item that failed', () => {
             title: 'Second Manga',
             status: 'failed',
             artifacts: [],
-            failure: { code: 'process_failed', said: raw('mangapress crashed.') },
+            failure: { code: 'process_failed', said: raw('mangaprep crashed.') },
           },
         ],
       })

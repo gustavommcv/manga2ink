@@ -38,7 +38,7 @@ export interface Strings {
   optionCredit: {
     art: string;
     by: string;
-    converted: (mangapress: string) => string;
+    converted: (mangaprep: string) => string;
   };
   optionExample: {
     openLarger: string;
@@ -75,7 +75,7 @@ export interface Strings {
     page: string;
     pages: string;
     region: string;
-    caption: (mangapress: string) => string;
+    caption: (mangaprep: string) => string;
     heads: Record<
       | 'title'
       | 'author'
@@ -120,7 +120,7 @@ const english: Strings = {
   optionCredit: {
     art: 'Art:',
     by: ' by ',
-    converted: (mangapress) => `. Converted with mangapress ${mangapress}.`,
+    converted: (mangaprep) => `. Converted with mangaprep ${mangaprep}.`,
   },
   optionExample: {
     openLarger: 'Open the larger image',
@@ -140,7 +140,7 @@ const english: Strings = {
     kept: (files) => (files ? 'File size' : 'Of the page kept'),
     caption: (files, width, height) =>
       files
-        ? `Source page: ${width} × ${height} px. The sizes are those of the file of the page mangapress wrote.`
+        ? `Source page: ${width} × ${height} px. The sizes are those of the file of the page mangaprep wrote.`
         : `Source page: ${width} × ${height} px. The pages are not enlarged, so the size shows what was cropped.`,
   },
   optionBook: {
@@ -159,8 +159,8 @@ const english: Strings = {
     page: 'page',
     pages: 'pages',
     region: 'measured values',
-    caption: (mangapress) =>
-      `Measured with mangapress ${mangapress}: each value is read back from the book it wrote.`,
+    caption: (mangaprep) =>
+      `Measured with mangaprep ${mangaprep}: each value is read back from the book it wrote.`,
     heads: {
       title: 'Book title',
       author: 'Author',
@@ -204,7 +204,7 @@ const portuguese: Strings = {
   optionCredit: {
     art: 'Arte:',
     by: ', de ',
-    converted: (mangapress) => `. Convertida com o mangapress ${mangapress}.`,
+    converted: (mangaprep) => `. Convertida com o mangaprep ${mangaprep}.`,
   },
   optionExample: {
     openLarger: 'Abrir imagem em tamanho maior',
@@ -224,7 +224,7 @@ const portuguese: Strings = {
     kept: (files) => (files ? 'Tamanho do arquivo' : 'Fica da página'),
     caption: (files, width, height) =>
       files
-        ? `Página de origem: ${width} × ${height} px. Os tamanhos são os do arquivo da página que o mangapress gravou.`
+        ? `Página de origem: ${width} × ${height} px. Os tamanhos são os do arquivo da página que o mangaprep gravou.`
         : `Página de origem: ${width} × ${height} px. As páginas não são ampliadas, então o tamanho mostra o que foi cortado.`,
   },
   optionBook: {
@@ -243,8 +243,8 @@ const portuguese: Strings = {
     page: 'página',
     pages: 'páginas',
     region: 'valores medidos',
-    caption: (mangapress) =>
-      `Medido com o mangapress ${mangapress}: cada valor é lido de volta do livro que ele gravou.`,
+    caption: (mangaprep) =>
+      `Medido com o mangaprep ${mangaprep}: cada valor é lido de volta do livro que ele gravou.`,
     heads: {
       title: 'Título do livro',
       author: 'Autor',
@@ -288,7 +288,7 @@ const japanese: Strings = {
   optionCredit: {
     art: '絵:',
     by: '、作者: ',
-    converted: (mangapress) => `。mangapress ${mangapress} で変換しました。`,
+    converted: (mangaprep) => `。mangaprep ${mangaprep} で変換しました。`,
   },
   optionExample: {
     openLarger: '大きい画像を開く',
@@ -308,7 +308,7 @@ const japanese: Strings = {
     kept: (files) => (files ? 'ファイルサイズ' : 'ページに残る割合'),
     caption: (files, width, height) =>
       files
-        ? `元のページ: ${width} × ${height} px。サイズは、mangapress が書き出したページのファイルのものです。`
+        ? `元のページ: ${width} × ${height} px。サイズは、mangaprep が書き出したページのファイルのものです。`
         : `元のページ: ${width} × ${height} px。ページは拡大していないので、サイズを見れば切り取られた量が分かります。`,
   },
   optionBook: {
@@ -327,8 +327,8 @@ const japanese: Strings = {
     page: 'ページ',
     pages: 'ページ',
     region: '測定した値',
-    caption: (mangapress) =>
-      `mangapress ${mangapress} で測定: 各値は、mangapress が書き出した本から読み戻したものです。`,
+    caption: (mangaprep) =>
+      `mangaprep ${mangaprep} で測定: 各値は、mangaprep が書き出した本から読み戻したものです。`,
     heads: {
       title: '書名',
       author: '著者',

@@ -93,8 +93,8 @@ export const failureRows: Rows<
   'failure.conversionFailed': [
     [
       {},
-      'Mangapress could not convert this volume.',
-      'O mangapress não conseguiu converter este volume.',
+      'Mangaprep could not convert this volume.',
+      'O mangaprep não conseguiu converter este volume.',
     ],
   ],
   'failure.titleNotConverted': [[{}, 'It could not be converted.', 'Não foi possível converter.']],

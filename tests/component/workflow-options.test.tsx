@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
 import { raw, message } from '@/domain/message';
@@ -184,7 +184,7 @@ describe('the options kept between sessions', () => {
             mode: 'convert-only',
             format: 'pdf',
             singleBook: false,
-            settings: { ...defaultMangapressSettings, deviceProfile: 'KS', upscale: false },
+            settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
           },
         }),
       }),
@@ -225,7 +225,7 @@ describe('the options kept between sessions', () => {
           mode: 'bind-and-convert',
           format: 'pdf',
           singleBook: false,
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
         },
       });
     });
@@ -379,7 +379,7 @@ describe('the options kept between sessions', () => {
         loadSettings: keptSettings({
           preferences: {
             ...defaultPreferences,
-            settings: { ...defaultMangapressSettings, deviceProfile: 'K999' },
+            settings: { ...defaultMangaprepSettings, deviceProfile: 'K999' },
           },
         }),
       }),
@@ -631,7 +631,7 @@ describe('the options kept between sessions', () => {
       await user.click(screen.getByRole('button', { name: 'Reset to defaults' }));
       const confirm = screen.getByRole('group', { name: 'Confirm reset' });
       expect(confirm).toHaveTextContent(
-        'Put the steps, device, format and every mangapress option back to their defaults?',
+        'Put the steps, device, format and every mangaprep option back to their defaults?',
       );
       await user.click(within(confirm).getByRole('button', { name: 'Reset' }));
 
@@ -683,7 +683,7 @@ describe('the options kept between sessions', () => {
       await user.click(screen.getByRole('button', { name: 'Reset to defaults' }));
       const confirm = screen.getByRole('group', { name: 'Confirm reset' });
       expect(confirm).toHaveTextContent(
-        'Put the device, format and every mangapress option back to their defaults?',
+        'Put the device, format and every mangaprep option back to their defaults?',
       );
       await user.click(within(confirm).getByRole('button', { name: 'Reset' }));
 

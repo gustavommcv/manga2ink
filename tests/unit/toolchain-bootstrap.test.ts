@@ -57,14 +57,14 @@ vi.mock('@/adapters/process/node-process-runner', () => ({
 vi.mock('@/adapters/mangabind/cli', () => ({
   MangabindCliAdapter: fake.recorder('mangabind-cli'),
 }));
-vi.mock('@/adapters/mangapress/cli', () => ({
-  MangapressCliAdapter: fake.recorder('mangapress-cli'),
+vi.mock('@/adapters/mangaprep/cli', () => ({
+  MangaprepCliAdapter: fake.recorder('mangaprep-cli'),
 }));
 vi.mock('@/adapters/mangabind/binding-port', () => ({
   MangabindBindingAdapter: fake.recorder('binding'),
 }));
-vi.mock('@/adapters/mangapress/conversion-port', () => ({
-  MangapressConversionAdapter: fake.recorder('conversion'),
+vi.mock('@/adapters/mangaprep/conversion-port', () => ({
+  MangaprepConversionAdapter: fake.recorder('conversion'),
 }));
 vi.mock('@/adapters/library/fs-book-file-store', () => ({
   FsBookFileStore: fake.recorder('book-files'),
@@ -86,13 +86,13 @@ const tool = (
 });
 const ready = (
   target: ToolchainTarget,
-  tools: readonly ToolVerificationStatus[] = [tool('mangabind'), tool('mangapress')],
+  tools: readonly ToolVerificationStatus[] = [tool('mangabind'), tool('mangaprep')],
 ): ToolchainStatus => ({ state: 'ready', target, tools, message: raw('Ready.') });
 const blocked: ToolchainStatus = { state: 'blocked', tools: [], message: raw('Not these tools.') };
 
 const emptyContext = (): Parameters<typeof bootstrapToolchain>[0] => ({
   workflow: undefined,
-  mangapressCli: undefined,
+  mangaprepCli: undefined,
   coverStore: undefined,
   processing: undefined,
   queueRuns: new QueueRuns({ now: () => 0, newToken: () => 'queue' }),
@@ -155,15 +155,15 @@ describe('a toolchain that verified', () => {
     const root = path.join('/opt/manga2ink/app', 'vendor', 'toolchain', 'linux-x64');
     expect(status).toEqual(ready('linux-x64'));
     const [mangabindCli] = madeOf('mangabind-cli');
-    const [mangapressCli] = madeOf('mangapress-cli');
+    const [mangaprepCli] = madeOf('mangaprep-cli');
     expect(mangabindCli?.args).toEqual([path.join(root, 'mangabind'), fake.runner, false]);
-    expect(mangapressCli?.args).toEqual([path.join(root, 'mangapress'), fake.runner]);
-    expect(context.mangapressCli).toBe(mangapressCli?.instance);
+    expect(mangaprepCli?.args).toEqual([path.join(root, 'mangaprep'), fake.runner]);
+    expect(context.mangaprepCli).toBe(mangaprepCli?.instance);
     // One runner for both tools, and the workflow is made of the adapters of those two.
     const [binding] = madeOf('binding');
     const [conversion] = madeOf('conversion');
     expect(binding?.args).toEqual([mangabindCli?.instance, undefined, undefined]);
-    expect(conversion?.args).toEqual([mangapressCli?.instance]);
+    expect(conversion?.args).toEqual([mangaprepCli?.instance]);
     const [workflow] = madeOf('workflow');
     expect(context.workflow).toBe(workflow?.instance);
     expect(workflow?.args).toEqual([
@@ -202,7 +202,7 @@ describe('a toolchain that verified', () => {
 
     const root = path.join('/opt/manga2ink/app', 'vendor', 'toolchain', 'win32-x64');
     expect(madeOf('mangabind-cli')[0]?.args[0]).toBe(path.join(root, 'mangabind.exe'));
-    expect(madeOf('mangapress-cli')[0]?.args[0]).toBe(path.join(root, 'mangapress.exe'));
+    expect(madeOf('mangaprep-cli')[0]?.args[0]).toBe(path.join(root, 'mangaprep.exe'));
   });
 
   it.each([
@@ -211,7 +211,7 @@ describe('a toolchain that verified', () => {
     ['advertises nothing', undefined, false],
   ])('tells mangabind it %s only when it does', async (_description, capabilities, expected) => {
     fake.verify.mockResolvedValue(
-      ready('linux-x64', [tool('mangabind', capabilities), tool('mangapress', ['progress-json'])]),
+      ready('linux-x64', [tool('mangabind', capabilities), tool('mangaprep', ['progress-json'])]),
     );
 
     await bootstrapToolchain(emptyContext());
@@ -287,14 +287,14 @@ describe('a toolchain that did not verify', () => {
 
     expect(status).toBe(blocked);
     expect(context.workflow).toBeUndefined();
-    expect(context.mangapressCli).toBeUndefined();
+    expect(context.mangaprepCli).toBeUndefined();
     expect(fake.made).toEqual([]);
   });
 
   it('builds nothing from a ready status that names no target', async () => {
     const withoutTarget: ToolchainStatus = {
       state: 'ready',
-      tools: [tool('mangabind'), tool('mangapress')],
+      tools: [tool('mangabind'), tool('mangaprep')],
       message: raw('Ready.'),
     };
     fake.verify.mockResolvedValue(withoutTarget);

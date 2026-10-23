@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import { dependencies, folder, mappedDraft } from './support/conversion-workflow';
 
@@ -55,7 +55,7 @@ function titleOf(volumes: number, limit: () => number) {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: mappedDraft(),
         },

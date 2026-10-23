@@ -45,7 +45,7 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
     'failure.toolIncompatible': () =>
       'A bundled conversion tool returned incompatible data. Reinstall Manga2Ink or open Diagnostics.',
     'failure.bindingFailed': () => 'Mangabind could not build the selected volumes.',
-    'failure.conversionFailed': () => 'Mangapress could not convert this volume.',
+    'failure.conversionFailed': () => 'Mangaprep could not convert this volume.',
     'failure.titleNotConverted': () => 'It could not be converted.',
     'failure.coverUnusable': ({ book }) =>
       `The cover chosen for ${book} could not be used. Remove it, or choose another image, on the book’s details page.`,
@@ -109,7 +109,7 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
     'failure.toolIncompatible': () =>
       'Uma das ferramentas de conversão incluídas devolveu dados incompatíveis. Reinstale o Manga2Ink ou abra o Diagnóstico.',
     'failure.bindingFailed': () => 'O mangabind não conseguiu montar os volumes escolhidos.',
-    'failure.conversionFailed': () => 'O mangapress não conseguiu converter este volume.',
+    'failure.conversionFailed': () => 'O mangaprep não conseguiu converter este volume.',
     'failure.titleNotConverted': () => 'Não foi possível converter.',
     'failure.coverUnusable': ({ book }) =>
       `Não foi possível usar a capa escolhida para ${book}. Remova-a, ou escolha outra imagem, na página de detalhes do livro.`,
@@ -175,7 +175,7 @@ export const failureSaid: Readonly<Record<Language, SaidFor<FailureMessageValues
     'failure.toolIncompatible': () =>
       '同梱の変換ツールが、互換性のないデータを返しました。Manga2Ink を再インストールするか、診断情報を開いてください。',
     'failure.bindingFailed': () => 'mangabind は、選ばれた巻を作成できませんでした。',
-    'failure.conversionFailed': () => 'mangapress は、この巻を変換できませんでした。',
+    'failure.conversionFailed': () => 'mangaprep は、この巻を変換できませんでした。',
     'failure.titleNotConverted': () => '変換できませんでした。',
     'failure.coverUnusable': ({ book }) =>
       `「${book}」に選んだ表紙を使用できませんでした。本の詳細ページで、表紙を削除するか、別の画像を選んでください。`,

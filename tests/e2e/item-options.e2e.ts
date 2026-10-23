@@ -211,7 +211,7 @@ describe('packaged conversion options of one item', () => {
     await cp(named, alpha, { recursive: true });
     await cp(named, gamma, { recursive: true });
     await mkdir(libraryPath);
-    // Chapters whose pages are not images: mangabind binds them and mangapress cannot convert them.
+    // Chapters whose pages are not images: mangabind binds them and mangaprep cannot convert them.
     const chapters = [
       'Vol.01 Ch.0001 - First (en) [Group]',
       'Vol.01 Ch.0002 - Second (en) [Group]',

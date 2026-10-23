@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { preferencesSchema, saveSettingsCommandSchema } from '@/shared/settings-contract';
-import { mangapressSettingsSchema } from '@/shared/workflow-contract';
+import { mangaprepSettingsSchema } from '@/shared/workflow-contract';
 
 describe('the options that are kept', () => {
   it('accept the defaults', () => {
@@ -11,13 +11,13 @@ describe('the options that are kept', () => {
   });
 
   it('drop a title and an author instead of keeping them', () => {
-    const parsed = mangapressSettingsSchema.parse({
-      ...defaultMangapressSettings,
+    const parsed = mangaprepSettingsSchema.parse({
+      ...defaultMangaprepSettings,
       title: 'Only for this book',
       author: 'Someone',
     });
 
-    expect(parsed).toEqual(defaultMangapressSettings);
+    expect(parsed).toEqual(defaultMangaprepSettings);
     expect(parsed).not.toHaveProperty('title');
     expect(parsed).not.toHaveProperty('author');
   });
@@ -29,18 +29,18 @@ describe('the options that are kept', () => {
     ['a source id that is far too long', { ...defaultPreferences, providerId: 'x'.repeat(65) }],
     [
       'an option out of range',
-      { ...defaultPreferences, settings: { ...defaultMangapressSettings, preserveMargin: -1 } },
+      { ...defaultPreferences, settings: { ...defaultMangaprepSettings, preserveMargin: -1 } },
     ],
   ])('refuse %s', (_name, preferences) => {
     expect(preferencesSchema.safeParse(preferences).success).toBe(false);
   });
 
   it('want a size for the custom device, as a conversion does', () => {
-    const custom = { ...defaultMangapressSettings, deviceProfile: 'OTHER' };
+    const custom = { ...defaultMangaprepSettings, deviceProfile: 'OTHER' };
 
-    expect(mangapressSettingsSchema.safeParse(custom).success).toBe(false);
+    expect(mangaprepSettingsSchema.safeParse(custom).success).toBe(false);
     expect(
-      mangapressSettingsSchema.safeParse({ ...custom, customWidth: 1000, customHeight: 1400 })
+      mangaprepSettingsSchema.safeParse({ ...custom, customWidth: 1000, customHeight: 1400 })
         .success,
     ).toBe(true);
   });

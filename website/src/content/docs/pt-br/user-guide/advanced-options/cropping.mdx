@@ -27,7 +27,7 @@ O padrão é **Margens e números de página**.
 A página tem o mesmo formato da tela, então com o recorte **Desativado** a margem fica e o desenho é menor. Com o recorte ligado, a margem sai e o desenho cresce para ocupar o lugar.
 
 - **Desativado**: a página vai para a tela como está.
-- **Margens**: o mangapress procura onde está o desenho. Ele passa a página para cinza (e inverte quando o fundo é escuro), estica os tons, borra levemente e trata como papel tudo que é mais claro que um limite. A caixa em volta do que sobra é o desenho, e a página é cortada nela. Nenhuma página perde mais de 10% da largura ou da altura em cada lado, então um scan com borda muito larga mantém o que passa disso.
+- **Margens**: o mangaprep procura onde está o desenho. Ele passa a página para cinza (e inverte quando o fundo é escuro), estica os tons, borra levemente e trata como papel tudo que é mais claro que um limite. A caixa em volta do que sobra é o desenho, e a página é cortada nela. Nenhuma página perde mais de 10% da largura ou da altura em cada lado, então um scan com borda muito larga mantém o que passa disso.
 - **Margens e números de página**: o mesmo, e depois mais um olhar para uma faixa fina logo acima da borda de baixo da caixa. Se ela tiver exatamente uma forma escura pequena, do tamanho de um número de um a três dígitos, a página é cortada de logo acima dela. Duas ou mais formas, ou uma grande demais, são tomadas por desenho e ficam como estão.
 
 A página acima não tem número de página, então **Margens** dá o mesmo resultado que **Margens e números de página**. `--cropping` aceita `disabled`, `margins` ou `margins-and-page-numbers`; `-c` é a forma curta.
@@ -48,13 +48,13 @@ A imagem contorna a parte de uma página que é mantida em cada potência, com a
 
 <OptionSizes id="cropping-power-sizes" />
 
-Maior nem sempre é mais. Em 3,75 o limite é 0: só o preto puro ainda conta como desenho, então o corte se agarra às linhas mais pretas e entra na página, até 887 pixels de largura aqui. Uma potência de 3,76 ou mais põe o limite abaixo de zero. Nada conta como desenho, o mangapress não encontra nenhum e a página fica sem corte. Uma potência acima de 3,75 desliga o recorte em vez de reforçá-lo. Se um scan tem margens cinza, tente 2 antes de ir mais alto.
+Maior nem sempre é mais. Em 3,75 o limite é 0: só o preto puro ainda conta como desenho, então o corte se agarra às linhas mais pretas e entra na página, até 887 pixels de largura aqui. Uma potência de 3,76 ou mais põe o limite abaixo de zero. Nada conta como desenho, o mangaprep não encontra nenhum e a página fica sem corte. Uma potência acima de 3,75 desliga o recorte em vez de reforçá-lo. Se um scan tem margens cinza, tente 2 antes de ir mais alto.
 
 `--croppingpower` define o valor.
 
 ## Área mínima mantida
 
-O padrão é 0%, e o app aceita de 0 a 100%. O mangapress só corta quando a página cortada mantém pelo menos essa fração da área da página, e deixa a página como está caso contrário.
+O padrão é 0%, e o app aceita de 0 a 100%. O mangaprep só corta quando a página cortada mantém pelo menos essa fração da área da página, e deixa a página como está caso contrário.
 
 <OptionSizes id="cropping-minimum-sizes" />
 
@@ -93,6 +93,6 @@ Serve para páginas no estilo webtoon, com trechos longos vazios. O exemplo junt
   }}
 />
 
-Na última imagem a faixa da borda direita também some, e ela não é um vão entre quadros. Para as colunas, o 1% da borda é medido pela altura da página, não pela largura, que é como o KCC faz e o mangapress o segue. Numa página mais alta que larga, uma faixa branca ao longo da borda direita é por isso removida como se fosse um vão, enquanto a da borda esquerda fica.
+Na última imagem a faixa da borda direita também some, e ela não é um vão entre quadros. Para as colunas, o 1% da borda é medido pela altura da página, não pela largura, que é como o KCC faz e o mangaprep o segue. Numa página mais alta que larga, uma faixa branca ao longo da borda direita é por isso removida como se fosse um vão, enquanto a da borda esquerda fica.
 
 `--ipc` aceita `disabled`, `horizontal` ou `both`.

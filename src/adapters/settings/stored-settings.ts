@@ -3,13 +3,13 @@ import { z } from 'zod';
 import type { StoredSettings } from '@/application/ports/settings-store';
 import type { OptionName } from '@/domain/messages/notice';
 import {
-  defaultMangapressSettings,
-  type MangapressSettingField,
-  type MangapressSettings,
+  defaultMangaprepSettings,
+  type MangaprepSettingField,
+  type MangaprepSettings,
 } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { networkInterfacePreferenceSchema, preferencesSchema } from '@/shared/settings-contract';
-import { mangapressSettingFields, mangapressSettingsSchema } from '@/shared/workflow-contract';
+import { mangaprepSettingFields, mangaprepSettingsSchema } from '@/shared/workflow-contract';
 
 export const settingsFileVersion = 1;
 
@@ -91,19 +91,19 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
     return undefined;
   };
 
-  const options: Record<string, unknown> = { ...defaultMangapressSettings };
-  for (const [name, schema] of Object.entries(mangapressSettingFields) as [
-    MangapressSettingField,
+  const options: Record<string, unknown> = { ...defaultMangaprepSettings };
+  for (const [name, schema] of Object.entries(mangaprepSettingFields) as [
+    MangaprepSettingField,
     z.ZodType,
   ][]) {
     const value = read(name, schema, rawSettings[name]);
     if (value !== undefined) options[name] = value;
   }
   // The options hold together or not at all: a custom device with no size is not a device.
-  if (!mangapressSettingsSchema.safeParse(options).success) {
+  if (!mangaprepSettingsSchema.safeParse(options).success) {
     for (const name of ['deviceProfile', 'customWidth', 'customHeight'] as const) {
       delete options[name];
-      if (name === 'deviceProfile') options[name] = defaultMangapressSettings.deviceProfile;
+      if (name === 'deviceProfile') options[name] = defaultMangaprepSettings.deviceProfile;
     }
     reset.push('customDeviceSize');
   }
@@ -129,7 +129,7 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
     mode: mode ?? defaultPreferences.mode,
     format: format ?? defaultPreferences.format,
     singleBook: singleBook ?? (wasCombining ? true : defaultPreferences.singleBook),
-    settings: { ...(options as unknown as MangapressSettings), combineIntoOneVolume: false },
+    settings: { ...(options as unknown as MangaprepSettings), combineIntoOneVolume: false },
     ...(providerId === undefined ? {} : { providerId }),
     ...(outputFolder === undefined ? {} : { outputFolder }),
     ...(lastPickerFolder === undefined ? {} : { lastPickerFolder }),

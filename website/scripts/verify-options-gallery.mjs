@@ -1,5 +1,5 @@
-// Checks the advanced-options pages against the pictures, the pinned mangapress and the list of
-// mangapress options (schemas/cli-capabilities.json). The rules are in options-gallery-check.mjs.
+// Checks the advanced-options pages against the pictures, the pinned mangaprep and the list of
+// mangaprep options (schemas/cli-capabilities.json). The rules are in options-gallery-check.mjs.
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
@@ -55,10 +55,10 @@ const otherDirectories = languages.map(({ directory }) => directory).filter(Bool
 const folderOf = ({ directory }) => path.join(docs, directory);
 const problems = checkGallery({
   manifest: json(assets, 'manifest.json'),
-  pin: json(root, 'toolchain.lock.json').tools.mangapress.pin.releaseTag.replace(/^v/, ''),
+  pin: json(root, 'toolchain.lock.json').tools.mangaprep.pin.releaseTag.replace(/^v/, ''),
   pictures,
   licenses: readFileSync(path.join(assets, 'LICENSES.md'), 'utf8'),
-  userFlags: json(root, 'schemas', 'cli-capabilities.json').tools.mangapress.user,
+  userFlags: json(root, 'schemas', 'cli-capabilities.json').tools.mangaprep.user,
   coverage: json(website, 'media-src', 'options', 'coverage.json'),
   pages: Object.fromEntries(
     languages.map((language) => [
@@ -84,4 +84,4 @@ if (problems.length > 0) {
   console.error(`\n${problems.length} problem(s) with the advanced-options pages.`);
   process.exit(1);
 }
-console.log('The advanced-options pages, their pictures and the mangapress options agree.');
+console.log('The advanced-options pages, their pictures and the mangaprep options agree.');

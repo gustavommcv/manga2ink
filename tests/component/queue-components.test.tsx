@@ -155,7 +155,7 @@ describe('ResultsScreen', () => {
     expect(screen.getByRole('heading', { name: '1 book ready' })).toHaveFocus();
   });
 
-  it('shows what mangapress noticed once per kind, saying which books it is in', () => {
+  it('shows what mangaprep noticed once per kind, saying which books it is in', () => {
     const small = { code: 'images_smaller_than_device', message: 'Consider --upscale.' };
     const later = { code: 'added_in_a_later_release', message: 'Something new was noticed.' };
     render(
@@ -190,7 +190,7 @@ describe('ResultsScreen', () => {
       'In all 2 books. More than a quarter of the pages are smaller than the screen',
     );
     expect(notices[0]).not.toHaveTextContent('--upscale');
-    expect(notices[1]).toHaveTextContent('A note from mangapress');
+    expect(notices[1]).toHaveTextContent('A note from mangaprep');
     expect(notices[1]).toHaveTextContent('In Work 02.epub. Something new was noticed.');
   });
 
@@ -370,7 +370,7 @@ describe('LibraryScreen', () => {
       title: 'Crashed',
       draft: createMappingDraft({ mangaTitle: 'Crashed', chapters }),
       volumes: [volume],
-      outcome: { status: 'failed', message: raw('mangapress crashed.') },
+      outcome: { status: 'failed', message: raw('mangaprep crashed.') },
     },
   ];
 
@@ -391,7 +391,7 @@ describe('LibraryScreen', () => {
       screen.queryByRole('button', { name: 'Edit volumes for Saved' }),
     ).not.toBeInTheDocument();
     expect(rows[4]).toHaveTextContent('Failed');
-    expect(rows[4]).toHaveTextContent('mangapress crashed.');
+    expect(rows[4]).toHaveTextContent('mangaprep crashed.');
   });
 
   it('leaves a title that was saved as much room as the others have buttons, so the chips line up', () => {

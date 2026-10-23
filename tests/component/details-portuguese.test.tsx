@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { LibraryTitle } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { message, raw } from '@/domain/message';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { AuthorLookupPanel } from '@/renderer/components/details/author-lookup';
 import { BookCovers } from '@/renderer/components/details/book-covers';
 import { ItemsWithOptionsNotice } from '@/renderer/components/settings/items-with-options-notice';
@@ -419,7 +419,7 @@ describe('the pages of the conversion options, in Portuguese', () => {
           onReset={vi.fn()}
           onSettings={vi.fn()}
           profiles={profiles}
-          settings={defaultMangapressSettings}
+          settings={defaultMangaprepSettings}
           singleBook={false}
         />,
       ),
@@ -464,8 +464,8 @@ describe('the pages of the conversion options, in Portuguese', () => {
           onNotify={vi.fn()}
           onUseQueueOptions={vi.fn()}
           profiles={profiles}
-          queue={{ settings: defaultMangapressSettings, format: 'epub' }}
-          settings={defaultMangapressSettings}
+          queue={{ settings: defaultMangaprepSettings, format: 'epub' }}
+          settings={defaultMangaprepSettings}
           singleBook={false}
         />,
       ),
@@ -491,8 +491,8 @@ describe('the pages of the conversion options, in Portuguese', () => {
           onNotify={vi.fn()}
           onUseQueueOptions={vi.fn()}
           profiles={profiles}
-          queue={{ settings: defaultMangapressSettings, format: 'epub' }}
-          settings={defaultMangapressSettings}
+          queue={{ settings: defaultMangaprepSettings, format: 'epub' }}
+          settings={defaultMangaprepSettings}
           singleBook={false}
         />,
       ),

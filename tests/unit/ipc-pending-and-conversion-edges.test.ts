@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { registerConversionHandlers } from '@/main/ipc/conversion';
 import { registerPendingHandlers } from '@/main/ipc/pending';
 import { PendingRunActivity } from '@/main/pending-run-activity';
@@ -269,7 +269,7 @@ describe('conversion, at the edges', () => {
       convert: vi.fn().mockResolvedValue([]),
     };
     const context = {
-      mangapressCli: undefined as unknown,
+      mangaprepCli: undefined as unknown,
       selectedLibraries: new Map<string, string>(),
       activeJobs: new Map<string, AbortController>(),
       conversions: new Set<string>(),
@@ -288,7 +288,7 @@ describe('conversion, at the edges', () => {
     jobId: 'job-1',
     sessionId: 'session-1',
     format: 'epub',
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
   };
 
   it('says why the device list cannot be had when the tool is not there, for the log', async () => {
@@ -298,7 +298,7 @@ describe('conversion, at the edges', () => {
 
     expect(result.ok).toBe(false);
     const cause = causeLogged();
-    expect(cause).toMatchObject({ message: 'mangapress is unavailable.' });
+    expect(cause).toMatchObject({ message: 'mangaprep is unavailable.' });
   });
 
   it('is a job that is known by its id while it runs, so that it can be cancelled', async () => {

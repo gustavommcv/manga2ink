@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BookFormat } from '@/domain/conversion';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
-import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
+import { MangaprepSettingsEditor } from '@/renderer/components/settings/mangaprep-settings';
 
 const profiles = [
   {
@@ -64,15 +64,15 @@ function StatefulEditor({
   initialFormat = 'epub',
   singleBook,
 }: {
-  readonly onChange?: (value: MangapressSettings) => void;
+  readonly onChange?: (value: MangaprepSettings) => void;
   readonly onNotify?: (message: string) => void;
   readonly initialFormat?: BookFormat;
   readonly singleBook?: boolean;
 }) {
-  const [settings, setSettings] = useState(defaultMangapressSettings);
+  const [settings, setSettings] = useState(defaultMangaprepSettings);
   const [format, setFormat] = useState<BookFormat>(initialFormat);
   return (
-    <MangapressSettingsEditor
+    <MangaprepSettingsEditor
       format={format}
       onFormat={setFormat}
       onNotify={onNotify}
@@ -87,7 +87,7 @@ function StatefulEditor({
   );
 }
 
-describe('mangapress settings editor', () => {
+describe('mangaprep settings editor', () => {
   it('shows meaningful placeholders only where a blank value is allowed', () => {
     render(<StatefulEditor />);
 
@@ -167,7 +167,7 @@ describe('mangapress settings editor', () => {
     expect(screen.getByLabelText('JPEG quality (optional)')).toHaveAttribute('placeholder', '85%');
   });
 
-  it('exposes every user-facing mangapress capability in organized sections', () => {
+  it('exposes every user-facing mangaprep capability in organized sections', () => {
     render(<StatefulEditor />);
 
     for (const heading of [
@@ -873,7 +873,7 @@ describe('where a choice is put among the fields of its section (ADR 0071)', () 
     await user.click(screen.getByRole('checkbox', { name: 'Manga reading order' }));
 
     expect(onChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({ mangaStyle: !defaultMangapressSettings.mangaStyle }),
+      expect.objectContaining({ mangaStyle: !defaultMangaprepSettings.mangaStyle }),
     );
     expect(
       screen.getByRole('checkbox', { name: 'Manga reading order' }),

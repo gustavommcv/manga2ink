@@ -7,7 +7,7 @@ const protocolVersion = 1 as const;
 const baseEventSchema = z
   .object({
     protocol_version: z.literal(protocolVersion),
-    tool: z.literal('mangapress'),
+    tool: z.literal('mangaprep'),
     tool_version: z.string().min(1),
     sequence: z.number().int().positive(),
     type: z.string().min(1),
@@ -88,30 +88,30 @@ const knownEventSchemas = {
   }),
 } as const;
 
-export type MangapressEvent = z.infer<typeof baseEventSchema>;
-export type MangapressErrorEvent = z.infer<(typeof knownEventSchemas)['error']>;
-export type MangapressPageEvent = z.infer<(typeof knownEventSchemas)['page']>;
-export type MangapressProfileEvent = z.infer<(typeof knownEventSchemas)['profile']>;
-export type MangapressResultEvent = z.infer<(typeof knownEventSchemas)['result']>;
-export type MangapressWarningEvent = z.infer<(typeof knownEventSchemas)['warning']>;
+export type MangaprepEvent = z.infer<typeof baseEventSchema>;
+export type MangaprepErrorEvent = z.infer<(typeof knownEventSchemas)['error']>;
+export type MangaprepPageEvent = z.infer<(typeof knownEventSchemas)['page']>;
+export type MangaprepProfileEvent = z.infer<(typeof knownEventSchemas)['profile']>;
+export type MangaprepResultEvent = z.infer<(typeof knownEventSchemas)['result']>;
+export type MangaprepWarningEvent = z.infer<(typeof knownEventSchemas)['warning']>;
 
-export function isMangapressErrorEvent(event: MangapressEvent): event is MangapressErrorEvent {
+export function isMangaprepErrorEvent(event: MangaprepEvent): event is MangaprepErrorEvent {
   return knownEventSchemas.error.safeParse(event).success;
 }
 
-export function isMangapressWarningEvent(event: MangapressEvent): event is MangapressWarningEvent {
+export function isMangaprepWarningEvent(event: MangaprepEvent): event is MangaprepWarningEvent {
   return knownEventSchemas.warning.safeParse(event).success;
 }
 
-export function isMangapressPageEvent(event: MangapressEvent): event is MangapressPageEvent {
+export function isMangaprepPageEvent(event: MangaprepEvent): event is MangaprepPageEvent {
   return knownEventSchemas.page.safeParse(event).success;
 }
 
-export function isMangapressProfileEvent(event: MangapressEvent): event is MangapressProfileEvent {
+export function isMangaprepProfileEvent(event: MangaprepEvent): event is MangaprepProfileEvent {
   return knownEventSchemas.profile.safeParse(event).success;
 }
 
-export function isMangapressResultEvent(event: MangapressEvent): event is MangapressResultEvent {
+export function isMangaprepResultEvent(event: MangaprepEvent): event is MangaprepResultEvent {
   return knownEventSchemas.result.safeParse(event).success;
 }
 
@@ -121,15 +121,15 @@ function parseJson(line: string): unknown {
   } catch (error) {
     throw new CliProtocolError(
       'malformed_json',
-      'mangapress returned a malformed JSON event.',
+      'mangaprep returned a malformed JSON event.',
       error,
     );
   }
 }
 
-export function parseMangapressEventLine(line: string): MangapressEvent {
+export function parseMangaprepEventLine(line: string): MangaprepEvent {
   if (line.trim() === '') {
-    throw new CliProtocolError('invalid_payload', 'mangapress returned an empty event line.');
+    throw new CliProtocolError('invalid_payload', 'mangaprep returned an empty event line.');
   }
 
   const payload = parseJson(line);
@@ -144,7 +144,7 @@ export function parseMangapressEventLine(line: string): MangapressEvent {
   ) {
     throw new CliProtocolError(
       'unsupported_protocol',
-      `mangapress protocol ${String(version.data.protocol_version)} is not supported.`,
+      `mangaprep protocol ${String(version.data.protocol_version)} is not supported.`,
     );
   }
 
@@ -152,7 +152,7 @@ export function parseMangapressEventLine(line: string): MangapressEvent {
   if (!baseResult.success) {
     throw new CliProtocolError(
       'invalid_payload',
-      'mangapress returned an event that does not match protocol version 1.',
+      'mangaprep returned an event that does not match protocol version 1.',
       baseResult.error,
     );
   }
@@ -169,25 +169,25 @@ export function parseMangapressEventLine(line: string): MangapressEvent {
   if (!knownResult.success) {
     throw new CliProtocolError(
       'invalid_payload',
-      `mangapress returned an invalid ${baseResult.data.type} event.`,
+      `mangaprep returned an invalid ${baseResult.data.type} event.`,
       knownResult.error,
     );
   }
   return knownResult.data;
 }
 
-export class MangapressEventDecoder {
+export class MangaprepEventDecoder {
   private buffer = '';
   private expectedSequence = 1;
 
-  push(chunk: string): MangapressEvent[] {
+  push(chunk: string): MangaprepEvent[] {
     this.buffer += chunk;
     const lines = this.buffer.split('\n');
     this.buffer = lines.pop()!;
     return lines.map((line) => this.parseSequenced(line.replace(/\r$/, '')));
   }
 
-  finish(): MangapressEvent[] {
+  finish(): MangaprepEvent[] {
     if (this.buffer === '') {
       return [];
     }
@@ -200,7 +200,7 @@ export class MangapressEventDecoder {
       if (error instanceof CliProtocolError && error.code === 'malformed_json') {
         throw new CliProtocolError(
           'incomplete_line',
-          'mangapress ended with an incomplete JSON event.',
+          'mangaprep ended with an incomplete JSON event.',
           error,
         );
       }
@@ -208,12 +208,12 @@ export class MangapressEventDecoder {
     }
   }
 
-  private parseSequenced(line: string): MangapressEvent {
-    const event = parseMangapressEventLine(line);
+  private parseSequenced(line: string): MangaprepEvent {
+    const event = parseMangaprepEventLine(line);
     if (event.sequence !== this.expectedSequence) {
       throw new CliProtocolError(
         'sequence_gap',
-        `Expected mangapress event ${this.expectedSequence}, received ${event.sequence}.`,
+        `Expected mangaprep event ${this.expectedSequence}, received ${event.sequence}.`,
       );
     }
     this.expectedSequence++;
@@ -221,11 +221,11 @@ export class MangapressEventDecoder {
   }
 }
 
-export function parseMangapressEventStream(input: string): MangapressEvent[] {
+export function parseMangaprepEventStream(input: string): MangaprepEvent[] {
   if (input.trim() === '') {
-    throw new CliProtocolError('empty_stream', 'mangapress returned no machine-readable events.');
+    throw new CliProtocolError('empty_stream', 'mangaprep returned no machine-readable events.');
   }
 
-  const decoder = new MangapressEventDecoder();
+  const decoder = new MangaprepEventDecoder();
   return [...decoder.push(input), ...decoder.finish()];
 }

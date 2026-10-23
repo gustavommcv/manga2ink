@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ProcessCancelledError } from '@/application/ports/process-runner';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   trustedDraft,
@@ -184,7 +184,7 @@ describe('library conversion workflow', () => {
     const { sessionId: folderSession } = await workflow.inspect(folder);
     const convertRequest = {
       libraryPath: '/output',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
     } as const;
 
@@ -250,7 +250,7 @@ describe('library conversion workflow', () => {
     const request = {
       sessionId,
       libraryPath: '/output',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
     } as const;
 
@@ -279,7 +279,7 @@ describe('library conversion workflow', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: { ...defaultMangapressSettings, jpegQuality: 101 },
+          settings: { ...defaultMangaprepSettings, jpegQuality: 101 },
           format: 'epub',
         },
         { onProgress: vi.fn() },
@@ -297,7 +297,7 @@ describe('library conversion workflow', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       },
       { onProgress },
@@ -328,23 +328,23 @@ describe('library conversion workflow', () => {
     expect(ports.release).toHaveBeenCalledWith('batch-workspace');
   });
 
-  it('isolates a mangapress-phase failure to its own title and keeps converting the rest', async () => {
+  it('isolates a mangaprep-phase failure to its own title and keeps converting the rest', async () => {
     const ports = dependencies();
-    ports.convert.mockImplementationOnce(() => Promise.reject(new Error('mangapress crashed')));
+    ports.convert.mockImplementationOnce(() => Promise.reject(new Error('mangaprep crashed')));
     const { workflow, sessionId } = await openLibrary(ports);
 
     const outcomes = await workflow.convertLibrary(
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       },
       { onProgress: vi.fn() },
     );
 
     expect(outcomes[0]).toMatchObject({ title: 'Good Manga', status: 'failed', artifacts: [] });
-    expect(outcomes[0]!.error).toMatchObject({ message: 'mangapress crashed' });
+    expect(outcomes[0]!.error).toMatchObject({ message: 'mangaprep crashed' });
     // The bind-phase failure for the other title is still reported, not skipped.
     expect(outcomes[1]).toMatchObject({ title: 'Broken Manga', status: 'failed' });
     expect(ports.release).toHaveBeenCalledWith('batch-workspace');
@@ -381,7 +381,7 @@ describe('library conversion workflow', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       },
       { onArtifact, onProgress: vi.fn() },
@@ -416,7 +416,7 @@ describe('library conversion workflow', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format,
           singleBook: true,
         },
@@ -458,16 +458,16 @@ describe('library conversion workflow', () => {
     },
   );
 
-  it('isolates mangapress failure per title in library single-book mode', async () => {
+  it('isolates mangaprep failure per title in library single-book mode', async () => {
     const ports = dependencies();
-    ports.convert.mockRejectedValueOnce(new Error('mangapress crash in single book'));
+    ports.convert.mockRejectedValueOnce(new Error('mangaprep crash in single book'));
     const { workflow, sessionId } = await openLibrary(ports);
 
     const outcomes = await workflow.convertLibrary(
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         singleBook: true,
       },
@@ -475,7 +475,7 @@ describe('library conversion workflow', () => {
     );
 
     expect(outcomes[0]).toMatchObject({ title: 'Good Manga', status: 'failed' });
-    expect(outcomes[0]!.error).toMatchObject({ message: 'mangapress crash in single book' });
+    expect(outcomes[0]!.error).toMatchObject({ message: 'mangaprep crash in single book' });
     expect(outcomes[1]).toMatchObject({ title: 'Broken Manga', status: 'failed' });
     expect(ports.release).toHaveBeenCalledWith('batch-workspace');
   });
@@ -489,7 +489,7 @@ describe('library conversion workflow', () => {
         {
           sessionId,
           libraryPath: '/output',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mode: 'bind-only',
           singleBook: true,
@@ -515,7 +515,7 @@ describe('library conversion workflow', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       },
       { onProgress: vi.fn(), signal: controller.signal },
@@ -542,7 +542,7 @@ describe('library conversion workflow', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         titles: ['Good Manga'],
       },
@@ -573,7 +573,7 @@ describe('what a library run binds', () => {
   }
   const run = {
     libraryPath: '/output',
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     format: 'epub' as const,
   };
 
@@ -695,7 +695,7 @@ describe('a title mangabind could not bind', () => {
       {
         sessionId,
         libraryPath: '/pending',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       },
       { onProgress: vi.fn() },

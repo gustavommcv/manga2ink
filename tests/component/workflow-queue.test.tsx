@@ -11,7 +11,7 @@ import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
 import { message, raw } from '@/domain/message';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
 import { type Manga2InkBridge } from '@/shared/runtime-info';
 import {
@@ -360,7 +360,7 @@ describe('queue application workflow', () => {
       sessionId: 'session',
       libraryId: 'pending-run',
       mode: 'bind-and-convert',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
       mapping,
     });
@@ -529,7 +529,7 @@ describe('queue application workflow', () => {
     expect(planConversion).toHaveBeenCalledWith(
       expect.objectContaining({
         sessionId: 'session',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
       }),
     );
 
@@ -809,7 +809,7 @@ describe('queue application workflow', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('takes a CBZ straight to mangapress and explains that it is already one volume', async () => {
+  it('takes a CBZ straight to mangaprep and explains that it is already one volume', async () => {
     const user = userEvent.setup();
     const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({

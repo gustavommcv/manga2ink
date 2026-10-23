@@ -1,12 +1,12 @@
-// What the option examples show. `npm run site:options` runs the pinned mangapress on the pages named
+// What the option examples show. `npm run site:options` runs the pinned mangaprep on the pages named
 // here, with and without each option, and writes the pictures and the manifest the pages read.
 // Only a variant's own flags differ inside an example: the page, the profile and the rest are shared.
 
 /**
- * The settings Manga2Ink starts a conversion with, as mangapress flags: Kindle Paperwhite 6, CBZ,
+ * The settings Manga2Ink starts a conversion with, as mangaprep flags: Kindle Paperwhite 6, CBZ,
  * manga reading order, spreads kept both ways, small pages enlarged, margins and page numbers
- * cropped. Cropping is mangapress's own default, so it needs no flag. The source of truth is
- * `defaultMangapressSettings` in src/domain/output-profile.ts; keep this in step with it.
+ * cropped. Cropping is mangaprep's own default, so it needs no flag. The source of truth is
+ * `defaultMangaprepSettings` in src/domain/output-profile.ts; keep this in step with it.
  */
 export const base = {
   profile: 'KPW6',
@@ -41,7 +41,7 @@ const PEPPER_STRIP = [
 ];
 
 // Pepper&Carrot has no ComicInfo.xml, so the examples about metadata give it one, written for them:
-// the fields mangapress reads, with the comic's own title, series number and author.
+// the fields mangaprep reads, with the comic's own title, series number and author.
 const BOOK = {
   name: 'Pepper and Carrot 06',
   format: 'epub',
@@ -904,7 +904,7 @@ export const examples = [
     ],
   },
   {
-    // One image from each of the shapes mangapress tells apart, cut from the same three pages.
+    // One image from each of the shapes mangaprep tells apart, cut from the same three pages.
     id: 'cover-smart-bands',
     kind: 'book',
     columns: ['source', 'cover'],

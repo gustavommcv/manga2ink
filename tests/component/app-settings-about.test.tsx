@@ -49,7 +49,7 @@ const checked: ToolchainStatus = {
   message: raw('Ready.'),
   tools: [
     { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
-    { name: 'mangapress', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
+    { name: 'mangaprep', releaseTag: 'v0.8.0', state: 'ready', message: raw('Ready.') },
   ],
 };
 
@@ -58,7 +58,7 @@ describe('the tools the About tab names', () => {
     await renderAbout({ getToolchainStatus: () => Promise.resolve(checked) });
 
     expect(await screen.findByText('mangabind')).toBeVisible();
-    expect(screen.getByText('mangapress')).toBeVisible();
+    expect(screen.getByText('mangaprep')).toBeVisible();
     const rows = screen.getAllByText(/^v\d/u).map((row) => row.textContent);
     expect(rows).toEqual(['v0.7.2 · verified', 'v0.8.0 · verified']);
   });
@@ -87,7 +87,7 @@ describe('the tools the About tab names', () => {
           tools: [
             { name: 'mangabind', releaseTag: 'v0.7.2', state: 'ready', message: raw('Ready.') },
             {
-              name: 'mangapress',
+              name: 'mangaprep',
               releaseTag: 'v0.8.0',
               state: 'failed',
               message: raw('Wrong hash.'),

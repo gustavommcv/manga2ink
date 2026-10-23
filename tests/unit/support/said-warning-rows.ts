@@ -144,7 +144,7 @@ export const warningRows: Rows<WarningMessageValues> = {
       'Os livros seguem os seus volumes, mas eles não puderam ser salvos no mangabind.json da pasta: a pasta não permite gravação, ou o mangabind.json dela não é um JSON válido. Da próxima vez que adicionar a pasta, você vai precisar editar os volumes de novo.',
     ],
   ],
-  'warning.unknownTitle': [[{}, 'A note from mangapress', 'Uma observação do mangapress']],
+  'warning.unknownTitle': [[{}, 'A note from mangaprep', 'Uma observação do mangaprep']],
   'warning.inAll': [[{ count: 3 }, 'In all 3 books.', 'Em todos os 3 livros.']],
   'warning.inOne': [[{ first: 'One.epub' }, 'In One.epub.', 'Em One.epub.']],
   'warning.inTwo': [

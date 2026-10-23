@@ -48,9 +48,9 @@ export const toolchainRows: Rows<ToolchainMessageValues> = {
   ],
   'toolchain.toolFailed': [
     [
-      { tool: 'mangapress' },
-      'mangapress could not be verified. Reinstall Manga2Ink to restore its bundled tools.',
-      'Não foi possível verificar mangapress. Reinstale o Manga2Ink para restaurar as ferramentas incluídas.',
+      { tool: 'mangaprep' },
+      'mangaprep could not be verified. Reinstall Manga2Ink to restore its bundled tools.',
+      'Não foi possível verificar mangaprep. Reinstale o Manga2Ink para restaurar as ferramentas incluídas.',
     ],
   ],
 };

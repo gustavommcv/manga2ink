@@ -293,7 +293,7 @@ describe('sharing to an e-reader', () => {
         convert: () =>
           Promise.resolve({
             ok: false,
-            error: { code: 'process_failed', said: raw('mangapress crashed.') },
+            error: { code: 'process_failed', said: raw('mangaprep crashed.') },
           }),
       }),
     );

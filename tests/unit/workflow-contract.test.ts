@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import {
   bookDetailsSchema,
   chooseInputsKindSchema,
@@ -19,7 +19,7 @@ const command = {
   jobId: 'job',
   sessionId: 'session',
   libraryId: 'library',
-  settings: defaultMangapressSettings,
+  settings: defaultMangaprepSettings,
   format: 'epub',
 };
 
@@ -32,13 +32,13 @@ describe('workflow IPC contract', () => {
     expect(
       conversionCommandSchema.safeParse({
         ...command,
-        settings: { ...defaultMangapressSettings, croppingMinimum: 101 },
+        settings: { ...defaultMangaprepSettings, croppingMinimum: 101 },
       }).success,
     ).toBe(false);
     expect(
       conversionCommandSchema.safeParse({
         ...command,
-        settings: { ...defaultMangapressSettings, deviceProfile: 'OTHER', customWidth: 1200 },
+        settings: { ...defaultMangaprepSettings, deviceProfile: 'OTHER', customWidth: 1200 },
       }).success,
     ).toBe(false);
   });
@@ -48,7 +48,7 @@ describe('workflow IPC contract', () => {
       jobId: 'job',
       sessionId: 'session',
       libraryId: 'library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       titles: ['Good Manga'],
     };
@@ -119,7 +119,7 @@ describe('workflow IPC contract', () => {
           jobId: 'job',
           sessionId: 'session',
           libraryId: 'library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           titleDetails: [{ title: 'Good Manga', details }],
         }).titleDetails,
@@ -164,7 +164,7 @@ describe('workflow IPC contract', () => {
           jobId: 'job',
           sessionId: 'session',
           libraryId: 'library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           titleDetails,
         }).success,
@@ -178,10 +178,10 @@ describe('the options a title of a library is made with', () => {
     jobId: 'job',
     sessionId: 'session',
     libraryId: 'library',
-    settings: defaultMangapressSettings,
+    settings: defaultMangaprepSettings,
     format: 'cbz',
   };
-  const own = { title: 'Good Manga', settings: defaultMangapressSettings, format: 'epub' };
+  const own = { title: 'Good Manga', settings: defaultMangaprepSettings, format: 'epub' };
 
   it('travel with the library, by the name of the title, and are optional', () => {
     expect(libraryConversionCommandSchema.parse(library)).not.toHaveProperty('titleOptions');
@@ -193,8 +193,8 @@ describe('the options a title of a library is made with', () => {
   it('are held to the same rules as the options of the library', () => {
     for (const bad of [
       { ...own, format: 'mobi' },
-      { ...own, settings: { ...defaultMangapressSettings, croppingPower: 'high' } },
-      { ...own, settings: { ...defaultMangapressSettings, deviceProfile: 'OTHER' } },
+      { ...own, settings: { ...defaultMangaprepSettings, croppingPower: 'high' } },
+      { ...own, settings: { ...defaultMangaprepSettings, deviceProfile: 'OTHER' } },
       { ...own, title: 'x'.repeat(1025) },
     ]) {
       expect(
@@ -338,7 +338,7 @@ describe('what the page may send, and how much', () => {
       jobId: 'job',
       sessionId: 'session',
       libraryId: 'library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
     };
     expect(
@@ -386,7 +386,7 @@ describe('what the page may send, and how much', () => {
     const withSettings = (overrides: Record<string, unknown>) =>
       conversionCommandSchema.safeParse({
         ...command,
-        settings: { ...defaultMangapressSettings, ...overrides },
+        settings: { ...defaultMangaprepSettings, ...overrides },
       }).success;
     expect(withSettings({ gamma: 1.8 })).toBe(true);
     expect(withSettings({ gamma: 18 })).toBe(false);

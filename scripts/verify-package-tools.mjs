@@ -1,4 +1,4 @@
-// Fails when the mangabind or mangapress inside an unpacked Linux package is not the file pinned in
+// Fails when the mangabind or mangaprep inside an unpacked Linux package is not the file pinned in
 // toolchain.lock.json. The app hashes both tools every time it starts and refuses to convert when
 // either differs, so a package builder that rewrites them (rpmbuild strips and edits ELF files by
 // default) installs without a word and then keeps every conversion from starting.
@@ -12,7 +12,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
 const target = 'linux-x64';
-const tools = ['mangabind', 'mangapress'];
+const tools = ['mangabind', 'mangaprep'];
 
 const [label, unpacked, lockPath = 'toolchain.lock.json'] = process.argv.slice(2);
 if (label === undefined || unpacked === undefined) {

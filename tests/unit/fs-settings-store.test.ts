@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FsSettingsStore, type FsSettingsStoreDeps } from '@/adapters/settings/fs-settings-store';
 import { settingsFileVersion } from '@/adapters/settings/stored-settings';
 import { SettingsSaveError, type StoredSettings } from '@/application/ports/settings-store';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 
 const settingsFile = path.join('data', 'settings.json');
@@ -15,7 +15,7 @@ const kept: StoredSettings = {
   mode: 'bind-only',
   format: 'cbz',
   singleBook: false,
-  settings: { ...defaultMangapressSettings, deviceProfile: 'KS' },
+  settings: { ...defaultMangaprepSettings, deviceProfile: 'KS' },
   outputFolder: '/books',
 };
 

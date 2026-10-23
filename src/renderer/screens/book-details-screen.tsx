@@ -43,7 +43,7 @@ export interface BookDetailsScreenProps {
   /** Where to look up who wrote it. Absent when there is no source to ask. */
   readonly lookup?: AuthorLookup;
   /**
-   * The covers of the item's books and what can be done with them. Absent when mangapress does
+   * The covers of the item's books and what can be done with them. Absent when mangaprep does
    * not make the books, since a cover is its to make.
    */
   readonly covers?: BookCoverControls;

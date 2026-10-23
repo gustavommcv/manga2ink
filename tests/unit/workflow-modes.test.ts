@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 
 import { mappedDraft, dependencies, folder, cbz, openLibrary } from './support/conversion-workflow';
 
 describe('conversion workflow process modes', () => {
-  const invalidSettings = { ...defaultMangapressSettings, deviceProfile: '' };
+  const invalidSettings = { ...defaultMangaprepSettings, deviceProfile: '' };
 
   function folderWorkflow(ports: ReturnType<typeof dependencies>) {
     let id = 0;
@@ -19,7 +19,7 @@ describe('conversion workflow process modes', () => {
     );
   }
 
-  it('joins a folder and saves the volumes as books without ever running mangapress', async () => {
+  it('joins a folder and saves the volumes as books without ever running mangaprep', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -30,7 +30,7 @@ describe('conversion workflow process modes', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        // Settings mangapress would reject are irrelevant when mangapress is not run.
+        // Settings mangaprep would reject are irrelevant when mangaprep is not run.
         settings: invalidSettings,
         format: 'epub',
         mapping: mappedDraft(),
@@ -84,7 +84,7 @@ describe('conversion workflow process modes', () => {
     ]);
   });
 
-  it('sends a folder straight to mangapress as one book when it is not grouped', async () => {
+  it('sends a folder straight to mangaprep as one book when it is not grouped', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -93,7 +93,7 @@ describe('conversion workflow process modes', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mode: 'convert-only',
       },
@@ -134,7 +134,7 @@ describe('conversion workflow process modes', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mode: 'convert-only',
       },
@@ -162,7 +162,7 @@ describe('conversion workflow process modes', () => {
     const request = {
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub' as const,
       mode: 'convert-only' as const,
     };
@@ -172,7 +172,7 @@ describe('conversion workflow process modes', () => {
       cause: disk,
     });
 
-    const broken = new Error('mangapress exited with code 1');
+    const broken = new Error('mangaprep exited with code 1');
     ports.convert.mockRejectedValueOnce(broken);
     ports.bookFiles.stageBook = async (_request, produce) => ({
       produced: await produce('/library/.mangabound/incoming/two'),
@@ -197,7 +197,7 @@ describe('conversion workflow process modes', () => {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mode: 'convert-only',
         },
@@ -206,7 +206,7 @@ describe('conversion workflow process modes', () => {
     ).rejects.toMatchObject({ name: 'AbortError' });
   });
 
-  it('still validates the mangapress settings when mangapress will run', async () => {
+  it('still validates the mangaprep settings when mangaprep will run', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -232,7 +232,7 @@ describe('conversion workflow process modes', () => {
     const request = {
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       mode: 'bind-only',
     } as const;
@@ -257,7 +257,7 @@ describe('conversion workflow process modes', () => {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: mappedDraft(),
           mode: 'bind-only',
@@ -282,7 +282,7 @@ describe('conversion workflow process modes', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
         mode: 'bind-only',
@@ -301,7 +301,7 @@ describe('conversion workflow process modes', () => {
     const request = {
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       mapping: mappedDraft(),
       mode: 'bind-only',
@@ -335,7 +335,7 @@ describe('conversion workflow process modes', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       },
@@ -352,12 +352,12 @@ describe('conversion workflow process modes', () => {
     const request = {
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       mapping: mappedDraft(),
     } as const;
 
-    ports.convert.mockRejectedValueOnce(new Error('mangapress crashed'));
+    ports.convert.mockRejectedValueOnce(new Error('mangaprep crashed'));
     await expect(workflow.convert(request, { onProgress: vi.fn() })).rejects.toThrow(/crashed/u);
     expect(ports.release).not.toHaveBeenCalled();
 
@@ -368,7 +368,7 @@ describe('conversion workflow process modes', () => {
     });
   });
 
-  it('validates a joined-only plan with mangabind and says mangapress is not run', async () => {
+  it('validates a joined-only plan with mangabind and says mangaprep is not run', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -389,7 +389,7 @@ describe('conversion workflow process modes', () => {
     expect(ports.conversionPlan).not.toHaveBeenCalled();
   });
 
-  it('validates an ungrouped folder with mangapress as a single book, needing no mapping', async () => {
+  it('validates an ungrouped folder with mangaprep as a single book, needing no mapping', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -398,14 +398,14 @@ describe('conversion workflow process modes', () => {
       workflow.plan({
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mode: 'convert-only',
       }),
     ).resolves.toEqual({
-      tool: 'mangapress',
+      tool: 'mangaprep',
       title: 'Standalone',
-      message: message('plan.mangapress', {
+      message: message('plan.mangaprep', {
         profile: 'KV',
         width: 1072,
         height: 1448,
@@ -421,7 +421,7 @@ describe('conversion workflow process modes', () => {
     expect(ports.bindingPlan).not.toHaveBeenCalled();
   });
 
-  it('rejects invalid settings on a plan that will run mangapress', async () => {
+  it('rejects invalid settings on a plan that will run mangaprep', async () => {
     const ports = dependencies();
     const workflow = folderWorkflow(ports);
     const inspected = await workflow.inspect(folder);
@@ -440,11 +440,11 @@ describe('conversion workflow process modes', () => {
   describe('a library', () => {
     const libraryRequest = {
       libraryPath: '/output',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
     } as const;
 
-    it('joins every title and saves the volumes as books, skipping mangapress and its settings', async () => {
+    it('joins every title and saves the volumes as books, skipping mangaprep and its settings', async () => {
       const ports = dependencies();
       const { workflow, sessionId } = await openLibrary(ports);
       const progress: ConversionProgress[] = [];
@@ -561,7 +561,7 @@ describe('conversion workflow process modes', () => {
       );
     });
 
-    it('still validates the mangapress settings when mangapress will run', async () => {
+    it('still validates the mangaprep settings when mangaprep will run', async () => {
       const ports = dependencies();
       const { workflow, sessionId } = await openLibrary(ports);
 

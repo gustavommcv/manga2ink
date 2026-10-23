@@ -108,7 +108,7 @@ describe('a report of mangabind that is missing something it must say', () => {
     ['manga.0.issues.0.severity', 'fatal'],
     ['manga.0.issues.0.code', ''],
     ['manga.0.issues.0.message', ''],
-    ['tool', 'mangapress'],
+    ['tool', 'mangaprep'],
     ['tool_version', ''],
   ])('is not accepted with %s as %j', (field, value) => {
     expect(refused(changed(field, { value }))).toMatchObject({ code: 'invalid_payload' });

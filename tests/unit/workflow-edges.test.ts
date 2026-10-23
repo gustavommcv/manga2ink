@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionProgress } from '@/domain/conversion';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   dependencies,
@@ -37,7 +37,7 @@ async function runFolder(
     {
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       mapping: mappedDraft(),
       ...overrides,
@@ -98,7 +98,7 @@ describe('a library whose titles could not all be bound', () => {
       {
         sessionId,
         libraryPath: '/output',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         ...request,
       },

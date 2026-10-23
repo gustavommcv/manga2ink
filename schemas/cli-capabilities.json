@@ -6,7 +6,7 @@
       "user": ["-batch", "-dry-run", "-metadata-file", "-n", "-q", "-quiet"],
       "internal": ["-json", "-progress-json", "-protocol-version", "-version"]
     },
-    "mangapress": {
+    "mangaprep": {
       "workflow": ["--cover", "--nested-toc", "--output", "-o"],
       "user": [
         "--author",

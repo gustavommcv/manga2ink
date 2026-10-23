@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 
 import {
   trustedDraft,
@@ -98,7 +98,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: { ...defaultMangapressSettings, deviceProfile: 'KPW5' },
+        settings: { ...defaultMangaprepSettings, deviceProfile: 'KPW5' },
         format: 'epub',
         mapping: submitted,
       },
@@ -180,7 +180,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       },
@@ -286,7 +286,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       },
@@ -342,7 +342,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       },
@@ -376,7 +376,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         singleBook: true,
         format: 'epub',
         mapping: mappedDraft(),
@@ -412,7 +412,7 @@ describe('conversion workflow', () => {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           singleBook: true,
           format: 'epub',
           mapping: mappedDraft(),
@@ -439,7 +439,7 @@ describe('conversion workflow', () => {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mode: 'bind-only',
           singleBook: true,
@@ -453,7 +453,7 @@ describe('conversion workflow', () => {
       workflow.plan({
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mode: 'bind-only',
         singleBook: true,
@@ -476,7 +476,7 @@ describe('conversion workflow', () => {
       const request = {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format,
         singleBook: true,
         mapping: mappedDraft(),
@@ -506,7 +506,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         singleBook: true,
       },
@@ -524,7 +524,7 @@ describe('conversion workflow', () => {
     const plan = await workflow.plan({
       sessionId: inspectedForPlan.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       singleBook: true,
     });
@@ -544,7 +544,7 @@ describe('conversion workflow', () => {
     const plan = await workflow.plan({
       sessionId: inspected.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
       singleBook: true,
       mapping: mappedDraft(),
@@ -568,7 +568,7 @@ describe('conversion workflow', () => {
       {
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'cbz',
       },
       { signal: controller.signal, onProgress: vi.fn() },
@@ -581,7 +581,7 @@ describe('conversion workflow', () => {
     );
   });
 
-  it('validates folder plans with mangabind and direct CBZ plans with mangapress', async () => {
+  it('validates folder plans with mangabind and direct CBZ plans with mangaprep', async () => {
     const ports = dependencies();
     let id = 0;
     const workflow = new ConversionWorkflow(
@@ -599,7 +599,7 @@ describe('conversion workflow', () => {
         {
           sessionId: inspectedFolder.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: mappedDraft(),
         },
@@ -627,15 +627,15 @@ describe('conversion workflow', () => {
         {
           sessionId: inspectedCbz.sessionId,
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
         },
         { signal: controller.signal },
       ),
     ).resolves.toEqual({
-      tool: 'mangapress',
+      tool: 'mangaprep',
       title: 'Standalone',
-      message: message('plan.mangapress', {
+      message: message('plan.mangaprep', {
         profile: 'KV',
         width: 1072,
         height: 1448,
@@ -651,7 +651,7 @@ describe('conversion workflow', () => {
     await workflow.plan({
       sessionId: inspectedCbz.sessionId,
       libraryPath: '/library',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'epub',
     });
     expect(ports.conversionPlan).toHaveBeenLastCalledWith(
@@ -668,7 +668,7 @@ describe('conversion workflow', () => {
       workflow.plan({
         sessionId: inspectedFolder.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
         mapping: mappedDraft(),
       }),
@@ -690,7 +690,7 @@ describe('conversion workflow', () => {
         {
           sessionId: 'missing',
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
         },
         { onProgress: vi.fn() },
@@ -703,7 +703,7 @@ describe('conversion workflow', () => {
         {
           sessionId: 'folder',
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
         },
         { onProgress: vi.fn() },
@@ -714,7 +714,7 @@ describe('conversion workflow', () => {
         {
           sessionId: 'folder',
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: {
             ...trustedDraft,
@@ -729,7 +729,7 @@ describe('conversion workflow', () => {
         {
           sessionId: 'folder',
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: {
             ...trustedDraft,
@@ -744,7 +744,7 @@ describe('conversion workflow', () => {
         {
           sessionId: 'folder',
           libraryPath: '/library',
-          settings: defaultMangapressSettings,
+          settings: defaultMangaprepSettings,
           format: 'epub',
           mapping: createMappingDraft({
             mangaTitle: 'Conflict',
@@ -775,7 +775,7 @@ describe('conversion workflow', () => {
         {
           sessionId: inspected.sessionId,
           libraryPath: '/library',
-          settings: { ...defaultMangapressSettings, jpegQuality: 101 },
+          settings: { ...defaultMangaprepSettings, jpegQuality: 101 },
           format: 'epub',
         },
         { onProgress: vi.fn() },
@@ -788,7 +788,7 @@ describe('conversion workflow', () => {
       workflow.plan({
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: { ...defaultMangapressSettings, customWidth: 0 },
+        settings: { ...defaultMangaprepSettings, customWidth: 0 },
         format: 'epub',
       }),
     ).rejects.toMatchObject({ code: 'invalid_settings' });
@@ -807,7 +807,7 @@ describe('conversion workflow', () => {
       workflow.plan({
         sessionId: 'missing',
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       }),
     ).rejects.toMatchObject({ code: 'session_not_found' });
@@ -816,7 +816,7 @@ describe('conversion workflow', () => {
       workflow.plan({
         sessionId: inspected.sessionId,
         libraryPath: '/library',
-        settings: defaultMangapressSettings,
+        settings: defaultMangaprepSettings,
         format: 'epub',
       }),
     ).rejects.toMatchObject({ code: 'mapping_required' });
@@ -861,7 +861,7 @@ describe('conversion workflow', () => {
 });
 
 describe('the books a validated plan says it will make', () => {
-  const settings = defaultMangapressSettings;
+  const settings = defaultMangaprepSettings;
 
   async function plannedBooks(
     overrides: Partial<Parameters<ConversionWorkflow['plan']>[0]> & {

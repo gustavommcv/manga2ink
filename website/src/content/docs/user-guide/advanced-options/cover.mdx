@@ -10,7 +10,7 @@ The **Cover** section of [Advanced conversion options](../../output-profiles/#ad
 
 ## How the cover is made
 
-The cover is not a page. mangapress makes it from the first image of the book as it came, apart from the pages: whatever happens to the first page, such as its margins cropped, a wide one split in two or a page turned, the cover is the whole image, upright. The cover is gray unless **Color pages** keeps color, it is never enlarged, only shrunk to fit inside the screen, and it is saved as a JPEG at the pages' quality.
+The cover is not a page. mangaprep makes it from the first image of the book as it came, apart from the pages: whatever happens to the first page, such as its margins cropped, a wide one split in two or a page turned, the cover is the whole image, upright. The cover is gray unless **Color pages** keeps color, it is never enlarged, only shrunk to fit inside the screen, and it is saved as a JPEG at the pages' quality.
 
 The pictures show the cover of an EPUB made from the first page of _Pepper&Carrot_, episode 6, which is 992 × 1373 pixels, on the Kindle Paperwhite 6 screen of 1272 × 1696. The gray is the screen around the cover.
 
@@ -39,7 +39,7 @@ An EPUB always has one. A CBZ has one only when the front cover was cut from a w
 
 By default the cover is fitted inside the screen, with the screen showing around it when the shapes differ, and a small cover is not enlarged. With this on, it is cropped to the exact size of the screen instead, and a small cover is enlarged to it: the first page of the episode, 992 × 1373, becomes a cover of 1272 × 1696 in the second picture above, and the edge that does not fit is cut off. `--coverfill` turns it on.
 
-It only matters for a book that has a cover: an EPUB, or a CBZ with a cover of your own or one cut from a wide image. The app dims it for a PDF, and for a CBZ unless the front cover is cut from a wide image. It looks only at the settings, not at the covers you chose for books, so for a CBZ with a cover of your own the option is dimmed although mangapress would apply it, as the rows with a cover of your own show.
+It only matters for a book that has a cover: an EPUB, or a CBZ with a cover of your own or one cut from a wide image. The app dims it for a PDF, and for a CBZ unless the front cover is cut from a wide image. It looks only at the settings, not at the covers you chose for books, so for a CBZ with a cover of your own the option is dimmed although mangaprep would apply it, as the rows with a cover of your own show.
 
 ## Cut the front cover from a wide image
 
@@ -67,7 +67,7 @@ The example has no jacket, so a spread stands in for it: two pages of _Go Go! En
 
 ### How much of the image is taken
 
-mangapress decides from the shape of the image, in bands, from a plain spread to a jacket with flaps; these are the bands of Kindle Comic Converter, which mangapress follows. An image no wider than it is tall is already a cover and is left whole. The table cuts one image from each band out of the same three pages, with Manga reading order on: the width of the cover is the share of the image that was taken.
+mangaprep decides from the shape of the image, in bands, from a plain spread to a jacket with flaps; these are the bands of Kindle Comic Converter, which mangaprep follows. An image no wider than it is tall is already a cover and is left whole. The table cuts one image from each band out of the same three pages, with Manga reading order on: the width of the cover is the share of the image that was taken.
 
 <OptionBook id="cover-smart-bands" />
 

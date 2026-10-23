@@ -6,7 +6,7 @@ import {
   coverAndNameLocks,
   defaultForceColorFor,
   defaultJpegQualityFor,
-  defaultMangapressSettings,
+  defaultMangaprepSettings,
   defaultPageSizeFor,
   defaultUpscaleFor,
   defaultValueForSetting,
@@ -19,7 +19,7 @@ import {
   restoreSettingDefault,
   stripsLockReason,
   untouchedLockReason,
-  validateMangapressSettings,
+  validateMangaprepSettings,
   webtoonLockReason,
   withAutoContrast,
   withBorderMode,
@@ -28,7 +28,7 @@ import {
 } from '@/domain/output-profile';
 import { english, inEnglish } from './support/say';
 
-describe('mangapress default settings', () => {
+describe('mangaprep default settings', () => {
   it.each([
     ['KPW6', 85],
     ['KV', 85],
@@ -36,12 +36,12 @@ describe('mangapress default settings', () => {
     ['KS', 90],
     ['KS3', 90],
     ['KCS', 90],
-  ])('matches mangapress JPEG quality for %s', (profile, quality) => {
+  ])('matches mangaprep JPEG quality for %s', (profile, quality) => {
     expect(defaultJpegQualityFor(profile)).toBe(quality);
   });
 
   it('start in the state Kindle Comic Converter opens in', () => {
-    expect(defaultMangapressSettings).toMatchObject({
+    expect(defaultMangaprepSettings).toMatchObject({
       // On by default in KCC's window.
       mangaStyle: true,
       splitter: 'both',
@@ -72,16 +72,16 @@ describe('mangapress default settings', () => {
       keepComicInfo: false,
     });
     // Left to the device profile, as in KCC.
-    expect(defaultMangapressSettings.gamma).toBeUndefined();
-    expect(defaultMangapressSettings.jpegQuality).toBeUndefined();
-    expect(inEnglish(validateMangapressSettings(defaultMangapressSettings))).toEqual([]);
+    expect(defaultMangaprepSettings.gamma).toBeUndefined();
+    expect(defaultMangaprepSettings.jpegQuality).toBeUndefined();
+    expect(inEnglish(validateMangaprepSettings(defaultMangaprepSettings))).toEqual([]);
   });
 
   it('start on the Kindle Paperwhite KCC opens on, with the upscaling that device starts with', () => {
-    expect(defaultMangapressSettings.deviceProfile).toBe('KPW6');
+    expect(defaultMangaprepSettings.deviceProfile).toBe('KPW6');
     // The two must agree, or the first device change would already flip the option.
-    expect(defaultMangapressSettings.upscale).toBe(
-      defaultUpscaleFor(defaultMangapressSettings.deviceProfile),
+    expect(defaultMangaprepSettings.upscale).toBe(
+      defaultUpscaleFor(defaultMangaprepSettings.deviceProfile),
     );
   });
 
@@ -131,36 +131,36 @@ describe('mangapress default settings', () => {
     for (const code of ['KPW6', 'KS', 'KoAO', 'OTHER', 'A-FUTURE-READER']) {
       expect(defaultForceColorFor(code)).toBe(false);
     }
-    expect(defaultMangapressSettings.forceColor).toBe(
-      defaultForceColorFor(defaultMangapressSettings.deviceProfile),
+    expect(defaultMangaprepSettings.forceColor).toBe(
+      defaultForceColorFor(defaultMangaprepSettings.deviceProfile),
     );
   });
 
   it('puts color where the new device starts it, whatever was chosen by hand', () => {
-    const colorsoft = withDeviceProfile(defaultMangapressSettings, 'KCS');
+    const colorsoft = withDeviceProfile(defaultMangaprepSettings, 'KCS');
     expect(colorsoft).toEqual({
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       deviceProfile: 'KCS',
       forceColor: true,
     });
     expect(withDeviceProfile({ ...colorsoft, forceColor: false }, 'KoLC').forceColor).toBe(true);
     expect(withDeviceProfile(colorsoft, 'KPW6').forceColor).toBe(false);
     expect(
-      withDeviceProfile({ ...defaultMangapressSettings, forceColor: true }, 'KV').forceColor,
+      withDeviceProfile({ ...defaultMangaprepSettings, forceColor: true }, 'KV').forceColor,
     ).toBe(false);
 
     expect(defaultValueForSetting(colorsoft, 'forceColor')).toBe(true);
-    expect(defaultValueForSetting(defaultMangapressSettings, 'forceColor')).toBe(false);
+    expect(defaultValueForSetting(defaultMangaprepSettings, 'forceColor')).toBe(false);
     expect(restoreSettingDefault({ ...colorsoft, forceColor: false }, 'forceColor')).toEqual(
       colorsoft,
     );
     // Going back to the default device takes color with it, as choosing that device would.
-    expect(restoreSettingDefault(colorsoft, 'deviceProfile')).toEqual(defaultMangapressSettings);
+    expect(restoreSettingDefault(colorsoft, 'deviceProfile')).toEqual(defaultMangaprepSettings);
   });
 
   it('resets upscaling and color, and nothing else, when another device is chosen', () => {
     const edited = {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       mangaStyle: false,
       splitter: 'rotate' as const,
       gamma: 1.2,
@@ -181,16 +181,16 @@ describe('mangapress default settings', () => {
   });
 
   it('uses the current device for the upscale default and the app defaults for other fields', () => {
-    const scribe = withDeviceProfile(defaultMangapressSettings, 'KS');
+    const scribe = withDeviceProfile(defaultMangaprepSettings, 'KS');
     expect(defaultValueForSetting(scribe, 'upscale')).toBe(false);
-    expect(defaultValueForSetting(defaultMangapressSettings, 'upscale')).toBe(true);
+    expect(defaultValueForSetting(defaultMangaprepSettings, 'upscale')).toBe(true);
     expect(defaultValueForSetting(scribe, 'gamma')).toBeUndefined();
     expect(defaultValueForSetting(scribe, 'mangaStyle')).toBe(true);
   });
 
   it('restores one field without changing its neighbors, except what follows the device', () => {
     const edited = {
-      ...withDeviceProfile(defaultMangapressSettings, 'KS'),
+      ...withDeviceProfile(defaultMangaprepSettings, 'KS'),
       gamma: 1.2,
       quiet: true,
       upscale: true,
@@ -224,7 +224,7 @@ describe('the page size, one choice for three flags', () => {
 
   it('sets exactly the flag a choice needs, whatever was set before', () => {
     const everything = {
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       upscale: true,
       stretch: true,
       wallpaper: true,
@@ -244,21 +244,21 @@ describe('the page size, one choice for three flags', () => {
     expect(defaultPageSizeFor('KPW6')).toBe('enlarge');
     expect(defaultPageSizeFor('KS')).toBe('fit');
     expect(defaultPageSizeFor('OTHER')).toBe('fit');
-    expect(pageSizeOf(defaultMangapressSettings)).toBe(
-      defaultPageSizeFor(defaultMangapressSettings.deviceProfile),
+    expect(pageSizeOf(defaultMangaprepSettings)).toBe(
+      defaultPageSizeFor(defaultMangaprepSettings.deviceProfile),
     );
   });
 
   it('keeps stretching or cropping to fill when the device changes', () => {
-    const stretched = withPageSize(defaultMangapressSettings, 'stretch');
+    const stretched = withPageSize(defaultMangaprepSettings, 'stretch');
     expect(pageSizeOf(withDeviceProfile(stretched, 'KV'))).toBe('stretch');
-    const filled = withPageSize(defaultMangapressSettings, 'fill');
+    const filled = withPageSize(defaultMangaprepSettings, 'fill');
     expect(pageSizeOf(withDeviceProfile(filled, 'OTHER'))).toBe('fill');
   });
 });
 
 describe('the borders, one choice for two flags', () => {
-  it('reads black over white, as mangapress does, and automatic when neither is set', () => {
+  it('reads black over white, as mangaprep does, and automatic when neither is set', () => {
     expect(borderModeOf({ whiteBorders: false, blackBorders: false })).toBe('automatic');
     expect(borderModeOf({ whiteBorders: true, blackBorders: false })).toBe('white');
     expect(borderModeOf({ whiteBorders: false, blackBorders: true })).toBe('black');
@@ -266,7 +266,7 @@ describe('the borders, one choice for two flags', () => {
   });
 
   it('sets the two flags so that they never disagree', () => {
-    const both = { ...defaultMangapressSettings, whiteBorders: true, blackBorders: true };
+    const both = { ...defaultMangaprepSettings, whiteBorders: true, blackBorders: true };
     expect(withBorderMode(both, 'automatic')).toMatchObject({
       whiteBorders: false,
       blackBorders: false,
@@ -279,12 +279,12 @@ describe('the borders, one choice for two flags', () => {
       whiteBorders: false,
       blackBorders: true,
     });
-    expect(borderModeOf(defaultMangapressSettings)).toBe('automatic');
+    expect(borderModeOf(defaultMangaprepSettings)).toBe('automatic');
   });
 });
 
 describe('the page-layout controls another choice leaves without effect', () => {
-  const settings = defaultMangapressSettings;
+  const settings = defaultMangaprepSettings;
 
   it('locks nothing for an EPUB with both spread versions, which is where the options start', () => {
     expect(inEnglish(pageLayoutLocks(settings, 'epub'))).toEqual({});
@@ -338,7 +338,7 @@ describe('the page-layout controls another choice leaves without effect', () => 
     });
   });
 
-  it('locks for webtoon strips all that mangapress never does to them, strips restacking included', () => {
+  it('locks for webtoon strips all that mangaprep never does to them, strips restacking included', () => {
     const locks = inEnglish(
       pageLayoutLocks({ ...settings, webtoon: true, maximizeStrips: true }, 'cbz'),
     );
@@ -358,7 +358,7 @@ describe('the page-layout controls another choice leaves without effect', () => 
 });
 
 describe('images left as they are', () => {
-  const untouched = { ...defaultMangapressSettings, noProcessing: true };
+  const untouched = { ...defaultMangaprepSettings, noProcessing: true };
 
   it('locks every page-layout control that would change an image', () => {
     expect(inEnglish(pageLayoutLocks(untouched, 'epub'))).toEqual({
@@ -416,7 +416,7 @@ describe('images left as they are', () => {
 });
 
 describe('the image controls another choice leaves without effect', () => {
-  const settings = defaultMangapressSettings;
+  const settings = defaultMangaprepSettings;
   const png = { ...settings, forcePng: true };
 
   it('offers the PNG variants only for PNG pages', () => {
@@ -459,16 +459,16 @@ describe('the image controls another choice leaves without effect', () => {
 });
 
 describe('the cover and file-name controls another choice leaves without effect', () => {
-  const settings = defaultMangapressSettings;
+  const settings = defaultMangaprepSettings;
   const koboOnly = 'Only for a Kobo’s EPUB.';
 
   it('locks nothing for a Kobo’s EPUB at the device’s own size', () => {
     expect(inEnglish(coverAndNameLocks(settings, 'epub', 'kobo'))).toEqual({});
   });
 
-  it('offers the plain .epub name only where mangapress names a book .kepub.epub', () => {
+  it('offers the plain .epub name only where mangaprep names a book .kepub.epub', () => {
     expect(inEnglish(coverAndNameLocks(settings, 'epub', 'kindle'))).toEqual({ noKepub: koboOnly });
-    // The family is what mangapress reports; until the profiles load there is none.
+    // The family is what mangaprep reports; until the profiles load there is none.
     expect(inEnglish(coverAndNameLocks(settings, 'epub', undefined))).toEqual({
       noKepub: koboOnly,
     });
@@ -516,7 +516,7 @@ describe('the cover and file-name controls another choice leaves without effect'
 });
 
 describe('what is still saved as JPEG', () => {
-  const settings = defaultMangapressSettings;
+  const settings = defaultMangaprepSettings;
 
   it('is every page until PNG is chosen', () => {
     expect(jpegUseOf(settings, 'epub')).toBe('pages');
@@ -539,15 +539,15 @@ describe('what is still saved as JPEG', () => {
 });
 
 describe('one autocontrast choice in the place of two flags', () => {
-  it('reads the flags as mangapress resolves them: off wins', () => {
-    expect(autoContrastOf(defaultMangapressSettings)).toBe('monochrome');
+  it('reads the flags as mangaprep resolves them: off wins', () => {
+    expect(autoContrastOf(defaultMangaprepSettings)).toBe('monochrome');
     expect(autoContrastOf({ noAutoContrast: false, colorAutoContrast: true })).toBe('all');
     expect(autoContrastOf({ noAutoContrast: true, colorAutoContrast: false })).toBe('off');
     expect(autoContrastOf({ noAutoContrast: true, colorAutoContrast: true })).toBe('off');
   });
 
   it('sets exactly the flag a choice needs, so the two never disagree', () => {
-    const both = { ...defaultMangapressSettings, noAutoContrast: true, colorAutoContrast: true };
+    const both = { ...defaultMangaprepSettings, noAutoContrast: true, colorAutoContrast: true };
     expect(withAutoContrast(both, 'monochrome')).toMatchObject({
       noAutoContrast: false,
       colorAutoContrast: false,
@@ -584,13 +584,13 @@ describe('resolving a device profile fallback', () => {
   });
 });
 
-describe('mangapress output settings', () => {
+describe('mangaprep output settings', () => {
   it('accepts the defaults and complete custom-device overrides', () => {
-    expect(inEnglish(validateMangapressSettings(defaultMangapressSettings))).toEqual([]);
+    expect(inEnglish(validateMangaprepSettings(defaultMangaprepSettings))).toEqual([]);
     expect(
       inEnglish(
-        validateMangapressSettings({
-          ...defaultMangapressSettings,
+        validateMangaprepSettings({
+          ...defaultMangaprepSettings,
           deviceProfile: 'OTHER',
           customWidth: 1200,
           customHeight: 1600,
@@ -604,8 +604,8 @@ describe('mangapress output settings', () => {
   });
 
   it('refuses a gamma, a cropping power and a screen size a slip of a key made, naming the range', () => {
-    const issuesFor = (overrides: Partial<typeof defaultMangapressSettings>) =>
-      inEnglish(validateMangapressSettings({ ...defaultMangapressSettings, ...overrides }));
+    const issuesFor = (overrides: Partial<typeof defaultMangaprepSettings>) =>
+      inEnglish(validateMangaprepSettings({ ...defaultMangaprepSettings, ...overrides }));
 
     expect(issuesFor({ gamma: 18 })).toEqual([
       { field: 'gamma', message: 'Gamma must be a number from 0.1 to 4.' },
@@ -632,8 +632,8 @@ describe('mangapress output settings', () => {
 
   it('reports empty, non-finite, and out-of-range values by field', () => {
     const issues = inEnglish(
-      validateMangapressSettings({
-        ...defaultMangapressSettings,
+      validateMangaprepSettings({
+        ...defaultMangaprepSettings,
         deviceProfile: ' ',
         croppingPower: Number.NaN,
         croppingMinimum: -1,
@@ -669,22 +669,22 @@ describe('mangapress output settings', () => {
       ['customHeight', 0],
     ] as const) {
       expect(
-        inEnglish(validateMangapressSettings({ ...defaultMangapressSettings, [field]: value })),
+        inEnglish(validateMangaprepSettings({ ...defaultMangaprepSettings, [field]: value })),
       ).toEqual(expect.arrayContaining([expect.objectContaining({ field })]));
     }
 
     expect(
       inEnglish(
-        validateMangapressSettings({
-          ...defaultMangapressSettings,
+        validateMangaprepSettings({
+          ...defaultMangaprepSettings,
           deviceProfile: 'OTHER',
         }),
       ),
     ).toContainEqual(expect.objectContaining({ field: 'customWidth' }));
     expect(
       inEnglish(
-        validateMangapressSettings({
-          ...defaultMangapressSettings,
+        validateMangaprepSettings({
+          ...defaultMangaprepSettings,
           deviceProfile: 'OTHER',
           customWidth: 1200,
         }),

@@ -153,7 +153,7 @@ test.describe('at the size the window opens at', () => {
     await expect(page.locator('#storybook-root')).toHaveScreenshot('results-partly-saved.png');
   });
 
-  test('results show what mangapress noticed below the books', async ({ page }) => {
+  test('results show what mangaprep noticed below the books', async ({ page }) => {
     await page.goto('/iframe.html?id=workflows-results--with-warnings&viewMode=story');
     await expect(page.getByRole('list', { name: 'Warnings about the books' })).toBeVisible();
     await expect(page.getByText('Pages already converted once', { exact: true })).toBeVisible();

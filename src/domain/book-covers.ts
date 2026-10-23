@@ -16,7 +16,7 @@ export interface AttachedCover {
   readonly origin: CoverOrigin;
 }
 
-/** The image types mangapress reads. A cover of another type would stop the book it is for. */
+/** The image types mangaprep reads. A cover of another type would stop the book it is for. */
 const coverExtensions: ReadonlySet<string> = new Set(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']);
 
 /** What a person is told when a file with an image's name is not one a cover can be made of. */
@@ -38,7 +38,7 @@ const text = (value: string): readonly number[] =>
   [...value].map((character) => character.charCodeAt(0));
 
 /**
- * Whether a file begins the way a JPEG, PNG, WebP, GIF or BMP image does. mangapress takes the
+ * Whether a file begins the way a JPEG, PNG, WebP, GIF or BMP image does. mangaprep takes the
  * type from what a file holds, not from its name, so this does too: a damaged or mislabelled file
  * would otherwise stop the book it is the cover of, after every one of its pages was made.
  */

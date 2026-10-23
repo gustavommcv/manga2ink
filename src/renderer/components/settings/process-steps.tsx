@@ -78,7 +78,7 @@ export function ProcessSteps({
           onMode(defaultProcessMode);
         }}
         reason={convertReason}
-        tool="mangapress"
+        tool="mangaprep"
       />
     </fieldset>
   );

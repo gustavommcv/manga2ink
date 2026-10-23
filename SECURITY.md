@@ -21,7 +21,7 @@ Maintainers will assess the report and coordinate a fix and disclosure with you 
 
 ## Bundled tools and dependencies
 
-If the problem is in mangabind or mangapress, identify the tool and version in the report. Maintainers can coordinate with the relevant upstream project; the tools' versions are pinned in `toolchain.lock.json`.
+If the problem is in mangabind or mangaprep, identify the tool and version in the report. Maintainers can coordinate with the relevant upstream project; the tools' versions are pinned in `toolchain.lock.json`.
 
 The website's dependency-audit records and exception policy live in [website/SECURITY.md](website/SECURITY.md). That document does not replace this private reporting channel.
 

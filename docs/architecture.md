@@ -4,7 +4,7 @@ This page maps the code and the conversion flow. [ADR 0001](adr/0001-electron-re
 
 ## The idea in one paragraph
 
-Manga2Ink orchestrates two bundled, version-pinned tools: **mangabind** groups chapters and writes volumes; **mangapress** processes pages and creates books. The app handles choices, progress, saving, and sharing rather than reimplementing those algorithms. Dependencies point inward: adapters implement the application's ports, the application coordinates domain rules, and the domain has no framework or infrastructure dependencies.
+Manga2Ink orchestrates two bundled, version-pinned tools: **mangabind** groups chapters and writes volumes; **mangaprep** processes pages and creates books. The app handles choices, progress, saving, and sharing rather than reimplementing those algorithms. Dependencies point inward: adapters implement the application's ports, the application coordinates domain rules, and the domain has no framework or infrastructure dependencies.
 
 ## Layers
 
@@ -29,7 +29,7 @@ The table lists allowed project layers; imports within a layer are always allowe
 1. **Add.** Native dialogs or dropped files supply paths. Main validates them and returns opaque selection ids to the renderer.
 2. **Inspect.** For a folder, mangabind runs a dry-run on a scratch copy to seed the mapping or discover a library. A standalone CBZ needs no grouping. Each input receives an application-owned session.
 3. **Review.** File-name grouping, optional online suggestions, and manual edits use the same undoable mapping model. Book details belong to each item; a folder's author and language are kept in its `mangabind.json`.
-4. **Process.** Main creates a durable pending run and validates the selected steps. When enabled, mangabind builds volumes and mangapress converts them through a bounded worker pool in isolated staging folders. Completed books are published under unique names in volume order; progress comes from the tools, cancellation reaches active processes, and partial successes remain available.
+4. **Process.** Main creates a durable pending run and validates the selected steps. When enabled, mangabind builds volumes and mangaprep converts them through a bounded worker pool in isolated staging folders. Completed books are published under unique names in volume order; progress comes from the tools, cancellation reaches active processes, and partial successes remain available.
 5. **Save.** Each book is indexed in the pending run. Save As or Save All copies it to a chosen destination and records the export. Save All never replaces existing files; an indexing warning retains the pending original for retry.
 6. **Open or share.** Books open in the OS default application. An opt-in OPDS server serves a pending run or selected library on the chosen interface and a fixed port, and stops on exit. It lists recently converted books and other supported files separately.
 
@@ -76,6 +76,6 @@ These are complementary checks, not a claim of whole-app 100% coverage. [CONTRIB
 
 ## Documentation website
 
-The independent Astro/Starlight package under `website/` imports no application modules. CI captures selected Storybook states from the same source commit and shares that artifact with site checks and publication. Astro produces responsive, losslessly optimized images; KOReader captures remain manual. Tutorial images do not replace visual baselines or enter the app installer. The pictures and measured tables of the advanced-options pages are committed files, made by running the pinned mangapress on open-licensed comic pages ([ADR 0048](adr/0048-option-examples-from-open-pages.md)); the site's tests fail when they were made with another version than the one in `toolchain.lock.json`.
+The independent Astro/Starlight package under `website/` imports no application modules. CI captures selected Storybook states from the same source commit and shares that artifact with site checks and publication. Astro produces responsive, losslessly optimized images; KOReader captures remain manual. Tutorial images do not replace visual baselines or enter the app installer. The pictures and measured tables of the advanced-options pages are committed files, made by running the pinned mangaprep on open-licensed comic pages ([ADR 0048](adr/0048-option-examples-from-open-pages.md)); the site's tests fail when they were made with another version than the one in `toolchain.lock.json`.
 
 The guide and app captures follow `main`, not release tags ([ADR 0034](adr/0034-tutorial-images-from-the-site-source-commit.md)). Development, media, indexing, and dependency-audit details live in [website/README.md](../website/README.md), [MEDIA.md](../website/MEDIA.md), [SEO.md](../website/SEO.md), and [website/SECURITY.md](../website/SECURITY.md).

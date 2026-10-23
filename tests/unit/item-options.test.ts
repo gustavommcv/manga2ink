@@ -7,9 +7,9 @@ import {
   type RunOptions,
   withQueueValue,
 } from '@/domain/item-options';
-import { defaultMangapressSettings, withDeviceProfile } from '@/domain/output-profile';
+import { defaultMangaprepSettings, withDeviceProfile } from '@/domain/output-profile';
 
-const queue: RunOptions = { settings: defaultMangapressSettings, format: 'cbz' };
+const queue: RunOptions = { settings: defaultMangaprepSettings, format: 'cbz' };
 
 describe('item options', () => {
   it('is nothing until an item sets an option', () => {
@@ -32,7 +32,7 @@ describe('item options', () => {
     });
     expect(run.format).toBe('epub');
     expect(run.settings).toEqual({
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       webtoon: true,
       deviceProfile: 'KoC',
     });
@@ -47,7 +47,7 @@ describe('item options', () => {
   it('follows a later change of the queue for what the item left alone', () => {
     const item = { settings: { webtoon: true } };
     const later: RunOptions = {
-      settings: { ...defaultMangapressSettings, deviceProfile: 'KoC', jpegQuality: 70 },
+      settings: { ...defaultMangaprepSettings, deviceProfile: 'KoC', jpegQuality: 70 },
       format: 'pdf',
     };
     const run = effectiveOptions(later, item);
@@ -59,7 +59,7 @@ describe('item options', () => {
 
   it('leaves an option unset where the item says so, though the queue has it', () => {
     const withQuality: RunOptions = {
-      settings: { ...defaultMangapressSettings, jpegQuality: 70 },
+      settings: { ...defaultMangaprepSettings, jpegQuality: 70 },
       format: 'cbz',
     };
     const run = effectiveOptions(withQuality, { settings: { jpegQuality: null } });
@@ -68,7 +68,7 @@ describe('item options', () => {
 
   it('finds only what an edited set of options changes', () => {
     const edited: RunOptions = {
-      settings: withDeviceProfile({ ...defaultMangapressSettings, webtoon: true }, 'KoC'),
+      settings: withDeviceProfile({ ...defaultMangaprepSettings, webtoon: true }, 'KoC'),
       format: 'epub',
     };
     const item = itemOptionsFor(queue, edited);
@@ -86,18 +86,18 @@ describe('item options', () => {
 
   it('records an option cleared in the edit as unset', () => {
     const withQuality: RunOptions = {
-      settings: { ...defaultMangapressSettings, jpegQuality: 70 },
+      settings: { ...defaultMangaprepSettings, jpegQuality: 70 },
       format: 'cbz',
     };
     const item = itemOptionsFor(withQuality, {
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
     });
     expect(item).toEqual({ settings: { jpegQuality: null } });
   });
 
   describe('putting one field back to what the queue has', () => {
-    const withKobo = { ...defaultMangapressSettings, deviceProfile: 'KoC', upscale: true };
+    const withKobo = { ...defaultMangaprepSettings, deviceProfile: 'KoC', upscale: true };
 
     it('puts back that field and no other', () => {
       const edited = { ...withKobo, webtoon: true, cropping: 'disabled' as const };
@@ -110,13 +110,13 @@ describe('item options', () => {
 
     it('puts back the two things a device starts with, with the device', () => {
       const queue = {
-        ...defaultMangapressSettings,
+        ...defaultMangaprepSettings,
         deviceProfile: 'K11',
         upscale: true,
         forceColor: false,
       };
       const edited = {
-        ...defaultMangapressSettings,
+        ...defaultMangaprepSettings,
         deviceProfile: 'KCS',
         upscale: false,
         forceColor: true,
@@ -129,8 +129,8 @@ describe('item options', () => {
     });
 
     it('leaves a field unset when the queue has it unset', () => {
-      const queue = { ...defaultMangapressSettings };
-      const edited = { ...defaultMangapressSettings, jpegQuality: 70 };
+      const queue = { ...defaultMangaprepSettings };
+      const edited = { ...defaultMangaprepSettings, jpegQuality: 70 };
 
       const next = withQueueValue(edited, queue, 'jpegQuality');
 

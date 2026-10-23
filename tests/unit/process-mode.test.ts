@@ -10,7 +10,7 @@ import {
   resolveMode,
   stepsFromMode,
   unsupportedModeReason,
-  usesMangapress,
+  usesMangaprep,
 } from '@/domain/process-mode';
 
 describe('process modes', () => {
@@ -32,10 +32,10 @@ describe('process modes', () => {
     }
   });
 
-  it('knows which modes run mangapress', () => {
-    expect(usesMangapress('bind-and-convert')).toBe(true);
-    expect(usesMangapress('convert-only')).toBe(true);
-    expect(usesMangapress('bind-only')).toBe(false);
+  it('knows which modes run mangaprep', () => {
+    expect(usesMangaprep('bind-and-convert')).toBe(true);
+    expect(usesMangaprep('convert-only')).toBe(true);
+    expect(usesMangaprep('bind-only')).toBe(false);
   });
 
   it('explains why a mode cannot run on a CBZ or on a library, and allows everything else', () => {
@@ -53,7 +53,7 @@ describe('process modes', () => {
     expect(unsupportedModeReason('library', 'bind-and-convert')).toBeUndefined();
   });
 
-  it('offers a CBZ only the straight-to-mangapress process and a library only the two that group', () => {
+  it('offers a CBZ only the straight-to-mangaprep process and a library only the two that group', () => {
     for (const mode of processModes) {
       expect(blockedModeReason('folder', mode)).toBeUndefined();
     }

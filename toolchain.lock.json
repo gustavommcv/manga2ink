@@ -42,40 +42,40 @@
         }
       }
     },
-    "mangapress": {
-      "sourceRepo": "https://github.com/gustavommcv/mangapress",
+    "mangaprep": {
+      "sourceRepo": "https://github.com/gustavommcv/mangaprep",
       "pin": {
-        "releaseTag": "v0.8.3",
+        "releaseTag": "v0.9.0",
         "protocolVersion": "1",
         "checksums": {
           "assetName": "checksums.txt",
-          "url": "https://github.com/gustavommcv/mangapress/releases/download/v0.8.3/checksums.txt",
-          "sha256": "f74775657266eb1de95e52e8888153730e94f87e661474f1ccc1895c87087ffc"
+          "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/checksums.txt",
+          "sha256": "d06d2b3dda9172e9bc9b3e95349847bb3d07b369bbab01ce468d79937006141c"
         },
         "artifacts": {
           "win32-x64": {
-            "assetName": "mangapress-x86_64-pc-windows-msvc.zip",
-            "url": "https://github.com/gustavommcv/mangapress/releases/download/v0.8.3/mangapress-x86_64-pc-windows-msvc.zip",
-            "archiveSha256": "fc1e7de2c4cf08981a89e57d403f9ad146551e14dab7854622ffffbf2b0d7a92",
-            "executableSha256": "9d3cabb21fec5a4f118b2b4308034a91769842caf2c8b9e01a9fda053dbed779"
+            "assetName": "mangaprep-x86_64-pc-windows-msvc.zip",
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-pc-windows-msvc.zip",
+            "archiveSha256": "21d584091ff6603cece45901c36899e682d7bebc963908857285f2f1aadb804b",
+            "executableSha256": "099f2bf096a7a28c431eec3f012af1de1a3ea72a9453160d16a20b342c378ad4"
           },
           "linux-x64": {
-            "assetName": "mangapress-x86_64-unknown-linux-musl.tar.gz",
-            "url": "https://github.com/gustavommcv/mangapress/releases/download/v0.8.3/mangapress-x86_64-unknown-linux-musl.tar.gz",
-            "archiveSha256": "9c7e17ef7705ebb3cf8cd3d564ba71149e7d2a4eca9c1ba4b593cb2c7c7e81be",
-            "executableSha256": "b53fe89b7ba581df1bcbc278ba864ec903f30e57adfed7a34b276508d5e1025f"
+            "assetName": "mangaprep-x86_64-unknown-linux-musl.tar.gz",
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-unknown-linux-musl.tar.gz",
+            "archiveSha256": "b895433dbf2d64efbe467386d98aad758e1448f328dfcc9409aa01a0f326ba62",
+            "executableSha256": "3f79be77639f84250cd6d1c13d1bffdd48623d17e8b9fd9efff7eb5ccbbd9381"
           },
           "darwin-x64": {
-            "assetName": "mangapress-x86_64-apple-darwin.tar.gz",
-            "url": "https://github.com/gustavommcv/mangapress/releases/download/v0.8.3/mangapress-x86_64-apple-darwin.tar.gz",
-            "archiveSha256": "47e87acff7c1ea70185bad137d4ff005bf00935de12d10eb45f6d1d73b2fbc87",
-            "executableSha256": "d60ba8b41ccbf218dd015a4499ee91044b259de8d1aea30b650809cdb34658f6"
+            "assetName": "mangaprep-x86_64-apple-darwin.tar.gz",
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-apple-darwin.tar.gz",
+            "archiveSha256": "214d8a77014d01820e6525382dd3b71bba57bcff45cdf49ac409b8c56f9ebef1",
+            "executableSha256": "b955fa06c78b91aaa7e82d64159523a3c6c49491413b071cfd6cf9137629dcd6"
           },
           "darwin-arm64": {
-            "assetName": "mangapress-aarch64-apple-darwin.tar.gz",
-            "url": "https://github.com/gustavommcv/mangapress/releases/download/v0.8.3/mangapress-aarch64-apple-darwin.tar.gz",
-            "archiveSha256": "fb139d936d953e017f452dbd6376d4a33c70335e572bf4a32c619f098a4f6fae",
-            "executableSha256": "d3e88f494ddd8cdaaa17c4dd33cb771a372a71e6b06b5ab668afbdd853a42b7d"
+            "assetName": "mangaprep-aarch64-apple-darwin.tar.gz",
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-aarch64-apple-darwin.tar.gz",
+            "archiveSha256": "faa9cc5ad124d9489d4fad19b4240d8eedf1c2a2e0f80961d5045d6503718323",
+            "executableSha256": "103fd4a72963e39a8a7ab046cf6b1bb3bc3a20d3a2c9d59acb36fa7b2e800c80"
           }
         }
       }

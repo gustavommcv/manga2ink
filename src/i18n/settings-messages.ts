@@ -39,8 +39,8 @@ export const settingsMessages: Readonly<Record<Language, SettingsMessages>> = {
       alreadyDefault: 'Every option is already at its default.',
       confirmLabel: 'Confirm reset',
       question: {
-        queue: 'Put the steps, device, format and every mangapress option back to their defaults?',
-        options: 'Put the device, format and every mangapress option back to their defaults?',
+        queue: 'Put the steps, device, format and every mangaprep option back to their defaults?',
+        options: 'Put the device, format and every mangaprep option back to their defaults?',
       },
       confirm: 'Reset',
       cancel: 'Cancel',
@@ -59,8 +59,8 @@ export const settingsMessages: Readonly<Record<Language, SettingsMessages>> = {
       confirmLabel: 'Confirmar a restauração',
       question: {
         queue:
-          'Voltar as etapas, o dispositivo, o formato e todas as opções do mangapress aos padrões?',
-        options: 'Voltar o dispositivo, o formato e todas as opções do mangapress aos padrões?',
+          'Voltar as etapas, o dispositivo, o formato e todas as opções do mangaprep aos padrões?',
+        options: 'Voltar o dispositivo, o formato e todas as opções do mangaprep aos padrões?',
       },
       confirm: 'Restaurar',
       cancel: 'Cancelar',
@@ -78,8 +78,8 @@ export const settingsMessages: Readonly<Record<Language, SettingsMessages>> = {
       alreadyDefault: 'すべてのオプションがすでに初期設定です。',
       confirmLabel: 'リセットを確認',
       question: {
-        queue: '手順、端末、形式、mangapress のすべてのオプションを初期設定に戻しますか？',
-        options: '端末、形式、mangapress のすべてのオプションを初期設定に戻しますか？',
+        queue: '手順、端末、形式、mangaprep のすべてのオプションを初期設定に戻しますか？',
+        options: '端末、形式、mangaprep のすべてのオプションを初期設定に戻しますか？',
       },
       confirm: 'リセット',
       cancel: 'キャンセル',

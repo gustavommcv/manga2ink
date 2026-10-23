@@ -16,7 +16,7 @@ export interface CoverChange {
   readonly note?: readonly AnyMessage[];
 }
 
-/** Where the cover of each book of an item is, for a run to hand to mangapress. */
+/** Where the cover of each book of an item is, for a run to hand to mangaprep. */
 export interface CoverLookup {
   pathsFor(itemPath: string): Promise<ReadonlyMap<CoverSlot, string>>;
 }

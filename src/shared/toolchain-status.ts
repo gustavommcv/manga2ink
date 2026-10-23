@@ -1,6 +1,6 @@
 import type { AnyMessage } from '@/domain/message';
 
-export type ToolName = 'mangabind' | 'mangapress';
+export type ToolName = 'mangabind' | 'mangaprep';
 export type ToolchainTarget = 'win32-x64' | 'linux-x64' | 'darwin-x64' | 'darwin-arm64';
 
 export interface ToolVerificationStatus {

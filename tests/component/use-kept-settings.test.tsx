@@ -1,7 +1,7 @@
 import { act, type RenderHookResult, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences, type Preferences } from '@/domain/preferences';
 import { useKeptSettings } from '@/renderer/hooks/use-kept-settings';
 import type { Manga2InkBridge } from '@/shared/runtime-info';
@@ -15,7 +15,7 @@ const kept: Preferences = {
   mode: 'bind-only',
   format: 'cbz',
   singleBook: false,
-  settings: { ...defaultMangapressSettings, quiet: true },
+  settings: { ...defaultMangaprepSettings, quiet: true },
   providerId: 'anilist',
 };
 
@@ -59,7 +59,7 @@ describe('useKeptSettings', () => {
 
       expect(result.current.mode).toBe('convert-only');
       expect(result.current.format).toBe(defaultPreferences.format);
-      expect(result.current.settings).toEqual(defaultMangapressSettings);
+      expect(result.current.settings).toEqual(defaultMangaprepSettings);
       expect(result.current.singleBook).toBe(false);
       expect(result.current.selectedProviderId).toBeUndefined();
       expect(result.current.preferredNetworkInterface).toBeUndefined();

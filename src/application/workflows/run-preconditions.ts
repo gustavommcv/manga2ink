@@ -1,8 +1,8 @@
 import { type ConversionRequest, ConversionWorkflowError } from '@/domain/conversion';
-import { validateMangapressSettings } from '@/domain/output-profile';
+import { validateMangaprepSettings } from '@/domain/output-profile';
 import { type RunStep } from '@/domain/messages/workflow';
 import { message } from '@/domain/message';
-import { defaultProcessMode, type ProcessMode, usesMangapress } from '@/domain/process-mode';
+import { defaultProcessMode, type ProcessMode, usesMangaprep } from '@/domain/process-mode';
 
 export type RunAction = RunStep;
 
@@ -16,7 +16,7 @@ export function validateRunOptions(
   action: RunAction,
 ): ProcessMode {
   const mode = request.mode ?? defaultProcessMode;
-  if (usesMangapress(mode) && validateMangapressSettings(request.settings).length > 0) {
+  if (usesMangaprep(mode) && validateMangaprepSettings(request.settings).length > 0) {
     throw new ConversionWorkflowError(
       'invalid_settings',
       message('workflow.reviewSettings', { before: action }),

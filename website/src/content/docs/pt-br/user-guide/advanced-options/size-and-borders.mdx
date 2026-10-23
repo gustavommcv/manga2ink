@@ -1,6 +1,6 @@
 ---
 title: 'Tamanho e bordas'
-description: 'O que Tamanho da página e Bordas fazem com uma página que não tem o formato da tela: ajustar, ampliar, esticar, cortar para preencher, e bordas brancas, pretas ou automáticas, mostrado em páginas reais com os tamanhos que o mangapress gravou.'
+description: 'O que Tamanho da página e Bordas fazem com uma página que não tem o formato da tela: ajustar, ampliar, esticar, cortar para preencher, e bordas brancas, pretas ou automáticas, mostrado em páginas reais com os tamanhos que o mangaprep gravou.'
 ---
 
 import OptionExample from '../../../../../components/OptionExample.astro';
@@ -11,7 +11,7 @@ As imagens mostram cada página na tela para a qual foi feita, em cinza: o cinza
 
 ## Como uma página é ajustada
 
-O mangapress decide nesta ordem, e vale a primeira regra que se aplica:
+O mangaprep decide nesta ordem, e vale a primeira regra que se aplica:
 
 1. **Esticar até a tela** está escolhida: a página é redimensionada para a tela exata.
 2. **Cortar para preencher a tela** está escolhida: a página é escalada até cobrir a tela e o resto é cortado.
@@ -62,7 +62,7 @@ Com **Tiras de webtoon**, as páginas nunca são ampliadas e as bordas são semp
 
 Quando uma página não tem o formato da tela, o espaço em volta dela são as bordas. Em CBZ ou PDF elas fazem parte da página, um preenchimento acrescentado a ela. Em EPUB não há preenchimento: a página é centralizada e o que aparece em volta é o fundo da página.
 
-- **Automáticas**: cada página recebe o fundo que as suas próprias bordas têm. O mangapress olha a página e a toma como clara ou escura, e preenche com branco ou com preto.
+- **Automáticas**: cada página recebe o fundo que as suas próprias bordas têm. O mangaprep olha a página e a toma como clara ou escura, e preenche com branco ou com preto.
 - **Brancas**: em CBZ ou PDF, as páginas não são preenchidas: o arquivo é só a página, do tamanho em que ela sai. Em EPUB, um fundo branco atrás de toda página, as escuras também. `--whiteborders`.
 - **Pretas**: as páginas são preenchidas até a tela com preto; em EPUB, um fundo preto atrás de toda página. `--blackborders`, que vence se `--whiteborders` também for dado.
 
@@ -92,6 +92,6 @@ Uma página escura é onde **Automáticas** faz diferença. A imagem abaixo é u
   }}
 />
 
-Com **Automáticas**, o mangapress achou uma página escura e preencheu com preto, então a primeira e a terceira imagens são o mesmo arquivo aqui. Com **Brancas**, o resultado é a página sozinha, 954 × 1471 pixels, e em EPUB lhe daria um fundo branco que apareceria como uma moldura clara em volta de uma imagem escura.
+Com **Automáticas**, o mangaprep achou uma página escura e preencheu com preto, então a primeira e a terceira imagens são o mesmo arquivo aqui. Com **Brancas**, o resultado é a página sozinha, 954 × 1471 pixels, e em EPUB lhe daria um fundo branco que apareceria como uma moldura clara em volta de uma imagem escura.
 
 Uma página cortada para caber, como na quarta regra acima, não tem bordas para escolher.

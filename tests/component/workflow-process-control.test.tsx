@@ -2,7 +2,7 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
 import { type Manga2InkBridge } from '@/shared/runtime-info';
@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 describe('process control in the queue', () => {
-  it('joins the volumes only: mangapress is not run, its controls lock, and only defaults are sent', async () => {
+  it('joins the volumes only: mangaprep is not run, its controls lock, and only defaults are sent', async () => {
     const user = userEvent.setup();
     const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
@@ -53,26 +53,26 @@ describe('process control in the queue', () => {
 
     expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
     expect(screen.getByText('Joined volumes · CBZ')).toBeVisible();
-    // The PDF choice was for mangapress, which did not run.
+    // The PDF choice was for mangaprep, which did not run.
     expect(convert.mock.calls[0]?.[0]).toMatchObject({
       sessionId: 'session',
       libraryId: 'pending-run',
       mode: 'bind-only',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
       mapping,
     });
   });
 
-  it('sends a folder straight to mangapress as one book, without its volumes', async () => {
+  it('sends a folder straight to mangaprep as one book, without its volumes', async () => {
     const user = userEvent.setup();
     const planConversion = vi.fn<Manga2InkBridge['planConversion']>(() =>
       Promise.resolve({
         ok: true,
         value: {
-          tool: 'mangapress',
+          tool: 'mangaprep',
           title: 'Offline Work',
-          message: message('plan.mangapress', {
+          message: message('plan.mangaprep', {
             profile: 'KV',
             width: 1072,
             height: 1448,
@@ -112,13 +112,13 @@ describe('process control in the queue', () => {
     expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
     expect(convert.mock.calls[0]?.[0]).toMatchObject({
       mode: 'convert-only',
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
       format: 'cbz',
     });
     expect(convert.mock.calls[0]?.[0].mapping).toBeUndefined();
   });
 
-  it('skips grouping from the editor, which sends the queue straight to mangapress', async () => {
+  it('skips grouping from the editor, which sends the queue straight to mangaprep', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);
@@ -184,7 +184,7 @@ describe('process control in the queue', () => {
       })
       .mockResolvedValueOnce({
         ok: false,
-        error: { code: 'process_failed', said: raw('mangapress crashed.') },
+        error: { code: 'process_failed', said: raw('mangaprep crashed.') },
       });
     installBridge(
       bridge({
@@ -211,7 +211,7 @@ describe('process control in the queue', () => {
       'session-second',
     ]);
     expect(screen.getByText('Second could not be converted')).toBeVisible();
-    expect(screen.getByText('mangapress crashed.')).toBeVisible();
+    expect(screen.getByText('mangaprep crashed.')).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Convert more' }));
     const list = screen.getByRole('list', { name: 'Queued items' });

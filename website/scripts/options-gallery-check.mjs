@@ -14,10 +14,10 @@ const longFlags = (flags) => flags.filter((flag) => flag.startsWith('--'));
  * The problems found, as sentences; an empty list means all is well.
  *
  * - manifest: the manifest the generator wrote.
- * - pin: the mangapress version Manga2Ink ships.
+ * - pin: the mangaprep version Manga2Ink ships.
  * - pictures: file name -> SHA-256 of each picture in the assets folder.
  * - licenses: the text of LICENSES.md, which lists the pictures with the licence of their source.
- * - userFlags: every flag of mangapress that a person can choose, from schemas/cli-capabilities.json.
+ * - userFlags: every flag of mangaprep that a person can choose, from schemas/cli-capabilities.json.
  * - coverage: { pages: { slug: [flag] }, elsewhere: { 'docs/path': [flag] }, planned: [slug] }.
  * - pages: { en: { slug: text }, 'pt-br': { slug: text } } for the advanced-options pages that exist,
  *   one entry for each language of the site, named by its `id`,
@@ -42,9 +42,9 @@ export function checkGallery({
   const optionsFolder = 'user-guide/advanced-options';
   const left = (locale, path) => (untranslated[locale] ?? []).includes(path);
 
-  if (manifest.mangapress !== pin) {
+  if (manifest.mangaprep !== pin) {
     problems.push(
-      `The pictures were made with mangapress ${manifest.mangapress}, and Manga2Ink ships ${pin}. Run npm run site:options.`,
+      `The pictures were made with mangaprep ${manifest.mangaprep}, and Manga2Ink ships ${pin}. Run npm run site:options.`,
     );
   }
 
@@ -107,11 +107,11 @@ export function checkGallery({
   for (const [slug, flags] of Object.entries(coverage.pages)) claim(flags, `the page ${slug}`);
   for (const [path, flags] of Object.entries(coverage.elsewhere)) claim(flags, path);
   for (const flag of userFlags) {
-    if (!claimed.has(flag)) problems.push(`${flag} is a mangapress option and no page covers it.`);
+    if (!claimed.has(flag)) problems.push(`${flag} is a mangaprep option and no page covers it.`);
   }
   for (const flag of claimed.keys()) {
     if (!userFlags.includes(flag))
-      problems.push(`${flag} is covered, but mangapress has no such option.`);
+      problems.push(`${flag} is covered, but mangaprep has no such option.`);
   }
 
   const planned = new Set(coverage.planned);

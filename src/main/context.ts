@@ -7,7 +7,7 @@ import { PendingCatalogStore } from '@/adapters/library/pending-catalog-store';
 import type { FsPendingRuns } from '@/adapters/library/fs-pending-runs';
 import type { ProcessingFolders } from '@/adapters/library/processing-folders';
 import { createMetadataProviders } from '@/adapters/metadata-providers/registry';
-import { type MangapressCliAdapter } from '@/adapters/mangapress/cli';
+import { type MangaprepCliAdapter } from '@/adapters/mangaprep/cli';
 import { OsNetworkInterfaces } from '@/adapters/network/os-network-interfaces';
 import { NodeOpdsServer } from '@/adapters/opds/http-server';
 import type { MetadataProviderPort } from '@/application/ports/metadata-provider';
@@ -75,7 +75,7 @@ export interface MainContext {
   log: FileLog | undefined;
   /** What the bundled tools were found to be at launch; undefined until they have been checked. */
   toolchainStatus: ToolchainStatus | undefined;
-  mangapressCli: MangapressCliAdapter | undefined;
+  mangaprepCli: MangaprepCliAdapter | undefined;
 }
 
 export function createMainContext(): MainContext {
@@ -112,7 +112,7 @@ export function createMainContext(): MainContext {
     currentPreferences: defaultPreferences,
     lastSaveFolder: undefined,
     workflow: undefined,
-    mangapressCli: undefined,
+    mangaprepCli: undefined,
   };
 }
 

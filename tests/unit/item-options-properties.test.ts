@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { BookFormat } from '@/domain/conversion';
 import { effectiveOptions, itemOptionsFor, type RunOptions } from '@/domain/item-options';
-import { defaultMangapressSettings, type MangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 
 /** A small seeded generator: the same seed gives the same cases, so a failure can be run again. */
 function random(seed: number): () => number {
@@ -14,15 +14,15 @@ function random(seed: number): () => number {
 }
 
 const formats: readonly BookFormat[] = ['cbz', 'epub', 'pdf'];
-const choices = Object.entries(defaultMangapressSettings) as [
-  keyof MangapressSettings,
-  MangapressSettings[keyof MangapressSettings],
+const choices = Object.entries(defaultMangaprepSettings) as [
+  keyof MangaprepSettings,
+  MangaprepSettings[keyof MangaprepSettings],
 ][];
 const optional = ['jpegQuality', 'gamma', 'customWidth', 'customHeight'] as const;
 
 /** Options with some of every kind of field changed: a flag turned over, a number, a text, one cleared. */
-function someSettings(next: () => number): MangapressSettings {
-  const settings: Record<string, unknown> = { ...defaultMangapressSettings };
+function someSettings(next: () => number): MangaprepSettings {
+  const settings: Record<string, unknown> = { ...defaultMangaprepSettings };
   for (const [field, value] of choices) {
     if (next() > 0.35) continue;
     settings[field] =
@@ -37,11 +37,11 @@ function someSettings(next: () => number): MangapressSettings {
     if (roll < 0.3) settings[field] = Math.floor(next() * 100) + 1;
     else if (roll < 0.5) delete settings[field];
   }
-  return settings as unknown as MangapressSettings;
+  return settings as unknown as MangaprepSettings;
 }
 
 /** The same options with a cleared field left out and one set to undefined counted the same. */
-const normalized = (settings: MangapressSettings): Record<string, unknown> =>
+const normalized = (settings: MangaprepSettings): Record<string, unknown> =>
   Object.fromEntries(
     Object.entries(settings)
       .filter(([, value]) => value !== undefined)
@@ -77,7 +77,7 @@ describe('what an item sets over the options of the queue', () => {
     expect(itemOptionsFor(queue, queue)).toBeUndefined();
     const item = itemOptionsFor(queue, edited);
     for (const [field, value] of Object.entries(item?.settings ?? {})) {
-      const queueValue = queue.settings[field as keyof MangapressSettings];
+      const queueValue = queue.settings[field as keyof MangaprepSettings];
       expect(value === null ? undefined : value).not.toBe(queueValue);
     }
     // Setting back what the queue has is not a difference.

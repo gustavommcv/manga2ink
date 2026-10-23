@@ -6,11 +6,11 @@ description: 'O que Conteúdo e Ordem de leitura de mangá fazem: um capítulo n
 import OptionBook from '../../../../../components/OptionBook.astro';
 import OptionExample from '../../../../../components/OptionExample.astro';
 
-A seção **Leitura** das [Opções avançadas de conversão](../../output-profiles/#opções-avançadas-de-conversão) diz o que são as imagens e em que sentido elas são lidas. Tem dois controles: **Conteúdo**, que diz ao mangapress se cada imagem é uma página ou um pedaço de uma tira longa, e **Ordem de leitura de mangá**.
+A seção **Leitura** das [Opções avançadas de conversão](../../output-profiles/#opções-avançadas-de-conversão) diz o que são as imagens e em que sentido elas são lidas. Tem dois controles: **Conteúdo**, que diz ao mangaprep se cada imagem é uma página ou um pedaço de uma tira longa, e **Ordem de leitura de mangá**.
 
 ## Conteúdo
 
-**Páginas de mangá ou quadrinhos** é a escolha inicial: cada imagem é uma página. **Tiras de webtoon** é para um webtoon. Um webtoon é desenhado como uma tira vertical longa, mas é distribuído cortado em imagens onde um arquivo terminou. Lida uma imagem de cada vez, um quadro pode acabar dividido entre duas páginas. Com **Tiras de webtoon**, o mangapress junta as imagens de cada capítulo numa tira só e a corta de novo em páginas, entre os quadros. `--webtoon` a liga, e `-w` é a forma curta.
+**Páginas de mangá ou quadrinhos** é a escolha inicial: cada imagem é uma página. **Tiras de webtoon** é para um webtoon. Um webtoon é desenhado como uma tira vertical longa, mas é distribuído cortado em imagens onde um arquivo terminou. Lida uma imagem de cada vez, um quadro pode acabar dividido entre duas páginas. Com **Tiras de webtoon**, o mangaprep junta as imagens de cada capítulo numa tira só e a corta de novo em páginas, entre os quadros. `--webtoon` a liga, e `-w` é a forma curta.
 
 _Pepper&Carrot_ não é um webtoon, mas três das suas páginas, uma sob a outra, formam uma tira do mesmo formato: 992 × 4119 pixels, com espaços brancos entre os quadros. Cortada a cada 1500 pixels em três imagens, ela parece o que um site de webtoon entrega: cada corte cai onde uma imagem termina, não entre quadros. A primeira linha converte essas três imagens como páginas. A segunda converte as mesmas três como tiras.
 
@@ -28,7 +28,7 @@ Como páginas, as três imagens dão três páginas de 1272 × 1696 pixels, o ta
 
 ### O que mais muda com ela
 
-A tabela dá o tamanho de cada página que o mangapress gravou para as mesmas três imagens. Todas as linhas foram convertidas com as configurações iniciais do Manga2Ink, que incluem ampliar páginas pequenas e a ordem de leitura de mangá, e as flags indicadas são o que a linha acrescenta.
+A tabela dá o tamanho de cada página que o mangaprep gravou para as mesmas três imagens. Todas as linhas foram convertidas com as configurações iniciais do Manga2Ink, que incluem ampliar páginas pequenas e a ordem de leitura de mangá, e as flags indicadas são o que a linha acrescenta.
 
 <OptionBook
   id="reading-webtoon-pages"
@@ -47,7 +47,7 @@ A tabela dá o tamanho de cada página que o mangapress gravou para as mesmas tr
 - **As páginas não são ampliadas.** A segunda linha foi convertida com a opção que amplia páginas pequenas, e suas páginas continuam com 992 pixels de largura. O app diz isso em **Tamanho da página**: “Tiras de webtoon nunca são ampliadas.”
 - **Esticar e cortar para preencher continuam valendo.** Na terceira e na quarta linha cada página cortada fica do tamanho da tela, como em [Tamanho e bordas](../size-and-borders/).
 - **O Corte entre quadros continua valendo.** A quinta linha fecha os espaços entre os quadros, então a segunda e a terceira páginas ficam mais curtas, como em [Recorte](../cropping/).
-- **Bordas e recorte de margens não são usados.** A sexta e a sétima linha são a segunda de novo, com os mesmos tamanhos. A descrição do próprio mangapress para o modo diz que ele implica bordas brancas e nenhum recorte de margens, então **Bordas**, **Corte das páginas** e seus três números ficam esmaecidos enquanto **Tiras de webtoon** está ligada.
+- **Bordas e recorte de margens não são usados.** A sexta e a sétima linha são a segunda de novo, com os mesmos tamanhos. A descrição do próprio mangaprep para o modo diz que ele implica bordas brancas e nenhum recorte de margens, então **Bordas**, **Corte das páginas** e seus três números ficam esmaecidos enquanto **Tiras de webtoon** está ligada.
 - **Um webtoon nunca é dividido nem girado.** **Páginas largas**, as três opções da página dupla inteira e **Reempilhar tiras de 4 quadros em 2×2** ficam esmaecidas, e também **Contraste automático** e **Ordem de leitura de mangá**, descrita abaixo.
 - **O corte continua quando as imagens ficam como estão.** A última linha liga **Usar as imagens como estão**: as páginas não são gravadas de novo, e a tira ainda é cortada nas mesmas páginas.
 
@@ -71,5 +71,5 @@ Se o próprio livro diz em que sentido ele vira, isso depende do formato. A tabe
 />
 
 - Um **EPUB** registra a direção no arquivo de pacote, como `page-progression-direction`: `rtl` com a opção ligada e `ltr` desligada, a menos que **Inverter a virada de página**, na [visão de duas páginas](../double-page-spreads/#visão-de-duas-páginas), a inverta. Um leitor que segue a direção do livro vira as páginas nesse sentido.
-- Com **Tiras de webtoon**, um EPUB fica da esquerda para a direita mesmo com **Ordem de leitura de mangá** ligada: a descrição que o mangapress dá ao modo diz que ele implica a ordem da esquerda para a direita. É por isso que o controle fica esmaecido.
-- Um **PDF** e um **CBZ** feitos pelo mangapress não registram direção nenhuma, então quem decide como eles viram é a configuração do próprio leitor. A página de [configurações do KOReader](../../../koreader/recommended-settings/) tem um exemplo que troca as zonas de toque e os gestos para a leitura da direita para a esquerda.
+- Com **Tiras de webtoon**, um EPUB fica da esquerda para a direita mesmo com **Ordem de leitura de mangá** ligada: a descrição que o mangaprep dá ao modo diz que ele implica a ordem da esquerda para a direita. É por isso que o controle fica esmaecido.
+- Um **PDF** e um **CBZ** feitos pelo mangaprep não registram direção nenhuma, então quem decide como eles viram é a configuração do próprio leitor. A página de [configurações do KOReader](../../../koreader/recommended-settings/) tem um exemplo que troca as zonas de toque e os gestos para a leitura da direita para a esquerda.

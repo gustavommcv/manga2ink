@@ -37,7 +37,7 @@ Tags matching `v*` trigger `.github/workflows/release.yml`; ordinary pushes and 
 
 1. **`check-version`:** compares the tag with `package.json`.
 2. **`verify-commit`:** requires a commit reachable from `main` whose latest application CI push run passed. Its bounded wait is a safety net, not permission to skip verification before tagging.
-3. **`build`:** builds Windows, Linux, and Apple Silicon packages through `make.yml`, also used by application CI. For Linux it also unpacks the `.deb` and the `.rpm` and fails when `mangabind` or `mangapress` inside is not the file pinned in `toolchain.lock.json`.
+3. **`build`:** builds Windows, Linux, and Apple Silicon packages through `make.yml`, also used by application CI. For Linux it also unpacks the `.deb` and the `.rpm` and fails when `mangabind` or `mangaprep` inside is not the file pinned in `toolchain.lock.json`.
 4. **`arch-package`:** builds the Arch package through `arch-package.yml`, likewise shared with CI, and makes the same check of its tools.
 5. **`publish`:** waits for every build, collects user-facing assets, generates checksums, and creates the release using the versioned notes.
 6. **`refresh-site`:** after the published asset names are verified, dispatches the existing documentation workflow on `main` to refresh the installation buttons. The guide still publishes only after its own checks pass.

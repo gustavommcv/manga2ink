@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "mangapress": "0.8.3",
+  "mangaprep": "0.9.0",
   "base": {
     "profile": "KPW6",
     "format": "cbz",

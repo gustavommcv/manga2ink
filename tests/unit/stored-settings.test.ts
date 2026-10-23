@@ -6,7 +6,7 @@ import {
   serializeStoredSettings,
   settingsFileVersion,
 } from '@/adapters/settings/stored-settings';
-import { defaultMangapressSettings } from '@/domain/output-profile';
+import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultPreferences } from '@/domain/preferences';
 
 const file = (overrides: Record<string, unknown> = {}): string =>
@@ -14,7 +14,7 @@ const file = (overrides: Record<string, unknown> = {}): string =>
     version: settingsFileVersion,
     mode: 'bind-only',
     format: 'pdf',
-    settings: { ...defaultMangapressSettings, deviceProfile: 'KS', upscale: false },
+    settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
     providerId: 'mangadex',
     outputFolder: '/books',
     lastPickerFolder: '/downloads',
@@ -33,7 +33,7 @@ describe('parseStoredSettings', () => {
       mode: 'bind-only',
       format: 'pdf',
       singleBook: false,
-      settings: { ...defaultMangapressSettings, deviceProfile: 'KS', upscale: false },
+      settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
       providerId: 'mangadex',
       outputFolder: '/books',
       lastPickerFolder: '/downloads',
@@ -62,7 +62,7 @@ describe('parseStoredSettings', () => {
       onePageLandscape,
       invertDirection,
       ...older
-    } = { ...defaultMangapressSettings, deviceProfile: 'KS', upscale: false, stretch: true };
+    } = { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false, stretch: true };
     void [webtoon, noRotate, rotateFirst, maximizeStrips, blackBorders];
     void [spreadShift, onePageLandscape, invertDirection];
     void [noProcessing, forceColor, colorAutoContrast, noQuantize, pngLegacy, forcePngRgb];
@@ -71,7 +71,7 @@ describe('parseStoredSettings', () => {
     const parsed = settingsIn(file({ settings: older }));
 
     expect(parsed?.settings).toEqual({
-      ...defaultMangapressSettings,
+      ...defaultMangaprepSettings,
       deviceProfile: 'KS',
       upscale: false,
       stretch: true,
@@ -92,7 +92,7 @@ describe('parseStoredSettings', () => {
       mode: 'bind-only',
       format: 'pdf',
       singleBook: false,
-      settings: { ...defaultMangapressSettings, deviceProfile: 'KS', upscale: false },
+      settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
     });
     expect(parsed).not.toHaveProperty('providerId');
     expect(parsed).not.toHaveProperty('outputFolder');
@@ -104,7 +104,7 @@ describe('parseStoredSettings', () => {
     const parsed = settingsIn(
       file({
         settings: {
-          ...defaultMangapressSettings,
+          ...defaultMangaprepSettings,
           title: 'Smuggled in',
           author: 'Someone',
           somethingNew: true,
@@ -113,7 +113,7 @@ describe('parseStoredSettings', () => {
       }),
     );
 
-    expect(parsed?.settings).toEqual(defaultMangapressSettings);
+    expect(parsed?.settings).toEqual(defaultMangaprepSettings);
     expect(parsed).not.toHaveProperty('somethingElse');
   });
 
@@ -133,7 +133,7 @@ describe('parseStoredSettings', () => {
     it('resets an option out of range and keeps everything else, and says which', () => {
       // The audit's case: one field outside its range cost the person format, mode, device and folders.
       const raw = file({
-        settings: { ...defaultMangapressSettings, deviceProfile: 'KS', croppingMinimum: 150 },
+        settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', croppingMinimum: 150 },
       });
 
       const parsed = parseStoredSettings(raw);
@@ -144,7 +144,7 @@ describe('parseStoredSettings', () => {
       expect(parsed?.settings.outputFolder).toBe('/books');
       expect(parsed?.settings.settings.deviceProfile).toBe('KS');
       expect(parsed?.settings.settings.croppingMinimum).toBe(
-        defaultMangapressSettings.croppingMinimum,
+        defaultMangaprepSettings.croppingMinimum,
       );
     });
 
@@ -156,7 +156,7 @@ describe('parseStoredSettings', () => {
       ['a JPEG quality of 0', { jpegQuality: 0 }, 'jpegQuality'],
     ])('resets %s alone', (_name, bad, field) => {
       const parsed = parseStoredSettings(
-        file({ settings: { ...defaultMangapressSettings, deviceProfile: 'KS', ...bad } }),
+        file({ settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', ...bad } }),
       );
 
       expect(parsed?.reset).toEqual([field]);
@@ -170,7 +170,7 @@ describe('parseStoredSettings', () => {
     it('names every option it reset, in the order of the options', () => {
       const parsed = parseStoredSettings(
         file({
-          settings: { ...defaultMangapressSettings, gamma: 99, croppingMinimum: -4, quiet: 3 },
+          settings: { ...defaultMangaprepSettings, gamma: 99, croppingMinimum: -4, quiet: 3 },
         }),
       );
 
@@ -182,16 +182,14 @@ describe('parseStoredSettings', () => {
 
       expect(parsed?.reset).toEqual([]);
       expect(parsed?.settings.settings).toEqual({
-        ...defaultMangapressSettings,
+        ...defaultMangaprepSettings,
         deviceProfile: 'KV',
       });
     });
 
     it('takes a file with no settings at all for the defaults', () => {
-      expect(settingsIn(file({ settings: undefined }))?.settings).toEqual(
-        defaultMangapressSettings,
-      );
-      expect(settingsIn(file({ settings: [1] }))?.settings).toEqual(defaultMangapressSettings);
+      expect(settingsIn(file({ settings: undefined }))?.settings).toEqual(defaultMangaprepSettings);
+      expect(settingsIn(file({ settings: [1] }))?.settings).toEqual(defaultMangaprepSettings);
     });
 
     it('resets the process and the format when the file names one that does not exist', () => {
@@ -268,18 +266,18 @@ describe('parseStoredSettings', () => {
       },
     );
 
-    it.each(Object.keys(defaultMangapressSettings))(
+    it.each(Object.keys(defaultMangaprepSettings))(
       'resets the option %s when it is an object whose length cannot be compared',
       (name) => {
         const parsed = parseStoredSettings(
           file({
-            settings: { ...defaultMangapressSettings, [name]: { length: { toString: null } } },
+            settings: { ...defaultMangaprepSettings, [name]: { length: { toString: null } } },
           }),
         );
 
         expect(parsed?.reset).toContain(name);
-        expect(parsed?.settings.settings[name as keyof typeof defaultMangapressSettings]).toEqual(
-          defaultMangapressSettings[name as keyof typeof defaultMangapressSettings],
+        expect(parsed?.settings.settings[name as keyof typeof defaultMangaprepSettings]).toEqual(
+          defaultMangaprepSettings[name as keyof typeof defaultMangaprepSettings],
         );
       },
     );
@@ -287,12 +285,12 @@ describe('parseStoredSettings', () => {
     it('resets a custom device that has no size, with the size, and keeps the rest', () => {
       const parsed = parseStoredSettings(
         file({
-          settings: { ...defaultMangapressSettings, deviceProfile: 'OTHER', upscale: true },
+          settings: { ...defaultMangaprepSettings, deviceProfile: 'OTHER', upscale: true },
         }),
       );
 
       expect(parsed?.reset).toEqual(['customDeviceSize']);
-      expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangapressSettings.deviceProfile);
+      expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangaprepSettings.deviceProfile);
       expect(parsed?.settings.settings.upscale).toBe(true);
       expect(parsed?.settings.mode).toBe('bind-only');
     });
@@ -301,7 +299,7 @@ describe('parseStoredSettings', () => {
       const parsed = parseStoredSettings(
         file({
           settings: {
-            ...defaultMangapressSettings,
+            ...defaultMangaprepSettings,
             deviceProfile: 'OTHER',
             customWidth: 800,
             customHeight: 0,
@@ -310,7 +308,7 @@ describe('parseStoredSettings', () => {
       );
 
       expect(parsed?.reset).toEqual(['customHeight', 'customDeviceSize']);
-      expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangapressSettings.deviceProfile);
+      expect(parsed?.settings.settings.deviceProfile).toBe(defaultMangaprepSettings.deviceProfile);
       expect(parsed?.settings.settings).not.toHaveProperty('customWidth');
     });
   });
@@ -344,7 +342,7 @@ describe('serializeStoredSettings', () => {
       mode: 'bind-and-convert',
       format: 'epub',
       combineIntoOneVolume: true,
-      settings: defaultMangapressSettings,
+      settings: defaultMangaprepSettings,
     });
     const parsed = settingsIn(legacy);
     expect(parsed?.singleBook).toBe(true);
@@ -353,7 +351,7 @@ describe('serializeStoredSettings', () => {
       version: 1,
       mode: 'bind-and-convert',
       format: 'epub',
-      settings: { ...defaultMangapressSettings, combineIntoOneVolume: true },
+      settings: { ...defaultMangaprepSettings, combineIntoOneVolume: true },
     });
     const parsed2 = settingsIn(legacyInSettings);
     expect(parsed2?.singleBook).toBe(true);
@@ -364,7 +362,7 @@ describe('serializeStoredSettings', () => {
       version: 1,
       mode: 'bind-and-convert',
       format: 'epub',
-      settings: { ...defaultMangapressSettings, combineIntoOneVolume: true },
+      settings: { ...defaultMangaprepSettings, combineIntoOneVolume: true },
     });
     const migrated = settingsIn(legacy);
     expect(migrated?.singleBook).toBe(true);
@@ -384,7 +382,7 @@ describe('serializeStoredSettings', () => {
       mode: 'convert-only' as const,
       format: 'cbz' as const,
       singleBook: true,
-      settings: { ...defaultMangapressSettings, jpegQuality: 70, gamma: 1.2 },
+      settings: { ...defaultMangaprepSettings, jpegQuality: 70, gamma: 1.2 },
       providerId: 'mangadex',
       outputFolder: 'C:\\Manga',
       lastPickerFolder: 'C:\\Manga\\Downloads',

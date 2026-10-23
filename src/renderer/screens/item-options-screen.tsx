@@ -2,8 +2,8 @@ import { RotateCcw } from 'lucide-react';
 
 import type { BookFormat } from '@/domain/conversion';
 import type { RunOptions } from '@/domain/item-options';
-import type { MangapressSettings } from '@/domain/output-profile';
-import { MangapressSettingsEditor } from '@/renderer/components/settings/mangapress-settings';
+import type { MangaprepSettings } from '@/domain/output-profile';
+import { MangaprepSettingsEditor } from '@/renderer/components/settings/mangaprep-settings';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
@@ -31,7 +31,7 @@ export interface ItemOptionsScreenProps {
   /** The options of the queue: what a field is compared with here, and what its reset puts back. */
   readonly queue: RunOptions;
   /** The options this item is converted with: the queue's, with what the item set over them. */
-  readonly settings: MangapressSettings;
+  readonly settings: MangaprepSettings;
   readonly singleBook: boolean;
 }
 
@@ -82,7 +82,7 @@ export function ItemOptionsScreen({
         id="item-options-title"
         title={words.title(name)}
       />
-      <MangapressSettingsEditor
+      <MangaprepSettingsEditor
         format={format}
         onFormat={(next) => {
           onChange({ settings, format: next });
