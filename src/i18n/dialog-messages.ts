@@ -19,6 +19,11 @@ export interface DialogMessages {
     readonly keep: string;
     readonly leave: string;
   };
+  /**
+   * Said before the window opens, when Mangabound is still open the first time Manga2Ink starts and
+   * its settings cannot move yet (ADR 0085).
+   */
+  readonly formerAppOpen: { readonly title: string; readonly text: string };
   /** Said by a notification when a long queue ends, with the window out of sight (ADR 0065). */
   readonly queueEnded: {
     readonly done: {
@@ -55,6 +60,10 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       detail: 'If you close Manga2Ink now, it will be lost.',
       keep: 'Keep converting',
       leave: 'Close anyway',
+    },
+    formerAppOpen: {
+      title: 'Close Mangabound first',
+      text: 'Manga2Ink is the new name of Mangabound. The first time it opens, it takes Mangabound’s settings, which it cannot do while Mangabound is open. Close Mangabound, then open Manga2Ink again.',
     },
     queueEnded: {
       done: {
@@ -97,6 +106,10 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       keep: 'Continuar convertendo',
       leave: 'Fechar mesmo',
     },
+    formerAppOpen: {
+      title: 'Feche o Mangabound primeiro',
+      text: 'Manga2Ink é o novo nome do Mangabound. Na primeira vez que abre, ele traz as configurações do Mangabound, o que não consegue fazer enquanto o Mangabound está aberto. Feche o Mangabound e abra o Manga2Ink de novo.',
+    },
     queueEnded: {
       done: {
         title: 'Seus livros estão prontos',
@@ -134,6 +147,10 @@ export const dialogMessages: Readonly<Record<Language, DialogMessages>> = {
       detail: '今 Manga2Ink を閉じると、実行中の変換は失われます。',
       keep: '変換を続ける',
       leave: 'このまま閉じる',
+    },
+    formerAppOpen: {
+      title: '先に Mangabound を閉じてください',
+      text: 'Manga2Ink は Mangabound の新しい名前です。初めて起動するときに Mangabound の設定を引き継ぎますが、Mangabound が開いている間は引き継げません。Mangabound を閉じてから、もう一度 Manga2Ink を開いてください。',
     },
     queueEnded: {
       done: {
