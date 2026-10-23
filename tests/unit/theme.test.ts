@@ -241,9 +241,11 @@ describe('the themes in the stylesheet', () => {
     });
 
     it('on the edge of a control: the box, the field and the select, against what each is on', async () => {
-      // WCAG 1.4.11: the boundary a control is told by is at least 3:1 with what is around it: the
-      // page, a raised surface, a row the pointer is over (muted at half over a surface), or the
-      // panel of the controls of a table (muted at 30%).
+      // The boundary a control is told by is at least 2.1:1 with what is around it: the page, a
+      // raised surface, a row the pointer is over (muted at half over a surface), or the panel of the
+      // controls of a table (muted at 30%). WCAG 1.4.11 asks 3:1, and ADR 0076 held it there; the
+      // owner chose a softer edge (ADR 0088), which this holds from going back to the hairline.
+      const leastEdge = 2.1;
       const tokens = await tokensOf(theme);
       const border = bytesOf(tokens.get('--control-border'));
       const around = {
@@ -257,7 +259,7 @@ describe('the themes in the stylesheet', () => {
         expect(
           contrastOfBytes(border, ground),
           `--control-border on ${name}`,
-        ).toBeGreaterThanOrEqual(3);
+        ).toBeGreaterThanOrEqual(leastEdge);
       }
     });
 
