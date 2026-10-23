@@ -8,6 +8,14 @@ import {
   type MappingVolume,
 } from '@/domain/mapping';
 
+/** The last part of a folder's path, whichever separator the system that wrote it uses. */
+function folderName(folder: string): string {
+  return folder
+    .replace(/[\\/]+$/u, '')
+    .split(/[\\/]/u)
+    .pop()!;
+}
+
 export function mappingDraftFromMangabindReport(
   report: MangabindReport,
   options: {
@@ -23,16 +31,27 @@ export function mappingDraftFromMangabindReport(
 
   const chapters = manga.units
     .filter((unit) => unit.parser.matched)
-    .map((unit) => ({
-      id: unit.path,
-      name: unit.name,
-      path: unit.path,
-      pageCount: unit.page_count,
-      ...(unit.parser.chapter === undefined ? {} : { chapter: unit.parser.chapter }),
-      ...(unit.parser.special === undefined ? {} : { special: unit.parser.special }),
-      ...(unit.parser.volume === undefined ? {} : { parsedVolume: unit.parser.volume }),
-      ...(unit.parser.language === undefined ? {} : { language: unit.parser.language }),
-    }));
+    .map((unit) => {
+      // A chapter in the folder of a volume has that volume, though its own name says none, and
+      // mangabind keeps it over the file the app writes: it is a volume of its own, like a name's.
+      const volume =
+        unit.parser.volume ??
+        (unit.volume_folder === undefined ? undefined : unit.effective_volume);
+      return {
+        id: unit.path,
+        // Two volume folders may hold a chapter of one name, so the folder is part of what is shown.
+        name:
+          unit.volume_folder === undefined
+            ? unit.name
+            : `${folderName(unit.volume_folder)}/${unit.name}`,
+        path: unit.path,
+        pageCount: unit.page_count,
+        ...(unit.parser.chapter === undefined ? {} : { chapter: unit.parser.chapter }),
+        ...(unit.parser.special === undefined ? {} : { special: unit.parser.special }),
+        ...(volume === undefined ? {} : { parsedVolume: volume }),
+        ...(unit.parser.language === undefined ? {} : { language: unit.parser.language }),
+      };
+    });
 
   const volumes: MappingVolume[] = [];
   if (options.seed === 'effective-volumes') {

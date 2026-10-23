@@ -7,6 +7,10 @@ export interface MappingChapter {
   readonly pageCount: number;
   readonly chapter?: number;
   readonly special?: string;
+  /**
+   * The volume the chapter has of its own: the one its file name says, or the one of the volume
+   * folder it is in. mangabind keeps it over what the file it reads says.
+   */
   readonly parsedVolume?: number;
   /** The language the folder name declared, such as "pt-br", when it declared one. */
   readonly language?: string;
@@ -459,6 +463,35 @@ export function assignedVolumeId(draft: MappingDraft, chapterId: string): string
 }
 
 /**
+ * Whether mangabind could take two chapters of one number for each other. It tells them apart by
+ * volume only when both have a volume of their own, from the file name or from the volume folder
+ * they are in, and the two differ: a number repeats from one volume to the next, and `第1話` of
+ * `第1巻` is not `第1話` of `第2巻`. A chapter with no volume of its own is given one by the file
+ * mangabind reads, which lists a chapter number once, so it could be either.
+ */
+function couldBeTakenForEachOther(left: MappingChapter, right: MappingChapter): boolean {
+  return (
+    left.parsedVolume === undefined ||
+    right.parsedVolume === undefined ||
+    left.parsedVolume === right.parsedVolume
+  );
+}
+
+/** The placed chapters of one number that some other of them could be taken for, in order. */
+function confusedAmong(draft: MappingDraft, chapterIds: readonly string[]): readonly string[] {
+  const confused = new Set<string>();
+  chapterIds.forEach((id, index) => {
+    for (const otherId of chapterIds.slice(index + 1)) {
+      if (couldBeTakenForEachOther(chapterById(draft, id), chapterById(draft, otherId))) {
+        confused.add(id);
+        confused.add(otherId);
+      }
+    }
+  });
+  return chapterIds.filter((id) => confused.has(id));
+}
+
+/**
  * The chapters that no volume holds but that share a chapter number with one that is placed, by
  * that number. A copy the filename puts in another volume than the placed one is not counted:
  * mangabind tells those apart by volume, and the copies of a chapter in the same volume are the
@@ -473,14 +506,9 @@ function copiesLeftOut(
   for (const chapter of draft.chapters) {
     if (assigned.has(chapter.id) || !isMappableChapter(chapter)) continue;
     const token = chapterToken(chapter);
-    const sameVolume = (placedByToken.get(token) ?? []).some((placedId) => {
-      const { parsedVolume } = chapterById(draft, placedId);
-      return (
-        parsedVolume === undefined ||
-        chapter.parsedVolume === undefined ||
-        parsedVolume === chapter.parsedVolume
-      );
-    });
+    const sameVolume = (placedByToken.get(token) ?? []).some((placedId) =>
+      couldBeTakenForEachOther(chapterById(draft, placedId), chapter),
+    );
     if (!sameVolume) continue;
     leftOut.set(token, [...(leftOut.get(token) ?? []), chapter.id]);
   }
@@ -560,12 +588,13 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
   const leftOut = copiesLeftOut(draft, assigned, tokens);
   for (const [token, chapterIds] of tokens) {
     const copies = leftOut.get(token) ?? [];
-    if (chapterIds.length > 1) {
+    const confused = confusedAmong(draft, chapterIds);
+    if (confused.length > 1) {
       issues.push({
         code: 'duplicate_chapter',
         severity: 'error',
         message: message('mapping.issue.duplicateSources', { token }),
-        chapterIds: [...chapterIds, ...copies],
+        chapterIds: [...confused, ...copies],
       });
     } else if (copies.length > 0) {
       // Placing one copy does not choose it: mangabind.json can only say "chapter 2", so every copy
@@ -598,12 +627,28 @@ export function toMangabindMetadata(draft: MappingDraft): MangabindMetadataFile 
   if (errors.length > 0) throw new MappingValidationError(errors);
 
   const chapters = new Map(draft.chapters.map((chapter) => [chapter.id, chapter]));
+  // The file lists a chapter number once: under two volumes mangabind keeps the last and warns that
+  // the first, whose name or folder says its own volume, disagrees. A number that repeats from one
+  // volume to the next is left out of the file for the chapters that carry their volume; they
+  // need no line, since that volume wins over the file.
+  const volumesOfToken = new Map<string, Set<string>>();
+  for (const volume of draft.volumes) {
+    for (const chapterId of volume.chapterIds) {
+      const token = chapterToken(chapters.get(chapterId)!);
+      volumesOfToken.set(token, (volumesOfToken.get(token) ?? new Set()).add(volume.number));
+    }
+  }
   const volumes = [...draft.volumes]
     .sort((left, right) => Number(left.number) - Number(right.number))
     .map((volume) => ({
       number: volume.number,
       chapters: volume.chapterIds
         .map((chapterId) => chapters.get(chapterId)!)
+        .filter(
+          (chapter) =>
+            chapter.parsedVolume === undefined ||
+            volumesOfToken.get(chapterToken(chapter))!.size <= 1,
+        )
         .sort(compareChapters)
         .map(chapterToken),
     }));

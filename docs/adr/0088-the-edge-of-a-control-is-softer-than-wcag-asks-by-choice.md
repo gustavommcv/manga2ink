@@ -1,6 +1,6 @@
 # ADR 0088: The edge of a control is softer than WCAG asks, by choice
 
-- Status: Accepted
+- Status: Accepted (superseded as to the value of the edge by [ADR 0090](0090-the-edge-of-a-control-is-the-hairline-again.md))
 - Date: 2026-10-23
 - Amends: [ADR 0076](0076-the-edge-of-a-control-is-told-from-what-it-is-on.md) (the value of the edge, and the least the test holds it to)
 
