@@ -130,8 +130,8 @@ describe('moving what an earlier version kept in another folder', () => {
     const files = fileSystem();
 
     await moveLegacyStorage({
-      from: path.resolve('/Data/Mangabound'),
-      to: path.resolve('/data/MANGABOUND'),
+      from: path.resolve('/Data/Manga2Ink'),
+      to: path.resolve('/data/MANGA2INK'),
       folders: ['pending'],
       fileSystem: files,
       onProblem: vi.fn(),
@@ -245,16 +245,16 @@ describe('how many things are taken in at once', () => {
 
 describe('what the temporary folder is cleaned of', () => {
   it('is a workspace named as the app names them, and no folder that only contains such a name', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-stale-names-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-stale-names-'));
     directories.push(root);
     const old = new Date(Date.UTC(2026, 0, 1));
     const names = [
-      'mangabound-abc123', // is one
-      'mangabound-abc1234', // one letter too long
-      'mangabound-abc12', // one too short
-      'xmangabound-abc123', // starts with another name
-      'mangabound-abc123x', // ends with another character
-      'mangabound-abc-12', // not a letter or digit
+      'manga2ink-abc123', // is one
+      'manga2ink-abc1234', // one letter too long
+      'manga2ink-abc12', // one too short
+      'xmanga2ink-abc123', // starts with another name
+      'manga2ink-abc123x', // ends with another character
+      'manga2ink-abc-12', // not a letter or digit
     ];
     for (const name of names) {
       const folder = path.join(root, name);
@@ -266,6 +266,6 @@ describe('what the temporary folder is cleaned of', () => {
 
     const removed = await removeStaleScratch(root, 1000, Date.UTC(2026, 9, 1));
 
-    expect(removed).toEqual(['mangabound-abc123']);
+    expect(removed).toEqual(['manga2ink-abc123']);
   });
 });

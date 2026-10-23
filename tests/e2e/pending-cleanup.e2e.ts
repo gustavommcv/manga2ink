@@ -40,7 +40,7 @@ async function ageTree(target: string, days: number): Promise<void> {
 
 describe('packaged clean-up of the books that wait', () => {
   it('deletes a conversion that has waited long, only after it is asked what goes and says yes', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-cleanup-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-cleanup-e2e-'));
     temporaryDirectories.push(testRoot);
     const input = path.join(testRoot, 'Named Volumes');
     await cp(
@@ -48,7 +48,7 @@ describe('packaged clean-up of the books that wait', () => {
       input,
       { recursive: true },
     );
-    const ownPending = process.env.MANGABOUND_PENDING_ROOT;
+    const ownPending = process.env.MANGA2INK_PENDING_ROOT;
     if (ownPending === undefined) throw new Error('The suite did not say where pending books go.');
     const before = new Set(await runFolders(ownPending));
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');

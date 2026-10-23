@@ -412,7 +412,7 @@ describe('bundled toolchain verification', () => {
         createNodeProcessRunner(),
       ),
     );
-    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'mangabound-kobo-'));
+    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'manga2ink-kobo-'));
     try {
       const book = await conversion.convert(
         {
@@ -422,7 +422,7 @@ describe('bundled toolchain verification', () => {
             'fixtures',
             'e2e',
             'cbz',
-            'Mangabound Direct.cbz',
+            'Manga2Ink Direct.cbz',
           ),
           outputDirectory,
           settings: { ...defaultMangapressSettings, deviceProfile: 'KoC' },
@@ -431,7 +431,7 @@ describe('bundled toolchain verification', () => {
         { onProgress: () => undefined },
       );
 
-      expect(book.name).toBe('Mangabound Direct.kepub.epub');
+      expect(book.name).toBe('Manga2Ink Direct.kepub.epub');
       expect(book.format).toBe('epub');
       expect(book.bytes).toBeGreaterThan(0);
 
@@ -444,7 +444,7 @@ describe('bundled toolchain verification', () => {
             'fixtures',
             'e2e',
             'cbz',
-            'Mangabound Direct.cbz',
+            'Manga2Ink Direct.cbz',
           ),
           outputDirectory,
           settings: {
@@ -458,7 +458,7 @@ describe('bundled toolchain verification', () => {
         },
         { onProgress: () => undefined },
       );
-      expect(plain.name).toBe('Mangabound Direct.epub');
+      expect(plain.name).toBe('Manga2Ink Direct.epub');
       expect(plain.format).toBe('epub');
       expect(plain.bytes).toBeGreaterThan(0);
     } finally {
@@ -483,9 +483,9 @@ describe('bundled toolchain verification', () => {
       'fixtures',
       'e2e',
       'cbz',
-      'Mangabound Direct.cbz',
+      'Manga2Ink Direct.cbz',
     );
-    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'mangabound-warnings-'));
+    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'manga2ink-warnings-'));
     try {
       const fitted = await conversion.convert(
         {
@@ -528,9 +528,9 @@ describe('bundled toolchain verification', () => {
       'fixtures',
       'e2e',
       'cbz',
-      'Mangabound Direct.cbz',
+      'Manga2Ink Direct.cbz',
     );
-    const work = await mkdtemp(path.join(tmpdir(), 'mangabound-cover-'));
+    const work = await mkdtemp(path.join(tmpdir(), 'manga2ink-cover-'));
     try {
       const store = new FsCoverStore(path.join(work, 'covers'));
       const picked = path.join(work, 'any name at all.png');
@@ -584,9 +584,9 @@ describe('bundled toolchain verification', () => {
       'fixtures',
       'e2e',
       'cbz',
-      'Mangabound Direct.cbz',
+      'Manga2Ink Direct.cbz',
     );
-    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'mangabound-images-'));
+    const outputDirectory = await mkdtemp(path.join(tmpdir(), 'manga2ink-images-'));
     try {
       for (const settings of [
         {

@@ -19,7 +19,7 @@ describe('rendererLocation', () => {
     const entry = `file://${path.join(root, 'main_window', 'index.html')}`;
 
     expect(rendererLocation(entry)).toEqual({
-      url: 'app://mangabound/main_window/index.html',
+      url: 'app://manga2ink/main_window/index.html',
       root,
     });
   });
@@ -27,40 +27,40 @@ describe('rendererLocation', () => {
 
 describe('rendererFile', () => {
   it('finds a file below the root', () => {
-    expect(rendererFile(root, 'app://mangabound/main_window/index.js')).toBe(
+    expect(rendererFile(root, 'app://manga2ink/main_window/index.js')).toBe(
       path.join(root, 'main_window', 'index.js'),
     );
   });
 
   it('decodes the name the page asked for', () => {
-    expect(rendererFile(root, 'app://mangabound/main_window/a%20b.js')).toBe(
+    expect(rendererFile(root, 'app://manga2ink/main_window/a%20b.js')).toBe(
       path.join(root, 'main_window', 'a b.js'),
     );
   });
 
   it('keeps a file whose name only starts with two dots', () => {
-    expect(rendererFile(root, 'app://mangabound/..hidden.js')).toBe(path.join(root, '..hidden.js'));
+    expect(rendererFile(root, 'app://manga2ink/..hidden.js')).toBe(path.join(root, '..hidden.js'));
   });
 
   it.each([
     ['another host', 'app://elsewhere/main_window/index.js'],
     ['another scheme', 'file:///etc/passwd'],
-    ['a web address', 'https://mangabound/main_window/index.js'],
-    ['a name that does not decode', 'app://mangabound/main_window/%E0%A4%A.js'],
-    ['an encoded backslash', 'app://mangabound/main_window%5C..%5Cpreload.js'],
-    ['a NUL', 'app://mangabound/main_window/index.js%00.txt'],
+    ['a web address', 'https://manga2ink/main_window/index.js'],
+    ['a name that does not decode', 'app://manga2ink/main_window/%E0%A4%A.js'],
+    ['an encoded backslash', 'app://manga2ink/main_window%5C..%5Cpreload.js'],
+    ['a NUL', 'app://manga2ink/main_window/index.js%00.txt'],
     ['an address that is not one', 'not a url'],
-    ['the root itself', 'app://mangabound/'],
+    ['the root itself', 'app://manga2ink/'],
   ])('refuses %s', (_description, requestUrl) => {
     expect(rendererFile(root, requestUrl)).toBeUndefined();
   });
 
   it.each([
-    'app://mangabound/../secret.txt',
-    'app://mangabound/main_window/../../secret.txt',
-    'app://mangabound/%2e%2e/secret.txt',
-    'app://mangabound/main_window/%2e%2e/%2e%2e/secret.txt',
-    'app://mangabound/main_window/..%2f..%2fsecret.txt',
+    'app://manga2ink/../secret.txt',
+    'app://manga2ink/main_window/../../secret.txt',
+    'app://manga2ink/%2e%2e/secret.txt',
+    'app://manga2ink/main_window/%2e%2e/%2e%2e/secret.txt',
+    'app://manga2ink/main_window/..%2f..%2fsecret.txt',
   ])('does not leave the root for %s', (requestUrl) => {
     const file = rendererFile(root, requestUrl);
     expect(file === undefined || file.startsWith(`${root}${path.sep}`)).toBe(true);
@@ -88,10 +88,10 @@ describe('contentTypeFor', () => {
 
 describe('pageInTheme', () => {
   it('names the theme on the html element, as the build writes it, without quotes', () => {
-    const built = '<!doctype html><html class=mangabound-app lang=en data-theme=dark><head></head>';
+    const built = '<!doctype html><html class=manga2ink-app lang=en data-theme=dark><head></head>';
 
     expect(pageInTheme(built, 'light')).toBe(
-      '<!doctype html><html class=mangabound-app lang=en data-theme="light"><head></head>',
+      '<!doctype html><html class=manga2ink-app lang=en data-theme="light"><head></head>',
     );
   });
 

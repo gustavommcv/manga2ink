@@ -143,7 +143,7 @@ describe('toFailure', () => {
         code: 'processing_folder_unusable',
         said: message('failure.processingFolderUnusable', { folder: '/mnt/books' }),
       },
-      english: 'Mangabound cannot work in /mnt/books. Choose a folder it can write in.',
+      english: 'Manga2Ink cannot work in /mnt/books. Choose a folder it can write in.',
     },
     {
       name: 'settings that could not be saved',
@@ -156,13 +156,13 @@ describe('toFailure', () => {
       error: new CliProtocolError('invalid_payload', 'Expected a number at volumes[2].'),
       failure: { code: 'invalid_payload', said: message('failure.toolIncompatible', {}) },
       english:
-        'A bundled conversion tool returned incompatible data. Reinstall Mangabound or open Diagnostics.',
+        'A bundled conversion tool returned incompatible data. Reinstall Manga2Ink or open Diagnostics.',
     },
     {
       name: 'a request the page should not have sent',
       error: z.object({ jobId: z.string() }).safeParse({}).error!,
       failure: { code: 'invalid_request', said: message('failure.invalidRequest', {}) },
-      english: 'Mangabound rejected an invalid workflow request.',
+      english: 'Manga2Ink rejected an invalid workflow request.',
     },
   ])(
     'tells the person something short about $name and logs the real error',

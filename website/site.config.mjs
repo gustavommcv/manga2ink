@@ -1,5 +1,5 @@
 export const site = 'https://gustavommcv.github.io';
-export const base = process.env.BASE_PATH || '/mangabound/';
+export const base = process.env.BASE_PATH || '/manga2ink/';
 
 /**
  * The languages of the site, the default one first. `id` is how the checks and the list of untranslated

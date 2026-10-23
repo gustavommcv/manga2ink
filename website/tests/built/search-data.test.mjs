@@ -56,13 +56,13 @@ for (const [source, lang] of [
     assert.equal(application.url, url);
     assert.deepEqual(application.inLanguage, ['en', 'pt-BR', 'ja']);
     assert.equal(application.offers.price, '0');
-    assert.equal(application.downloadUrl, 'https://github.com/gustavommcv/mangabound/releases');
+    assert.equal(application.downloadUrl, 'https://github.com/gustavommcv/manga2ink/releases');
     assert.equal($('html').attr('lang'), lang);
     assert.match($('meta[name="description"]').attr('content'), /KOReader/);
     assert.match($('meta[name="description"]').attr('content'), /local network|rede local/);
     assert.equal($('title').length, 1);
-    assert.match($('title').text(), /Mangabound: /);
-    assert.equal($('h1').text(), 'Mangabound');
+    assert.match($('title').text(), /Manga2Ink: /);
+    assert.equal($('h1').text(), 'Manga2Ink');
   });
 
   test(`unexpected noindex on just the ${lang} home is a failure`, () => {

@@ -13,7 +13,7 @@ import { bridge, installBridge } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 const progress: ConversionProgress = {

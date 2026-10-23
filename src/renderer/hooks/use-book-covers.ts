@@ -4,7 +4,7 @@ import type { AttachedCover, CoverSlot } from '@/domain/book-covers';
 import type { AnyMessage } from '@/domain/message';
 import { useSayLater } from '@/renderer/hooks/use-messages';
 import type { BookCoverControls } from '@/renderer/components/details/book-covers';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { CoversChange, CoverTarget, WorkflowResult } from '@/shared/workflow-contract';
 
 interface CoverState {
@@ -22,7 +22,7 @@ const keyOf = (target: CoverTarget): string => `${target.sessionId}\n${target.ti
  */
 export function useBookCovers(
   bridge: Pick<
-    MangaboundBridge,
+    Manga2InkBridge,
     'listCovers' | 'chooseCover' | 'chooseCoversFolder' | 'dropCovers' | 'removeCover'
   >,
   target: CoverTarget | undefined,

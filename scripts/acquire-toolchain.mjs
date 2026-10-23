@@ -94,7 +94,7 @@ if (await alreadyAcquired(path.join(toolchainRoot, target), target, lock)) {
 
 await mkdir(toolchainRoot, { recursive: true });
 const stagingDirectory = await mkdtemp(path.join(toolchainRoot, `.staging-${target}-`));
-const workspaceDirectory = await mkdtemp(path.join(tmpdir(), 'mangabound-acquire-'));
+const workspaceDirectory = await mkdtemp(path.join(tmpdir(), 'manga2ink-acquire-'));
 const resolvedWorkspace = path.resolve(workspaceDirectory);
 if (!resolvedWorkspace.startsWith(`${path.resolve(tmpdir())}${path.sep}`)) {
   throw new Error(`Unexpected acquisition workspace: ${resolvedWorkspace}`);

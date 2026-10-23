@@ -13,7 +13,7 @@ import { createMappingDraft } from '@/domain/mapping';
 import { message, raw } from '@/domain/message';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 import {
   type ConversionProgressPayload,
   type InspectedInputPayload,
@@ -38,13 +38,13 @@ import {
 } from './support/workflow';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 describe('queue application workflow', () => {
   it('recovers an unsaved book after reopening and lets it be saved without rerunning conversion', async () => {
     const user = userEvent.setup();
-    const saveArtifactAs = vi.fn<MangaboundBridge['saveArtifactAs']>(() =>
+    const saveArtifactAs = vi.fn<Manga2InkBridge['saveArtifactAs']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -53,7 +53,7 @@ describe('queue application workflow', () => {
         },
       }),
     );
-    const convert = vi.fn<MangaboundBridge['convert']>();
+    const convert = vi.fn<Manga2InkBridge['convert']>();
     installBridge(
       bridge({
         convert,
@@ -104,7 +104,7 @@ describe('queue application workflow', () => {
       ],
     };
     const listPendingRuns = vi
-      .fn<MangaboundBridge['listPendingRuns']>()
+      .fn<Manga2InkBridge['listPendingRuns']>()
       .mockResolvedValueOnce({ ok: true, value: [pending] })
       .mockResolvedValue({ ok: true, value: [] });
     installBridge(bridge({ listPendingRuns }));
@@ -171,7 +171,7 @@ describe('queue application workflow', () => {
 
   it('confirms deletion of one pending conversion without removing another', async () => {
     const user = userEvent.setup();
-    const discardPendingRun = vi.fn<MangaboundBridge['discardPendingRun']>(() =>
+    const discardPendingRun = vi.fn<Manga2InkBridge['discardPendingRun']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(
@@ -265,7 +265,7 @@ describe('queue application workflow', () => {
 
   it('keeps batch saving available after a warning is dismissed', async () => {
     const user = userEvent.setup();
-    const saveAllArtifacts = vi.fn<MangaboundBridge['saveAllArtifacts']>(() =>
+    const saveAllArtifacts = vi.fn<Manga2InkBridge['saveAllArtifacts']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -319,19 +319,19 @@ describe('queue application workflow', () => {
 
   it('reads a folder into the queue, converts it and hands the books to the operating system', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'artifact', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
       }),
     );
-    const openArtifact = vi.fn<MangaboundBridge['openArtifact']>(() =>
+    const openArtifact = vi.fn<Manga2InkBridge['openArtifact']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
-    const showArtifactInFolder = vi.fn<MangaboundBridge['showArtifactInFolder']>(() =>
+    const showArtifactInFolder = vi.fn<Manga2InkBridge['showArtifactInFolder']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
-    const releaseInput = vi.fn<MangaboundBridge['releaseInput']>(() =>
+    const releaseInput = vi.fn<Manga2InkBridge['releaseInput']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(bridge({ convert, openArtifact, releaseInput, showArtifactInFolder }));
@@ -379,13 +379,13 @@ describe('queue application workflow', () => {
 
   it('does not carry an error about a book it could not open to the queue it goes back to', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'artifact', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
       }),
     );
-    const openArtifact = vi.fn<MangaboundBridge['openArtifact']>(() =>
+    const openArtifact = vi.fn<Manga2InkBridge['openArtifact']>(() =>
       Promise.resolve({
         ok: false,
         error: { code: 'artifact_not_found', said: message('failure.savedBookGone', {}) },
@@ -480,7 +480,7 @@ describe('queue application workflow', () => {
 
   it('focuses the running heading once a conversion starts', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() => new Promise(() => undefined));
+    const convert = vi.fn<Manga2InkBridge['convert']>(() => new Promise(() => undefined));
     installBridge(bridge({ convert }));
     render(<App />);
 
@@ -504,7 +504,7 @@ describe('queue application workflow', () => {
 
   it('shows a successful no-output plan before conversion and forgets it once anything changes', async () => {
     const user = userEvent.setup();
-    const planConversion = vi.fn<MangaboundBridge['planConversion']>(() =>
+    const planConversion = vi.fn<Manga2InkBridge['planConversion']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -563,7 +563,7 @@ describe('queue application workflow', () => {
 
   it('leaves out a folder that still needs volumes until the editor confirms them', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Offline Work.epub', bytes: 2048, format: 'epub' }],
@@ -622,16 +622,16 @@ describe('queue application workflow', () => {
 
   it('offers the sources as a list with none chosen, and searches only when asked', async () => {
     const user = userEvent.setup();
-    const searchMetadata = vi.fn<MangaboundBridge['searchMetadata']>(() =>
+    const searchMetadata = vi.fn<Manga2InkBridge['searchMetadata']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'work-1', title: 'A Quiet Journey', provider: 'mangadex' }],
       }),
     );
-    const suggestVolumes = vi.fn<MangaboundBridge['suggestVolumes']>(() =>
+    const suggestVolumes = vi.fn<Manga2InkBridge['suggestVolumes']>(() =>
       Promise.resolve({ ok: true, value: { volumes: [{ number: '1', chapterNumbers: [1, 2] }] } }),
     );
-    const openProviderHomepage = vi.fn<MangaboundBridge['openProviderHomepage']>(() =>
+    const openProviderHomepage = vi.fn<Manga2InkBridge['openProviderHomepage']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(
@@ -714,7 +714,7 @@ describe('queue application workflow', () => {
 
   it('looks volumes up in the language the folders declare, and shows a lookup that failed', async () => {
     const user = userEvent.setup();
-    const suggestVolumes = vi.fn<MangaboundBridge['suggestVolumes']>(() =>
+    const suggestVolumes = vi.fn<Manga2InkBridge['suggestVolumes']>(() =>
       Promise.resolve({
         ok: false,
         error: {
@@ -811,7 +811,7 @@ describe('queue application workflow', () => {
 
   it('takes a CBZ straight to mangapress and explains that it is already one volume', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(() =>
       Promise.resolve({
         ok: true,
         value: [{ id: 'a1', name: 'Standalone.epub', bytes: 2048, format: 'epub' }],
@@ -888,10 +888,10 @@ describe('queue application workflow', () => {
 
   it('shows which item is running and how far it is, and offers cancellation', async () => {
     const user = userEvent.setup();
-    const cancelConversion = vi.fn<MangaboundBridge['cancelConversion']>(() =>
+    const cancelConversion = vi.fn<Manga2InkBridge['cancelConversion']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
-    const convert = vi.fn<MangaboundBridge['convert']>(() => new Promise(() => undefined));
+    const convert = vi.fn<Manga2InkBridge['convert']>(() => new Promise(() => undefined));
     let emit: (progress: ConversionProgressPayload) => void = () => undefined;
     installBridge(
       bridge({
@@ -938,7 +938,7 @@ describe('queue application workflow', () => {
     let emit: (progress: ConversionProgressPayload) => void = () => undefined;
     // The tool's first word arrives while the call is being made, ahead of the render that follows
     // the item starting: it belongs to the run all the same.
-    const convert = vi.fn<MangaboundBridge['convert']>((command) => {
+    const convert = vi.fn<Manga2InkBridge['convert']>((command) => {
       act(() => {
         emit({
           jobId: command.jobId,
@@ -1016,7 +1016,7 @@ describe('queue application workflow', () => {
   it('releases what an item held when it is removed while the tools were still reading it', async () => {
     const user = userEvent.setup();
     const reading = deferred<WorkflowResult<InspectedInputPayload>>();
-    const releaseInput = vi.fn<MangaboundBridge['releaseInput']>(() =>
+    const releaseInput = vi.fn<Manga2InkBridge['releaseInput']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(bridge({ inspectInput: () => reading.promise, releaseInput }));
@@ -1039,7 +1039,7 @@ describe('queue application workflow', () => {
 
   it('clears the whole queue and releases every session it held', async () => {
     const user = userEvent.setup();
-    const releaseInput = vi.fn<MangaboundBridge['releaseInput']>(() =>
+    const releaseInput = vi.fn<Manga2InkBridge['releaseInput']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(bridge({ releaseInput }));
@@ -1054,7 +1054,7 @@ describe('queue application workflow', () => {
 
   it('does not read the same folder twice when it is added again', async () => {
     const user = userEvent.setup();
-    const inspectInput = vi.fn<MangaboundBridge['inspectInput']>((id) =>
+    const inspectInput = vi.fn<Manga2InkBridge['inspectInput']>((id) =>
       Promise.resolve(inspection(id)),
     );
     installBridge(bridge({ inspectInput }));
@@ -1068,7 +1068,7 @@ describe('queue application workflow', () => {
   });
 
   it('adds what is dropped on the queue by way of the bridge, and ignores drops anywhere else', async () => {
-    const registerDroppedFiles = vi.fn<MangaboundBridge['registerDroppedFiles']>(() =>
+    const registerDroppedFiles = vi.fn<Manga2InkBridge['registerDroppedFiles']>(() =>
       Promise.resolve({
         ok: true,
         value: { inputs: [folder('Dropped Work', 'dropped')], rejected: [] },
@@ -1110,7 +1110,7 @@ describe('queue application workflow', () => {
   });
 
   it('adds nothing from a drop while the conversion tools are not ready', async () => {
-    const registerDroppedFiles = vi.fn<MangaboundBridge['registerDroppedFiles']>(() =>
+    const registerDroppedFiles = vi.fn<Manga2InkBridge['registerDroppedFiles']>(() =>
       Promise.resolve({ ok: true, value: { inputs: [folder()], rejected: [] } }),
     );
     installBridge(

@@ -7,7 +7,7 @@ import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { AboutTab } from '@/renderer/components/settings/about-tab';
 import { projectLinks } from '@/shared/project-links-contract';
 import { message, raw, type AnyMessage } from '@/domain/message';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 
@@ -16,7 +16,7 @@ import { deferred } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 const speaking =
-  (language: Language): MangaboundBridge['loadAppSettings'] =>
+  (language: Language): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -24,7 +24,7 @@ const speaking =
     });
 
 async function renderAbout(
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
   language: Language = 'en',
 ): Promise<void> {
   render(
@@ -34,7 +34,7 @@ async function renderAbout(
       <AboutTab />
     </AppSettingsProvider>,
   );
-  await screen.findByText('Mangabound');
+  await screen.findByText('Manga2Ink');
 }
 
 /** What the main process answers when it could not do what was asked: a code the window writes. */
@@ -160,7 +160,7 @@ describe('the tools the About tab names', () => {
 describe('what the About tab gives for a report of a problem', () => {
   it('copies the diagnostics, and says so', async () => {
     const user = userEvent.setup();
-    const copyDiagnostics = vi.fn<MangaboundBridge['copyDiagnostics']>(() =>
+    const copyDiagnostics = vi.fn<Manga2InkBridge['copyDiagnostics']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ copyDiagnostics });
@@ -173,7 +173,7 @@ describe('what the About tab gives for a report of a problem', () => {
 
   it('opens the data folder by its name, and says nothing when it opens', async () => {
     const user = userEvent.setup();
-    const openAppFolder = vi.fn<MangaboundBridge['openAppFolder']>(() =>
+    const openAppFolder = vi.fn<Manga2InkBridge['openAppFolder']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ openAppFolder });
@@ -188,7 +188,7 @@ describe('what the About tab gives for a report of a problem', () => {
 
   it('opens the logs folder by its name', async () => {
     const user = userEvent.setup();
-    const openAppFolder = vi.fn<MangaboundBridge['openAppFolder']>(() =>
+    const openAppFolder = vi.fn<Manga2InkBridge['openAppFolder']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ openAppFolder });
@@ -244,14 +244,14 @@ describe('what the About tab gives for a report of a problem', () => {
 
       await user.click(screen.getByRole('button', { name: button }));
 
-      expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+      expect(await screen.findByText('Manga2Ink could not complete that action.')).toBeVisible();
     },
   );
 
   it('takes the failure away once a later try works', async () => {
     const user = userEvent.setup();
     const copyDiagnostics = vi
-      .fn<MangaboundBridge['copyDiagnostics']>()
+      .fn<Manga2InkBridge['copyDiagnostics']>()
       .mockResolvedValueOnce(refused(message('failure.diagnosticsNotCopied', {})))
       .mockResolvedValueOnce({ ok: true, value: undefined });
     await renderAbout({ copyDiagnostics });
@@ -283,7 +283,7 @@ describe('the About tab', () => {
       runtime: { electron: '44.3.0', platform: 'linux', version: '0.1.0-alpha.15' },
     });
 
-    expect(screen.getByText('Mangabound')).toBeVisible();
+    expect(screen.getByText('Manga2Ink')).toBeVisible();
     expect(screen.getByText('Version 0.1.0-alpha.15')).toBeVisible();
   });
 
@@ -325,7 +325,7 @@ describe('the About tab', () => {
     ['Third-party notices', 'third-party-notices'],
   ] as const)('opens a place by its name when %s is chosen', async (name, link) => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ openProjectLink });
@@ -338,7 +338,7 @@ describe('the About tab', () => {
 
   it('has a button for every place the main process knows but the releases, which the Updates tab opens, so none is left out of reach', async () => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ openProjectLink });
@@ -352,7 +352,7 @@ describe('the About tab', () => {
 
   it('tells the language of the window to the main process, which picks the guide', async () => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderAbout({ openProjectLink }, 'pt-BR');
@@ -380,7 +380,7 @@ describe('the About tab', () => {
   it('takes the message away once a page opens', async () => {
     const user = userEvent.setup();
     const openProjectLink = vi
-      .fn<MangaboundBridge['openProjectLink']>()
+      .fn<Manga2InkBridge['openProjectLink']>()
       .mockResolvedValueOnce({ ok: false, error: { code: 'x', said: raw('No.') } })
       .mockResolvedValueOnce({ ok: true, value: undefined });
     await renderAbout({ openProjectLink });

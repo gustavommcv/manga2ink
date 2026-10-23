@@ -4,13 +4,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Check existing issues first. For a suspected security vulnerability, use [private reporting](https://github.com/gustavommcv/mangabound/security/advisories/new), not this public form.
+        Check existing issues first. For a suspected security vulnerability, use [private reporting](https://github.com/gustavommcv/manga2ink/security/advisories/new), not this public form.
 
         Remove personal paths, passwords, and other sensitive information from screenshots and diagnostics. Do not upload manga archives or pages; a small sample you are allowed to share is enough if one is needed.
   - type: input
     id: version
     attributes:
-      label: Mangabound version
+      label: Manga2Ink version
       description: Copy the version shown next to the app name. For a development build, include the commit SHA. For a website-only issue, write "Website".
     validations:
       required: true

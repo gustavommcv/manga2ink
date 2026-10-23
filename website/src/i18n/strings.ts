@@ -94,7 +94,7 @@ export interface Strings {
 
 const english: Strings = {
   numberLocale: 'en',
-  brandLogo: { openFullSize: 'Open full-size logo' },
+  brandLogo: { openFullSize: 'Open full-size illustration' },
   support: { label: 'Support the project' },
   languageSuggestion: {
     label: 'Language of this page',
@@ -178,7 +178,7 @@ const english: Strings = {
 
 const portuguese: Strings = {
   numberLocale: 'pt-BR',
-  brandLogo: { openFullSize: 'Abrir logo em tamanho original' },
+  brandLogo: { openFullSize: 'Abrir ilustração em tamanho original' },
   support: { label: 'Apoie o projeto' },
   languageSuggestion: {
     label: 'Idioma desta página',
@@ -262,7 +262,7 @@ const portuguese: Strings = {
 
 const japanese: Strings = {
   numberLocale: 'ja',
-  brandLogo: { openFullSize: 'ロゴを元のサイズで開く' },
+  brandLogo: { openFullSize: 'イラストを元のサイズで開く' },
   support: { label: 'プロジェクトを支援する' },
   languageSuggestion: {
     label: 'このページの言語',

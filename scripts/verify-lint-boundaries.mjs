@@ -127,12 +127,7 @@ const cases = [
     'domain-relative',
     "import type { MappingDraft } from '../domain/mapping';",
   ),
-  valid(
-    'preload',
-    'ts',
-    'shared',
-    "import type { MangaboundBridge } from '@/shared/runtime-info';",
-  ),
+  valid('preload', 'ts', 'shared', "import type { Manga2InkBridge } from '@/shared/runtime-info';"),
   invalid(
     'preload',
     'ts',
@@ -154,7 +149,7 @@ const cases = [
     'renderer',
     'tsx',
     'shared',
-    "import type { MangaboundBridge } from '@/shared/runtime-info';",
+    "import type { Manga2InkBridge } from '@/shared/runtime-info';",
   ),
   invalid(
     'renderer',

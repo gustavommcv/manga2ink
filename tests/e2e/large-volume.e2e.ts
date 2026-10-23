@@ -111,7 +111,7 @@ describe('packaged conversion of a volume of hundreds of pages', function () {
 
   for (const format of ['CBZ', 'EPUB'] as const) {
     it(`makes every page into a ${format}, reports all of them, and does not hold on to them`, async () => {
-      const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-large-volume-e2e-'));
+      const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-large-volume-e2e-'));
       temporaryDirectories.push(testRoot);
       const series = await writeSeries(testRoot);
       const libraryPath = path.join(testRoot, 'library');

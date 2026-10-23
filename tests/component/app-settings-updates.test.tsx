@@ -5,21 +5,21 @@ import { describe, expect, it, vi } from 'vitest';
 import { message } from '@/domain/message';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { UpdatesTab } from '@/renderer/components/settings/updates-tab';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { deferred } from './support/workflow';
 import { inertBridge } from './support/bridge';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 const reading =
-  (language: 'en' | 'pt-BR'): MangaboundBridge['loadAppSettings'] =>
+  (language: 'en' | 'pt-BR'): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
       value: { settings: { ...defaultAppSettings, language }, language, unreadable: false },
     });
 
-const newer: MangaboundBridge['checkForUpdates'] = () =>
+const newer: Manga2InkBridge['checkForUpdates'] = () =>
   Promise.resolve({
     ok: true,
     value: {
@@ -32,7 +32,7 @@ const newer: MangaboundBridge['checkForUpdates'] = () =>
 
 async function renderUpdates(
   language: 'en' | 'pt-BR' = 'en',
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
 ): Promise<void> {
   const bridge = inertBridge({ loadAppSettings: reading(language), ...overrides });
   render(
@@ -86,7 +86,7 @@ describe('the Updates tab', () => {
   });
 
   it('looks for nothing until the button is clicked', async () => {
-    const checkForUpdates = vi.fn<MangaboundBridge['checkForUpdates']>(newer);
+    const checkForUpdates = vi.fn<Manga2InkBridge['checkForUpdates']>(newer);
     await renderUpdates('en', { checkForUpdates });
 
     expect(checkForUpdates).not.toHaveBeenCalled();
@@ -97,8 +97,8 @@ describe('the Updates tab', () => {
 describe('checking for updates', () => {
   it('says so while it asks, and that the installed version is the newest when it is', async () => {
     const user = userEvent.setup();
-    const answer = deferred<Awaited<ReturnType<MangaboundBridge['checkForUpdates']>>>();
-    const checkForUpdates = vi.fn<MangaboundBridge['checkForUpdates']>(() => answer.promise);
+    const answer = deferred<Awaited<ReturnType<Manga2InkBridge['checkForUpdates']>>>();
+    const checkForUpdates = vi.fn<Manga2InkBridge['checkForUpdates']>(() => answer.promise);
     await renderUpdates('en', { checkForUpdates });
 
     await user.click(screen.getByRole('button', { name: 'Check for updates' }));
@@ -130,7 +130,7 @@ describe('checking for updates', () => {
   it('does not say a day when the release gives none, or one that is not a day', async () => {
     const user = userEvent.setup();
     const checkForUpdates = vi
-      .fn<MangaboundBridge['checkForUpdates']>()
+      .fn<Manga2InkBridge['checkForUpdates']>()
       .mockResolvedValueOnce({
         ok: true,
         value: { status: 'available', version: '0.1.0-alpha.16', tag: 'v0.1.0-alpha.16' },
@@ -154,7 +154,7 @@ describe('checking for updates', () => {
 
   it('opens the download page of the project, by name, in the language of the window', async () => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     await renderUpdates('pt-BR', { checkForUpdates: newer, openProjectLink });
@@ -171,7 +171,7 @@ describe('checking for updates', () => {
 
   it('says so when the page could not be opened, and no longer when the check is made again', async () => {
     const user = userEvent.setup();
-    const openProjectLink = vi.fn<MangaboundBridge['openProjectLink']>(() =>
+    const openProjectLink = vi.fn<Manga2InkBridge['openProjectLink']>(() =>
       Promise.resolve({
         ok: false,
         error: { code: 'unexpected_failure', said: message('failure.internal', {}) },
@@ -195,7 +195,7 @@ describe('checking for updates', () => {
 
   it('says why GitHub could not be asked, in the language of the window, and can be tried again', async () => {
     const user = userEvent.setup();
-    const checkForUpdates = vi.fn<MangaboundBridge['checkForUpdates']>(() =>
+    const checkForUpdates = vi.fn<Manga2InkBridge['checkForUpdates']>(() =>
       Promise.resolve({
         ok: false,
         error: {
@@ -221,12 +221,12 @@ describe('checking for updates', () => {
 
     await user.click(screen.getByRole('button', { name: 'Check for updates' }));
 
-    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+    expect(await screen.findByText('Manga2Ink could not complete that action.')).toBeVisible();
   });
 
   it('shows nothing of an answer that arrives after the tab was put away', async () => {
     const user = userEvent.setup();
-    const answer = deferred<Awaited<ReturnType<MangaboundBridge['checkForUpdates']>>>();
+    const answer = deferred<Awaited<ReturnType<Manga2InkBridge['checkForUpdates']>>>();
     const bridge = inertBridge({
       loadAppSettings: reading('en'),
       checkForUpdates: () => answer.promise,

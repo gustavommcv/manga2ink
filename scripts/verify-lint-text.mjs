@@ -49,7 +49,7 @@ const cases = [
   accepted('element-on-the-right', component('<span>{ready && <Icon />}</span>')),
 
   // Names that are the same in every language, and what holds no word.
-  accepted('name-of-the-app', component('<span>Mangabound</span>')),
+  accepted('name-of-the-app', component('<span>Manga2Ink</span>')),
   accepted('name-of-a-format', component('<option value="epub">EPUB</option>')),
   accepted('version', component('<span>v{version}</span>')),
   accepted('space', component("<span>{words.a}{' '}{words.b}</span>")),

@@ -1,7 +1,7 @@
 import type { QueueRunSummary } from '@/domain/queue-run';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
-type QueueBridge = Pick<MangaboundBridge, 'beginQueue' | 'endQueue'>;
+type QueueBridge = Pick<Manga2InkBridge, 'beginQueue' | 'endQueue'>;
 
 /**
  * Tells the main process that a queue has begun, from the click on Process, and gives back what ends

@@ -1,5 +1,5 @@
 // Makes the pictures and the manifest of the advanced-options pages: runs the mangapress that
-// Mangabound ships on pages from open-licensed comics, once for each variant of each example.
+// Manga2Ink ships on pages from open-licensed comics, once for each variant of each example.
 //
 //   npm run site:options            every example
 //   npm run site:options -- cropping-modes gamma     only these
@@ -98,7 +98,7 @@ async function fetchSource(id) {
   if (!existsSync(file)) {
     console.log(`Downloading ${source.url}`);
     const response = await fetch(source.url, {
-      headers: { 'User-Agent': 'mangabound-docs (https://github.com/gustavommcv/mangabound)' },
+      headers: { 'User-Agent': 'manga2ink-docs (https://github.com/gustavommcv/manga2ink)' },
     });
     if (!response.ok) throw new Error(`${source.url}: HTTP ${response.status}`);
     mkdirSync(cache, { recursive: true });
@@ -374,7 +374,7 @@ async function row(pages) {
 }
 
 /**
- * The flags of a run: Mangabound's starting ones, without those the example or variant takes out and
+ * The flags of a run: Manga2Ink's starting ones, without those the example or variant takes out and
  * without those the variant sets again (mangapress refuses a flag given twice), then the variant's.
  */
 function combine(shared, own, without) {

@@ -46,12 +46,12 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
   ] as const)(
     'uses the custom filename for %s with the real converter, without changing its title',
     async (_label, deviceProfile, settings, format, extension) => {
-      const output = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-custom-name-'));
+      const output = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-custom-name-'));
       const adapter = new MangapressConversionAdapter(
         new MangapressCliAdapter(executable('mangapress'), runner),
       );
       const request = {
-        inputPath: path.join(fixtures, 'cbz', 'Mangabound Direct.cbz'),
+        inputPath: path.join(fixtures, 'cbz', 'Manga2Ink Direct.cbz'),
         outputDirectory: output,
         book: { title: 'Custom: Book' },
         format,
@@ -71,7 +71,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
   );
 
   it('keeps the recovered-page warning from the real converter on the completed book', async () => {
-    const scratch = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-truncated-'));
+    const scratch = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-truncated-'));
     const input = path.join(scratch, 'Partial pages');
     const chapter = path.join(input, 'Chapter 1');
     const output = path.join(scratch, 'books');
@@ -82,7 +82,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
       await mkdir(chapter, { recursive: true });
       await mkdir(output);
       const page = await readFile(
-        path.join(fixtures, 'manga-folder', 'Mangabound E2E', 'Chapter 1', '001.png'),
+        path.join(fixtures, 'manga-folder', 'Manga2Ink E2E', 'Chapter 1', '001.png'),
       );
       await writeFile(path.join(chapter, '001.png'), page);
       // Keep the existing PNG header but cut its image data, like an interrupted transfer.
@@ -112,7 +112,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('reads the report of mangabind for a folder of chapters, a plan and a library', async () => {
     const mangabind = new MangabindCliAdapter(executable('mangabind'), runner);
-    const output = path.join(tmpdir(), 'mangabound-pinned-never-written');
+    const output = path.join(tmpdir(), 'manga2ink-pinned-never-written');
 
     const folder = await mangabind.run({
       inputPath: path.join(fixtures, 'manga-named-volumes', 'Named Volumes'),
@@ -135,7 +135,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('binds one title of a library on its own, the way the whole library is bound', async () => {
     const cli = new MangabindCliAdapter(executable('mangabind'), runner, true);
-    const scratch = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-bind-'));
+    const scratch = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-bind-'));
     const adapter = new MangabindBindingAdapter(cli, undefined, scratch);
     const library = path.join(fixtures, 'manga-batch', 'Library');
     try {
@@ -162,7 +162,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('leaves out a link that leads outside the folder it binds, and says so', async ({ skip }) => {
     const mangabind = new MangabindCliAdapter(executable('mangabind'), runner);
-    const root = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-links-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-links-'));
     try {
       const chapter = path.join(root, 'Hostile', 'Vol.01 Ch.001');
       await mkdir(chapter, { recursive: true });
@@ -193,7 +193,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
     skip,
   }) => {
     const cli = new MangabindCliAdapter(executable('mangabind'), runner, true);
-    const root = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-library-links-'));
+    const root = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-library-links-'));
     const adapter = new MangabindBindingAdapter(cli, undefined, root);
     try {
       const chapter = path.join(root, 'Library', 'Plain', 'Vol.01 Ch.001');
@@ -227,7 +227,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('counts only the images of a chapter, and says which other files it left out', async () => {
     const cli = new MangabindCliAdapter(executable('mangabind'), runner, true);
-    const scratch = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-pages-'));
+    const scratch = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-pages-'));
     const adapter = new MangabindBindingAdapter(cli, undefined, scratch);
     try {
       const chapter = path.join(scratch, 'Mixed', 'Vol.01 Ch.001');
@@ -255,8 +255,8 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('reads the event stream of mangapress for a plan, a conversion and its list of devices', async () => {
     const mangapress = new MangapressCliAdapter(executable('mangapress'), runner);
-    const input = path.join(fixtures, 'cbz', 'Mangabound Direct.cbz');
-    const output = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-'));
+    const input = path.join(fixtures, 'cbz', 'Manga2Ink Direct.cbz');
+    const output = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-'));
     try {
       const plan = await mangapress.run({
         inputPath: input,
@@ -287,7 +287,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
 
   it('keeps unsupported-input warnings when mangabind finds no chapters', async () => {
     const cli = new MangabindCliAdapter(executable('mangabind'), runner, true);
-    const scratch = await mkdtemp(path.join(tmpdir(), 'mangabound-pinned-no-chapters-'));
+    const scratch = await mkdtemp(path.join(tmpdir(), 'manga2ink-pinned-no-chapters-'));
     const adapter = new MangabindBindingAdapter(cli, undefined, scratch);
     try {
       const input = path.join(scratch, 'Series');

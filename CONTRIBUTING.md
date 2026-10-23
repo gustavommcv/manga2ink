@@ -4,7 +4,7 @@ Start with the [architecture overview](docs/architecture.md) for module boundari
 
 ## Community and reports
 
-Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Use the [issue templates](https://github.com/gustavommcv/mangabound/issues/new/choose) for bugs and suggestions; check existing issues and remove private information from attachments. Include the app version, system, reproduction steps, expected result, and actual result.
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Use the [issue templates](https://github.com/gustavommcv/manga2ink/issues/new/choose) for bugs and suggestions; check existing issues and remove private information from attachments. Include the app version, system, reproduction steps, expected result, and actual result.
 
 Report suspected vulnerabilities privately through [SECURITY.md](SECURITY.md), not a public issue or pull request.
 
@@ -36,7 +36,7 @@ The user guide is the independent Astro/Starlight package under `website/`; `doc
 
 `npm run site:dev` generates the tutorial images and starts the guide. The guide and automatic app captures follow `main`, which may be ahead of the latest release; KOReader captures are supplied manually. Update every language together (a page that a language has not translated yet is on its list in `website/i18n-gaps.json`), and never use images as the only instructions. See [website/README.md](website/README.md) for development and checks, and [MEDIA.md](website/MEDIA.md) for illustrations.
 
-The pictures and measured tables of the advanced-options pages are made from open-licensed comic pages with the mangapress that Mangabound ships, by `npm run site:options`, and committed ([ADR 0048](docs/adr/0048-option-examples-from-open-pages.md)). The pictures keep the licences of the pages they come from, listed in `website/src/assets/options/LICENSES.md`, and are not under the repository's MIT licence.
+The pictures and measured tables of the advanced-options pages are made from open-licensed comic pages with the mangapress that Manga2Ink ships, by `npm run site:options`, and committed ([ADR 0048](docs/adr/0048-option-examples-from-open-pages.md)). The pictures keep the licences of the pages they come from, listed in `website/src/assets/options/LICENSES.md`, and are not under the repository's MIT licence.
 
 ## The gates, and what each is for
 

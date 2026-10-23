@@ -189,7 +189,7 @@ describe('FsLibraryStore (mocked filesystem)', () => {
 
 describe('FsLibraryStore (real filesystem)', () => {
   it('removes a partial catalog write while retaining the previous catalog and original error', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-partial-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-partial-'));
     try {
       await new FsLibraryStore().publish(root, entry());
       const catalogPath = path.join(root, '.mangabound', 'library.json');
@@ -218,7 +218,7 @@ describe('FsLibraryStore (real filesystem)', () => {
   });
 
   it('publishes through a transient rename lock without losing the existing catalog', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-lock-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-lock-'));
     try {
       await new FsLibraryStore().publish(root, entry());
       const retryingRename = vi
@@ -239,7 +239,7 @@ describe('FsLibraryStore (real filesystem)', () => {
   });
 
   it('removes its temporary file and preserves the catalog when publication fails', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-failed-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-failed-'));
     try {
       await new FsLibraryStore().publish(root, entry());
       const catalogPath = path.join(root, '.mangabound', 'library.json');
@@ -257,7 +257,7 @@ describe('FsLibraryStore (real filesystem)', () => {
   });
 
   it('round-trips a published entry through a real directory on disk', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-'));
     try {
       const store = new FsLibraryStore();
       await store.publish(root, entry());
@@ -271,7 +271,7 @@ describe('FsLibraryStore (real filesystem)', () => {
   });
 
   it('finds a loose comic file that was never published, on a real directory', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-untracked-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-untracked-'));
     try {
       const store = new FsLibraryStore();
       await store.publish(root, entry());

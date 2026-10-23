@@ -21,6 +21,6 @@ for (const locale of ['', 'pt-br/', 'ja/']) {
     const url = new URL(await fullSize.getAttribute('href'), page.url()).href;
     const response = await page.goto(url);
     expect(response.status()).toBe(200);
-    await expect.poll(() => page.locator('img').evaluate((img) => img.naturalWidth)).toBe(1055);
+    await expect.poll(() => page.locator('img').evaluate((img) => img.naturalWidth)).toBe(4096);
   });
 }

@@ -16,7 +16,7 @@ afterEach(async () => {
 });
 
 async function scratch(): Promise<string> {
-  const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-stale-test-'));
+  const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-stale-test-'));
   directories.push(root);
   return root;
 }
@@ -118,53 +118,60 @@ describe('newestChange', () => {
 describe('removeStaleScratch', () => {
   it('removes scratch workspaces nothing has touched for longer than the age, and says which', async () => {
     const root = await scratch();
-    await fileChanged(path.join(root, 'mangabound-aB3dE9', 'volumes', 'v1.cbz'), 3 * day);
-    await treeChanged(path.join(root, 'mangabound-aB3dE9'), 3 * day);
-    await fileChanged(path.join(root, 'mangabound-Zz09Yy', 'input', 'c1.png'), 2 * day);
-    await treeChanged(path.join(root, 'mangabound-Zz09Yy'), 2 * day);
+    await fileChanged(path.join(root, 'manga2ink-aB3dE9', 'volumes', 'v1.cbz'), 3 * day);
+    await treeChanged(path.join(root, 'manga2ink-aB3dE9'), 3 * day);
+    await fileChanged(path.join(root, 'manga2ink-Zz09Yy', 'input', 'c1.png'), 2 * day);
+    await treeChanged(path.join(root, 'manga2ink-Zz09Yy'), 2 * day);
+    // One left by a version from before the app's new name (ADR 0085).
+    await fileChanged(path.join(root, 'mangabound-Qq11Rr', 'v1.cbz'), 4 * day);
+    await treeChanged(path.join(root, 'mangabound-Qq11Rr'), 4 * day);
 
     const removed = await removeStaleScratch(root, day, now);
 
-    expect([...removed].sort()).toEqual(['mangabound-Zz09Yy', 'mangabound-aB3dE9']);
+    expect([...removed].sort()).toEqual([
+      'manga2ink-Zz09Yy',
+      'manga2ink-aB3dE9',
+      'mangabound-Qq11Rr',
+    ]);
     expect(await readdir(root)).toEqual([]);
   });
 
   it('leaves one that something changed recently, even when the folder itself is old', async () => {
     const root = await scratch();
-    await fileChanged(path.join(root, 'mangabound-aB3dE9', 'volumes', 'v1.cbz'), 3 * day);
-    await treeChanged(path.join(root, 'mangabound-aB3dE9'), 3 * day);
+    await fileChanged(path.join(root, 'manga2ink-aB3dE9', 'volumes', 'v1.cbz'), 3 * day);
+    await treeChanged(path.join(root, 'manga2ink-aB3dE9'), 3 * day);
     // Something in it was written a minute ago: a book being made is not a leftover.
-    await fileChanged(path.join(root, 'mangabound-aB3dE9', 'volumes', 'v2.cbz'), 60 * 1000);
+    await fileChanged(path.join(root, 'manga2ink-aB3dE9', 'volumes', 'v2.cbz'), 60 * 1000);
 
     expect(await removeStaleScratch(root, day, now)).toEqual([]);
-    expect(await readdir(root)).toEqual(['mangabound-aB3dE9']);
+    expect(await readdir(root)).toEqual(['manga2ink-aB3dE9']);
   });
 
   it('leaves one that is exactly as old as the age, and takes the next moment of it', async () => {
     const root = await scratch();
-    await fileChanged(path.join(root, 'mangabound-aB3dE9', 'v1.cbz'), day);
-    await treeChanged(path.join(root, 'mangabound-aB3dE9'), day);
+    await fileChanged(path.join(root, 'manga2ink-aB3dE9', 'v1.cbz'), day);
+    await treeChanged(path.join(root, 'manga2ink-aB3dE9'), day);
 
     expect(await removeStaleScratch(root, day, now)).toEqual([]);
-    expect(await removeStaleScratch(root, day, now + 1)).toEqual(['mangabound-aB3dE9']);
+    expect(await removeStaleScratch(root, day, now + 1)).toEqual(['manga2ink-aB3dE9']);
   });
 
   it('leaves what is not a scratch workspace of the app, however old', async () => {
     const root = await scratch();
     for (const name of [
-      'mangabound-e2e-123',
-      'mangabound-acquire-AbCdEf',
-      'mangabound-abc',
-      'mangabound-abcdefg',
-      'mangabound-ab-def',
+      'manga2ink-e2e-123',
+      'manga2ink-acquire-AbCdEf',
+      'manga2ink-abc',
+      'manga2ink-abcdefg',
+      'manga2ink-ab-def',
       'other-aB3dE9',
-      'MANGABOUND-aB3dE9',
+      'MANGA2INK-aB3dE9',
     ]) {
       await fileChanged(path.join(root, name, 'f.txt'), 30 * day);
       await treeChanged(path.join(root, name), 30 * day);
     }
     // A file with the right name is not a workspace either.
-    await fileChanged(path.join(root, 'mangabound-fIlE01'), 30 * day);
+    await fileChanged(path.join(root, 'manga2ink-fIlE01'), 30 * day);
 
     expect(await removeStaleScratch(root, day, now)).toEqual([]);
     expect(await readdir(root)).toHaveLength(8);
@@ -191,11 +198,11 @@ describe('removeStaleScratch', () => {
 
   it('uses the time of the call when it is not given one', async () => {
     const root = await scratch();
-    await mkdir(path.join(root, 'mangabound-aB3dE9'));
+    await mkdir(path.join(root, 'manga2ink-aB3dE9'));
 
     // Made a moment ago, so a day is too long. A negative age is older than anything made now: a
     // minute of it, since a file system's clock can be a few milliseconds ahead of the program's.
     expect(await removeStaleScratch(root, day)).toEqual([]);
-    expect(await removeStaleScratch(root, -60_000)).toEqual(['mangabound-aB3dE9']);
+    expect(await removeStaleScratch(root, -60_000)).toEqual(['manga2ink-aB3dE9']);
   });
 });

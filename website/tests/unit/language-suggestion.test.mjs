@@ -32,45 +32,42 @@ test('a reader whose languages the site does not have comes to none', () => {
 });
 
 test('the same page is in each language under that language’s directory, and none for the default', () => {
-  const site = { base: '/mangabound/', languages };
+  const site = { base: '/manga2ink/', languages };
 
+  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/manga2ink/user-guide/exporting/' }), {
+    en: '/manga2ink/user-guide/exporting/',
+    'pt-BR': '/manga2ink/pt-br/user-guide/exporting/',
+    ja: '/manga2ink/ja/user-guide/exporting/',
+  });
   assert.deepEqual(
-    pathsInEachLanguage({ ...site, pathname: '/mangabound/user-guide/exporting/' }),
+    pathsInEachLanguage({ ...site, pathname: '/manga2ink/pt-br/user-guide/exporting/' }),
     {
-      en: '/mangabound/user-guide/exporting/',
-      'pt-BR': '/mangabound/pt-br/user-guide/exporting/',
-      ja: '/mangabound/ja/user-guide/exporting/',
-    },
-  );
-  assert.deepEqual(
-    pathsInEachLanguage({ ...site, pathname: '/mangabound/pt-br/user-guide/exporting/' }),
-    {
-      en: '/mangabound/user-guide/exporting/',
-      'pt-BR': '/mangabound/pt-br/user-guide/exporting/',
-      ja: '/mangabound/ja/user-guide/exporting/',
+      en: '/manga2ink/user-guide/exporting/',
+      'pt-BR': '/manga2ink/pt-br/user-guide/exporting/',
+      ja: '/manga2ink/ja/user-guide/exporting/',
     },
   );
 });
 
 test('a home page is the home page of each language', () => {
-  const site = { base: '/mangabound/', languages };
+  const site = { base: '/manga2ink/', languages };
 
-  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/mangabound/' }), {
-    en: '/mangabound/',
-    'pt-BR': '/mangabound/pt-br/',
-    ja: '/mangabound/ja/',
+  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/manga2ink/' }), {
+    en: '/manga2ink/',
+    'pt-BR': '/manga2ink/pt-br/',
+    ja: '/manga2ink/ja/',
   });
-  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/mangabound/ja/' }), {
-    en: '/mangabound/',
-    'pt-BR': '/mangabound/pt-br/',
-    ja: '/mangabound/ja/',
+  assert.deepEqual(pathsInEachLanguage({ ...site, pathname: '/manga2ink/ja/' }), {
+    en: '/manga2ink/',
+    'pt-BR': '/manga2ink/pt-br/',
+    ja: '/manga2ink/ja/',
   });
 });
 
 test('a base without its closing slash, or the site at the root, gives the same addresses', () => {
   assert.equal(
-    pathsInEachLanguage({ base: '/mangabound', pathname: '/mangabound/ja/a/', languages }).en,
-    '/mangabound/a/',
+    pathsInEachLanguage({ base: '/manga2ink', pathname: '/manga2ink/ja/a/', languages }).en,
+    '/manga2ink/a/',
   );
   assert.deepEqual(pathsInEachLanguage({ base: '/', pathname: '/pt-br/a/', languages }), {
     en: '/a/',
@@ -81,19 +78,19 @@ test('a base without its closing slash, or the site at the root, gives the same 
 
 test('a page whose name only starts like a directory of a language is in the default language', () => {
   const paths = pathsInEachLanguage({
-    base: '/mangabound/',
-    pathname: '/mangabound/jazz/',
+    base: '/manga2ink/',
+    pathname: '/manga2ink/jazz/',
     languages,
   });
 
-  assert.equal(paths.en, '/mangabound/jazz/');
-  assert.equal(paths.ja, '/mangabound/ja/jazz/');
+  assert.equal(paths.en, '/manga2ink/jazz/');
+  assert.equal(paths.ja, '/manga2ink/ja/jazz/');
 });
 
 test('a path outside the base is taken as it is', () => {
-  const paths = pathsInEachLanguage({ base: '/mangabound/', pathname: '/elsewhere/', languages });
+  const paths = pathsInEachLanguage({ base: '/manga2ink/', pathname: '/elsewhere/', languages });
 
-  assert.equal(paths.en, '/mangabound/elsewhere/');
+  assert.equal(paths.en, '/manga2ink/elsewhere/');
 });
 
 const state = {

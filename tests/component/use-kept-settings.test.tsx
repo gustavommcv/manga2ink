@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { defaultMangapressSettings } from '@/domain/output-profile';
 import { defaultPreferences, type Preferences } from '@/domain/preferences';
 import { useKeptSettings } from '@/renderer/hooks/use-kept-settings';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { RestoredSettings } from '@/shared/settings-contract';
 
 import { inertBridge } from './support/bridge';
@@ -19,7 +19,7 @@ const kept: Preferences = {
   providerId: 'anilist',
 };
 
-function reading(value: RestoredSettings): MangaboundBridge['loadSettings'] {
+function reading(value: RestoredSettings): Manga2InkBridge['loadSettings'] {
   return () => Promise.resolve({ ok: true, value });
 }
 
@@ -34,7 +34,7 @@ function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
 /** Renders the hook against a bridge whose kept settings were read, and lets them be applied. */
 async function restoredFrom(
   value: RestoredSettings,
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
   notify: (message: string) => void = vi.fn(),
 ): Promise<RenderHookResult<ReturnType<typeof useKeptSettings>, unknown>> {
   const bridge = inertBridge({ loadSettings: reading(value), ...overrides });
@@ -48,8 +48,8 @@ async function restoredFrom(
 describe('useKeptSettings', () => {
   describe('restoring', () => {
     it('starts from the defaults and saves nothing before what was kept has been read', () => {
-      const read = deferred<Awaited<ReturnType<MangaboundBridge['loadSettings']>>>();
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>();
+      const read = deferred<Awaited<ReturnType<Manga2InkBridge['loadSettings']>>>();
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>();
       const bridge = inertBridge({ loadSettings: () => read.promise, saveSettings });
 
       const { result } = renderHook(() => useKeptSettings(bridge, vi.fn()));
@@ -67,7 +67,7 @@ describe('useKeptSettings', () => {
     });
 
     it('replaces the defaults with what was kept, and does not write it back', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>();
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>();
 
       const { result } = await restoredFrom(
         { preferences: kept, preferredNetworkInterface: wifi, notices: [] },
@@ -84,8 +84,8 @@ describe('useKeptSettings', () => {
     });
 
     it('puts a choice made before the kept ones arrive over them, and saves it', async () => {
-      const read = deferred<Awaited<ReturnType<MangaboundBridge['loadSettings']>>>();
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const read = deferred<Awaited<ReturnType<Manga2InkBridge['loadSettings']>>>();
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const notify = vi.fn();
@@ -117,7 +117,7 @@ describe('useKeptSettings', () => {
     });
 
     it('applies an option changed before the kept ones arrive on top of the kept options', async () => {
-      const read = deferred<Awaited<ReturnType<MangaboundBridge['loadSettings']>>>();
+      const read = deferred<Awaited<ReturnType<Manga2InkBridge['loadSettings']>>>();
       const notify = vi.fn();
       const bridge = inertBridge({ loadSettings: () => read.promise });
       const { result } = renderHook(() => useKeptSettings(bridge, notify));
@@ -247,7 +247,7 @@ describe('useKeptSettings', () => {
 
     it('never saves over what it could not read', async () => {
       const notify = vi.fn();
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>();
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>();
       const bridge = inertBridge({
         loadSettings: () =>
           Promise.resolve({
@@ -270,7 +270,7 @@ describe('useKeptSettings', () => {
 
     it('uses nothing that is read after it is gone', async () => {
       const notify = vi.fn();
-      const read = deferred<Awaited<ReturnType<MangaboundBridge['loadSettings']>>>();
+      const read = deferred<Awaited<ReturnType<Manga2InkBridge['loadSettings']>>>();
       const bridge = inertBridge({ loadSettings: () => read.promise });
       const { unmount } = renderHook(() => useKeptSettings(bridge, notify));
 
@@ -305,7 +305,7 @@ describe('useKeptSettings', () => {
 
   describe('saving', () => {
     it('saves a change, with only what was chosen', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -329,7 +329,7 @@ describe('useKeptSettings', () => {
     });
 
     it('saves the online source and the network address once they are chosen', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -350,7 +350,7 @@ describe('useKeptSettings', () => {
     });
 
     it('saves a change to each of the choices it keeps', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -381,7 +381,7 @@ describe('useKeptSettings', () => {
     });
 
     it('does not save options that are not valid yet', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -401,7 +401,7 @@ describe('useKeptSettings', () => {
     });
 
     it('does not write again what it has just saved', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -420,7 +420,7 @@ describe('useKeptSettings', () => {
     });
 
     it('does not save what is already saved', async () => {
-      const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+      const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
         Promise.resolve({ ok: true, value: undefined }),
       );
       const { result } = await restoredFrom(
@@ -438,7 +438,7 @@ describe('useKeptSettings', () => {
     it('says so when a save is refused, and writes again with the next change', async () => {
       const notify = vi.fn();
       const saveSettings = vi
-        .fn<MangaboundBridge['saveSettings']>()
+        .fn<Manga2InkBridge['saveSettings']>()
         .mockResolvedValueOnce({
           ok: false,
           error: { code: 'settings_failed', said: raw('The disk is full.') },
@@ -467,7 +467,7 @@ describe('useKeptSettings', () => {
     it('says so when saving throws, and writes again with the next change', async () => {
       const notify = vi.fn();
       const saveSettings = vi
-        .fn<MangaboundBridge['saveSettings']>()
+        .fn<Manga2InkBridge['saveSettings']>()
         .mockRejectedValueOnce(new Error('The bridge is gone.'))
         .mockResolvedValue({ ok: true, value: undefined });
       const { result } = await restoredFrom(

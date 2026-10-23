@@ -14,7 +14,7 @@
 // by the catalogs' own tests and by review, and the names of the attributes below are the ones
 // that are, in practice, where text is written by hand.
 
-const names = ['v', 'Mangabound', 'EPUB', 'CBZ', 'PDF', 'KOReader', 'MangaDex', 'JPmarquesbraga'];
+const names = ['v', 'Manga2Ink', 'EPUB', 'CBZ', 'PDF', 'KOReader', 'MangaDex', 'JPmarquesbraga'];
 
 /** Attributes and props whose value is read by a person, or by a screen reader. */
 const textAttributes = new Set([

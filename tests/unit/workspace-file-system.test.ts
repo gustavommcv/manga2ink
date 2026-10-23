@@ -17,7 +17,7 @@ let root: string;
 beforeEach(async () => {
   const actual = await vi.importActual<typeof FsPromises>('node:fs/promises');
   vi.mocked(rename).mockImplementation(actual.rename);
-  root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-workspace-atomic-'));
+  root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-workspace-atomic-'));
 });
 
 afterEach(async () => {

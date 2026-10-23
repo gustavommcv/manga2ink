@@ -1,13 +1,13 @@
 ---
 title: 'インストール'
-description: 'Windows・macOS・Linux（.deb、.rpm、Arch）向けの Mangabound を公式のリリースページからダウンロードしてインストールする方法と、署名のないアルファ版を安全に開く方法を説明します。'
+description: 'Windows・macOS・Linux（.deb、.rpm、Arch）向けの Manga2Ink を公式のリリースページからダウンロードしてインストールする方法と、署名のないアルファ版を安全に開く方法を説明します。'
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 import ReleaseDownloads from '../../../../components/ReleaseDownloads.astro';
 
-お使いのシステム向けの最新バージョンを下からダウンロードするか、[すべてのリリース](https://github.com/gustavommcv/mangabound/releases)を確認してください。
+お使いのシステム向けの最新バージョンを下からダウンロードするか、[すべてのリリース](https://github.com/gustavommcv/manga2ink/releases)を確認してください。
 
 <Tabs>
 <TabItem label="Windows">
@@ -27,7 +27,7 @@ import ReleaseDownloads from '../../../../components/ReleaseDownloads.astro';
 
 <ReleaseDownloads platform="macOS" />
 
-ZIP を展開し、**Mangabound.app** を**アプリケーション**フォルダーに移動してください。Intel Mac 向けのパッケージはまだありません。
+ZIP を展開し、**Manga2Ink.app** を**アプリケーション**フォルダーに移動してください。Intel Mac 向けのパッケージはまだありません。
 
 アルファ版のアプリは Apple の公証（notarization）を受けていないため、macOS が開くのを拒否することがあります。その場合は**システム設定 → プライバシーとセキュリティ**を開き、ボタンが表示されていれば**このまま開く**を選んでください。[Apple による手順の説明](https://support.apple.com/ja-jp/102445)があります。このために Gatekeeper を無効にしないでください。
 
@@ -60,7 +60,7 @@ sudo dnf install ./package.rpm
 sudo pacman -U ./package.pkg.tar.zst
 ```
 
-その後、アプリケーションメニューから **Mangabound** を開きます。`sudo` はインストールのときだけ使い、アプリの実行には使わないでください。
+その後、アプリケーションメニューから **Manga2Ink** を開きます。`sudo` はインストールのときだけ使い、アプリの実行には使わないでください。
 
 </TabItem>
 </Tabs>
@@ -84,10 +84,10 @@ Windows では、PowerShell で `Get-FileHash <ファイル名>` を実行し、
 
 ## インストールに失敗したら
 
-お使いのシステムとアーキテクチャ向けのパッケージをダウンロードしたか確認してください。Mangabound が mangabind または mangapress を「検証できませんでした」と表示した場合は、公式のリリースページから Mangabound をインストールし直してください。ツールを、ほかの入手元のファイルに置き換えないでください。
+お使いのシステムとアーキテクチャ向けのパッケージをダウンロードしたか確認してください。Manga2Ink が mangabind または mangapress を「検証できませんでした」と表示した場合は、公式のリリースページから Manga2Ink をインストールし直してください。ツールを、ほかの入手元のファイルに置き換えないでください。
 
 ## 問題を報告する
 
-[issue を作成](https://github.com/gustavommcv/mangabound/issues)し、バージョン、お使いの OS、やろうとしていたこと、起きたことを書いてください。**アプリの設定**の**このアプリについて**にある**トラブルシューティング**の**診断情報をコピー**を使うと、バージョンとお使いのシステムがクリップボードに入ります（パスや名前は含まれません）。報告に貼り付けてください。クラッシュや変換の失敗の場合は、エラーメッセージをそのまま添えてください。**ログフォルダーを開く**で開くログファイルを添付する場合は、先に内容を確認してください。本やフォルダーのパスが含まれていることがあります。詳しくは[アプリの設定](../../user-guide/app-settings/#このアプリについて)を見てください。
+[issue を作成](https://github.com/gustavommcv/manga2ink/issues)し、バージョン、お使いの OS、やろうとしていたこと、起きたことを書いてください。**アプリの設定**の**このアプリについて**にある**トラブルシューティング**の**診断情報をコピー**を使うと、バージョンとお使いのシステムがクリップボードに入ります（パスや名前は含まれません）。報告に貼り付けてください。クラッシュや変換の失敗の場合は、エラーメッセージをそのまま添えてください。**ログフォルダーを開く**で開くログファイルを添付する場合は、先に内容を確認してください。本やフォルダーのパスが含まれていることがあります。詳しくは[アプリの設定](../../user-guide/app-settings/#このアプリについて)を見てください。
 
 準備はいいですか？[クイックスタート](../quickstart/)に進みましょう。

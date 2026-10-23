@@ -93,7 +93,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     support: {
       title: 'Support',
-      text: 'Mangabound is free and has no ads. If it helped you, you can support its development.',
+      text: 'Manga2Ink is free and has no ads. If it helped you, you can support its development.',
       button: 'Support the project',
     },
     credits: {
@@ -103,7 +103,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'License',
-      text: 'Mangabound is released under the MIT License. mangapress and mangabind bring their own notices with the app.',
+      text: 'Manga2Ink is released under the MIT License. mangapress and mangabind bring their own notices with the app.',
       mit: 'MIT License',
       notices: 'Third-party notices',
     },
@@ -139,7 +139,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     support: {
       title: 'Apoio',
-      text: 'O Mangabound é gratuito e não tem anúncios. Se ele te ajudou, você pode apoiar o desenvolvimento.',
+      text: 'O Manga2Ink é gratuito e não tem anúncios. Se ele te ajudou, você pode apoiar o desenvolvimento.',
       button: 'Apoiar o projeto',
     },
     credits: {
@@ -149,7 +149,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'Licença',
-      text: 'O Mangabound é distribuído sob a Licença MIT. mangapress e mangabind levam seus próprios avisos junto com o app.',
+      text: 'O Manga2Ink é distribuído sob a Licença MIT. mangapress e mangabind levam seus próprios avisos junto com o app.',
       mit: 'Licença MIT',
       notices: 'Avisos de terceiros',
     },
@@ -185,7 +185,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     support: {
       title: '支援',
-      text: 'Mangabound は無料で、広告もありません。役に立ったと感じたら、開発を支援していただけます。',
+      text: 'Manga2Ink は無料で、広告もありません。役に立ったと感じたら、開発を支援していただけます。',
       button: 'プロジェクトを支援する',
     },
     credits: {
@@ -195,7 +195,7 @@ export const aboutMessages: Readonly<Record<Language, AboutMessages>> = {
     },
     license: {
       title: 'ライセンス',
-      text: 'Mangabound は MIT ライセンスで公開されています。mangapress と mangabind は、それぞれの通知をアプリに同梱しています。',
+      text: 'Manga2Ink は MIT ライセンスで公開されています。mangapress と mangabind は、それぞれの通知をアプリに同梱しています。',
       mit: 'MIT ライセンス',
       notices: 'サードパーティの通知',
     },

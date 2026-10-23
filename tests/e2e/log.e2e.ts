@@ -9,19 +9,19 @@ describe('packaged log', () => {
   it('records how the app started and what it says went wrong, and its folder opens from the About tab', async () => {
     const version = await browser.electron.execute((electron) => electron.app.getVersion());
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
-    const file = path.join(userData, 'logs', 'mangabound.log');
+    const file = path.join(userData, 'logs', 'manga2ink.log');
     const logged = async (): Promise<string> => (existsSync(file) ? readFile(file, 'utf8') : '');
     await $('h1=Queue').waitForDisplayed({ timeout: 30_000 });
 
     // The first line says how the app started, with the time and the level in front of it.
-    await browser.waitUntil(async () => (await logged()).includes(' INFO Mangabound '), {
+    await browser.waitUntil(async () => (await logged()).includes(' INFO Manga2Ink '), {
       timeout: 30_000,
       timeoutMsg: 'The log did not say the app had started.',
     });
     assert.match(
       await logged(),
       new RegExp(
-        `^\\d{4}-\\d\\d-\\d\\dT[\\d:.]+Z INFO Mangabound ${version.replaceAll('.', '\\.')} started \\(packaged, Electron \\S+, \\S+ \\S+\\)\\.$`,
+        `^\\d{4}-\\d\\d-\\d\\dT[\\d:.]+Z INFO Manga2Ink ${version.replaceAll('.', '\\.')} started \\(packaged, Electron \\S+, \\S+ \\S+\\)\\.$`,
         'mu',
       ),
     );

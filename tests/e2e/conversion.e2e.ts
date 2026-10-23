@@ -28,17 +28,11 @@ after(async () => {
 
 describe('packaged conversion pipeline', () => {
   it('converts a real manga folder and direct CBZ with the pinned tools', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-packaged-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-packaged-e2e-'));
     temporaryDirectories.push(testRoot);
-    const sourceFixture = path.resolve(
-      'tests',
-      'fixtures',
-      'e2e',
-      'manga-folder',
-      'Mangabound E2E',
-    );
-    const inputPath = path.join(testRoot, 'Mangabound E2E');
-    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const sourceFixture = path.resolve('tests', 'fixtures', 'e2e', 'manga-folder', 'Manga2Ink E2E');
+    const inputPath = path.join(testRoot, 'Manga2Ink E2E');
+    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const libraryPath = path.join(testRoot, 'library');
     await cp(sourceFixture, inputPath, { recursive: true });
     await mkdir(libraryPath);
@@ -53,8 +47,8 @@ describe('packaged conversion pipeline', () => {
     // Nothing in the chapter names says which volume they belong to, so the folder waits for a
     // grouping before it can run.
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Edit volumes for Mangabound E2E"]').click();
-    await $('h1=Organize Mangabound E2E into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="Edit volumes for Manga2Ink E2E"]').click();
+    await $('h1=Organize Manga2Ink E2E into volumes').waitForDisplayed({ timeout: 30_000 });
     assert.equal(await $('[role="tab"][aria-selected="true"]').getText(), 'Manual');
     await $('[role="status"][aria-label="No volumes found in file names"]').waitForDisplayed();
     await $('button=Select all').click();
@@ -74,12 +68,12 @@ describe('packaged conversion pipeline', () => {
       'processing must not save before the user chooses a destination',
     );
     const pendingShare = await browser.execute(async () => {
-      const bridge = window.mangabound;
+      const bridge = window.manga2ink;
       if (bridge === undefined) throw new Error('The app bridge is unavailable.');
       const listed = await bridge.listPendingRuns();
       if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
       const run = listed.value.find((candidate) =>
-        candidate.artifacts.some((artifact) => artifact.name === 'Mangabound E2E - Vol.01.epub'),
+        candidate.artifacts.some((artifact) => artifact.name === 'Manga2Ink E2E - Vol.01.epub'),
       );
       if (run === undefined)
         throw new Error('The newly converted book was not registered as pending.');
@@ -94,13 +88,13 @@ describe('packaged conversion pipeline', () => {
       if (pendingShare.url === undefined) throw new Error('The pending catalog has no address.');
       const catalog = await fetch(pendingShare.url);
       assert.equal(catalog.status, 200);
-      assert.match(await catalog.text(), /<title>Mangabound ready books<\/title>/u);
+      assert.match(await catalog.text(), /<title>Manga2Ink ready books<\/title>/u);
       const recent = await fetch(`${pendingShare.url}/recent`);
       assert.equal(recent.status, 200);
-      assert.match(await recent.text(), /Mangabound E2E - Vol\.01/u);
+      assert.match(await recent.text(), /Manga2Ink E2E - Vol\.01/u);
     } finally {
       await browser.execute(async () => {
-        await window.mangabound?.stopSharing();
+        await window.manga2ink?.stopSharing();
       });
     }
 
@@ -112,11 +106,11 @@ describe('packaged conversion pipeline', () => {
     assert.equal(metadata.source, undefined);
     assert.deepEqual(metadata, {
       schema_version: 1,
-      manga: { title: 'Mangabound E2E' },
+      manga: { title: 'Manga2Ink E2E' },
       volumes: [{ number: '1', chapters: ['1', '2'] }],
     });
-    const folderBook = path.join(libraryPath, 'Mangabound E2E - Vol.01.epub');
-    await saveBookAs('Mangabound E2E - Vol.01.epub', folderBook);
+    const folderBook = path.join(libraryPath, 'Manga2Ink E2E - Vol.01.epub');
+    await saveBookAs('Manga2Ink E2E - Vol.01.epub', folderBook);
     const folderBytes = await readFile(folderBook);
     assert.ok(folderBytes.length > 1_024);
     assert.equal(folderBytes.subarray(0, 2).toString('ascii'), 'PK');
@@ -130,7 +124,7 @@ describe('packaged conversion pipeline', () => {
     // The saved folder left the queue; the CBZ is added next, on its own.
     await $('button=Convert more').click();
     await $('h1=Queue').waitForDisplayed();
-    assert.equal(await $('p=Mangabound E2E').isExisting(), false);
+    assert.equal(await $('p=Manga2Ink E2E').isExisting(), false);
     await $('button=Files').click();
     await $('span=Ready').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /goes straight to the e-reader step/u);
@@ -138,13 +132,13 @@ describe('packaged conversion pipeline', () => {
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
     assert.deepEqual((await readdir(libraryPath)).sort(), [
       '.mangabound',
-      'Mangabound E2E - Vol.01.epub',
+      'Manga2Ink E2E - Vol.01.epub',
     ]);
     await $('button=Process 1 item').click();
     await $('h1=1 book ready').waitForDisplayed({ timeout: 120_000 });
 
-    const directBook = path.join(libraryPath, 'Mangabound Direct.epub');
-    await saveBookAs('Mangabound Direct.epub', directBook);
+    const directBook = path.join(libraryPath, 'Manga2Ink Direct.epub');
+    await saveBookAs('Manga2Ink Direct.epub', directBook);
     const directBytes = await readFile(directBook);
     assert.ok(directBytes.length > 1_024);
     assert.equal(directBytes.subarray(0, 2).toString('ascii'), 'PK');
@@ -154,14 +148,14 @@ describe('packaged conversion pipeline', () => {
     );
     assert.deepEqual((await readdir(libraryPath)).sort(), [
       '.mangabound',
-      'Mangabound Direct.epub',
-      'Mangabound E2E - Vol.01.epub',
+      'Manga2Ink Direct.epub',
+      'Manga2Ink E2E - Vol.01.epub',
     ]);
     assert.equal(openDialog.mock.calls.length, 2);
   });
 
   it('reads a real library from the queue, fixes one title, and converts both with the pinned tools', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-e2e-'));
     temporaryDirectories.push(testRoot);
     const sourceLibrary = path.resolve('tests', 'fixtures', 'e2e', 'manga-batch', 'Library');
     const libraryParentPath = path.join(testRoot, 'Library');
@@ -246,7 +240,7 @@ describe('packaged conversion pipeline', () => {
     await saveAllBooks();
     await $('li*=destination catalog could not be updated').waitForDisplayed({ timeout: 30_000 });
     const pendingAfterWarning = await browser.execute(async () => {
-      const listed = await window.mangabound?.listPendingRuns();
+      const listed = await window.manga2ink?.listPendingRuns();
       if (listed === undefined || !listed.ok) throw new Error('Pending books could not be read.');
       return listed.value
         .flatMap((run) => run.artifacts)
@@ -281,7 +275,7 @@ describe('packaged conversion pipeline', () => {
   });
 
   it('binds only the titles of a library that are ready, and leaves the others alone', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-library-subset-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-library-subset-e2e-'));
     temporaryDirectories.push(testRoot);
     const sourceLibrary = path.resolve('tests', 'fixtures', 'e2e', 'manga-batch', 'Library');
     const libraryParentPath = path.join(testRoot, 'Library');
@@ -306,7 +300,7 @@ describe('packaged conversion pipeline', () => {
   });
 
   it('keeps sharing every ready book, the one converted after sharing started included', async () => {
-    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [directCbzPath] });
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [directCbzPath] });
@@ -321,7 +315,7 @@ describe('packaged conversion pipeline', () => {
 
     // The person shares the books that are ready, as the results screen offers.
     const shared = await browser.execute(async () => {
-      const bridge = window.mangabound;
+      const bridge = window.manga2ink;
       if (bridge === undefined) throw new Error('The app bridge is unavailable.');
       const listed = await bridge.listPendingRuns();
       if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
@@ -364,24 +358,24 @@ describe('packaged conversion pipeline', () => {
 
       // Every pending conversion is in what is served, so none can be deleted meanwhile.
       const refusal = await browser.execute(async (runId) => {
-        const result = await window.mangabound?.discardPendingRun(runId);
+        const result = await window.manga2ink?.discardPendingRun(runId);
         if (result === undefined) return 'the bridge is unavailable';
         return result.ok ? 'deleted' : result.error.code;
       }, shared.runId);
       assert.equal(refusal, 'pending_in_use');
     } finally {
       await browser.execute(async () => {
-        await window.mangabound?.stopSharing();
+        await window.manga2ink?.stopSharing();
       });
     }
   });
 
   it('recovers an unsaved book after the window reloads', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-restart-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-restart-e2e-'));
     temporaryDirectories.push(testRoot);
-    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Mangabound Direct.cbz');
+    const directCbzPath = path.resolve('tests', 'fixtures', 'e2e', 'cbz', 'Manga2Ink Direct.cbz');
     const destination = path.join(testRoot, 'Recovered.epub');
-    const pendingRoot = process.env.MANGABOUND_PENDING_ROOT;
+    const pendingRoot = process.env.MANGA2INK_PENDING_ROOT;
     if (pendingRoot === undefined)
       throw new Error('The packaged test has no isolated pending root.');
     const earlierRuns = new Set(await readdir(pendingRoot));
@@ -406,13 +400,13 @@ describe('packaged conversion pipeline', () => {
     await saveDialog.mockResolvedValueOnce({ canceled: false, filePath: wrongExtension });
     const rejectedSave = JSON.parse(
       await browser.execute(async () => {
-        const bridge = window.mangabound;
+        const bridge = window.manga2ink;
         if (bridge === undefined) throw new Error('The app bridge is unavailable.');
         const listed = await bridge.listPendingRuns();
         if (!listed.ok) throw new Error(JSON.stringify(listed.error.said));
         const artifact = listed.value
           .flatMap((run) => run.artifacts)
-          .find((book) => book.name === 'Mangabound Direct.epub' && !book.saved);
+          .find((book) => book.name === 'Manga2Ink Direct.epub' && !book.saved);
         if (artifact === undefined) throw new Error('The pending book is missing.');
         return JSON.stringify(await bridge.saveArtifactAs(artifact.id));
       }),
@@ -425,19 +419,19 @@ describe('packaged conversion pipeline', () => {
       },
     });
     await assert.rejects(readFile(wrongExtension));
-    await saveBookAs('Mangabound Direct.epub', destination);
+    await saveBookAs('Manga2Ink Direct.epub', destination);
     assert.equal((await readFile(destination)).subarray(0, 2).toString('ascii'), 'PK');
 
     const newRuns = (await readdir(pendingRoot)).filter((id) => !earlierRuns.has(id));
     assert.equal(newRuns.length, 1);
     await $('button=Convert more').click();
-    const deleteButton = $('button[aria-label="Delete pending books from Mangabound Direct.epub"]');
+    const deleteButton = $('button[aria-label="Delete pending books from Manga2Ink Direct.epub"]');
     await deleteButton.click();
     await $('button=Cancel').click();
     assert.ok((await readdir(pendingRoot)).includes(newRuns[0]!));
 
     await browser.execute(async (runId) => {
-      const started = await window.mangabound?.startSharing(runId, '127.0.0.1', {
+      const started = await window.manga2ink?.startSharing(runId, '127.0.0.1', {
         username: '',
         password: '',
       });
@@ -453,7 +447,7 @@ describe('packaged conversion pipeline', () => {
     );
     assert.ok((await readdir(pendingRoot)).includes(newRuns[0]!));
     await browser.execute(async () => {
-      const stopped = await window.mangabound?.stopSharing();
+      const stopped = await window.manga2ink?.stopSharing();
       if (stopped?.ok !== true) throw new Error('Could not stop sharing the pending run.');
     });
     await $('button=Delete books').click();

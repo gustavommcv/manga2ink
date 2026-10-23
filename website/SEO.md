@@ -1,10 +1,10 @@
 # Search indexing
 
-The documentation is published at <https://gustavommcv.github.io/mangabound/>. This guide records what the repository provides, what the site owner needs to configure, and the limits of this GitHub Pages project site. It does not promise a search position, indexing date, or a particular search-result appearance.
+The documentation is published at <https://gustavommcv.github.io/manga2ink/>. This guide records what the repository provides, what the site owner needs to configure, and the limits of this GitHub Pages project site. It does not promise a search position, indexing date, or a particular search-result appearance.
 
 ## What the build provides
 
-Astro and Starlight already supply canonical URLs, language alternatives (`hreflang`), a sitemap, Open Graph metadata, and localized page language. Keep these framework features rather than implementing another sitemap or metadata system. The home pages use a descriptive browser title while keeping **Mangabound** as the visible heading and sidebar label.
+Astro and Starlight already supply canonical URLs, language alternatives (`hreflang`), a sitemap, Open Graph metadata, and localized page language. Keep these framework features rather than implementing another sitemap or metadata system. The home pages use a descriptive browser title while keeping **Manga2Ink** as the visible heading and sidebar label.
 
 A language that has not translated a page yet shows the English page under its own address (Starlight's fallback page, with a notice and its text marked as English). Those pages stay indexable, with their own canonical address and the language alternatives, as Starlight builds them; [ADR 0051](../docs/adr/0051-a-language-of-the-guide-may-leave-pages-in-english.md) says why, and what to change if search turns out to dislike the duplicate text. A title is unique within a language, not across the site.
 
@@ -25,7 +25,7 @@ Each page has a description of its own task. Write for readers, not a keyword sc
 
 The data describes the project; it does not guarantee enhanced search results. Google's [software-app result requirements](https://developers.google.com/search/docs/appearance/structured-data/software-app) include a real rating or review. None is declared because the project has none to publish; never invent one to pass a validator.
 
-Google's [site-name feature](https://developers.google.com/search/docs/appearance/site-names) supports domain and subdomain roots, not subdirectories. `WebSite` remains a semantic description of this documentation, but adding it at `/mangabound/` or `/mangabound/pt-br/` does not establish a separate Google site name. A custom domain would require revisiting deployment URLs and this limitation, not changing the desktop app.
+Google's [site-name feature](https://developers.google.com/search/docs/appearance/site-names) supports domain and subdomain roots, not subdirectories. `WebSite` remains a semantic description of this documentation, but adding it at `/manga2ink/` or `/manga2ink/pt-br/` does not establish a separate Google site name. A custom domain would require revisiting deployment URLs and this limitation, not changing the desktop app.
 
 ## Verification
 
@@ -46,7 +46,7 @@ After a push, verify the exact commit's remote CI. After an authorized merge, ve
 
 Registration belongs to the site owner's Google account. An empty verification setting does not establish whether a property exists or whether another verification method was used. Confirm that status with the owner rather than recording a guess as an audit result.
 
-1. Open [Google Search Console](https://search.google.com/search-console). Use an existing property for this URL, or add a **URL-prefix** property for `https://gustavommcv.github.io/mangabound/`. A Domain property requires DNS access, which the project does not have for `github.io`.
+1. Open [Google Search Console](https://search.google.com/search-console). Use an existing property for this URL, or add a **URL-prefix** property for `https://gustavommcv.github.io/manga2ink/`. A Domain property requires DNS access, which the project does not have for `github.io`.
 2. For **HTML tag** verification, copy only the tag's `content` value into `googleSiteVerification` in `site.config.mjs`, in a reviewed PR. That value is public verification metadata, not a password. Keep it empty until supplied; do not substitute a placeholder.
 3. After the authorized deployment, confirm that the homepage contains the verification tag, then select **Verify** in Search Console.
 4. Under **Sitemaps**, submit `sitemap-index.xml` and check its processing status.
@@ -56,7 +56,7 @@ Search Console is a useful submission and diagnostic tool, not a requirement for
 
 ## Hosting and maintenance
 
-- **Robots policy belongs to the host root.** Crawlers read `https://gustavommcv.github.io/robots.txt`, not `/mangabound/robots.txt`; see [Google's location requirements](https://developers.google.com/crawling/docs/robots-txt/create-robots-txt). The root is managed separately from this project. No redundant project-level file is added. If the owner manages the root site, its policy may reference this project's sitemap; review that policy for all projects it affects.
+- **Robots policy belongs to the host root.** Crawlers read `https://gustavommcv.github.io/robots.txt`, not `/manga2ink/robots.txt`; see [Google's location requirements](https://developers.google.com/crawling/docs/robots-txt/create-robots-txt). The root is managed separately from this project. No redundant project-level file is added. If the owner manages the root site, its policy may reference this project's sitemap; review that policy for all projects it affects.
 - **Repository topics are optional discoverability metadata.** They belong to repository settings, not this PR. Adding them requires the owner's approval and is separate from Search Console or the site's build.
 - **No tracking is added.** The heart in the header that leads to the support page (`supportUrl` in `site.config.mjs`, with its words in `src/i18n/strings.ts`) is a plain link: no script, button or widget of the service is loaded into the page, and a browser test fails if a script from another origin is. Google Analytics is not needed for the changes here. Search Console provides search reports without adding visitor-tracking scripts to the documentation.
 - **The suggestion of a language is not a redirect, and it tracks no one.** A bar at the top of a page, written in the language it suggests, offers the page in the language the browser asks for first when the site has it ([ADR 0069](../docs/adr/0069-the-site-suggests-the-language-the-browser-asks-for.md)). It is the site's own script reading the browser's list of languages; what a reader answers is kept in their own browser (`localStorage`, `sessionStorage`) and nothing is sent. Each address still shows its own language, to a person, a search engine and a shared link. Its words are in `<template>` elements, so they are not text of the page.

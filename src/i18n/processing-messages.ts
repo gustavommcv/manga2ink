@@ -72,21 +72,21 @@ export interface ProcessingMessages {
 export const processingMessages: Readonly<Record<Language, ProcessingMessages>> = {
   en: {
     description:
-      'Where Mangabound builds volumes while it converts, and where finished books wait until you save them. A drive with plenty of room helps with long series.',
+      'Where Manga2Ink builds volumes while it converts, and where finished books wait until you save them. A drive with plenty of room helps with long series.',
     folder: 'Working folder',
-    automatic: 'Chosen by Mangabound',
+    automatic: 'Chosen by Manga2Ink',
     scratch: 'Volumes while converting',
     pending: 'Finished books, until saved',
     free: 'Free space',
     choose: 'Choose a folder…',
     useDefault: 'Use the default folder',
-    help: 'Mangabound makes Pending and Scratch inside the folder you choose. The next conversions use it; books already waiting stay where they are and stay in the list.',
+    help: 'Manga2Ink makes Pending and Scratch inside the folder you choose. The next conversions use it; books already waiting stay where they are and stay in the list.',
     unavailable:
       'The working folder is not available. Connect its drive again, or choose another folder: nothing can be converted until then.',
-    loading: 'Reading where Mangabound works…',
+    loading: 'Reading where Manga2Ink works…',
     earlier: {
       title: 'Still waiting in earlier folders',
-      help: 'Save or delete these books from the list on the queue page. Once none is left in a folder, Mangabound stops looking there.',
+      help: 'Save or delete these books from the list on the queue page. Once none is left in a folder, Manga2Ink stops looking there.',
       books: (count) => `${String(count)} ${countOf(count, 'book', 'books')}`,
     },
     waiting: {
@@ -94,7 +94,7 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       none: 'No books are waiting.',
       summary: (books, runs, size) =>
         `${String(books)} ${countOf(books, 'book', 'books')} in ${String(runs)} ${countOf(runs, 'conversion', 'conversions')}, ${size}`,
-      help: 'A conversion whose books are all saved is removed when Mangabound closes. The others stay until you save or delete them.',
+      help: 'A conversion whose books are all saved is removed when Manga2Ink closes. The others stay until you save or delete them.',
       cleanUp: 'Delete what has waited, untouched, for more than',
       days: (days) => `${String(days)} days`,
       delete: 'Delete…',
@@ -108,11 +108,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       inUse: 'Nothing was deleted: what was found is being saved.',
     },
     queue: {
-      title: 'While Mangabound converts',
+      title: 'While Manga2Ink converts',
       notify: {
         label: 'Tell me when a long conversion ends',
         help: (seconds) =>
-          `A system notification, only when the conversion took more than ${String(seconds)} seconds and no Mangabound window is in front. Clicking it brings the window back.`,
+          `A system notification, only when the conversion took more than ${String(seconds)} seconds and no Manga2Ink window is in front. Clicking it brings the window back.`,
       },
       awake: {
         label: 'Keep the computer awake while converting',
@@ -128,21 +128,21 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
   },
   'pt-BR': {
     description:
-      'Onde o Mangabound monta os volumes enquanto converte e onde os livros prontos esperam até você salvá-los. Um disco com bastante espaço ajuda com séries longas.',
+      'Onde o Manga2Ink monta os volumes enquanto converte e onde os livros prontos esperam até você salvá-los. Um disco com bastante espaço ajuda com séries longas.',
     folder: 'Pasta de trabalho',
-    automatic: 'Escolhida pelo Mangabound',
+    automatic: 'Escolhida pelo Manga2Ink',
     scratch: 'Volumes durante a conversão',
     pending: 'Livros prontos, até serem salvos',
     free: 'Espaço livre',
     choose: 'Escolher uma pasta…',
     useDefault: 'Usar a pasta padrão',
-    help: 'O Mangabound cria Pending e Scratch dentro da pasta que você escolher. As próximas conversões a usam; os livros que já estão esperando ficam onde estão e continuam na lista.',
+    help: 'O Manga2Ink cria Pending e Scratch dentro da pasta que você escolher. As próximas conversões a usam; os livros que já estão esperando ficam onde estão e continuam na lista.',
     unavailable:
       'A pasta de trabalho não está disponível. Conecte o disco dela de novo ou escolha outra pasta: nada pode ser convertido até lá.',
-    loading: 'Lendo onde o Mangabound trabalha…',
+    loading: 'Lendo onde o Manga2Ink trabalha…',
     earlier: {
       title: 'Ainda esperando em pastas anteriores',
-      help: 'Salve ou apague esses livros pela lista da página da fila. Quando não sobrar nenhum em uma pasta, o Mangabound deixa de procurar nela.',
+      help: 'Salve ou apague esses livros pela lista da página da fila. Quando não sobrar nenhum em uma pasta, o Manga2Ink deixa de procurar nela.',
       books: (count) => `${String(count)} ${countOf(count, 'livro', 'livros')}`,
     },
     waiting: {
@@ -150,7 +150,7 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       none: 'Nenhum livro está esperando.',
       summary: (books, runs, size) =>
         `${String(books)} ${countOf(books, 'livro', 'livros')} em ${String(runs)} ${countOf(runs, 'conversão', 'conversões')}, ${size}`,
-      help: 'Uma conversão cujos livros foram todos salvos é removida quando o Mangabound fecha. As outras ficam até você salvar ou apagar.',
+      help: 'Uma conversão cujos livros foram todos salvos é removida quando o Manga2Ink fecha. As outras ficam até você salvar ou apagar.',
       cleanUp: 'Apagar o que espera, sem ser tocado, há mais de',
       days: (days) => `${String(days)} dias`,
       delete: 'Apagar…',
@@ -164,11 +164,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       inUse: 'Nada foi apagado: o que foi encontrado está sendo salvo.',
     },
     queue: {
-      title: 'Enquanto o Mangabound converte',
+      title: 'Enquanto o Manga2Ink converte',
       notify: {
         label: 'Avisar quando uma conversão longa terminar',
         help: (seconds) =>
-          `Uma notificação do sistema, só se a conversão levou mais de ${String(seconds)} segundos e nenhuma janela do Mangabound estiver em primeiro plano. Ao clicar nela, a janela volta.`,
+          `Uma notificação do sistema, só se a conversão levou mais de ${String(seconds)} segundos e nenhuma janela do Manga2Ink estiver em primeiro plano. Ao clicar nela, a janela volta.`,
       },
       awake: {
         label: 'Manter o computador acordado durante a conversão',
@@ -184,9 +184,9 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
   },
   ja: {
     description:
-      'Mangabound が変換中に巻を作る場所と、完成した本が保存されるまで待機する場所です。長いシリーズを変換するときは、空き容量の大きなドライブが役に立ちます。',
+      'Manga2Ink が変換中に巻を作る場所と、完成した本が保存されるまで待機する場所です。長いシリーズを変換するときは、空き容量の大きなドライブが役に立ちます。',
     folder: '作業フォルダー',
-    automatic: 'Mangabound が選択',
+    automatic: 'Manga2Ink が選択',
     scratch: '変換中の巻',
     pending: '保存前の完成した本',
     free: '空き容量',
@@ -195,17 +195,17 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
     help: '選んだフォルダーの中に、Pending と Scratch を作ります。以降の変換ではそのフォルダーを使います。すでに待機している本は元の場所に残り、一覧にも表示され続けます。',
     unavailable:
       '作業フォルダーを利用できません。ドライブを接続し直すか、別のフォルダーを選んでください。それまでは何も変換できません。',
-    loading: 'Mangabound の作業場所を読み込んでいます…',
+    loading: 'Manga2Ink の作業場所を読み込んでいます…',
     earlier: {
       title: '以前のフォルダーで待機中',
-      help: 'これらの本は、キューのページの一覧から保存または削除できます。フォルダーに本が残っていなければ、Mangabound はそこを調べなくなります。',
+      help: 'これらの本は、キューのページの一覧から保存または削除できます。フォルダーに本が残っていなければ、Manga2Ink はそこを調べなくなります。',
       books: (count) => `${String(count)} 冊`,
     },
     waiting: {
       title: '保存待ちの本',
       none: '待機中の本はありません。',
       summary: (books, runs, size) => `${String(books)} 冊（変換 ${String(runs)} 件、${size}）`,
-      help: '本がすべて保存された変換は、Mangabound を閉じるときに削除されます。それ以外は、保存または削除するまで残ります。',
+      help: '本がすべて保存された変換は、Manga2Ink を閉じるときに削除されます。それ以外は、保存または削除するまで残ります。',
       cleanUp: '次の期間を超えて手つかずのまま待機しているものを削除',
       days: (days) => `${String(days)} 日`,
       delete: '削除…',
@@ -218,11 +218,11 @@ export const processingMessages: Readonly<Record<Language, ProcessingMessages>> 
       inUse: '見つかったものは保存中のため、何も削除しませんでした。',
     },
     queue: {
-      title: 'Mangabound の変換中',
+      title: 'Manga2Ink の変換中',
       notify: {
         label: '長い変換が終わったら知らせる',
         help: (seconds) =>
-          `システムの通知です。変換に ${String(seconds)} 秒を超える時間がかかり、Mangabound のウィンドウが前面にないときだけ表示されます。通知をクリックするとウィンドウに戻ります。`,
+          `システムの通知です。変換に ${String(seconds)} 秒を超える時間がかかり、Manga2Ink のウィンドウが前面にないときだけ表示されます。通知をクリックするとウィンドウに戻ります。`,
       },
       awake: {
         label: '変換中はパソコンをスリープさせない',

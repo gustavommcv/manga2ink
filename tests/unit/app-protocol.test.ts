@@ -45,7 +45,7 @@ describe('where the window loads its page from', () => {
     const root = path.resolve('build', 'renderer');
     const app = await loadWith(`file://${path.join(root, 'main_window', 'index.html')}`);
 
-    expect(app.rendererUrl).toBe('app://mangabound/main_window/index.html');
+    expect(app.rendererUrl).toBe('app://manga2ink/main_window/index.html');
   });
 });
 
@@ -67,7 +67,7 @@ describe('the scheme the packaged page is served on', () => {
     let theme: Theme;
     beforeEach(async () => {
       theme = 'dark';
-      const parent = await mkdtemp(path.join(os.tmpdir(), 'mangabound-app-protocol-'));
+      const parent = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-app-protocol-'));
       site = path.join(parent, 'site');
       await mkdir(path.join(site, 'main_window'), { recursive: true });
       await writeFile(path.join(site, 'main_window', 'index.html'), '<p>page</p>');
@@ -89,7 +89,7 @@ describe('the scheme the packaged page is served on', () => {
     afterEach(() => rm(path.dirname(site), { recursive: true, force: true }));
 
     const get = (pathname: string, init?: RequestInit): Promise<Response> =>
-      handler(new Request(`app://mangabound${pathname}`, init));
+      handler(new Request(`app://manga2ink${pathname}`, init));
 
     it('gives a file of the build with the type it is known by, and forbids sniffing another', async () => {
       const page = await get('/main_window/index.html');

@@ -100,7 +100,7 @@ function isAuthorized(req: IncomingMessage, auth: OpdsAuthConfig): boolean {
 
 function respondUnauthorized(res: ServerResponse): void {
   res.writeHead(401, {
-    'WWW-Authenticate': 'Basic realm="Mangabound"',
+    'WWW-Authenticate': 'Basic realm="Manga2Ink"',
     'Content-Type': 'text/plain; charset=utf-8',
   });
   res.end('Unauthorized.');
@@ -247,7 +247,7 @@ export class NodeOpdsServer implements OpdsServerPort {
     if (this.refusedHosts.has(name) || this.refusedHosts.size >= 20) return;
     this.refusedHosts.add(name);
     console.warn(
-      `A request to the catalog was refused: ${name} is not an address of this computer. Use the address Mangabound shows, or the computer's own name.`,
+      `A request to the catalog was refused: ${name} is not an address of this computer. Use the address Manga2Ink shows, or the computer's own name.`,
     );
   }
 

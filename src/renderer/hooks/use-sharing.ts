@@ -5,7 +5,7 @@ import type {
   OpdsAuthConfig,
   OpdsSharingStatus,
 } from '@/shared/opds-contract';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { SelectedLibrary, WorkflowFailure } from '@/shared/workflow-contract';
 
 /**
@@ -16,7 +16,7 @@ import type { SelectedLibrary, WorkflowFailure } from '@/shared/workflow-contrac
  * (a state setter).
  */
 export function useSharing(
-  bridge: MangaboundBridge,
+  bridge: Manga2InkBridge,
   onFailure: (failure: WorkflowFailure) => void,
 ): {
   readonly panelOpen: boolean;

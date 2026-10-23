@@ -179,7 +179,7 @@ describe('what a share serves', () => {
   it('is every ready book when one pending conversion is asked for', () => {
     expect(sharingTarget(path.join(root, 'run-1'), root)).toEqual({
       path: root,
-      title: 'Mangabound ready books',
+      title: 'Manga2Ink ready books',
       readyBooks: true,
     });
   });
@@ -204,7 +204,7 @@ describe('what a share serves', () => {
 
     expect(sharingTarget(run, root, [before])).toEqual({
       path: run,
-      title: 'Mangabound ready books',
+      title: 'Manga2Ink ready books',
       readyBooks: false,
     });
     // The folder in use still stands for all its conversions, however many earlier ones there are.

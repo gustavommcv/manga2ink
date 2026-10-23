@@ -1,7 +1,7 @@
 # MangaDex response fixtures
 
 Real responses from the public MangaDex API, recorded on 2026-09-19 with a descriptive user agent
-(`Mangabound-dev (+https://github.com/gustavommcv/mangabound)`), then trimmed to keep the files
+(`Manga2Ink-dev (+https://github.com/gustavommcv/manga2ink)`), then trimmed to keep the files
 small. The shapes, ids, titles and volume numbers are as the service sent them.
 
 | File                       | Request                                                                                                                                                                                      |

@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
@@ -18,9 +18,7 @@ const ready: ToolchainStatus = {
 const blocked: ToolchainStatus = {
   state: 'blocked',
   tools: [],
-  message: raw(
-    'A bundled conversion tool failed verification. Reinstall Mangabound to restore it.',
-  ),
+  message: raw('A bundled conversion tool failed verification. Reinstall Manga2Ink to restore it.'),
 };
 const paperwhite: DeviceProfileSummary = {
   code: 'KPW6',
@@ -61,7 +59,7 @@ describe('useToolchain', () => {
   });
 
   it('does not ask for the devices while the tools are not ready', async () => {
-    const getDeviceProfiles = vi.fn<MangaboundBridge['getDeviceProfiles']>();
+    const getDeviceProfiles = vi.fn<Manga2InkBridge['getDeviceProfiles']>();
     const bridge = inertBridge({
       getToolchainStatus: () => Promise.resolve(blocked),
       getDeviceProfiles,
@@ -143,7 +141,7 @@ describe('useToolchain', () => {
   });
 
   it('does not report a device failure that arrives after the component is gone', async () => {
-    const devices = deferred<Awaited<ReturnType<MangaboundBridge['getDeviceProfiles']>>>();
+    const devices = deferred<Awaited<ReturnType<Manga2InkBridge['getDeviceProfiles']>>>();
     const onFailure = vi.fn();
     const bridge = inertBridge({
       getToolchainStatus: () => Promise.resolve(ready),

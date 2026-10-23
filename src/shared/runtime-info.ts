@@ -54,7 +54,7 @@ export interface RuntimeInfo {
   readonly version: string;
 }
 
-export interface MangaboundBridge {
+export interface Manga2InkBridge {
   readonly runtime: RuntimeInfo;
   readonly getToolchainStatus: () => Promise<ToolchainStatus>;
   /** Opens a native picker for several comic files or several manga folders. */

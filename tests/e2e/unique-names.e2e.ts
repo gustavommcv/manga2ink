@@ -22,7 +22,7 @@ async function twoFoldersNamed(
   fixture: readonly string[],
   name: string,
 ): Promise<{ readonly folders: readonly string[]; readonly libraryPath: string }> {
-  const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-unique-names-e2e-'));
+  const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-unique-names-e2e-'));
   temporaryDirectories.push(testRoot);
   const folders: string[] = [];
   for (const parent of ['first', 'second']) {
@@ -39,7 +39,7 @@ async function twoFoldersNamed(
 
 describe('packaged runs never let one book replace another', () => {
   it('keeps both books when two folders would convert to the same file name', async () => {
-    const { folders, libraryPath } = await twoFoldersNamed(['manga-folder'], 'Mangabound E2E');
+    const { folders, libraryPath } = await twoFoldersNamed(['manga-folder'], 'Manga2Ink E2E');
     const openDialog = await browser.electron.mock('dialog', 'showOpenDialog');
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [...folders] });
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [libraryPath] });
@@ -57,13 +57,13 @@ describe('packaged runs never let one book replace another', () => {
 
     assert.deepEqual((await readdir(libraryPath)).sort(), [
       '.mangabound',
-      'Mangabound E2E (2).epub',
-      'Mangabound E2E.epub',
+      'Manga2Ink E2E (2).epub',
+      'Manga2Ink E2E.epub',
     ]);
     // Export the same pending books again into a populated destination: exclusive publication
     // must select new names, not replace either of the previous copies.
-    const firstCopy = await readFile(path.join(libraryPath, 'Mangabound E2E.epub'));
-    const secondCopy = await readFile(path.join(libraryPath, 'Mangabound E2E (2).epub'));
+    const firstCopy = await readFile(path.join(libraryPath, 'Manga2Ink E2E.epub'));
+    const secondCopy = await readFile(path.join(libraryPath, 'Manga2Ink E2E (2).epub'));
     await saveAllBooks();
     // The books were already marked saved, so nothing on screen says when the repeated export is
     // over: only the folder does, once it holds the two new names and no staged copy.
@@ -71,18 +71,18 @@ describe('packaged runs never let one book replace another', () => {
       libraryPath,
       [
         '.mangabound',
-        'Mangabound E2E (2) (2).epub',
-        'Mangabound E2E (2).epub',
-        'Mangabound E2E (3).epub',
-        'Mangabound E2E.epub',
+        'Manga2Ink E2E (2) (2).epub',
+        'Manga2Ink E2E (2).epub',
+        'Manga2Ink E2E (3).epub',
+        'Manga2Ink E2E.epub',
       ],
       { describeAppState: () => $('main').getText() },
     );
-    assert.deepEqual(await readFile(path.join(libraryPath, 'Mangabound E2E.epub')), firstCopy);
-    assert.deepEqual(await readFile(path.join(libraryPath, 'Mangabound E2E (2).epub')), secondCopy);
-    assert.deepEqual(await readFile(path.join(libraryPath, 'Mangabound E2E (3).epub')), firstCopy);
+    assert.deepEqual(await readFile(path.join(libraryPath, 'Manga2Ink E2E.epub')), firstCopy);
+    assert.deepEqual(await readFile(path.join(libraryPath, 'Manga2Ink E2E (2).epub')), secondCopy);
+    assert.deepEqual(await readFile(path.join(libraryPath, 'Manga2Ink E2E (3).epub')), firstCopy);
     assert.deepEqual(
-      await readFile(path.join(libraryPath, 'Mangabound E2E (2) (2).epub')),
+      await readFile(path.join(libraryPath, 'Manga2Ink E2E (2) (2).epub')),
       secondCopy,
     );
   });

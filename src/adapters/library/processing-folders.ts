@@ -86,7 +86,7 @@ export function diskIoOver(disk: DiskCalls): ProcessingFoldersIo {
       await disk.mkdir(folder, { recursive: true });
     },
     probeWrite: async (folder) => {
-      const probe = path.join(folder, `.mangabound-write-test-${disk.createId()}`);
+      const probe = path.join(folder, `.manga2ink-write-test-${disk.createId()}`);
       await disk.writeFile(probe, '');
       await disk.rm(probe, { force: true });
     },

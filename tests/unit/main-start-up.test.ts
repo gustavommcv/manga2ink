@@ -16,6 +16,10 @@ const fake = vi.hoisted(() => {
     ready: undefined as undefined | (() => Promise<void>),
     invoked: new Map<string, (...args: never[]) => unknown>(),
     legacyMove: undefined as undefined | Record<string, unknown>,
+    moves: [] as Record<string, unknown>[],
+    locked: false,
+    formerUserData: undefined as
+      undefined | { appData: string; userData: string; beforeLock: boolean },
     context: undefined as unknown as Record<string, unknown>,
     quit: undefined as unknown as { mock: { calls: unknown[][] } } & (() => void),
     nativeTheme: { themeSource: 'system', shouldUseDarkColors: false },
@@ -31,7 +35,10 @@ vi.mock('electron', () => ({
     quit: () => {
       fake.calls.push('quit');
     },
-    requestSingleInstanceLock: () => fake.lock,
+    requestSingleInstanceLock: () => {
+      fake.locked = true;
+      return fake.lock;
+    },
     whenReady: () => ({
       then: (callback: () => Promise<void>) => {
         fake.ready = callback;
@@ -149,6 +156,7 @@ vi.mock('@/adapters/library/legacy-storage', () => ({
   moveLegacyStorage: (options: Record<string, unknown>) => {
     fake.calls.push('legacy-move');
     fake.legacyMove = options;
+    fake.moves.push(options);
     return Promise.resolve();
   },
 }));
@@ -156,6 +164,13 @@ vi.mock('@/adapters/library/pending-path', () => ({
   coversRoot: () => '/covers',
   pendingRoot: () => '/pending-root',
   legacyStorageMove: () => fake.context['legacy'],
+  formerStorageMove: () => fake.context['former'],
+}));
+vi.mock('@/main/former-user-data', () => ({
+  moveFormerUserData: (appData: string, userData: string) => {
+    fake.formerUserData = { appData, userData, beforeLock: !fake.locked };
+    return fake.context['formerProblem'];
+  },
 }));
 vi.mock('@/adapters/settings/fs-settings-store', () => ({
   FsSettingsStore: class {
@@ -357,6 +372,9 @@ beforeEach(() => {
   fake.invoked.clear();
   fake.ready = undefined;
   fake.legacyMove = undefined;
+  fake.moves = [];
+  fake.locked = false;
+  fake.formerUserData = undefined;
   fake.context = {
     theme: 'dark',
     activeJobs: new Map(),
@@ -456,7 +474,7 @@ describe('starting the app', () => {
 
     expect(fake.context['log']).toBeDefined();
     expect(String(fake.context['logStarted'])).toMatch(
-      /^Mangabound \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
+      /^Manga2Ink \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
     );
     expect(fake.context['logTargets']).toMatchObject({ console, process });
   });
@@ -536,6 +554,45 @@ describe('starting the app', () => {
     const onProblem = fake.legacyMove?.['onProblem'] as (message: string, cause: unknown) => void;
     onProblem('Could not move it.', new Error('busy'));
     expect(console.error).toHaveBeenCalledWith('Could not move it.', expect.any(Error));
+  });
+
+  it('moves Mangabound’s settings folder to the new name before the single-instance lock makes it', async () => {
+    await start();
+
+    expect(fake.formerUserData).toEqual({
+      appData: '/home/appData',
+      userData: '/home/userData',
+      beforeLock: true,
+    });
+  });
+
+  it('leaves the settings folder alone while the installer starts the app for its own events', async () => {
+    fake.started = true;
+    await start();
+
+    expect(fake.formerUserData).toBeUndefined();
+  });
+
+  it('tells the log when Mangabound’s settings folder could not be moved', async () => {
+    fake.context['formerProblem'] = 'Could not move /home/appData/Mangabound: busy';
+    const ready = await start();
+
+    await ready();
+
+    expect(console.error).toHaveBeenCalledWith('Could not move /home/appData/Mangabound: busy');
+  });
+
+  it('moves Mangabound’s pending books before what the installer’s folder kept', async () => {
+    fake.context['former'] = { from: '/former', to: '/new' };
+    fake.context['legacy'] = { from: '/old', to: '/new' };
+    const ready = await start();
+
+    await ready();
+
+    expect(fake.moves.map((move) => move['from'])).toEqual(['/former', '/old']);
+    expect(fake.calls.lastIndexOf('legacy-move')).toBeLessThan(
+      fake.calls.indexOf('cover-store:/covers'),
+    );
   });
 
   it('moves nothing when there is nothing from an earlier version to move', async () => {

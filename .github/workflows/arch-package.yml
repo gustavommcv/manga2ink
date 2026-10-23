@@ -50,7 +50,7 @@ jobs:
         # electron-forge names this directory from packagerConfig's productName, arch, and
         # platform - copied to a fixed name so the PKGBUILD does not need to guess it.
         run: |
-          packaged=$(find out -maxdepth 1 -type d -iname 'Mangabound-linux-*' -print -quit)
+          packaged=$(find out -maxdepth 1 -type d -iname 'Manga2Ink-linux-*' -print -quit)
           if [[ -z "$packaged" ]]; then
             echo "::error::Could not find electron-forge's packaged Linux output under out/"
             exit 1
@@ -59,7 +59,7 @@ jobs:
       - name: Stage the app icon for the PKGBUILD
         # Stage the app's PNG icon for the PKGBUILD; the desktop entry's Icon= names it, and the
         # .deb and .rpm makers use the same asset.
-        run: cp assets/icons/mangabound.png packaging/arch/mangabound.png
+        run: cp assets/icons/manga2ink.png packaging/arch/manga2ink.png
       - name: Set the package version from package.json
         # pacman forbids hyphens in pkgver; RELEASING.md documents the same x.y.z-alpha.N shape
         # every other maker's version transform starts from.
@@ -90,7 +90,7 @@ jobs:
         # A gate: an Icon= that names nothing the package installs gives every launcher (rofi,
         # GNOME, KDE) a blank in place of an icon, and nothing else would notice.
         run: |
-          icon=$(sed -n 's/^Icon=//p' packaging/arch/mangabound.desktop)
+          icon=$(sed -n 's/^Icon=//p' packaging/arch/manga2ink.desktop)
           if [[ -z "$icon" ]]; then
             echo "::error::The desktop entry has no Icon= line."
             exit 1

@@ -27,7 +27,7 @@ describe('the package tool check', () => {
   let lock: string;
 
   beforeEach(async () => {
-    workspace = await mkdtemp(path.join(tmpdir(), 'mangabound-package-tools-'));
+    workspace = await mkdtemp(path.join(tmpdir(), 'manga2ink-package-tools-'));
     unpacked = path.join(workspace, 'unpacked');
     lock = path.join(workspace, 'toolchain.lock.json');
     await writeFile(lock, lockFor(pinned));
@@ -39,7 +39,7 @@ describe('the package tool check', () => {
 
   async function install(
     tools: Partial<Record<'mangabind' | 'mangapress', string>>,
-    root = 'usr/lib/mangabound/resources/toolchain/linux-x64',
+    root = 'usr/lib/manga2ink/resources/toolchain/linux-x64',
   ): Promise<void> {
     const folder = path.join(unpacked, root);
     await mkdir(folder, { recursive: true });
@@ -52,7 +52,7 @@ describe('the package tool check', () => {
     readonly status: number | null;
     readonly output: string;
   } {
-    const run = spawnSync(process.execPath, [script, 'mangabound.rpm', unpacked, ...extra], {
+    const run = spawnSync(process.execPath, [script, 'manga2ink.rpm', unpacked, ...extra], {
       encoding: 'utf8',
     });
     return { status: run.status, output: `${run.stdout}${run.stderr}` };
@@ -62,11 +62,11 @@ describe('the package tool check', () => {
     await install(pinned);
     const run = verify(lock);
     expect(run.status).toBe(0);
-    expect(run.output).toContain('mangabound.rpm: mangabind and mangapress are byte for byte');
+    expect(run.output).toContain('manga2ink.rpm: mangabind and mangapress are byte for byte');
   });
 
   it('finds the tools wherever the package puts its resources folder', async () => {
-    await install(pinned, 'opt/mangabound/resources/toolchain/linux-x64');
+    await install(pinned, 'opt/manga2ink/resources/toolchain/linux-x64');
     expect(verify(lock).status).toBe(0);
   });
 
@@ -76,7 +76,7 @@ describe('the package tool check', () => {
     expect(run.status).toBe(1);
     expect(run.output).toContain('the app would refuse to convert');
     // The script names the file as the operating system writes its path: backslashes on Windows.
-    const edited = path.join('usr', 'lib', 'mangabound', 'resources', 'toolchain', 'linux-x64');
+    const edited = path.join('usr', 'lib', 'manga2ink', 'resources', 'toolchain', 'linux-x64');
     expect(run.output).toContain(`mangapress: ${path.join(edited, 'mangapress')}`);
     expect(run.output).toContain(sha256(pinned.mangapress));
     expect(run.output).not.toContain('mangabind:');

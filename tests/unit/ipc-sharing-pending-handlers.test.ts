@@ -117,7 +117,7 @@ describe('sharing the books on the network', () => {
     await call('opds:start-sharing', start);
 
     expect(context.opdsServer.start).toHaveBeenCalledWith(
-      expect.objectContaining({ libraryPath: '/pending', libraryTitle: 'Mangabound ready books' }),
+      expect.objectContaining({ libraryPath: '/pending', libraryTitle: 'Manga2Ink ready books' }),
     );
     expect(context.activeSharingTarget).toMatchObject({ readyBooks: true });
   });
@@ -134,7 +134,7 @@ describe('sharing the books on the network', () => {
     expect(context.opdsServer.start).toHaveBeenCalledWith(
       expect.objectContaining({
         libraryPath: path.join(earlier, 'run-9'),
-        libraryTitle: 'Mangabound ready books',
+        libraryTitle: 'Manga2Ink ready books',
       }),
     );
     expect(context.activeSharingTarget).toMatchObject({ readyBooks: false });

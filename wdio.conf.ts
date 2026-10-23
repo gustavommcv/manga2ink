@@ -6,15 +6,15 @@ import { rm } from 'node:fs/promises';
 import type {} from '@wdio/electron-service';
 import type {} from '@wdio/types';
 
-const packageDirectory = path.resolve('out', `Mangabound-${process.platform}-${process.arch}`);
+const packageDirectory = path.resolve('out', `Manga2Ink-${process.platform}-${process.arch}`);
 const appBinaryPath =
   process.platform === 'win32'
-    ? path.join(packageDirectory, 'mangabound.exe')
+    ? path.join(packageDirectory, 'manga2ink.exe')
     : process.platform === 'darwin'
-      ? path.join(packageDirectory, 'Mangabound.app', 'Contents', 'MacOS', 'mangabound')
-      : path.join(packageDirectory, 'mangabound');
+      ? path.join(packageDirectory, 'Manga2Ink.app', 'Contents', 'MacOS', 'manga2ink')
+      : path.join(packageDirectory, 'manga2ink');
 
-const isWayland = process.env.MANGABOUND_WAYLAND === '1';
+const isWayland = process.env.MANGA2INK_WAYLAND === '1';
 // Everything a run of the suite writes outside the checkout goes under one folder, so that one
 // removal at the end takes all of it. WebdriverIO evaluates this file in the launcher first and
 // then again in each worker; a worker inherits the environment the launcher had by then, so the
@@ -22,15 +22,15 @@ const isWayland = process.env.MANGABOUND_WAYLAND === '1';
 // own process id, and nothing removed them). The app's scratch folders and the spec files' own
 // fixtures land in it too, because the temporary folder of the whole run is moved into it.
 const runRoot =
-  process.env.MANGABOUND_E2E_RUN_ROOT ??
-  path.join(os.tmpdir(), `mangabound-e2e-${String(process.pid)}`);
-process.env.MANGABOUND_E2E_RUN_ROOT = runRoot;
+  process.env.MANGA2INK_E2E_RUN_ROOT ??
+  path.join(os.tmpdir(), `manga2ink-e2e-${String(process.pid)}`);
+process.env.MANGA2INK_E2E_RUN_ROOT = runRoot;
 const scratchRoot = path.join(runRoot, 'tmp');
 mkdirSync(scratchRoot, { recursive: true });
 for (const name of ['TMPDIR', 'TMP', 'TEMP']) process.env[name] = scratchRoot;
 // Each worker still has pending books and covers of its own, kept apart from other spec files'.
-process.env.MANGABOUND_PENDING_ROOT = path.join(runRoot, `pending-${String(process.pid)}`);
-process.env.MANGABOUND_COVERS_ROOT = path.join(runRoot, `covers-${String(process.pid)}`);
+process.env.MANGA2INK_PENDING_ROOT = path.join(runRoot, `pending-${String(process.pid)}`);
+process.env.MANGA2INK_COVERS_ROOT = path.join(runRoot, `covers-${String(process.pid)}`);
 
 export const config: WebdriverIO.Config = {
   autoXvfb: !isWayland,
@@ -79,7 +79,7 @@ export const config: WebdriverIO.Config = {
   waitforTimeout: 10_000,
   onComplete: async () => {
     // The folder is named by the launcher, which is the only process that gets here.
-    if (!path.basename(runRoot).startsWith('mangabound-e2e-')) {
+    if (!path.basename(runRoot).startsWith('manga2ink-e2e-')) {
       throw new Error('Refusing to remove a test folder that this suite did not name.');
     }
     // Windows can hold a folder for a moment after the app that used it has gone.

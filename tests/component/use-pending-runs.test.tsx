@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { PendingRunSummary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
@@ -30,7 +30,7 @@ const inUse: WorkflowFailure = {
   said: raw('Stop sharing these books before deleting their pending copies.'),
 };
 
-type ListResult = Awaited<ReturnType<MangaboundBridge['listPendingRuns']>>;
+type ListResult = Awaited<ReturnType<Manga2InkBridge['listPendingRuns']>>;
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
   let resolve: (value: T) => void = () => undefined;
@@ -88,7 +88,7 @@ describe('usePendingRuns', () => {
   it('reads the list again on refresh', async () => {
     const onFailure = vi.fn();
     const listPendingRuns = vi
-      .fn<MangaboundBridge['listPendingRuns']>()
+      .fn<Manga2InkBridge['listPendingRuns']>()
       .mockResolvedValueOnce({ ok: true, value: [runA] })
       .mockResolvedValueOnce({ ok: true, value: [runA, runB] });
     const bridge = inertBridge({ listPendingRuns });
@@ -107,7 +107,7 @@ describe('usePendingRuns', () => {
   it('reports a refresh that fails and keeps the list it had', async () => {
     const onFailure = vi.fn();
     const listPendingRuns = vi
-      .fn<MangaboundBridge['listPendingRuns']>()
+      .fn<Manga2InkBridge['listPendingRuns']>()
       .mockResolvedValueOnce({ ok: true, value: [runA] })
       .mockResolvedValueOnce({ ok: false, error: unreadable });
     const bridge = inertBridge({ listPendingRuns });
@@ -126,7 +126,7 @@ describe('usePendingRuns', () => {
 
   it('removes only the run it deleted, and says it was deleted', async () => {
     const onFailure = vi.fn();
-    const discardPendingRun = vi.fn<MangaboundBridge['discardPendingRun']>(() =>
+    const discardPendingRun = vi.fn<Manga2InkBridge['discardPendingRun']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     const bridge = inertBridge({

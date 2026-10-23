@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '@/renderer/app';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 
 import { createMappingDraft } from '@/domain/mapping';
 
@@ -19,10 +19,10 @@ import { converted, goodTitle, libraryBridge, looseTitle } from './support/libra
 import { raw } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
-const profiles: MangaboundBridge['getDeviceProfiles'] = () =>
+const profiles: Manga2InkBridge['getDeviceProfiles'] = () =>
   Promise.resolve({
     ok: true,
     value: [
@@ -46,7 +46,7 @@ const profiles: MangaboundBridge['getDeviceProfiles'] = () =>
   });
 
 /** Two folders in the queue, so one can have options of its own while the other follows the queue. */
-const twoFolders = (overrides: Partial<MangaboundBridge> = {}): MangaboundBridge =>
+const twoFolders = (overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridge =>
   bridge({
     getDeviceProfiles: profiles,
     chooseInputs: () =>
@@ -67,7 +67,7 @@ const openOptions = async (user: UserEvent, name: string): Promise<void> => {
 describe('the conversion options of one item', () => {
   it('are the queue’s until set, and used for that item only', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(twoFolders({ convert }));
     render(<App />);
     await addFolder(user);
@@ -94,7 +94,7 @@ describe('the conversion options of one item', () => {
 
   it('keep following the queue for every option the item did not set', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(twoFolders({ convert }));
     render(<App />);
     await addFolder(user);
@@ -115,7 +115,7 @@ describe('the conversion options of one item', () => {
 
   it('show that an item has its own, and give them up for the queue’s again', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(twoFolders({ convert }));
     render(<App />);
     await addFolder(user);
@@ -147,7 +147,7 @@ describe('the conversion options of one item', () => {
 
   it('are counted on the page of the queue’s options, and put back for every item there', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(twoFolders({ convert }));
     render(<App />);
     await addFolder(user);
@@ -243,8 +243,8 @@ describe('the conversion options of one item', () => {
 
   it('differ from one item to the next, and are never kept as the queue’s own options', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
-    const saveSettings = vi.fn<MangaboundBridge['saveSettings']>(() =>
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
+    const saveSettings = vi.fn<Manga2InkBridge['saveSettings']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(
@@ -365,7 +365,7 @@ describe('putting an option of one item back', () => {
 
   it('is for each option on its own, whatever kind of control it is', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     installBridge(twoFolders({ convert }));
     render(<App />);
     await addFolder(user);
@@ -424,7 +424,7 @@ describe('putting an option of one item back', () => {
 describe('the conversion options of a title in a library', () => {
   it('are set per title, and sent for the titles they were set for', async () => {
     const user = userEvent.setup();
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({ ok: true, value: [converted('Good Manga', 'good-1')] }),
     );
     installBridge(
@@ -459,7 +459,7 @@ describe('the conversion options of a title in a library', () => {
 
   it('send none for a library whose titles set none', async () => {
     const user = userEvent.setup();
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({ ok: true, value: [converted('Good Manga', 'good-1')] }),
     );
     installBridge(libraryBridge([goodTitle], { convertLibrary }));
@@ -492,7 +492,7 @@ describe('the conversion options of items in a large queue', () => {
 
   it('reach only the folders they were set for among thirty, in the order of the queue', async () => {
     const user = userEvent.setup();
-    const convert = vi.fn<MangaboundBridge['convert']>(bridge().convert);
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     const names = Array.from({ length: 30 }, (_, index) => `Series ${pad(index)}`);
     installBridge(
       bridge({
@@ -567,7 +567,7 @@ describe('the conversion options of items in a large queue', () => {
         issues: [],
       };
     });
-    const convertLibrary = vi.fn<MangaboundBridge['convertLibrary']>(() =>
+    const convertLibrary = vi.fn<Manga2InkBridge['convertLibrary']>(() =>
       Promise.resolve({
         ok: true,
         value: titles.map((entry, index) => converted(entry.title, `book-${pad(index)}`)),
@@ -619,7 +619,7 @@ describe('the conversion options of an item that failed', () => {
   it('stay with a folder that failed, and are the ones it is run with again', async () => {
     const user = userEvent.setup();
     let secondWorks = false;
-    const convert = vi.fn<MangaboundBridge['convert']>((command) => {
+    const convert = vi.fn<Manga2InkBridge['convert']>((command) => {
       if (command.sessionId === 'session-second' && !secondWorks) {
         return Promise.resolve({
           ok: false as const,
@@ -693,7 +693,7 @@ describe('the conversion options of an item that failed', () => {
     const user = userEvent.setup();
     const secondTitle = { ...goodTitle, title: 'Second Manga' };
     const convertLibrary = vi
-      .fn<MangaboundBridge['convertLibrary']>()
+      .fn<Manga2InkBridge['convertLibrary']>()
       .mockResolvedValueOnce({
         ok: true,
         value: [
@@ -757,7 +757,7 @@ describe('the conversion options of an item that failed', () => {
 
 describe('the language field on the details of an item', () => {
   /** The folder names say Portuguese, so the details page has a language to point out. */
-  const declaringPortuguese: MangaboundBridge['inspectInput'] = (id) => {
+  const declaringPortuguese: Manga2InkBridge['inspectInput'] = (id) => {
     const base = inspection(id);
     return Promise.resolve(
       base.ok && base.value.kind === 'folder'

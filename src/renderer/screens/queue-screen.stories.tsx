@@ -206,7 +206,7 @@ export const LowSpace: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/free where Mangabound works/u)).toBeVisible();
+    await expect(canvas.getByText(/free where Manga2Ink works/u)).toBeVisible();
     await expect(canvas.getByRole('button', { name: /^Process/u })).toBeEnabled();
   },
 };

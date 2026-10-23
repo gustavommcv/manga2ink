@@ -1,6 +1,6 @@
 ---
 title: 'Salvamento e livros prontos'
-description: 'Salve os mangás convertidos pelo Mangabound, entenda os avisos da conversão, abra ou compartilhe os livros e veja o que permanece após reiniciar.'
+description: 'Salve os mangás convertidos pelo Manga2Ink, entenda os avisos da conversão, abra ou compartilhe os livros e veja o que permanece após reiniciar.'
 ---
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
@@ -11,7 +11,7 @@ Use **Salvar como…** ao lado de um livro para escolher nome e destino. Para v�
 
 Você pode salvar de novo enquanto os livros pendentes ainda estiverem lá. **Salvar todos em uma pasta…** nunca substitui arquivos existentes. Em vez disso, ele escolhe um nome numerado livre, então salvar várias vezes pode deixar cópias extras. **Salvar como…** usa a janela de salvar do seu sistema, que pergunta antes de sobrescrever um arquivo.
 
-Se o salvamento falhar ou mostrar um aviso, leia a mensagem e tente de novo. O Mangabound também registra cada livro salvo em uma lista dentro da pasta de destino, que é a que o compartilhamento usa. Um livro pode ter sido copiado mesmo que esse registro tenha falhado, então confira a pasta antes de copiá-lo de novo. A cópia pendente continua disponível.
+Se o salvamento falhar ou mostrar um aviso, leia a mensagem e tente de novo. O Manga2Ink também registra cada livro salvo em uma lista dentro da pasta de destino, que é a que o compartilhamento usa. Um livro pode ter sido copiado mesmo que esse registro tenha falhado, então confira a pasta antes de copiá-lo de novo. A cópia pendente continua disponível.
 
 <TutorialImage
   name="generated/save-results"
@@ -42,7 +42,7 @@ A etapa que junta os capítulos em volumes, feita pelo mangabind, acrescenta avi
 - **Arquivos de um capítulo que não são imagens de página ficaram de fora**: os nomes desses arquivos não dizem que são imagens (JPEG, PNG, WebP, GIF, BMP, AVIF, JPEG XL ou TIFF). Se um for uma página, dê a ele a extensão do seu formato e converta de novo. Arquivos ocultos do sistema, como `.DS_Store`, ficam de fora sem aviso.
 - **Páginas que se expandem demais ficaram de fora**: uma página dentro de um CBZ declara que, ao ser descompactada, ocupa muito mais do que uma página poderia ocupar (mais de 256 MiB, ou mais de mil vezes o tamanho dela no arquivo). É assim que parece um arquivo feito para encher a memória de um computador, por isso ele ficou de fora.
 
-O Mangabound acrescenta um aviso próprio:
+O Manga2Ink acrescenta um aviso próprio:
 
 - **Os volumes que você editou não foram guardados com a pasta**: os livros seguem os volumes que você editou, mas eles não puderam ser salvos no `mangabind.json` da pasta do mangá, porque a pasta não permite gravação ou esse arquivo não é um JSON válido. Da próxima vez que adicionar a pasta, edite os volumes de novo. Veja [Organização de volumes](../mapping-editor/).
 
@@ -56,29 +56,31 @@ Se um mangapress mais novo enviar um tipo de aviso que esta versão não conhece
 
 ## O que permanece após reiniciar?
 
-Os livros pendentes ficam guardados nos dados do próprio Mangabound, no seu computador, ou na pasta de trabalho que você escolheu (veja **Onde o Mangabound trabalha?** abaixo), e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Livros prontos**, na fila. **Ver livros** abre os resultados dela.
+Os livros pendentes ficam guardados nos dados do próprio Manga2Ink, no seu computador, ou na pasta de trabalho que você escolheu (veja **Onde o Manga2Ink trabalha?** abaixo), e não em uma pasta temporária. Uma conversão que não foi salva, foi salva só em parte ou tem avisos continua em **Livros prontos**, na fila. **Ver livros** abre os resultados dela.
 
-Se você fechar o Mangabound enquanto uma conversão está em andamento, ele pergunta antes, porque a conversão para e os livros que ela não terminou são perdidos. Escolha **Continuar convertendo** para continuar. No macOS, fechar só a janela não a interrompe.
+Se você fechar o Manga2Ink enquanto uma conversão está em andamento, ele pergunta antes, porque a conversão para e os livros que ela não terminou são perdidos. Escolha **Continuar convertendo** para continuar. No macOS, fechar só a janela não a interrompe.
 
-Quando todos os livros de uma conversão concluída foram salvos e registrados, o Mangabound pode limpar as cópias pendentes dela ao fechar o aplicativo. As cópias que você salvou continuam onde você as salvou. Faça os seus próprios backups: os livros pendentes não são uma biblioteca permanente.
+Quando todos os livros de uma conversão concluída foram salvos e registrados, o Manga2Ink pode limpar as cópias pendentes dela ao fechar o aplicativo. As cópias que você salvou continuam onde você as salvou. Faça os seus próprios backups: os livros pendentes não são uma biblioteca permanente.
 
 <TutorialImage
   name="generated/ready-books"
   alt="Livros prontos com ações para reabrir ou excluir a conversão pendente."
 />
 
-## Onde o Mangabound trabalha?
+## Onde o Manga2Ink trabalha?
 
-Por padrão, o Mangabound monta os volumes na pasta temporária do sistema enquanto converte, e guarda os livros prontos na própria pasta de dados dele até você salvá-los. Em um computador cuja pasta temporária é pequena, ou cujo disco está quase cheio, uma série longa pode ficar sem espaço.
+Por padrão, o Manga2Ink monta os volumes na pasta temporária do sistema enquanto converte, e guarda os livros prontos na própria pasta de dados dele até você salvá-los. Em um computador cuja pasta temporária é pequena, ou cujo disco está quase cheio, uma série longa pode ficar sem espaço.
 
-Para usar um disco com mais espaço, abra **Configurações do app** (a engrenagem na barra de título, ou Ctrl+, no Windows e no Linux e Cmd+, no Mac), escolha **Processamento** e selecione **Escolher uma pasta…**. O Mangabound cria duas pastas dentro da que você escolher: **Pending**, para os livros prontos, e **Scratch**, para os volumes que ele monta durante a conversão. A aba mostra os dois caminhos e quanto espaço está livre.
+Até a versão 0.1.0-alpha.17, o app se chamava Mangabound. Na primeira vez que o Manga2Ink abre, ele move as configurações do Mangabound e os livros que ainda não tinham sido salvos para as próprias pastas, sem perder nada.
 
-- A mudança vale para a próxima conversão. Os livros que já estavam esperando ficam onde estão e continuam em **Livros prontos**: você ainda pode salvá-los ou apagá-los, e compartilhá-los pelos resultados deles. A aba lista as pastas que ainda guardam livros, e o Mangabound deixa de procurar em uma delas quando ela fica vazia.
+Para usar um disco com mais espaço, abra **Configurações do app** (a engrenagem na barra de título, ou Ctrl+, no Windows e no Linux e Cmd+, no Mac), escolha **Processamento** e selecione **Escolher uma pasta…**. O Manga2Ink cria duas pastas dentro da que você escolher: **Pending**, para os livros prontos, e **Scratch**, para os volumes que ele monta durante a conversão. A aba mostra os dois caminhos e quanto espaço está livre.
+
+- A mudança vale para a próxima conversão. Os livros que já estavam esperando ficam onde estão e continuam em **Livros prontos**: você ainda pode salvá-los ou apagá-los, e compartilhá-los pelos resultados deles. A aba lista as pastas que ainda guardam livros, e o Manga2Ink deixa de procurar em uma delas quando ela fica vazia.
 - Você não pode mudar a pasta enquanto uma conversão ou um compartilhamento está em andamento.
-- Se o disco da pasta não está conectado, o Mangabound avisa e não converte até que esteja, em vez de trabalhar em silêncio em outro lugar. **Usar a pasta padrão** deixa tudo como era.
+- Se o disco da pasta não está conectado, o Manga2Ink avisa e não converte até que esteja, em vez de trabalhar em silêncio em outro lugar. **Usar a pasta padrão** deixa tudo como era.
 - Os livros que você salvou em outra pasta não são afetados.
 
-Antes de você apertar **Process**, o Mangabound estima quanto espaço a fila pode ocupar (cerca de um megabyte por página, em cada lugar que ele usa) e compara com o que está livre. Se um disco tem menos do que isso, ou menos de 1 GB, um aviso abaixo do botão diz quanto está livre e quanto a fila pode ocupar. É só um aviso: a estimativa é um palpite, e **Process** continua funcionando. Os arquivos de quadrinhos (.cbz) não entram na conta, porque suas páginas só são conhecidas quando são abertos.
+Antes de você apertar **Process**, o Manga2Ink estima quanto espaço a fila pode ocupar (cerca de um megabyte por página, em cada lugar que ele usa) e compara com o que está livre. Se um disco tem menos do que isso, ou menos de 1 GB, um aviso abaixo do botão diz quanto está livre e quanto a fila pode ocupar. É só um aviso: a estimativa é um palpite, e **Process** continua funcionando. Os arquivos de quadrinhos (.cbz) não entram na conta, porque suas páginas só são conhecidas quando são abertos.
 
 ## Exclua livros pendentes
 
@@ -86,21 +88,21 @@ Na seção **Livros prontos** da fila, cada grupo de conversões tem uma ação 
 
 Ela não remove os seus arquivos originais nem as cópias que você salvou em outra pasta. Não é possível excluir enquanto uma conversão está em andamento, nem enquanto os livros daquele grupo estão sendo salvos ou compartilhados. Pare o compartilhamento, ou espere a operação terminar, e tente de novo.
 
-Para limpar vários de uma vez, abra **Configurações do app**, escolha **Processamento** e veja **Livros esperando para serem salvos**: a aba diz quantos livros estão esperando, em quantas conversões, e quanto espaço ocupam. Escolha 7, 30 ou 90 dias e selecione **Apagar…**. O Mangabound diz quantas conversões, quantos livros e quanto espaço isso removeria, e só apaga depois que você confirma. Ele pega as conversões em que nada mudou há todo esse tempo, inteiras: os livros delas que você não salvou também se perdem. Uma conversão cujos livros foram todos salvos é removida quando o Mangabound fecha, então não precisa fazer isso à mão.
+Para limpar vários de uma vez, abra **Configurações do app**, escolha **Processamento** e veja **Livros esperando para serem salvos**: a aba diz quantos livros estão esperando, em quantas conversões, e quanto espaço ocupam. Escolha 7, 30 ou 90 dias e selecione **Apagar…**. O Manga2Ink diz quantas conversões, quantos livros e quanto espaço isso removeria, e só apaga depois que você confirma. Ele pega as conversões em que nada mudou há todo esse tempo, inteiras: os livros delas que você não salvou também se perdem. Uma conversão cujos livros foram todos salvos é removida quando o Manga2Ink fecha, então não precisa fazer isso à mão.
 
 :::caution[Salve primeiro]
 Se a conversão pendente for a sua única cópia, **Apagar** joga fora os livros dela. Para tê-los de volta, você teria que processar os arquivos originais de novo.
 :::
 
-## Enquanto o Mangabound converte
+## Enquanto o Manga2Ink converte
 
-Três escolhas em **Configurações do app**, em **Processamento**, dizem o que o Mangabound faz enquanto uma conversão roda. Uma mudança vale na próxima vez que você pressionar **Processar**: ela não mexe em uma conversão que já está rodando. As duas de baixo vêm ligadas.
+Três escolhas em **Configurações do app**, em **Processamento**, dizem o que o Manga2Ink faz enquanto uma conversão roda. Uma mudança vale na próxima vez que você pressionar **Processar**: ela não mexe em uma conversão que já está rodando. As duas de baixo vêm ligadas.
 
 - **Manter o computador acordado durante a conversão** impede o computador de dormir até a conversão terminar. A tela ainda pode apagar. Isso vale para o computador parado: fechar a tampa de um notebook ainda pode fazê-lo dormir.
-- **Avisar quando uma conversão longa terminar** mostra uma notificação do seu sistema quando uma conversão que levou mais de 30 segundos termina e nenhuma janela do Mangabound está em primeiro plano. Ela diz quantos livros ficaram prontos, ou que algumas conversões falharam. Ao selecionar a notificação, o Mangabound volta para a frente. Nada aparece se você mesmo parou a conversão ou se estava olhando a janela.
+- **Avisar quando uma conversão longa terminar** mostra uma notificação do seu sistema quando uma conversão que levou mais de 30 segundos termina e nenhuma janela do Manga2Ink está em primeiro plano. Ela diz quantos livros ficaram prontos, ou que algumas conversões falharam. Ao selecionar a notificação, o Manga2Ink volta para a frente. Nada aparece se você mesmo parou a conversão ou se estava olhando a janela.
 
-A notificação é do seu sistema, então só aparece se as notificações estiverem permitidas para o Mangabound.
+A notificação é do seu sistema, então só aparece se as notificações estiverem permitidas para o Manga2Ink.
 
 **Conversões em paralelo** diz quantos livros de um mesmo título são convertidos ao mesmo tempo: os volumes de uma pasta, ou de um título de uma biblioteca. Os itens da fila continuam indo um depois do outro. O **Automático** calcula o número pelo computador, no máximo 3: um para cada 4 processadores e um para cada 4 GiB de memória, o que der menos, e nunca menos que 1. Um computador com 8 processadores e 8 GiB fica com 2. A lista mostra a que o **Automático** chega no seu computador (como "Automático (3 neste computador)") e, depois, os números de 1 até o máximo que o seu computador comporta: um para cada 2 threads de processador e um para cada 2 GiB de memória, o que der menos, e nunca mais de 12 (6 em um computador de 12 threads e 32 GiB). O **Automático** nunca passa de 3, mas um número que você escolher pode. Um número guardado em um computador maior é reduzido ao que este comporta. Mais ao mesmo tempo só ajuda enquanto os processadores têm trabalho sobrando: em um computador com 12 threads de processador, 3 ao mesmo tempo terminaram uma série cerca de 15% a 20% mais cedo que 1, e passar de 3 não ganhou nada. Um computador com muito mais threads pode ganhar com 4, 6 ou 8, mas isso não foi medido em um. Mais ao mesmo tempo também usa mais memória, cerca de meio gigabyte para cada um nesse teste. Se o computador ficar lento durante a conversão, escolha **Automático** ou 1. Um livro convertido sozinho não é afetado.
 
-No Windows e no Linux, fechar a janela logo depois de pressionar **Processar**, ou entre dois itens da fila, pergunta antes, como já acontece enquanto um livro é feito. No Mac, fechar a janela deixa o Mangabound aberto e a conversão rodando (ele só pergunta ao sair), mas o computador deixa de ser mantido acordado quando a janela some.
+No Windows e no Linux, fechar a janela logo depois de pressionar **Processar**, ou entre dois itens da fila, pergunta antes, como já acontece enquanto um livro é feito. No Mac, fechar a janela deixa o Manga2Ink aberto e a conversão rodando (ele só pergunta ao sair), mas o computador deixa de ser mantido acordado quando a janela some.

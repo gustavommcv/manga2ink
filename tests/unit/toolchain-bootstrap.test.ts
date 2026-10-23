@@ -42,7 +42,7 @@ vi.mock('electron', () => ({
     get isPackaged() {
       return fake.isPackaged;
     },
-    getAppPath: () => '/opt/mangabound/app',
+    getAppPath: () => '/opt/manga2ink/app',
   },
 }));
 vi.mock('node:os', async (importOriginal) => ({
@@ -108,7 +108,7 @@ beforeEach(() => {
   fake.verify.mockReset();
   Object.defineProperty(process, 'resourcesPath', {
     configurable: true,
-    value: path.join(path.sep, 'opt', 'mangabound', 'resources'),
+    value: path.join(path.sep, 'opt', 'manga2ink', 'resources'),
   });
 });
 afterEach(() => {
@@ -125,7 +125,7 @@ describe('where the bundled tools are looked for', () => {
     expect(fake.verify).toHaveBeenCalledExactlyOnceWith({
       arch: process.arch,
       platform: process.platform,
-      toolchainRoot: path.join('/opt/mangabound/app', 'vendor', 'toolchain'),
+      toolchainRoot: path.join('/opt/manga2ink/app', 'vendor', 'toolchain'),
     });
   });
 
@@ -138,7 +138,7 @@ describe('where the bundled tools are looked for', () => {
     expect(fake.verify).toHaveBeenCalledExactlyOnceWith({
       arch: process.arch,
       platform: process.platform,
-      toolchainRoot: path.join(path.sep, 'opt', 'mangabound', 'resources', 'toolchain'),
+      toolchainRoot: path.join(path.sep, 'opt', 'manga2ink', 'resources', 'toolchain'),
     });
   });
 });
@@ -152,7 +152,7 @@ describe('a toolchain that verified', () => {
 
     const status = await bootstrapToolchain(context);
 
-    const root = path.join('/opt/mangabound/app', 'vendor', 'toolchain', 'linux-x64');
+    const root = path.join('/opt/manga2ink/app', 'vendor', 'toolchain', 'linux-x64');
     expect(status).toEqual(ready('linux-x64'));
     const [mangabindCli] = madeOf('mangabind-cli');
     const [mangapressCli] = madeOf('mangapress-cli');
@@ -200,7 +200,7 @@ describe('a toolchain that verified', () => {
 
     await bootstrapToolchain(emptyContext());
 
-    const root = path.join('/opt/mangabound/app', 'vendor', 'toolchain', 'win32-x64');
+    const root = path.join('/opt/manga2ink/app', 'vendor', 'toolchain', 'win32-x64');
     expect(madeOf('mangabind-cli')[0]?.args[0]).toBe(path.join(root, 'mangabind.exe'));
     expect(madeOf('mangapress-cli')[0]?.args[0]).toBe(path.join(root, 'mangapress.exe'));
   });

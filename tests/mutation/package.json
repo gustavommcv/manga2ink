@@ -1,5 +1,5 @@
 {
-  "name": "mangabound-mutation",
+  "name": "manga2ink-mutation",
   "private": true,
   "description": "Mutation testing of the layers that hold logic: domain, application, library, adapters, OPDS, main and preload. It is a package of its own, as website/ is: Stryker needs Babel 8, and none of it should reach the app's lockfile.",
   "type": "module",

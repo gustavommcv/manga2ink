@@ -1,10 +1,10 @@
 {
-  "name": "mangabound",
-  "productName": "Mangabound",
+  "name": "manga2ink",
+  "productName": "Manga2Ink",
   "version": "0.1.0-alpha.17",
   "private": true,
   "description": "A desktop workflow for binding, converting, and delivering manga to e-readers.",
-  "author": "Mangabound contributors",
+  "author": "Manga2Ink contributors",
   "license": "MIT",
   "main": ".webpack/main/index.cjs",
   "scripts": {

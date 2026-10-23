@@ -1,11 +1,11 @@
 ---
 title: 'Local sharing'
-description: 'Share converted manga from Mangabound with KOReader over your local network through an OPDS catalog: pick the network, start sharing, copy the address.'
+description: 'Share converted manga from Manga2Ink with KOReader over your local network through an OPDS catalog: pick the network, start sharing, copy the address.'
 ---
 
 import TutorialImage from '../../../components/TutorialImage.astro';
 
-Share books with KOReader over your local network. Open Mangabound's **OPDS catalog** on the reader and choose which books to download.
+Share books with KOReader over your local network. Open Manga2Ink's **OPDS catalog** on the reader and choose which books to download.
 
 ## Start sharing
 
@@ -13,9 +13,9 @@ Share books with KOReader over your local network. Open Mangabound's **OPDS cata
 
    **Share these books** shares every ready book: those of this conversion and those of any earlier conversion still under **Ready books**. A book you convert while sharing is running also shows up on the reader. While books are shared, you cannot delete a pending conversion. Stop sharing first.
 
-2. Select the **Network interface** for the network your reader can reach. Ethernet is fine even if the reader uses Wi-Fi. Avoid a VPN adapter unless both devices can reach that network. Mangabound remembers your choice.
+2. Select the **Network interface** for the network your reader can reach. Ethernet is fine even if the reader uses Wi-Fi. Avoid a VPN adapter unless both devices can reach that network. Manga2Ink remembers your choice.
 3. Optionally fill in both **Username** and **Password**, or leave both empty.
-4. Select **Start sharing**, then **Copy** the address the app displays. Keep Mangabound open until downloads finish.
+4. Select **Start sharing**, then **Copy** the address the app displays. Keep Manga2Ink open until downloads finish.
 
 The address looks like `http://192.168.1.150:48123/`. Use the one shown in your app.
 
@@ -36,7 +36,7 @@ Choose the network interface your reader can reach and use **Start sharing**.
   alt="Network interface selection, optional credentials and Start sharing."
 />
 
-Use the catalog address shown after sharing starts. Keep Mangabound open during downloads.
+Use the catalog address shown after sharing starts. Keep Manga2Ink open during downloads.
 
 <TutorialImage
   name="generated/share-panel"
@@ -51,11 +51,11 @@ Sharing uses HTTP. Optional Basic authentication restricts access but does not e
 
 Continue with [connecting KOReader](../connecting/).
 
-Use **Stop sharing** when you are finished. It ends right away, and a book that is still downloading at that moment is cut off. Mangabound also drops a connection that has been silent for a minute, for example an e-reader that went to sleep in the middle of a download.
+Use **Stop sharing** when you are finished. It ends right away, and a book that is still downloading at that moment is cut off. Manga2Ink also drops a connection that has been silent for a minute, for example an e-reader that went to sleep in the middle of a download.
 
 ## If a book does not show up
 
-Mangabound shares only files that are inside the shared folder. A subfolder that is a link (a symlink or a junction) to a place outside it is not followed, so its books are not shared, and the app's log says which book was left out. Share the folder where the books really are instead.
+Manga2Ink shares only files that are inside the shared folder. A subfolder that is a link (a symlink or a junction) to a place outside it is not followed, so its books are not shared, and the app's log says which book was left out. Share the folder where the books really are instead.
 
 ## If your reader cannot connect
 
@@ -68,4 +68,4 @@ Check that:
 
 Guest Wi-Fi with client isolation, and VPNs, can block access even when both devices have internet. If your computer's IP address changes, update the catalog address in KOReader.
 
-Mangabound answers only to an address of the computer it runs on: the numbers it shows (such as `192.168.1.150`), `localhost` or the computer's own name. A request that arrives under any other name is refused. This keeps a web page you happen to visit from reaching your catalog through your browser. If your router gives the computer a name of its own and your reader uses it, use the address shown in the app instead. The app's log says which name was refused.
+Manga2Ink answers only to an address of the computer it runs on: the numbers it shows (such as `192.168.1.150`), `localhost` or the computer's own name. A request that arrives under any other name is refused. This keeps a web page you happen to visit from reaching your catalog through your browser. If your router gives the computer a name of its own and your reader uses it, use the address shown in the app instead. The app's log says which name was refused.

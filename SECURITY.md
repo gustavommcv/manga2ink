@@ -2,15 +2,15 @@
 
 ## Supported versions
 
-Mangabound is in alpha, and only the latest published release is supported. Security fixes are made on `main` and shipped in a new release; older alpha releases do not receive separate patches. Where possible, check whether the problem still occurs in the latest release before reporting it. Reports about development builds are also welcome: include the commit SHA.
+Manga2Ink is in alpha, and only the latest published release is supported. Security fixes are made on `main` and shipped in a new release; older alpha releases do not receive separate patches. Where possible, check whether the problem still occurs in the latest release before reporting it. Reports about development builds are also welcome: include the commit SHA.
 
 ## Report a vulnerability privately
 
-Use GitHub's [private vulnerability reporting form](https://github.com/gustavommcv/mangabound/security/advisories/new). You can also find it under **Security → Report a vulnerability** in this repository. Reports go to the repository maintainers, not to a public issue.
+Use GitHub's [private vulnerability reporting form](https://github.com/gustavommcv/manga2ink/security/advisories/new). You can also find it under **Security → Report a vulnerability** in this repository. Reports go to the repository maintainers, not to a public issue.
 
 Do not disclose a suspected vulnerability in a public issue, pull request, or discussion. Include:
 
-- The Mangabound version or commit, operating system, and installation type.
+- The Manga2Ink version or commit, operating system, and installation type.
 - Steps to reproduce the problem and its security impact.
 - The affected component, if known: the desktop app, local sharing, a bundled tool, or the documentation site.
 - A minimal proof of concept or redacted diagnostic output, if available.
@@ -25,4 +25,4 @@ If the problem is in mangabind or mangapress, identify the tool and version in t
 
 The website's dependency-audit records and exception policy live in [website/SECURITY.md](website/SECURITY.md). That document does not replace this private reporting channel.
 
-For ordinary bugs and feature requests, use the [issue templates](https://github.com/gustavommcv/mangabound/issues/new/choose) instead.
+For ordinary bugs and feature requests, use the [issue templates](https://github.com/gustavommcv/manga2ink/issues/new/choose) instead.

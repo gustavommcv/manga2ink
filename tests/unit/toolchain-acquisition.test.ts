@@ -83,12 +83,12 @@ async function cachedToolchain() {
 }
 
 beforeEach(async () => {
-  workspace = await mkdtemp(path.join(tmpdir(), 'mangabound-toolchain-test-'));
+  workspace = await mkdtemp(path.join(tmpdir(), 'manga2ink-toolchain-test-'));
 });
 
 afterEach(async () => {
   expect(path.dirname(workspace)).toBe(path.resolve(tmpdir()));
-  expect(path.basename(workspace)).toMatch(/^mangabound-toolchain-test-/u);
+  expect(path.basename(workspace)).toMatch(/^manga2ink-toolchain-test-/u);
   await rm(workspace, { recursive: true, force: true });
 });
 

@@ -88,7 +88,7 @@ test.describe('at the size the window opens at', () => {
 
   test('the warning of too little room stays above the Process button', async ({ page }) => {
     await page.goto('/iframe.html?id=workflows-queue--low-space&viewMode=story');
-    await expect(page.getByText(/free where Mangabound works/u)).toBeVisible();
+    await expect(page.getByText(/free where Manga2Ink works/u)).toBeVisible();
     await page.evaluate(async () => document.fonts.ready);
     await expect(page.locator('#storybook-root')).toHaveScreenshot('queue-low-space.png');
   });
@@ -419,7 +419,7 @@ test('a missing desktop bridge presents readable recovery instructions', async (
   );
   await expect(page.getByRole('alert', { name: 'Startup error' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Mangabound could not start correctly.' }),
+    page.getByRole('heading', { name: 'Manga2Ink could not start correctly.' }),
   ).toBeVisible();
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('startup-error.png');

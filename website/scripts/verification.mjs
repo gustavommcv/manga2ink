@@ -200,12 +200,12 @@ export function auditSearchData(pages, { site, base, languages = siteLanguages }
           type === 'BreadcrumbList'
             ? {
                 itemListElement: [
-                  { '@type': 'ListItem', position: 1, name: 'Mangabound', item: home },
+                  { '@type': 'ListItem', position: 1, name: 'Manga2Ink', item: home },
                   { '@type': 'ListItem', position: 2, name: $('h1').text().trim(), item: address },
                 ],
               }
             : {
-                name: 'Mangabound',
+                name: 'Manga2Ink',
                 url: address,
                 description,
                 inLanguage: type === 'WebSite' ? lang : appLanguages,

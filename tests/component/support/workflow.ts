@@ -4,7 +4,7 @@ import { expect } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultAppSettings } from '@/domain/app-settings';
 import { defaultPreferences } from '@/domain/preferences';
-import { type MangaboundBridge } from '@/shared/runtime-info';
+import { type Manga2InkBridge } from '@/shared/runtime-info';
 import { type RestoredSettings } from '@/shared/settings-contract';
 import { defaultProcessingStatus, roomyWorkingSpace, sixCoreCapacity } from './processing';
 import {
@@ -80,7 +80,7 @@ export function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => voi
   return { promise, resolve };
 }
 
-export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBridge {
+export function bridge(overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridge {
   return {
     listCovers: () => Promise.resolve({ ok: true, value: [] }),
     chooseCover: () => Promise.resolve({ ok: true, value: null }),
@@ -179,15 +179,15 @@ export function bridge(overrides: Partial<MangaboundBridge> = {}): MangaboundBri
 
 /** A bridge that hands back these settings, as if they had been kept from the last session. */
 export const keptSettings =
-  (kept: Partial<RestoredSettings>): MangaboundBridge['loadSettings'] =>
+  (kept: Partial<RestoredSettings>): Manga2InkBridge['loadSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
       value: { preferences: defaultPreferences, notices: [], ...kept },
     });
 
-export function installBridge(value: MangaboundBridge): void {
-  Object.defineProperty(window, 'mangabound', { configurable: true, value });
+export function installBridge(value: Manga2InkBridge): void {
+  Object.defineProperty(window, 'manga2ink', { configurable: true, value });
 }
 
 /**

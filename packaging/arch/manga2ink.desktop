@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Mangabound
+Name=Manga2Ink
 Comment=A desktop workflow for binding, converting, and delivering manga to e-readers
-Exec=mangabound %U
-Icon=mangabound
+Exec=manga2ink %U
+Icon=manga2ink
 Terminal=false
 Categories=Graphics;Utility;
-StartupWMClass=Mangabound
+StartupWMClass=Manga2Ink

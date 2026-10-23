@@ -10,12 +10,12 @@ import {
 } from '@/renderer/components/settings/app-settings-tabs';
 import { languages, defaultAppSettings } from '@/domain/app-settings';
 import { messagesFor } from '@/i18n/messages';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 
 const reading =
-  (language: 'en' | 'pt-BR'): MangaboundBridge['loadAppSettings'] =>
+  (language: 'en' | 'pt-BR'): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,

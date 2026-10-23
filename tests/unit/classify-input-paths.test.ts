@@ -28,7 +28,7 @@ const fakeStat = (implementation: (target: string) => Promise<unknown>): { stat:
 
 describe('classifying input paths', () => {
   it('reads the real disk by default: folders and .cbz files are accepted, anything else is not', async () => {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'mangabound-classify-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-classify-'));
     temporaryDirectories.push(root);
     const folder = path.join(root, 'Chainsaw Man');
     const cbz = path.join(root, 'Vagabond.CBZ');

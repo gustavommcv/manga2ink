@@ -1,6 +1,6 @@
 ---
 title: 'Organização de volumes'
-description: 'Agrupe capítulos de mangá em volumes no Mangabound: use os números de volume dos nomes dos arquivos, atribua à mão ou confira uma sugestão do MangaDex.'
+description: 'Agrupe capítulos de mangá em volumes no Manga2Ink: use os números de volume dos nomes dos arquivos, atribua à mão ou confira uma sugestão do MangaDex.'
 ---
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
@@ -53,7 +53,7 @@ Um capítulo cuja pasta diz o volume no nome, como `Vol.02 Ch.010`, fica nesse v
 
 ## O mesmo capítulo duas vezes
 
-Às vezes uma pasta traz o mesmo capítulo de dois grupos, por exemplo `Ch.0002 [G1]` e `Ch.0002 [G2]`. O Mangabound não consegue escolher entre as cópias, então deixa **todas** de fora do livro. Colocar uma delas em um volume não muda isso. O editor mostra um erro, **Chapter 2 is in the folder more than once**, até você remover todas as cópias menos uma da pasta e adicionar a pasta de novo.
+Às vezes uma pasta traz o mesmo capítulo de dois grupos, por exemplo `Ch.0002 [G1]` e `Ch.0002 [G2]`. O Manga2Ink não consegue escolher entre as cópias, então deixa **todas** de fora do livro. Colocar uma delas em um volume não muda isso. O editor mostra um erro, **Chapter 2 is in the folder more than once**, até você remover todas as cópias menos uma da pasta e adicionar a pasta de novo.
 
 Se um livro for feito mesmo assim e algo tiver ficado de fora, os resultados avisam abaixo do livro. Por exemplo, eles podem dizer que ficaram de fora capítulos com mais de uma cópia, capítulos que faltam dentro de um volume, capítulos sem páginas ou links que levam para fora da pasta. Esses avisos estão listados em [Salvamento e livros prontos](../exporting/#avisos-sobre-os-livros).
 
@@ -61,7 +61,7 @@ Um link em uma pasta de mangá só é seguido quando leva a um arquivo dentro de
 
 ## Pastas cujo nome não é um nome de capítulo
 
-O Mangabound procura um número de capítulo no nome de cada pasta. Uma pasta cujo nome ele não consegue ler (`Omake`, `Ch.004 [GroupA]` ou um nome em outro alfabeto sem número) não entra em nenhum volume nem em nenhum livro, e o editor não consegue colocá-la, porque não sabe qual capítulo ela é. A linha da fila e o editor listam essas pastas pelo nome em **Pastas deixadas de fora**.
+O Manga2Ink procura um número de capítulo no nome de cada pasta. Uma pasta cujo nome ele não consegue ler (`Omake`, `Ch.004 [GroupA]` ou um nome em outro alfabeto sem número) não entra em nenhum volume nem em nenhum livro, e o editor não consegue colocá-la, porque não sabe qual capítulo ela é. A linha da fila e o editor listam essas pastas pelo nome em **Pastas deixadas de fora**.
 
 Renomeie as pastas para incluir um número de capítulo, por exemplo `Ch.005`, e adicione a pasta de novo. Em uma biblioteca, a linha da fila mostra cada título com as pastas que ficaram de fora dele, e o editor desse título as lista. Depois de renomear, adicione a biblioteca de novo.
 
@@ -99,12 +99,12 @@ Confira os volumes sugeridos antes de confirmar ou editar a organização.
 
 ## Pulando o agrupamento
 
-**Pular o agrupamento** aparece quando o Mangabound pode converter sem reagrupar. Ele fica desativado em **Criar um livro para a série**, porque esse modo precisa dos volumes para pôr cada capítulo dentro do seu volume: no índice de um EPUB, nos marcadores de um PDF ou em pastas num CBZ.
+**Pular o agrupamento** aparece quando o Manga2Ink pode converter sem reagrupar. Ele fica desativado em **Criar um livro para a série**, porque esse modo precisa dos volumes para pôr cada capítulo dentro do seu volume: no índice de um EPUB, nos marcadores de um PDF ou em pastas num CBZ.
 
 ## Onde os seus volumes ficam guardados
 
 O editor passa os seus volumes ao mangabind em um [formato de metadados documentado](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md). Você nunca precisa editar esse arquivo JSON.
 
-Quando você muda os volumes que o mangabind propôs, o Mangabound também os salva na pasta do mangá, no `mangabind.json` dela, para que estejam lá da próxima vez que você adicionar a pasta. Se a pasta não permitir gravação, ou se o `mangabind.json` dela não for um JSON válido, os livros são feitos mesmo assim com os seus volumes, e um aviso abaixo deles, **Os volumes que você editou não foram guardados com a pasta**, diz que você vai precisar editá-los de novo da próxima vez. Um `mangabind.json` que não é um JSON válido fica como estava.
+Quando você muda os volumes que o mangabind propôs, o Manga2Ink também os salva na pasta do mangá, no `mangabind.json` dela, para que estejam lá da próxima vez que você adicionar a pasta. Se a pasta não permitir gravação, ou se o `mangabind.json` dela não for um JSON válido, os livros são feitos mesmo assim com os seus volumes, e um aviso abaixo deles, **Os volumes que você editou não foram guardados com a pasta**, diz que você vai precisar editá-los de novo da próxima vez. Um `mangabind.json` que não é um JSON válido fica como estava.
 
 Um título de uma biblioteca é diferente: esse arquivo é o modo como o mangabind recebe os volumes dele. Se ele não puder ser salvo, **Confirmar mapeamento** avisa, e o título continua precisando de volumes até a pasta permitir gravação.

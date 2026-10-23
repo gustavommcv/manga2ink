@@ -41,7 +41,7 @@ const packageDocument = (filePath: string): Promise<string> =>
 
 describe('packaged title, author and language of a book', () => {
   it('titles each volume after the series title typed for the item, with its author and language', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-book-details-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-book-details-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');
@@ -93,7 +93,7 @@ describe('packaged title, author and language of a book', () => {
 
 describe('packaged author and language kept with a folder', () => {
   it('are written next to the chapters, found again when the folder is added again, and taken away when cleared', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-kept-details-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-kept-details-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');
@@ -227,7 +227,7 @@ function jpegSize(jpeg: Buffer): { readonly width: number; readonly height: numb
 
 describe('packaged cover of the person’s own', () => {
   it('is picked for one volume, kept by the app without the original, and made that book’s cover', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-covers-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-covers-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     const libraryPath = path.join(testRoot, 'library');
@@ -263,7 +263,7 @@ describe('packaged cover of the person’s own', () => {
 
     // The app has its own copy: the original can go before the books are made.
     await rm(picked);
-    const coversRoot = process.env.MANGABOUND_COVERS_ROOT;
+    const coversRoot = process.env.MANGA2INK_COVERS_ROOT;
     assert.ok(coversRoot);
     const [itemFolder] = await readdir(coversRoot);
     assert.ok(itemFolder);
@@ -291,7 +291,7 @@ describe('packaged cover of the person’s own', () => {
     assert.notDeepEqual(await coverOf(books[0]!), { width: 300, height: 400 });
   });
   it('does not keep an image that cannot be read as a cover, and says so', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-covers-damaged-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-covers-damaged-e2e-'));
     temporaryDirectories.push(testRoot);
     const inputPath = path.join(testRoot, 'Named Volumes');
     // It has the name of an image and holds none: it would stop the book it was the cover of.
@@ -302,7 +302,7 @@ describe('packaged cover of the person’s own', () => {
       { recursive: true },
     );
     await writeFile(damaged, 'this is not an image');
-    const coversRoot = process.env.MANGABOUND_COVERS_ROOT;
+    const coversRoot = process.env.MANGA2INK_COVERS_ROOT;
     assert.ok(coversRoot);
     const before = await readdir(coversRoot);
 

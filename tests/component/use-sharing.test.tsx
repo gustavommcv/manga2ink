@@ -2,7 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useSharing } from '@/renderer/hooks/use-sharing';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { SelectedLibrary, WorkflowFailure } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
@@ -67,7 +67,7 @@ describe('useSharing', () => {
 
   it('does not let a read of an earlier bridge replace what a later one gave', async () => {
     const onFailure = vi.fn();
-    const slow = deferred<Awaited<ReturnType<MangaboundBridge['listNetworkInterfaces']>>>();
+    const slow = deferred<Awaited<ReturnType<Manga2InkBridge['listNetworkInterfaces']>>>();
     const first = inertBridge({ listNetworkInterfaces: () => slow.promise });
     const second = inertBridge({
       listNetworkInterfaces: () => Promise.resolve({ ok: true, value: [ethernet] }),
@@ -104,7 +104,7 @@ describe('useSharing', () => {
 
     it('changes nothing when the dialog is cancelled', async () => {
       const chooseLibrary = vi
-        .fn<MangaboundBridge['chooseLibrary']>()
+        .fn<Manga2InkBridge['chooseLibrary']>()
         .mockResolvedValueOnce({ ok: true, value: folder })
         .mockResolvedValueOnce({ ok: true, value: null });
       const bridge = inertBridge({ chooseLibrary });
@@ -138,7 +138,7 @@ describe('useSharing', () => {
 
   describe('starting and stopping', () => {
     it('does nothing until a folder is chosen', async () => {
-      const startSharing = vi.fn<MangaboundBridge['startSharing']>();
+      const startSharing = vi.fn<Manga2InkBridge['startSharing']>();
       const bridge = inertBridge({ startSharing });
       const { result } = renderHook(() => useSharing(bridge, vi.fn()));
 
@@ -151,7 +151,7 @@ describe('useSharing', () => {
     });
 
     it('starts sharing the chosen folder on the address, and keeps the status it gets', async () => {
-      const startSharing = vi.fn<MangaboundBridge['startSharing']>(() =>
+      const startSharing = vi.fn<Manga2InkBridge['startSharing']>(() =>
         Promise.resolve({ ok: true, value: running }),
       );
       const bridge = inertBridge({

@@ -3,7 +3,7 @@
 // Only a variant's own flags differ inside an example: the page, the profile and the rest are shared.
 
 /**
- * The settings Mangabound starts a conversion with, as mangapress flags: Kindle Paperwhite 6, CBZ,
+ * The settings Manga2Ink starts a conversion with, as mangapress flags: Kindle Paperwhite 6, CBZ,
  * manga reading order, spreads kept both ways, small pages enlarged, margins and page numbers
  * cropped. Cropping is mangapress's own default, so it needs no flag. The source of truth is
  * `defaultMangapressSettings` in src/domain/output-profile.ts; keep this in step with it.

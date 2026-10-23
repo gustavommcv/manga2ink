@@ -97,7 +97,7 @@ describe('which names the catalog answers to', () => {
       expect.stringContaining('rebound.example'),
     ]);
     expect(String(warn.mock.calls[0]?.[0])).toContain(
-      'is not an address of this computer. Use the address Mangabound shows',
+      'is not an address of this computer. Use the address Manga2Ink shows',
     );
   });
 

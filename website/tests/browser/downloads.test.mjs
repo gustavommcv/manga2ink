@@ -4,6 +4,7 @@ import { base } from '../../site.config.mjs';
 import { expectNoAccessibilityViolations } from '../support/accessibility.mjs';
 
 const root = base.replace(/\/?$/, '/');
+// Until the first Manga2Ink release, the newest release carries Mangabound's file names (ADR 0085).
 const platforms = [
   {
     name: 'Windows',
@@ -12,13 +13,13 @@ const platforms = [
         en: 'Download installer (.exe)',
         pt: 'Baixar instalador (.exe)',
         ja: 'インストーラーをダウンロード (.exe)',
-        filename: /^Mangabound-.+\.Setup\.exe$/,
+        filename: /^(?:Manga2Ink|Mangabound)-.+\.Setup\.exe$/,
       },
       {
         en: 'Download portable (.zip)',
         pt: 'Baixar versão portátil (.zip)',
         ja: 'ポータブル版をダウンロード (.zip)',
-        filename: /^Mangabound-win32-x64-.+\.zip$/,
+        filename: /^(?:Manga2Ink|Mangabound)-win32-x64-.+\.zip$/,
       },
     ],
   },
@@ -29,7 +30,7 @@ const platforms = [
         en: 'Download for Apple Silicon (.zip)',
         pt: 'Baixar para Apple Silicon (.zip)',
         ja: 'Apple Silicon 版をダウンロード (.zip)',
-        filename: /^Mangabound-darwin-arm64-.+\.zip$/,
+        filename: /^(?:Manga2Ink|Mangabound)-darwin-arm64-.+\.zip$/,
       },
     ],
   },
@@ -72,19 +73,16 @@ for (const locale of Object.keys(languageOf)) {
         if (new URL(request.url()).hostname === 'api.github.com') apiRequests.push(request.url());
       });
       // Exercise real anchor clicks and browser downloads without downloading large installers.
-      await page.route(
-        'https://github.com/gustavommcv/mangabound/releases/download/**',
-        (route) => {
-          const filename = decodeURIComponent(
-            new URL(route.request().url()).pathname.split('/').at(-1),
-          );
-          return route.fulfill({
-            contentType: 'application/octet-stream',
-            headers: { 'content-disposition': `attachment; filename="${filename}"` },
-            body: 'download response fixture',
-          });
-        },
-      );
+      await page.route('https://github.com/gustavommcv/manga2ink/releases/download/**', (route) => {
+        const filename = decodeURIComponent(
+          new URL(route.request().url()).pathname.split('/').at(-1),
+        );
+        return route.fulfill({
+          contentType: 'application/octet-stream',
+          headers: { 'content-disposition': `attachment; filename="${filename}"` },
+          body: 'download response fixture',
+        });
+      });
       await page.emulateMedia({ colorScheme });
       await page.goto(`${root}${locale}getting-started/installation/`);
       let selectedTag;
@@ -100,11 +98,11 @@ for (const locale of Object.keys(languageOf)) {
         const notes = group.getByRole('link', { name: notesLabel[lang] });
         await expect(notes).toHaveAttribute(
           'href',
-          `https://github.com/gustavommcv/mangabound/releases/tag/${encodeURIComponent(tag)}`,
+          `https://github.com/gustavommcv/manga2ink/releases/tag/${encodeURIComponent(tag)}`,
         );
         await expect(group.getByRole('link', { name: 'SHA256SUMS', exact: true })).toHaveAttribute(
           'href',
-          `https://github.com/gustavommcv/mangabound/releases/download/${encodeURIComponent(tag)}/SHA256SUMS`,
+          `https://github.com/gustavommcv/manga2ink/releases/download/${encodeURIComponent(tag)}/SHA256SUMS`,
         );
         const first = group.getByRole('link', {
           name: platform.buttons[0][lang],
@@ -125,7 +123,7 @@ for (const locale of Object.keys(languageOf)) {
           expect(target.origin).toBe('https://github.com');
           const parts = target.pathname.split('/').map(decodeURIComponent);
           expect(parts.slice(0, -1).join('/')).toBe(
-            `/gustavommcv/mangabound/releases/download/${tag}`,
+            `/gustavommcv/manga2ink/releases/download/${tag}`,
           );
           const filename = parts.at(-1);
           expect(filename).toMatch(button.filename);

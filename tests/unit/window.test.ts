@@ -56,7 +56,7 @@ vi.mock('electron', () => ({
     get isPackaged() {
       return electron.isPackaged;
     },
-    getAppPath: () => '/opt/mangabound/app',
+    getAppPath: () => '/opt/manga2ink/app',
     getVersion: () => electron.version,
     quit: () => {
       electron.quit();
@@ -99,7 +99,7 @@ vi.mock('electron', () => ({
     }
   },
 }));
-vi.mock('@/main/app-protocol', () => ({ rendererUrl: 'app://mangabound/main_window/index.html' }));
+vi.mock('@/main/app-protocol', () => ({ rendererUrl: 'app://manga2ink/main_window/index.html' }));
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
 const originalResources = Object.getOwnPropertyDescriptor(process, 'resourcesPath');
@@ -150,7 +150,7 @@ beforeEach(() => {
   vi.stubGlobal('MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY', '/build/preload/index.js');
   Object.defineProperty(process, 'resourcesPath', {
     configurable: true,
-    value: path.join(path.sep, 'opt', 'mangabound', 'resources'),
+    value: path.join(path.sep, 'opt', 'manga2ink', 'resources'),
   });
 });
 afterEach(() => {
@@ -187,7 +187,7 @@ describe('the page the window gives its content', () => {
     createMainWindow();
 
     expect(electron.loadURL).toHaveBeenCalledExactlyOnceWith(
-      'app://mangabound/main_window/index.html',
+      'app://manga2ink/main_window/index.html',
     );
   });
 });
@@ -255,7 +255,7 @@ describe('the window itself', () => {
   it('shows at once on the colour of the page, so there is no moment of a blank window', () => {
     createMainWindow();
 
-    expect(optionsOfWindow()).toMatchObject({ backgroundColor: '#121214', title: 'Mangabound' });
+    expect(optionsOfWindow()).toMatchObject({ backgroundColor: '#121214', title: 'Manga2Ink' });
     expect(optionsOfWindow()).not.toHaveProperty('show');
   });
 
@@ -295,10 +295,10 @@ describe('the window itself', () => {
   });
 
   it.each([
-    ['win32', false, path.join('/opt/mangabound/app', 'assets', 'icons', 'mangabound.ico')],
-    ['linux', false, path.join('/opt/mangabound/app', 'assets', 'icons', 'mangabound.png')],
-    ['win32', true, path.join(path.sep, 'opt', 'mangabound', 'resources', 'mangabound.ico')],
-    ['linux', true, path.join(path.sep, 'opt', 'mangabound', 'resources', 'mangabound.png')],
+    ['win32', false, path.join('/opt/manga2ink/app', 'assets', 'icons', 'manga2ink.ico')],
+    ['linux', false, path.join('/opt/manga2ink/app', 'assets', 'icons', 'manga2ink.png')],
+    ['win32', true, path.join(path.sep, 'opt', 'manga2ink', 'resources', 'manga2ink.ico')],
+    ['linux', true, path.join(path.sep, 'opt', 'manga2ink', 'resources', 'manga2ink.png')],
   ] as const)('on %s, packaged %s, takes its icon from %s', (platform, packaged, expectedIcon) => {
     onPlatform(platform);
     electron.isPackaged = packaged;

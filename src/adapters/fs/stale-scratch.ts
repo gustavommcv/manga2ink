@@ -5,10 +5,11 @@ import path from 'node:path';
 import { newestChange } from './newest-change';
 
 /**
- * The name `mkdtemp` gives a scratch workspace made with the prefix `mangabound-`: six letters or
- * digits, and nothing else. The test folders and the acquisition script's own use longer names.
+ * The name `mkdtemp` gives a scratch workspace made with the prefix `manga2ink-`, or with
+ * `mangabound-` by a version from before the app's new name (ADR 0085): six letters or digits, and
+ * nothing else. The test folders and the acquisition script's own use longer names.
  */
-const workspaceName = /^mangabound-[A-Za-z0-9]{6}$/u;
+const workspaceName = /^(?:manga2ink|mangabound)-[A-Za-z0-9]{6}$/u;
 
 /**
  * Removes the scratch workspaces an earlier run of the app left in the temporary folder, and says

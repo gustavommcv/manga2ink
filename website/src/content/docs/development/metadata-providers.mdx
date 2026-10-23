@@ -1,11 +1,11 @@
 ---
 title: 'Adding metadata sources'
-description: "How to add an online metadata source to Mangabound through the MetadataProviderPort boundary, following the repository's provider guide and its rules."
+description: "How to add an online metadata source to Manga2Ink through the MetadataProviderPort boundary, following the repository's provider guide and its rules."
 ---
 
-Follow the repository's [canonical provider guide](https://github.com/gustavommcv/mangabound/blob/main/docs/adding-a-metadata-provider.md). It is the maintained checklist for API suitability, terms, attribution, privacy, implementation, and real-response fixtures.
+Follow the repository's [canonical provider guide](https://github.com/gustavommcv/manga2ink/blob/main/docs/adding-a-metadata-provider.md). It is the maintained checklist for API suitability, terms, attribution, privacy, implementation, and real-response fixtures.
 
-The boundary is **MetadataProviderPort**, in [src/application/ports/metadata-provider.ts](https://github.com/gustavommcv/mangabound/blob/main/src/application/ports/metadata-provider.ts). Providers live under **src/adapters/metadata-providers/** and use its existing registry.
+The boundary is **MetadataProviderPort**, in [src/application/ports/metadata-provider.ts](https://github.com/gustavommcv/manga2ink/blob/main/src/application/ports/metadata-provider.ts). Providers live under **src/adapters/metadata-providers/** and use its existing registry.
 
 Reuse the shared HTTP/error helpers and test against recorded service responses.
 

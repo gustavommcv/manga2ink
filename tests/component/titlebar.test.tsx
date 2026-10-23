@@ -7,7 +7,7 @@ describe('Titlebar', () => {
   it('names the app without the old desktop or foundation labels', () => {
     render(<Titlebar />);
 
-    expect(screen.getByText('Mangabound')).toBeVisible();
+    expect(screen.getByText('Manga2Ink')).toBeVisible();
     expect(screen.queryByText('Desktop')).not.toBeInTheDocument();
     expect(screen.queryByText('Foundation')).not.toBeInTheDocument();
   });
@@ -22,7 +22,7 @@ describe('Titlebar', () => {
     expect(logo).toHaveAttribute('height', '20');
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
     expect(
-      logo!.compareDocumentPosition(screen.getByText('Mangabound')) &
+      logo!.compareDocumentPosition(screen.getByText('Manga2Ink')) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

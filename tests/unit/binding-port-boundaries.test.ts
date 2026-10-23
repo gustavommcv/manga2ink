@@ -37,7 +37,7 @@ const ranWith = (
 });
 
 const files = (): WorkspaceFileSystem => ({
-  createTemporaryDirectory: () => Promise.resolve(path.join(os.tmpdir(), 'mangabound-boundaries')),
+  createTemporaryDirectory: () => Promise.resolve(path.join(os.tmpdir(), 'manga2ink-boundaries')),
   createDirectory: () => Promise.resolve(),
   writeText: () => Promise.resolve(),
   writeTextAtomically: () => Promise.resolve(),
@@ -242,7 +242,7 @@ describe('the workspace on disk', () => {
     }
   });
   const scratch = async (): Promise<string> => {
-    const directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-workspace-fs-'));
+    const directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-workspace-fs-'));
     directories.push(directory);
     return directory;
   };

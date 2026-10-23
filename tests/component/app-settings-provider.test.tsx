@@ -6,7 +6,7 @@ import { defaultAppSettings } from '@/domain/app-settings';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useLanguage, useMessages } from '@/renderer/hooks/use-messages';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { inertBridge } from './support/bridge';
 import { pretendToBeTheSystem } from './support/system-theme';
@@ -34,7 +34,7 @@ function Probe(): React.JSX.Element {
 }
 
 const reading =
-  (language: 'en' | 'pt-BR'): MangaboundBridge['loadAppSettings'] =>
+  (language: 'en' | 'pt-BR'): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,

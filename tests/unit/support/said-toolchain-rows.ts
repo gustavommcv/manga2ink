@@ -21,15 +21,15 @@ export const toolchainRows: Rows<ToolchainMessageValues> = {
   'toolchain.noTarget': [
     [
       { platform: 'linux', arch: 'arm64' },
-      'Mangabound does not bundle tools for linux-arm64.',
-      'O Mangabound não inclui ferramentas para linux-arm64.',
+      'Manga2Ink does not bundle tools for linux-arm64.',
+      'O Manga2Ink não inclui ferramentas para linux-arm64.',
     ],
   ],
   'toolchain.manifestUnverified': [
     [
       {},
-      'The bundled-tool manifest could not be verified. Reinstall Mangabound.',
-      'Não foi possível verificar a lista das ferramentas incluídas. Reinstale o Mangabound.',
+      'The bundled-tool manifest could not be verified. Reinstall Manga2Ink.',
+      'Não foi possível verificar a lista das ferramentas incluídas. Reinstale o Manga2Ink.',
     ],
   ],
   'toolchain.checkFailed': [
@@ -49,8 +49,8 @@ export const toolchainRows: Rows<ToolchainMessageValues> = {
   'toolchain.toolFailed': [
     [
       { tool: 'mangapress' },
-      'mangapress could not be verified. Reinstall Mangabound to restore its bundled tools.',
-      'Não foi possível verificar mangapress. Reinstale o Mangabound para restaurar as ferramentas incluídas.',
+      'mangapress could not be verified. Reinstall Manga2Ink to restore its bundled tools.',
+      'Não foi possível verificar mangapress. Reinstale o Manga2Ink para restaurar as ferramentas incluídas.',
     ],
   ],
 };

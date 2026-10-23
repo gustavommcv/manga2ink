@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 const script = path.resolve('scripts/verify-package-permissions.mjs');
 
 function verify(listing: string): { readonly status: number | null; readonly output: string } {
-  const run = spawnSync(process.execPath, [script, 'mangabound.deb'], {
+  const run = spawnSync(process.execPath, [script, 'manga2ink.deb'], {
     encoding: 'utf8',
     input: listing,
   });
@@ -19,25 +19,25 @@ describe('the package permission check', () => {
   it('accepts a package whose folders and files anyone can use', () => {
     const run = verify(
       debListing(
-        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/mangabound/',
-        '-rwxr-xr-x root/root  12345678 2026-10-04 10:00 ./opt/mangabound/mangabound',
-        '-rw-r--r-- root/root      1234 2026-10-04 10:00 ./opt/mangabound/resources/app.asar',
-        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/mangabound/resources/toolchain/',
-        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/mangabound/resources/toolchain/mangapress',
-        '-rwsr-xr-x root/root    123456 2026-10-04 10:00 ./opt/mangabound/chrome-sandbox',
-        'lrwxrwxrwx root/root         0 2026-10-04 10:00 ./usr/bin/mangabound -> /opt/mangabound/mangabound',
+        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/manga2ink/',
+        '-rwxr-xr-x root/root  12345678 2026-10-04 10:00 ./opt/manga2ink/manga2ink',
+        '-rw-r--r-- root/root      1234 2026-10-04 10:00 ./opt/manga2ink/resources/app.asar',
+        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/',
+        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/mangapress',
+        '-rwsr-xr-x root/root    123456 2026-10-04 10:00 ./opt/manga2ink/chrome-sandbox',
+        'lrwxrwxrwx root/root         0 2026-10-04 10:00 ./usr/bin/manga2ink -> /opt/manga2ink/manga2ink',
       ),
     );
     expect(run.status).toBe(0);
-    expect(run.output).toContain('mangabound.deb: 7 entries');
+    expect(run.output).toContain('manga2ink.deb: 7 entries');
   });
 
   it('refuses a folder only its owner can open, which is how the bundled tools were left', () => {
     const run = verify(
       debListing(
-        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/mangabound/resources/',
-        'drwx------ root/root         0 2026-10-04 10:00 ./opt/mangabound/resources/toolchain/linux-x64/',
-        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/mangabound/resources/toolchain/linux-x64/mangapress',
+        'drwxr-xr-x root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/',
+        'drwx------ root/root         0 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/linux-x64/',
+        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00 ./opt/manga2ink/resources/toolchain/linux-x64/mangapress',
       ),
     );
     expect(run.status).toBe(1);
@@ -92,8 +92,8 @@ describe('the package permission check', () => {
   it('reads the listing of an rpm, where the mode is followed by a link count', () => {
     const run = verify(
       [
-        'drwxr-xr-x    2 root    root                        0 Oct  4 10:00 /opt/mangabound',
-        'drwx------    2 root    root                        0 Oct  4 10:00 /opt/mangabound/resources/toolchain',
+        'drwxr-xr-x    2 root    root                        0 Oct  4 10:00 /opt/manga2ink',
+        'drwx------    2 root    root                        0 Oct  4 10:00 /opt/manga2ink/resources/toolchain',
       ].join('\n'),
     );
     expect(run.status).toBe(1);
@@ -103,8 +103,8 @@ describe('the package permission check', () => {
   it('reads the listing of an Arch package, which tar prints like a deb', () => {
     const run = verify(
       debListing(
-        'drwxr-xr-x root/root         0 2026-10-04 10:00:00 opt/mangabound/',
-        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00:00 opt/mangabound/mangabound',
+        'drwxr-xr-x root/root         0 2026-10-04 10:00:00 opt/manga2ink/',
+        '-rwxr-xr-x root/root   9876543 2026-10-04 10:00:00 opt/manga2ink/manga2ink',
       ),
     );
     expect(run.status).toBe(0);
@@ -112,7 +112,7 @@ describe('the package permission check', () => {
 
   it('skips lines that are not entries, such as the heading of a listing', () => {
     const run = verify(
-      debListing('Package: mangabound', '', '-rw-r--r-- root/root 10 2026-10-04 10:00 ./a/file'),
+      debListing('Package: manga2ink', '', '-rw-r--r-- root/root 10 2026-10-04 10:00 ./a/file'),
     );
     expect(run.status).toBe(0);
     expect(run.output).toContain('1 entries');

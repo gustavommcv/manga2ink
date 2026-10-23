@@ -22,7 +22,7 @@ const runFolders = async (root: string): Promise<string[]> =>
 
 describe('packaged processing folder', () => {
   it('builds volumes and keeps the books in the folder that is chosen, and leaves earlier books where they are', async () => {
-    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'mangabound-processing-e2e-'));
+    const testRoot = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-processing-e2e-'));
     temporaryDirectories.push(testRoot);
     const work = path.join(testRoot, 'work');
     await mkdir(work);
@@ -34,7 +34,7 @@ describe('packaged processing folder', () => {
         recursive: true,
       },
     );
-    const ownPending = process.env.MANGABOUND_PENDING_ROOT;
+    const ownPending = process.env.MANGA2INK_PENDING_ROOT;
     if (ownPending === undefined) throw new Error('The suite did not say where pending books go.');
     const userData = await browser.electron.execute((electron) => electron.app.getPath('userData'));
     const settingsFile = path.join(userData, 'app-settings.json');
@@ -63,7 +63,7 @@ describe('packaged processing folder', () => {
 
     // Choosing a folder: the app makes Pending and Scratch in it, and says so.
     let panel = await openProcessingTab();
-    assert.match(await panel.getText(), /Chosen by Mangabound/u);
+    assert.match(await panel.getText(), /Chosen by Manga2Ink/u);
     assert.equal(await panel.$('button=Use the default folder').isEnabled(), false);
     await openDialog.mockResolvedValueOnce({ canceled: false, filePaths: [work] });
     await panel.$('button=Choose a folder…').click();
@@ -95,7 +95,7 @@ describe('packaged processing folder', () => {
     // The next conversion builds its volumes in the folder, and its book waits in it.
     await convertNamedVolumes();
     assert.equal(
-      (await readdir(path.join(work, 'Scratch'))).filter((name) => name.startsWith('mangabound-'))
+      (await readdir(path.join(work, 'Scratch'))).filter((name) => name.startsWith('manga2ink-'))
         .length,
       1,
       'the volumes should be built in the chosen folder',
@@ -108,7 +108,7 @@ describe('packaged processing folder', () => {
     // Back to the app's own places: the books in the folder stay, and are listed there.
     panel = await openProcessingTab();
     await panel.$('button=Use the default folder').click();
-    await browser.waitUntil(async () => (await panel.getText()).includes('Chosen by Mangabound'), {
+    await browser.waitUntil(async () => (await panel.getText()).includes('Chosen by Manga2Ink'), {
       timeout: 30_000,
       timeoutMsg: 'The tab did not go back to the app’s own places.',
     });

@@ -9,7 +9,7 @@ import {
   type LanguagePreference,
   resolveLanguage,
 } from '@/domain/app-settings';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 /**
  * What the app settings and the tabs of their dialog need of the bridge, and nothing else: reading
@@ -17,7 +17,7 @@ import type { MangaboundBridge } from '@/shared/runtime-info';
  * system, and where the app works.
  */
 export type AppSettingsBridge = Pick<
-  MangaboundBridge,
+  Manga2InkBridge,
   | 'checkForUpdates'
   | 'chooseProcessingFolder'
   | 'copyDiagnostics'

@@ -41,7 +41,7 @@ test('the Japanese home page is in Japanese, and so is the sidebar', async ({ pa
   // A component of the page writes its words in the language of the page.
   await expect(page.locator('a.brand-logo')).toHaveAttribute(
     'aria-label',
-    'ロゴを元のサイズで開く',
+    'イラストを元のサイズで開く',
   );
   await openNavigation(page);
   const sidebar = page.locator('#starlight__sidebar');

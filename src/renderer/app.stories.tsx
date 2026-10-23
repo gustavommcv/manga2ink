@@ -18,7 +18,7 @@ export const MissingDesktopBridge: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByRole('alert', { name: 'Startup error' })).toBeVisible();
     await expect(
-      canvas.getByText('Restart the app. If the problem persists, reinstall Mangabound.'),
+      canvas.getByText('Restart the app. If the problem persists, reinstall Manga2Ink.'),
     ).toBeVisible();
     await expect(canvas.queryByRole('button', { name: 'Share' })).toBeNull();
   },

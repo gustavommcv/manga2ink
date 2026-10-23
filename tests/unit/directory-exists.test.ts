@@ -10,7 +10,7 @@ describe('directoryExists', () => {
   let directory: string;
 
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-directory-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-directory-'));
   });
 
   afterEach(async () => {

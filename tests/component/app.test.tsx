@@ -11,11 +11,11 @@ import { inertBridge } from './support/bridge';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 function installBridge(overrides: Parameters<typeof inertBridge>[0]): void {
-  Object.defineProperty(window, 'mangabound', {
+  Object.defineProperty(window, 'manga2ink', {
     configurable: true,
     value: inertBridge(overrides),
   });
@@ -27,10 +27,10 @@ describe('application startup', () => {
 
     const error = screen.getByRole('alert', { name: 'Startup error' });
     expect(
-      within(error).getByRole('heading', { name: 'Mangabound could not start correctly.' }),
+      within(error).getByRole('heading', { name: 'Manga2Ink could not start correctly.' }),
     ).toBeVisible();
     expect(
-      within(error).getByText('Restart the app. If the problem persists, reinstall Mangabound.'),
+      within(error).getByText('Restart the app. If the problem persists, reinstall Manga2Ink.'),
     ).toBeVisible();
     expect(screen.queryByRole('heading', { name: 'Queue' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Share' })).not.toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('application startup', () => {
 
   it('shows the repair path when the bridge resolves with a blocked toolchain, not only when it rejects', async () => {
     const text =
-      'A bundled conversion tool failed verification. Reinstall Mangabound to restore it.';
+      'A bundled conversion tool failed verification. Reinstall Manga2Ink to restore it.';
     const unavailable = raw(text);
     installBridge({
       getToolchainStatus: vi.fn().mockResolvedValue({
@@ -139,7 +139,7 @@ describe('application startup', () => {
             name: 'mangabind',
             releaseTag: 'v0.4.0',
             state: 'failed',
-            message: raw('mangabind failed verification. Reinstall Mangabound to restore it.'),
+            message: raw('mangabind failed verification. Reinstall Manga2Ink to restore it.'),
           },
           {
             name: 'mangapress',

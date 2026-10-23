@@ -275,7 +275,7 @@ describe('on a real disk', () => {
   let directory: string;
 
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-settings-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-settings-'));
   });
 
   afterEach(async () => {

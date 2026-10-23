@@ -7,7 +7,7 @@ import { type AnyMessage, message } from '@/domain/message';
 import { AppSettingsProvider } from '@/renderer/app-settings-provider';
 import { ProcessingTab } from '@/renderer/components/settings/processing-tab';
 import type { ProcessingFolderStatus } from '@/shared/processing-folder-contract';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { WorkflowResult } from '@/shared/workflow-contract';
 
 import { inertBridge } from './support/bridge';
@@ -16,7 +16,7 @@ import { deferred } from './support/workflow';
 import { defaultAppSettings } from '@/domain/app-settings';
 
 const speaking =
-  (language: Language): MangaboundBridge['loadAppSettings'] =>
+  (language: Language): Manga2InkBridge['loadAppSettings'] =>
   () =>
     Promise.resolve({
       ok: true,
@@ -24,7 +24,7 @@ const speaking =
     });
 
 const answering =
-  (status: ProcessingFolderStatus): MangaboundBridge['getProcessingFolder'] =>
+  (status: ProcessingFolderStatus): Manga2InkBridge['getProcessingFolder'] =>
   () =>
     Promise.resolve({ ok: true, value: status });
 
@@ -40,7 +40,7 @@ const unusable = refusing(
 );
 
 async function renderTab(
-  overrides: Partial<MangaboundBridge> = {},
+  overrides: Partial<Manga2InkBridge> = {},
   language: Language = 'en',
 ): Promise<void> {
   render(
@@ -55,12 +55,12 @@ async function renderTab(
 }
 
 describe('the Processing tab when the app works in its own places', () => {
-  it('says the folder is Mangabound’s own choice, and where volumes and books are, and the room', async () => {
+  it('says the folder is Manga2Ink’s own choice, and where volumes and books are, and the room', async () => {
     await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
 
-    expect(await screen.findByText('Chosen by Mangabound')).toBeVisible();
+    expect(await screen.findByText('Chosen by Manga2Ink')).toBeVisible();
     expect(screen.getByText('/tmp')).toBeVisible();
-    expect(screen.getByText('/home/reader/.local/share/mangabound/pending')).toBeVisible();
+    expect(screen.getByText('/home/reader/.local/share/manga2ink/pending')).toBeVisible();
     expect(screen.getByText('120 GB')).toBeVisible();
     expect(screen.getByText('Free space')).toBeVisible();
   });
@@ -77,7 +77,7 @@ describe('the Processing tab when the app works in its own places', () => {
       getProcessingFolder: answering({ ...defaultProcessingStatus, freeBytes: null }),
     });
 
-    await screen.findByText('Chosen by Mangabound');
+    await screen.findByText('Chosen by Manga2Ink');
     expect(screen.queryByText('Free space')).not.toBeInTheDocument();
   });
 
@@ -90,7 +90,7 @@ describe('the Processing tab when the app works in its own places', () => {
   it('shows nothing about earlier folders while there are none', async () => {
     await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
 
-    await screen.findByText('Chosen by Mangabound');
+    await screen.findByText('Chosen by Manga2Ink');
     expect(screen.queryByText('Still waiting in earlier folders')).not.toBeInTheDocument();
   });
 });
@@ -111,7 +111,7 @@ describe('the Processing tab when a folder was chosen', () => {
       getProcessingFolder: answering({
         ...chosenProcessingStatus,
         earlier: [
-          { folder: '/home/reader/.local/share/mangabound/pending', books: 3 },
+          { folder: '/home/reader/.local/share/manga2ink/pending', books: 3 },
           { folder: '/old/Pending', books: 1 },
         ],
       }),
@@ -147,7 +147,7 @@ describe('the Processing tab when a folder was chosen', () => {
 describe('choosing a folder', () => {
   it('shows what the main process answers once the folder is chosen', async () => {
     const user = userEvent.setup();
-    const chooseProcessingFolder = vi.fn<MangaboundBridge['chooseProcessingFolder']>(() =>
+    const chooseProcessingFolder = vi.fn<Manga2InkBridge['chooseProcessingFolder']>(() =>
       Promise.resolve({ ok: true, value: chosenProcessingStatus }),
     );
     await renderTab({
@@ -174,7 +174,7 @@ describe('choosing a folder', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Choose a folder…' })).toBeEnabled();
     });
-    expect(screen.getByText('Chosen by Mangabound')).toBeVisible();
+    expect(screen.getByText('Chosen by Manga2Ink')).toBeVisible();
     expect(screen.queryByText(/could not be changed|cannot work|running/u)).not.toBeInTheDocument();
   });
 
@@ -198,7 +198,7 @@ describe('choosing a folder', () => {
 
   it.each([
     ['a conversion or a share is running', busy, /A conversion or a share is running/u],
-    ['the folder cannot be used', unusable, /Mangabound cannot work in \/read-only/u],
+    ['the folder cannot be used', unusable, /Manga2Ink cannot work in \/read-only/u],
   ])('says so when %s, in the words of the window', async (_name, answer, sentence) => {
     const user = userEvent.setup();
     await renderTab({
@@ -209,7 +209,7 @@ describe('choosing a folder', () => {
     await user.click(await screen.findByRole('button', { name: 'Choose a folder…' }));
 
     expect(await screen.findByText(sentence)).toBeVisible();
-    expect(screen.getByText('Chosen by Mangabound')).toBeVisible();
+    expect(screen.getByText('Chosen by Manga2Ink')).toBeVisible();
   });
 
   it('says the same, in Portuguese, when the window is in Portuguese', async () => {
@@ -236,13 +236,13 @@ describe('choosing a folder', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Choose a folder…' }));
 
-    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+    expect(await screen.findByText('Manga2Ink could not complete that action.')).toBeVisible();
   });
 
   it('takes the message away when the next try is made', async () => {
     const user = userEvent.setup();
     const chooseProcessingFolder = vi
-      .fn<MangaboundBridge['chooseProcessingFolder']>()
+      .fn<Manga2InkBridge['chooseProcessingFolder']>()
       .mockResolvedValueOnce(busy)
       .mockResolvedValueOnce({ ok: true, value: chosenProcessingStatus });
     await renderTab({
@@ -260,10 +260,10 @@ describe('choosing a folder', () => {
   });
 });
 
-describe('going back to the folder Mangabound picks', () => {
+describe('going back to the folder Manga2Ink picks', () => {
   it('asks for it, and shows its own places again', async () => {
     const user = userEvent.setup();
-    const useDefaultProcessingFolder = vi.fn<MangaboundBridge['useDefaultProcessingFolder']>(() =>
+    const useDefaultProcessingFolder = vi.fn<Manga2InkBridge['useDefaultProcessingFolder']>(() =>
       Promise.resolve({
         ok: true,
         value: {
@@ -279,7 +279,7 @@ describe('going back to the folder Mangabound picks', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Use the default folder' }));
 
-    expect(await screen.findByText('Chosen by Mangabound')).toBeVisible();
+    expect(await screen.findByText('Chosen by Manga2Ink')).toBeVisible();
     expect(useDefaultProcessingFolder).toHaveBeenCalledOnce();
     expect(screen.getByText('2 books')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Use the default folder' })).toBeDisabled();
@@ -308,7 +308,7 @@ describe('reading where the app works', () => {
       </AppSettingsProvider>,
     );
 
-    expect(await screen.findByText('Reading where Mangabound works…')).toBeVisible();
+    expect(await screen.findByText('Reading where Manga2Ink works…')).toBeVisible();
     expect(screen.queryByRole('button', { name: 'Choose a folder…' })).not.toBeInTheDocument();
     answer.resolve({ ok: true, value: defaultProcessingStatus });
     expect(await screen.findByRole('button', { name: 'Choose a folder…' })).toBeVisible();
@@ -321,14 +321,14 @@ describe('reading where the app works', () => {
     });
 
     expect(await screen.findByText('The saved settings could not be loaded.')).toBeVisible();
-    expect(screen.queryByText('Reading where Mangabound works…')).not.toBeInTheDocument();
+    expect(screen.queryByText('Reading where Manga2Ink works…')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Choose a folder…' })).not.toBeInTheDocument();
   });
 
   it('says it could not when the main process does not answer', async () => {
     await renderTab({ getProcessingFolder: () => Promise.reject(new Error('gone')) });
 
-    expect(await screen.findByText('Mangabound could not complete that action.')).toBeVisible();
+    expect(await screen.findByText('Manga2Ink could not complete that action.')).toBeVisible();
   });
 
   it('takes no answer into account once the tab is gone', async () => {
@@ -338,13 +338,13 @@ describe('reading where the app works', () => {
         <ProcessingTab />
       </AppSettingsProvider>,
     );
-    await screen.findByText('Reading where Mangabound works…');
+    await screen.findByText('Reading where Manga2Ink works…');
 
     view.unmount();
     answer.resolve({ ok: true, value: defaultProcessingStatus });
 
     await Promise.resolve();
-    expect(screen.queryByText('Chosen by Mangabound')).not.toBeInTheDocument();
+    expect(screen.queryByText('Chosen by Manga2Ink')).not.toBeInTheDocument();
   });
 });
 
@@ -370,9 +370,7 @@ describe('the Processing tab in Portuguese', () => {
 });
 
 describe('what a queue does, chosen in the Processing tab', () => {
-  const kept = (
-    change: Partial<typeof defaultAppSettings>,
-  ): MangaboundBridge['loadAppSettings'] => {
+  const kept = (change: Partial<typeof defaultAppSettings>): Manga2InkBridge['loadAppSettings'] => {
     return () =>
       Promise.resolve({
         ok: true,
@@ -383,15 +381,15 @@ describe('what a queue does, chosen in the Processing tab', () => {
         },
       });
   };
-  const saving = (): ReturnType<typeof vi.fn<MangaboundBridge['saveAppSettings']>> =>
-    vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+  const saving = (): ReturnType<typeof vi.fn<Manga2InkBridge['saveAppSettings']>> =>
+    vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'en' } }),
     );
 
   it('has both turned on to begin with, each said by what it does', async () => {
     await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) });
 
-    expect(screen.getByRole('heading', { name: 'While Mangabound converts' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'While Manga2Ink converts' })).toBeVisible();
     const notify = screen.getByRole('checkbox', { name: 'Tell me when a long conversion ends' });
     const awake = screen.getByRole('checkbox', {
       name: 'Keep the computer awake while converting',
@@ -399,7 +397,7 @@ describe('what a queue does, chosen in the Processing tab', () => {
     expect(notify).toBeChecked();
     expect(awake).toBeChecked();
     expect(notify).toHaveAccessibleDescription(
-      'A system notification, only when the conversion took more than 30 seconds and no Mangabound window is in front. Clicking it brings the window back.',
+      'A system notification, only when the conversion took more than 30 seconds and no Manga2Ink window is in front. Clicking it brings the window back.',
     );
     expect(awake).toHaveAccessibleDescription(
       'The screen may still turn off, but the computer will not go to sleep and stop the conversion.',
@@ -461,7 +459,7 @@ describe('what a queue does, chosen in the Processing tab', () => {
   it('says the change could not be kept, and leaves the choice as it was; the message goes with the next one that is kept', async () => {
     const user = userEvent.setup();
     const saveAppSettings = vi
-      .fn<MangaboundBridge['saveAppSettings']>()
+      .fn<Manga2InkBridge['saveAppSettings']>()
       .mockResolvedValueOnce({
         ok: false,
         error: { code: 'settings_save_failed', said: message('failure.internal', {}) },
@@ -486,11 +484,11 @@ describe('what a queue does, chosen in the Processing tab', () => {
   it('says it in Portuguese for a window in Portuguese', async () => {
     await renderTab({ getProcessingFolder: answering(defaultProcessingStatus) }, 'pt-BR');
 
-    expect(screen.getByRole('heading', { name: 'Enquanto o Mangabound converte' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Enquanto o Manga2Ink converte' })).toBeVisible();
     expect(
       screen.getByRole('checkbox', { name: 'Avisar quando uma conversão longa terminar' }),
     ).toHaveAccessibleDescription(
-      'Uma notificação do sistema, só se a conversão levou mais de 30 segundos e nenhuma janela do Mangabound estiver em primeiro plano. Ao clicar nela, a janela volta.',
+      'Uma notificação do sistema, só se a conversão levou mais de 30 segundos e nenhuma janela do Manga2Ink estiver em primeiro plano. Ao clicar nela, a janela volta.',
     );
     expect(
       screen.getByRole('checkbox', { name: 'Manter o computador acordado durante a conversão' }),
@@ -499,9 +497,7 @@ describe('what a queue does, chosen in the Processing tab', () => {
 });
 
 describe('how many conversions run at once, chosen in the Processing tab', () => {
-  const kept = (
-    change: Partial<typeof defaultAppSettings>,
-  ): MangaboundBridge['loadAppSettings'] => {
+  const kept = (change: Partial<typeof defaultAppSettings>): Manga2InkBridge['loadAppSettings'] => {
     return () =>
       Promise.resolve({
         ok: true,
@@ -512,12 +508,12 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
         },
       });
   };
-  const saving = (): ReturnType<typeof vi.fn<MangaboundBridge['saveAppSettings']>> =>
-    vi.fn<MangaboundBridge['saveAppSettings']>(() =>
+  const saving = (): ReturnType<typeof vi.fn<Manga2InkBridge['saveAppSettings']>> =>
+    vi.fn<Manga2InkBridge['saveAppSettings']>(() =>
       Promise.resolve({ ok: true, value: { language: 'en' } }),
     );
   /** What this computer says it can do: what automatic comes to, and the most that can be asked for. */
-  const capacity = (automatic: number, most: number): MangaboundBridge['getConversionCapacity'] => {
+  const capacity = (automatic: number, most: number): Manga2InkBridge['getConversionCapacity'] => {
     return () => Promise.resolve({ ok: true, value: { automatic, most } });
   };
   /** The select, once the computer has said what it can do. */
@@ -601,7 +597,7 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
 
   it('says the change could not be kept, and leaves the number as it was', async () => {
     const user = userEvent.setup();
-    const saveAppSettings = vi.fn<MangaboundBridge['saveAppSettings']>().mockResolvedValue({
+    const saveAppSettings = vi.fn<Manga2InkBridge['saveAppSettings']>().mockResolvedValue({
       ok: false,
       error: { code: 'settings_save_failed', said: message('failure.internal', {}) },
     });
@@ -625,7 +621,7 @@ describe('how many conversions run at once, chosen in the Processing tab', () =>
     });
 
     // The rest of the tab is there, and the choice is not.
-    expect(await screen.findByText('Chosen by Mangabound')).toBeVisible();
+    expect(await screen.findByText('Chosen by Manga2Ink')).toBeVisible();
     expect(
       screen.getByRole('checkbox', { name: 'Keep the computer awake while converting' }),
     ).toBeVisible();

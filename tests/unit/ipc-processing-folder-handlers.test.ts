@@ -108,7 +108,7 @@ describe('choosing the folder the app works in', () => {
 
     expect(electron.showOpenDialog).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        title: 'Choose the folder Mangabound works in',
+        title: 'Choose the folder Manga2Ink works in',
         buttonLabel: 'Use this folder',
         properties: ['openDirectory', 'createDirectory'],
         defaultPath: path.resolve('now'),
@@ -127,7 +127,7 @@ describe('choosing the folder the app works in', () => {
 
     expect(electron.showOpenDialog).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        title: 'Escolher a pasta em que o Mangabound trabalha',
+        title: 'Escolher a pasta em que o Manga2Ink trabalha',
         buttonLabel: 'Usar esta pasta',
       }),
     );

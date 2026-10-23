@@ -1,11 +1,11 @@
 ---
 title: 'Compartilhamento local'
-description: 'Compartilhe mangás convertidos do Mangabound com o KOReader pela rede local, por um catálogo OPDS: escolha a rede, inicie e copie o endereço.'
+description: 'Compartilhe mangás convertidos do Manga2Ink com o KOReader pela rede local, por um catálogo OPDS: escolha a rede, inicie e copie o endereço.'
 ---
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
 
-Compartilhe livros com o KOReader pela rede local. Abra o **catálogo OPDS** do Mangabound no leitor e escolha quais livros baixar.
+Compartilhe livros com o KOReader pela rede local. Abra o **catálogo OPDS** do Manga2Ink no leitor e escolha quais livros baixar.
 
 ## Inicie o compartilhamento
 
@@ -13,9 +13,9 @@ Compartilhe livros com o KOReader pela rede local. Abra o **catálogo OPDS** do 
 
    **Compartilhar estes livros** compartilha todos os livros prontos: os desta conversão e os de qualquer conversão anterior que ainda esteja em **Livros prontos**. Um livro que você converter com o compartilhamento ativo também aparece no leitor. Enquanto os livros estão compartilhados, não é possível apagar uma conversão pendente. Pare o compartilhamento antes.
 
-2. Selecione a **Interface de rede** da rede que o leitor alcança. O computador pode usar Ethernet mesmo com o leitor no Wi-Fi. Evite adaptadores VPN, a menos que os dois aparelhos alcancem essa rede. O Mangabound lembra a sua escolha.
+2. Selecione a **Interface de rede** da rede que o leitor alcança. O computador pode usar Ethernet mesmo com o leitor no Wi-Fi. Evite adaptadores VPN, a menos que os dois aparelhos alcancem essa rede. O Manga2Ink lembra a sua escolha.
 3. Preencha opcionalmente **Usuário** e **Senha**, ou deixe ambos vazios.
-4. Selecione **Começar a compartilhar** e use **Copiar** no endereço mostrado. Mantenha o Mangabound aberto até os downloads terminarem.
+4. Selecione **Começar a compartilhar** e use **Copiar** no endereço mostrado. Mantenha o Manga2Ink aberto até os downloads terminarem.
 
 O endereço tem o formato `http://192.168.1.150:48123/`. Use o que aparece no seu aplicativo.
 
@@ -36,7 +36,7 @@ Escolha a interface de rede acessível ao leitor e use **Começar a compartilhar
   alt="Seleção de Interface de rede, credenciais opcionais e Começar a compartilhar."
 />
 
-Use o endereço do catálogo exibido após iniciar o compartilhamento. Mantenha o Mangabound aberto durante os downloads.
+Use o endereço do catálogo exibido após iniciar o compartilhamento. Mantenha o Manga2Ink aberto durante os downloads.
 
 <TutorialImage
   name="generated/share-panel"
@@ -51,11 +51,11 @@ O compartilhamento usa HTTP. A autenticação Basic opcional restringe acesso, m
 
 Continue em [conectando o KOReader](../connecting/).
 
-Use **Parar de compartilhar** quando terminar. O compartilhamento termina na hora, e um livro que ainda estiver sendo baixado nesse momento é interrompido. O Mangabound também derruba uma conexão que ficou um minuto em silêncio, por exemplo um e-reader que entrou em repouso no meio de um download.
+Use **Parar de compartilhar** quando terminar. O compartilhamento termina na hora, e um livro que ainda estiver sendo baixado nesse momento é interrompido. O Manga2Ink também derruba uma conexão que ficou um minuto em silêncio, por exemplo um e-reader que entrou em repouso no meio de um download.
 
 ## Se um livro não aparecer
 
-O Mangabound compartilha apenas arquivos que estão dentro da pasta compartilhada. Uma subpasta que seja um link (symlink ou junction) para um lugar fora dela não é seguida, então os livros dela não são compartilhados, e o registro do aplicativo diz qual livro ficou de fora. Compartilhe a pasta onde os livros realmente estão.
+O Manga2Ink compartilha apenas arquivos que estão dentro da pasta compartilhada. Uma subpasta que seja um link (symlink ou junction) para um lugar fora dela não é seguida, então os livros dela não são compartilhados, e o registro do aplicativo diz qual livro ficou de fora. Compartilhe a pasta onde os livros realmente estão.
 
 ## Se o leitor não conectar
 
@@ -68,4 +68,4 @@ Confira se:
 
 Wi-Fi de convidados com isolamento de clientes, e VPNs, podem bloquear o acesso mesmo com internet nos dois aparelhos. Se o IP do computador mudar, atualize o endereço no KOReader.
 
-O Mangabound responde apenas a um endereço do computador em que roda: os números que ele mostra (como `192.168.1.150`), `localhost` ou o nome do próprio computador. Um pedido que chegue por qualquer outro nome é recusado. Isso impede que uma página web que você visite alcance o seu catálogo pelo navegador. Se o seu roteador dá ao computador um nome próprio e o leitor usa esse nome, use o endereço mostrado no aplicativo. O registro do aplicativo diz qual nome foi recusado.
+O Manga2Ink responde apenas a um endereço do computador em que roda: os números que ele mostra (como `192.168.1.150`), `localhost` ou o nome do próprio computador. Um pedido que chegue por qualquer outro nome é recusado. Isso impede que uma página web que você visite alcance o seu catálogo pelo navegador. Se o seu roteador dá ao computador um nome próprio e o leitor usa esse nome, use o endereço mostrado no aplicativo. O registro do aplicativo diz qual nome foi recusado.

@@ -20,7 +20,7 @@ describe('the request every metadata provider goes through', () => {
       signal: expect.any(AbortSignal) as AbortSignal,
     });
     // A real, identifiable agent that says where the app lives, never a borrowed browser's.
-    expect(userAgent).toMatch(/^Mangabound \(\+https:\/\/github\.com\//u);
+    expect(userAgent).toMatch(/^Manga2Ink \(\+https:\/\/github\.com\//u);
   });
 
   it('stops the request when the caller cancels, as well as when it times out', async () => {

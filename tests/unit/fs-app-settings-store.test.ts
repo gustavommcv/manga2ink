@@ -217,7 +217,7 @@ describe('saving the file of the app settings', () => {
 describe('the file of the app settings on a real disk', () => {
   let directory: string;
   beforeEach(async () => {
-    directory = await mkdtemp(path.join(os.tmpdir(), 'mangabound-app-settings-'));
+    directory = await mkdtemp(path.join(os.tmpdir(), 'manga2ink-app-settings-'));
   });
   afterEach(() => rm(directory, { recursive: true, force: true }));
 

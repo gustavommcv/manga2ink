@@ -34,7 +34,7 @@ describe('the diagnostics a person copies for a report', () => {
   it('say what is running, on what, and how the tools were checked, one thing to a line', () => {
     expect(diagnosticsText(input)).toBe(
       [
-        'Mangabound 0.1.0-alpha.15 (packaged)',
+        'Manga2Ink 0.1.0-alpha.15 (packaged)',
         'Electron 44.3.0, Chrome 152.0.7977.130, Node 24.11.0',
         'System: linux x64, 6.17.5-arch1-1',
         'Machine: 8 processors, 15.5 GiB of memory',
@@ -50,7 +50,7 @@ describe('the diagnostics a person copies for a report', () => {
 
   it('say a development build for what is not packaged', () => {
     expect(diagnosticsText({ ...input, packaged: false })).toContain(
-      'Mangabound 0.1.0-alpha.15 (development build)',
+      'Manga2Ink 0.1.0-alpha.15 (development build)',
     );
   });
 
@@ -85,7 +85,7 @@ describe('the diagnostics a person copies for a report', () => {
             name: 'mangapress',
             releaseTag: 'v0.8.0',
             state: 'failed',
-            message: raw('The hash of /opt/mangabound/toolchain/mangapress is wrong.'),
+            message: raw('The hash of /opt/manga2ink/toolchain/mangapress is wrong.'),
           },
         ],
       },

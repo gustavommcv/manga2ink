@@ -1,6 +1,6 @@
 ---
 title: 'Conversion settings'
-description: 'Choose the e-reader profile, the EPUB, CBZ or PDF format, custom page dimensions and the layout and image options for a manga conversion in Mangabound.'
+description: 'Choose the e-reader profile, the EPUB, CBZ or PDF format, custom page dimensions and the layout and image options for a manga conversion in Manga2Ink.'
 ---
 
 import TutorialImage from '../../../components/TutorialImage.astro';
@@ -9,11 +9,11 @@ import TutorialImage from '../../../components/TutorialImage.astro';
 
 Choose your model under **Device**. To set the page size yourself, open **Advanced conversion options** and fill in **Custom width** and **Custom height**, in pixels. With the **Other** device, both are required. On the command line these settings are `--profile`, `--format`, `--customwidth` and `--customheight`. The [mangapress CLI](../../cli/mangapress/) page shows what each does.
 
-| Format | When to choose it                                                                                                  |
-| ------ | ------------------------------------------------------------------------------------------------------------------ |
-| CBZ    | The format Mangabound starts with. Processed images in a ZIP archive. KOReader's own guide recommends it for manga |
-| EPUB   | A book with chapter navigation and an author                                                                       |
-| PDF    | Fixed pages for a reader or tablet that supports PDF                                                               |
+| Format | When to choose it                                                                                                 |
+| ------ | ----------------------------------------------------------------------------------------------------------------- |
+| CBZ    | The format Manga2Ink starts with. Processed images in a ZIP archive. KOReader's own guide recommends it for manga |
+| EPUB   | A book with chapter navigation and an author                                                                      |
+| PDF    | Fixed pages for a reader or tablet that supports PDF                                                              |
 
 What works depends on the reading app as well as the device. A Kindle's own reader does not open an EPUB directly: send the file with a service that converts it, such as Amazon's Send to Kindle, or read it in an app you installed, such as KOReader. KOReader treats an EPUB differently from a CBZ or PDF. It lays the EPUB out like text, with its own margins and status bar around each page, so a page can come out smaller than the screen. See [reader settings](../../koreader/recommended-settings/).
 

@@ -8,14 +8,14 @@ import { fetchReleaseDownloads, resolveReleaseDownloads } from '../../src/releas
 const recorded = JSON.parse(
   await readFile(new URL('../fixtures/release-alpha12.json', import.meta.url), 'utf8'),
 );
-const repository = 'https://github.com/gustavommcv/mangabound';
+const repository = 'https://github.com/gustavommcv/manga2ink';
 const filenames = {
-  windowsInstaller: 'Mangabound-0.1.0-alpha.12.Setup.exe',
-  windowsPortable: 'Mangabound-win32-x64-0.1.0-alpha.12.zip',
-  macOS: 'Mangabound-darwin-arm64-0.1.0-alpha.12.zip',
-  debian: 'mangabound_0.1.0.alpha.12_amd64.deb',
-  fedora: 'mangabound-0.1.0.alpha.12-1.x86_64.rpm',
-  arch: 'mangabound-0.1.0_alpha.12-1-x86_64.pkg.tar.zst',
+  windowsInstaller: 'Manga2Ink-0.1.0-alpha.12.Setup.exe',
+  windowsPortable: 'Manga2Ink-win32-x64-0.1.0-alpha.12.zip',
+  macOS: 'Manga2Ink-darwin-arm64-0.1.0-alpha.12.zip',
+  debian: 'manga2ink_0.1.0.alpha.12_amd64.deb',
+  fedora: 'manga2ink-0.1.0.alpha.12-1.x86_64.rpm',
+  arch: 'manga2ink-0.1.0_alpha.12-1-x86_64.pkg.tar.zst',
   checksums: 'SHA256SUMS',
 };
 
@@ -105,11 +105,11 @@ for (const [kind, filename] of Object.entries(filenames)) {
 }
 
 for (const [filename, replacement] of [
-  [filenames.windowsPortable, 'Mangabound-win32-arm64-0.1.0-alpha.12.zip'],
-  [filenames.macOS, 'Mangabound-darwin-x64-0.1.0-alpha.12.zip'],
-  [filenames.debian, 'mangabound_0.1.0.alpha.12_arm64.deb'],
-  [filenames.fedora, 'mangabound-0.1.0.alpha.12-1.aarch64.rpm'],
-  [filenames.arch, 'mangabound-0.1.0_alpha.12-1-aarch64.pkg.tar.zst'],
+  [filenames.windowsPortable, 'Manga2Ink-win32-arm64-0.1.0-alpha.12.zip'],
+  [filenames.macOS, 'Manga2Ink-darwin-x64-0.1.0-alpha.12.zip'],
+  [filenames.debian, 'manga2ink_0.1.0.alpha.12_arm64.deb'],
+  [filenames.fedora, 'manga2ink-0.1.0.alpha.12-1.aarch64.rpm'],
+  [filenames.arch, 'manga2ink-0.1.0_alpha.12-1-aarch64.pkg.tar.zst'],
 ]) {
   test(`an unsupported architecture (${replacement}) cannot fill a supported package slot`, () => {
     const wrong = release();
@@ -138,7 +138,7 @@ for (const url of [
 
 test('unrelated updater and source archives do not become user-facing packages', () => {
   const extra = release();
-  for (const name of ['RELEASES', 'Mangabound.nupkg', 'Source-code.zip']) {
+  for (const name of ['RELEASES', 'Manga2Ink.nupkg', 'Source-code.zip']) {
     extra.assets.push({ name, state: 'uploaded', browser_download_url: 'https://example.org/' });
   }
   assert.deepEqual(resolveReleaseDownloads([extra]), resolveReleaseDownloads([release()]));
@@ -146,7 +146,7 @@ test('unrelated updater and source archives do not become user-facing packages',
 
 test('the default request fetches public release metadata without authentication', async (t) => {
   t.mock.method(globalThis, 'fetch', async (url, options) => {
-    assert.equal(url, 'https://api.github.com/repos/gustavommcv/mangabound/releases?per_page=100');
+    assert.equal(url, 'https://api.github.com/repos/gustavommcv/manga2ink/releases?per_page=100');
     assert.equal(options.headers.Accept, 'application/vnd.github+json');
     assert.equal(options.headers['X-GitHub-Api-Version'], '2026-03-10');
     assert.equal(options.headers.Authorization, undefined);
@@ -189,4 +189,19 @@ test('invalid JSON and network failures prevent generating download links', asyn
     }),
     (error) => error === failure,
   );
+});
+
+test('a release from before the new name, with Mangabound file names, is still offered', () => {
+  const before = release();
+  const tag = encodeURIComponent(before.tag_name);
+  before.assets = before.assets.map((asset) => {
+    const name = asset.name
+      .replace(/^Manga2Ink/u, 'Mangabound')
+      .replace(/^manga2ink/u, 'mangabound');
+    const url = `${repository}/releases/download/${tag}/${encodeURIComponent(name)}`;
+    return { ...asset, name, browser_download_url: url };
+  });
+  const downloads = resolveReleaseDownloads([before]);
+  assert.match(downloads.assets.windowsInstaller, /\/Mangabound-0\.1\.0-alpha\.12\.Setup\.exe$/u);
+  assert.match(downloads.assets.debian, /\/mangabound_0\.1\.0\.alpha\.12_amd64\.deb$/u);
 });

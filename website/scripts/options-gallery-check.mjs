@@ -14,7 +14,7 @@ const longFlags = (flags) => flags.filter((flag) => flag.startsWith('--'));
  * The problems found, as sentences; an empty list means all is well.
  *
  * - manifest: the manifest the generator wrote.
- * - pin: the mangapress version Mangabound ships.
+ * - pin: the mangapress version Manga2Ink ships.
  * - pictures: file name -> SHA-256 of each picture in the assets folder.
  * - licenses: the text of LICENSES.md, which lists the pictures with the licence of their source.
  * - userFlags: every flag of mangapress that a person can choose, from schemas/cli-capabilities.json.
@@ -44,7 +44,7 @@ export function checkGallery({
 
   if (manifest.mangapress !== pin) {
     problems.push(
-      `The pictures were made with mangapress ${manifest.mangapress}, and Mangabound ships ${pin}. Run npm run site:options.`,
+      `The pictures were made with mangapress ${manifest.mangapress}, and Manga2Ink ships ${pin}. Run npm run site:options.`,
     );
   }
 

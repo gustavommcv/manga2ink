@@ -18,7 +18,7 @@ describe('packaged application shell', () => {
       process.platform === 'darwin' ? '../Resources' : 'resources',
     );
     for (const extension of ['png', 'ico']) {
-      const name = `mangabound.${extension}`;
+      const name = `manga2ink.${extension}`;
       assert.deepEqual(
         readFileSync(path.join(resources, name)),
         readFileSync(new URL(`../../assets/icons/${name}`, import.meta.url)),
@@ -31,12 +31,12 @@ describe('packaged application shell', () => {
       assert.ok(iconName, 'The macOS bundle must declare its icon');
       assert.deepEqual(
         readFileSync(path.join(resources, iconName)),
-        readFileSync(new URL('../../assets/icons/mangabound.icns', import.meta.url)),
+        readFileSync(new URL('../../assets/icons/manga2ink.icns', import.meta.url)),
       );
     }
   });
 
-  (process.env.MANGABOUND_WAYLAND === '1' ? it.skip : it)(
+  (process.env.MANGA2INK_WAYLAND === '1' ? it.skip : it)(
     'loads the packaged window icon as a real native image',
     async () => {
       const { binary } = browser.requestedCapabilities['goog:chromeOptions'] as { binary: string };
@@ -50,7 +50,7 @@ describe('packaged application shell', () => {
           const image = electron.nativeImage.createFromPath(iconPath);
           return { empty: image.isEmpty(), size: image.getSize() };
         },
-        path.join(resources, `mangabound.${extension}`),
+        path.join(resources, `manga2ink.${extension}`),
       );
       assert.equal(icon.empty, false);
       assert.ok(icon.size.width > 0 && icon.size.height > 0);
@@ -103,7 +103,7 @@ describe('packaged application shell', () => {
   });
 
   it('launches with the packaged CLI binaries verified and ready, saying nothing about it', async () => {
-    assert.equal(await browser.getTitle(), 'Mangabound');
+    assert.equal(await browser.getTitle(), 'Manga2Ink');
     assert.equal(await $('h1').getText(), 'Queue');
     // Verified tools are mandatory, not a status: the queue enables once they are, with no banner.
     await $('button=Files').waitForEnabled();
@@ -156,7 +156,7 @@ describe('packaged application shell', () => {
   it('returns safe command-specific failures for invalid IPC payloads without side effects', async () => {
     const results = JSON.parse(
       await browser.execute(async () => {
-        const bridge = window.mangabound;
+        const bridge = window.manga2ink;
         if (bridge === undefined) throw new Error('The app bridge is unavailable.');
         const before = await bridge.listPendingRuns();
         const failures = await Promise.all([

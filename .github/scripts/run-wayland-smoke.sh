@@ -4,7 +4,7 @@ set -euo pipefail
 runtime_directory="$(mktemp -d)"
 chmod 700 "$runtime_directory"
 export XDG_RUNTIME_DIR="$runtime_directory"
-export WAYLAND_DISPLAY="wayland-mangabound"
+export WAYLAND_DISPLAY="wayland-manga2ink"
 export ELECTRON_OZONE_PLATFORM_HINT="wayland"
 
 weston \
@@ -23,7 +23,7 @@ trap cleanup EXIT
 
 for _ in {1..40}; do
   if [[ -S "$runtime_directory/$WAYLAND_DISPLAY" ]]; then
-    MANGABOUND_WAYLAND=1 npm run test:e2e
+    MANGA2INK_WAYLAND=1 npm run test:e2e
     exit 0
   fi
   sleep 0.25

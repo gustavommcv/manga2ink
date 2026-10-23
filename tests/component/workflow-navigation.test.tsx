@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from '@/renderer/app';
-import type { MangaboundBridge } from '@/shared/runtime-info';
+import type { Manga2InkBridge } from '@/shared/runtime-info';
 
 import { converted, goodTitle, groupedTitle, looseTitle } from './support/library';
 import {
@@ -19,11 +19,11 @@ import {
 import { raw } from '@/domain/message';
 
 afterEach(() => {
-  Reflect.deleteProperty(window, 'mangabound');
+  Reflect.deleteProperty(window, 'manga2ink');
 });
 
 /** Two libraries deliberately have the same title names, but different sessions and details. */
-function mixedQueue(overrides: Partial<MangaboundBridge> = {}): MangaboundBridge {
+function mixedQueue(overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridge {
   const libraries = [folder('First Library', 'first'), folder('Second Library', 'second')];
   return bridge({
     chooseInputs: () =>
@@ -58,7 +58,7 @@ function mixedQueue(overrides: Partial<MangaboundBridge> = {}): MangaboundBridge
 describe('workflow navigation targets', () => {
   it('keeps details attached to their library or input across mapping and options visits', async () => {
     const user = userEvent.setup();
-    const saveBookDetails = vi.fn<MangaboundBridge['saveBookDetails']>(() =>
+    const saveBookDetails = vi.fn<Manga2InkBridge['saveBookDetails']>(() =>
       Promise.resolve({ ok: true, value: undefined }),
     );
     installBridge(mixedQueue({ saveBookDetails }));
@@ -123,13 +123,13 @@ describe('workflow navigation targets', () => {
   it('retries a title mapping in the selected library and refreshes only that library', async () => {
     const user = userEvent.setup();
     const writeTitleMapping = vi
-      .fn<MangaboundBridge['writeTitleMapping']>()
+      .fn<Manga2InkBridge['writeTitleMapping']>()
       .mockResolvedValueOnce({
         ok: false,
         error: { code: 'mapping_save_failed', said: raw('The folder is read-only.') },
       })
       .mockResolvedValueOnce({ ok: true, value: undefined });
-    const planLibrary = vi.fn<MangaboundBridge['planLibrary']>(() =>
+    const planLibrary = vi.fn<Manga2InkBridge['planLibrary']>(() =>
       Promise.resolve({ ok: true, value: { titles: [goodTitle, groupedTitle], issues: [] } }),
     );
     installBridge(mixedQueue({ writeTitleMapping, planLibrary }));
