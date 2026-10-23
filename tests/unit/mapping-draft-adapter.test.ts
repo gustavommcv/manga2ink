@@ -6,7 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { mappingDraftFromMangabindReport } from '@/adapters/mangabind/mapping-draft';
 import { parseMangabindReport } from '@/adapters/mangabind/protocol';
-import { dominantLanguage, validateMapping } from '@/domain/mapping';
+import {
+  assignChapters,
+  dominantLanguage,
+  toMangabindMetadata,
+  validateMapping,
+} from '@/domain/mapping';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 function protocolFixture(name: string): ReturnType<typeof parseMangabindReport> {
@@ -19,6 +24,10 @@ const report = protocolFixture('mangabind-v1-plan.json');
 const groupedReport = protocolFixture('mangabind-v1-vol-ch-title.json');
 const mixedReport = protocolFixture('mangabind-v1-mixed-grouping.json');
 const duplicateReport = protocolFixture('mangabind-v1-duplicate-chapters.json');
+// Real mangabind 0.8.0 reports, recorded from the pinned binary: a series kept as one folder for
+// each volume, and one kept with the chapters in a folder for each volume, numbered again in each.
+const volumeUnitsReport = protocolFixture('mangabind-v1-volume-units.json');
+const volumeFoldersReport = protocolFixture('mangabind-v1-volume-folders.json');
 
 describe('mangabind report to mapping draft', () => {
   it('starts from parsed chapters with no volume assignments and no provider', () => {
@@ -205,5 +214,102 @@ describe('seeding the mapping from mangabind grouping', () => {
     const draft = mappingDraftFromMangabindReport(edited, { seed: 'effective-volumes' });
 
     expect(draft.volumes.map((volume) => volume.number)).toEqual(['1', '2']);
+  });
+});
+
+describe('a series kept as one folder for each volume (mangabind 0.8.0)', () => {
+  const draft = mappingDraftFromMangabindReport(volumeUnitsReport, { seed: 'effective-volumes' });
+
+  it('puts each volume with its own folder, each with the one chapter it has', () => {
+    expect(draft.chapters).toMatchObject([
+      { chapter: 1, parsedVolume: 1, pageCount: 2 },
+      { chapter: 1, parsedVolume: 2, pageCount: 2 },
+    ]);
+    expect(draft.volumes).toMatchObject([
+      { number: '1', chapterIds: [draft.chapters[0]!.id] },
+      { number: '2', chapterIds: [draft.chapters[1]!.id] },
+    ]);
+  });
+
+  it('is a mapping with nothing to fix, though both volumes are chapter 1', () => {
+    expect(validateMapping(draft).filter((issue) => issue.severity === 'error')).toEqual([]);
+  });
+
+  it('asks the file for nothing, since each folder says its volume', () => {
+    expect(toMangabindMetadata(draft).volumes).toEqual([
+      { number: '1', chapters: [] },
+      { number: '2', chapters: [] },
+    ]);
+  });
+});
+
+describe('a series kept with the chapters in a folder for each volume (mangabind 0.8.0)', () => {
+  const draft = mappingDraftFromMangabindReport(volumeFoldersReport, { seed: 'effective-volumes' });
+  const idOf = (name: string) => draft.chapters.find((chapter) => chapter.name === name)!.id;
+
+  it('has the volume of the folder as the volume of each chapter, and says the folder in its name', () => {
+    // The draft is in the order of the chapter numbers, so the folders alternate; the name says which.
+    const byName = [...draft.chapters].sort((left, right) => left.name.localeCompare(right.name));
+    expect(byName.map((chapter) => [chapter.name, chapter.chapter, chapter.parsedVolume])).toEqual([
+      ['第1巻/第1話', 1, 1],
+      ['第1巻/第2話', 2, 1],
+      ['第2巻/第1話', 1, 2],
+      ['第2巻/第2話', 2, 2],
+    ]);
+    expect(draft.volumes.map((volume) => [volume.number, volume.chapterIds.length])).toEqual([
+      ['1', 2],
+      ['2', 2],
+    ]);
+  });
+
+  it('is a mapping with nothing to fix, though both volumes start again at chapter 1', () => {
+    expect(validateMapping(draft).filter((issue) => issue.severity === 'error')).toEqual([]);
+    expect(toMangabindMetadata(draft).volumes).toEqual([
+      { number: '1', chapters: [] },
+      { number: '2', chapters: [] },
+    ]);
+  });
+
+  it('does not let a chapter be put in another volume than its folder, which mangabind keeps', () => {
+    const moved = assignChapters(draft, draft.volumes[1]!.id, [idOf('第1巻/第1話')]);
+
+    const errors = validateMapping(moved).filter((issue) => issue.severity === 'error');
+    expect(errors.map((issue) => issue.code)).toEqual(['filename_volume_conflict']);
+    expect(errors[0]!.chapterIds).toEqual([idOf('第1巻/第1話')]);
+  });
+
+  it('names the folder by the last part of its path whichever separator it was written with', () => {
+    const windows = structuredClone(volumeFoldersReport);
+    for (const unit of windows.manga[0]!.units) {
+      unit.volume_folder = unit
+        .volume_folder!.replace('/fixtures/', 'C:\\fixtures\\')
+        .replaceAll('/', '\\');
+    }
+
+    const names = mappingDraftFromMangabindReport(windows, { seed: 'empty' })
+      .chapters.map((chapter) => chapter.name)
+      .sort();
+
+    expect(names).toEqual(['第1巻/第1話', '第1巻/第2話', '第2巻/第1話', '第2巻/第2話']);
+  });
+
+  it('takes the volume the name says over the folder, when a chapter says one of its own', () => {
+    const own = structuredClone(volumeFoldersReport);
+    const unit = own.manga[0]!.units[0]!;
+    unit.parser.volume = 7;
+    unit.effective_volume = 7;
+
+    const chapter = mappingDraftFromMangabindReport(own, { seed: 'empty' }).chapters[0]!;
+
+    expect(chapter.parsedVolume).toBe(7);
+  });
+
+  it('has no volume of its own for a chapter in a folder when mangabind reports none', () => {
+    const none = structuredClone(volumeFoldersReport);
+    delete none.manga[0]!.units[0]!.effective_volume;
+
+    const chapter = mappingDraftFromMangabindReport(none, { seed: 'empty' }).chapters[0]!;
+
+    expect(chapter.parsedVolume).toBeUndefined();
   });
 });
