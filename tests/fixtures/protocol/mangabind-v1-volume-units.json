@@ -1,0 +1,60 @@
+{
+  "protocol_version": 1,
+  "tool": "mangabind",
+  "tool_version": "0.8.0",
+  "kind": "report",
+  "mode": "plan",
+  "status": "completed",
+  "input_path": "/fixtures/Units Manga",
+  "output_path": "/fixtures/Output Library",
+  "batch": false,
+  "manga": [
+    {
+      "name": "Units Manga",
+      "input_path": "/fixtures/Units Manga",
+      "status": "completed",
+      "units": [
+        {
+          "name": "(一般コミック) [奥浩哉] いぬやしき 第01巻",
+          "path": "/fixtures/Units Manga/(一般コミック) [奥浩哉] いぬやしき 第01巻",
+          "kind": "folder",
+          "page_count": 2,
+          "parser": { "matched": true, "name": "japanese-volume", "volume": 1, "chapter": 1 },
+          "metadata_assignment": { "status": "not_requested" },
+          "effective_volume": 1,
+          "disposition": "included"
+        },
+        {
+          "name": "(一般コミック) [奥浩哉] いぬやしき 第02巻",
+          "path": "/fixtures/Units Manga/(一般コミック) [奥浩哉] いぬやしき 第02巻",
+          "kind": "folder",
+          "page_count": 2,
+          "parser": { "matched": true, "name": "japanese-volume", "volume": 2, "chapter": 1 },
+          "metadata_assignment": { "status": "not_requested" },
+          "effective_volume": 2,
+          "disposition": "included"
+        }
+      ],
+      "volumes": [
+        {
+          "number": 1,
+          "output_path": "/fixtures/Output Library/Units Manga - Vol.01.cbz",
+          "page_count": 2,
+          "chapters": ["(一般コミック) [奥浩哉] いぬやしき 第01巻"],
+          "written": false
+        },
+        {
+          "number": 2,
+          "output_path": "/fixtures/Output Library/Units Manga - Vol.02.cbz",
+          "page_count": 2,
+          "chapters": ["(一般コミック) [奥浩哉] いぬやしき 第02巻"],
+          "written": false
+        }
+      ],
+      "issues": [],
+      "summary": { "units": 2, "volumes": 2, "pages": 4, "warnings": 0, "errors": 0 }
+    }
+  ],
+  "issues": [],
+  "summary": { "manga": 1, "volumes": 2, "pages": 4, "errors": 0, "warnings": 0 }
+}

@@ -471,6 +471,73 @@ describe('two copies of one chapter in the folder', () => {
   });
 });
 
+describe('a chapter number that repeats from one volume to the next', () => {
+  const chapter = (id: string, number: number, parsedVolume?: number): MappingChapter => ({
+    id,
+    name: id,
+    path: `/m/${id}`,
+    pageCount: 1,
+    chapter: number,
+    ...(parsedVolume === undefined ? {} : { parsedVolume }),
+  });
+
+  /** The chapters placed as `volumes` says: volume number to the ids in it. */
+  const placed = (list: readonly MappingChapter[], volumes: Record<string, readonly string[]>) =>
+    Object.entries(volumes).reduce(
+      (draft, [number, ids]) =>
+        assignChapters(addVolume(draft, `v${number}`, number), `v${number}`, ids),
+      createMappingDraft({ chapters: list, mangaTitle: 'Repeats' }),
+    );
+
+  const errorsOf = (draft: ReturnType<typeof placed>) =>
+    validateMapping(draft).filter((issue) => issue.severity === 'error');
+
+  it('is no copy when each chapter has a volume of its own and they are not the same', () => {
+    const draft = placed([chapter('a', 1, 1), chapter('b', 1, 2)], { '1': ['a'], '2': ['b'] });
+
+    expect(errorsOf(draft)).toEqual([]);
+  });
+
+  it('is a copy when two chapters have the same volume of their own', () => {
+    const draft = placed([chapter('a', 1, 1), chapter('b', 1, 1)], { '1': ['a', 'b'] });
+
+    expect(errorsOf(draft)).toMatchObject([{ code: 'duplicate_chapter', chapterIds: ['a', 'b'] }]);
+  });
+
+  it('is a copy when one of the two has no volume of its own, which the file can only give one of', () => {
+    const draft = placed([chapter('a', 1, 1), chapter('b', 1)], { '1': ['a', 'b'] });
+
+    expect(errorsOf(draft)).toMatchObject([{ code: 'duplicate_chapter', chapterIds: ['a', 'b'] }]);
+  });
+
+  it('names only the chapters that could be taken for another, not the one that has its own volume', () => {
+    const draft = placed([chapter('a', 1, 1), chapter('b', 1, 1), chapter('c', 1, 2)], {
+      '1': ['a', 'b'],
+      '2': ['c'],
+    });
+
+    expect(errorsOf(draft)).toMatchObject([{ code: 'duplicate_chapter', chapterIds: ['a', 'b'] }]);
+  });
+
+  describe('in the file mangabind reads', () => {
+    const list = [chapter('a', 1, 1), chapter('b', 1, 2), chapter('c', 2), chapter('d', 3, 2)];
+    const draft = placed(list, { '1': ['a', 'c'], '2': ['b', 'd'] });
+
+    it('does not list under two volumes a number that its own chapters say the volume of', () => {
+      expect(toMangabindMetadata(draft).volumes).toEqual([
+        { number: '1', chapters: ['2'] },
+        { number: '2', chapters: ['3'] },
+      ]);
+    });
+
+    it('still lists a chapter that says its volume when no other chapter has its number', () => {
+      const single = placed([chapter('a', 5, 1), chapter('b', 6)], { '1': ['a', 'b'] });
+
+      expect(toMangabindMetadata(single).volumes).toEqual([{ number: '1', chapters: ['5', '6'] }]);
+    });
+  });
+});
+
 describe('what a volume number and a chapter number may be', () => {
   const draft = createMappingDraft({ chapters, mangaTitle: 'Example' });
 

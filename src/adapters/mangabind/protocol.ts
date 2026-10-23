@@ -56,6 +56,8 @@ const unitSchema = z
       })
       .passthrough(),
     effective_volume: z.number().optional(),
+    /** The folder of a volume that the unit was found in, when it was found in one (mangabind 0.8.0). */
+    volume_folder: z.string().optional(),
     disposition: z.enum(['included', 'unassigned', 'unparsed', 'empty', 'conflict', 'failed']),
   })
   .passthrough();
