@@ -1,7 +1,7 @@
 {
   "name": "manga2ink",
   "productName": "Manga2Ink",
-  "version": "0.1.0-alpha.17",
+  "version": "0.1.0-alpha.18",
   "private": true,
   "description": "A desktop workflow for binding, converting, and delivering manga to e-readers.",
   "author": "Manga2Ink contributors",
