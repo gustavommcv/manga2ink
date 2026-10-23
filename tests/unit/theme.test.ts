@@ -240,14 +240,15 @@ describe('the themes in the stylesheet', () => {
       }
     });
 
-    it('on the edge of a control: the box, the field and the select, against what each is on', async () => {
-      // The boundary a control is told by is at least 2.1:1 with what is around it: the page, a
-      // raised surface, a row the pointer is over (muted at half over a surface), or the panel of the
-      // controls of a table (muted at 30%). WCAG 1.4.11 asks 3:1, and ADR 0076 held it there; the
-      // owner chose a softer edge (ADR 0088), which this holds from going back to the hairline.
-      const leastEdge = 2.1;
+    it('on the edge of a control: the box, the field and the select, never fainter than the hairline', async () => {
+      // The edge of a control is the hairline of the cards in the two themes the app has, by the
+      // owner's choice (ADR 0090): the soft look of the first theme. WCAG 1.4.11 asks 3:1 of it; a
+      // high-contrast theme is where that goes. What this holds is that it is never fainter than
+      // the hairline against what it is on: the page, a raised surface, a row the pointer is over
+      // (muted at half over a surface), or the panel of the controls of a table (muted at 30%).
       const tokens = await tokensOf(theme);
-      const border = bytesOf(tokens.get('--control-border'));
+      const edge = bytesOf(tokens.get('--control-border'));
+      const hairline = bytesOf(tokens.get('--border'));
       const around = {
         'the page': bytesOf(tokens.get('--background')),
         'a surface': bytesOf(tokens.get('--surface')),
@@ -256,10 +257,9 @@ describe('the themes in the stylesheet', () => {
       };
 
       for (const [name, ground] of Object.entries(around)) {
-        expect(
-          contrastOfBytes(border, ground),
-          `--control-border on ${name}`,
-        ).toBeGreaterThanOrEqual(leastEdge);
+        expect(contrastOfBytes(edge, ground), `--control-border on ${name}`).toBeGreaterThanOrEqual(
+          contrastOfBytes(hairline, ground),
+        );
       }
     });
 

@@ -1,6 +1,6 @@
 # ADR 0076: The edge of a control is told from what it is on
 
-- Status: Accepted (the edge is softer since [ADR 0088](0088-the-edge-of-a-control-is-softer-than-wcag-asks-by-choice.md): 2.1 to 1 at the least, not 3 to 1)
+- Status: Accepted (the edge was softened by [ADR 0088](0088-the-edge-of-a-control-is-softer-than-wcag-asks-by-choice.md) and is the hairline again since [ADR 0090](0090-the-edge-of-a-control-is-the-hairline-again.md); the cascade fix stands)
 - Date: 2026-10-19
 - Relates to: [ADR 0066](0066-the-look-of-the-app-is-a-theme-and-a-theme-is-a-block-of-tokens.md) (a theme is a block of tokens), [ADR 0067](0067-the-light-theme.md) (contrast held by a test)
 
