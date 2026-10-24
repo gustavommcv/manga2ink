@@ -114,6 +114,21 @@ describe('process steps', () => {
     expect(screen.queryByRole('button', { name: /^Restore default for/u })).not.toBeInTheDocument();
   });
 
+  it('keeps a folder of CBZ chapters joined, since the converter cannot read pages inside them', async () => {
+    const user = userEvent.setup();
+    const onMode = vi.fn();
+    render(<Harness initial="convert-only" input="archives" onMode={onMode} />);
+
+    // A choice made for a folder of pages is carried over as the ordinary run.
+    expect(group()).toBeChecked();
+    expect(convert()).toBeChecked();
+    expect(group()).toBeDisabled();
+    expect(group()).toHaveAccessibleDescription(/CBZ files/u);
+
+    await user.click(convert());
+    expect(onMode).toHaveBeenLastCalledWith('bind-only');
+  });
+
   it('can be locked while a run is in progress', () => {
     render(<Harness disabled initial="bind-and-convert" input="folder" />);
 

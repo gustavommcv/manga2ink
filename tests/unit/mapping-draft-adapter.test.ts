@@ -9,6 +9,7 @@ import { parseMangabindReport } from '@/adapters/mangabind/protocol';
 import {
   assignChapters,
   dominantLanguage,
+  hasArchiveChapters,
   toMangabindMetadata,
   validateMapping,
 } from '@/domain/mapping';
@@ -40,6 +41,17 @@ describe('mangabind report to mapping draft', () => {
       { name: 'Chapter 1', chapter: 1, pageCount: 2 },
       { name: 'Chapter 3', chapter: 3, pageCount: 1 },
     ]);
+  });
+
+  it('tells whether a chapter is a folder of pages or an archive of them', () => {
+    const draft = mappingDraftFromMangabindReport(report, { seed: 'empty' });
+
+    expect(draft.chapters.map((chapter) => chapter.kind)).toEqual(['folder', 'folder']);
+    expect(hasArchiveChapters(draft)).toBe(false);
+    expect(
+      hasArchiveChapters({ ...draft, chapters: [{ ...draft.chapters[0]!, kind: 'cbz' }] }),
+    ).toBe(true);
+    expect(hasArchiveChapters(undefined)).toBe(false);
   });
 
   it('can seed the exact same draft from effective suggested assignments', () => {

@@ -29,6 +29,7 @@ import {
   plannedVolumeBookName,
   type WorkflowPlan,
 } from '@/domain/conversion';
+import { hasArchiveChapters } from '@/domain/mapping';
 import { type ProcessMode, unsupportedModeReason, usesMangaprep } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 
@@ -220,7 +221,12 @@ export class SingleInputRun {
     const mode = validateRunOptions(request, action);
     const session = this.sessions.requireSession(request.sessionId);
     rejectLibrary(session);
-    const unsupported = unsupportedModeReason(session.selection.kind, mode);
+    // A folder whose chapters are CBZ files is not pages the converter can read before they are joined.
+    const input =
+      session.selection.kind === 'folder' && hasArchiveChapters(session.trustedDraft)
+        ? 'archives'
+        : session.selection.kind;
+    const unsupported = unsupportedModeReason(input, mode);
     if (unsupported !== undefined)
       throw new ConversionWorkflowError('unsupported_mode', unsupported);
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);

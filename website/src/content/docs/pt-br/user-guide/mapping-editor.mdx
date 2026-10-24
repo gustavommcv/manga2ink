@@ -101,6 +101,8 @@ Confira os volumes sugeridos antes de confirmar ou editar a organização.
 
 **Pular o agrupamento** aparece quando o Manga2Ink pode converter sem reagrupar. Ele fica desativado em **Criar um livro para a série**, porque esse modo precisa dos volumes para pôr cada capítulo dentro do seu volume: no índice de um EPUB, nos marcadores de um PDF ou em pastas num CBZ.
 
+Ele também fica desativado para uma pasta cujos capítulos são arquivos CBZ (`Ch.0001.cbz`, `Ch.0002.cbz`, …): o conversor não consegue ler as páginas de dentro dos arquivos de uma pasta, então os capítulos precisam ser juntados antes. Uma pasta assim mostra **Precisa agrupar** se a etapa for pulada, e **Agrupar capítulos em volumes** continua ligado.
+
 ## Onde os seus volumes ficam guardados
 
 O editor passa os seus volumes ao mangabind em um [formato de metadados documentado](https://github.com/gustavommcv/mangabind/blob/main/docs/adr/0010-local-metadata-file.md). Você nunca precisa editar esse arquivo JSON.
