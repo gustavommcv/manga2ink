@@ -111,7 +111,7 @@ function GroupCard({
           <Badge>{words.versions(group.candidates.length)}</Badge>
         </div>
         <Badge tone={decision === undefined ? 'warning' : 'accent'}>
-          {decision === undefined ? words.choose(group.token) : words.decided}
+          {decision === undefined ? words.undecided : words.decided}
         </Badge>
       </div>
       <ul className="space-y-2">

@@ -70,7 +70,7 @@ describe('the screen where the files of one chapter are chosen among', () => {
     expect(within(group).getByText('Folder · 18 pages')).toBeVisible();
     for (const radio of within(group).getAllByRole('radio')) expect(radio).not.toBeChecked();
     expect(screen.getByRole('status')).toHaveTextContent('0 of 1 chapter decided');
-    expect(within(group).getByText('Which version of chapter 6 to use')).toBeVisible();
+    expect(within(group).getByText('Not decided yet')).toBeVisible();
   });
 
   it('chooses one version, all of them as alternatives, or none', async () => {
