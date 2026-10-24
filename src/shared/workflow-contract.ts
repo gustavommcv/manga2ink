@@ -54,6 +54,7 @@ const chapterSchema = z.object({
   special: z.string().max(16).optional(),
   parsedVolume: z.number().nonnegative().optional(),
   language: z.string().max(40).optional(),
+  kind: z.enum(['folder', 'cbz']).optional(),
 });
 const volumeSchema = z.object({
   id: z.string().min(1).max(maxNameLength),

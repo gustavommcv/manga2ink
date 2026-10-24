@@ -1,9 +1,15 @@
 import { type BookDetails, hasBookDetails, normalizeBookDetails } from './book-details';
 import { hasItemOptions, type ItemOptions } from './item-options';
 import { onlyLinksNote } from './library-links';
-import { type MappingDraft, mappingSignature } from './mapping';
+import { hasArchiveChapters, type MappingDraft, mappingSignature } from './mapping';
 import { type AnyMessage, message } from './message';
-import { libraryReason, type ProcessMode, resolveMode } from './process-mode';
+import {
+  archivesReason,
+  libraryReason,
+  type ModeInput,
+  type ProcessMode,
+  resolveMode,
+} from './process-mode';
 import { unrecognizedChaptersNote, unrecognizedInLibraryNote } from './unrecognized-chapters';
 
 /** What can be added to the queue: a folder or one comic archive. */
@@ -340,6 +346,20 @@ export function rowMode(kind: QueueRowKind, mode: ProcessMode): ProcessMode | 's
   return resolveMode(kind, mode);
 }
 
+/**
+ * What the steps of the queue are limited to: a queue of one kind only limits them to what that kind
+ * allows, and a mixed one does not. A queue of folders that all hold chapters that are CBZ files
+ * cannot skip joining them.
+ */
+export function queueModeInput(rows: readonly QueueRow[]): ModeInput {
+  const first = rows[0];
+  if (first === undefined) return 'folder';
+  if (rows.every((row) => row.kind === first.kind) && first.kind !== 'folder') return first.kind;
+  const archives = (row: QueueRow): boolean =>
+    row.state === 'inspected' && row.kind === 'folder' && hasArchiveChapters(row.mapping);
+  return rows.every(archives) ? 'archives' : 'folder';
+}
+
 export type RowTone = 'neutral' | 'accent' | 'warning' | 'danger';
 
 export interface RowView {
@@ -421,6 +441,16 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
   const chapters = row.mapping?.chapters.length ?? 0;
   const volumes = row.mapping?.volumes.length ?? 0;
   const unassigned = row.mapping === undefined ? 0 : unassignedChapterCount(row.mapping);
+  if (mode === 'convert-only' && hasArchiveChapters(row.mapping)) {
+    // Chapters that are CBZ files are not pages the converter can read from the folder.
+    return {
+      chip: message('queue.chip.needsGrouping', {}),
+      tone: 'warning',
+      detail: message('queue.detail.folderChapters', { chapters, grouping: 'plain' }),
+      runnable: false,
+      notes: [archivesReason],
+    };
+  }
   if (mode === 'convert-only') {
     return {
       chip: message('queue.chip.oneBook', {}),
@@ -444,7 +474,9 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
       ],
     };
   }
+  // Only volumes the names gave are "from names": a folder whose names give none has not been grouped.
   const grouping =
+    volumes > 0 &&
     row.mapping !== undefined &&
     row.proposedSignature !== undefined &&
     mappingSignature(row.mapping) === row.proposedSignature

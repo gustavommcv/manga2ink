@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { ConversionWorkflow } from '@/application/workflows/conversion-workflow';
 import type { ConversionArtifact, ConversionProgress } from '@/domain/conversion';
+import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
 
@@ -245,6 +246,43 @@ describe('conversion workflow process modes', () => {
     });
     await expect(workflow.plan(request)).rejects.toMatchObject({ code: 'unsupported_mode' });
     expect(ports.saveBook).not.toHaveBeenCalled();
+  });
+
+  it('refuses to skip joining a folder whose chapters are CBZ files, for both convert and plan', async () => {
+    const ports = dependencies();
+    ports.inspect.mockResolvedValue({
+      workspaceId: 'workspace-1',
+      draft: createMappingDraft({
+        mangaTitle: 'Archives',
+        chapters: [
+          {
+            id: 'c1',
+            name: 'Ch.1',
+            path: '/trusted/c1.cbz',
+            pageCount: 2,
+            chapter: 1,
+            kind: 'cbz',
+          },
+        ],
+      }),
+      issues: [],
+    });
+    const workflow = folderWorkflow(ports);
+    const inspected = await workflow.inspect(folder);
+    const request = {
+      sessionId: inspected.sessionId,
+      libraryPath: '/library',
+      settings: defaultMangaprepSettings,
+      format: 'epub',
+      mode: 'convert-only',
+    } as const;
+
+    await expect(workflow.convert(request, { onProgress: vi.fn() })).rejects.toMatchObject({
+      code: 'unsupported_mode',
+      said: message('mode.chaptersAreArchives', {}),
+    });
+    await expect(workflow.plan(request)).rejects.toMatchObject({ code: 'unsupported_mode' });
+    expect(ports.convert).not.toHaveBeenCalled();
   });
 
   it('reports no volumes when joining produces nothing to save', async () => {

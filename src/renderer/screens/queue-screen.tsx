@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-import { type QueueRow, summarizeQueue } from '@/domain/input-queue';
+import { type QueueRow, queueModeInput, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
 import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangaprep } from '@/domain/preferences';
@@ -92,14 +92,6 @@ const formatOptions = [
   { value: 'pdf', label: 'PDF' },
 ] as const;
 
-/** A queue of one kind only limits the steps to what that kind allows; a mixed one does not. */
-function stepsInput(rows: readonly QueueRow[]): 'folder' | 'cbz' | 'library' {
-  const kind = rows[0]?.kind;
-  return kind !== undefined && rows.every((row) => row.kind === kind) && kind !== 'folder'
-    ? kind
-    : 'folder';
-}
-
 export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const {
     disabled,
@@ -163,7 +155,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     >
       <ProcessSteps
         disabled={disabled}
-        input={stepsInput(rows)}
+        input={queueModeInput(rows)}
         mode={mode}
         onMode={onMode}
         singleBook={singleBookActive}

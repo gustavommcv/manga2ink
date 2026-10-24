@@ -195,6 +195,13 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
       'Um CBZ já é um volume só, então não há o que juntar.',
     ],
   ],
+  'mode.chaptersAreArchives': [
+    [
+      {},
+      'The chapters of this folder are CBZ files, so they have to be joined into volumes before they can be converted.',
+      'Os capítulos desta pasta são arquivos CBZ, então precisam ser juntados em volumes antes de serem convertidos.',
+    ],
+  ],
   'mode.libraryGroupsFirst': [
     [
       {},

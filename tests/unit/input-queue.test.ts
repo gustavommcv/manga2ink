@@ -8,6 +8,7 @@ import {
   itemsWithOptions,
   type QueueInput,
   type QueueRow,
+  queueModeInput,
   queueReducer,
   type ReadTitle,
   rowMode,
@@ -334,6 +335,57 @@ describe('describing a row', () => {
       tone: 'neutral',
       detail: 'Folder · 0 chapters · not grouped',
       runnable: true,
+    });
+  });
+
+  it('says a folder is grouped from its names only when the names gave it volumes', () => {
+    // mangabind proposed nothing, and nothing was changed: there are no volumes to be from names.
+    const proposed = inspectedFolder(ungrouped);
+    expect(describeRow(proposed, 'bind-and-convert').detail).toBe('Folder · 3 chapters');
+    expect(describeRow(inspectedFolder(grouped), 'bind-and-convert').detail).toBe(
+      'Folder · 3 chapters · grouped from names',
+    );
+  });
+
+  describe('a folder whose chapters are CBZ files', () => {
+    const archives = createMappingDraft({
+      mangaTitle: 'Work',
+      chapters: chapters.map((chapter) => ({ ...chapter, kind: 'cbz' as const })),
+    });
+
+    it('cannot skip joining them, and says why', () => {
+      expect(describeRow(inspectedFolder(archives), 'convert-only')).toEqual({
+        chip: 'Needs grouping',
+        tone: 'warning',
+        detail: 'Folder · 3 chapters',
+        runnable: false,
+        note: 'The chapters of this folder are CBZ files, so they have to be joined into volumes before they can be converted.',
+      });
+    });
+
+    it('is joined as any other folder is, when the run joins', () => {
+      expect(describeRow(inspectedFolder(archives), 'bind-and-convert')).toMatchObject({
+        chip: 'Needs volumes',
+        runnable: false,
+      });
+    });
+
+    it('is left out of a run that does not group, and told so, without keeping anything else back', () => {
+      const rows = [inspectedFolder(archives), inspectedFolder(ungrouped, { id: 'plain' })];
+
+      expect(runnableRows(rows, 'convert-only').map(({ row }) => row.id)).toEqual(['plain']);
+    });
+
+    it('limits the steps of a queue of such folders, and only of those', () => {
+      const archived = inspectedFolder(archives);
+      const plain = inspectedFolder(ungrouped, { id: 'plain' });
+
+      expect(queueModeInput([archived, { ...archived, id: 'second' }])).toBe('archives');
+      expect(queueModeInput([archived, plain])).toBe('folder');
+      expect(queueModeInput([plain])).toBe('folder');
+      expect(queueModeInput([{ ...folderInput, state: 'inspecting' }])).toBe('folder');
+      expect(queueModeInput([])).toBe('folder');
+      expect(queueModeInput([inspectedCbz(), { ...inspectedCbz(), id: 'again' }])).toBe('cbz');
     });
   });
 

@@ -78,4 +78,20 @@ describe('process modes', () => {
     expect(resolveMode('library', 'bind-only')).toBe('bind-only');
     expect(resolveMode('library', 'bind-and-convert')).toBe('bind-and-convert');
   });
+
+  it('does not let a folder of chapters that are CBZ files skip joining them', () => {
+    // The converter cannot read pages from inside the archives of a folder: they are joined first.
+    expect(unsupportedModeReason('archives', 'convert-only')).toEqual(
+      message('mode.chaptersAreArchives', {}),
+    );
+    expect(blockedModeReason('archives', 'convert-only')).toEqual(
+      message('mode.chaptersAreArchives', {}),
+    );
+    for (const mode of ['bind-only', 'bind-and-convert'] as const) {
+      expect(unsupportedModeReason('archives', mode)).toBeUndefined();
+      expect(blockedModeReason('archives', mode)).toBeUndefined();
+      expect(resolveMode('archives', mode)).toBe(mode);
+    }
+    expect(resolveMode('archives', 'convert-only')).toBe('bind-and-convert');
+  });
 });

@@ -14,6 +14,8 @@ export interface MappingChapter {
   readonly parsedVolume?: number;
   /** The language the folder name declared, such as "pt-br", when it declared one. */
   readonly language?: string;
+  /** Whether the chapter is a folder of pages or an archive of them (a `.cbz` or `.zip`). */
+  readonly kind?: 'folder' | 'cbz';
 }
 
 export interface MappingVolume {
@@ -246,6 +248,15 @@ export function dominantLanguage(chapters: readonly MappingChapter[]): string | 
     }
   }
   return best;
+}
+
+/**
+ * Whether some chapter of the draft is an archive. An archive of pages is not something the
+ * converter reads as a chapter of a book: it has to be joined with the others first, so a folder of
+ * them cannot skip the joining step.
+ */
+export function hasArchiveChapters(draft: MappingDraft | undefined): boolean {
+  return draft?.chapters.some((chapter) => chapter.kind === 'cbz') ?? false;
 }
 
 export function createMappingDraft({
