@@ -389,6 +389,51 @@ describe('describing a row', () => {
     });
   });
 
+  describe('a series made into one book', () => {
+    it('is ready with no volumes: its chapters are the book, and nothing is left out for want of one', () => {
+      expect(
+        describeRow(inspectedFolder(ungrouped), 'bind-and-convert', { singleBook: true }),
+      ).toEqual({
+        chip: 'Whole series',
+        tone: 'accent',
+        detail: 'Folder · 3 chapters',
+        runnable: true,
+      });
+    });
+
+    it('is as it was where the series has volumes: the chapters not in one are still asked about', () => {
+      expect(
+        describeRow(inspectedFolder(grouped), 'bind-and-convert', { singleBook: true }),
+      ).toMatchObject({
+        chip: '2 volumes',
+        runnable: true,
+      });
+      expect(
+        describeRow(inspectedFolder(gappy), 'bind-and-convert', { singleBook: true }),
+      ).toMatchObject({
+        chip: 'Needs volumes',
+        runnable: false,
+      });
+    });
+
+    it('is not ready with no volumes for books of volumes', () => {
+      expect(describeRow(inspectedFolder(ungrouped), 'bind-and-convert')).toMatchObject({
+        chip: 'Needs volumes',
+        runnable: false,
+      });
+    });
+
+    it('is counted, and run, in a queue that makes one book of each series', () => {
+      const rows = [inspectedFolder(ungrouped), inspectedFolder(grouped, { id: 'second' })];
+
+      expect(summarizeQueue(rows, 'bind-and-convert', { singleBook: true }).runnable).toBe(2);
+      expect(summarizeQueue(rows, 'bind-and-convert').runnable).toBe(1);
+      expect(
+        runnableRows(rows, 'bind-and-convert', { singleBook: true }).map(({ row }) => row.id),
+      ).toEqual(['a', 'second']);
+    });
+  });
+
   describe('a folder with a chapter that more than one file claims', () => {
     const versions = [
       {

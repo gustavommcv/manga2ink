@@ -390,6 +390,8 @@ describe('conversion workflow', () => {
       undefined,
       true,
       expect.any(Function),
+      // A series made into one book is told to the tool as one, so that it needs no volumes.
+      { wholeSeries: true },
     );
     expect(ports.convert).toHaveBeenCalledTimes(1);
     expect(ports.convert.mock.calls[0]?.[0].inputPath).toBe('/work/Trusted Manga.cbz');
@@ -550,8 +552,10 @@ describe('conversion workflow', () => {
       mapping: mappedDraft(),
     });
 
-    expect(plan.message).toEqual(message('plan.mangabind', { volumes: 2, shape: 'series' }));
-    expect(plan.books).toEqual([{ name: 'Trusted Manga', pageCount: 5, wholeSeries: true }]);
+    expect(plan.message).toEqual(message('plan.series', { volumes: 2, chapters: 0 }));
+    expect(plan.books).toEqual([
+      { name: 'Trusted Manga', pageCount: 5, wholeSeries: true, file: 'Trusted Manga.epub' },
+    ]);
   });
 
   it('bypasses binding for a direct CBZ and propagates cancellation to conversion', async () => {
@@ -620,6 +624,7 @@ describe('conversion workflow', () => {
       'workspace-1',
       expect.objectContaining({ mangaTitle: 'Trusted Manga' }),
       controller.signal,
+      { wholeSeries: false },
     );
 
     await expect(

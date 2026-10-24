@@ -123,12 +123,9 @@ describe('the queue screen in Portuguese', () => {
       within(panel).getByRole('checkbox', { name: 'Agrupar capítulos em volumes' }),
     ).toBeChecked();
     expect(within(panel).getByRole('checkbox', { name: 'Converter para e-reader' })).toBeChecked();
-    expect(
-      within(panel).getByRole('checkbox', { name: 'Criar um livro para a série' }),
-    ).not.toBeChecked();
-    expect(
-      screen.getByText('Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.'),
-    ).toBeVisible();
+    expect(within(panel).getByRole('radio', { name: 'Série inteira' })).not.toBeChecked();
+    expect(within(panel).getByRole('radio', { name: 'Um por volume' })).toBeChecked();
+    expect(screen.getByText('Cada volume vira um livro próprio.')).toBeVisible();
     expect(within(panel).getByRole('combobox', { name: 'Dispositivo' })).toBeVisible();
     expect(within(panel).getByRole('radiogroup', { name: 'Formato' })).toBeVisible();
     expect(
@@ -440,9 +437,7 @@ describe('what the queue says about each row, in Portuguese', () => {
       ),
     );
 
-    expect(
-      screen.getAllByText('Desligue “Criar um livro para a série” para mudar isto.'),
-    ).not.toHaveLength(0);
+    expect(screen.getAllByText('Escolha “Um por volume” para mudar isto.')).not.toHaveLength(0);
   });
 
   it('writes the reason of a step that a CBZ does not allow', () => {

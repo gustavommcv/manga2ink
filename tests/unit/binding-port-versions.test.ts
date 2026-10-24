@@ -271,3 +271,94 @@ describe('the choice among the versions of a chapter, kept with the folder', () 
     });
   });
 });
+
+describe('a series made into one book that has no volumes', () => {
+  async function opened(name = 'chapter-versions-unresolved') {
+    const files = fakeFiles();
+    const report = recorded(name);
+    for (const volume of report.manga[0]!.volumes) {
+      volume.output_path = path.join(root, 'volumes', path.basename(volume.output_path));
+    }
+    report.manga[0]!.combined_output_path = path.join(root, 'volumes', 'Folders Series.cbz');
+    const { adapter, run } = adapterOver(report, files);
+    const { workspaceId, draft } = await adapter.inspect(folder);
+    return { adapter, draft, files, run, workspaceId };
+  }
+
+  const scratchOf = (files: ReturnType<typeof fakeFiles>) =>
+    JSON.parse(files.writeText.mock.calls[0]![1]) as {
+      volumes: { number: string; chapters: string[] }[];
+    };
+
+  it('is told to the tool as one volume, and the folder is not told of a volume nobody made', async () => {
+    const { adapter, draft, files, workspaceId } = await opened();
+    const mapping = chooseVersions(draft, '3', [groupB]);
+
+    await adapter.bind(workspaceId, mapping, undefined, true, undefined, { wholeSeries: true });
+
+    expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
+    // What is kept with the folder is the person's own: the choice, and no volume.
+    expect(JSON.parse(files.writeTextAtomically.mock.calls[0]![1])).toMatchObject({
+      volumes: [],
+      chapter_versions: [{ chapter: '3', use: ['Ch.0003 - Koala (en) [GroupB].cbz'] }],
+    });
+  });
+
+  it('is planned the same way', async () => {
+    const { adapter, draft, files, workspaceId } = await opened();
+    const mapping = chooseVersions(draft, '3', [groupB]);
+
+    await adapter.plan(workspaceId, mapping, undefined, { wholeSeries: true });
+
+    expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
+  });
+
+  it('is left to the volumes the person made, where there are any', async () => {
+    const { adapter, draft, files, workspaceId } = await opened('chapter-versions-conflict');
+    const mapping = chooseVersions(draft, '3', [groupB]);
+
+    await adapter.bind(workspaceId, mapping, undefined, true, undefined, { wholeSeries: true });
+
+    expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
+    expect(mapping.volumes).toHaveLength(1);
+  });
+
+  it('asks for the chapters to be named by their numbers, in the plan and in the run, and not in the first look', async () => {
+    const { adapter, draft, run, workspaceId } = await opened();
+    const mapping = chooseVersions(draft, '3', [groupB]);
+
+    await adapter.plan(workspaceId, mapping);
+    await adapter.bind(workspaceId, mapping);
+
+    expect(run.mock.calls[0]![0]).not.toHaveProperty('chapterLabels');
+    expect(run.mock.calls[1]![0]).toMatchObject({ dryRun: true, chapterLabels: 'number' });
+    expect(run.mock.calls[2]![0]).toMatchObject({ dryRun: false, chapterLabels: 'number' });
+  });
+
+  it('plans with the chapters as the book will name them, and the files set aside', async () => {
+    const { adapter, draft, workspaceId } = await opened('chapter-versions-one');
+
+    const plan = await adapter.plan(workspaceId, draft);
+
+    expect(plan.volumes[0]?.chapters?.map((chapter) => chapter.label)).toEqual([
+      'Ch.1',
+      'Ch.2',
+      'Ch.3 - Koala',
+      'Ch.4',
+    ]);
+    expect(plan.volumes[0]?.chapters?.[2]).toEqual({ label: 'Ch.3 - Koala', pageCount: 3 });
+    expect(plan.leftOut).toEqual(['Ch.0003 - Koala (en) [GroupA]']);
+  });
+
+  it('plans with what the tool tells, which is no chapters and nothing set aside for a tool that tells none', async () => {
+    const { adapter, draft, workspaceId } = await opened('chapter-versions-conflict');
+
+    const plan = await adapter.plan(workspaceId, draft);
+
+    expect(plan.leftOut).toBeUndefined();
+    expect(plan.volumes[0]?.chapters).toBeDefined();
+    const old = await opened('plan');
+    const older = await old.adapter.plan(old.workspaceId, old.draft);
+    expect(older.volumes.every((volume) => volume.chapters === undefined)).toBe(true);
+  });
+});

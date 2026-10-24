@@ -403,16 +403,14 @@ describe('process control in the queue', () => {
     expect(screen.getByText('Keep at least one step on.')).toBeVisible();
   });
 
-  it('locks the steps, and not the format, when "Create one book for the series" is checked, and unlocks them when unchecked', async () => {
+  it('locks the steps, and not the format, when "Whole series" is chosen, and unlocks them when "One per volume" is', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);
 
     expect(await screen.findByRole('heading', { name: 'Queue' })).toBeVisible();
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    expect(singleBookCheckbox).not.toBeChecked();
+    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
+    expect(wholeSeries).not.toBeChecked();
     // The controls are enabled once the tools have been read, which is a moment after the heading.
     await waitFor(() => {
       expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
@@ -422,9 +420,9 @@ describe('process control in the queue', () => {
     const formatBefore = screen.getByRole('radio', { name: 'CBZ' });
     expect(formatBefore).toBeChecked();
 
-    await user.click(singleBookCheckbox);
+    await user.click(wholeSeries);
 
-    expect(singleBookCheckbox).toBeChecked();
+    expect(wholeSeries).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
@@ -434,22 +432,16 @@ describe('process control in the queue', () => {
       expect(screen.getByRole('radio', { name: format })).toBeEnabled();
     }
     expect(screen.getByRole('radio', { name: 'CBZ' })).toBeChecked();
-    expect(
-      screen.getAllByText('Turn off “Create one book for the series” to change this.'),
-    ).toHaveLength(2);
+    expect(screen.getAllByText('Choose “One per volume” to change this.')).toHaveLength(2);
 
     // Individual restore for "Create one book for the series"
-    await user.click(
-      screen.getByRole('button', { name: 'Restore default for Create one book for the series' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Restore default for Books' }));
 
-    expect(singleBookCheckbox).not.toBeChecked();
+    expect(wholeSeries).not.toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
     expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    expect(
-      screen.queryByText('Turn off “Create one book for the series” to change this.'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Choose “One per volume” to change this.')).not.toBeInTheDocument();
   });
 
   it('keeps the series as one book when the format is changed, and says what each format gives', async () => {
@@ -466,25 +458,23 @@ describe('process control in the queue', () => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
 
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    await user.click(singleBookCheckbox);
+    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
+    await user.click(wholeSeries);
 
     const notes = {
-      CBZ: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
-      EPUB: 'Produces a single EPUB with volumes and chapters in the table of contents.',
-      PDF: 'Produces a single PDF with the pages in order and bookmarks for the volumes and chapters.',
+      CBZ: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
+      EPUB: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
+      PDF: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
     };
     for (const [format, note] of Object.entries(notes)) {
       await user.click(screen.getByRole('radio', { name: format }));
-      expect(singleBookCheckbox).toBeChecked();
+      expect(wholeSeries).toBeChecked();
       expect(screen.getByRole('radio', { name: format })).toBeChecked();
       expect(screen.getByText(note)).toBeVisible();
     }
   });
 
-  it('disables "Create one book for the series" when only CBZ files are in the queue', async () => {
+  it('disables "Whole series" when only CBZ files are in the queue', async () => {
     const user = userEvent.setup();
     installBridge(
       bridge({
@@ -497,10 +487,8 @@ describe('process control in the queue', () => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
 
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    expect(singleBookCheckbox).toBeDisabled();
+    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
+    expect(wholeSeries).toBeDisabled();
     expect(screen.getByText('Not available for standalone .cbz files.')).toBeVisible();
   });
 
@@ -516,14 +504,12 @@ describe('process control in the queue', () => {
     );
     render(<App />);
 
-    const singleBookCheckbox = await screen.findByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    await waitFor(() => expect(singleBookCheckbox).toBeChecked());
+    const wholeSeries = await screen.findByRole('radio', { name: 'Whole series' });
+    await waitFor(() => expect(wholeSeries).toBeChecked());
     await user.click(screen.getByRole('button', { name: 'Files' }));
     await waitFor(() => expect(screen.getByText('Ready')).toBeVisible());
 
-    expect(singleBookCheckbox).toBeEnabled();
+    expect(wholeSeries).toBeEnabled();
     expect(
       screen.getByText('Saved for manga folders. A standalone CBZ is already one book.'),
     ).toBeVisible();
@@ -536,11 +522,11 @@ describe('process control in the queue', () => {
 
     await user.click(screen.getByRole('radio', { name: 'PDF' }));
     // The format is its own choice: it no longer turns the saved one-book-per-series off.
-    expect(singleBookCheckbox).toBeChecked();
+    expect(wholeSeries).toBeChecked();
     expect(screen.getByRole('radio', { name: 'PDF' })).toBeChecked();
   });
 
-  it('enables "Create one book for the series" when both folders and CBZ files are in the queue', async () => {
+  it('enables "Whole series" when both folders and CBZ files are in the queue', async () => {
     const user = userEvent.setup();
     installBridge(
       bridge({
@@ -557,14 +543,8 @@ describe('process control in the queue', () => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
 
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    expect(singleBookCheckbox).toBeEnabled();
-    expect(
-      screen.getByText(
-        'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
-      ),
-    ).toBeVisible();
+    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
+    expect(wholeSeries).toBeEnabled();
+    expect(screen.getByText('Each volume is made into a book of its own.')).toBeVisible();
   });
 });

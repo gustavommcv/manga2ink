@@ -13,7 +13,7 @@ export const modeSaid: Readonly<Record<Language, SaidFor<ModeMessageValues>>> = 
     'mode.chaptersAreArchives': () =>
       'The chapters of this folder are CBZ files, so they have to be joined into volumes before they can be converted.',
     'mode.singleBookLocked': () =>
-      `Turn off “${queueMessages.en.panel.singleBook.label}” to change this.`,
+      `Choose “${queueMessages.en.panel.singleBook.perVolume}” to change this.`,
   },
   'pt-BR': {
     'mode.cbzIsOneVolume': () => 'Um CBZ já é um volume só, então não há o que juntar.',
@@ -22,7 +22,7 @@ export const modeSaid: Readonly<Record<Language, SaidFor<ModeMessageValues>>> = 
     'mode.chaptersAreArchives': () =>
       'Os capítulos desta pasta são arquivos CBZ, então precisam ser juntados em volumes antes de serem convertidos.',
     'mode.singleBookLocked': () =>
-      `Desligue “${queueMessages['pt-BR'].panel.singleBook.label}” para mudar isto.`,
+      `Escolha “${queueMessages['pt-BR'].panel.singleBook.perVolume}” para mudar isto.`,
   },
   ja: {
     'mode.cbzIsOneVolume': () => 'CBZ はすでに 1 巻なので、まとめる対象がありません。',
@@ -31,6 +31,6 @@ export const modeSaid: Readonly<Record<Language, SaidFor<ModeMessageValues>>> = 
     'mode.chaptersAreArchives': () =>
       'このフォルダーの各話は CBZ ファイルなので、変換する前に巻にまとめる必要があります。',
     'mode.singleBookLocked': () =>
-      `これを変更するには、「${queueMessages.ja.panel.singleBook.label}」をオフにしてください。`,
+      `これを変更するには、「${queueMessages.ja.panel.singleBook.perVolume}」を選んでください。`,
   },
 };

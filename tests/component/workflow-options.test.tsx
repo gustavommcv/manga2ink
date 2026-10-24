@@ -489,30 +489,24 @@ describe('the options kept between sessions', () => {
     render(<App />);
 
     expect(await screen.findByRole('heading', { name: 'Queue' })).toBeVisible();
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
+    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
     // What was kept arrives a moment after the page does, so the page is first drawn with the defaults.
     await waitFor(() => {
-      expect(singleBookCheckbox).toBeChecked();
+      expect(wholeSeries).toBeChecked();
     });
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
     expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
     expect(screen.getByRole('radio', { name: 'EPUB' })).toBeChecked();
-    expect(
-      screen.getAllByText('Turn off “Create one book for the series” to change this.'),
-    ).toHaveLength(2);
+    expect(screen.getAllByText('Choose “One per volume” to change this.')).toHaveLength(2);
 
-    await user.click(singleBookCheckbox);
+    await user.click(screen.getByRole('radio', { name: 'One per volume' }));
 
-    expect(singleBookCheckbox).not.toBeChecked();
+    expect(wholeSeries).not.toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
     expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
     expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    expect(
-      screen.queryByText('Turn off “Create one book for the series” to change this.'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Choose “One per volume” to change this.')).not.toBeInTheDocument();
 
     await waitFor(() => {
       expect(saveCalls(saveSettings).at(-1)?.preferences).toMatchObject({

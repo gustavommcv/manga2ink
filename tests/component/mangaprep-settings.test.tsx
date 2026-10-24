@@ -498,9 +498,7 @@ describe('mangaprep settings editor', () => {
     expect(pdfOption.disabled).toBe(false);
     expect(screen.getByLabelText('Book format')).toBeEnabled();
     expect(screen.getByRole('status')).toHaveTextContent('Single book for the series');
-    expect(
-      screen.queryByText('Turn off “Create one book for the series” to change this.'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Choose “One per volume” to change this.')).not.toBeInTheDocument();
   });
 
   it('marks changed fields and restores only the chosen select, toggle, text, or number', async () => {

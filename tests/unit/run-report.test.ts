@@ -205,6 +205,22 @@ function finish(
 }
 
 describe('the final run report and remaining queue', () => {
+  it('does not report as left out a series with no volumes when the books are one for the whole series, and does otherwise', () => {
+    const series: InspectedRow = { ...folder('Series'), mapping: ungrouped };
+    const asOneBook = finishRunReport({
+      rows: [series],
+      mode: 'bind-and-convert',
+      singleBook: true,
+      settled: [],
+      attempted: new Set(),
+      completedTitles: new Map(),
+    });
+
+    // It would have run, so it is not one that was left out.
+    expect(asOneBook.outcomes).toEqual([]);
+    expect(finish([series]).outcomes[0]).toMatchObject({ rowId: 'Series', status: 'skipped' });
+  });
+
   it('returns to the queue when there are no outcomes or omissions', () => {
     expect(finish([])).toEqual({ outcomes: [], completedRowIds: [], hasResults: false });
   });

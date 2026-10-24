@@ -106,6 +106,23 @@ export const runRows: Rows<RunMessageValues> = {
       'mangabind validou 2 volumes · um só livro para a série · nenhum arquivo da biblioteca gravado',
     ],
   ],
+  'plan.series': [
+    [
+      { volumes: 0, chapters: 16 },
+      'mangabind validated 16 chapters · one book for the whole series · no library files written',
+      'mangabind validou 16 capítulos · um livro para a série inteira · nenhum arquivo da biblioteca gravado',
+    ],
+    [
+      { volumes: 2, chapters: 1 },
+      'mangabind validated 1 chapter in 2 volumes · one book for the whole series · no library files written',
+      'mangabind validou 1 capítulo em 2 volumes · um livro para a série inteira · nenhum arquivo da biblioteca gravado',
+    ],
+    [
+      { volumes: 0, chapters: 0 },
+      'mangabind validated the series · one book for the whole series · no library files written',
+      'mangabind validou a série · um livro para a série inteira · nenhum arquivo da biblioteca gravado',
+    ],
+  ],
   'plan.library': [
     [
       { titles: 1, volumes: 1, books: 1, shape: 'books' },

@@ -15,6 +15,8 @@ export interface QueueMessageValues {
   readonly 'queue.chip.needsVolumes': NoValues;
   readonly 'queue.chip.needsGrouping': NoValues;
   readonly 'queue.chip.reviewVersions': NoValues;
+  /** A series with no volumes, made into one book of its chapters (ADR 0094). */
+  readonly 'queue.chip.wholeSeries': NoValues;
   readonly 'queue.chip.saved': NoValues;
   readonly 'queue.chip.volumes': { readonly count: number };
   readonly 'queue.chip.titles': { readonly count: number };

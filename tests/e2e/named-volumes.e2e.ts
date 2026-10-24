@@ -158,10 +158,15 @@ describe('packaged folder whose names carry the volumes', () => {
     await $('button=Folder').click();
     await $('span=2 volumes').waitForDisplayed({ timeout: 30_000 });
     // The mode is kept for the rest of the session, so it is made sure to be on, not toggled.
-    const combine = $('#combine-into-one-volume');
-    if ((await combine.getAttribute('aria-checked')) !== 'true') await combine.click();
+    const wholeSeries = $('button=Whole series');
+    if ((await wholeSeries.getAttribute('aria-checked')) !== 'true') await wholeSeries.click();
     // The mode leaves the format as it was chosen.
-    assert.equal(await $(`[role="radio"][aria-checked="true"]`).getText(), format);
+    assert.equal(
+      await $(
+        '[role="radiogroup"][aria-label="Format"] [role="radio"][aria-checked="true"]',
+      ).getText(),
+      format,
+    );
     await $('button=Validate plan').click();
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /One book for Named Volumes/u);

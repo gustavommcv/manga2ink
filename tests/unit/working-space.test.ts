@@ -89,6 +89,19 @@ describe('what a run is taken to need', () => {
     });
   });
 
+  it('counts a series with no volumes only when it is made into one book', () => {
+    const series = {
+      ...folder,
+      mapping: createMappingDraft({ mangaTitle: 'Work', chapters }),
+    };
+
+    expect(roomNeeded([series], 'bind-and-convert')).toEqual({ scratchBytes: 0, pendingBytes: 0 });
+    expect(roomNeeded([series], 'bind-and-convert', { singleBook: true })).toEqual({
+      scratchBytes: pages(180),
+      pendingBytes: pages(180),
+    });
+  });
+
   it('counts every chapter of a folder converted whole, and builds no volume for it', () => {
     expect(roomNeeded([folder], 'convert-only')).toEqual({
       scratchBytes: 0,

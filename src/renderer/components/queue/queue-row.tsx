@@ -30,6 +30,7 @@ export function QueueRowItem({
   onRemove,
   onReviewVersions,
   row,
+  singleBook = false,
 }: {
   readonly mode: ProcessMode;
   readonly onEdit: () => void;
@@ -41,10 +42,12 @@ export function QueueRowItem({
   /** Opens the choice among the files that claim one chapter (ADR 0093). */
   readonly onReviewVersions: () => void;
   readonly row: QueueRow;
+  /** The books are one for the whole series, which a folder with no volumes can be (ADR 0094). */
+  readonly singleBook?: boolean;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
   const { say, sayAll } = useSay();
-  const view = describeRow(row, mode);
+  const view = describeRow(row, mode, { singleBook });
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
   // A folder or a library has volumes to edit, and only while volumes are in play.
   const editable = row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only';

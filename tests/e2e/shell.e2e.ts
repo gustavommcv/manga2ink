@@ -240,7 +240,7 @@ describe('packaged application shell', () => {
   });
 
   it('has one scrollbar when single-book options make the queue taller than the window', async () => {
-    await $('#combine-into-one-volume').click();
+    await $('button=Whole series').click();
     const measured = JSON.parse(
       await browser.execute(() => {
         const bar = document.querySelector('header.window-titlebar');
@@ -288,7 +288,7 @@ describe('packaged application shell', () => {
     assert.equal(measured.bodyOverflow, 'hidden', JSON.stringify(measured));
     assert.equal(measured.scrollables.length, 1, JSON.stringify(measured));
     assert.equal(measured.scrollables[0]?.right, measured.viewportWidth, JSON.stringify(measured));
-    await $('#combine-into-one-volume').click();
+    await $('button=One per volume').click();
   });
 
   it('has only the content area scroll on the long options page', async () => {

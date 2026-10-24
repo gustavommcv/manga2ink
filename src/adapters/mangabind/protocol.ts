@@ -90,6 +90,18 @@ const volumeSchema = z
     output_path: z.string(),
     page_count: z.number().int().nonnegative(),
     chapters: z.array(z.string()),
+    /** The chapters as the book will call them, in reading order (mangabind's ADR 0029). */
+    chapter_entries: z
+      .array(
+        z
+          .object({
+            label: z.string(),
+            path: z.string(),
+            page_count: z.number().int().nonnegative(),
+          })
+          .passthrough(),
+      )
+      .optional(),
     written: z.boolean(),
   })
   .passthrough();

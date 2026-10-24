@@ -402,7 +402,9 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     setValidating(true);
     const collected: RowPlan[] = [];
     try {
-      for (const { row, mode: rowProcess } of runnableRows(rows, mode)) {
+      for (const { row, mode: rowProcess } of runnableRows(rows, mode, {
+        singleBook: singleBookActive,
+      })) {
         if (row.kind === 'library') {
           const planned = await bridge.planLibrary(crypto.randomUUID(), row.sessionId);
           if (!planned.ok) {
@@ -520,7 +522,14 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     runningJob.current = undefined;
     setProgress(undefined);
     setRunPosition(undefined);
-    const report = finishRunReport({ rows, mode, settled, attempted, completedTitles });
+    const report = finishRunReport({
+      rows,
+      mode,
+      singleBook: singleBookActive,
+      settled,
+      attempted,
+      completedTitles,
+    });
     removeRows(report.completedRowIds);
     if (!report.hasResults) {
       setNavigation({ screen: 'queue' });
@@ -539,7 +548,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
    * computer awake and tells when it is done (ADR 0065). A queue is never left running there.
    */
   const startRun = async (): Promise<void> => {
-    const items = runnableRows(rows, mode);
+    const items = runnableRows(rows, mode, { singleBook: singleBookActive });
     if (items.length === 0) return;
     const queue = await beginQueue(bridge);
     let summary = nothingMade;

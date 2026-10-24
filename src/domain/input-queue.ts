@@ -406,8 +406,14 @@ export interface RowView {
   readonly notes: readonly AnyMessage[];
 }
 
-export function describeRow(row: QueueRow, mode: ProcessMode): RowView {
-  const view = describeRowBase(row, mode);
+/** What of the queue's choices a row's description depends on besides the process. */
+export interface QueueView {
+  /** The books are one for the whole series, not one for each volume (ADR 0094). */
+  readonly singleBook?: boolean;
+}
+
+export function describeRow(row: QueueRow, mode: ProcessMode, queue: QueueView = {}): RowView {
+  const view = describeRowBase(row, mode, queue);
   // Folders the tool could not read as chapters are in no book, whatever else the row says.
   const told = row.state === 'inspected' ? leftOutNote(row) : undefined;
   return told === undefined ? view : { ...view, notes: [...view.notes, told] };
@@ -424,7 +430,7 @@ function leftOutNote(row: InspectedRow): AnyMessage | undefined {
     : unrecognizedChaptersNote(row.unrecognized ?? []);
 }
 
-function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
+function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): RowView {
   if (row.state === 'inspecting') {
     return {
       chip: message('queue.chip.checking', {}),
@@ -526,6 +532,17 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
       notes: [message('queue.note.versionsPending', { count: undecided })],
     };
   }
+  // The whole series is one book, and a series with no volumes is one book of its chapters: nothing
+  // is missing, and nothing is left out for want of a volume (ADR 0094).
+  if (queue.singleBook === true && volumes === 0) {
+    return {
+      chip: message('queue.chip.wholeSeries', {}),
+      tone: 'accent',
+      detail,
+      runnable: true,
+      notes: [],
+    };
+  }
   if (volumes === 0 || (unassigned > 0 && !row.confirmed)) {
     return {
       chip: message('queue.chip.needsVolumes', {}),
@@ -615,12 +632,16 @@ export interface QueueSummary {
   readonly inspecting: number;
 }
 
-export function summarizeQueue(rows: readonly QueueRow[], mode: ProcessMode): QueueSummary {
+export function summarizeQueue(
+  rows: readonly QueueRow[],
+  mode: ProcessMode,
+  queue: QueueView = {},
+): QueueSummary {
   let runnable = 0;
   let inspecting = 0;
   for (const row of rows) {
     if (row.state === 'inspecting') inspecting += 1;
-    else if (describeRow(row, mode).runnable) runnable += 1;
+    else if (describeRow(row, mode, queue).runnable) runnable += 1;
   }
   return { total: rows.length, runnable, skipped: rows.length - runnable - inspecting, inspecting };
 }
@@ -643,12 +664,13 @@ export function itemsWithOptions(rows: readonly QueueRow[]): number {
 export function runnableRows(
   rows: readonly QueueRow[],
   mode: ProcessMode,
+  queue: QueueView = {},
 ): readonly { readonly row: InspectedRow; readonly mode: ProcessMode }[] {
   const result: { readonly row: InspectedRow; readonly mode: ProcessMode }[] = [];
   for (const row of rows) {
     if (row.state !== 'inspected') continue;
     const process = rowMode(row.kind, mode);
-    if (process === 'skip' || !describeRow(row, mode).runnable) continue;
+    if (process === 'skip' || !describeRow(row, mode, queue).runnable) continue;
     result.push({ row, mode: process });
   }
   return result;

@@ -56,7 +56,12 @@ export interface QueueMessages {
     /** The name of the panel of conversion options beside the queue. */
     readonly label: string;
     readonly singleBook: {
+      /** The name of the choice between one book for each volume and one for the whole series (ADR 0094). */
       readonly label: string;
+      readonly perVolume: string;
+      readonly series: string;
+      /** What a book for each volume is. */
+      readonly perVolumeNote: string;
       readonly saved: string;
       readonly unavailable: string;
       /** What the one book is, by its format: an EPUB has a table of contents, a PDF bookmarks, a CBZ neither (ADR 0083). */
@@ -82,6 +87,12 @@ export interface QueueMessages {
     readonly pages: (count: number) => string;
     /** The one book a whole series is bound into, named for the series. */
     readonly oneBookFor: (series: string) => string;
+    /** The file a book will be, with its extension. */
+    readonly file: (name: string) => string;
+    /** The chapters in a book, as its table of contents will call them. */
+    readonly chapters: (count: number) => string;
+    /** The files set aside because another version of their chapter was chosen. */
+    readonly leftOut: (count: number) => string;
   };
   readonly pending: {
     readonly earlierBooks: string;
@@ -143,13 +154,16 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     panel: {
       label: 'Conversion options',
       singleBook: {
-        label: 'Create one book for the series',
+        label: 'Books',
+        perVolume: 'One per volume',
+        series: 'Whole series',
+        perVolumeNote: 'Each volume is made into a book of its own.',
         saved: 'Saved for manga folders. A standalone CBZ is already one book.',
         unavailable: 'Not available for standalone .cbz files.',
         produces: {
-          epub: 'Produces a single EPUB with volumes and chapters in the table of contents.',
-          cbz: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
-          pdf: 'Produces a single PDF with the pages in order and bookmarks for the volumes and chapters.',
+          epub: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
+          cbz: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
+          pdf: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
         },
       },
       device: 'Device',
@@ -173,6 +187,10 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'No library files were written.',
       pages: (count) => `${String(count)} ${countOf(count, 'page', 'pages')}`,
       oneBookFor: (series) => `One book for ${series}`,
+      file: (name) => `File: ${name}`,
+      chapters: (count) => `${String(count)} ${countOf(count, 'chapter', 'chapters')} in the book`,
+      leftOut: (count) =>
+        `${String(count)} ${countOf(count, 'file', 'files')} left out because another version was chosen`,
     },
     pending: {
       earlierBooks: 'Earlier books',
@@ -234,13 +252,16 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     panel: {
       label: 'Opções de conversão',
       singleBook: {
-        label: 'Criar um livro para a série',
+        label: 'Livros',
+        perVolume: 'Um por volume',
+        series: 'Série inteira',
+        perVolumeNote: 'Cada volume vira um livro próprio.',
         saved: 'Guardado para pastas de mangá. Um CBZ avulso já é um livro só.',
         unavailable: 'Indisponível para arquivos .cbz avulsos.',
         produces: {
-          epub: 'Gera um único EPUB com volumes e capítulos no sumário.',
-          cbz: 'Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.',
-          pdf: 'Gera um único PDF com as páginas em ordem e marcadores para os volumes e capítulos.',
+          epub: 'Um EPUB para a série inteira, com os capítulos (e os volumes, se ela tiver) no sumário. Não precisa de volumes.',
+          cbz: 'Um CBZ para a série inteira, com os capítulos (e os volumes) em pastas. Não tem sumário.',
+          pdf: 'Um PDF para a série inteira, com as páginas em ordem e marcadores para os capítulos (e os volumes).',
         },
       },
       device: 'Dispositivo',
@@ -264,6 +285,10 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'Nenhum arquivo da biblioteca foi gravado.',
       pages: (count) => `${String(count)} ${countOf(count, 'página', 'páginas')}`,
       oneBookFor: (series) => `Um livro para ${series}`,
+      file: (name) => `Arquivo: ${name}`,
+      chapters: (count) => `${String(count)} ${countOf(count, 'capítulo', 'capítulos')} no livro`,
+      leftOut: (count) =>
+        `${String(count)} ${countOf(count, 'arquivo ficou', 'arquivos ficaram')} de fora porque outra versão foi escolhida`,
     },
     pending: {
       earlierBooks: 'Livros anteriores',
@@ -323,13 +348,16 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     panel: {
       label: '変換オプション',
       singleBook: {
-        label: 'シリーズを 1 冊の本にする',
+        label: '本',
+        perVolume: '巻ごとに 1 冊',
+        series: 'シリーズ全体で 1 冊',
+        perVolumeNote: '各巻が、それぞれ 1 冊の本になります。',
         saved: 'マンガのフォルダー用に保存されます。単体の CBZ は、すでに 1 冊の本です。',
         unavailable: '単体の .cbz ファイルでは使えません。',
         produces: {
-          epub: '各巻と各話が目次に入った、1 つの EPUB を作成します。',
-          cbz: '各巻と各話をフォルダーにした、1 つの CBZ を作成します。目次はありません。',
-          pdf: 'ページが順番に並び、各巻と各話のしおりが付いた、1 つの PDF を作成します。',
+          epub: 'シリーズ全体で 1 つの EPUB を作成します。各話（巻がある場合は各巻も）が目次に入ります。巻は不要です。',
+          cbz: 'シリーズ全体で 1 つの CBZ を作成します。各話（巻がある場合は各巻も）がフォルダーになります。目次はありません。',
+          pdf: 'シリーズ全体で 1 つの PDF を作成します。ページが順番に並び、各話（巻がある場合は各巻も）のしおりが付きます。',
         },
       },
       device: '端末',
@@ -352,6 +380,9 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'ライブラリのファイルは書き込まれていません。',
       pages: (count) => `${String(count)} ページ`,
       oneBookFor: (series) => `「${series}」全体で 1 冊`,
+      file: (name) => `ファイル: ${name}`,
+      chapters: (count) => `本に入る話: ${String(count)} 話`,
+      leftOut: (count) => `別の版が選ばれたため除外したファイル: ${String(count)} 個`,
     },
     pending: {
       earlierBooks: '以前の本',

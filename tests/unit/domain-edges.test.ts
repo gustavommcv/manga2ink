@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { canonicalLanguageTag } from '@/domain/book-details';
 import { warningNotices } from '@/domain/book-warnings';
-import { plannedVolumeBookName } from '@/domain/conversion';
+import { plannedSingleBook, plannedVolumeBookName } from '@/domain/conversion';
 import {
   emptyQueue,
   type InspectedRow,
@@ -176,6 +176,31 @@ describe('the name of a joined volume’s book', () => {
       'My.cbz.backup.epub',
     );
     expect(plannedVolumeBookName({ name: 'Vol.CBZ' }, undefined, 'pdf')).toBe('Vol.pdf');
+  });
+});
+
+describe('the book of a whole series, planned', () => {
+  const volumes = [
+    { name: 'One.cbz', pageCount: 3, chapters: [{ label: 'Ch.1', pageCount: 3 }] },
+    { name: 'Two.cbz', pageCount: 2 },
+  ];
+
+  it('adds up the pages and gathers the chapters of its volumes, and has the file when it is known', () => {
+    expect(plannedSingleBook('Series', volumes, 'Series.epub')).toEqual({
+      name: 'Series',
+      pageCount: 5,
+      wholeSeries: true,
+      file: 'Series.epub',
+      chapters: [{ label: 'Ch.1', pageCount: 3 }],
+    });
+  });
+
+  it('says no more than is known: no file, and no chapters when the volumes tell none', () => {
+    expect(plannedSingleBook('Series', [{ name: 'One.cbz', pageCount: 3 }])).toEqual({
+      name: 'Series',
+      pageCount: 3,
+      wholeSeries: true,
+    });
   });
 });
 

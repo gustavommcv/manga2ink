@@ -1,4 +1,5 @@
-import { type InspectedRow, type QueueRow, runnableRows } from './input-queue';
+import { type InspectedRow, type QueueRow, type QueueView, runnableRows } from './input-queue';
+import { withSeriesVolume } from './series-book';
 import type { ProcessMode } from './process-mode';
 
 /**
@@ -40,11 +41,17 @@ export interface LowSpace {
  * The pages a row would make books of: the chapters of a folder that are in a volume (all of them
  * when the folder is converted whole), the volumes still to be made of a library.
  */
-export function pagesToMake(row: InspectedRow, process: ProcessMode): number {
+export function pagesToMake(
+  row: InspectedRow,
+  process: ProcessMode,
+  queue: QueueView = {},
+): number {
   if (row.kind === 'folder') {
     const { mapping } = row;
     if (mapping === undefined) return 0;
-    const inVolumes = new Set(mapping.volumes.flatMap((volume) => volume.chapterIds));
+    // A series with no volumes made into one book is all in the one volume made for the run.
+    const placed = queue.singleBook === true ? withSeriesVolume(mapping) : mapping;
+    const inVolumes = new Set(placed.volumes.flatMap((volume) => volume.chapterIds));
     return mapping.chapters
       .filter((chapter) => process === 'convert-only' || inVolumes.has(chapter.id))
       .reduce((total, chapter) => total + chapter.pageCount, 0);
@@ -63,11 +70,15 @@ export function pagesToMake(row: InspectedRow, process: ProcessMode): number {
  * What a run of the queue is taken to need. Volumes are built only where a process joins chapters;
  * a book waits in the other place whatever the process is.
  */
-export function roomNeeded(rows: readonly QueueRow[], mode: ProcessMode): RoomNeeded {
+export function roomNeeded(
+  rows: readonly QueueRow[],
+  mode: ProcessMode,
+  queue: QueueView = {},
+): RoomNeeded {
   let scratchBytes = 0;
   let pendingBytes = 0;
-  for (const { row, mode: process } of runnableRows(rows, mode)) {
-    const bytes = pagesToMake(row, process) * bytesPerPage;
+  for (const { row, mode: process } of runnableRows(rows, mode, queue)) {
+    const bytes = pagesToMake(row, process, queue) * bytesPerPage;
     pendingBytes += bytes;
     if (process !== 'convert-only') scratchBytes += bytes;
   }

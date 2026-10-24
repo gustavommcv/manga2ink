@@ -19,10 +19,8 @@ import { DropTarget } from '@/renderer/components/queue/drop-target';
 import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
-import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
-import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Field } from '@/renderer/components/shared/field';
 import { IconLine } from '@/renderer/components/shared/icon-line';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -134,7 +132,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const { gap } = useSentenceMarks();
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const summary = summarizeQueue(rows, mode);
+  const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
+  const singleBookActive = singleBook && !onlyCbz;
+  const summary = summarizeQueue(rows, mode, { singleBook: singleBookActive });
   const mangaprepRuns = mode !== 'bind-only';
   const canRun = !disabled && summary.inspecting === 0 && summary.runnable > 0;
   const hint =
@@ -147,9 +147,10 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           : summary.skipped > 0
             ? words.run.leftOut(summary.skipped)
             : undefined;
-  const short = space === null ? null : lowSpace(space, roomNeeded(rows, mode));
-  const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
-  const singleBookActive = singleBook && !onlyCbz;
+  const short =
+    space === null
+      ? null
+      : lowSpace(space, roomNeeded(rows, mode, { singleBook: singleBookActive }));
 
   const panel = (
     <aside
@@ -164,33 +165,36 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         singleBook={singleBookActive}
       />
 
-      <CheckRow
-        checked={singleBook}
-        describedBy="combine-into-one-volume-message"
+      <Field
+        changed={singleBook}
+        description={
+          onlyCbz
+            ? singleBook
+              ? words.panel.singleBook.saved
+              : words.panel.singleBook.unavailable
+            : singleBook
+              ? words.panel.singleBook.produces[format]
+              : words.panel.singleBook.perVolumeNote
+        }
         disabled={disabled || (onlyCbz && !singleBook)}
-        id="combine-into-one-volume"
-        note={
-          <Note id="combine-into-one-volume-message">
-            {onlyCbz
-              ? singleBook
-                ? words.panel.singleBook.saved
-                : words.panel.singleBook.unavailable
-              : words.panel.singleBook.produces[format]}
-          </Note>
-        }
-        onChange={onSingleBook}
-        title={
-          <SettingFieldHeader
-            changed={singleBook}
-            disabled={disabled || (onlyCbz && !singleBook)}
-            id="combine-into-one-volume"
-            label={words.panel.singleBook.label}
-            onReset={() => {
-              onSingleBook(false);
-            }}
-          />
-        }
-      />
+        label={words.panel.singleBook.label}
+        onReset={() => {
+          onSingleBook(false);
+        }}
+      >
+        <SegmentedControl
+          disabled={disabled || (onlyCbz && !singleBook)}
+          label={words.panel.singleBook.label}
+          onChange={(value) => {
+            onSingleBook(value === 'series');
+          }}
+          options={[
+            { value: 'volume', label: words.panel.singleBook.perVolume },
+            { value: 'series', label: words.panel.singleBook.series },
+          ]}
+          value={singleBook ? 'series' : 'volume'}
+        />
+      </Field>
 
       <Field
         changed={settings.deviceProfile !== defaultMangaprepSettings.deviceProfile}
@@ -347,6 +351,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                     onReviewVersions(row.id);
                   }}
                   row={row}
+                  singleBook={singleBookActive}
                 />
               ))}
             </ul>
@@ -530,18 +535,55 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
         <div key={name}>
           <h3 className="text-sm font-medium">{name}</h3>
           <Note className="mt-1">{say(plan.message)}</Note>
-          <ul className="mt-2 space-y-1 text-sm">
+          <ul className="mt-2 space-y-2 text-sm">
             {plan.books.map((book) => (
-              <li className="flex justify-between gap-4" key={book.name}>
-                <span className="truncate">
-                  {book.wholeSeries === true ? words.oneBookFor(book.name) : book.name}
-                </span>
-                <span className="text-muted-foreground shrink-0">
-                  {words.pages(book.pageCount)}
-                </span>
+              <li key={book.name}>
+                <div className="flex justify-between gap-4">
+                  <span className="truncate">
+                    {book.wholeSeries === true ? words.oneBookFor(book.name) : book.name}
+                  </span>
+                  <span className="text-muted-foreground shrink-0">
+                    {words.pages(book.pageCount)}
+                  </span>
+                </div>
+                {book.file !== undefined && <Note>{words.file(book.file)}</Note>}
+                {book.chapters !== undefined && (
+                  <details className="mt-1">
+                    <summary className="text-muted-foreground cursor-pointer text-xs">
+                      {words.chapters(book.chapters.length)}
+                    </summary>
+                    <ol className="mt-1 space-y-0.5 pl-4 text-xs">
+                      {book.chapters.map((chapter, index) => (
+                        <li
+                          className="flex justify-between gap-4"
+                          key={`${String(index)}-${chapter.label}`}
+                        >
+                          <span className="wrap-anywhere">{chapter.label}</span>
+                          <span className="text-muted-foreground shrink-0">
+                            {words.pages(chapter.pageCount)}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </details>
+                )}
               </li>
             ))}
           </ul>
+          {plan.leftOut !== undefined && plan.leftOut.length > 0 && (
+            <details className="mt-2">
+              <summary className="text-muted-foreground cursor-pointer text-xs">
+                {words.leftOut(plan.leftOut.length)}
+              </summary>
+              <ul className="mt-1 space-y-0.5 pl-4 text-xs">
+                {plan.leftOut.map((file) => (
+                  <li className="wrap-anywhere" key={file}>
+                    {file}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
         </div>
       ))}
     </section>

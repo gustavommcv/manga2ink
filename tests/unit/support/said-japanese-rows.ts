@@ -15,6 +15,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'queue.chip.needsVolumes': ['巻が必要'],
   'queue.chip.needsGrouping': ['まとめが必要'],
   'queue.chip.reviewVersions': ['版を選択'],
+  'queue.chip.wholeSeries': ['シリーズ全体'],
   'queue.chip.saved': ['保存済み'],
   'queue.chip.volumes': ['1 巻', '2 巻'],
   'queue.chip.titles': ['1 タイトル', '3 タイトル'],
@@ -81,9 +82,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'mode.libraryGroupsFirst': [
     'ライブラリは、まずタイトルごとに各話が巻にまとめられるため、巻をまとめる手順を省略できません。',
   ],
-  'mode.singleBookLocked': [
-    'これを変更するには、「シリーズを 1 冊の本にする」をオフにしてください。',
-  ],
+  'mode.singleBookLocked': ['これを変更するには、「巻ごとに 1 冊」を選んでください。'],
   'text.raw': ['Not enough space on the disk.'],
   'failure.cancelled': ['キャンセルしました。'],
   'failure.conversionCancelled': ['変換をキャンセルしました。'],
@@ -399,6 +398,11 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     'mangabind の検証: 1 巻 · ライブラリのファイルは書き込まれていません',
     'mangabind の検証: 2 巻 · CBZ ファイルとして保存（mangaprep は実行しません） · ライブラリのファイルは書き込まれていません',
     'mangabind の検証: 2 巻 · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません',
+  ],
+  'plan.series': [
+    'mangabind の検証: 16 話 · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません',
+    'mangabind の検証: 1 話（2 巻） · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません',
+    'mangabind の検証: シリーズ · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません',
   ],
   'plan.library': [
     'mangabind の検証: 1 タイトル · 1 巻 · ライブラリのファイルは書き込まれていません',

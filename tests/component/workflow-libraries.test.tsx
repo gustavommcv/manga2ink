@@ -477,7 +477,7 @@ describe('libraries in the queue', () => {
     render(<App />);
     await addFolder(user);
     expectNoOutputFolderPicker();
-    await user.click(screen.getByRole('checkbox', { name: 'Create one book for the series' }));
+    await user.click(screen.getByRole('radio', { name: 'Whole series' }));
     await user.click(screen.getByRole('button', { name: 'Validate plan' }));
 
     expect(await screen.findByRole('heading', { name: 'Plan validated' })).toBeVisible();

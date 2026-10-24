@@ -19,6 +19,7 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.chip.needsVolumes': [[{}, 'Needs volumes', 'Precisa de volumes']],
   'queue.chip.needsGrouping': [[{}, 'Needs grouping', 'Precisa agrupar']],
   'queue.chip.reviewVersions': [[{}, 'Choose versions', 'Escolher versões']],
+  'queue.chip.wholeSeries': [[{}, 'Whole series', 'Série inteira']],
   'queue.chip.saved': [[{}, 'Saved', 'Salvo']],
   'queue.chip.volumes': [
     [{ count: 1 }, '1 volume', '1 volume'],
@@ -223,11 +224,7 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
     ],
   ],
   'mode.singleBookLocked': [
-    [
-      {},
-      'Turn off “Create one book for the series” to change this.',
-      'Desligue “Criar um livro para a série” para mudar isto.',
-    ],
+    [{}, 'Choose “One per volume” to change this.', 'Escolha “Um por volume” para mudar isto.'],
   ],
 
   'text.raw': [

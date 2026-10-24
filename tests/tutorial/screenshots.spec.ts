@@ -447,9 +447,7 @@ tutorial(
   async ({ capture, open, page, t }) => {
     const story = 'workflows-queue--single-book-active';
     await open(story);
-    await expect(
-      page.getByRole('checkbox', { name: t.queue.panel.singleBook.label }),
-    ).toBeChecked();
+    await expect(page.getByRole('radio', { name: t.queue.panel.singleBook.series })).toBeChecked();
     await expect(
       page.getByRole('checkbox', { name: t.queue.steps.group, exact: true }),
     ).toBeDisabled();

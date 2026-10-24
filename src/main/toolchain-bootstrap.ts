@@ -58,12 +58,13 @@ export async function bootstrapToolchain(
   }
   if (toolchainStatus.state === 'ready' && toolchainStatus.target !== undefined) {
     const runner = createNodeProcessRunner();
+    const mangabindCapabilities =
+      toolchainStatus.tools.find((tool) => tool.name === 'mangabind')?.capabilities ?? [];
     const mangabindCli = new MangabindCliAdapter(
       executablePath(toolchainRoot, toolchainStatus.target, 'mangabind'),
       runner,
-      toolchainStatus.tools
-        .find((tool) => tool.name === 'mangabind')
-        ?.capabilities?.includes('progress-json') === true,
+      mangabindCapabilities.includes('progress-json'),
+      mangabindCapabilities.includes('chapter-labels'),
     );
     context.mangaprepCli = new MangaprepCliAdapter(
       executablePath(toolchainRoot, toolchainStatus.target, 'mangaprep'),

@@ -108,6 +108,8 @@ interface RunReportInput<Artifact> {
   /** The queue snapshot the run started with, before its title outcomes were updated. */
   readonly rows: readonly QueueRow[];
   readonly mode: ProcessMode;
+  /** Whether the books were one for the whole series, which decides what a row lacked to run. */
+  readonly singleBook?: boolean;
   readonly settled: readonly RunOutcome<Artifact>[];
   readonly attempted: ReadonlySet<string>;
   readonly completedTitles: ReadonlyMap<string, ReadonlySet<string>>;
@@ -123,6 +125,7 @@ interface RunReport<Artifact> {
 export function finishRunReport<Artifact>({
   rows,
   mode,
+  singleBook,
   settled,
   attempted,
   completedTitles,
@@ -145,7 +148,7 @@ export function finishRunReport<Artifact>({
       continue;
     }
     if (attempted.has(row.id)) continue;
-    const view = describeRow(row, mode);
+    const view = describeRow(row, mode, { singleBook: singleBook === true });
     if (view.runnable) continue;
     outcomes.push({
       rowId: row.id,

@@ -344,7 +344,7 @@ export const SingleBookActive: Story = {
     await expect(canvas.getByRole('radio', { name: 'PDF' })).toBeEnabled();
     await expect(
       canvas.getByText(
-        'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
+        'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
       ),
     ).toBeVisible();
   },
