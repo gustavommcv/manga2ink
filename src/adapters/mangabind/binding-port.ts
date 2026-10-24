@@ -35,7 +35,7 @@ import {
   ToolExecutionError,
 } from '@/domain/conversion';
 import { type MappingDraft, mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
-import { withSeriesVolume } from '@/domain/series-book';
+import { serializeSeriesMetadata } from '@/domain/series-book';
 import { message } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
@@ -179,9 +179,7 @@ export class MangabindBindingAdapter implements BindingPort {
     const metadata = serializeMangabindMetadata(mapping, below);
     await this.files.writeText(
       workspace.metadataPath,
-      options.wholeSeries === true
-        ? serializeMangabindMetadata(withSeriesVolume(mapping), below)
-        : metadata,
+      options.wholeSeries === true ? serializeSeriesMetadata(mapping, below) : metadata,
     );
     // When the user accepted mangabind's own grouping unchanged, the folder names already say
     // everything: a mangabind.json next to them would record nothing new, and would make a
@@ -257,10 +255,11 @@ export class MangabindBindingAdapter implements BindingPort {
     if (workspace === undefined) {
       throw new Error('The temporary binding workspace is no longer available.');
     }
-    const metadata = serializeMangabindMetadata(
-      options.wholeSeries === true ? withSeriesVolume(mapping) : mapping,
-      pathBelow(workspace.inputPath),
-    );
+    const below = pathBelow(workspace.inputPath);
+    const metadata =
+      options.wholeSeries === true
+        ? serializeSeriesMetadata(mapping, below)
+        : serializeMangabindMetadata(mapping, below);
     await this.files.writeText(workspace.metadataPath, metadata);
     const result = await this.cli.run(
       {
