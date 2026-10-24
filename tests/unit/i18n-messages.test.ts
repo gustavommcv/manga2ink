@@ -134,7 +134,6 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   ],
   'versions.chapter': [['6']],
   'versions.versions': [[2], [3]],
-  'versions.choose': [['6']],
   'versions.pages': [[1], [12]],
   'versions.preview.alt': [['Ch.1']],
   'versions.all.label': [[2], [3]],

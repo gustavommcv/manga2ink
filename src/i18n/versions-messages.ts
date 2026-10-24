@@ -19,8 +19,8 @@ export interface VersionsMessages {
   /** The chapter, by its number as the mapping file writes it: `6`, `6.5`, `21x1`. */
   readonly chapter: (token: string) => string;
   readonly versions: (count: number) => string;
-  /** The question a chapter asks. */
-  readonly choose: (token: string) => string;
+  /** What a chapter says while nothing is chosen for it. */
+  readonly undecided: string;
   readonly pages: (count: number) => string;
   readonly kind: { readonly folder: string; readonly cbz: string };
   readonly preview: {
@@ -52,7 +52,7 @@ export const versionsMessages: Readonly<Record<Language, VersionsMessages>> = {
     done: 'Done',
     chapter: (token) => `Chapter ${token}`,
     versions: (count) => `${String(count)} versions`,
-    choose: (token) => `Which version of chapter ${token} to use`,
+    undecided: 'Not decided yet',
     pages: (count) => `${String(count)} ${countOf(count, 'page', 'pages')}`,
     kind: { folder: 'Folder', cbz: 'CBZ file' },
     preview: {
@@ -86,7 +86,7 @@ export const versionsMessages: Readonly<Record<Language, VersionsMessages>> = {
     done: 'Concluir',
     chapter: (token) => `Capítulo ${token}`,
     versions: (count) => `${String(count)} versões`,
-    choose: (token) => `Qual versão do capítulo ${token} usar`,
+    undecided: 'Ainda não decidido',
     pages: (count) => `${String(count)} ${countOf(count, 'página', 'páginas')}`,
     kind: { folder: 'Pasta', cbz: 'Arquivo CBZ' },
     preview: {
@@ -119,7 +119,7 @@ export const versionsMessages: Readonly<Record<Language, VersionsMessages>> = {
     done: '完了',
     chapter: (token) => `第 ${token} 話`,
     versions: (count) => `${String(count)} 版`,
-    choose: (token) => `第 ${token} 話で使う版`,
+    undecided: '未選択',
     pages: (count) => `${String(count)} ページ`,
     kind: { folder: 'フォルダー', cbz: 'CBZ ファイル' },
     preview: {
