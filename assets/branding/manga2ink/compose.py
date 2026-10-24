@@ -23,9 +23,9 @@ def compose():
         })
         ET.SubElement(root, tag('title'), id='title').text = f'Manga2Ink {kind}'
         ET.SubElement(root, tag('desc'), id='description').text = (
-            'Adapted from JPmarquesbraga artwork, with a reconstructed crown and '
-            'a reference-aligned native vector character. The original high '
-            'collar is retained. No embedded bitmap or external font is used. '
+            'Adapted from JPmarquesbraga artwork and the owner-supplied complete '
+            'reference, using the selected refined native vector character. '
+            'No embedded bitmap or external font is used. '
             + ('Grenze Black lettering is converted to editable paths.' if kind == 'logo'
                else 'Text-free compact mark for app icons and favicons.')
         )
@@ -48,9 +48,15 @@ def compose():
         if kind == 'icon':
             # Crop the bust at the badge base; keep the full crown visible.
             art.set('transform', 'translate(-222 80.6) scale(1.4)')
+        # Register the new complete character in the established badge layout.
+        # Uniform scaling keeps the face, hands and hair in their drawn proportions.
+        coordinates = ET.SubElement(art, tag('g'), {
+            'id': 'character-coordinate-frame',
+            'transform': 'translate(125 -12) scale(0.841796875)',
+        })
         for layer in character:
             if layer.tag == tag('g'):
-                art.append(copy.deepcopy(layer))
+                coordinates.append(copy.deepcopy(layer))
         if kind == 'logo':
             root.append(copy.deepcopy(next(n for n in wordmark if n.get('id') == 'wordmark')))
         ET.indent(root, space='  ')

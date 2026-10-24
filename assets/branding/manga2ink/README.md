@@ -8,15 +8,16 @@ use the exports listed in [`../../README.md`](../../README.md).
 
 | File            | Purpose                                                                                                  |
 | --------------- | -------------------------------------------------------------------------------------------------------- |
-| `character.svg` | Standalone transparent mascot, complete head, 135 native paths in twelve named layers.                   |
+| `character.svg` | Standalone transparent mascot, complete head, 179 native paths in thirteen named layers.                 |
 | `wordmark.svg`  | Manga2Ink lettering, set in Grenze Black. Each glyph is an editable path.                                |
 | `logo.svg`      | Complete navy badge, mascot and gold lettering. The bust has the original composition's top/bottom crop. |
 | `icon.svg`      | Text-free compact mark. The full crown is visible; the bust meets the badge base.                        |
 
-The character is the reviewed stroke-by-stroke reconstruction from before **all**
-collar corrections. Its SHA-256 is
+The maintainer selected the refined character on 2026-10-24, following the later
+complete reference in `sources/reference-v2.png`, including its collar, hair and
+book. Drawing refinement is ongoing. The previous 135-path character is preserved
+at `history/character-before-reference-v2.svg`, SHA-256
 `9a53a5afc63d49f715de3e076a84c97ddf27246e4913ef881ec0dda16c40d449`.
-The original high collar and neck paths are restored exactly, not redrawn again.
 Hair, skin, eyes, brows, mouth, clothing, hand, book and individual flower petals
 remain separate editable objects. The standalone head is not cropped.
 
@@ -45,7 +46,7 @@ These files, Mangabound's icons and their attribution must not be overwritten
 or removed by the rename. The maintainer confirmed MIT distribution permission
 on 2026-10-11; see `../../README.md`. The maintainer also states that the original
 image was AI-generated. This vector adaptation was made with AI assistance.
-The missing crown is reconstructed, and clean curves simplify raster texture;
+The full head follows the later reference, and clean curves simplify raster texture;
 this is not a pixel-identical conversion or a claim of independently drawn art.
 
 ## Exports and integration
