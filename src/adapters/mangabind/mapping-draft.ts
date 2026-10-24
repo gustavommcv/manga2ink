@@ -45,6 +45,7 @@ export function mappingDraftFromMangabindReport(
             ? unit.name
             : `${folderName(unit.volume_folder)}/${unit.name}`,
         path: unit.path,
+        kind: unit.kind,
         pageCount: unit.page_count,
         ...(unit.parser.chapter === undefined ? {} : { chapter: unit.parser.chapter }),
         ...(unit.parser.special === undefined ? {} : { special: unit.parser.special }),

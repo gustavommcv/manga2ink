@@ -70,6 +70,9 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     '名前を各話として読み取れないフォルダーが 7 個あり、本から除外されています: A（1）、B（2）、C（3） ほか 1 タイトル。各話の番号（たとえば Ch.005）を含む名前に変更してから、ライブラリをもう一度追加してください。',
   ],
   'mode.cbzIsOneVolume': ['CBZ はすでに 1 巻なので、まとめる対象がありません。'],
+  'mode.chaptersAreArchives': [
+    'このフォルダーの各話は CBZ ファイルなので、変換する前に巻にまとめる必要があります。',
+  ],
   'mode.libraryGroupsFirst': [
     'ライブラリは、まずタイトルごとに各話が巻にまとめられるため、巻をまとめる手順を省略できません。',
   ],
