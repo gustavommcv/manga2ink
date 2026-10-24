@@ -79,7 +79,7 @@ The name of the app, of the tools and of the services it works with (Manga2Ink, 
 | pending book                  | 保留中の本                           | A finished book that is not saved yet; the guide's words. "Earlier books": 以前の本. |
 | working folder                | 作業フォルダー                       |                                                                                      |
 | free space                    | 空き容量                             |                                                                                      |
-| single book                   | 1 冊にまとめる                       | "Create one book for the series": シリーズを 1 冊の本にする.                         |
+| single book                   | 1 冊にまとめる                       | "Books": 本; "One per volume": 巻ごとに 1 冊; "Whole series": シリーズ全体で 1 冊.   |
 
 ## Saving, sharing and the small words
 

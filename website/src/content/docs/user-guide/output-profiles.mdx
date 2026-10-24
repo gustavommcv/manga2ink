@@ -54,17 +54,21 @@ You can reset a changed field on its own, or all of them with **Reset to default
 
 ## One book for the series
 
-Turn on **Create one book for the series** in the queue to combine its chapters and volumes into one book. The mode works in every format and keeps both process steps on; turn it off to change the steps. The format stays yours to choose, and it decides what the book holds:
+Under **Books** in the queue, choose **Whole series** instead of **One per volume** to combine a series into one book. The mode works in every format and keeps both process steps on; choose **One per volume** to change the steps.
 
-- **EPUB** has a table of contents, with the chapters under their volumes.
-- **CBZ** keeps the volumes and chapters as folders, so a reader that orders pages by name, as KOReader does, shows them in order. It has no table of contents.
-- **PDF** has the pages in order and bookmarks, with the chapters under their volumes. Your reader lists them beside the pages.
+The series needs no volumes for it. With none, the book has its chapters, named by their numbers, in its table of contents. With volumes you made, or that the folder names give, the chapters are under their volumes. Press **Validate plan** to see, before anything is made, the file the book will be, the chapters it will hold, and any file left out because you chose another version of its chapter.
+
+The format stays yours to choose, and it decides what the book holds:
+
+- **EPUB** has a table of contents, with the chapters (under their volumes, where there are any).
+- **CBZ** keeps the chapters, and the volumes if there are any, as folders, so a reader that orders pages by name, as KOReader does, shows them in order. It has no table of contents.
+- **PDF** has the pages in order and bookmarks, with the chapters (under their volumes, where there are any). Your reader lists them beside the pages.
 
 To jump between the chapters of a long series, choose EPUB or PDF. A large combined book can take longer to open on an e-reader.
 
 <TutorialImage
   name="generated/single-book"
-  alt="Create one book for the series enabled, with the process steps locked and the format free to change."
+  alt="Whole series chosen under Books, with the process steps locked and the format free to change."
 />
 
 The command-line tool has its own defaults, which are not the app's. For terminal use, see [mangaprep](../../cli/mangapress/).
