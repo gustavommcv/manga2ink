@@ -389,6 +389,95 @@ describe('describing a row', () => {
     });
   });
 
+  describe('a folder with a chapter that more than one file claims', () => {
+    const versions = [
+      {
+        token: '2',
+        chapter: 2,
+        candidates: [
+          { id: 'c2', name: 'c2', path: '/m/2', kind: 'cbz' as const, pageCount: 2 },
+          { id: 'c2-b', name: 'c2-b', path: '/m/2b', kind: 'cbz' as const, pageCount: 3 },
+        ],
+      },
+    ];
+    const withVersions = (use?: readonly string[]) =>
+      createMappingDraft({
+        mangaTitle: 'Work',
+        chapters,
+        volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2', 'c3'] }],
+        versions: use === undefined ? versions : [{ ...versions[0]!, use }],
+      });
+
+    it('waits for a choice, says so, and does not run', () => {
+      expect(describeRow(inspectedFolder(withVersions()), 'bind-and-convert')).toEqual({
+        chip: 'Choose versions',
+        tone: 'warning',
+        detail: 'Folder · 3 chapters · grouped from names',
+        runnable: false,
+        note: '1 chapter comes in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
+      });
+    });
+
+    it('runs once it is chosen, whichever way', () => {
+      for (const use of [['c2'], ['c2', 'c2-b'], []]) {
+        expect(describeRow(inspectedFolder(withVersions(use)), 'bind-only')).toMatchObject({
+          chip: '1 volume',
+          runnable: true,
+        });
+      }
+    });
+
+    it('does not matter to a run that does not group', () => {
+      expect(describeRow(inspectedFolder(withVersions()), 'convert-only')).toMatchObject({
+        chip: 'One book',
+        runnable: true,
+      });
+    });
+
+    it('makes a choice, or takes it back, for the chapter the row is asked about', () => {
+      const row = inspectedFolder(withVersions());
+      const rows = [row, { ...row, id: 'other', displayPath: 'other' }];
+
+      const chosen = queueReducer(rows, {
+        type: 'set-versions',
+        id: row.id,
+        token: '2',
+        use: ['c2-b'],
+      });
+      const taken = queueReducer(chosen, {
+        type: 'set-versions',
+        id: row.id,
+        token: '2',
+        use: undefined,
+      });
+
+      expect((chosen[0] as InspectedRow).mapping?.versions?.[0]?.use).toEqual(['c2-b']);
+      expect((chosen[1] as InspectedRow).mapping?.versions?.[0]?.use).toBeUndefined();
+      expect((taken[0] as InspectedRow).mapping?.versions?.[0]).not.toHaveProperty('use');
+    });
+
+    it('leaves a row alone when the chapter is not one with versions, or it has no mapping', () => {
+      const row = inspectedFolder(withVersions());
+      const bare = inspectedFolder(undefined, { id: 'bare', displayPath: 'bare' });
+      const rows = [row, bare, { ...folderInput, id: 'read', state: 'inspecting' as const }];
+
+      for (const token of ['99']) {
+        expect(
+          queueReducer(rows, { type: 'set-versions', id: row.id, token, use: ['c2'] }),
+        ).toEqual(rows);
+        expect(
+          queueReducer(rows, { type: 'set-versions', id: row.id, token, use: undefined }),
+        ).toEqual(rows);
+      }
+      expect(
+        queueReducer(rows, { type: 'set-versions', id: bare.id, token: '2', use: ['c2'] }),
+      ).toEqual(rows);
+      expect(
+        queueReducer(rows, { type: 'set-versions', id: 'read', token: '2', use: ['c2'] }),
+      ).toEqual(rows);
+    });
+  });
+
   it('sends a folder straight to mangaprep as one book when the run does not group', () => {
     expect(describeRow(inspectedFolder(ungrouped), 'convert-only')).toEqual({
       chip: 'One book',

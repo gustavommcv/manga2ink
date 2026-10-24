@@ -37,6 +37,9 @@ export interface QueueMessages {
     readonly editVolumesFor: (name: string) => string;
     readonly editTitles: string;
     readonly editVolumes: string;
+    /** Opens the choice among the files that claim one chapter (ADR 0093). */
+    readonly reviewVersionsFor: (name: string) => string;
+    readonly reviewVersions: string;
     readonly editDetailsOf: (name: string) => string;
     readonly editDetails: (set: boolean) => string;
     readonly editOptionsOf: (name: string) => string;
@@ -119,6 +122,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Edit volumes for ${name}`,
       editTitles: 'Edit titles',
       editVolumes: 'Edit volumes',
+      reviewVersionsFor: (name) => `Choose between the versions of chapters in ${name}`,
+      reviewVersions: 'Choose versions',
       editDetailsOf: (name) => `Edit details of ${name}`,
       editDetails: (set) =>
         set ? 'Edit title, author and language (set)' : 'Edit title, author and language',
@@ -208,6 +213,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Editar os volumes de ${name}`,
       editTitles: 'Editar títulos',
       editVolumes: 'Editar volumes',
+      reviewVersionsFor: (name) => `Escolher entre as versões de capítulos em ${name}`,
+      reviewVersions: 'Escolher versões',
       editDetailsOf: (name) => `Editar os detalhes de ${name}`,
       editDetails: (set) =>
         set ? 'Editar título, autor e idioma (definidos)' : 'Editar título, autor e idioma',
@@ -297,6 +304,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `「${name}」の巻を編集`,
       editTitles: 'タイトルを編集',
       editVolumes: '巻を編集',
+      reviewVersionsFor: (name) => `「${name}」の複数版の話から選ぶ`,
+      reviewVersions: '版を選択',
       editDetailsOf: (name) => `「${name}」の詳細を編集`,
       editDetails: (set) =>
         set ? 'タイトル、著者、言語を編集（設定済み）' : 'タイトル、著者、言語を編集',

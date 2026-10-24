@@ -58,7 +58,29 @@ const unitSchema = z
     effective_volume: z.number().optional(),
     /** The folder of a volume that the unit was found in, when it was found in one (mangabind 0.8.0). */
     volume_folder: z.string().optional(),
-    disposition: z.enum(['included', 'unassigned', 'unparsed', 'empty', 'conflict', 'failed']),
+    /** The first image of the unit in reading order, as a file of the folder or an entry of the archive. */
+    first_page: z.string().optional(),
+    disposition: z.enum([
+      'included',
+      'unassigned',
+      'unparsed',
+      'empty',
+      'conflict',
+      // The mapping file chose another file for the chapter this one claims (mangabind's ADR 0028).
+      'not_chosen',
+      'failed',
+    ]),
+  })
+  .passthrough();
+
+/** A chapter that more than one file claims, whether or not a volume would make them a conflict. */
+const versionGroupSchema = z
+  .object({
+    chapter: z.number(),
+    special: z.string().optional(),
+    volume: z.number().optional(),
+    units: z.array(z.string()).min(1),
+    resolution: z.enum(['chosen', 'unresolved']),
   })
   .passthrough();
 
@@ -83,6 +105,8 @@ const mangaSchema = z
     combined_output_path: z.string().optional(),
     status: z.enum(['completed', 'completed_with_warnings', 'failed']),
     units: z.array(unitSchema),
+    /** Absent before mangabind could choose among the files of a chapter; no chapter is then claimed twice. */
+    chapter_versions: z.array(versionGroupSchema).default([]),
     volumes: z.array(volumeSchema),
     issues: z.array(issueSchema),
     summary: z

@@ -28,6 +28,8 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
       'The author and language are kept with a folder, and this input is not one.',
     'workflow.mappingInvalid': () => 'The chapter mapping contains unknown or invalid assignments.',
     'workflow.mappingErrors': () => 'Fix the chapter mapping errors before converting.',
+    'workflow.versionsPending': ({ count }) =>
+      `${String(count)} ${count === 1 ? 'chapter comes' : 'chapters come'} in more than one version. Choose which to use before converting.`,
     'workflow.mappingNotSaved': () =>
       "Couldn't save mangabind.json in the source folder. Check that the folder is writable and that its mangabind.json is valid JSON.",
     'workflow.detailsNotSaved': () =>
@@ -56,6 +58,8 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
       'O mapeamento dos capítulos tem atribuições desconhecidas ou inválidas.',
     'workflow.mappingErrors': () =>
       'Corrija os erros do mapeamento dos capítulos antes de converter.',
+    'workflow.versionsPending': ({ count }) =>
+      `${String(count)} ${count === 1 ? 'capítulo vem' : 'capítulos vêm'} em mais de uma versão. Escolha qual usar antes de converter.`,
     'workflow.mappingNotSaved': () =>
       'Não foi possível salvar o mangabind.json na pasta de origem. Verifique se a pasta permite gravação e se o mangabind.json dela é um JSON válido.',
     'workflow.detailsNotSaved': () =>
@@ -85,6 +89,8 @@ export const workflowSaid: Readonly<Record<Language, SaidFor<WorkflowMessageValu
     'workflow.mappingInvalid': () =>
       '各話と巻の割り当てに、不明または不正な割り当てが含まれています。',
     'workflow.mappingErrors': () => '変換する前に、各話と巻の割り当てのエラーを修正してください。',
+    'workflow.versionsPending': ({ count }) =>
+      `${String(count)} 話に複数の版があります。変換する前に、使う版を選んでください。`,
     'workflow.mappingNotSaved': () =>
       '元のフォルダーに mangabind.json を保存できませんでした。フォルダーに書き込めることと、mangabind.json が正しい JSON であることを確認してください。',
     'workflow.detailsNotSaved': () =>

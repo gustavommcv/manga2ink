@@ -60,6 +60,8 @@ import { ShareMenu } from '@/renderer/components/sharing/share-menu';
 import { useKeptSettings } from '@/renderer/hooks/use-kept-settings';
 import type { CoverSlot } from '@/domain/book-covers';
 import { useBookCovers } from '@/renderer/hooks/use-book-covers';
+import { useChapterPreviews } from '@/renderer/hooks/use-chapter-previews';
+import { versionGroups } from '@/domain/chapter-versions';
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -81,6 +83,7 @@ import { LibraryScreen } from '@/renderer/screens/library-screen';
 import { QueueScreen, type RowPlan } from '@/renderer/screens/queue-screen';
 import { ResultsScreen, type RunOutcome } from '@/renderer/screens/results-screen';
 import { RunningScreen } from '@/renderer/screens/running-screen';
+import { VersionsScreen } from '@/renderer/screens/versions-screen';
 import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type {
@@ -603,6 +606,10 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       });
   };
 
+  const openVersions = (rowId: string): void => {
+    setNavigation({ screen: 'versions', rowId });
+  };
+
   const openEditor = (rowId: string): void => {
     setNavigation(
       rows.find((row) => row.id === rowId)?.kind === 'library'
@@ -812,7 +819,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       ? navigation.target
       : undefined;
   const editingRow =
-    navigation.screen === 'library'
+    navigation.screen === 'library' || navigation.screen === 'versions'
       ? rows.find((row) => row.id === navigation.rowId)
       : editingTarget !== undefined
         ? rows.find((row) => row.id === editingTarget.rowId)
@@ -853,6 +860,16 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
         ? volumeNumbers(editingRow.mapping)
         : ['book'];
   const covers = useBookCovers(bridge, coverTarget, coverSlots, notify);
+
+  // The files that claim a chapter, shown by their first pages while their screen is open.
+  const versionsOpen =
+    navigation.screen === 'versions' && editingRow?.state === 'inspected' ? editingRow : undefined;
+  const openGroups = versionGroups(versionsOpen?.mapping);
+  const versionPreviews = useChapterPreviews(
+    bridge,
+    versionsOpen?.sessionId,
+    openGroups.flatMap((group) => group.candidates.map((candidate) => candidate.id)),
+  );
 
   // The item whose own conversion options are open: a folder or CBZ of the queue, or one title of
   // a library. What it is converted with is the queue's options with what it set over them.
@@ -991,6 +1008,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
               removeRows([id]);
             }}
             onReset={resetAll}
+            onReviewVersions={openVersions}
             onSingleBook={handleSingleBook}
             onValidate={() => {
               void validatePlans();
@@ -1084,6 +1102,20 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
               />
             </div>
           )}
+        {versionsOpen !== undefined && (
+          <VersionsScreen
+            backLabel={messages.queue.title}
+            groups={openGroups}
+            name={versionsOpen.displayName}
+            onBack={() => {
+              setNavigation({ screen: 'queue' });
+            }}
+            onChoose={(token, use) => {
+              dispatch({ type: 'set-versions', id: versionsOpen.id, token, use });
+            }}
+            previews={versionPreviews}
+          />
+        )}
         {navigation.screen === 'library' &&
           editingRow?.state === 'inspected' &&
           editingRow.titles !== undefined && (

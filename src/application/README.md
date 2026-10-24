@@ -4,7 +4,8 @@ Use cases and the small ports they require. Application code coordinates domain 
 
 - `workflows/conversion-workflow.ts` is the entry point for reading, planning, converting, saving metadata and releasing a folder, a CBZ or a library. It composes the modules below and preserves the public method contracts.
 - `workflows/input-sessions.ts` owns inspected sessions, their trusted paths/drafts, library refresh and metadata saves. Successful single-input conversion spends its session; a failure keeps it for retry. Library runs keep their inspected session, and shutdown releases every remaining scratch workspace.
-- `workflows/single-run.ts` plans or converts one folder or CBZ, validating the same preconditions in both operations.
+- `workflows/single-run.ts` plans or converts one folder or CBZ, validating the same preconditions in both operations. It refuses a run while a chapter that more than one file claims has no choice (ADR 0093).
+- `workflows/chapter-previews.ts` gives the first pages of the files that claim one chapter, asked for by the ids the app gave them in a session and never by a path.
 - `workflows/library-run.ts` binds a library once, converts titles sequentially and reports a title's failure with its completed books before continuing. It releases the batch workspace in `finally`.
 - `workflows/book-production.ts` supplies the shared book-producing callback: convert with mangaprep or copy a joined CBZ, then publish a complete, uniquely named file. Staging failures retain their existing error and cancellation semantics.
 - `workflows/run-preconditions.ts` shares output-settings validation, single-book requirements and the empty-binding error factory. `SingleInputRun.assertRunnable` uses the session registry's lookup; libraries keep their distinct validation order, and a loose CBZ still ignores single-book mode.

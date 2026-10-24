@@ -53,7 +53,17 @@ A chapter whose folder name gives a volume, such as `Vol.02 Ch.010`, stays in th
 
 ## The same chapter twice
 
-A folder sometimes holds the same chapter from two groups, for example `Ch.0002 [G1]` and `Ch.0002 [G2]`. Manga2Ink cannot choose between the copies, so it leaves **all** of them out of the book. Placing one of them in a volume does not change that. The editor lists this as an error, **Chapter 2 is in the folder more than once**, until you remove all but one of the copies from the folder and add the folder again.
+A folder sometimes holds the same chapter more than once, for example `Ch.0006 [GroupA].cbz` and `Ch.0006 [GroupB].cbz`: two scan groups, two languages, or a re-release. Manga2Ink does not choose between them for you, and it never asks you to move, rename or delete anything.
+
+The row says **Choose versions** and waits. Press the **Choose versions** button on the row to see every file of each such chapter: its full name, its first page, whether it is a folder or a CBZ file, and how many pages it has. For each chapter you can:
+
+- **Use one version.** Only that file is in the book. The others stay where they are.
+- **Keep all versions.** They are in the book one after the other, each named with `(version 1 of 2)`, `(version 2 of 2)`, and the chapter keeps its own number in the table of contents.
+- **Leave the chapter out.**
+
+Manga2Ink never picks a version for you by size or by number of pages, and nothing runs until every chapter is decided. In the volume editor, a chapter with more than one version is one chapter.
+
+Your choice is kept with the folder, in its `mangabind.json`, and used when you add the folder again. If a file came after your choice, or changed since, the chapter is asked again, with your earlier choice offered.
 
 If a book is made anyway and something was left out of it, the results say so under the book. For example, they can say that chapters with more than one copy, chapters missing inside a volume, chapters with no pages, or links that lead outside the folder were left out. These notices are listed in [Saving and ready books](../exporting/#warnings-about-the-books).
 

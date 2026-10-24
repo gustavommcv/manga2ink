@@ -20,6 +20,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.chip.notRecognized': () => 'Not recognized',
     'queue.chip.needsVolumes': () => 'Needs volumes',
     'queue.chip.needsGrouping': () => 'Needs grouping',
+    'queue.chip.reviewVersions': () => 'Choose versions',
     'queue.chip.saved': () => 'Saved',
     'queue.chip.volumes': ({ count }) => `${String(count)} ${countOf(count, 'volume', 'volumes')}`,
     'queue.chip.titles': ({ count }) => `${String(count)} ${countOf(count, 'title', 'titles')}`,
@@ -52,6 +53,8 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     },
     'queue.note.noVolumesYet': () =>
       `No volumes yet. Open ${english.row.editVolumes} to group the chapters.`,
+    'queue.note.versionsPending': ({ count }) =>
+      `${String(count)} ${countOf(count, 'chapter comes', 'chapters come')} in more than one version. Open ${english.row.reviewVersions} to choose which to use; your files stay where they are.`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} ${countOf(count, 'chapter', 'chapters')} still ${countOf(count, 'has', 'have')} no volume. Open ${english.row.editVolumes} to place ${countOf(count, 'it', 'them')}, or accept the gaps there.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
@@ -83,6 +86,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.chip.notRecognized': () => 'Não reconhecido',
     'queue.chip.needsVolumes': () => 'Precisa de volumes',
     'queue.chip.needsGrouping': () => 'Precisa agrupar',
+    'queue.chip.reviewVersions': () => 'Escolher versões',
     'queue.chip.saved': () => 'Salvo',
     'queue.chip.volumes': ({ count }) => `${String(count)} ${countOf(count, 'volume', 'volumes')}`,
     'queue.chip.titles': ({ count }) => `${String(count)} ${countOf(count, 'título', 'títulos')}`,
@@ -115,6 +119,8 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     },
     'queue.note.noVolumesYet': () =>
       `Ainda não há volumes. Abra ${portuguese.row.editVolumes} para agrupar os capítulos.`,
+    'queue.note.versionsPending': ({ count }) =>
+      `${String(count)} ${countOf(count, 'capítulo vem', 'capítulos vêm')} em mais de uma versão. Abra ${portuguese.row.reviewVersions} para escolher qual usar; os seus arquivos continuam onde estão.`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo ainda não tem', 'capítulos ainda não têm')} volume. Abra ${portuguese.row.editVolumes} para colocá-${countOf(count, 'lo', 'los')}, ou aceite as lacunas lá.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
@@ -145,6 +151,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.chip.notRecognized': () => '認識できません',
     'queue.chip.needsVolumes': () => '巻が必要',
     'queue.chip.needsGrouping': () => 'まとめが必要',
+    'queue.chip.reviewVersions': () => '版を選択',
     'queue.chip.saved': () => '保存済み',
     'queue.chip.volumes': ({ count }) => `${String(count)} 巻`,
     'queue.chip.titles': ({ count }) => `${String(count)} タイトル`,
@@ -174,6 +181,8 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       `この中のフォルダー ${String(names.length)} 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: ${namesOf(names, (more) => ` ほか ${String(more)} 個`, '、')}。実際のフォルダーをライブラリに置いて、もう一度追加してください。`,
     'queue.note.noVolumesYet': () =>
       `まだ巻がありません。「${japanese.row.editVolumes}」を開いて、各話をまとめてください。`,
+    'queue.note.versionsPending': ({ count }) =>
+      `${String(count)} 話に複数の版があります。「${japanese.row.reviewVersions}」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} 話が、まだどの巻にも入っていません。「${japanese.row.editVolumes}」を開いて割り当てるか、抜けがあるまま進めることもできます。`,
     'queue.note.chaptersLeftOut': ({ count }) => `${String(count)} 話が対象外です。`,

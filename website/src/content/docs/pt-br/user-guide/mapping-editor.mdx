@@ -53,7 +53,17 @@ Um capítulo cuja pasta diz o volume no nome, como `Vol.02 Ch.010`, fica nesse v
 
 ## O mesmo capítulo duas vezes
 
-Às vezes uma pasta traz o mesmo capítulo de dois grupos, por exemplo `Ch.0002 [G1]` e `Ch.0002 [G2]`. O Manga2Ink não consegue escolher entre as cópias, então deixa **todas** de fora do livro. Colocar uma delas em um volume não muda isso. O editor mostra um erro, **Chapter 2 is in the folder more than once**, até você remover todas as cópias menos uma da pasta e adicionar a pasta de novo.
+Às vezes uma pasta traz o mesmo capítulo mais de uma vez, por exemplo `Ch.0006 [GroupA].cbz` e `Ch.0006 [GroupB].cbz`: dois grupos de scan, dois idiomas ou um relançamento. O Manga2Ink não escolhe entre eles por você, e nunca pede que você mova, renomeie ou apague nada.
+
+A linha mostra **Escolher versões** e espera. Aperte o botão **Escolher versões** da linha para ver todos os arquivos de cada capítulo assim: o nome completo, a primeira página, se é uma pasta ou um arquivo CBZ e quantas páginas tem. Para cada capítulo você pode:
+
+- **Usar uma versão.** Só esse arquivo entra no livro. Os outros ficam onde estão.
+- **Manter todas as versões.** Elas ficam no livro uma depois da outra, cada uma com `(version 1 of 2)`, `(version 2 of 2)` no nome, e o capítulo mantém o seu próprio número no índice.
+- **Deixar o capítulo de fora.**
+
+O Manga2Ink nunca escolhe uma versão por você pelo tamanho ou pelo número de páginas, e nada é processado até que todos os capítulos estejam decididos. No editor de volumes, um capítulo com mais de uma versão é um capítulo só.
+
+A sua escolha fica guardada com a pasta, no `mangabind.json` dela, e é usada quando você adiciona a pasta de novo. Se um arquivo chegou depois da sua escolha, ou mudou desde então, o capítulo é perguntado de novo, com a sua escolha anterior oferecida.
 
 Se um livro for feito mesmo assim e algo tiver ficado de fora, os resultados avisam abaixo do livro. Por exemplo, eles podem dizer que ficaram de fora capítulos com mais de uma cópia, capítulos que faltam dentro de um volume, capítulos sem páginas ou links que levam para fora da pasta. Esses avisos estão listados em [Salvamento e livros prontos](../exporting/#avisos-sobre-os-livros).
 

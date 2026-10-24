@@ -50,6 +50,7 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     onEdit: vi.fn(),
     onEditDetails: vi.fn(),
     onEditOptions: vi.fn(),
+    onReviewVersions: vi.fn(),
     onFormat: vi.fn(),
     onMode: vi.fn(),
     onOpenOptions: vi.fn(),

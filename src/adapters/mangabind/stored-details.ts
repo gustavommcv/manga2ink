@@ -1,3 +1,5 @@
+import type { SeenVersions } from './version-memory';
+
 import {
   type BookDetails,
   isLanguageTag,
@@ -53,11 +55,22 @@ function inKeyOrder(value: unknown): unknown {
  * other key is kept, in the order the file had it. A file that is not a JSON object is refused, not
  * overwritten.
  */
-export function carryStoredDetails(existing: string | undefined, next: string): string {
-  if (existing === undefined) return next;
+export function carryStoredDetails(
+  existing: string | undefined,
+  next: string,
+  seen: SeenVersions = {},
+): string {
+  const mine = JSON.parse(next) as Json;
+  // What the app saw of the files of each chapter it was asked to choose among is the app's own note,
+  // kept under its own key, and only for the chapters it chose for this time.
+  const noted =
+    Object.keys(seen).length === 0
+      ? next
+      : stringify({ ...mine, manga2ink: { versions_seen: seen } });
+  if (existing === undefined) return noted;
   const old: unknown = JSON.parse(existing);
   if (!isRecord(old)) throw new TypeError('mangabind.json is not a JSON object.');
-  const mine = JSON.parse(next) as Json;
+  if (noted !== next) mine.manga2ink = { versions_seen: seen };
 
   const merged: Json = { ...old, ...mine };
   if (isRecord(old.manga) || isRecord(mine.manga)) {
@@ -78,9 +91,27 @@ export function carryStoredDetails(existing: string | undefined, next: string): 
       ...volume,
     }));
   }
+  // A choice is replaced for the chapters this mapping chose for, and the others are the file's own.
+  if (Array.isArray(mine.chapter_versions) && Array.isArray(old.chapter_versions)) {
+    const replaced = new Set((mine.chapter_versions as Json[]).map((choice) => choice.chapter));
+    merged.chapter_versions = [
+      ...(old.chapter_versions as unknown[]).filter(
+        (choice) => !(isRecord(choice) && replaced.has(choice.chapter)),
+      ),
+      ...(mine.chapter_versions as unknown[]),
+    ];
+  }
+  if (isRecord(old.manga2ink)) {
+    const before = isRecord(old.manga2ink.versions_seen) ? old.manga2ink.versions_seen : {};
+    const versionsSeen = { ...before, ...seen };
+    merged.manga2ink = {
+      ...old.manga2ink,
+      ...(Object.keys(versionsSeen).length === 0 ? {} : { versions_seen: versionsSeen }),
+    };
+  }
   // Nothing of the old file is worth keeping: the mapping is written exactly as it was made.
   return JSON.stringify(inKeyOrder(merged)) === JSON.stringify(inKeyOrder(mine))
-    ? next
+    ? noted
     : stringify(merged);
 }
 

@@ -1,4 +1,5 @@
 import { type BookDetails, hasBookDetails, normalizeBookDetails } from './book-details';
+import { chooseVersions, clearVersionChoice, pendingVersionGroups } from './chapter-versions';
 import { hasItemOptions, type ItemOptions } from './item-options';
 import { onlyLinksNote } from './library-links';
 import { hasArchiveChapters, type MappingDraft, mappingSignature } from './mapping';
@@ -117,6 +118,16 @@ export type QueueAction =
       readonly results: readonly { readonly title: string; readonly outcome: TitleOutcome }[];
     }
   | { readonly type: 'confirm-mapping'; readonly id: string; readonly mapping: MappingDraft }
+  /**
+   * Which of the files that claim a chapter to use: one, several or none; with no files, the choice is
+   * taken back and the chapter waits for one again.
+   */
+  | {
+      readonly type: 'set-versions';
+      readonly id: string;
+      readonly token: string;
+      readonly use: readonly string[] | undefined;
+    }
   | { readonly type: 'set-details'; readonly id: string; readonly details: BookDetails }
   | {
       readonly type: 'set-title-details';
@@ -235,6 +246,12 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
           ? { ...row, mapping: action.mapping, confirmed: true }
           : row,
       );
+    case 'set-versions':
+      return rows.map((row) =>
+        row.id === action.id && row.state === 'inspected' && row.mapping !== undefined
+          ? { ...row, mapping: withVersions(row.mapping, action.token, action.use) }
+          : row,
+      );
     case 'set-details':
       return rows.map((row) =>
         row.id === action.id && row.state === 'inspected'
@@ -286,6 +303,21 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
     }
     case 'clear':
       return emptyQueue;
+  }
+}
+
+/** The draft with a choice among the files of a chapter made or taken back; the same draft if the chapter is not one. */
+function withVersions(
+  mapping: MappingDraft,
+  token: string,
+  use: readonly string[] | undefined,
+): MappingDraft {
+  try {
+    return use === undefined
+      ? clearVersionChoice(mapping, token)
+      : chooseVersions(mapping, token, use);
+  } catch {
+    return mapping;
   }
 }
 
@@ -483,6 +515,17 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
       ? 'from-names'
       : 'plain';
   const detail = message('queue.detail.folderChapters', { chapters, grouping });
+  // Files that claim one chapter are not decided by the app: nothing runs until a person has.
+  const undecided = pendingVersionGroups(row.mapping).length;
+  if (undecided > 0) {
+    return {
+      chip: message('queue.chip.reviewVersions', {}),
+      tone: 'warning',
+      detail,
+      runnable: false,
+      notes: [message('queue.note.versionsPending', { count: undecided })],
+    };
+  }
   if (volumes === 0 || (unassigned > 0 && !row.confirmed)) {
     return {
       chip: message('queue.chip.needsVolumes', {}),

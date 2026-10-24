@@ -28,6 +28,7 @@ const meta = {
     onEdit: () => undefined,
     onEditDetails: () => undefined,
     onEditOptions: () => undefined,
+    onReviewVersions: () => undefined,
     onRemove: () => undefined,
   },
 } satisfies Meta<typeof QueueRowItem>;
@@ -49,6 +50,59 @@ export const Grouped: Story = {
         mangaTitle: 'Chainsaw Man',
         chapters,
         volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c2'] }],
+      }),
+      confirmed: false,
+    },
+  },
+};
+
+/** A chapter that two files claim: the row waits for a choice, and the button to make it is colored. */
+export const NeedsVersions: Story = {
+  args: {
+    row: {
+      id: 'v',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-v',
+      mapping: createMappingDraft({
+        mangaTitle: 'Ubunchu!',
+        chapters: [
+          {
+            id: 'c1',
+            name: 'Ch.0001 (en)',
+            path: '/m/1.cbz',
+            pageCount: 12,
+            chapter: 1,
+            kind: 'cbz',
+          },
+          {
+            id: 'c6',
+            name: 'Ch.0006 (en) [A]',
+            path: '/m/6a.cbz',
+            pageCount: 12,
+            chapter: 6,
+            kind: 'cbz',
+          },
+        ],
+        volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c6'] }],
+        versions: [
+          {
+            token: '6',
+            chapter: 6,
+            candidates: [
+              { id: 'c6', name: 'Ch.0006 (en) [A]', path: '/m/6a.cbz', kind: 'cbz', pageCount: 12 },
+              {
+                id: 'c6b',
+                name: 'Ch.0006 (en) [B]',
+                path: '/m/6b.cbz',
+                kind: 'cbz',
+                pageCount: 18,
+              },
+            ],
+          },
+        ],
       }),
       confirmed: false,
     },

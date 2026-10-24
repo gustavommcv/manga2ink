@@ -12,6 +12,7 @@ import {
   type LibraryPlan,
 } from '@/domain/conversion';
 import { skippedLinkNames } from '@/domain/library-links';
+import { withSubmittedChoices } from '@/domain/chapter-versions';
 import { createMappingDraft, type MappingDraft, validateMapping } from '@/domain/mapping';
 import { unrecognizedChapterNames } from '@/domain/unrecognized-chapters';
 import { message } from '@/domain/message';
@@ -251,6 +252,8 @@ export function trustedMapping(trusted: MappingDraft, submitted: MappingDraft): 
       mangaTitle: submitted.mangaTitle,
       chapters: trusted.chapters,
       volumes: submitted.volumes,
+      // The files that claim a chapter are the app's own; the page only says which of them to use.
+      versions: withSubmittedChoices(trusted, submitted).versions ?? [],
       ...(submitted.source === undefined ? {} : { source: submitted.source }),
     });
   } catch (error) {

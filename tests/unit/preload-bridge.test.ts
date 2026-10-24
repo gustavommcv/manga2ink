@@ -94,6 +94,12 @@ const forwarded: readonly (readonly [
     { sessionId: 'session-1', title: 'Title', mapping: { volumes: [] } },
   ],
   ['saveBookDetails', [{ title: 'T' }], 'workflow:save-book-details', { title: 'T' }],
+  [
+    'previewChapters',
+    [{ sessionId: 's', ids: ['a'] }],
+    'previews:chapters',
+    { sessionId: 's', ids: ['a'] },
+  ],
   ['listCovers', [{ kind: 'folder' }], 'covers:list', { kind: 'folder' }],
   ['chooseCover', [{ book: 1 }], 'covers:choose', { book: 1 }],
   ['chooseCoversFolder', [{ book: 1 }], 'covers:choose-folder', { book: 1 }],

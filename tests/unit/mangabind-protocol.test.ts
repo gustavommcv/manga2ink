@@ -37,6 +37,28 @@ describe('mangabind protocol v1', () => {
     expect(report.manga[0]?.volumes[0]?.chapters).toEqual(['Chapter 1']);
   });
 
+  it('reads the versions of a chapter, and a report from a tool that knows none', () => {
+    const versions = parseMangabindReport(
+      fs.readFileSync(
+        path.join(
+          repositoryRoot,
+          'tests',
+          'fixtures',
+          'protocol',
+          'mangabind-v1-chapter-versions-one.json',
+        ),
+        'utf8',
+      ),
+    );
+
+    expect(versions.manga[0]?.chapter_versions).toEqual([
+      expect.objectContaining({ chapter: 3, volume: 1, resolution: 'chosen' }),
+    ]);
+    expect(versions.manga[0]?.units.map((unit) => unit.disposition)).toContain('not_chosen');
+    expect(versions.manga[0]?.units[0]?.first_page).toBe('001.png');
+    expect(parseMangabindReport(fixture).manga[0]?.chapter_versions).toEqual([]);
+  });
+
   it('parses the compatibility handshake and tolerates additive fields', () => {
     const info = parseMangabindProtocolInfo(
       JSON.stringify({

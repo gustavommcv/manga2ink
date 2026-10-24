@@ -51,7 +51,7 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
     chapter_conflict: {
       title: 'Chapters with more than one copy were left out',
       advice:
-        'A chapter that is in the folder more than once cannot be told from its copy, so none of its copies is in the book. Remove all but one copy from the folder and convert again.',
+        'A chapter that is in the folder more than once cannot be told from its copy, so none of its copies is in the book. Add the folder on its own and use “Choose versions” to say which copy to use, or remove all but one copy from the folder, and convert again.',
     },
     chapter_gap: {
       title: 'Chapters are missing inside a volume',
@@ -119,7 +119,7 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
     chapter_conflict: {
       title: 'Capítulos com mais de uma cópia ficaram de fora',
       advice:
-        'Um capítulo que aparece mais de uma vez na pasta não pode ser distinguido da sua cópia, então nenhuma das cópias está no livro. Deixe só uma cópia na pasta e converta de novo.',
+        'Um capítulo que aparece mais de uma vez na pasta não pode ser distinguido da sua cópia, então nenhuma das cópias está no livro. Adicione a pasta sozinha e use “Escolher versões” para dizer qual cópia usar, ou deixe só uma cópia na pasta, e converta de novo.',
     },
     chapter_gap: {
       title: 'Faltam capítulos dentro de um volume',
@@ -187,7 +187,7 @@ const warningWords: Readonly<Record<Language, WarningWordsFor>> = {
     chapter_conflict: {
       title: 'コピーが複数ある話を除外しました',
       advice:
-        'フォルダー内に同じ話が複数あると、コピーを見分けられないため、どのコピーも本に入りません。1 つを残してほかのコピーをフォルダーから取り除き、もう一度変換してください。',
+        'フォルダー内に同じ話が複数あると、コピーを見分けられないため、どのコピーも本に入りません。そのフォルダーだけを追加して「版を選択」で使うコピーを選ぶか、1 つを残してほかのコピーをフォルダーから取り除き、もう一度変換してください。',
     },
     chapter_gap: {
       title: '巻の中で話が抜けています',
