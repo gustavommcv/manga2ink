@@ -47,7 +47,7 @@ describe('packaged conversion pipeline', () => {
     // Nothing in the chapter names says which volume they belong to, so the folder waits for a
     // grouping before it can run.
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Edit volumes for Manga2Ink E2E"]').click();
+    await $('button[aria-label="Edit books and volumes for Manga2Ink E2E"]').click();
     await $('h1=Organize Manga2Ink E2E into books').waitForDisplayed({ timeout: 30_000 });
     assert.equal(await $('[role="tab"][aria-selected="true"]').getText(), 'Manual');
     await $('[role="status"][aria-label="No volumes found in file names"]').waitForDisplayed();

@@ -53,11 +53,15 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       return `${one ? 'A folder in it is a link' : `${String(names.length)} folders in it are links`}, and mangabind does not follow links to a series, so ${one ? 'it was' : 'they were'} not read: ${namesOf(names, (more) => ` and ${String(more)} more`)}. Put the real ${one ? 'folder' : 'folders'} in the library and add it again.`;
     },
     'queue.note.noVolumesYet': () =>
-      `No volumes yet. Open ${english.row.editVolumes} to group the chapters, or make one book of the whole series.`,
+      `No volumes yet. Open ${english.row.editBooks} to group the chapters, or make one book of the whole series.`,
+    'queue.note.stepsNotForSeries': ({ of }) =>
+      `The steps of the queue do not apply here: ${of === 'library' ? 'each title is' : 'this series is'} joined and converted as one book.`,
+    'queue.note.stepsNotForAsIs': () =>
+      'The steps of the queue do not apply here: this folder is only converted, as it is.',
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} ${countOf(count, 'chapter comes', 'chapters come')} in more than one version. Open ${english.row.reviewVersions} to choose which to use; your files stay where they are.`,
     'queue.note.unassigned': ({ count }) =>
-      `${String(count)} ${countOf(count, 'chapter', 'chapters')} still ${countOf(count, 'has', 'have')} no volume. Open ${english.row.editVolumes} to place ${countOf(count, 'it', 'them')}, or accept the gaps there.`,
+      `${String(count)} ${countOf(count, 'chapter', 'chapters')} still ${countOf(count, 'has', 'have')} no volume. Open ${english.row.editBooks} to place ${countOf(count, 'it', 'them')}, or accept the gaps there.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
       `${String(count)} ${countOf(count, 'chapter', 'chapters')} left out.`,
     'queue.note.libraryEmpty': () => 'mangabind found no manga in this folder.',
@@ -120,11 +124,15 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       return `${one ? 'Uma pasta dentro dela é um link' : `${String(names.length)} pastas dentro dela são links`}, e o mangabind não segue links para uma série, então ${one ? 'ela não foi lida' : 'elas não foram lidas'}: ${namesOf(names, (more) => ` e mais ${String(more)}`)}. Coloque ${one ? 'a pasta real' : 'as pastas reais'} na biblioteca e adicione-a de novo.`;
     },
     'queue.note.noVolumesYet': () =>
-      `Ainda não há volumes. Abra ${portuguese.row.editVolumes} para agrupar os capítulos, ou faça um livro só da série inteira.`,
+      `Ainda não há volumes. Abra ${portuguese.row.editBooks} para agrupar os capítulos, ou faça um livro só da série inteira.`,
+    'queue.note.stepsNotForSeries': ({ of }) =>
+      `As etapas da fila não valem aqui: ${of === 'library' ? 'cada título é juntado e convertido' : 'esta série é juntada e convertida'} em um livro só.`,
+    'queue.note.stepsNotForAsIs': () =>
+      'As etapas da fila não valem aqui: esta pasta só é convertida, como está.',
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo vem', 'capítulos vêm')} em mais de uma versão. Abra ${portuguese.row.reviewVersions} para escolher qual usar; os seus arquivos continuam onde estão.`,
     'queue.note.unassigned': ({ count }) =>
-      `${String(count)} ${countOf(count, 'capítulo ainda não tem', 'capítulos ainda não têm')} volume. Abra ${portuguese.row.editVolumes} para colocá-${countOf(count, 'lo', 'los')}, ou aceite as lacunas lá.`,
+      `${String(count)} ${countOf(count, 'capítulo ainda não tem', 'capítulos ainda não têm')} volume. Abra ${portuguese.row.editBooks} para colocá-${countOf(count, 'lo', 'los')}, ou aceite as lacunas lá.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo ficou', 'capítulos ficaram')} de fora.`,
     'queue.note.libraryEmpty': () => 'O mangabind não encontrou nenhum mangá nesta pasta.',
@@ -183,11 +191,15 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.note.onlyLinks': ({ names }) =>
       `この中のフォルダー ${String(names.length)} 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: ${namesOf(names, (more) => ` ほか ${String(more)} 個`, '、')}。実際のフォルダーをライブラリに置いて、もう一度追加してください。`,
     'queue.note.noVolumesYet': () =>
-      `まだ巻がありません。「${japanese.row.editVolumes}」を開いて各話をまとめるか、シリーズ全体を 1 冊にしてください。`,
+      `まだ巻がありません。「${japanese.row.editBooks}」を開いて各話をまとめるか、シリーズ全体を 1 冊にしてください。`,
+    'queue.note.stepsNotForSeries': ({ of }) =>
+      `キューの手順はここでは適用されません。${of === 'library' ? '各タイトルは' : 'このシリーズは'}、まとめて変換され、1 冊になります。`,
+    'queue.note.stepsNotForAsIs': () =>
+      'キューの手順はここでは適用されません。このフォルダーは、そのまま変換されるだけです。',
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} 話に複数の版があります。「${japanese.row.reviewVersions}」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。`,
     'queue.note.unassigned': ({ count }) =>
-      `${String(count)} 話が、まだどの巻にも入っていません。「${japanese.row.editVolumes}」を開いて割り当てるか、抜けがあるまま進めることもできます。`,
+      `${String(count)} 話が、まだどの巻にも入っていません。「${japanese.row.editBooks}」を開いて割り当てるか、抜けがあるまま進めることもできます。`,
     'queue.note.chaptersLeftOut': ({ count }) => `${String(count)} 話が対象外です。`,
     'queue.note.libraryEmpty': () =>
       'このフォルダーに、mangabind はマンガを見つけられませんでした。',

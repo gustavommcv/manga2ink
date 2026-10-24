@@ -41,7 +41,7 @@ describe('packaged OPDS delivery', () => {
     // conversion timestamp is deterministically the newest of the two.
     await $('button=Folder').click();
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Edit volumes for Manga2Ink E2E"]').click();
+    await $('button[aria-label="Edit books and volumes for Manga2Ink E2E"]').click();
     await $('h1=Organize Manga2Ink E2E into books').waitForDisplayed({ timeout: 30_000 });
     await $('button=Select all').click();
     await $('button[aria-label="Add volume"]').click();

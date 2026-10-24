@@ -96,7 +96,9 @@ describe('process control in the queue', () => {
     expect(screen.getByText('One book')).toBeVisible();
     expect(screen.getByText(/2 chapters · not grouped/u)).toBeVisible();
     // The books of the series are still chosen where its chapters are grouped, whatever the steps are.
-    expect(screen.getByRole('button', { name: 'Edit volumes for Offline Work' })).toBeVisible();
+    expect(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    ).toBeVisible();
 
     expectNoOutputFolderPicker();
     await user.click(screen.getByRole('button', { name: 'Validate plan' }));
@@ -120,7 +122,9 @@ describe('process control in the queue', () => {
     render(<App />);
     await addFolder(user);
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('radio', { name: /Convert the folder as it is/u }));
     await user.click(screen.getByRole('button', { name: /Queue/u }));
 
@@ -376,7 +380,7 @@ describe('process control in the queue', () => {
     expect(await screen.findByText('Loose was skipped')).toBeVisible();
     expect(
       screen.getByText(
-        'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
+        'No volumes yet. Open Edit books and volumes to group the chapters, or make one book of the whole series.',
       ),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Fix Loose' }));
@@ -409,7 +413,9 @@ describe('process control in the queue', () => {
     render(<App />);
     await addFolder(user);
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('radio', { name: /One book for the whole series/u }));
     await user.click(screen.getByRole('button', { name: /Queue/u }));
 
@@ -436,7 +442,9 @@ describe('process control in the queue', () => {
     };
     for (const [format, note] of Object.entries(notes)) {
       await user.click(screen.getByRole('radio', { name: format }));
-      await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+      await user.click(
+        screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+      );
       expect(await screen.findByText(note)).toBeVisible();
       await user.click(screen.getByRole('button', { name: /Queue/u }));
       await screen.findByRole('heading', { name: 'Queue' });
@@ -456,7 +464,9 @@ describe('process control in the queue', () => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
 
-    expect(screen.queryByRole('button', { name: /Edit volumes/u })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Edit books and volumes/u }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByRole('radiogroup', { name: 'Books' })).not.toBeInTheDocument();
   });
 
@@ -475,7 +485,9 @@ describe('process control in the queue', () => {
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('radio', { name: /One book for the whole series/u }));
     await user.click(screen.getByRole('button', { name: /Queue/u }));
 

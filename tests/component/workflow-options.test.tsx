@@ -249,7 +249,9 @@ describe('the options kept between sessions', () => {
     );
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     // The saved id is not in the list, so nothing is chosen.
@@ -280,7 +282,9 @@ describe('the options kept between sessions', () => {
     );
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     expect(screen.getByRole('combobox', { name: 'Source' })).toHaveTextContent('MangaDex');

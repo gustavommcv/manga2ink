@@ -161,7 +161,7 @@ describe('the queue screen in Portuguese', () => {
 
     const list = screen.getByRole('list', { name: 'Itens na fila' });
     expect(
-      within(list).getByRole('button', { name: 'Editar os volumes de Chainsaw Man' }),
+      within(list).getByRole('button', { name: 'Editar os livros e volumes de Chainsaw Man' }),
     ).toBeVisible();
     expect(
       within(list).getByRole('button', { name: 'Editar os detalhes de Chainsaw Man' }),
@@ -375,7 +375,7 @@ describe('what the queue says about each row, in Portuguese', () => {
     expect(within(row).getByText('Precisa de volumes')).toBeVisible();
     expect(
       within(row).getByText(
-        'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
+        'Ainda não há volumes. Abra Editar livros e volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
       ),
     ).toBeVisible();
   });

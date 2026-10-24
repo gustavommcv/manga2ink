@@ -90,8 +90,8 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.note.noVolumesYet': [
     [
       {},
-      'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
-      'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
+      'No volumes yet. Open Edit books and volumes to group the chapters, or make one book of the whole series.',
+      'Ainda não há volumes. Abra Editar livros e volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
     ],
   ],
   'queue.note.versionsPending': [
@@ -109,13 +109,32 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.note.unassigned': [
     [
       { count: 1 },
-      '1 chapter still has no volume. Open Edit volumes to place it, or accept the gaps there.',
-      '1 capítulo ainda não tem volume. Abra Editar volumes para colocá-lo, ou aceite as lacunas lá.',
+      '1 chapter still has no volume. Open Edit books and volumes to place it, or accept the gaps there.',
+      '1 capítulo ainda não tem volume. Abra Editar livros e volumes para colocá-lo, ou aceite as lacunas lá.',
     ],
     [
       { count: 2 },
-      '2 chapters still have no volume. Open Edit volumes to place them, or accept the gaps there.',
-      '2 capítulos ainda não têm volume. Abra Editar volumes para colocá-los, ou aceite as lacunas lá.',
+      '2 chapters still have no volume. Open Edit books and volumes to place them, or accept the gaps there.',
+      '2 capítulos ainda não têm volume. Abra Editar livros e volumes para colocá-los, ou aceite as lacunas lá.',
+    ],
+  ],
+  'queue.note.stepsNotForSeries': [
+    [
+      { of: 'series' },
+      'The steps of the queue do not apply here: this series is joined and converted as one book.',
+      'As etapas da fila não valem aqui: esta série é juntada e convertida em um livro só.',
+    ],
+    [
+      { of: 'library' },
+      'The steps of the queue do not apply here: each title is joined and converted as one book.',
+      'As etapas da fila não valem aqui: cada título é juntado e convertido em um livro só.',
+    ],
+  ],
+  'queue.note.stepsNotForAsIs': [
+    [
+      {},
+      'The steps of the queue do not apply here: this folder is only converted, as it is.',
+      'As etapas da fila não valem aqui: esta pasta só é convertida, como está.',
     ],
   ],
   'queue.note.chaptersLeftOut': [

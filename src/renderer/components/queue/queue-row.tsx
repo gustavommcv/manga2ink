@@ -76,11 +76,11 @@ export function QueueRowItem({
             aria-label={
               row.kind === 'library'
                 ? words.editTitlesOf(row.displayName)
-                : words.editVolumesFor(row.displayName)
+                : words.editBooksFor(row.displayName)
             }
             onClick={onEdit}
             size="icon"
-            title={row.kind === 'library' ? words.editTitles : words.editVolumes}
+            title={row.kind === 'library' ? words.editTitles : words.editBooks}
             variant="ghost"
           >
             <Layers />

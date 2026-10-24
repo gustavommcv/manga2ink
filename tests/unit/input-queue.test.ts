@@ -450,6 +450,49 @@ describe('describing a row', () => {
     });
   });
 
+  describe('a row whose own books are above the steps of the queue', () => {
+    it('says the steps do not apply where it ignores one that was turned off, and says nothing where it agrees', () => {
+      const series = inspectedFolder(ungrouped, { books: 'series' });
+      const asIs = inspectedFolder(grouped, { books: 'as-is' });
+
+      expect(describeRow(series, 'bind-only').note).toBe(
+        'The steps of the queue do not apply here: this series is joined and converted as one book.',
+      );
+      expect(describeRow(series, 'convert-only').note).toContain('do not apply here');
+      expect(describeRow(series, 'bind-and-convert')).not.toHaveProperty('note');
+      expect(describeRow(asIs, 'bind-and-convert').note).toBe(
+        'The steps of the queue do not apply here: this folder is only converted, as it is.',
+      );
+      expect(describeRow(asIs, 'convert-only')).not.toHaveProperty('note');
+      // A row that follows the steps has nothing to say of them.
+      expect(describeRow(inspectedFolder(grouped), 'bind-only')).not.toHaveProperty('note');
+    });
+
+    it('says it too where a series has volumes, next to what is left out', () => {
+      expect(
+        describeRow(inspectedFolder(gappy, { books: 'series', confirmed: true }), 'bind-only').note,
+      ).toBe(
+        'The steps of the queue do not apply here: this series is joined and converted as one book. 1 chapter left out.',
+      );
+    });
+
+    it('says it of a library whose titles are one book each', () => {
+      const library = {
+        ...inspectedFolder(grouped),
+        kind: 'library',
+        books: 'series',
+        titles: [
+          { title: 'Work', draft: grouped, volumes: [{ name: 'Work - Vol.01.cbz', pageCount: 4 }] },
+        ],
+      } as InspectedRow;
+
+      expect(describeRow(library, 'bind-only').note).toBe(
+        'The steps of the queue do not apply here: each title is joined and converted as one book.',
+      );
+      expect(describeRow({ ...library, books: undefined }, 'bind-only')).not.toHaveProperty('note');
+    });
+  });
+
   describe('a folder left as it is', () => {
     it('is only converted, whatever the steps of the queue are, and says it is one book', () => {
       const folder = inspectedFolder(grouped, { books: 'as-is' });

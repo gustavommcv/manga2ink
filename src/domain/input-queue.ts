@@ -537,6 +537,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
 
   const process = rowProcess(row, mode);
   const series = booksOf(row) === 'series';
+  const stepsNote = stepsNotHere(row, mode);
   const chapters = row.mapping?.chapters.length ?? 0;
   const volumes = row.mapping?.volumes.length ?? 0;
   const unassigned = row.mapping === undefined ? 0 : unassignedChapterCount(row.mapping);
@@ -556,7 +557,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
       tone: 'neutral',
       detail: message('queue.detail.folderChapters', { chapters, grouping: 'not-grouped' }),
       runnable: true,
-      notes: [],
+      notes: stepsNote,
     };
   }
   if (chapters === 0) {
@@ -601,7 +602,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
       tone: 'accent',
       detail,
       runnable: true,
-      notes: [],
+      notes: stepsNote,
     };
   }
   if (volumes === 0 || (unassigned > 0 && !row.confirmed)) {
@@ -624,8 +625,27 @@ function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
     tone: 'accent',
     detail,
     runnable: true,
-    notes: unassigned > 0 ? [message('queue.note.chaptersLeftOut', { count: unassigned })] : [],
+    notes: [
+      ...stepsNote,
+      ...(unassigned > 0 ? [message('queue.note.chaptersLeftOut', { count: unassigned })] : []),
+    ],
   };
+}
+
+/**
+ * What a row says when its own books are above the steps of the queue: they are not what it is made
+ * with, and a person who turned a step off would not otherwise be told that this row ignores it.
+ */
+function stepsNotHere(row: InspectedRow, mode: ProcessMode): readonly AnyMessage[] {
+  const process = rowProcess(row, mode);
+  if (process === rowMode(row.kind, mode)) return [];
+  return process === 'convert-only'
+    ? [message('queue.note.stepsNotForAsIs', {})]
+    : [
+        message('queue.note.stepsNotForSeries', {
+          of: row.kind === 'library' ? 'library' : 'series',
+        }),
+      ];
 }
 
 function describeLibrary(row: InspectedRow, mode: ProcessMode): RowView {
@@ -681,7 +701,7 @@ function describeLibrary(row: InspectedRow, mode: ProcessMode): RowView {
     tone: 'accent',
     detail: message('queue.detail.libraryVolumes', { titles: titles.length, volumes }),
     runnable: true,
-    notes,
+    notes: [...stepsNotHere(row, mode), ...notes],
   };
 }
 

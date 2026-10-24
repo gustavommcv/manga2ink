@@ -36,6 +36,9 @@ export interface QueueMessages {
     readonly editVolumesFor: (name: string) => string;
     readonly editTitles: string;
     readonly editVolumes: string;
+    /** The button of the row of a folder: its books are chosen there, and its volumes made. */
+    readonly editBooksFor: (name: string) => string;
+    readonly editBooks: string;
     /** The shortcut of a series that has no volumes: its books are one for the whole series (ADR 0094). */
     readonly makeOneBook: string;
     readonly makeOneBookFor: (name: string) => string;
@@ -123,6 +126,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Edit volumes for ${name}`,
       editTitles: 'Edit titles',
       editVolumes: 'Edit volumes',
+      editBooksFor: (name) => `Edit books and volumes for ${name}`,
+      editBooks: 'Edit books and volumes',
       makeOneBook: 'Make one book',
       makeOneBookFor: (name) => `Make one book of ${name}`,
       reviewVersionsFor: (name) => `Choose between the versions of chapters in ${name}`,
@@ -210,6 +215,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Editar os volumes de ${name}`,
       editTitles: 'Editar títulos',
       editVolumes: 'Editar volumes',
+      editBooksFor: (name) => `Editar os livros e volumes de ${name}`,
+      editBooks: 'Editar livros e volumes',
       makeOneBook: 'Fazer um livro só',
       makeOneBookFor: (name) => `Fazer um livro só de ${name}`,
       reviewVersionsFor: (name) => `Escolher entre as versões de capítulos em ${name}`,
@@ -297,6 +304,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `「${name}」の巻を編集`,
       editTitles: 'タイトルを編集',
       editVolumes: '巻を編集',
+      editBooksFor: (name) => `「${name}」の本と巻を編集`,
+      editBooks: '本と巻を編集',
       makeOneBook: '1 冊にする',
       makeOneBookFor: (name) => `「${name}」を 1 冊にする`,
       reviewVersionsFor: (name) => `「${name}」の複数版の話から選ぶ`,

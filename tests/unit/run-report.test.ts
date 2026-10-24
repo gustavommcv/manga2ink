@@ -283,7 +283,7 @@ describe('the final run report and remaining queue', () => {
           status: 'skipped',
           artifacts: [],
           message:
-            'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
+            'No volumes yet. Open Edit books and volumes to group the chapters, or make one book of the whole series.',
           fixable: true,
         },
       ],

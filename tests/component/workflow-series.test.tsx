@@ -180,7 +180,9 @@ describe('the books of each series, in the window', () => {
     render(<App />);
     await addFolder(user);
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     expect(await screen.findByRole('radio', { name: /One book per volume/u })).toBeChecked();
     await user.click(screen.getByRole('radio', { name: /One book for the whole series/u }));
     expect(screen.getByText(/This series needs no volumes/u)).toBeVisible();
@@ -189,7 +191,9 @@ describe('the books of each series, in the window', () => {
     expect(await screen.findByText('Whole series', { selector: 'span' })).toBeVisible();
     expect(await runButton(1)).toBeEnabled();
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('radio', { name: /One book per volume/u }));
     await user.click(screen.getByRole('button', { name: /Offline Work|Queue/u }));
     expect(await screen.findByText('Needs volumes')).toBeVisible();
@@ -202,7 +206,9 @@ describe('the books of each series, in the window', () => {
     render(<App />);
     await addFolder(user);
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('radio', { name: /Convert the folder as it is/u }));
     await user.click(screen.getByRole('button', { name: /Queue/u }));
 
