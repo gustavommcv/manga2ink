@@ -428,7 +428,7 @@ test('the process steps remain visually consistent', async ({ page }) => {
 test('a library in Portuguese remains visually consistent', async ({ page }) => {
   await page.goto('/iframe.html?id=workflows-library-titles--in-portuguese&viewMode=story');
   await expect(page.getByRole('heading', { name: 'Manga Library' })).toBeVisible();
-  await expect(page.getByRole('status', { name: 'Modo de livro único' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Livros' })).toBeVisible();
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('library-titles-portuguese.png');
 });
