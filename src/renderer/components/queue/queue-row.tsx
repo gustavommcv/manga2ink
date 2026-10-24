@@ -12,7 +12,7 @@ import {
 
 import { pendingVersionGroups, versionGroups } from '@/domain/chapter-versions';
 import { hasBookDetails } from '@/domain/book-details';
-import { describeRow, type QueueRow, rowMode } from '@/domain/input-queue';
+import { describeRow, offersOneBook, type QueueRow, rowProcess } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangaprep } from '@/domain/process-mode';
 import { Badge } from '@/renderer/components/shared/badge';
@@ -27,10 +27,10 @@ export function QueueRowItem({
   onEdit,
   onEditDetails,
   onEditOptions,
+  onMakeOneBook,
   onRemove,
   onReviewVersions,
   row,
-  singleBook = false,
 }: {
   readonly mode: ProcessMode;
   readonly onEdit: () => void;
@@ -38,22 +38,23 @@ export function QueueRowItem({
   readonly onEditDetails: () => void;
   /** Opens the conversion options of the item, which are the queue's until it sets its own. */
   readonly onEditOptions: () => void;
+  /** Makes one book of the whole series, which a folder with no volumes can be (ADR 0094). */
+  readonly onMakeOneBook: () => void;
   readonly onRemove: () => void;
   /** Opens the choice among the files that claim one chapter (ADR 0093). */
   readonly onReviewVersions: () => void;
   readonly row: QueueRow;
-  /** The books are one for the whole series, which a folder with no volumes can be (ADR 0094). */
-  readonly singleBook?: boolean;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
   const { say, sayAll } = useSay();
-  const view = describeRow(row, mode, { singleBook });
+  const view = describeRow(row, mode);
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
-  // A folder or a library has volumes to edit, and only while volumes are in play.
-  const editable = row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only';
+  const process = rowProcess(row, mode);
+  // A folder or a library has its books to choose, and its volumes to edit where they are in play: a
+  // library that the steps leave out has neither, and is for the steps to fix.
+  const editable = row.state === 'inspected' && row.kind !== 'cbz' && process !== 'skip';
   // A book's own title, author and language matter where mangaprep makes the book. A library
   // has them per title, from the screen that lists its titles.
-  const process = rowMode(row.kind, mode);
   const detailsEditable =
     row.state === 'inspected' &&
     row.kind !== 'library' &&
@@ -62,7 +63,7 @@ export function QueueRowItem({
   // Chapters that more than one file claims, where they matter: wherever the files are joined.
   const versions = row.state === 'inspected' ? versionGroups(row.mapping) : [];
   const versionsReviewable =
-    versions.length > 0 && row.kind === 'folder' && mode !== 'convert-only';
+    versions.length > 0 && row.kind === 'folder' && process !== 'convert-only';
   const versionsPending = row.state === 'inspected' && pendingVersionGroups(row.mapping).length > 0;
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
   // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
@@ -132,7 +133,27 @@ export function QueueRowItem({
       ]}
       detail={say(view.detail)}
       icon={row.state === 'inspecting' ? <LoaderCircle className="animate-spin" /> : <Icon />}
-      {...(view.notes.length > 0 ? { notes: sayAll(view.notes) } : {})}
+      {...(view.notes.length > 0 || offersOneBook(row, mode)
+        ? {
+            notes: (
+              <>
+                {sayAll(view.notes)}
+                {offersOneBook(row, mode) && (
+                  <span className="mt-2 block">
+                    <Button
+                      aria-label={words.makeOneBookFor(row.displayName)}
+                      onClick={onMakeOneBook}
+                      size="sm"
+                      variant="outline"
+                    >
+                      {words.makeOneBook}
+                    </Button>
+                  </span>
+                )}
+              </>
+            ),
+          }
+        : {})}
       status={<Badge tone={view.tone}>{say(view.chip)}</Badge>}
       title={row.displayName}
       titleHint={row.displayPath}

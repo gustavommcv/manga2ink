@@ -96,7 +96,7 @@ describe('what a run is taken to need', () => {
     };
 
     expect(roomNeeded([series], 'bind-and-convert')).toEqual({ scratchBytes: 0, pendingBytes: 0 });
-    expect(roomNeeded([series], 'bind-and-convert', { singleBook: true })).toEqual({
+    expect(roomNeeded([{ ...series, books: 'series' }], 'bind-and-convert')).toEqual({
       scratchBytes: pages(180),
       pendingBytes: pages(180),
     });

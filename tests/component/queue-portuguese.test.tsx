@@ -59,13 +59,13 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     onEdit: vi.fn(),
     onEditDetails: vi.fn(),
     onEditOptions: vi.fn(),
+    onBooks: vi.fn(),
     onReviewVersions: vi.fn(),
     onFormat: vi.fn(),
     onMode: vi.fn(),
     onOpenOptions: vi.fn(),
     onRemove: vi.fn(),
     onReset: vi.fn(),
-    onSingleBook: vi.fn(),
     onValidate: vi.fn(),
     space: null,
     profiles: [
@@ -81,7 +81,6 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     rejected: [],
     rows: [],
     settings: defaultMangaprepSettings,
-    singleBook: false,
     validating: false,
     ...overrides,
   };
@@ -123,9 +122,8 @@ describe('the queue screen in Portuguese', () => {
       within(panel).getByRole('checkbox', { name: 'Agrupar capítulos em volumes' }),
     ).toBeChecked();
     expect(within(panel).getByRole('checkbox', { name: 'Converter para e-reader' })).toBeChecked();
-    expect(within(panel).getByRole('radio', { name: 'Série inteira' })).not.toBeChecked();
-    expect(within(panel).getByRole('radio', { name: 'Um por volume' })).toBeChecked();
-    expect(screen.getByText('Cada volume vira um livro próprio.')).toBeVisible();
+    // How the books are made is the choice of each series, not of the panel.
+    expect(within(panel).queryByRole('radiogroup', { name: 'Livros' })).not.toBeInTheDocument();
     expect(within(panel).getByRole('combobox', { name: 'Dispositivo' })).toBeVisible();
     expect(within(panel).getByRole('radiogroup', { name: 'Formato' })).toBeVisible();
     expect(
@@ -376,8 +374,29 @@ describe('what the queue says about each row, in Portuguese', () => {
     const row = rowOf('Random scans');
     expect(within(row).getByText('Precisa de volumes')).toBeVisible();
     expect(
-      within(row).getByText('Ainda não há volumes. Abra Editar volumes para agrupar os capítulos.'),
+      within(row).getByText(
+        'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
+      ),
     ).toBeVisible();
+  });
+
+  it('offers to make one book of it from its own row, and says so when it is one', async () => {
+    const user = userEvent.setup();
+    const onBooks = vi.fn();
+    const { rerender } = render(
+      inPortuguese(<QueueScreen {...props({ rows: [needsVolumes], onBooks })} />),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Fazer um livro só de Random scans' }));
+    expect(onBooks).toHaveBeenCalledExactlyOnceWith('n', 'series');
+
+    rerender(
+      inPortuguese(
+        <QueueScreen {...props({ rows: [{ ...needsVolumes, books: 'series' }], onBooks })} />,
+      ),
+    );
+    expect(within(rowOf('Random scans')).getByText('Série inteira')).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Fazer um livro só/u })).not.toBeInTheDocument();
   });
 
   it('writes a CBZ that goes straight to the e-reader step, and one that has nothing to join', () => {
@@ -428,16 +447,6 @@ describe('what the queue says about each row, in Portuguese', () => {
         'Uma biblioteca é agrupada título por título primeiro, então não dá para pular a junção dos volumes.',
       ),
     ).toBeVisible();
-  });
-
-  it('writes the reason a step cannot be turned off, quoting the control by its Portuguese name', () => {
-    render(
-      inPortuguese(
-        <QueueScreen {...props({ rows: [folderRow], format: 'epub', singleBook: true })} />,
-      ),
-    );
-
-    expect(screen.getAllByText('Escolha “Um por volume” para mudar isto.')).not.toHaveLength(0);
   });
 
   it('writes the reason of a step that a CBZ does not allow', () => {

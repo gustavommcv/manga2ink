@@ -1,17 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  booksOf,
   emptyQueue,
   type InspectedRow,
   isPendingTitle,
   isWaitingTitle,
   itemsWithOptions,
+  offersOneBook,
   type QueueInput,
   type QueueRow,
   queueModeInput,
   queueReducer,
   type ReadTitle,
   rowMode,
+  rowProcess,
   runnableRows,
   sessionIds,
   summarizeQueue,
@@ -392,7 +395,7 @@ describe('describing a row', () => {
   describe('a series made into one book', () => {
     it('is ready with no volumes: its chapters are the book, and nothing is left out for want of one', () => {
       expect(
-        describeRow(inspectedFolder(ungrouped), 'bind-and-convert', { singleBook: true }),
+        describeRow(inspectedFolder(ungrouped, { books: 'series' }), 'bind-and-convert'),
       ).toEqual({
         chip: 'Whole series',
         tone: 'accent',
@@ -401,15 +404,15 @@ describe('describing a row', () => {
       });
     });
 
-    it('is as it was where the series has volumes: the chapters not in one are still asked about', () => {
+    it('says it is one book where the series has volumes, and still asks about the chapters not in one', () => {
       expect(
-        describeRow(inspectedFolder(grouped), 'bind-and-convert', { singleBook: true }),
+        describeRow(inspectedFolder(grouped, { books: 'series' }), 'bind-and-convert'),
       ).toMatchObject({
-        chip: '2 volumes',
+        chip: 'Whole series',
         runnable: true,
       });
       expect(
-        describeRow(inspectedFolder(gappy), 'bind-and-convert', { singleBook: true }),
+        describeRow(inspectedFolder(gappy, { books: 'series' }), 'bind-and-convert'),
       ).toMatchObject({
         chip: 'Needs volumes',
         runnable: false,
@@ -423,14 +426,113 @@ describe('describing a row', () => {
       });
     });
 
-    it('is counted, and run, in a queue that makes one book of each series', () => {
-      const rows = [inspectedFolder(ungrouped), inspectedFolder(grouped, { id: 'second' })];
+    it('is counted, and run, with the series that have no volumes only where the person made them one book', () => {
+      const rows = [
+        inspectedFolder(ungrouped, { books: 'series' }),
+        inspectedFolder(grouped, { id: 'second' }),
+        inspectedFolder(ungrouped, { id: 'third' }),
+      ];
 
-      expect(summarizeQueue(rows, 'bind-and-convert', { singleBook: true }).runnable).toBe(2);
-      expect(summarizeQueue(rows, 'bind-and-convert').runnable).toBe(1);
+      expect(summarizeQueue(rows, 'bind-and-convert').runnable).toBe(2);
+      expect(runnableRows(rows, 'bind-and-convert').map(({ row }) => row.id)).toEqual([
+        'a',
+        'second',
+      ]);
+    });
+
+    it('is made whatever the steps of the queue are: the choice of a series is above them', () => {
+      const series = inspectedFolder(ungrouped, { books: 'series' });
+
+      for (const mode of ['bind-only', 'convert-only'] as const) {
+        expect(rowProcess(series, mode)).toBe('bind-and-convert');
+        expect(runnableRows([series], mode)[0]?.mode).toBe('bind-and-convert');
+      }
+    });
+  });
+
+  describe('a folder left as it is', () => {
+    it('is only converted, whatever the steps of the queue are, and says it is one book', () => {
+      const folder = inspectedFolder(grouped, { books: 'as-is' });
+
+      expect(rowProcess(folder, 'bind-and-convert')).toBe('convert-only');
+      expect(describeRow(folder, 'bind-and-convert')).toMatchObject({
+        chip: 'One book',
+        detail: 'Folder · 3 chapters · not grouped',
+        runnable: true,
+      });
+    });
+
+    it('cannot be converted where its chapters are archives, which have to be joined first', () => {
+      const archives = createMappingDraft({
+        mangaTitle: 'Work',
+        chapters: chapters.map((chapter) => ({ ...chapter, kind: 'cbz' as const })),
+      });
+
       expect(
-        runnableRows(rows, 'bind-and-convert', { singleBook: true }).map(({ row }) => row.id),
-      ).toEqual(['a', 'second']);
+        describeRow(inspectedFolder(archives, { books: 'as-is' }), 'bind-and-convert'),
+      ).toMatchObject({ chip: 'Needs grouping', runnable: false });
+    });
+  });
+
+  describe('the books of a row', () => {
+    const rowOf = (books?: 'series' | 'as-is'): InspectedRow =>
+      inspectedFolder(ungrouped, books === undefined ? {} : { books });
+    const set = (rows: readonly QueueRow[], books: 'volumes' | 'series' | 'as-is') =>
+      queueReducer(rows, { type: 'set-books', id: 'a', books });
+
+    it('are one for each volume until the person says otherwise, and say so back', () => {
+      expect(booksOf(rowOf())).toBe('volumes');
+      expect(booksOf(rowOf('series'))).toBe('series');
+      expect(booksOf(rowOf('as-is'))).toBe('as-is');
+      expect(booksOf({ ...folderInput, state: 'inspecting' })).toBe('volumes');
+    });
+
+    it('are kept with the row, and one for each volume takes the choice back', () => {
+      const rows = [rowOf()];
+
+      expect(booksOf(set(rows, 'series')[0]!)).toBe('series');
+      expect(booksOf(set(rows, 'as-is')[0]!)).toBe('as-is');
+      expect(set(set(rows, 'series'), 'volumes')[0]).not.toHaveProperty('books');
+      expect(set(rows, 'volumes')).toEqual(rows);
+    });
+
+    it('are not a choice of a comic file, which is one book already, nor of a row still being read', () => {
+      const cbz = inspectedCbz();
+      const reading: QueueRow = { ...folderInput, state: 'inspecting' };
+
+      expect(queueReducer([cbz], { type: 'set-books', id: 'b', books: 'series' })).toEqual([cbz]);
+      expect(booksOf(cbz)).toBe('volumes');
+      expect(queueReducer([reading], { type: 'set-books', id: 'a', books: 'series' })).toEqual([
+        reading,
+      ]);
+    });
+
+    it('are one for each title or one for each volume for a library, which is joined title by title first', () => {
+      const library = { ...rowOf(), kind: 'library', titles: [] } as InspectedRow;
+
+      expect(booksOf(set([library], 'series')[0]!)).toBe('series');
+      expect(set([library], 'as-is')).toEqual([library]);
+      expect(booksOf({ ...library, books: 'as-is' })).toBe('volumes');
+      expect(rowProcess(set([library], 'series')[0]!, 'bind-only')).toBe('bind-and-convert');
+    });
+
+    it('are offered as one book at a stroke only to a folder with chapters and no volumes yet', () => {
+      expect(offersOneBook(rowOf(), 'bind-and-convert')).toBe(true);
+      expect(offersOneBook(rowOf('series'), 'bind-and-convert')).toBe(false);
+      expect(offersOneBook(rowOf('as-is'), 'bind-and-convert')).toBe(false);
+      expect(offersOneBook(rowOf(), 'convert-only')).toBe(false);
+      expect(offersOneBook(inspectedFolder(grouped), 'bind-and-convert')).toBe(false);
+      expect(offersOneBook(inspectedFolder(undefined), 'bind-and-convert')).toBe(false);
+      expect(
+        offersOneBook(
+          inspectedFolder(createMappingDraft({ mangaTitle: 'Empty', chapters: [] })),
+          'bind-and-convert',
+        ),
+      ).toBe(false);
+      expect(offersOneBook(inspectedCbz(), 'bind-and-convert')).toBe(false);
+      expect(offersOneBook({ ...folderInput, state: 'inspecting' }, 'bind-and-convert')).toBe(
+        false,
+      );
     });
   });
 

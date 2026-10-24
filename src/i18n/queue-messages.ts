@@ -1,5 +1,4 @@
 import type { Language } from '@/domain/app-settings';
-import type { BookFormat } from '@/domain/conversion';
 
 import { countOf } from './count';
 
@@ -37,6 +36,9 @@ export interface QueueMessages {
     readonly editVolumesFor: (name: string) => string;
     readonly editTitles: string;
     readonly editVolumes: string;
+    /** The shortcut of a series that has no volumes: its books are one for the whole series (ADR 0094). */
+    readonly makeOneBook: string;
+    readonly makeOneBookFor: (name: string) => string;
     /** Opens the choice among the files that claim one chapter (ADR 0093). */
     readonly reviewVersionsFor: (name: string) => string;
     readonly reviewVersions: string;
@@ -55,18 +57,6 @@ export interface QueueMessages {
   readonly panel: {
     /** The name of the panel of conversion options beside the queue. */
     readonly label: string;
-    readonly singleBook: {
-      /** The name of the choice between one book for each volume and one for the whole series (ADR 0094). */
-      readonly label: string;
-      readonly perVolume: string;
-      readonly series: string;
-      /** What a book for each volume is. */
-      readonly perVolumeNote: string;
-      readonly saved: string;
-      readonly unavailable: string;
-      /** What the one book is, by its format: an EPUB has a table of contents, a PDF bookmarks, a CBZ neither (ADR 0083). */
-      readonly produces: Readonly<Record<BookFormat, string>>;
-    };
     readonly device: string;
     readonly format: string;
     readonly advanced: string;
@@ -133,6 +123,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Edit volumes for ${name}`,
       editTitles: 'Edit titles',
       editVolumes: 'Edit volumes',
+      makeOneBook: 'Make one book',
+      makeOneBookFor: (name) => `Make one book of ${name}`,
       reviewVersionsFor: (name) => `Choose between the versions of chapters in ${name}`,
       reviewVersions: 'Choose versions',
       editDetailsOf: (name) => `Edit details of ${name}`,
@@ -153,19 +145,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: 'Conversion options',
-      singleBook: {
-        label: 'Books',
-        perVolume: 'One per volume',
-        series: 'Whole series',
-        perVolumeNote: 'Each volume is made into a book of its own.',
-        saved: 'Saved for manga folders. A standalone CBZ is already one book.',
-        unavailable: 'Not available for standalone .cbz files.',
-        produces: {
-          epub: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
-          cbz: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
-          pdf: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
-        },
-      },
       device: 'Device',
       format: 'Format',
       advanced: 'Advanced conversion options',
@@ -231,6 +210,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Editar os volumes de ${name}`,
       editTitles: 'Editar títulos',
       editVolumes: 'Editar volumes',
+      makeOneBook: 'Fazer um livro só',
+      makeOneBookFor: (name) => `Fazer um livro só de ${name}`,
       reviewVersionsFor: (name) => `Escolher entre as versões de capítulos em ${name}`,
       reviewVersions: 'Escolher versões',
       editDetailsOf: (name) => `Editar os detalhes de ${name}`,
@@ -251,19 +232,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: 'Opções de conversão',
-      singleBook: {
-        label: 'Livros',
-        perVolume: 'Um por volume',
-        series: 'Série inteira',
-        perVolumeNote: 'Cada volume vira um livro próprio.',
-        saved: 'Guardado para pastas de mangá. Um CBZ avulso já é um livro só.',
-        unavailable: 'Indisponível para arquivos .cbz avulsos.',
-        produces: {
-          epub: 'Um EPUB para a série inteira, com os capítulos (e os volumes, se ela tiver) no sumário. Não precisa de volumes.',
-          cbz: 'Um CBZ para a série inteira, com os capítulos (e os volumes) em pastas. Não tem sumário.',
-          pdf: 'Um PDF para a série inteira, com as páginas em ordem e marcadores para os capítulos (e os volumes).',
-        },
-      },
       device: 'Dispositivo',
       format: 'Formato',
       advanced: 'Opções avançadas de conversão',
@@ -329,6 +297,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `「${name}」の巻を編集`,
       editTitles: 'タイトルを編集',
       editVolumes: '巻を編集',
+      makeOneBook: '1 冊にする',
+      makeOneBookFor: (name) => `「${name}」を 1 冊にする`,
       reviewVersionsFor: (name) => `「${name}」の複数版の話から選ぶ`,
       reviewVersions: '版を選択',
       editDetailsOf: (name) => `「${name}」の詳細を編集`,
@@ -347,19 +317,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: '変換オプション',
-      singleBook: {
-        label: '本',
-        perVolume: '巻ごとに 1 冊',
-        series: 'シリーズ全体で 1 冊',
-        perVolumeNote: '各巻が、それぞれ 1 冊の本になります。',
-        saved: 'マンガのフォルダー用に保存されます。単体の CBZ は、すでに 1 冊の本です。',
-        unavailable: '単体の .cbz ファイルでは使えません。',
-        produces: {
-          epub: 'シリーズ全体で 1 つの EPUB を作成します。各話（巻がある場合は各巻も）が目次に入ります。巻は不要です。',
-          cbz: 'シリーズ全体で 1 つの CBZ を作成します。各話（巻がある場合は各巻も）がフォルダーになります。目次はありません。',
-          pdf: 'シリーズ全体で 1 つの PDF を作成します。ページが順番に並び、各話（巻がある場合は各巻も）のしおりが付きます。',
-        },
-      },
       device: '端末',
       format: '形式',
       advanced: '詳細な変換オプション',

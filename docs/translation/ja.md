@@ -64,22 +64,22 @@ The name of the app, of the tools and of the services it works with (Manga2Ink, 
 
 ## Working through the queue
 
-| English                       | 日本語                               | Note                                                                                 |
-| ----------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------ |
-| queue                         | キュー                               | What is to be converted. A queued item: キューの項目.                                |
-| group chapters into volumes   | 各話を巻にまとめる                   | The guide's words for the first step. While it runs ("Binding"): まとめ中.           |
-| convert, conversion           | 変換                                 | Converting: 変換中. "Convert for e-reader": リーダー向けに変換.                      |
-| chapter mapping               | 各話と巻の割り当て                   | 割り当て alone where it is clear. Not マッピング.                                    |
-| assign, assigned, unassigned  | 割り当てる、割り当て済み、未割り当て |                                                                                      |
-| split (a volume)              | 分割                                 |                                                                                      |
-| plan                          | 計画                                 | What the app shows before it writes anything. "Validate plan": 計画を検証.           |
-| ready check                   | 確定前のチェック                     | The errors and warnings listed before a mapping is confirmed.                        |
-| confirm (a mapping)           | 確定                                 | A choice that is settled. 確認 is "check".                                           |
-| waiting, converting, complete | 待機中、変換中、完了                 | Saving: 保存中.                                                                      |
-| pending book                  | 保留中の本                           | A finished book that is not saved yet; the guide's words. "Earlier books": 以前の本. |
-| working folder                | 作業フォルダー                       |                                                                                      |
-| free space                    | 空き容量                             |                                                                                      |
-| single book                   | 1 冊にまとめる                       | "Books": 本; "One per volume": 巻ごとに 1 冊; "Whole series": シリーズ全体で 1 冊.   |
+| English                       | 日本語                               | Note                                                                                                                                                                                                                              |
+| ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| queue                         | キュー                               | What is to be converted. A queued item: キューの項目.                                                                                                                                                                             |
+| group chapters into volumes   | 各話を巻にまとめる                   | The guide's words for the first step. While it runs ("Binding"): まとめ中.                                                                                                                                                        |
+| convert, conversion           | 変換                                 | Converting: 変換中. "Convert for e-reader": リーダー向けに変換.                                                                                                                                                                   |
+| chapter mapping               | 各話と巻の割り当て                   | 割り当て alone where it is clear. Not マッピング.                                                                                                                                                                                 |
+| assign, assigned, unassigned  | 割り当てる、割り当て済み、未割り当て |                                                                                                                                                                                                                                   |
+| split (a volume)              | 分割                                 |                                                                                                                                                                                                                                   |
+| plan                          | 計画                                 | What the app shows before it writes anything. "Validate plan": 計画を検証.                                                                                                                                                        |
+| ready check                   | 確定前のチェック                     | The errors and warnings listed before a mapping is confirmed.                                                                                                                                                                     |
+| confirm (a mapping)           | 確定                                 | A choice that is settled. 確認 is "check".                                                                                                                                                                                        |
+| waiting, converting, complete | 待機中、変換中、完了                 | Saving: 保存中.                                                                                                                                                                                                                   |
+| pending book                  | 保留中の本                           | A finished book that is not saved yet; the guide's words. "Earlier books": 以前の本.                                                                                                                                              |
+| working folder                | 作業フォルダー                       |                                                                                                                                                                                                                                   |
+| free space                    | 空き容量                             |                                                                                                                                                                                                                                   |
+| books of a series             | 本                                   | "One book per volume": 巻ごとに 1 冊; "One book for the whole series": シリーズ全体で 1 冊; "One book for each title": タイトルごとに 1 冊; "Convert the folder as it is": フォルダーをそのまま変換; "Make one book": 1 冊にする. |
 
 ## Saving, sharing and the small words
 

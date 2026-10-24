@@ -2,16 +2,20 @@
 
 - Status: Accepted
 - Date: 2026-10-24
-- Amends: [ADR 0025](0025-single-book-mode-workflow-control.md) (the control of the single book), [ADR 0081](0081-a-series-made-into-one-book-can-be-an-epub-a-cbz-or-a-pdf.md) (what the one book holds)
+- Amends: [ADR 0025](0025-single-book-mode-workflow-control.md) (the choice of the single book, and where it is made), [ADR 0081](0081-a-series-made-into-one-book-can-be-an-epub-a-cbz-or-a-pdf.md) (what the one book holds)
 
 ## Context
 
 A real test of alpha.19 on sixteen chapters of a series with no volumes asked for one book of the whole series, and the app could not make it. The mode was a checkbox, **Create one book for the series**, off by default, and the row of a folder with no volumes said **Needs volumes**: the mode wanted the volumes to put each chapter under its volume, so a person who only wanted all the chapters in one book had to invent a volume in the editor first. The choice a person is making is between two shapes of result, one book for each volume or one for the whole series, and a checkbox named for the second hid the first.
 
+It was also made in the wrong place. The checkbox was a setting of the whole queue, kept between sessions, next to the device and the format, which are about the output. How a series becomes books is about the series: with one series that has volumes and one that has none in the same queue, one answer could not be right for both, and a choice kept from last week made the next series with volumes one big book without being asked. The same shape was decided in four places (the two steps, the choice of books, **Skip grouping**, and the volumes), and the choice locked the steps from above.
+
 ## Decision
 
-- **The choice is a control of two options, named for what it makes.** In the queue, **Books**: **One per volume** or **Whole series**. It is the same setting as before (`singleBook`, kept between sessions, and the same lock on the steps while the whole series is chosen), so nothing about what is kept changes. A queue of loose CBZ files still cannot choose the whole series.
-- **A series with no volumes is ready for the whole series.** The row says **Whole series** and runs; the volumes it lacks are not asked for. Where the series has volumes, from the names of the folders or made by the person, the rows are as they were: the chapters that are in no volume are still asked about.
+- **The choice is each series', made where its chapters are grouped.** The editor of a folder opens with **Books**: **One book per volume**, **One book for the whole series**, or **Convert the folder as it is** (what **Skip grouping** was, which no longer changes the steps of the whole queue). Each choice says what it needs and, for the whole series, what the book is in the format it will be made in. The panel beside the queue has no choice of books, and its two steps are never locked by one: the steps are the queue's, and a row's own choice is above them, as its own conversion options are (ADR 0046). A folder left as it is cannot be had where its chapters are archives that have to be joined first, and says why. A comic file is one book already and has no choice.
+- **Nothing is kept between sessions.** The choice lives with the row, and the next series added is one book for each volume, as every series was. The setting of an earlier version (`singleBook`, which was never about one series) is not read.
+- **A folder with no volumes can be made one book from its own row.** Where the row says **Needs volumes**, the button **Make one book** makes it. The row then says **Whole series** and runs; the volumes it lacks are not asked for. Where the series has volumes, from the names of the folders or made by the person, the rows are as they were: the chapters that are in no volume are still asked about, and the row says **Whole series** as well.
+- **A library has a choice of its own.** The screen that lists its titles has **Books**: **One book per volume** or **One book for each title**, for every title of it. The titles of a library are bound by their own folders' files, so a title with no volumes still waits for some.
 - **The tool is told of one volume, made for the run.** mangabind binds a series into one file by way of its volumes, so a series with none is given one holding every chapter that a file can name (not those whose own name already says a volume, and not those the person left out). It is in the mapping file of the run only: it is never kept with the folder, which would turn a choice of shape into volumes the person never made.
 - **Volumes are a level of the table of contents only where the person has them.** With volumes the book is made with `--nested-toc` as before. Without, the chapters are the table of contents, flat; the volume made for the run does not show.
 - **The chapters are named by their numbers.** The app asks mangabind for `-chapter-labels number` (its ADR 0029) in the plan and in the run, whenever the release offers it, so that the table of contents says `Ch.8` for chapter 8 even when chapter 3 is missing or two versions of chapter 6 are both kept. A release that does not offer it keeps naming them by their place.
@@ -20,7 +24,8 @@ A real test of alpha.19 on sixteen chapters of a series with no volumes asked fo
 
 ## Consequences
 
-- A folder of CBZ chapters with no volumes becomes one EPUB, CBZ or PDF of the whole series in two steps: add it, choose **Whole series**. With versions to choose among, **Choose versions** comes first.
-- The kept preference of an earlier session is read as before; only what it is called in the window changes, and the guide says it in three languages.
-- Libraries are unchanged: the titles of a library are bound by their own folders' files, and a title with no volumes still waits for some.
+- A folder of CBZ chapters with no volumes becomes one EPUB, CBZ or PDF of the whole series in two steps: add it, press **Make one book** (or choose it in the editor). With versions to choose among, **Choose versions** comes first.
+- One queue can hold a series made one book and one made of its volumes, and each is made as it was asked.
+- The preference that was kept (`singleBook`) is dropped from the settings file, which ignores what it does not know, so a person who had it on finds every series one book for each volume again, and chooses the series that are not.
+- The editor is where the books are chosen even when the steps leave nothing to join, so its button stays in the row of a folder; a library that the steps leave out has none, for the steps are what is to be changed there.
 - The names by number need the mangabind release that carries its ADR 0029; until the pin moves, the series is made with the names by place, which are as good as they were for books of volumes. The list of flags in `schemas/cli-capabilities.json` moves with the pin, since it is checked against the flags the pinned release advertises.

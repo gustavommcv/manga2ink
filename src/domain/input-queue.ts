@@ -22,6 +22,16 @@ export type QueueInputKind = 'folder' | 'cbz';
  */
 export type QueueRowKind = QueueInputKind | 'library';
 
+/**
+ * How the books of a series are made (ADR 0094): one for each volume, which is what a series is until
+ * its person says otherwise; one for the whole series, which needs no volumes; or, for a folder, as it
+ * is, with nothing grouped. It is the choice of each series, made where its chapters are grouped.
+ */
+export type BooksChoice = 'volumes' | 'series' | 'as-is';
+
+/** What a row holds of that choice: one for each volume is no choice, and is not kept. */
+export type OwnBooks = Exclude<BooksChoice, 'volumes'>;
+
 /** What a run did with one manga of a library. */
 export type TitleOutcome =
   { readonly status: 'done' } | { readonly status: 'failed'; readonly message: AnyMessage };
@@ -72,6 +82,8 @@ export type QueueRow = QueueRowBase &
         readonly details?: BookDetails;
         /** What this input is converted with differently from the queue's options (ADR 0046). */
         readonly options?: ItemOptions;
+        /** How its books are made, when not one for each volume (ADR 0094). */
+        readonly books?: OwnBooks;
         /** Folders of the manga that could not be read as chapters, and are in no book. */
         readonly unrecognized?: readonly string[];
         /** Links in a library folder that were not followed: manga that are in no list of titles. */
@@ -128,6 +140,8 @@ export type QueueAction =
       readonly token: string;
       readonly use: readonly string[] | undefined;
     }
+  /** How the books of this input are made; one for each volume puts it back. */
+  | { readonly type: 'set-books'; readonly id: string; readonly books: BooksChoice }
   | { readonly type: 'set-details'; readonly id: string; readonly details: BookDetails }
   | {
       readonly type: 'set-title-details';
@@ -252,6 +266,10 @@ export function queueReducer(rows: readonly QueueRow[], action: QueueAction): re
           ? { ...row, mapping: withVersions(row.mapping, action.token, action.use) }
           : row,
       );
+    case 'set-books':
+      return rows.map((row) =>
+        row.id === action.id && row.state === 'inspected' ? withBooks(row, action.books) : row,
+      );
     case 'set-details':
       return rows.map((row) =>
         row.id === action.id && row.state === 'inspected'
@@ -321,6 +339,18 @@ function withVersions(
   }
 }
 
+/**
+ * The row with these books. A comic file is one book already and a library is joined title by title, so
+ * neither can be left as it is: what a row cannot have is not given to it.
+ */
+function withBooks(row: InspectedRow, books: BooksChoice): InspectedRow {
+  if (row.kind === 'cbz') return row;
+  const { books: previous, ...rest } = row;
+  void previous;
+  if (books === 'volumes' || (row.kind === 'library' && books === 'as-is')) return rest;
+  return { ...rest, books };
+}
+
 /** The row or title with these options of its own, or without any when there are none. */
 function withOptions<T extends { readonly options?: ItemOptions }>(
   target: T,
@@ -366,6 +396,41 @@ export function unassignedChapterCount(mapping: MappingDraft): number {
   return mapping.chapters.filter((chapter) => !assigned.has(chapter.id)).length;
 }
 
+/** How the books of a row are made: what it was given, and one for each volume where it was given none. */
+export function booksOf(row: QueueRow): BooksChoice {
+  if (row.state !== 'inspected' || row.kind === 'cbz') return 'volumes';
+  if (row.kind === 'library') return row.books === 'series' ? 'series' : 'volumes';
+  return row.books ?? 'volumes';
+}
+
+/**
+ * Whether a folder that has chapters and no volumes can be made into one book at a stroke: it is
+ * waiting for volumes, and the whole series is the other way to have its books (ADR 0094).
+ */
+export function offersOneBook(row: QueueRow, mode: ProcessMode): boolean {
+  if (row.state !== 'inspected' || row.kind !== 'folder' || booksOf(row) !== 'volumes')
+    return false;
+  const { mapping } = row;
+  return (
+    rowProcess(row, mode) !== 'convert-only' &&
+    mapping !== undefined &&
+    mapping.chapters.length > 0 &&
+    mapping.volumes.length === 0
+  );
+}
+
+/**
+ * The process a row gets under the steps of the queue and its own books: a series made into one book is
+ * joined and converted, a folder left as it is is only converted, and the steps are for the rest, which
+ * is how the other options of a row go too: its own choice is above the queue's.
+ */
+export function rowProcess(row: QueueRow, mode: ProcessMode): ProcessMode | 'skip' {
+  const books = booksOf(row);
+  if (books === 'series') return 'bind-and-convert';
+  if (books === 'as-is') return 'convert-only';
+  return rowMode(row.kind, mode);
+}
+
 /**
  * The process a row gets under the chosen mode, or `skip` when the mode has nothing to do for it:
  * a CBZ is already one volume, so a run that only joins volumes leaves it alone rather than
@@ -406,14 +471,8 @@ export interface RowView {
   readonly notes: readonly AnyMessage[];
 }
 
-/** What of the queue's choices a row's description depends on besides the process. */
-export interface QueueView {
-  /** The books are one for the whole series, not one for each volume (ADR 0094). */
-  readonly singleBook?: boolean;
-}
-
-export function describeRow(row: QueueRow, mode: ProcessMode, queue: QueueView = {}): RowView {
-  const view = describeRowBase(row, mode, queue);
+export function describeRow(row: QueueRow, mode: ProcessMode): RowView {
+  const view = describeRowBase(row, mode);
   // Folders the tool could not read as chapters are in no book, whatever else the row says.
   const told = row.state === 'inspected' ? leftOutNote(row) : undefined;
   return told === undefined ? view : { ...view, notes: [...view.notes, told] };
@@ -430,7 +489,7 @@ function leftOutNote(row: InspectedRow): AnyMessage | undefined {
     : unrecognizedChaptersNote(row.unrecognized ?? []);
 }
 
-function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): RowView {
+function describeRowBase(row: QueueRow, mode: ProcessMode): RowView {
   if (row.state === 'inspecting') {
     return {
       chip: message('queue.chip.checking', {}),
@@ -476,10 +535,12 @@ function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): Ro
 
   if (row.kind === 'library') return describeLibrary(row, mode);
 
+  const process = rowProcess(row, mode);
+  const series = booksOf(row) === 'series';
   const chapters = row.mapping?.chapters.length ?? 0;
   const volumes = row.mapping?.volumes.length ?? 0;
   const unassigned = row.mapping === undefined ? 0 : unassignedChapterCount(row.mapping);
-  if (mode === 'convert-only' && hasArchiveChapters(row.mapping)) {
+  if (process === 'convert-only' && hasArchiveChapters(row.mapping)) {
     // Chapters that are CBZ files are not pages the converter can read from the folder.
     return {
       chip: message('queue.chip.needsGrouping', {}),
@@ -489,7 +550,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): Ro
       notes: [archivesReason],
     };
   }
-  if (mode === 'convert-only') {
+  if (process === 'convert-only') {
     return {
       chip: message('queue.chip.oneBook', {}),
       tone: 'neutral',
@@ -534,7 +595,7 @@ function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): Ro
   }
   // The whole series is one book, and a series with no volumes is one book of its chapters: nothing
   // is missing, and nothing is left out for want of a volume (ADR 0094).
-  if (queue.singleBook === true && volumes === 0) {
+  if (series && volumes === 0) {
     return {
       chip: message('queue.chip.wholeSeries', {}),
       tone: 'accent',
@@ -557,7 +618,9 @@ function describeRowBase(row: QueueRow, mode: ProcessMode, queue: QueueView): Ro
     };
   }
   return {
-    chip: message('queue.chip.volumes', { count: volumes }),
+    chip: series
+      ? message('queue.chip.wholeSeries', {})
+      : message('queue.chip.volumes', { count: volumes }),
     tone: 'accent',
     detail,
     runnable: true,
@@ -577,7 +640,7 @@ function describeLibrary(row: InspectedRow, mode: ProcessMode): RowView {
       notes: [message('queue.note.libraryEmpty', {})],
     };
   }
-  if (rowMode('library', mode) === 'skip') {
+  if (rowProcess(row, mode) === 'skip') {
     return {
       chip: message('queue.chip.needsGrouping', {}),
       tone: 'neutral',
@@ -632,16 +695,12 @@ export interface QueueSummary {
   readonly inspecting: number;
 }
 
-export function summarizeQueue(
-  rows: readonly QueueRow[],
-  mode: ProcessMode,
-  queue: QueueView = {},
-): QueueSummary {
+export function summarizeQueue(rows: readonly QueueRow[], mode: ProcessMode): QueueSummary {
   let runnable = 0;
   let inspecting = 0;
   for (const row of rows) {
     if (row.state === 'inspecting') inspecting += 1;
-    else if (describeRow(row, mode, queue).runnable) runnable += 1;
+    else if (describeRow(row, mode).runnable) runnable += 1;
   }
   return { total: rows.length, runnable, skipped: rows.length - runnable - inspecting, inspecting };
 }
@@ -664,13 +723,12 @@ export function itemsWithOptions(rows: readonly QueueRow[]): number {
 export function runnableRows(
   rows: readonly QueueRow[],
   mode: ProcessMode,
-  queue: QueueView = {},
 ): readonly { readonly row: InspectedRow; readonly mode: ProcessMode }[] {
   const result: { readonly row: InspectedRow; readonly mode: ProcessMode }[] = [];
   for (const row of rows) {
     if (row.state !== 'inspected') continue;
-    const process = rowMode(row.kind, mode);
-    if (process === 'skip' || !describeRow(row, mode, queue).runnable) continue;
+    const process = rowProcess(row, mode);
+    if (process === 'skip' || !describeRow(row, mode).runnable) continue;
     result.push({ row, mode: process });
   }
   return result;

@@ -1,5 +1,11 @@
 import type { BookFormat } from './conversion';
-import { describeRow, isWaitingTitle, type QueueAction, type QueueRow } from './input-queue';
+import {
+  describeRow,
+  isWaitingTitle,
+  type QueueAction,
+  type QueueRow,
+  rowProcess,
+} from './input-queue';
 import { type AnyMessage, message } from './message';
 import type { ProcessMode } from './process-mode';
 
@@ -108,8 +114,6 @@ interface RunReportInput<Artifact> {
   /** The queue snapshot the run started with, before its title outcomes were updated. */
   readonly rows: readonly QueueRow[];
   readonly mode: ProcessMode;
-  /** Whether the books were one for the whole series, which decides what a row lacked to run. */
-  readonly singleBook?: boolean;
   readonly settled: readonly RunOutcome<Artifact>[];
   readonly attempted: ReadonlySet<string>;
   readonly completedTitles: ReadonlyMap<string, ReadonlySet<string>>;
@@ -125,7 +129,6 @@ interface RunReport<Artifact> {
 export function finishRunReport<Artifact>({
   rows,
   mode,
-  singleBook,
   settled,
   attempted,
   completedTitles,
@@ -148,7 +151,7 @@ export function finishRunReport<Artifact>({
       continue;
     }
     if (attempted.has(row.id)) continue;
-    const view = describeRow(row, mode, { singleBook: singleBook === true });
+    const view = describeRow(row, mode);
     if (view.runnable) continue;
     outcomes.push({
       rowId: row.id,
@@ -156,7 +159,8 @@ export function finishRunReport<Artifact>({
       status: 'skipped',
       artifacts: [],
       message: view.notes.length > 0 ? view.notes : [view.chip],
-      fixable: row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only',
+      // Its books and volumes are chosen in the editor, wherever the steps leave it something to join.
+      fixable: row.state === 'inspected' && row.kind !== 'cbz' && rowProcess(row, mode) !== 'skip',
     });
   }
   const completedRowIds = rows

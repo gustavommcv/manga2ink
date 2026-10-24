@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangaprepSettings } from '@/domain/output-profile';
-import { defaultPreferences } from '@/domain/preferences';
 import { App } from '@/renderer/app';
 import { type Manga2InkBridge } from '@/shared/runtime-info';
 
@@ -17,7 +16,6 @@ import {
   expectNoOutputFolderPicker,
   folder,
   installBridge,
-  keptSettings,
   mapping,
   runButton,
 } from './support/workflow';
@@ -97,10 +95,8 @@ describe('process control in the queue', () => {
 
     expect(screen.getByText('One book')).toBeVisible();
     expect(screen.getByText(/2 chapters · not grouped/u)).toBeVisible();
-    // No volumes are in play, so there is nothing to edit.
-    expect(
-      screen.queryByRole('button', { name: 'Edit volumes for Offline Work' }),
-    ).not.toBeInTheDocument();
+    // The books of the series are still chosen where its chapters are grouped, whatever the steps are.
+    expect(screen.getByRole('button', { name: 'Edit volumes for Offline Work' })).toBeVisible();
 
     expectNoOutputFolderPicker();
     await user.click(screen.getByRole('button', { name: 'Validate plan' }));
@@ -118,17 +114,19 @@ describe('process control in the queue', () => {
     expect(convert.mock.calls[0]?.[0].mapping).toBeUndefined();
   });
 
-  it('skips grouping from the editor, which sends the queue straight to mangaprep', async () => {
+  it('leaves a folder as it is from the editor, which converts that folder and changes no step', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);
     await addFolder(user);
 
     await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
-    await user.click(await screen.findByRole('button', { name: 'Skip grouping' }));
+    await user.click(await screen.findByRole('radio', { name: /Convert the folder as it is/u }));
+    await user.click(screen.getByRole('button', { name: /Queue/u }));
 
     expect(await screen.findByRole('heading', { name: 'Queue' })).toBeVisible();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).not.toBeChecked();
+    // The steps are the queue's, and what one folder is is not theirs to say.
+    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeChecked();
     expect(screen.getByText('One book')).toBeVisible();
   });
 
@@ -377,7 +375,9 @@ describe('process control in the queue', () => {
 
     expect(await screen.findByText('Loose was skipped')).toBeVisible();
     expect(
-      screen.getByText('No volumes yet. Open Edit volumes to group the chapters.'),
+      screen.getByText(
+        'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
+      ),
     ).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Fix Loose' }));
     expect(await screen.findByRole('button', { name: 'Confirm mapping' })).toBeVisible();
@@ -403,51 +403,69 @@ describe('process control in the queue', () => {
     expect(screen.getByText('Keep at least one step on.')).toBeVisible();
   });
 
-  it('locks the steps, and not the format, when "Whole series" is chosen, and unlocks them when "One per volume" is', async () => {
+  it('never locks the steps for a series made into one book: the choice is the series’, and the steps are the queue’s', async () => {
     const user = userEvent.setup();
     installBridge(bridge());
     render(<App />);
+    await addFolder(user);
 
-    expect(await screen.findByRole('heading', { name: 'Queue' })).toBeVisible();
-    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
-    expect(wholeSeries).not.toBeChecked();
-    // The controls are enabled once the tools have been read, which is a moment after the heading.
-    await waitFor(() => {
-      expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
-      expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
-      expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    });
-    const formatBefore = screen.getByRole('radio', { name: 'CBZ' });
-    expect(formatBefore).toBeChecked();
+    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(await screen.findByRole('radio', { name: /One book for the whole series/u }));
+    await user.click(screen.getByRole('button', { name: /Queue/u }));
 
-    await user.click(wholeSeries);
-
-    expect(wholeSeries).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeChecked();
-    // The format is still the person's own: it was not changed, and can be.
+    expect(await screen.findByText('Whole series', { selector: 'span' })).toBeVisible();
+    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
+    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
     for (const format of ['CBZ', 'EPUB', 'PDF']) {
       expect(screen.getByRole('radio', { name: format })).toBeEnabled();
     }
-    expect(screen.getByRole('radio', { name: 'CBZ' })).toBeChecked();
-    expect(screen.getAllByText('Choose “One per volume” to change this.')).toHaveLength(2);
-
-    // Individual restore for "Create one book for the series"
-    await user.click(screen.getByRole('button', { name: 'Restore default for Books' }));
-
-    expect(wholeSeries).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    expect(screen.queryByText('Choose “One per volume” to change this.')).not.toBeInTheDocument();
+    expect(screen.queryByText(/to change this/u)).not.toBeInTheDocument();
+    expect(screen.queryByRole('radiogroup', { name: 'Books' })).not.toBeInTheDocument();
   });
 
-  it('keeps the series as one book when the format is changed, and says what each format gives', async () => {
+  it('says what the one book is in the format it will be made in, where it is chosen', async () => {
+    const user = userEvent.setup();
+    installBridge(bridge());
+    render(<App />);
+    await addFolder(user);
+
+    const notes = {
+      CBZ: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
+      EPUB: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
+      PDF: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
+    };
+    for (const [format, note] of Object.entries(notes)) {
+      await user.click(screen.getByRole('radio', { name: format }));
+      await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+      expect(await screen.findByText(note)).toBeVisible();
+      await user.click(screen.getByRole('button', { name: /Queue/u }));
+      await screen.findByRole('heading', { name: 'Queue' });
+    }
+  });
+
+  it('has no choice of books for a comic file, which is one book already', async () => {
     const user = userEvent.setup();
     installBridge(
       bridge({
+        chooseInputs: () => Promise.resolve({ ok: true, value: { inputs: [cbz], rejected: [] } }),
+      }),
+    );
+    render(<App />);
+    await chooseToAdd(user, 'Files');
+    await waitFor(() => {
+      expect(screen.getByText('Ready')).toBeVisible();
+    });
+
+    expect(screen.queryByRole('button', { name: /Edit volumes/u })).not.toBeInTheDocument();
+    expect(screen.queryByRole('radiogroup', { name: 'Books' })).not.toBeInTheDocument();
+  });
+
+  it('makes one book of a folder next to a comic file, which is converted as it is', async () => {
+    const user = userEvent.setup();
+    const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
+    installBridge(
+      bridge({
+        convert,
         chooseInputs: () =>
           Promise.resolve({ ok: true, value: { inputs: [folder(), cbz], rejected: [] } }),
       }),
@@ -457,94 +475,15 @@ describe('process control in the queue', () => {
     await waitFor(() => {
       expect(screen.getByText('Ready')).toBeVisible();
     });
+    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(await screen.findByRole('radio', { name: /One book for the whole series/u }));
+    await user.click(screen.getByRole('button', { name: /Queue/u }));
 
-    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
-    await user.click(wholeSeries);
+    await user.click(await runButton(2));
+    await screen.findByRole('heading', { name: /books? ready/u });
 
-    const notes = {
-      CBZ: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
-      EPUB: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
-      PDF: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
-    };
-    for (const [format, note] of Object.entries(notes)) {
-      await user.click(screen.getByRole('radio', { name: format }));
-      expect(wholeSeries).toBeChecked();
-      expect(screen.getByRole('radio', { name: format })).toBeChecked();
-      expect(screen.getByText(note)).toBeVisible();
-    }
-  });
-
-  it('disables "Whole series" when only CBZ files are in the queue', async () => {
-    const user = userEvent.setup();
-    installBridge(
-      bridge({
-        chooseInputs: () => Promise.resolve({ ok: true, value: { inputs: [cbz], rejected: [] } }),
-      }),
-    );
-    render(<App />);
-    await chooseToAdd(user, 'Files');
-    await waitFor(() => {
-      expect(screen.getByText('Ready')).toBeVisible();
-    });
-
-    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
-    expect(wholeSeries).toBeDisabled();
-    expect(screen.getByText('Not available for standalone .cbz files.')).toBeVisible();
-  });
-
-  it('keeps the saved mode available but does not lock a CBZ-only queue', async () => {
-    const user = userEvent.setup();
-    installBridge(
-      bridge({
-        chooseInputs: () => Promise.resolve({ ok: true, value: { inputs: [cbz], rejected: [] } }),
-        loadSettings: keptSettings({
-          preferences: { ...defaultPreferences, singleBook: true },
-        }),
-      }),
-    );
-    render(<App />);
-
-    const wholeSeries = await screen.findByRole('radio', { name: 'Whole series' });
-    await waitFor(() => expect(wholeSeries).toBeChecked());
-    await user.click(screen.getByRole('button', { name: 'Files' }));
-    await waitFor(() => expect(screen.getByText('Ready')).toBeVisible());
-
-    expect(wholeSeries).toBeEnabled();
-    expect(
-      screen.getByText('Saved for manga folders. A standalone CBZ is already one book.'),
-    ).toBeVisible();
-    expect(screen.getByRole('radio', { name: 'PDF' })).toBeEnabled();
-    await user.click(screen.getByRole('button', { name: 'Advanced conversion options' }));
-    expect(
-      screen.queryByRole('status', { name: 'Single book for the series' }),
-    ).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Back' }));
-
-    await user.click(screen.getByRole('radio', { name: 'PDF' }));
-    // The format is its own choice: it no longer turns the saved one-book-per-series off.
-    expect(wholeSeries).toBeChecked();
-    expect(screen.getByRole('radio', { name: 'PDF' })).toBeChecked();
-  });
-
-  it('enables "Whole series" when both folders and CBZ files are in the queue', async () => {
-    const user = userEvent.setup();
-    installBridge(
-      bridge({
-        chooseInputs: () =>
-          Promise.resolve({
-            ok: true,
-            value: { inputs: [folder(), cbz], rejected: [] },
-          }),
-      }),
-    );
-    render(<App />);
-    await chooseToAdd(user, 'Files');
-    await waitFor(() => {
-      expect(screen.getByText('Ready')).toBeVisible();
-    });
-
-    const wholeSeries = screen.getByRole('radio', { name: 'Whole series' });
-    expect(wholeSeries).toBeEnabled();
-    expect(screen.getByText('Each volume is made into a book of its own.')).toBeVisible();
+    const sent = new Map(convert.mock.calls.map(([command]) => [command.sessionId, command]));
+    expect(sent.get('session')?.singleBook).toBe(true);
+    expect(sent.get('cbz-session')?.singleBook).toBe(false);
   });
 });

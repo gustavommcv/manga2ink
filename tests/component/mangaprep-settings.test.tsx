@@ -62,12 +62,10 @@ function StatefulEditor({
   onChange = vi.fn(),
   onNotify = vi.fn(),
   initialFormat = 'epub',
-  singleBook,
 }: {
   readonly onChange?: (value: MangaprepSettings) => void;
   readonly onNotify?: (message: string) => void;
   readonly initialFormat?: BookFormat;
-  readonly singleBook?: boolean;
 }) {
   const [settings, setSettings] = useState(defaultMangaprepSettings);
   const [format, setFormat] = useState<BookFormat>(initialFormat);
@@ -82,7 +80,6 @@ function StatefulEditor({
       }}
       profiles={profiles}
       settings={settings}
-      singleBook={singleBook}
     />
   );
 }
@@ -482,23 +479,6 @@ describe('mangaprep settings editor', () => {
       'aria-invalid',
       'true',
     );
-  });
-
-  it('shows that single-book mode is active and still lets the format be chosen', () => {
-    const { rerender } = render(<StatefulEditor singleBook={false} />);
-
-    expect(screen.getByLabelText('Book format')).toBeEnabled();
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-
-    rerender(<StatefulEditor singleBook={true} />);
-
-    const cbzOption: HTMLOptionElement = screen.getByRole('option', { name: 'CBZ' });
-    const pdfOption: HTMLOptionElement = screen.getByRole('option', { name: 'PDF' });
-    expect(cbzOption.disabled).toBe(false);
-    expect(pdfOption.disabled).toBe(false);
-    expect(screen.getByLabelText('Book format')).toBeEnabled();
-    expect(screen.getByRole('status')).toHaveTextContent('Single book for the series');
-    expect(screen.queryByText('Choose “One per volume” to change this.')).not.toBeInTheDocument();
   });
 
   it('marks changed fields and restores only the chosen select, toggle, text, or number', async () => {

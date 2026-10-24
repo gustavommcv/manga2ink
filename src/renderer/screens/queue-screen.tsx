@@ -9,7 +9,12 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-import { type QueueRow, queueModeInput, summarizeQueue } from '@/domain/input-queue';
+import {
+  type BooksChoice,
+  type QueueRow,
+  queueModeInput,
+  summarizeQueue,
+} from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
 import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangaprep } from '@/domain/preferences';
@@ -64,6 +69,8 @@ export interface QueueScreenProps {
   readonly onEditDetails: (id: string) => void;
   /** Opens the conversion options one item has of its own. */
   readonly onEditOptions: (id: string) => void;
+  /** How the books of one item are made. */
+  readonly onBooks: (id: string, books: BooksChoice) => void;
   readonly onFormat: (format: BookFormat) => void;
   readonly onMode: (mode: ProcessMode) => void;
   readonly onOpenOptions: () => void;
@@ -72,7 +79,6 @@ export interface QueueScreenProps {
   readonly onReset: () => void;
   /** Opens the choice among the files that claim one chapter. */
   readonly onReviewVersions: (id: string) => void;
-  readonly onSingleBook: (singleBook: boolean) => void;
   readonly onValidate: () => void;
   readonly plans?: readonly RowPlan[];
   readonly profiles: readonly DeviceProfileSummary[];
@@ -80,7 +86,6 @@ export interface QueueScreenProps {
   readonly rejected: readonly RejectedInput[];
   readonly rows: readonly QueueRow[];
   readonly settings: MangaprepSettings;
-  readonly singleBook: boolean;
   /** What is left on the drives the app works on, or null while it is not known (ADR 0060). */
   readonly space: WorkingSpace | null;
   readonly validating: boolean;
@@ -109,6 +114,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onDropFiles,
     onEdit,
     onEditDetails,
+    onBooks,
     onEditOptions,
     onFormat,
     onMode,
@@ -116,14 +122,12 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onRemove,
     onReset,
     onReviewVersions,
-    onSingleBook,
     onValidate,
     plans,
     profiles,
     rejected,
     rows,
     settings,
-    singleBook,
     space,
     validating,
   } = props;
@@ -132,9 +136,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const { gap } = useSentenceMarks();
   const { say } = useSay();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
-  const singleBookActive = singleBook && !onlyCbz;
-  const summary = summarizeQueue(rows, mode, { singleBook: singleBookActive });
+  const summary = summarizeQueue(rows, mode);
   const mangaprepRuns = mode !== 'bind-only';
   const canRun = !disabled && summary.inspecting === 0 && summary.runnable > 0;
   const hint =
@@ -147,54 +149,14 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
           : summary.skipped > 0
             ? words.run.leftOut(summary.skipped)
             : undefined;
-  const short =
-    space === null
-      ? null
-      : lowSpace(space, roomNeeded(rows, mode, { singleBook: singleBookActive }));
+  const short = space === null ? null : lowSpace(space, roomNeeded(rows, mode));
 
   const panel = (
     <aside
       aria-label={words.panel.label}
       className="border-border bg-surface h-fit space-y-4 rounded-xl border p-5"
     >
-      <ProcessSteps
-        disabled={disabled}
-        input={queueModeInput(rows)}
-        mode={mode}
-        onMode={onMode}
-        singleBook={singleBookActive}
-      />
-
-      <Field
-        changed={singleBook}
-        description={
-          onlyCbz
-            ? singleBook
-              ? words.panel.singleBook.saved
-              : words.panel.singleBook.unavailable
-            : singleBook
-              ? words.panel.singleBook.produces[format]
-              : words.panel.singleBook.perVolumeNote
-        }
-        disabled={disabled || (onlyCbz && !singleBook)}
-        label={words.panel.singleBook.label}
-        onReset={() => {
-          onSingleBook(false);
-        }}
-      >
-        <SegmentedControl
-          disabled={disabled || (onlyCbz && !singleBook)}
-          label={words.panel.singleBook.label}
-          onChange={(value) => {
-            onSingleBook(value === 'series');
-          }}
-          options={[
-            { value: 'volume', label: words.panel.singleBook.perVolume },
-            { value: 'series', label: words.panel.singleBook.series },
-          ]}
-          value={singleBook ? 'series' : 'volume'}
-        />
-      </Field>
+      <ProcessSteps disabled={disabled} input={queueModeInput(rows)} mode={mode} onMode={onMode} />
 
       <Field
         changed={settings.deviceProfile !== defaultMangaprepSettings.deviceProfile}
@@ -251,9 +213,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         )}
         <div className="border-border border-t pt-3">
           <ResetOptions
-            changed={
-              mode !== defaultProcessMode || singleBook || !isDefaultMangaprep(format, settings)
-            }
+            changed={mode !== defaultProcessMode || !isDefaultMangaprep(format, settings)}
             onReset={onReset}
             scope="queue"
           />
@@ -344,6 +304,9 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                   onEditOptions={() => {
                     onEditOptions(row.id);
                   }}
+                  onMakeOneBook={() => {
+                    onBooks(row.id, 'series');
+                  }}
                   onRemove={() => {
                     onRemove(row.id);
                   }}
@@ -351,7 +314,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                     onReviewVersions(row.id);
                   }}
                   row={row}
-                  singleBook={singleBookActive}
                 />
               ))}
             </ul>

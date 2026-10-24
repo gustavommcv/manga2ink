@@ -107,11 +107,17 @@ Review the proposed volumes before confirming or editing the mapping.
 
 </details>
 
-## Skipping grouping
+## How the books are made
 
-**Skip grouping** is available where Manga2Ink can convert without regrouping. It is turned off when **Books** is **Whole series**, because that mode joins the chapters first: under the volumes you made, if you made any, in the table of contents of an EPUB, in the bookmarks of a PDF, or as folders in a CBZ. A series with no volumes needs none for it.
+At the top of the editor of a folder, **Books** is the choice of how this series becomes books:
 
-It is also turned off for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first. Such a folder shows **Needs grouping** if the step is skipped, and **Group chapters into volumes** stays on.
+- **One book per volume** is what every series starts as. It needs volumes: from the names of the folders, from an online source, or made by hand below.
+- **One book for the whole series** needs no volumes. The chapters are the table of contents of the book; the volumes you make, if you make any, are its first level (in the table of contents of an EPUB, in the bookmarks of a PDF, or as folders in a CBZ). It says what the book is in the format you chose. With no volumes, **Done** is all there is to press.
+- **Convert the folder as it is** is what **Skip grouping** was: nothing is grouped, and the folder goes to mangaprep as one book. It does not change the steps of the queue, only this folder.
+
+The last is not offered for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first, and the choice says so. A comic file has no choice of books, since it is one book already. For a library, **Books** is on the screen that lists its titles: **One book per volume**, or **One book for each title** (a title still needs its volumes).
+
+The choice is kept with the row of the queue and not between sessions. The steps beside the queue are not locked by it: they are the queue's, and what you chose for one series is above them.
 
 ## Where your volumes are kept
 

@@ -26,7 +26,6 @@ function settingsToKeep(values: {
   readonly mode: ProcessMode;
   readonly format: BookFormat;
   readonly settings: MangaprepSettings;
-  readonly singleBook: boolean;
   readonly providerId: string | undefined;
   readonly preferredNetworkInterface: NetworkInterfaceOption | undefined;
 }): SaveSettingsCommand {
@@ -35,7 +34,6 @@ function settingsToKeep(values: {
       mode: values.mode,
       format: values.format,
       settings: values.settings,
-      singleBook: values.singleBook,
       ...(values.providerId === undefined ? {} : { providerId: values.providerId }),
     },
     ...(values.preferredNetworkInterface === undefined
@@ -46,7 +44,7 @@ function settingsToKeep(values: {
 
 /**
  * The choices that are kept between sessions (ADR 0014): the process steps, the format, the
- * conversion options, one book per series, the online source and the network address to share on.
+ * conversion options, the online source and the network address to share on.
  * They start as the defaults, are replaced once by what was kept (a notice for anything that could
  * not be restored), and every change after that is saved. `notify` is told what the person should
  * know about; it is a dependency of both effects, so pass a stable function.
@@ -61,8 +59,6 @@ export function useKeptSettings(
   readonly setFormat: Dispatch<SetStateAction<BookFormat>>;
   readonly settings: MangaprepSettings;
   readonly setSettings: Dispatch<SetStateAction<MangaprepSettings>>;
-  readonly singleBook: boolean;
-  readonly setSingleBook: Dispatch<SetStateAction<boolean>>;
   /** No online source is chosen until a person chooses one; it is then kept for the next title. */
   readonly selectedProviderId: string | undefined;
   readonly setSelectedProviderId: Dispatch<SetStateAction<string | undefined>>;
@@ -75,7 +71,6 @@ export function useKeptSettings(
   const [settings, setSettingsNow] = useState<MangaprepSettings>(defaultMangaprepSettings);
   const [format, setFormatNow] = useState<BookFormat>(defaultFormat);
   const [mode, setModeNow] = useState<ProcessMode>(defaultProcessMode);
-  const [singleBook, setSingleBookNow] = useState(false);
   const [selectedProviderId, setSelectedProviderIdNow] = useState<string>();
   const [preferredNetworkInterface, setPreferredNetworkInterfaceNow] =
     useState<NetworkInterfaceOption>();
@@ -100,7 +95,6 @@ export function useKeptSettings(
     setSettings: choosing(setSettingsNow),
     setFormat: choosing(setFormatNow),
     setMode: choosing(setModeNow),
-    setSingleBook: choosing(setSingleBookNow),
     setSelectedProviderId: choosing(setSelectedProviderIdNow),
     setPreferredNetworkInterface: choosing(setPreferredNetworkInterfaceNow),
   }));
@@ -128,9 +122,6 @@ export function useKeptSettings(
           notify(say(message('failure.settingsNotLoaded', {})));
           return;
         }
-        const restoredSingleBook = Boolean(saved.preferences.singleBook);
-        const resolvedMode = restoredSingleBook ? 'bind-and-convert' : saved.preferences.mode;
-        const resolvedFormat = restoredSingleBook ? 'epub' : saved.preferences.format;
         const resolvedSettings = {
           ...saved.preferences.settings,
           combineIntoOneVolume: false,
@@ -138,17 +129,13 @@ export function useKeptSettings(
         lastKept.current = JSON.stringify(
           settingsToKeep({
             ...saved.preferences,
-            mode: resolvedMode,
-            format: resolvedFormat,
-            singleBook: restoredSingleBook,
             settings: resolvedSettings,
             providerId: saved.preferences.providerId,
             preferredNetworkInterface: saved.preferredNetworkInterface,
           }),
         );
-        setSingleBookNow(restoredSingleBook);
-        setModeNow(resolvedMode);
-        setFormatNow(resolvedFormat);
+        setModeNow(saved.preferences.mode);
+        setFormatNow(saved.preferences.format);
         setSettingsNow(resolvedSettings);
         setSelectedProviderIdNow(saved.preferences.providerId);
         setPreferredNetworkInterfaceNow(saved.preferredNetworkInterface);
@@ -171,7 +158,6 @@ export function useKeptSettings(
       mode,
       format,
       settings,
-      singleBook,
       providerId: selectedProviderId,
       preferredNetworkInterface,
     });
@@ -197,7 +183,6 @@ export function useKeptSettings(
     mode,
     format,
     settings,
-    singleBook,
     selectedProviderId,
     preferredNetworkInterface,
     notify,
@@ -208,7 +193,6 @@ export function useKeptSettings(
     mode,
     format,
     settings,
-    singleBook,
     selectedProviderId,
     preferredNetworkInterface,
     ...setters,

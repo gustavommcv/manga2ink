@@ -127,12 +127,12 @@ const base: QueueScreenProps = {
   onEditDetails: () => undefined,
   onEditOptions: () => undefined,
   onReviewVersions: () => undefined,
+  onBooks: () => undefined,
   onFormat: () => undefined,
   onMode: () => undefined,
   onOpenOptions: () => undefined,
   onRemove: () => undefined,
   onReset: () => undefined,
-  onSingleBook: () => undefined,
   onValidate: () => undefined,
   space: null,
   profiles: [
@@ -156,7 +156,6 @@ const base: QueueScreenProps = {
   rejected: [],
   rows: [],
   settings: defaultMangaprepSettings,
-  singleBook: false,
   validating: false,
 };
 
@@ -332,20 +331,19 @@ export const ToolsNotReady: Story = {
   args: { disabled: true },
 };
 
-/** The whole series as one book: the steps are locked, the format is still the person's to choose. */
-export const SingleBookActive: Story = {
-  args: {
-    rows: rows.slice(0, 1),
-    format: 'cbz',
-    singleBook: true,
-  },
+/**
+ * How the books of a series are made is the choice of each series, not of the queue: the panel has
+ * none, a folder with no volumes can be made one book from its own row, and the steps are never locked.
+ */
+export const OneBookOfASeries: Story = {
+  args: { rows: rows.slice(0, 2) },
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    await expect(canvas.getByRole('radio', { name: 'PDF' })).toBeEnabled();
+    await expect(canvas.queryByRole('radiogroup', { name: 'Books' })).toBeNull();
     await expect(
-      canvas.getByText(
-        'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
-      ),
+      canvas.getByRole('checkbox', { name: /Group chapters into volumes/u }),
+    ).toBeEnabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Make one book of Random scans' }),
     ).toBeVisible();
   },
 };

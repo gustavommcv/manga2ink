@@ -6,7 +6,6 @@ import {
   type ProcessMode,
   type ProcessSteps as Steps,
   resolveMode,
-  singleBookLockReason,
   stepsFromMode,
 } from '@/domain/process-mode';
 import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
@@ -20,7 +19,6 @@ interface ProcessStepsProps {
   readonly mode: ProcessMode;
   readonly onMode: (mode: ProcessMode) => void;
   readonly disabled?: boolean;
-  readonly singleBook?: boolean;
 }
 
 /** Which of the two tools a run uses: join chapters into volumes, convert for a device, or both. */
@@ -29,7 +27,6 @@ export function ProcessSteps({
   input,
   mode,
   onMode,
-  singleBook = false,
 }: ProcessStepsProps): React.JSX.Element {
   const words = useMessages().queue.steps;
   const { say } = useSay();
@@ -37,11 +34,10 @@ export function ProcessSteps({
   const steps = stepsFromMode(resolvedMode);
   // A CBZ or library can force a different effective mode. That is not a user change to the
   // checkbox shown here, so only offer an individual reset when the saved mode is visible.
-  const canRestoreStep = !singleBook && input !== 'cbz' && resolvedMode === mode;
+  const canRestoreStep = input !== 'cbz' && resolvedMode === mode;
   // A step is off-limits when turning it off would leave nothing to run, or would ask this kind of
-  // input for a process it cannot have, or when single-book mode is active.
+  // input for a process it cannot have.
   const reasonFor = (toggled: Steps): string | undefined => {
-    if (singleBook) return say(singleBookLockReason);
     if (!toggled.group && !toggled.convert) return words.keepOne;
     const blocked = blockedModeReason(input, modeFromSteps(toggled));
     return blocked === undefined ? undefined : say(blocked);

@@ -14,7 +14,6 @@ const wifi = { name: 'Wi-Fi', address: '192.168.1.20' };
 const kept: Preferences = {
   mode: 'bind-only',
   format: 'cbz',
-  singleBook: false,
   settings: { ...defaultMangaprepSettings, quiet: true },
   providerId: 'anilist',
 };
@@ -60,7 +59,6 @@ describe('useKeptSettings', () => {
       expect(result.current.mode).toBe('convert-only');
       expect(result.current.format).toBe(defaultPreferences.format);
       expect(result.current.settings).toEqual(defaultMangaprepSettings);
-      expect(result.current.singleBook).toBe(false);
       expect(result.current.selectedProviderId).toBeUndefined();
       expect(result.current.preferredNetworkInterface).toBeUndefined();
       expect(saveSettings).not.toHaveBeenCalled();
@@ -77,7 +75,6 @@ describe('useKeptSettings', () => {
       expect(result.current.mode).toBe('bind-only');
       expect(result.current.format).toBe('cbz');
       expect(result.current.settings).toEqual(kept.settings);
-      expect(result.current.singleBook).toBe(false);
       expect(result.current.selectedProviderId).toBe('anilist');
       expect(result.current.preferredNetworkInterface).toEqual(wifi);
       expect(saveSettings).not.toHaveBeenCalled();
@@ -187,17 +184,6 @@ describe('useKeptSettings', () => {
         ['The saved format was not valid.'],
         ['The device is gone.'],
       ]);
-    });
-
-    it('keeps one book per series as EPUB with binding and conversion, whatever else was saved', async () => {
-      const { result } = await restoredFrom({
-        preferences: { ...kept, mode: 'convert-only', format: 'pdf', singleBook: true },
-        notices: [],
-      });
-
-      expect(result.current.singleBook).toBe(true);
-      expect(result.current.mode).toBe('bind-and-convert');
-      expect(result.current.format).toBe('epub');
     });
 
     it('never restores the whole-series volume, which is chosen again each time', async () => {
@@ -323,7 +309,6 @@ describe('useKeptSettings', () => {
           mode: 'bind-only',
           format: defaultPreferences.format,
           settings: defaultPreferences.settings,
-          singleBook: false,
         },
       });
     });
@@ -362,19 +347,14 @@ describe('useKeptSettings', () => {
         result.current.setFormat('pdf');
       });
       act(() => {
-        result.current.setSingleBook(true);
-      });
-      act(() => {
         result.current.setSettings((current) => ({ ...current, quiet: true }));
       });
 
       expect(saveSettings.mock.calls.map(([command]) => command.preferences)).toStrictEqual([
         { ...defaultPreferences, format: 'pdf' },
-        { ...defaultPreferences, format: 'pdf', singleBook: true },
         {
           ...defaultPreferences,
           format: 'pdf',
-          singleBook: true,
           settings: { ...defaultPreferences.settings, quiet: true },
         },
       ]);

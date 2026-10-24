@@ -9,13 +9,14 @@ import {
 } from '@/domain/book-details';
 import { type BookFormat, type ConversionProgress, plannedSingleBook } from '@/domain/conversion';
 import {
+  booksOf,
   emptyQueue,
   type InspectedRow,
   isPendingTitle,
   itemsWithOptions,
   type QueueInput,
   queueReducer,
-  rowMode,
+  rowProcess as processOf,
   runnableRows,
   sessionIds,
 } from '@/domain/input-queue';
@@ -116,8 +117,8 @@ function libraryPlanSummary(
   row: InspectedRow,
   planned: LibraryPlanSummary,
   process: ProcessMode,
-  singleBook: boolean,
 ): PlanSummary {
+  const singleBook = booksOf(row) === 'series';
   const pending = new Set((row.titles ?? []).filter(isPendingTitle).map((title) => title.title));
   const titles = planned.titles.filter((title) => pending.has(title.title));
   const volumes = titles.flatMap((title) => title.volumes);
@@ -175,17 +176,11 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     setFormat,
     settings,
     setSettings,
-    singleBook,
-    setSingleBook,
     selectedProviderId,
     setSelectedProviderId,
     preferredNetworkInterface,
     setPreferredNetworkInterface,
   } = useKeptSettings(bridge, notify);
-  // A standalone CBZ is already one book. Keep the saved choice for a later folder, but do not
-  // present its grouping/EPUB locks as active while the queue contains only CBZ files.
-  const singleBookActive =
-    singleBook && !(rows.length > 0 && rows.every((row) => row.kind === 'cbz'));
   // What every item is converted with unless it sets options of its own (ADR 0046).
   const queueOptions: RunOptions = useMemo(() => ({ settings, format }), [settings, format]);
   const [progress, setProgress] = useState<ConversionProgress>();
@@ -348,7 +343,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
   ): PlanConversionCommand => ({
     jobId: commandJobId,
     sessionId: row.sessionId,
-    singleBook: row.kind === 'cbz' ? false : singleBook,
+    singleBook: booksOf(row) === 'series',
     ...withRunSettings(rowProcess, row.options),
     ...(row.mapping === undefined || rowProcess === 'convert-only' ? {} : { mapping: row.mapping }),
     // What was typed only matters where mangaprep makes the book.
@@ -372,10 +367,10 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
         mode,
         format,
         settings,
-        singleBook,
         rows.map((row) => [
           row.id,
           row.state,
+          row.state === 'inspected' ? (row.books ?? null) : null,
           row.state === 'inspected' && row.mapping !== undefined
             ? mappingSignature(row.mapping)
             : '',
@@ -393,7 +388,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
           row.state === 'inspected' ? (row.options ?? null) : null,
         ]),
       ]),
-    [mode, format, settings, singleBook, rows],
+    [mode, format, settings, rows],
   );
   const plans = validated?.key === planKey ? validated.plans : undefined;
 
@@ -402,9 +397,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     setValidating(true);
     const collected: RowPlan[] = [];
     try {
-      for (const { row, mode: rowProcess } of runnableRows(rows, mode, {
-        singleBook: singleBookActive,
-      })) {
+      for (const { row, mode: rowProcess } of runnableRows(rows, mode)) {
         if (row.kind === 'library') {
           const planned = await bridge.planLibrary(crypto.randomUUID(), row.sessionId);
           if (!planned.ok) {
@@ -413,7 +406,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
           }
           collected.push({
             name: row.displayName,
-            plan: libraryPlanSummary(row, planned.value, rowProcess, singleBook),
+            plan: libraryPlanSummary(row, planned.value, rowProcess),
           });
           continue;
         }
@@ -486,7 +479,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
           jobId: nextJobId,
           sessionId: row.sessionId,
           libraryId: runId,
-          singleBook,
+          singleBook: booksOf(row) === 'series',
           ...withRunSettings(libraryProcess),
           titles: pendingTitles.map((title) => title.title),
           ...(titleDetails.length === 0 ? {} : { titleDetails }),
@@ -525,7 +518,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
     const report = finishRunReport({
       rows,
       mode,
-      singleBook: singleBookActive,
       settled,
       attempted,
       completedTitles,
@@ -536,7 +528,16 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       return summarizeRun(report.outcomes, cancelRequested.current);
     }
     setOutcomes(report.outcomes);
-    setResultSummary(describeRun(mode, deviceName, format, withOwnOptions));
+    // The summary says the books were only joined when no item of the run was converted.
+    const joinedOnly = items.every(({ mode: ran }) => ran === 'bind-only');
+    setResultSummary(
+      describeRun(
+        joinedOnly ? 'bind-only' : 'bind-and-convert',
+        deviceName,
+        format,
+        withOwnOptions,
+      ),
+    );
     await refreshPendingRuns();
     setNavigation({ screen: 'results' });
     return summarizeRun(report.outcomes, cancelRequested.current);
@@ -548,7 +549,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
    * computer awake and tells when it is done (ADR 0065). A queue is never left running there.
    */
   const startRun = async (): Promise<void> => {
-    const items = runnableRows(rows, mode, { singleBook: singleBookActive });
+    const items = runnableRows(rows, mode);
     if (items.length === 0) return;
     const queue = await beginQueue(bridge);
     let summary = nothingMade;
@@ -766,23 +767,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
 
   const resetAll = (): void => {
     setMode(defaultProcessMode);
-    setSingleBook(false);
     resetMangaprep();
-  };
-
-  const handleSingleBook = (nextSingleBook: boolean): void => {
-    setSingleBook(nextSingleBook);
-    setSettings((prev) =>
-      prev.combineIntoOneVolume ? { ...prev, combineIntoOneVolume: false } : prev,
-    );
-    if (nextSingleBook) setMode('bind-and-convert');
-  };
-
-  const handleMode = (nextMode: ProcessMode): void => {
-    if (!singleBookActive) {
-      if (singleBook) setSingleBook(false);
-      setMode(nextMode);
-    }
   };
 
   // The source chosen last time only counts while the list still has it.
@@ -834,8 +819,10 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
         ? rows.find((row) => row.id === editingTarget.rowId)
         : undefined;
   // A library's titles can have their own details only where mangaprep makes their books.
-  const libraryProcess = rowMode('library', mode);
+  const libraryProcess = editingRow === undefined ? 'skip' : processOf(editingRow, mode);
   const libraryMakesBooks = libraryProcess !== 'skip' && usesMangaprep(libraryProcess);
+  // How the books of what is being edited are made: one for the whole series, or one for each volume.
+  const editingSeries = editingRow !== undefined && booksOf(editingRow) === 'series';
   const editingTitleEntry =
     editingTarget?.kind === 'title' && editingRow?.state === 'inspected'
       ? editingRow.titles?.find((title) => title.title === editingTarget.title)
@@ -845,7 +832,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
   const inputProcess =
     editingRow === undefined || editingRow.kind === 'library'
       ? 'skip'
-      : rowMode(editingRow.kind, mode);
+      : processOf(editingRow, mode);
   const coverTarget =
     navigation.screen !== 'details' || editingRow?.state !== 'inspected'
       ? undefined
@@ -859,12 +846,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
   // The books the item makes, in order: its volumes, or the one book it is.
   const coverSlots: readonly CoverSlot[] =
     editingTarget?.kind === 'title'
-      ? singleBook
+      ? editingSeries
         ? ['book']
         : volumeNumbers(editingTitleEntry?.draft)
       : editingRow?.state === 'inspected' &&
           editingRow.kind === 'folder' &&
-          !singleBook &&
+          !editingSeries &&
           inputProcess === 'bind-and-convert'
         ? volumeNumbers(editingRow.mapping)
         : ['book'];
@@ -1008,8 +995,11 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             onEdit={openEditor}
             onEditDetails={openDetails}
             onEditOptions={openOptions}
+            onBooks={(id, books) => {
+              dispatch({ type: 'set-books', id, books });
+            }}
             onFormat={setFormat}
-            onMode={handleMode}
+            onMode={setMode}
             onOpenOptions={() => {
               setNavigation({ screen: 'options' });
             }}
@@ -1018,7 +1008,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             }}
             onReset={resetAll}
             onReviewVersions={openVersions}
-            onSingleBook={handleSingleBook}
             onValidate={() => {
               void validatePlans();
             }}
@@ -1027,7 +1016,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             rejected={rejected}
             rows={rows}
             settings={settings}
-            singleBook={singleBook}
             validating={validating}
           />
         )}
@@ -1047,7 +1035,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             onSettings={setSettings}
             profiles={profiles}
             settings={settings}
-            singleBook={singleBookActive}
           />
         )}
         {itemOptionsOpen !== undefined && (
@@ -1070,7 +1057,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             profiles={profiles}
             queue={queueOptions}
             settings={effectiveOptions(queueOptions, itemOptionsOpen.own).settings}
-            singleBook={singleBookActive}
           />
         )}
         {navigation.screen === 'mapping' &&
@@ -1087,16 +1073,16 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
                 <ChevronLeft /> {messages.queue.title}
               </Button>
               <MappingEditor
+                books={booksOf(editingRow)}
+                format={effectiveOptions(queueOptions, editingRow.options).format}
                 initialDraft={editingRow.mapping}
+                onBooks={(books) => {
+                  dispatch({ type: 'set-books', id: editingRow.id, books });
+                }}
                 onConfirm={(_metadata, draft) => {
                   dispatch({ type: 'confirm-mapping', id: editingRow.id, mapping: draft });
                   setNavigation({ screen: 'queue' });
                 }}
-                onSkipGrouping={() => {
-                  setMode('convert-only');
-                  setNavigation({ screen: 'queue' });
-                }}
-                singleBook={singleBook}
                 {...(editingRow.unrecognized === undefined
                   ? {}
                   : { unrecognized: editingRow.unrecognized })}
@@ -1129,9 +1115,13 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
           editingRow?.state === 'inspected' &&
           editingRow.titles !== undefined && (
             <LibraryScreen
+              books={editingSeries ? 'series' : 'volumes'}
               name={editingRow.displayName}
               onBack={() => {
                 setNavigation({ screen: 'queue' });
+              }}
+              onBooks={(books) => {
+                dispatch({ type: 'set-books', id: editingRow.id, books });
               }}
               onEdit={(title) => {
                 setNavigation({
@@ -1152,7 +1142,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
               {...(editingRow.skippedLinks === undefined
                 ? {}
                 : { skippedLinks: editingRow.skippedLinks })}
-              singleBook={singleBook}
               titles={editingRow.titles}
             />
           )}
@@ -1170,12 +1159,12 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
                 <ChevronLeft /> {editingRow.displayName}
               </Button>
               <MappingEditor
+                books={booksOf(editingRow)}
                 initialDraft={editingTitleEntry.draft}
                 key={editingTitleEntry.title}
                 onConfirm={(_metadata, draft) => {
                   void confirmTitleMapping(editingRow, editingTitleEntry.title, draft);
                 }}
-                singleBook={singleBook}
                 {...(editingTitleEntry.unrecognized === undefined
                   ? {}
                   : { unrecognized: editingTitleEntry.unrecognized, inLibrary: true })}
@@ -1210,8 +1199,8 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
                 dispatch({ type: 'set-details', id: editingRow.id, details });
               }}
               {...(editingRow.kind === 'folder' &&
-              !singleBook &&
-              rowMode(editingRow.kind, mode) === 'bind-and-convert'
+              !editingSeries &&
+              processOf(editingRow, mode) === 'bind-and-convert'
                 ? { volumes: volumeNumbers(editingRow.mapping) }
                 : {})}
             />
@@ -1249,7 +1238,7 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
                   details,
                 });
               }}
-              {...(singleBook ? {} : { volumes: volumeNumbers(editingTitleEntry.draft) })}
+              {...(editingSeries ? {} : { volumes: volumeNumbers(editingTitleEntry.draft) })}
             />
           )}
         {navigation.screen === 'running' && (

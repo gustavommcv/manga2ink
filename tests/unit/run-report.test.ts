@@ -207,14 +207,7 @@ function finish(
 describe('the final run report and remaining queue', () => {
   it('does not report as left out a series with no volumes when the books are one for the whole series, and does otherwise', () => {
     const series: InspectedRow = { ...folder('Series'), mapping: ungrouped };
-    const asOneBook = finishRunReport({
-      rows: [series],
-      mode: 'bind-and-convert',
-      singleBook: true,
-      settled: [],
-      attempted: new Set(),
-      completedTitles: new Map(),
-    });
+    const asOneBook = finish([{ ...series, books: 'series' }]);
 
     // It would have run, so it is not one that was left out.
     expect(asOneBook.outcomes).toEqual([]);
@@ -289,7 +282,8 @@ describe('the final run report and remaining queue', () => {
           name: 'Loose',
           status: 'skipped',
           artifacts: [],
-          message: 'No volumes yet. Open Edit volumes to group the chapters.',
+          message:
+            'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
           fixable: true,
         },
       ],

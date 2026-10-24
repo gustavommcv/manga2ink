@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
 import { createMappingDraft } from '@/domain/mapping';
 
@@ -28,6 +29,7 @@ const meta = {
     onEdit: () => undefined,
     onEditDetails: () => undefined,
     onEditOptions: () => undefined,
+    onMakeOneBook: () => undefined,
     onReviewVersions: () => undefined,
     onRemove: () => undefined,
   },
@@ -233,4 +235,44 @@ export const Unreadable: Story = {
 /** Converting only: volumes are already made, so there is nothing here to edit. */
 export const ConvertOnlyMode: Story = {
   args: { mode: 'convert-only', row: Grouped.args.row },
+};
+
+/** A folder with no volumes can be made into one book from its own row (ADR 0094). */
+export const OneBookOffered: Story = {
+  args: {
+    row: {
+      id: 'o',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-o',
+      mapping: createMappingDraft({ mangaTitle: 'Ubunchu!', chapters }),
+      confirmed: false,
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('button', { name: 'Make one book of Ubunchu!' })).toBeVisible();
+  },
+};
+
+/** The series made into one book says so on its row, and needs no volumes to run. */
+export const WholeSeries: Story = {
+  args: {
+    row: {
+      id: 'w',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-w',
+      mapping: createMappingDraft({ mangaTitle: 'Ubunchu!', chapters }),
+      books: 'series',
+      confirmed: false,
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Whole series')).toBeVisible();
+    await expect(canvas.queryByRole('button', { name: /Make one book/u })).toBeNull();
+  },
 };

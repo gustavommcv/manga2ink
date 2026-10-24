@@ -28,6 +28,7 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'appSettings.openTip': [['Ctrl+,'], ['⌘,']],
   'queue.row.editTitlesOf': [['Library']],
   'queue.row.editVolumesFor': [['Series']],
+  'queue.row.makeOneBookFor': [['Series']],
   'queue.row.reviewVersionsFor': [['Series']],
   'queue.row.editDetailsOf': [['Series']],
   'queue.row.editDetails': [[false], [true]],

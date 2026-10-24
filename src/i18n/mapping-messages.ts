@@ -1,4 +1,5 @@
 import type { Language } from '@/domain/app-settings';
+import type { BookFormat } from '@/domain/conversion';
 
 import { countOf } from './count';
 
@@ -11,15 +12,10 @@ export interface MappingMessages {
       readonly groupedByMangabind: string;
       readonly manual: string;
     };
-    /** "Organize … into volumes"; a title that is empty is said as an untitled manga. */
+    /** "Organize … into books"; a title that is empty is said as an untitled manga. */
     readonly title: (manga: string) => string;
     readonly introEditing: string;
     readonly introReviewing: string;
-    readonly skipGrouping: {
-      readonly button: string;
-      readonly singleBook: string;
-      readonly detail: string;
-    };
     readonly showSummary: string;
     readonly history: {
       readonly label: string;
@@ -28,7 +24,28 @@ export interface MappingMessages {
       readonly reset: string;
     };
     readonly leftOut: string;
-    readonly singleBook: { readonly title: string; readonly text: string };
+    /** How the books of the series are made (ADR 0094): the choice that opens the editor of a folder. */
+    readonly books: {
+      readonly legend: string;
+      readonly perVolume: { readonly label: string; readonly help: string };
+      readonly series: {
+        readonly label: string;
+        /** What the one book is when the format is not known. */
+        readonly help: string;
+        /** What the one book is, by its format: an EPUB has a table of contents, a PDF bookmarks, a CBZ neither (ADR 0083). */
+        readonly produces: Readonly<Record<BookFormat, string>>;
+      };
+      readonly asIs: { readonly label: string; readonly help: string };
+      /** Said in place of the volumes of a series that is one book and has none, and need not. */
+      readonly noVolumes: {
+        readonly text: string;
+        readonly done: string;
+        /** Opens the volumes for a series that has none, to give the book a first level. */
+        readonly group: string;
+      };
+      /** Said over the editor of a title of a library whose titles are one book each. */
+      readonly inLibrary: { readonly title: string; readonly text: string };
+    };
     readonly start: {
       readonly text: string;
       readonly createFirst: string;
@@ -146,16 +163,11 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         groupedByMangabind: 'Grouped by mangabind · Offline',
         manual: 'Manual mapping · Offline',
       },
-      title: (manga) => `Organize ${manga === '' ? 'untitled manga' : manga} into volumes`,
+      title: (manga) => `Organize ${manga === '' ? 'untitled manga' : manga} into books`,
       introEditing:
         'Select chapters, assign them to a volume, and fix any conflicts before continuing. Assigning an already placed chapter moves it.',
       introReviewing:
         'Review the proposed volumes below, or open the editor to change chapter assignments.',
-      skipGrouping: {
-        button: 'Skip grouping',
-        singleBook: 'Single book mode requires grouping chapters into volumes.',
-        detail: 'Send the folder to mangaprep as one book, without grouping chapters into volumes.',
-      },
       showSummary: 'Show mapping summary',
       history: {
         label: 'Edit history',
@@ -164,9 +176,34 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'Reset all mapping edits',
       },
       leftOut: 'Folders left out',
-      singleBook: {
-        title: 'Single book for the series',
-        text: 'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, in the bookmarks of a PDF, as folders in a CBZ.',
+      books: {
+        legend: 'Books',
+        perVolume: {
+          label: 'One book per volume',
+          help: 'Needs volumes: from the names, an online source, or made by hand.',
+        },
+        series: {
+          label: 'One book for the whole series',
+          help: 'Needs no volumes: the chapters are its table of contents. Volumes, if you add them, are its first level.',
+          produces: {
+            epub: 'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
+            cbz: 'One CBZ for the whole series, with the chapters (and the volumes) as folders. It has no table of contents.',
+            pdf: 'One PDF for the whole series, with the pages in order and bookmarks for the chapters (and the volumes).',
+          },
+        },
+        asIs: {
+          label: 'Convert the folder as it is',
+          help: 'Nothing is grouped: the folder goes to mangaprep as one book.',
+        },
+        noVolumes: {
+          text: 'This series needs no volumes: its chapters are the table of contents of the book. Group them into volumes only if you want the volumes as its first level.',
+          done: 'Done',
+          group: 'Group into volumes',
+        },
+        inLibrary: {
+          title: 'One book for each title',
+          text: 'The mapped volumes become the top level of the title’s book, with their chapters under them: in the table of contents of an EPUB, in the bookmarks of a PDF, as folders in a CBZ.',
+        },
       },
       start: {
         text: 'Start by creating a volume, then assign chapters to it.',
@@ -298,17 +335,11 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         groupedByMangabind: 'Agrupado pelo mangabind · Offline',
         manual: 'Mapeamento manual · Offline',
       },
-      title: (manga) => `Organizar ${manga === '' ? 'mangá sem título' : manga} em volumes`,
+      title: (manga) => `Organizar ${manga === '' ? 'mangá sem título' : manga} em livros`,
       introEditing:
         'Selecione capítulos, atribua-os a um volume e resolva os conflitos antes de continuar. Atribuir um capítulo que já está em um volume o move.',
       introReviewing:
         'Revise os volumes propostos abaixo, ou abra o editor para mudar em que volume cada capítulo fica.',
-      skipGrouping: {
-        button: 'Pular o agrupamento',
-        singleBook: 'O modo de livro único exige agrupar os capítulos em volumes.',
-        detail:
-          'Enviar a pasta ao mangaprep como um livro só, sem agrupar os capítulos em volumes.',
-      },
       showSummary: 'Mostrar o resumo do mapeamento',
       history: {
         label: 'Histórico de edições',
@@ -317,9 +348,34 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'Desfazer todas as edições do mapeamento',
       },
       leftOut: 'Pastas deixadas de fora',
-      singleBook: {
-        title: 'Um livro para a série',
-        text: 'Os volumes mapeados serão o primeiro nível do livro único, com os capítulos dentro deles: no sumário de um EPUB, nos marcadores de um PDF, em pastas num CBZ.',
+      books: {
+        legend: 'Livros',
+        perVolume: {
+          label: 'Um livro por volume',
+          help: 'Precisa de volumes: pelos nomes, de uma fonte online ou feitos à mão.',
+        },
+        series: {
+          label: 'Um livro para a série inteira',
+          help: 'Não precisa de volumes: os capítulos formam o sumário. Os volumes, se você os criar, são o primeiro nível.',
+          produces: {
+            epub: 'Um EPUB para a série inteira, com os capítulos (e os volumes, se ela tiver) no sumário. Não precisa de volumes.',
+            cbz: 'Um CBZ para a série inteira, com os capítulos (e os volumes) em pastas. Não tem sumário.',
+            pdf: 'Um PDF para a série inteira, com as páginas em ordem e marcadores para os capítulos (e os volumes).',
+          },
+        },
+        asIs: {
+          label: 'Converter a pasta como está',
+          help: 'Nada é agrupado: a pasta vai ao mangaprep como um livro só.',
+        },
+        noVolumes: {
+          text: 'Esta série não precisa de volumes: os capítulos formam o sumário do livro. Agrupe-os em volumes só se quiser os volumes como primeiro nível.',
+          done: 'Concluir',
+          group: 'Agrupar em volumes',
+        },
+        inLibrary: {
+          title: 'Um livro para cada título',
+          text: 'Os volumes mapeados serão o primeiro nível do livro do título, com os capítulos dentro deles: no sumário de um EPUB, nos marcadores de um PDF, em pastas num CBZ.',
+        },
       },
       start: {
         text: 'Comece criando um volume e depois atribua capítulos a ele.',
@@ -459,16 +515,11 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         manual: '手動の割り当て · オフライン',
       },
       title: (manga) =>
-        manga === '' ? 'タイトルのないマンガを巻にまとめる' : `「${manga}」を巻にまとめる`,
+        manga === '' ? 'タイトルのないマンガを本にまとめる' : `「${manga}」を本にまとめる`,
       introEditing:
         '各話を選んで巻に割り当て、競合があれば解消してから進みます。すでに割り当て済みの話をもう一度割り当てると、その話は移動します。',
       introReviewing:
         '提案された巻を下で確認するか、エディターを開いて各話の割り当てを変更します。',
-      skipGrouping: {
-        button: 'まとめをスキップ',
-        singleBook: '1 冊にまとめるモードでは、各話を巻にまとめる必要があります。',
-        detail: '各話を巻にまとめずに、フォルダーを 1 冊の本として mangaprep に渡します。',
-      },
       showSummary: '割り当ての概要を表示',
       history: {
         label: '編集履歴',
@@ -477,9 +528,34 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'すべての割り当ての編集をリセット',
       },
       leftOut: '対象外のフォルダー',
-      singleBook: {
-        title: 'シリーズを 1 冊の本に',
-        text: '割り当てた巻は 1 冊の本の最上位になり、その下に各話が入ります。EPUB では目次、PDF ではしおり、CBZ ではフォルダーになります。',
+      books: {
+        legend: '本',
+        perVolume: {
+          label: '巻ごとに 1 冊',
+          help: '巻が必要です。ファイル名、オンラインの情報源、または手作業で作ります。',
+        },
+        series: {
+          label: 'シリーズ全体で 1 冊',
+          help: '巻は不要です。各話が目次になります。巻を作った場合は、その巻が目次の最上位になります。',
+          produces: {
+            epub: 'シリーズ全体で 1 つの EPUB を作成します。各話（巻がある場合は各巻も）が目次に入ります。巻は不要です。',
+            cbz: 'シリーズ全体で 1 つの CBZ を作成します。各話（巻がある場合は各巻も）がフォルダーになります。目次はありません。',
+            pdf: 'シリーズ全体で 1 つの PDF を作成します。ページが順番に並び、各話（巻がある場合は各巻も）のしおりが付きます。',
+          },
+        },
+        asIs: {
+          label: 'フォルダーをそのまま変換',
+          help: 'まとめは行いません。フォルダーが 1 冊の本として mangaprep に渡されます。',
+        },
+        noVolumes: {
+          text: 'このシリーズに巻は不要です。各話が本の目次になります。巻を目次の最上位にしたい場合にだけ、各話を巻にまとめてください。',
+          done: '完了',
+          group: '巻にまとめる',
+        },
+        inLibrary: {
+          title: 'タイトルごとに 1 冊',
+          text: '割り当てた巻はタイトルの本の最上位になり、その下に各話が入ります。EPUB では目次、PDF ではしおり、CBZ ではフォルダーになります。',
+        },
       },
       start: {
         text: 'まず巻を作成し、そこに各話を割り当てます。',

@@ -14,7 +14,6 @@ describe('the defaults everything starts from', () => {
     expect(defaultPreferences).toEqual({
       mode: defaultProcessMode,
       format: 'cbz',
-      singleBook: false,
       settings: defaultMangaprepSettings,
     });
     expect(defaultFormat).toBe('cbz');

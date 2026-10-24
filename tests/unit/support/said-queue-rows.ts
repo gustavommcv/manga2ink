@@ -90,8 +90,8 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.note.noVolumesYet': [
     [
       {},
-      'No volumes yet. Open Edit volumes to group the chapters.',
-      'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos.',
+      'No volumes yet. Open Edit volumes to group the chapters, or make one book of the whole series.',
+      'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
     ],
   ],
   'queue.note.versionsPending': [
@@ -222,9 +222,6 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
       'A library is grouped title by title first, so it cannot skip joining volumes.',
       'Uma biblioteca é agrupada título por título primeiro, então não dá para pular a junção dos volumes.',
     ],
-  ],
-  'mode.singleBookLocked': [
-    [{}, 'Choose “One per volume” to change this.', 'Escolha “Um por volume” para mudar isto.'],
   ],
 
   'text.raw': [

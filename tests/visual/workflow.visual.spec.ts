@@ -344,7 +344,7 @@ test('changed output settings show aligned labels and individual resets', async 
 
 test('single-book notices span their editor and share the warning treatment', async ({ page }) => {
   await page.goto('/iframe.html?id=workflows-mapping-editor--single-book-active&viewMode=story');
-  const mapping = page.getByRole('region', { name: /Organize A Quiet Journey into volumes/u });
+  const mapping = page.getByRole('region', { name: /Organize A Quiet Journey into books/u });
   const mappingNotice = page.getByRole('status', { name: 'Single book for the series' });
   await expect(mappingNotice).toBeVisible();
   const mappingBox = await mapping.boundingBox();

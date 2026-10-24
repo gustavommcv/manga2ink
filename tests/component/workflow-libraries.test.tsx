@@ -466,7 +466,7 @@ describe('libraries in the queue', () => {
     expect(screen.queryByText('Broken Manga - Vol.01.cbz')).not.toBeInTheDocument();
   });
 
-  it('plans one book per ready library title in single-book mode', async () => {
+  it('plans one book per ready library title when the library is made one book for each title', async () => {
     const user = userEvent.setup();
     installBridge(
       libraryBridge([goodTitle, looseTitle], {
@@ -477,7 +477,9 @@ describe('libraries in the queue', () => {
     render(<App />);
     await addFolder(user);
     expectNoOutputFolderPicker();
-    await user.click(screen.getByRole('radio', { name: 'Whole series' }));
+    await user.click(screen.getByRole('button', { name: 'Edit titles of Manga Library' }));
+    await user.click(await screen.findByRole('radio', { name: 'One book for each title' }));
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
     await user.click(screen.getByRole('button', { name: 'Validate plan' }));
 
     expect(await screen.findByRole('heading', { name: 'Plan validated' })).toBeVisible();

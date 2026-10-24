@@ -50,7 +50,7 @@ describe('packaged folder whose names carry the volumes', () => {
     assert.match(await $('main').getText(), /grouped from names/u);
 
     await $('button[aria-label="Edit volumes for Named Volumes"]').click();
-    await $('h1=Organize Named Volumes into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('h1=Organize Named Volumes into books').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /Proposed chapter mapping/u);
     assert.match(await $('main').getText(), /2 volumes · 3 of 3 chapters assigned/u);
     await $('button=Edit chapter mapping').click();
@@ -157,10 +157,12 @@ describe('packaged folder whose names carry the volumes', () => {
     await setFormat(format);
     await $('button=Folder').click();
     await $('span=2 volumes').waitForDisplayed({ timeout: 30_000 });
-    // The mode is kept for the rest of the session, so it is made sure to be on, not toggled.
-    const wholeSeries = $('button=Whole series');
-    if ((await wholeSeries.getAttribute('aria-checked')) !== 'true') await wholeSeries.click();
-    // The mode leaves the format as it was chosen.
+    // The books of a series are chosen where its chapters are grouped, not in the panel.
+    await $('button[aria-label="Edit volumes for Named Volumes"]').click();
+    await $('input#books-series').click();
+    await $('button=Queue').click();
+    await $('span=Whole series').waitForDisplayed({ timeout: 10_000 });
+    // The choice leaves the format as it was chosen.
     assert.equal(
       await $(
         '[role="radiogroup"][aria-label="Format"] [role="radio"][aria-checked="true"]',

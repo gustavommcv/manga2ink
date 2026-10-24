@@ -33,7 +33,6 @@ const props = (
   onSettings: vi.fn(),
   profiles,
   settings: defaultMangaprepSettings,
-  singleBook: false,
   ...overrides,
 });
 
@@ -170,19 +169,16 @@ describe('the conversion options screen', () => {
     expect(trigger).toHaveFocus();
   });
 
-  it('keeps the single-book notice while the format and other conversion choices remain editable', async () => {
+  it('keeps the format and the other conversion choices editable, and says nothing of the books of a series', async () => {
     const user = userEvent.setup();
     const onSettings = vi.fn();
     const onFormat = vi.fn();
-    render(
-      <ConversionOptionsScreen
-        {...props({ singleBook: true, format: 'epub', onFormat, onSettings })}
-      />,
-    );
+    render(<ConversionOptionsScreen {...props({ format: 'epub', onFormat, onSettings })} />);
 
-    expect(screen.getByRole('status', { name: 'Single book for the series' })).toHaveTextContent(
-      'The process steps are locked.',
-    );
+    // How the books of a series are made is the series’ own, chosen where its chapters are grouped.
+    expect(
+      screen.queryByRole('status', { name: 'Single book for the series' }),
+    ).not.toBeInTheDocument();
     expect(screen.getByLabelText('Book format')).toBeEnabled();
     expect(screen.getByLabelText('Book format')).toHaveValue('epub');
     await user.selectOptions(screen.getByLabelText('Book format'), 'pdf');

@@ -36,12 +36,8 @@ export function rowText(view: RowView): RowText {
 }
 
 /** `describeRow`, with what it says in English, so a test reads what a person would. */
-export function describeRowText(
-  row: QueueRow,
-  mode: ProcessMode,
-  queue?: Parameters<typeof describeRow>[2],
-): RowText {
-  return rowText(describeRow(row, mode, queue));
+export function describeRowText(row: QueueRow, mode: ProcessMode): RowText {
+  return rowText(describeRow(row, mode));
 }
 
 const isMessage = (value: unknown): value is AnyMessage =>

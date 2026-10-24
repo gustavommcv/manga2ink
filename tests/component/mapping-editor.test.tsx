@@ -72,7 +72,7 @@ describe('mapping editor', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: /Organize Offline Work into volumes/u }),
+      screen.getByRole('heading', { name: /Organize Offline Work into books/u }),
     ).toHaveFocus();
   });
 
@@ -927,59 +927,149 @@ describe('mapping editor', () => {
     });
   });
 
-  describe('single-book mode integration', () => {
-    it('disables "Skip grouping" and displays the informational banner when singleBook is true', () => {
-      const onSkip = vi.fn();
-      render(
-        <MappingEditor
-          initialDraft={createMappingDraft({ mangaTitle: 'Offline Work', chapters })}
-          onSkipGrouping={onSkip}
-          singleBook={true}
-        />,
+  describe('the books of the series', () => {
+    const noVolumes = createMappingDraft({ mangaTitle: 'Offline Work', chapters });
+
+    it('are chosen from the editor of a folder: one for each volume, the whole series, or the folder as it is', async () => {
+      const user = userEvent.setup();
+      const onBooks = vi.fn();
+      const { rerender } = render(
+        <MappingEditor books="volumes" initialDraft={noVolumes} onBooks={onBooks} />,
       );
 
-      const skipButton = screen.getByRole('button', { name: 'Skip grouping' });
-      expect(skipButton).toBeDisabled();
+      expect(screen.getByRole('group', { name: 'Books' })).toBeVisible();
+      expect(screen.getByRole('radio', { name: /One book per volume/u })).toBeChecked();
       expect(
-        screen.getByText('Single book mode requires grouping chapters into volumes.'),
+        screen.getByText('Needs volumes: from the names, an online source, or made by hand.'),
       ).toBeVisible();
 
-      const banner = screen.getByRole('status', { name: 'Single book for the series' });
-      expect(banner).toBeVisible();
-      expect(banner.parentElement).toBe(
-        screen.getByRole('region', { name: /Organize Offline Work into volumes/u }),
+      await user.click(screen.getByRole('radio', { name: /One book for the whole series/u }));
+      expect(onBooks).toHaveBeenLastCalledWith('series');
+      await user.click(screen.getByRole('radio', { name: /Convert the folder as it is/u }));
+      expect(onBooks).toHaveBeenLastCalledWith('as-is');
+
+      // What is chosen is the caller’s to keep: given back, the choice can be taken back.
+      rerender(<MappingEditor books="as-is" initialDraft={noVolumes} onBooks={onBooks} />);
+      await user.click(screen.getByRole('radio', { name: /One book per volume/u }));
+      expect(onBooks).toHaveBeenLastCalledWith('volumes');
+    });
+
+    it('are not chosen where the folder is a title of a library, whose books are the library’s', () => {
+      render(<MappingEditor initialDraft={noVolumes} inLibrary />);
+
+      expect(screen.queryByRole('group', { name: 'Books' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: 'One book for each title' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('say what the one book is in the format it will be made in, or what it needs where that is not known', () => {
+      const { rerender } = render(
+        <MappingEditor books="series" format="epub" initialDraft={noVolumes} onBooks={vi.fn()} />,
       );
       expect(
         screen.getByText(
-          'The mapped volumes become the top level of the single book, with their chapters under them: in the table of contents of an EPUB, in the bookmarks of a PDF, as folders in a CBZ.',
+          'One EPUB for the whole series, with its chapters (and its volumes, if it has them) in the table of contents. It needs no volumes.',
+        ),
+      ).toBeVisible();
+
+      rerender(
+        <MappingEditor books="series" format="pdf" initialDraft={noVolumes} onBooks={vi.fn()} />,
+      );
+      expect(screen.getByText(/One PDF for the whole series/u)).toBeVisible();
+
+      rerender(<MappingEditor books="series" initialDraft={noVolumes} onBooks={vi.fn()} />);
+      expect(
+        screen.getByText(
+          'Needs no volumes: the chapters are its table of contents. Volumes, if you add them, are its first level.',
         ),
       ).toBeVisible();
     });
 
-    it('enables "Skip grouping" and omits the banner when singleBook is false', async () => {
+    it('cannot leave a folder as it is where its chapters are archives that have to be joined first', () => {
+      const archives = createMappingDraft({
+        mangaTitle: 'Offline Work',
+        chapters: chapters.map((chapter) => ({ ...chapter, kind: 'cbz' as const })),
+      });
+      render(<MappingEditor initialDraft={archives} onBooks={vi.fn()} />);
+
+      expect(screen.getByRole('radio', { name: /Convert the folder as it is/u })).toBeDisabled();
+      expect(
+        screen.getByText(
+          'The chapters of this folder are CBZ files, so they have to be joined into volumes before they can be converted.',
+        ),
+      ).toBeVisible();
+      expect(screen.getByRole('radio', { name: /One book per volume/u })).toBeEnabled();
+    });
+
+    it('need no volumes for the whole series: it says so, and Done confirms what there is', async () => {
       const user = userEvent.setup();
-      const onSkip = vi.fn();
+      const onConfirm = vi.fn();
       render(
         <MappingEditor
-          initialDraft={createMappingDraft({ mangaTitle: 'Offline Work', chapters })}
-          onSkipGrouping={onSkip}
-          singleBook={false}
+          books="series"
+          initialDraft={noVolumes}
+          onBooks={vi.fn()}
+          onConfirm={onConfirm}
         />,
       );
 
-      const skipButton = screen.getByRole('button', { name: 'Skip grouping' });
-      expect(skipButton).toBeEnabled();
-      expect(
-        screen.getByText(
-          'Send the folder to mangaprep as one book, without grouping chapters into volumes.',
-        ),
-      ).toBeVisible();
-      expect(
-        screen.queryByRole('status', { name: 'Single book for the series' }),
-      ).not.toBeInTheDocument();
+      expect(screen.getByText(/This series needs no volumes/u)).toBeVisible();
+      expect(screen.queryByRole('button', { name: 'Create first volume' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Confirm mapping' })).not.toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Done' }));
 
-      await user.click(skipButton);
-      expect(onSkip).toHaveBeenCalledOnce();
+      expect(onConfirm).toHaveBeenCalledOnce();
+      expect(onConfirm.mock.calls[0]?.[1]).toMatchObject({ volumes: [] });
+    });
+
+    it('can still be grouped into volumes as the first level of the book, and then confirmed', async () => {
+      const user = userEvent.setup();
+      const onConfirm = vi.fn();
+      render(
+        <MappingEditor
+          books="series"
+          initialDraft={noVolumes}
+          onBooks={vi.fn()}
+          onConfirm={onConfirm}
+        />,
+      );
+
+      expect(screen.queryByRole('tab', { name: 'Manual' })).not.toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Group into volumes' }));
+      expect(screen.getByRole('tab', { name: 'Manual' })).toBeVisible();
+      expect(screen.getByRole('button', { name: 'Confirm mapping' })).toBeEnabled();
+      await user.click(screen.getByRole('button', { name: 'Confirm mapping' }));
+
+      expect(onConfirm).toHaveBeenCalledOnce();
+    });
+
+    it('show the summary where a series that is one book has volumes of its own', () => {
+      const grouped = createMappingDraft({
+        mangaTitle: 'Offline Work',
+        chapters,
+        volumes: [{ id: 'v1', number: '1', chapterIds: ['chapter-1', 'chapter-2', 'chapter-3'] }],
+      });
+      render(<MappingEditor books="series" initialDraft={grouped} onBooks={vi.fn()} />);
+
+      expect(screen.getByRole('button', { name: 'Confirm mapping' })).toBeEnabled();
+      expect(screen.queryByText(/This series needs no volumes/u)).not.toBeInTheDocument();
+    });
+
+    it('leave nothing to group in a folder that is left as it is', () => {
+      render(<MappingEditor books="as-is" initialDraft={noVolumes} onBooks={vi.fn()} />);
+
+      expect(screen.getByRole('radio', { name: /Convert the folder as it is/u })).toBeChecked();
+      expect(screen.queryByRole('heading', { name: 'Chapters' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('tab', { name: 'Manual' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Confirm mapping' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Create first volume' })).not.toBeInTheDocument();
+    });
+
+    it('are said over the editor of a title of a library whose titles are one book each', () => {
+      render(<MappingEditor books="series" initialDraft={noVolumes} inLibrary />);
+
+      expect(screen.getByRole('status', { name: 'One book for each title' })).toBeVisible();
     });
   });
 });

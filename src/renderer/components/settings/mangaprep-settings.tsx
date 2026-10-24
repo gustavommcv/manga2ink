@@ -38,7 +38,6 @@ import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-h
 import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { Field } from '@/renderer/components/shared/field';
-import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
 import { Input } from '@/renderer/components/ui/input';
 import { NativeSelect } from '@/renderer/components/ui/native-select';
@@ -58,7 +57,6 @@ interface MangaprepSettingsProps {
    */
   readonly queue?: { readonly settings: MangaprepSettings; readonly format: BookFormat };
   readonly settings: MangaprepSettings;
-  readonly singleBook?: boolean;
 }
 
 export function MangaprepSettingsEditor({
@@ -68,14 +66,12 @@ export function MangaprepSettingsEditor({
   profiles,
   queue,
   settings,
-  singleBook,
 }: MangaprepSettingsProps): React.JSX.Element {
   const { say } = useSay();
   const words = useMessages().fields;
   /** Why a control has no effect, or what is wrong with a value, said in the language of the window. */
   const said = (reason: AnyMessage | undefined): string | undefined =>
     reason === undefined ? undefined : say(reason);
-  const singleBookActive = Boolean(singleBook);
   const issues = validateMangaprepSettings(settings);
   const errorFor = (field: MangaprepSettingField): string | undefined =>
     said(issues.find((issue) => issue.field === field)?.message);
@@ -146,9 +142,6 @@ export function MangaprepSettingsEditor({
 
   return (
     <div className="space-y-5">
-      {singleBookActive && (
-        <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />
-      )}
       <SettingsSection
         description={words.device.description}
         eyebrow={words.eyebrow.basic}

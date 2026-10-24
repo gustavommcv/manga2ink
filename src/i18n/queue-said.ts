@@ -53,7 +53,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       return `${one ? 'A folder in it is a link' : `${String(names.length)} folders in it are links`}, and mangabind does not follow links to a series, so ${one ? 'it was' : 'they were'} not read: ${namesOf(names, (more) => ` and ${String(more)} more`)}. Put the real ${one ? 'folder' : 'folders'} in the library and add it again.`;
     },
     'queue.note.noVolumesYet': () =>
-      `No volumes yet. Open ${english.row.editVolumes} to group the chapters.`,
+      `No volumes yet. Open ${english.row.editVolumes} to group the chapters, or make one book of the whole series.`,
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} ${countOf(count, 'chapter comes', 'chapters come')} in more than one version. Open ${english.row.reviewVersions} to choose which to use; your files stay where they are.`,
     'queue.note.unassigned': ({ count }) =>
@@ -120,7 +120,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
       return `${one ? 'Uma pasta dentro dela é um link' : `${String(names.length)} pastas dentro dela são links`}, e o mangabind não segue links para uma série, então ${one ? 'ela não foi lida' : 'elas não foram lidas'}: ${namesOf(names, (more) => ` e mais ${String(more)}`)}. Coloque ${one ? 'a pasta real' : 'as pastas reais'} na biblioteca e adicione-a de novo.`;
     },
     'queue.note.noVolumesYet': () =>
-      `Ainda não há volumes. Abra ${portuguese.row.editVolumes} para agrupar os capítulos.`,
+      `Ainda não há volumes. Abra ${portuguese.row.editVolumes} para agrupar os capítulos, ou faça um livro só da série inteira.`,
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo vem', 'capítulos vêm')} em mais de uma versão. Abra ${portuguese.row.reviewVersions} para escolher qual usar; os seus arquivos continuam onde estão.`,
     'queue.note.unassigned': ({ count }) =>
@@ -183,7 +183,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.note.onlyLinks': ({ names }) =>
       `この中のフォルダー ${String(names.length)} 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: ${namesOf(names, (more) => ` ほか ${String(more)} 個`, '、')}。実際のフォルダーをライブラリに置いて、もう一度追加してください。`,
     'queue.note.noVolumesYet': () =>
-      `まだ巻がありません。「${japanese.row.editVolumes}」を開いて、各話をまとめてください。`,
+      `まだ巻がありません。「${japanese.row.editVolumes}」を開いて各話をまとめるか、シリーズ全体を 1 冊にしてください。`,
     'queue.note.versionsPending': ({ count }) =>
       `${String(count)} 話に複数の版があります。「${japanese.row.reviewVersions}」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。`,
     'queue.note.unassigned': ({ count }) =>

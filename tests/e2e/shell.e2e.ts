@@ -239,58 +239,6 @@ describe('packaged application shell', () => {
     assert.equal(measured.windowScrolled, 0, 'the window itself does not scroll');
   });
 
-  it('has one scrollbar when single-book options make the queue taller than the window', async () => {
-    await $('button=Whole series').click();
-    const measured = JSON.parse(
-      await browser.execute(() => {
-        const bar = document.querySelector('header.window-titlebar');
-        const scroller = bar?.nextElementSibling;
-        const scrollables = Array.from(document.querySelectorAll('*'))
-          .filter((element): element is HTMLElement => element instanceof HTMLElement)
-          .filter((element) => {
-            const overflow = getComputedStyle(element).overflowY;
-            return (
-              (overflow === 'auto' || overflow === 'scroll') &&
-              element.scrollHeight - element.clientHeight > 1
-            );
-          })
-          .map((element) => ({
-            tag: element.tagName,
-            className: element.className,
-            left: element.getBoundingClientRect().left,
-            right: element.getBoundingClientRect().right,
-            range: element.scrollHeight - element.clientHeight,
-          }));
-        return JSON.stringify({
-          viewportWidth: window.innerWidth,
-          documentOverflow: getComputedStyle(document.documentElement).overflowY,
-          bodyOverflow: getComputedStyle(document.body).overflowY,
-          contentRange:
-            scroller instanceof HTMLElement ? scroller.scrollHeight - scroller.clientHeight : -1,
-          scrollables,
-        });
-      }),
-    ) as {
-      viewportWidth: number;
-      documentOverflow: string;
-      bodyOverflow: string;
-      contentRange: number;
-      scrollables: readonly {
-        tag: string;
-        className: string;
-        left: number;
-        right: number;
-        range: number;
-      }[];
-    };
-    assert.ok(measured.contentRange > 0, JSON.stringify(measured));
-    assert.equal(measured.documentOverflow, 'hidden', JSON.stringify(measured));
-    assert.equal(measured.bodyOverflow, 'hidden', JSON.stringify(measured));
-    assert.equal(measured.scrollables.length, 1, JSON.stringify(measured));
-    assert.equal(measured.scrollables[0]?.right, measured.viewportWidth, JSON.stringify(measured));
-    await $('button=One per volume').click();
-  });
-
   it('has only the content area scroll on the long options page', async () => {
     await $('button=Advanced conversion options').click();
     await $('h1=Conversion options').waitForDisplayed();

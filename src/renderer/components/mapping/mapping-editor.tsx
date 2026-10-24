@@ -12,6 +12,9 @@ import {
 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 
+import type { BookFormat } from '@/domain/conversion';
+import type { BooksChoice as Books } from '@/domain/input-queue';
+import { archivesReason } from '@/domain/process-mode';
 import {
   createMappingHistory,
   dispatchMappingCommand,
@@ -24,6 +27,7 @@ import { unrecognizedChaptersNote } from '@/domain/unrecognized-chapters';
 import {
   assignedVolumeId,
   dominantLanguage,
+  hasArchiveChapters,
   isVolumeNumber,
   type MappingDraft,
   MappingOperationError,
@@ -35,6 +39,7 @@ import {
 } from '@/domain/mapping';
 import type { MappingMessages } from '@/i18n/mapping-messages';
 
+import { BooksChoice } from './books-choice';
 import { ChaptersFrom } from './chapters-from';
 import { MappingSummary } from './mapping-summary';
 
@@ -59,14 +64,16 @@ export interface MappingEditorProps {
   readonly initialDraft: MappingDraft;
   /** Set when `initialDraft` already carries mangabind's own grouping (volumes read from names). */
   readonly startedFrom?: 'mangabind' | undefined;
-  readonly singleBook?: boolean;
+  /** How the books of the series are made; with `onBooks`, the editor offers the choice (ADR 0094). */
+  readonly books?: Books;
+  readonly onBooks?: (books: Books) => void;
+  /** The format the books will be made in, so that what the one book is can be said. */
+  readonly format?: BookFormat;
   /** Folders of the manga whose names could not be read as chapters: they are not in the draft. */
   readonly unrecognized?: readonly string[];
   /** The editor is of a title of a library, so a name is fixed by adding the library again. */
   readonly inLibrary?: boolean;
   readonly onConfirm?: (metadata: string, draft: MappingDraft) => void;
-  /** Offered when the folder can skip grouping and go straight to mangaprep as one book. */
-  readonly onSkipGrouping?: () => void;
   /** Online sources that can suggest volumes. The "Online source" tab only appears when there is one. */
   readonly metadataProviders?: readonly MetadataProviderDescriptor[];
   /** The source chosen, if any. Left out, the editor keeps the choice itself. */
@@ -126,14 +133,15 @@ function volumeName(
 export function MappingEditor({
   initialDraft,
   startedFrom,
-  singleBook,
+  books = 'volumes',
+  format,
+  onBooks,
   unrecognized = [],
   inLibrary = false,
   onConfirm,
   metadataProviders = [],
   onOpenProviderHomepage,
   onSelectProvider,
-  onSkipGrouping,
   onSearchMetadata,
   onSuggestVolumes,
   selectedProviderId,
@@ -169,8 +177,17 @@ export function MappingEditor({
   const issues = useMemo(() => validateMapping(draft), [draft]);
   const errors = issues.filter((issue) => issue.severity === 'error');
   const warnings = issues.filter((issue) => issue.severity === 'warning');
-  // An incomplete or conflicting proposal must never hide the controls needed to fix it.
-  const showEditor = editorExpanded || issues.length > 0 || draft.volumes.length === 0;
+  // A series that is one book needs no volumes, and a folder left as it is has none to make.
+  const series = books === 'series';
+  const asIs = books === 'as-is';
+  // An incomplete or conflicting proposal must never hide the controls needed to fix it; a series that is
+  // one book has no volumes to be incomplete, and the chapters in none are what it is made of.
+  const noVolumesNeeded = series && draft.volumes.length === 0;
+  const showEditor =
+    !asIs &&
+    (editorExpanded ||
+      (!noVolumesNeeded && issues.length > 0) ||
+      (draft.volumes.length === 0 && !series));
 
   const createVolumeId = (): string => {
     let id: string;
@@ -253,21 +270,6 @@ export function MappingEditor({
       <ScreenHeader
         actions={
           <>
-            {onSkipGrouping !== undefined && (
-              <div className="space-y-1">
-                <Button
-                  aria-describedby="skip-grouping-detail"
-                  disabled={singleBook}
-                  onClick={onSkipGrouping}
-                  variant="outline"
-                >
-                  {words.skipGrouping.button}
-                </Button>
-                <Note className="max-w-56" id="skip-grouping-detail">
-                  {singleBook ? words.skipGrouping.singleBook : words.skipGrouping.detail}
-                </Note>
-              </div>
-            )}
             <div className="flex items-center gap-2">
               {showEditor && issues.length === 0 && draft.volumes.length > 0 && (
                 <Button
@@ -324,7 +326,13 @@ export function MappingEditor({
             </div>
           </>
         }
-        description={showEditor ? words.introEditing : words.introReviewing}
+        description={
+          asIs || (noVolumesNeeded && !showEditor)
+            ? undefined
+            : showEditor
+              ? words.introEditing
+              : words.introReviewing
+        }
         eyebrow={
           <>
             <Eyebrow>{words.kicker}</Eyebrow>
@@ -343,67 +351,79 @@ export function MappingEditor({
         title={words.title(draft.mangaTitle)}
       />
       {leftOut !== undefined && <InfoBanner message={say(leftOut)} title={words.leftOut} />}
-      {singleBook && <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />}
+      {onBooks !== undefined && (
+        <BooksChoice
+          asIsReason={hasArchiveChapters(initialDraft) ? say(archivesReason) : undefined}
+          format={format}
+          onChange={onBooks}
+          value={books}
+        />
+      )}
+      {inLibrary && series && (
+        <InfoBanner message={words.books.inLibrary.text} title={words.books.inLibrary.title} />
+      )}
 
-      <ChaptersFrom
-        initialSource={
-          initialDraft.source !== undefined &&
-          metadataProviders.some((provider) => provider.id === initialDraft.source?.provider) &&
-          onSearchMetadata !== undefined &&
-          onSuggestVolumes !== undefined
-            ? 'online'
-            : startedFrom === 'mangabind'
-              ? 'names'
-              : 'manual'
-        }
-        missingNamesGrouping={
-          initialDraft.source === undefined && initialDraft.volumes.length === 0
-        }
-        onManualSelect={() => {
-          setEditorExpanded(true);
-        }}
-        names={{
-          volumes: startedFrom === 'mangabind' ? initialDraft.volumes.length : 0,
-          chapters: initialDraft.chapters.length,
-          changed: history.past.length > 0 && initialDraft.source === undefined,
-          onStartOver: () => {
-            setHistory(createMappingHistory(initialDraft));
-            setSelectedChapterIds(new Set());
-            setOperationMessage(undefined);
-          },
-        }}
-        online={
-          metadataProviders.length > 0 &&
-          onSearchMetadata !== undefined &&
-          onSuggestVolumes !== undefined
-            ? {
-                providers: metadataProviders,
-                selectedId: onSelectProvider === undefined ? localProviderId : selectedProviderId,
-                onSelect: onSelectProvider ?? setLocalProviderId,
-                onOpenHomepage: onOpenProviderHomepage ?? (() => undefined),
-                mangaTitle: draft.mangaTitle,
-                language: dominantLanguage(draft.chapters),
-                onSearch: onSearchMetadata,
-                onSuggest: onSuggestVolumes,
-                onApply: (result, volumes) => {
-                  if (
-                    dispatch({
-                      type: 'apply-suggestion',
-                      suggestions: volumes.map((volume) => ({ ...volume, id: createVolumeId() })),
-                      source: { provider: result.provider, id: result.id },
-                    })
-                  ) {
-                    // A complete online suggestion can be reviewed as a summary; incomplete
-                    // suggestions still expose the editor through validation issues.
-                    setEditorExpanded(false);
-                  }
-                },
-              }
-            : undefined
-        }
-      />
+      {!asIs && !(noVolumesNeeded && !editorExpanded) && (
+        <ChaptersFrom
+          initialSource={
+            initialDraft.source !== undefined &&
+            metadataProviders.some((provider) => provider.id === initialDraft.source?.provider) &&
+            onSearchMetadata !== undefined &&
+            onSuggestVolumes !== undefined
+              ? 'online'
+              : startedFrom === 'mangabind'
+                ? 'names'
+                : 'manual'
+          }
+          missingNamesGrouping={
+            initialDraft.source === undefined && initialDraft.volumes.length === 0
+          }
+          onManualSelect={() => {
+            setEditorExpanded(true);
+          }}
+          names={{
+            volumes: startedFrom === 'mangabind' ? initialDraft.volumes.length : 0,
+            chapters: initialDraft.chapters.length,
+            changed: history.past.length > 0 && initialDraft.source === undefined,
+            onStartOver: () => {
+              setHistory(createMappingHistory(initialDraft));
+              setSelectedChapterIds(new Set());
+              setOperationMessage(undefined);
+            },
+          }}
+          online={
+            metadataProviders.length > 0 &&
+            onSearchMetadata !== undefined &&
+            onSuggestVolumes !== undefined
+              ? {
+                  providers: metadataProviders,
+                  selectedId: onSelectProvider === undefined ? localProviderId : selectedProviderId,
+                  onSelect: onSelectProvider ?? setLocalProviderId,
+                  onOpenHomepage: onOpenProviderHomepage ?? (() => undefined),
+                  mangaTitle: draft.mangaTitle,
+                  language: dominantLanguage(draft.chapters),
+                  onSearch: onSearchMetadata,
+                  onSuggest: onSuggestVolumes,
+                  onApply: (result, volumes) => {
+                    if (
+                      dispatch({
+                        type: 'apply-suggestion',
+                        suggestions: volumes.map((volume) => ({ ...volume, id: createVolumeId() })),
+                        source: { provider: result.provider, id: result.id },
+                      })
+                    ) {
+                      // A complete online suggestion can be reviewed as a summary; incomplete
+                      // suggestions still expose the editor through validation issues.
+                      setEditorExpanded(false);
+                    }
+                  },
+                }
+              : undefined
+          }
+        />
+      )}
 
-      {showEditor && draft.volumes.length === 0 && (
+      {showEditor && draft.volumes.length === 0 && !series && (
         <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl border p-5">
           <p className="text-muted-foreground text-sm">{words.start.text}</p>
           <Button aria-label={words.start.createFirst} onClick={addNewVolume} size="sm">
@@ -418,7 +438,7 @@ export function MappingEditor({
         </Callout>
       )}
 
-      {!showEditor && (
+      {!showEditor && !asIs && draft.volumes.length > 0 && (
         <MappingSummary
           draft={draft}
           onConfirm={confirm}
@@ -426,6 +446,23 @@ export function MappingEditor({
             setEditorExpanded(true);
           }}
         />
+      )}
+
+      {!showEditor && series && draft.volumes.length === 0 && (
+        <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl border p-5">
+          <p className="text-muted-foreground max-w-prose text-sm">{words.books.noVolumes.text}</p>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                setEditorExpanded(true);
+              }}
+              variant="outline"
+            >
+              {words.books.noVolumes.group}
+            </Button>
+            <Button onClick={confirm}>{words.books.noVolumes.done}</Button>
+          </div>
+        </div>
       )}
 
       {showEditor && (
@@ -836,7 +873,7 @@ export function MappingEditor({
               )}
               <Button
                 className="mt-5 w-full"
-                disabled={errors.length > 0 || draft.volumes.length === 0}
+                disabled={errors.length > 0 || (draft.volumes.length === 0 && !series)}
                 onClick={confirm}
               >
                 {words.check.confirm}

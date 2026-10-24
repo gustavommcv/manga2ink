@@ -44,7 +44,9 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     'この中のフォルダー 1 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: Berserk。実際のフォルダーをライブラリに置いて、もう一度追加してください。',
     'この中のフォルダー 4 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: Berserk、Vagabond、Monster ほか 1 個。実際のフォルダーをライブラリに置いて、もう一度追加してください。',
   ],
-  'queue.note.noVolumesYet': ['まだ巻がありません。「巻を編集」を開いて、各話をまとめてください。'],
+  'queue.note.noVolumesYet': [
+    'まだ巻がありません。「巻を編集」を開いて各話をまとめるか、シリーズ全体を 1 冊にしてください。',
+  ],
   'queue.note.versionsPending': [
     '1 話に複数の版があります。「版を選択」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。',
     '3 話に複数の版があります。「版を選択」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。',
@@ -82,7 +84,6 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'mode.libraryGroupsFirst': [
     'ライブラリは、まずタイトルごとに各話が巻にまとめられるため、巻をまとめる手順を省略できません。',
   ],
-  'mode.singleBookLocked': ['これを変更するには、「巻ごとに 1 冊」を選んでください。'],
   'text.raw': ['Not enough space on the disk.'],
   'failure.cancelled': ['キャンセルしました。'],
   'failure.conversionCancelled': ['変換をキャンセルしました。'],
