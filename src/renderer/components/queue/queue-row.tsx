@@ -1,5 +1,6 @@
 import {
   FileArchive,
+  Files,
   Folder,
   Layers,
   Library,
@@ -9,6 +10,7 @@ import {
   X,
 } from 'lucide-react';
 
+import { pendingVersionGroups, versionGroups } from '@/domain/chapter-versions';
 import { hasBookDetails } from '@/domain/book-details';
 import { describeRow, type QueueRow, rowMode } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
@@ -26,6 +28,7 @@ export function QueueRowItem({
   onEditDetails,
   onEditOptions,
   onRemove,
+  onReviewVersions,
   row,
 }: {
   readonly mode: ProcessMode;
@@ -35,6 +38,8 @@ export function QueueRowItem({
   /** Opens the conversion options of the item, which are the queue's until it sets its own. */
   readonly onEditOptions: () => void;
   readonly onRemove: () => void;
+  /** Opens the choice among the files that claim one chapter (ADR 0093). */
+  readonly onReviewVersions: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
@@ -51,6 +56,11 @@ export function QueueRowItem({
     row.kind !== 'library' &&
     process !== 'skip' &&
     usesMangaprep(process);
+  // Chapters that more than one file claims, where they matter: wherever the files are joined.
+  const versions = row.state === 'inspected' ? versionGroups(row.mapping) : [];
+  const versionsReviewable =
+    versions.length > 0 && row.kind === 'folder' && mode !== 'convert-only';
+  const versionsPending = row.state === 'inspected' && pendingVersionGroups(row.mapping).length > 0;
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
   // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
@@ -70,6 +80,18 @@ export function QueueRowItem({
             variant="ghost"
           >
             <Layers />
+          </Button>
+        ) : undefined,
+        versionsReviewable ? (
+          <Button
+            aria-label={words.reviewVersionsFor(row.displayName)}
+            className={cn(versionsPending && 'text-status-warning')}
+            onClick={onReviewVersions}
+            size="icon"
+            title={words.reviewVersions}
+            variant="ghost"
+          >
+            <Files />
           </Button>
         ) : undefined,
         detailsEditable ? (

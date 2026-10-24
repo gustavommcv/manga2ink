@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { app } from 'electron';
 
+import { FsChapterPreviews } from '@/adapters/input/chapter-previews';
 import { FsBookFileStore } from '@/adapters/library/fs-book-file-store';
 import { MangabindBindingAdapter } from '@/adapters/mangabind/binding-port';
 import { MangabindCliAdapter } from '@/adapters/mangabind/cli';
@@ -87,6 +88,7 @@ export async function bootstrapToolchain(
         machine: machineCapacity,
       }),
       context.coverStore,
+      new FsChapterPreviews(),
     );
   }
   return toolchainStatus;

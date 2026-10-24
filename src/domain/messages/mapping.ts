@@ -11,6 +11,8 @@ export interface MappingMessageValues {
   readonly 'mapping.chapterBadSpecial': { readonly name: string };
   readonly 'mapping.unknownChapter': { readonly id: string };
   readonly 'mapping.unknownVolume': { readonly id: string };
+  readonly 'mapping.unknownVersionGroup': { readonly token: string };
+  readonly 'mapping.unknownVersion': { readonly id: string };
   readonly 'mapping.duplicateChapterId': { readonly id: string };
   readonly 'mapping.duplicateVolumeId': { readonly id: string };
   readonly 'mapping.chooseOneChapter': NoValues;

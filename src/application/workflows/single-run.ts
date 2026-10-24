@@ -29,7 +29,8 @@ import {
   plannedVolumeBookName,
   type WorkflowPlan,
 } from '@/domain/conversion';
-import { hasArchiveChapters } from '@/domain/mapping';
+import { pendingVersionGroups } from '@/domain/chapter-versions';
+import { hasArchiveChapters, type MappingDraft } from '@/domain/mapping';
 import { type ProcessMode, unsupportedModeReason, usesMangaprep } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 
@@ -76,6 +77,7 @@ export class SingleInputRun {
         );
       }
       const mapping = trustedMapping(session.trustedDraft, request.mapping);
+      requireVersionsChosen(mapping);
       onProgress({
         stage: 'binding',
         message: message('progress.organizingChapters', { chapters: mapping.chapters.length }),
@@ -189,6 +191,7 @@ export class SingleInputRun {
       );
     }
     const mapping = trustedMapping(session.trustedDraft, request.mapping);
+    requireVersionsChosen(mapping);
     const plan = await this.binding.plan(session.workspaceId, mapping, signal);
     return {
       tool: 'mangabind',
@@ -232,6 +235,17 @@ export class SingleInputRun {
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);
     if (singleBook) assertSingleBook(mode);
     return { session, mode, singleBook };
+  }
+}
+
+/** Chapters that more than one file claims are not decided by the app: a run waits for a person to. */
+function requireVersionsChosen(mapping: MappingDraft): void {
+  const pending = pendingVersionGroups(mapping);
+  if (pending.length > 0) {
+    throw new ConversionWorkflowError(
+      'versions_pending',
+      message('workflow.versionsPending', { count: pending.length }),
+    );
   }
 }
 

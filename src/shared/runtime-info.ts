@@ -1,3 +1,4 @@
+import type { ChapterPreview } from '@/domain/chapter-versions';
 import type { AnyMessage } from '@/domain/message';
 import type { UpdateCheck } from '@/domain/update-check';
 
@@ -33,6 +34,7 @@ import type {
   CoversFolderCommand,
   CoverTarget,
   DropCoversCommand,
+  PreviewChaptersCommand,
   SaveBookDetailsCommand,
   PendingRunSummary,
   SaveAllResult,
@@ -105,6 +107,10 @@ export interface Manga2InkBridge {
   ) => Promise<WorkflowResult<undefined>>;
   /** Keeps the author and language of a folder, or of a library's title, with that folder. */
   readonly saveBookDetails: (command: SaveBookDetailsCommand) => Promise<WorkflowResult<undefined>>;
+  /** The first pages of the files that claim one chapter, by the ids the app gave them. */
+  readonly previewChapters: (
+    command: PreviewChaptersCommand,
+  ) => Promise<WorkflowResult<readonly ChapterPreview[]>>;
   /** The covers kept for the books of an item. */
   readonly listCovers: (target: CoverTarget) => Promise<WorkflowResult<readonly AttachedCover[]>>;
   /** Asks for one image and makes it that book's cover; `null` when nothing was picked. */

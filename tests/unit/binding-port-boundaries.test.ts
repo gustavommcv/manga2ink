@@ -42,6 +42,7 @@ const files = (): WorkspaceFileSystem => ({
   writeText: () => Promise.resolve(),
   writeTextAtomically: () => Promise.resolve(),
   readText: () => Promise.resolve(undefined),
+  fileSignature: () => Promise.resolve(undefined),
   removeFile: () => Promise.resolve(),
   removeDirectory: () => Promise.resolve(),
 });
@@ -273,6 +274,24 @@ describe('the workspace on disk', () => {
 
     // A folder is not a file: this is not "no such file", and must not look like it.
     await expect(workspaceFileSystem.readText(root)).rejects.toMatchObject({ code: 'EISDIR' });
+  });
+
+  it('tells how big a file is and when it last changed, to the second, or that there is none', async () => {
+    const root = await scratch();
+    const file = path.join(root, 'chapter.cbz');
+    await writeFile(file, 'twelve bytes');
+    const changed = new Date('2026-10-24T12:00:00.900Z');
+    fs.utimesSync(file, changed, changed);
+
+    expect(await workspaceFileSystem.fileSignature(file)).toEqual({
+      size: 12,
+      modified: Math.floor(changed.getTime() / 1000),
+    });
+    expect(await workspaceFileSystem.fileSignature(path.join(root, 'missing.cbz'))).toBeUndefined();
+    // Not being there is not the same as not being able to tell: a name that cannot be asked about.
+    await expect(workspaceFileSystem.fileSignature('not a name')).rejects.toMatchObject({
+      code: 'ERR_INVALID_ARG_VALUE',
+    });
   });
 
   it('takes away a file, and does nothing for one that is not there', async () => {

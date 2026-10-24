@@ -126,6 +126,7 @@ const base: QueueScreenProps = {
   onEdit: () => undefined,
   onEditDetails: () => undefined,
   onEditOptions: () => undefined,
+  onReviewVersions: () => undefined,
   onFormat: () => undefined,
   onMode: () => undefined,
   onOpenOptions: () => undefined,

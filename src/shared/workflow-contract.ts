@@ -290,6 +290,17 @@ export interface CoversChange {
   readonly note?: readonly AnyMessage[];
 }
 
+/** The files of a session whose first pages are wanted, by the ids the app gave them. */
+export const previewChaptersCommandSchema = z.object({
+  sessionId: identifierSchema,
+  ids: z.array(z.string().min(1).max(maxNameLength)).max(24),
+});
+
+export interface PreviewChaptersCommand {
+  readonly sessionId: string;
+  readonly ids: readonly string[];
+}
+
 export const writeTitleMappingCommandSchema = z.object({
   sessionId: identifierSchema,
   /** The title's name in the library the session read; its folder is found from that. */

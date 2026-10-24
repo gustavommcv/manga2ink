@@ -110,8 +110,8 @@ export const warningRows: Rows<WarningMessageValues> = {
     ],
     [
       { code: 'chapter_conflict' },
-      'A chapter that is in the folder more than once cannot be told from its copy, so none of its copies is in the book. Remove all but one copy from the folder and convert again.',
-      'Um capítulo que aparece mais de uma vez na pasta não pode ser distinguido da sua cópia, então nenhuma das cópias está no livro. Deixe só uma cópia na pasta e converta de novo.',
+      'A chapter that is in the folder more than once cannot be told from its copy, so none of its copies is in the book. Add the folder on its own and use “Choose versions” to say which copy to use, or remove all but one copy from the folder, and convert again.',
+      'Um capítulo que aparece mais de uma vez na pasta não pode ser distinguido da sua cópia, então nenhuma das cópias está no livro. Adicione a pasta sozinha e use “Escolher versões” para dizer qual cópia usar, ou deixe só uma cópia na pasta, e converta de novo.',
     ],
     [
       { code: 'chapter_gap' },

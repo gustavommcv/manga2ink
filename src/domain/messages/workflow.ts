@@ -13,6 +13,8 @@ export interface WorkflowMessageValues {
   readonly 'workflow.detailsNeedFolder': NoValues;
   readonly 'workflow.mappingInvalid': NoValues;
   readonly 'workflow.mappingErrors': NoValues;
+  /** Chapters that more than one file claims, and nobody has said which to use. */
+  readonly 'workflow.versionsPending': { readonly count: number };
   readonly 'workflow.mappingNotSaved': NoValues;
   readonly 'workflow.detailsNotSaved': NoValues;
   readonly 'workflow.confirmMapping': { readonly before: RunStep };

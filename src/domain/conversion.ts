@@ -189,7 +189,8 @@ export class ConversionWorkflowError extends Error {
       | 'publish_failed'
       | 'session_not_found'
       | 'title_not_found'
-      | 'unsupported_mode',
+      | 'unsupported_mode'
+      | 'versions_pending',
     readonly said: AnyMessage,
     options?: ErrorOptions,
   ) {

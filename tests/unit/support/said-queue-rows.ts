@@ -18,6 +18,7 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.chip.notRecognized': [[{}, 'Not recognized', 'Não reconhecido']],
   'queue.chip.needsVolumes': [[{}, 'Needs volumes', 'Precisa de volumes']],
   'queue.chip.needsGrouping': [[{}, 'Needs grouping', 'Precisa agrupar']],
+  'queue.chip.reviewVersions': [[{}, 'Choose versions', 'Escolher versões']],
   'queue.chip.saved': [[{}, 'Saved', 'Salvo']],
   'queue.chip.volumes': [
     [{ count: 1 }, '1 volume', '1 volume'],
@@ -90,6 +91,18 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
       {},
       'No volumes yet. Open Edit volumes to group the chapters.',
       'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos.',
+    ],
+  ],
+  'queue.note.versionsPending': [
+    [
+      { count: 1 },
+      '1 chapter comes in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
+      '1 capítulo vem em mais de uma versão. Abra Escolher versões para escolher qual usar; os seus arquivos continuam onde estão.',
+    ],
+    [
+      { count: 3 },
+      '3 chapters come in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
+      '3 capítulos vêm em mais de uma versão. Abra Escolher versões para escolher qual usar; os seus arquivos continuam onde estão.',
     ],
   ],
   'queue.note.unassigned': [

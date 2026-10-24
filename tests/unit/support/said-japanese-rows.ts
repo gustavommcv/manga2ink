@@ -14,6 +14,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'queue.chip.notRecognized': ['認識できません'],
   'queue.chip.needsVolumes': ['巻が必要'],
   'queue.chip.needsGrouping': ['まとめが必要'],
+  'queue.chip.reviewVersions': ['版を選択'],
   'queue.chip.saved': ['保存済み'],
   'queue.chip.volumes': ['1 巻', '2 巻'],
   'queue.chip.titles': ['1 タイトル', '3 タイトル'],
@@ -43,6 +44,10 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     'この中のフォルダー 4 個はリンクです。mangabind はシリーズへのリンクをたどらないため、読み込まれませんでした: Berserk、Vagabond、Monster ほか 1 個。実際のフォルダーをライブラリに置いて、もう一度追加してください。',
   ],
   'queue.note.noVolumesYet': ['まだ巻がありません。「巻を編集」を開いて、各話をまとめてください。'],
+  'queue.note.versionsPending': [
+    '1 話に複数の版があります。「版を選択」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。',
+    '3 話に複数の版があります。「版を選択」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。',
+  ],
   'queue.note.unassigned': [
     '1 話が、まだどの巻にも入っていません。「巻を編集」を開いて割り当てるか、抜けがあるまま進めることもできます。',
     '2 話が、まだどの巻にも入っていません。「巻を編集」を開いて割り当てるか、抜けがあるまま進めることもできます。',
@@ -198,6 +203,10 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   ],
   'workflow.mappingInvalid': ['各話と巻の割り当てに、不明または不正な割り当てが含まれています。'],
   'workflow.mappingErrors': ['変換する前に、各話と巻の割り当てのエラーを修正してください。'],
+  'workflow.versionsPending': [
+    '1 話に複数の版があります。変換する前に、使う版を選んでください。',
+    '3 話に複数の版があります。変換する前に、使う版を選んでください。',
+  ],
   'workflow.mappingNotSaved': [
     '元のフォルダーに mangabind.json を保存できませんでした。フォルダーに書き込めることと、mangabind.json が正しい JSON であることを確認してください。',
   ],
@@ -263,6 +272,8 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
   'mapping.chapterBadSpecial': ['「Ch.2 extra」には、対応していない特別話の接尾辞が付いています。'],
   'mapping.unknownChapter': ['不明な話: c9'],
   'mapping.unknownVolume': ['不明な巻: v9'],
+  'mapping.unknownVersionGroup': ['不明な複数版の話: 6'],
+  'mapping.unknownVersion': ['その話に存在しない版です: b.cbz'],
   'mapping.duplicateChapterId': ['話の ID が重複しています: c1'],
   'mapping.duplicateVolumeId': ['巻の ID が重複しています: v1'],
   'mapping.chooseOneChapter': ['少なくとも 1 つの話を選んでください。'],
@@ -422,7 +433,7 @@ export const japaneseRows: Readonly<Record<MessageId, readonly string[]>> = {
     'ラベルの付いた位置に、結合できるページがありませんでした。ほかの見開きは結合されています。',
     'このままでは、本が元のファイル自身を置き換えてしまうため、別の名前を付けました。',
     'ページのファイルが、画像の途中で終わっています。多くの場合、ダウンロードが途中で止まったことが原因です。本には読み取れた部分が入り、そのページの残りは空白になります。ページ全体を取得するには、その話をもう一度ダウンロードしてください。',
-    'フォルダー内に同じ話が複数あると、コピーを見分けられないため、どのコピーも本に入りません。1 つを残してほかのコピーをフォルダーから取り除き、もう一度変換してください。',
+    'フォルダー内に同じ話が複数あると、コピーを見分けられないため、どのコピーも本に入りません。そのフォルダーだけを追加して「版を選択」で使うコピーを選ぶか、1 つを残してほかのコピーをフォルダーから取り除き、もう一度変換してください。',
     '巻の最初の話と最後の話の間に、抜けている話の番号があります。フォルダーにない場合、本はそれらの話なしで作られます。',
     '入力の中に、ページが 1 つもない話があるため、本には入りません。',
     'フォルダー内のファイルが、フォルダー内のファイルを指さないリンクです（フォルダーの外、フォルダー、または何もないものを指しています）。そのため本にはコピーしていません。ほかの人から受け取ったフォルダーを使って、お使いのパソコンのファイルが本に混ざるのを防ぐためです。そのページを入れたい場合は、ファイルのコピーをフォルダーに置いて、もう一度変換してください。',

@@ -13,6 +13,7 @@ const nothing = Promise.resolve({ ok: true as const, value: undefined });
  */
 export function inertBridge(overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridge {
   return {
+    previewChapters: () => Promise.resolve({ ok: true, value: [] }),
     listCovers: () => Promise.resolve({ ok: true, value: [] }),
     chooseCover: () => Promise.resolve({ ok: true, value: null }),
     chooseCoversFolder: () => Promise.resolve({ ok: true, value: null }),

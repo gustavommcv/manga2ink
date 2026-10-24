@@ -14,6 +14,7 @@ export interface QueueMessageValues {
   readonly 'queue.chip.notRecognized': NoValues;
   readonly 'queue.chip.needsVolumes': NoValues;
   readonly 'queue.chip.needsGrouping': NoValues;
+  readonly 'queue.chip.reviewVersions': NoValues;
   readonly 'queue.chip.saved': NoValues;
   readonly 'queue.chip.volumes': { readonly count: number };
   readonly 'queue.chip.titles': { readonly count: number };
@@ -36,6 +37,8 @@ export interface QueueMessageValues {
   readonly 'queue.note.noChapters': NoValues;
   readonly 'queue.note.onlyLinks': { readonly names: readonly string[] };
   readonly 'queue.note.noVolumesYet': NoValues;
+  /** Chapters that more than one file claims, and a choice of which to use is waiting. */
+  readonly 'queue.note.versionsPending': { readonly count: number };
   readonly 'queue.note.unassigned': { readonly count: number };
   readonly 'queue.note.chaptersLeftOut': { readonly count: number };
   readonly 'queue.note.libraryEmpty': NoValues;

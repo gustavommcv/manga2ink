@@ -1,0 +1,189 @@
+{
+  "protocol_version": 1,
+  "tool": "mangabind",
+  "tool_version": "dev",
+  "kind": "report",
+  "mode": "plan",
+  "status": "completed_with_warnings",
+  "input_path": "/fixtures/Folders Series",
+  "output_path": "/fixtures/out-chapter-versions-conflict",
+  "batch": false,
+  "manga": [
+    {
+      "name": "Folders Series",
+      "input_path": "/fixtures/Folders Series",
+      "metadata_file": "/fixtures/chapter-versions-conflict-mapping.json",
+      "status": "completed_with_warnings",
+      "units": [
+        {
+          "name": "Ch.0001 (en)",
+          "path": "/fixtures/Folders Series/Ch.0001 (en).cbz",
+          "kind": "cbz",
+          "page_count": 1,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 1,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "applied",
+            "metadata_volume": 1
+          },
+          "effective_volume": 1,
+          "disposition": "included"
+        },
+        {
+          "name": "Ch.0002 (en)",
+          "path": "/fixtures/Folders Series/Ch.0002 (en).cbz",
+          "kind": "cbz",
+          "page_count": 2,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 2,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "applied",
+            "metadata_volume": 1
+          },
+          "effective_volume": 1,
+          "disposition": "included"
+        },
+        {
+          "name": "Ch.0003 - Koala (en) [GroupA]",
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+          "kind": "cbz",
+          "page_count": 2,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 3,
+            "title": "Koala",
+            "group": "GroupA",
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "applied",
+            "metadata_volume": 1
+          },
+          "effective_volume": 1,
+          "disposition": "conflict"
+        },
+        {
+          "name": "Ch.0003 - Koala (en) [GroupB]",
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz",
+          "kind": "cbz",
+          "page_count": 3,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 3,
+            "title": "Koala",
+            "group": "GroupB",
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "applied",
+            "metadata_volume": 1
+          },
+          "effective_volume": 1,
+          "disposition": "conflict"
+        },
+        {
+          "name": "Ch.0004 (en)",
+          "path": "/fixtures/Folders Series/Ch.0004 (en).cbz",
+          "kind": "cbz",
+          "page_count": 1,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 4,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "applied",
+            "metadata_volume": 1
+          },
+          "effective_volume": 1,
+          "disposition": "included"
+        }
+      ],
+      "chapter_versions": [
+        {
+          "chapter": 3,
+          "volume": 1,
+          "units": [
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz"
+          ],
+          "resolution": "unresolved"
+        }
+      ],
+      "volumes": [
+        {
+          "number": 1,
+          "output_path": "/fixtures/out-chapter-versions-conflict/Folders Series - Vol.01.cbz",
+          "page_count": 4,
+          "chapters": ["Ch.0001 (en)", "Ch.0002 (en)", "Ch.0004 (en)"],
+          "chapter_entries": [
+            {
+              "label": "c001",
+              "path": "/fixtures/Folders Series/Ch.0001 (en).cbz",
+              "page_count": 1
+            },
+            {
+              "label": "c002",
+              "path": "/fixtures/Folders Series/Ch.0002 (en).cbz",
+              "page_count": 2
+            },
+            {
+              "label": "c003",
+              "path": "/fixtures/Folders Series/Ch.0004 (en).cbz",
+              "page_count": 1
+            }
+          ],
+          "written": false
+        }
+      ],
+      "issues": [
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "chapter_conflict",
+          "stage": "group",
+          "manga": "Folders Series",
+          "volume": 1,
+          "chapter": 3,
+          "related_paths": [
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz"
+          ],
+          "recoverable": true,
+          "message": "Volume 1 chapter 3 has 2 conflicting sources; all were skipped."
+        }
+      ],
+      "summary": {
+        "units": 5,
+        "volumes": 1,
+        "pages": 4,
+        "warnings": 1,
+        "errors": 0
+      }
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "manga": 1,
+    "volumes": 1,
+    "pages": 4,
+    "errors": 0,
+    "warnings": 1
+  }
+}

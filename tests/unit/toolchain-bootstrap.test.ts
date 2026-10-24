@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { FsChapterPreviews } from '@/adapters/input/chapter-previews';
 import { QueueRuns } from '@/main/queue-runs';
 import { bootstrapToolchain } from '@/main/toolchain-bootstrap';
 import type {
@@ -173,6 +174,7 @@ describe('a toolchain that verified', () => {
       madeOf('book-files')[0]?.instance,
       expect.any(Function),
       coverStore,
+      expect.any(FsChapterPreviews),
     ]);
   });
 

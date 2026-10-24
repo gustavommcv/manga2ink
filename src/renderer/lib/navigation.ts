@@ -1,3 +1,4 @@
+import { versionGroups } from '@/domain/chapter-versions';
 import type { QueueRow } from '@/domain/input-queue';
 
 /** What one of the screens about an item of the queue is about. */
@@ -8,7 +9,7 @@ export type EditingTarget =
 /** A screen and its target travel together; non-editing screens keep no stale selection. */
 export type WorkflowNavigation =
   | { readonly screen: 'queue' | 'options' | 'running' | 'results' }
-  | { readonly screen: 'library'; readonly rowId: string }
+  | { readonly screen: 'library' | 'versions'; readonly rowId: string }
   | { readonly screen: 'mapping' | 'details' | 'item-options'; readonly target: EditingTarget };
 
 const queue: WorkflowNavigation = { screen: 'queue' };
@@ -26,6 +27,13 @@ export function resolveNavigation(
   if (navigation.screen === 'library') {
     const row = rows.find((candidate) => candidate.id === navigation.rowId);
     return row?.state === 'inspected' && row.titles !== undefined ? navigation : queue;
+  }
+  if (navigation.screen === 'versions') {
+    const row = navigation.rowId;
+    const found = rows.find((candidate) => candidate.id === row);
+    return found?.state === 'inspected' && versionGroups(found.mapping).length > 0
+      ? navigation
+      : queue;
   }
   if (
     navigation.screen === 'mapping' ||

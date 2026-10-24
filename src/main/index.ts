@@ -36,6 +36,7 @@ import { installLog, logFolder } from './log';
 import { registerArtifactHandlers } from './ipc/artifacts';
 import { registerConversionHandlers } from './ipc/conversion';
 import { registerCoverHandlers } from './ipc/covers';
+import { registerPreviewHandlers } from './ipc/previews';
 import { registerInputHandlers } from './ipc/inputs';
 import { registerMetadataHandlers } from './ipc/metadata';
 import { registerOpdsHandlers } from './ipc/opds';
@@ -195,6 +196,7 @@ void app.whenReady().then(async () => {
     electronQueueSystem(),
   );
   registerCoverHandlers(context);
+  registerPreviewHandlers(context);
   registerMetadataHandlers(context);
   registerArtifactHandlers(context);
   registerPendingHandlers(context);
