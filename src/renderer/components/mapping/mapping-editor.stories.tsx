@@ -145,6 +145,16 @@ export const WholeSeriesWithoutVolumes: Story = {
   },
 };
 
+/** A title of a library whose titles are one book each says so over its editor. */
+export const TitleOfALibraryMadeOneBook: Story = {
+  args: { ...PreGrouped.args, books: 'series', inLibrary: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status', { name: 'One book for each title' })).toBeVisible();
+    await expect(canvas.queryByRole('group', { name: 'Books' })).toBeNull();
+  },
+};
+
 /** A folder left as it is has no volumes to make: the grouping below the choice is gone. */
 export const LeftAsItIs: Story = {
   args: { ...PreGrouped.args, books: 'as-is', onBooks: () => undefined },
