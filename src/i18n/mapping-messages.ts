@@ -147,9 +147,9 @@ export interface MappingMessages {
       readonly applying: string;
       readonly use: string;
       /** The source has the series, but puts none of its chapters in a volume. */
-      readonly noVolumes: (name: string) => string;
+      readonly noVolumes: { readonly title: string; readonly text: (name: string) => string };
       /** The source has volumes, but none holds a chapter of the folder. */
-      readonly noMatch: (name: string) => string;
+      readonly noMatch: { readonly title: string; readonly text: (name: string) => string };
     };
   };
   readonly providers: {
@@ -328,10 +328,16 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         matches: 'Matches',
         applying: 'Applying…',
         use: 'Use these volumes',
-        noVolumes: (name) =>
-          `${name} has this series, but no volumes for it: its chapters are not grouped into volumes there. The series can still be one book: choose “One book for the whole series” under Books, or group the chapters yourself.`,
-        noMatch: (name) =>
-          `${name} has volumes for this series, but none of them holds a chapter of this folder, so nothing was grouped. Check that the chapter numbers match, or group the chapters yourself.`,
+        noVolumes: {
+          title: 'No volumes there',
+          text: (name) =>
+            `${name} has this series, but no volumes for it: its chapters are not grouped into volumes there. The series can still be one book: choose “One book for the whole series” under Books, or group the chapters yourself.`,
+        },
+        noMatch: {
+          title: 'Nothing to group',
+          text: (name) =>
+            `${name} has volumes for this series, but none of them holds a chapter of this folder, so nothing was grouped. Check that the chapter numbers match, or group the chapters yourself.`,
+        },
       },
     },
     providers: {
@@ -515,10 +521,16 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         matches: 'Resultados',
         applying: 'Aplicando…',
         use: 'Usar estes volumes',
-        noVolumes: (name) =>
-          `${name} tem esta série, mas sem volumes: lá os capítulos não estão agrupados em volumes. A série ainda pode ser um livro só: escolha “Um livro para a série inteira” em Livros, ou agrupe os capítulos você mesmo.`,
-        noMatch: (name) =>
-          `${name} tem volumes para esta série, mas nenhum deles tem um capítulo desta pasta, então nada foi agrupado. Confira se a numeração dos capítulos confere, ou agrupe os capítulos você mesmo.`,
+        noVolumes: {
+          title: 'Sem volumes lá',
+          text: (name) =>
+            `${name} tem esta série, mas sem volumes: lá os capítulos não estão agrupados em volumes. A série ainda pode ser um livro só: escolha “Um livro para a série inteira” em Livros, ou agrupe os capítulos você mesmo.`,
+        },
+        noMatch: {
+          title: 'Nada para agrupar',
+          text: (name) =>
+            `${name} tem volumes para esta série, mas nenhum deles tem um capítulo desta pasta, então nada foi agrupado. Confira se a numeração dos capítulos confere, ou agrupe os capítulos você mesmo.`,
+        },
       },
     },
     providers: {
@@ -699,10 +711,16 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         matches: '一致',
         applying: '適用中…',
         use: 'この巻を使う',
-        noVolumes: (name) =>
-          `${name} にはこのシリーズがありますが、巻の情報がありません。あちらでは各話が巻にまとめられていません。シリーズは 1 冊にすることもできます。「本」で「シリーズ全体で 1 冊」を選ぶか、各話を自分でまとめてください。`,
-        noMatch: (name) =>
-          `${name} にはこのシリーズの巻がありますが、このフォルダーの各話を含む巻がないため、何もまとめられませんでした。各話の番号が合っているか確認するか、各話を自分でまとめてください。`,
+        noVolumes: {
+          title: '巻がありません',
+          text: (name) =>
+            `${name} にはこのシリーズがありますが、巻の情報がありません。あちらでは各話が巻にまとめられていません。シリーズは 1 冊にすることもできます。「本」で「シリーズ全体で 1 冊」を選ぶか、各話を自分でまとめてください。`,
+        },
+        noMatch: {
+          title: 'まとめるものがありません',
+          text: (name) =>
+            `${name} にはこのシリーズの巻がありますが、このフォルダーの各話を含む巻がないため、何もまとめられませんでした。各話の番号が合っているか確認するか、各話を自分でまとめてください。`,
+        },
       },
     },
     providers: {

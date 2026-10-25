@@ -388,7 +388,7 @@ describe('where the chapters come from, in Portuguese', () => {
 
     await user.click(screen.getByRole('button', { name: 'Buscar' }));
     await user.click(await screen.findByRole('button', { name: 'Usar estes volumes' }));
-    expect(await screen.findByRole('status', { name: '' })).toHaveTextContent(
+    expect(await screen.findByRole('status', { name: 'Sem volumes lá' })).toHaveTextContent(
       'MangaDex tem esta série, mas sem volumes: lá os capítulos não estão agrupados em volumes. A série ainda pode ser um livro só: escolha “Um livro para a série inteira” em Livros, ou agrupe os capítulos você mesmo.',
     );
 

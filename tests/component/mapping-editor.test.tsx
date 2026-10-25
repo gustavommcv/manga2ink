@@ -683,7 +683,7 @@ describe('mapping editor', () => {
       await user.click(screen.getByRole('button', { name: 'Search' }));
       await user.click(await screen.findByRole('button', { name: 'Use these volumes' }));
 
-      const note = await screen.findByRole('status', { name: '' });
+      const note = await screen.findByRole('status', { name: 'No volumes there' });
       expect(note).toHaveTextContent('MangaDex has this series, but no volumes for it');
       expect(note).toHaveTextContent('choose “One book for the whole series” under Books');
       expect(screen.queryByText('Suggested by MangaDex')).not.toBeInTheDocument();

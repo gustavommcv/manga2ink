@@ -112,8 +112,8 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'mapping.chaptersFrom.online.search': [['MangaDex']],
   'mapping.chaptersFrom.online.privacy': [['MangaDex']],
   'mapping.chaptersFrom.online.language': [['ja']],
-  'mapping.chaptersFrom.online.noVolumes': [['MangaDex']],
-  'mapping.chaptersFrom.online.noMatch': [['MangaDex']],
+  'mapping.chaptersFrom.online.noVolumes.text': [['MangaDex']],
+  'mapping.chaptersFrom.online.noMatch.text': [['MangaDex']],
   'mapping.noMatches.text': [
     ['Work', 'search'],
     ['Work', 'title'],
