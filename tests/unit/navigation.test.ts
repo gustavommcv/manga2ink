@@ -144,15 +144,27 @@ describe('resolveNavigation', () => {
     };
 
     it('stays for a folder that has chapters with versions', () => {
-      const navigation: WorkflowNavigation = { screen: 'versions', rowId: 'versions' };
+      const navigation: WorkflowNavigation = {
+        screen: 'versions',
+        rowId: 'versions',
+        from: 'queue',
+      };
 
       expect(resolveNavigation(navigation, [withVersions])).toBe(navigation);
     });
 
     it('is the queue when the folder was removed, has none, or is not read', () => {
-      expect(resolveNavigation({ screen: 'versions', rowId: 'versions' }, [])).toEqual(queue);
-      expect(resolveNavigation({ screen: 'versions', rowId: 'folder' }, rows)).toEqual(queue);
-      expect(resolveNavigation({ screen: 'versions', rowId: 'reading' }, rows)).toEqual(queue);
+      for (const from of ['queue', 'mapping'] as const) {
+        expect(resolveNavigation({ screen: 'versions', rowId: 'versions', from }, [])).toEqual(
+          queue,
+        );
+        expect(resolveNavigation({ screen: 'versions', rowId: 'folder', from }, rows)).toEqual(
+          queue,
+        );
+        expect(resolveNavigation({ screen: 'versions', rowId: 'reading', from }, rows)).toEqual(
+          queue,
+        );
+      }
     });
   });
 });

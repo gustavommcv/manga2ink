@@ -43,8 +43,6 @@ export interface QueueMessages {
     readonly makeOneBook: string;
     readonly makeOneBookFor: (name: string) => string;
     /** Opens the choice among the files that claim one chapter (ADR 0093). */
-    readonly reviewVersionsFor: (name: string) => string;
-    readonly reviewVersions: string;
     readonly editDetailsOf: (name: string) => string;
     readonly editDetails: (set: boolean) => string;
     readonly editOptionsOf: (name: string) => string;
@@ -130,8 +128,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editBooks: 'Edit books and volumes',
       makeOneBook: 'Make one book',
       makeOneBookFor: (name) => `Make one book of ${name}`,
-      reviewVersionsFor: (name) => `Choose between the versions of chapters in ${name}`,
-      reviewVersions: 'Choose versions',
       editDetailsOf: (name) => `Edit details of ${name}`,
       editDetails: (set) =>
         set ? 'Edit title, author and language (set)' : 'Edit title, author and language',
@@ -219,8 +215,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editBooks: 'Editar livros e volumes',
       makeOneBook: 'Fazer um livro só',
       makeOneBookFor: (name) => `Fazer um livro só de ${name}`,
-      reviewVersionsFor: (name) => `Escolher entre as versões de capítulos em ${name}`,
-      reviewVersions: 'Escolher versões',
       editDetailsOf: (name) => `Editar os detalhes de ${name}`,
       editDetails: (set) =>
         set ? 'Editar título, autor e idioma (definidos)' : 'Editar título, autor e idioma',
@@ -308,8 +302,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editBooks: '本と巻を編集',
       makeOneBook: '1 冊にする',
       makeOneBookFor: (name) => `「${name}」を 1 冊にする`,
-      reviewVersionsFor: (name) => `「${name}」の複数版の話から選ぶ`,
-      reviewVersions: '版を選択',
       editDetailsOf: (name) => `「${name}」の詳細を編集`,
       editDetails: (set) =>
         set ? 'タイトル、著者、言語を編集（設定済み）' : 'タイトル、著者、言語を編集',

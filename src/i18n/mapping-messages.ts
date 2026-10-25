@@ -24,6 +24,13 @@ export interface MappingMessages {
       readonly reset: string;
     };
     readonly leftOut: string;
+    /** Where the choice among the files of a chapter can be seen again, for a folder that has some (ADR 0093). */
+    readonly versions: {
+      readonly text: (count: number) => string;
+      readonly open: string;
+      /** Why the choice cannot be opened now: what was changed here would be lost. */
+      readonly edited: string;
+    };
     /** How the books of the series are made (ADR 0094): the choice that opens the editor of a folder. */
     readonly books: {
       readonly legend: string;
@@ -176,6 +183,12 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'Reset all mapping edits',
       },
       leftOut: 'Folders left out',
+      versions: {
+        text: (count) =>
+          `${String(count)} ${countOf(count, 'chapter of this folder comes', 'chapters of this folder come')} in more than one version, and you chose which to use.`,
+        open: 'Review the versions',
+        edited: 'Undo or confirm your changes to the volumes first: they would be lost.',
+      },
       books: {
         legend: 'Books',
         perVolume: {
@@ -348,6 +361,12 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'Desfazer todas as edições do mapeamento',
       },
       leftOut: 'Pastas deixadas de fora',
+      versions: {
+        text: (count) =>
+          `${String(count)} ${countOf(count, 'capítulo desta pasta vem', 'capítulos desta pasta vêm')} em mais de uma versão, e você escolheu qual usar.`,
+        open: 'Rever as versões',
+        edited: 'Desfaça ou confirme antes as suas mudanças nos volumes: elas se perderiam.',
+      },
       books: {
         legend: 'Livros',
         perVolume: {
@@ -528,6 +547,12 @@ export const mappingMessages: Readonly<Record<Language, MappingMessages>> = {
         reset: 'すべての割り当ての編集をリセット',
       },
       leftOut: '対象外のフォルダー',
+      versions: {
+        text: (count) =>
+          `このフォルダーの ${String(count)} 話に複数の版があり、使う版を選んであります。`,
+        open: '版を見直す',
+        edited: '先に、巻への変更を元に戻すか確定してください。そのままでは失われます。',
+      },
       books: {
         legend: '本',
         perVolume: {

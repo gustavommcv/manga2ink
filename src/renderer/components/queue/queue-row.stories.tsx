@@ -30,7 +30,6 @@ const meta = {
     onEditDetails: () => undefined,
     onEditOptions: () => undefined,
     onMakeOneBook: () => undefined,
-    onReviewVersions: () => undefined,
     onRemove: () => undefined,
   },
 } satisfies Meta<typeof QueueRowItem>;
@@ -108,6 +107,16 @@ export const NeedsVersions: Story = {
       }),
       confirmed: false,
     },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Choose versions')).toBeVisible();
+    // The choice is made where the folder is grouped: the row has no button of its own for it, and
+    // the one that groups is the one that asks.
+    await expect(canvas.queryByRole('button', { name: /versions of chapters/u })).toBeNull();
+    await expect(canvas.queryByRole('button', { name: /Make one book/u })).toBeNull();
+    await expect(
+      canvas.getByRole('button', { name: 'Edit books and volumes for Ubunchu!' }),
+    ).toBeVisible();
   },
 };
 

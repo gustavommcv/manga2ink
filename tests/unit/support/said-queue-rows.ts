@@ -97,13 +97,13 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.note.versionsPending': [
     [
       { count: 1 },
-      '1 chapter comes in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
-      '1 capítulo vem em mais de uma versão. Abra Escolher versões para escolher qual usar; os seus arquivos continuam onde estão.',
+      '1 chapter comes in more than one version. Open Edit books and volumes to choose which to use before grouping; your files stay where they are.',
+      '1 capítulo vem em mais de uma versão. Abra Editar livros e volumes para escolher qual usar antes de agrupar; os seus arquivos continuam onde estão.',
     ],
     [
       { count: 3 },
-      '3 chapters come in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
-      '3 capítulos vêm em mais de uma versão. Abra Escolher versões para escolher qual usar; os seus arquivos continuam onde estão.',
+      '3 chapters come in more than one version. Open Edit books and volumes to choose which to use before grouping; your files stay where they are.',
+      '3 capítulos vêm em mais de uma versão. Abra Editar livros e volumes para escolher qual usar antes de agrupar; os seus arquivos continuam onde estão.',
     ],
   ],
   'queue.note.unassigned': [

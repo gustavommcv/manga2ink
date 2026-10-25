@@ -77,8 +77,6 @@ export interface QueueScreenProps {
   readonly onRemove: (id: string) => void;
   /** Puts the steps, device, format and every mangaprep option back to their defaults. */
   readonly onReset: () => void;
-  /** Opens the choice among the files that claim one chapter. */
-  readonly onReviewVersions: (id: string) => void;
   readonly onValidate: () => void;
   readonly plans?: readonly RowPlan[];
   readonly profiles: readonly DeviceProfileSummary[];
@@ -121,7 +119,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onOpenOptions,
     onRemove,
     onReset,
-    onReviewVersions,
     onValidate,
     plans,
     profiles,
@@ -309,9 +306,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                   }}
                   onRemove={() => {
                     onRemove(row.id);
-                  }}
-                  onReviewVersions={() => {
-                    onReviewVersions(row.id);
                   }}
                   row={row}
                 />

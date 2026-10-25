@@ -145,6 +145,23 @@ export const WholeSeriesWithoutVolumes: Story = {
   },
 };
 
+/** A folder that had chapters in more than one version says so, and offers to review the choice. */
+export const WithDecidedVersions: Story = {
+  args: {
+    ...PreGrouped.args,
+    books: 'volumes',
+    onBooks: () => undefined,
+    versions: { count: 2, onOpen: () => undefined },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByText(/2 chapters of this folder come in more than one version/u),
+    ).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Review the versions' })).toBeEnabled();
+  },
+};
+
 /** A title of a library whose titles are one book each says so over its editor. */
 export const TitleOfALibraryMadeOneBook: Story = {
   args: { ...PreGrouped.args, books: 'series', inLibrary: true },

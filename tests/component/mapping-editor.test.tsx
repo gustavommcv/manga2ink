@@ -927,6 +927,46 @@ describe('mapping editor', () => {
     });
   });
 
+  describe('the versions of the chapters that more than one file claims', () => {
+    const draft = createMappingDraft({ mangaTitle: 'Offline Work', chapters });
+
+    it('are not mentioned for a folder that has none', () => {
+      render(<MappingEditor initialDraft={draft} />);
+
+      expect(screen.queryByRole('button', { name: 'Review the versions' })).not.toBeInTheDocument();
+    });
+
+    it('say there were some, and offer to review the choice', async () => {
+      const user = userEvent.setup();
+      const onOpen = vi.fn();
+      render(<MappingEditor initialDraft={draft} versions={{ count: 2, onOpen }} />);
+
+      expect(
+        screen.getByText(
+          '2 chapters of this folder come in more than one version, and you chose which to use.',
+        ),
+      ).toBeVisible();
+      await user.click(screen.getByRole('button', { name: 'Review the versions' }));
+
+      expect(onOpen).toHaveBeenCalledOnce();
+    });
+
+    it('cannot be reviewed once the volumes were changed here, since the trip would lose the changes', async () => {
+      const user = userEvent.setup();
+      const onOpen = vi.fn();
+      render(<MappingEditor initialDraft={draft} versions={{ count: 1, onOpen }} />);
+
+      expect(screen.getByRole('button', { name: 'Review the versions' })).toBeEnabled();
+      await user.click(screen.getByRole('button', { name: 'Create first volume' }));
+
+      const button = screen.getByRole('button', { name: 'Review the versions' });
+      expect(button).toBeDisabled();
+      expect(button).toHaveAccessibleDescription(
+        'Undo or confirm your changes to the volumes first: they would be lost.',
+      );
+    });
+  });
+
   describe('the books of the series', () => {
     const noVolumes = createMappingDraft({ mangaTitle: 'Offline Work', chapters });
 

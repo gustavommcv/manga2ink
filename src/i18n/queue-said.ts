@@ -59,7 +59,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.note.stepsNotForAsIs': () =>
       'The steps of the queue do not apply here: this folder is only converted, as it is.',
     'queue.note.versionsPending': ({ count }) =>
-      `${String(count)} ${countOf(count, 'chapter comes', 'chapters come')} in more than one version. Open ${english.row.reviewVersions} to choose which to use; your files stay where they are.`,
+      `${String(count)} ${countOf(count, 'chapter comes', 'chapters come')} in more than one version. Open ${english.row.editBooks} to choose which to use before grouping; your files stay where they are.`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} ${countOf(count, 'chapter', 'chapters')} still ${countOf(count, 'has', 'have')} no volume. Open ${english.row.editBooks} to place ${countOf(count, 'it', 'them')}, or accept the gaps there.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
@@ -130,7 +130,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.note.stepsNotForAsIs': () =>
       'As etapas da fila não valem aqui: esta pasta só é convertida, como está.',
     'queue.note.versionsPending': ({ count }) =>
-      `${String(count)} ${countOf(count, 'capítulo vem', 'capítulos vêm')} em mais de uma versão. Abra ${portuguese.row.reviewVersions} para escolher qual usar; os seus arquivos continuam onde estão.`,
+      `${String(count)} ${countOf(count, 'capítulo vem', 'capítulos vêm')} em mais de uma versão. Abra ${portuguese.row.editBooks} para escolher qual usar antes de agrupar; os seus arquivos continuam onde estão.`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} ${countOf(count, 'capítulo ainda não tem', 'capítulos ainda não têm')} volume. Abra ${portuguese.row.editBooks} para colocá-${countOf(count, 'lo', 'los')}, ou aceite as lacunas lá.`,
     'queue.note.chaptersLeftOut': ({ count }) =>
@@ -197,7 +197,7 @@ export const queueSaid: Readonly<Record<Language, SaidFor<QueueMessageValues>>> 
     'queue.note.stepsNotForAsIs': () =>
       'キューの手順はここでは適用されません。このフォルダーは、そのまま変換されるだけです。',
     'queue.note.versionsPending': ({ count }) =>
-      `${String(count)} 話に複数の版があります。「${japanese.row.reviewVersions}」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。`,
+      `${String(count)} 話に複数の版があります。グループ分けの前に、「${japanese.row.editBooks}」を開いて使う版を選んでください。ファイルはそのままの場所に残ります。`,
     'queue.note.unassigned': ({ count }) =>
       `${String(count)} 話が、まだどの巻にも入っていません。「${japanese.row.editBooks}」を開いて割り当てるか、抜けがあるまま進めることもできます。`,
     'queue.note.chaptersLeftOut': ({ count }) => `${String(count)} 話が対象外です。`,
