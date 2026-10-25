@@ -149,6 +149,28 @@ export const OnlineSearchNoMatches: Story = {
   },
 };
 
+/** A source that has the series with no volumes for it says so, as a notice, and applies nothing. */
+export const OnlineSeriesWithoutVolumes: Story = {
+  args: {
+    online: {
+      ...onlineArgs.online,
+      selectedId: 'mangadex',
+      onSuggest: () => Promise.resolve({ volumes: [] }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('tab', { name: 'Online source' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Search' }));
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Use these volumes' }))[0]!,
+    );
+    await expect(await canvas.findByRole('status', { name: 'No volumes there' })).toHaveTextContent(
+      'MangaDex has this series, but no volumes for it',
+    );
+  },
+};
+
 /** The search itself failed, such as the service being unreachable. */
 export const OnlineSearchFailed: Story = {
   args: {

@@ -171,7 +171,7 @@ function OnlinePanel({
   const [query, setQuery] = useState(mangaTitle);
   const [applyingId, setApplyingId] = useState<string>();
   // What a source answered that could not be used: it is not a failure, and it is told, not left unsaid.
-  const [unusable, setUnusable] = useState<string>();
+  const [unusable, setUnusable] = useState<{ readonly title: string; readonly text: string }>();
   // A search only ever starts from the Search button (or Enter). Nothing is sent on open, on
   // choosing a source or while typing, so the title never leaves the machine without a request.
   const {
@@ -200,9 +200,15 @@ function OnlinePanel({
     onSuggest(provider.id, result.id, language)
       .then((suggestion) => {
         if (suggestion.volumes.length === 0) {
-          setUnusable(words.noVolumes(provider.displayName));
+          setUnusable({
+            title: words.noVolumes.title,
+            text: words.noVolumes.text(provider.displayName),
+          });
         } else if (onApply(result, suggestion.volumes) === false) {
-          setUnusable(words.noMatch(provider.displayName));
+          setUnusable({
+            title: words.noMatch.title,
+            text: words.noMatch.text(provider.displayName),
+          });
         }
       })
       .catch((error: unknown) => {
@@ -282,7 +288,7 @@ function OnlinePanel({
               {panelError}
             </p>
           )}
-          {unusable !== undefined && <Note role="status">{unusable}</Note>}
+          {unusable !== undefined && <InfoBanner message={unusable.text} title={unusable.title} />}
           {!searching && searched && panelError === undefined && results.length === 0 && (
             <NoMatchesNotice fix="search" query={lastTitle ?? query} />
           )}
