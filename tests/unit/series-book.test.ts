@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { buildMangabindArguments } from '@/adapters/mangabind/arguments';
 import { MangabindCliAdapter } from '@/adapters/mangabind/cli';
 import { chooseVersions, type VersionGroup } from '@/domain/chapter-versions';
-import { createMappingDraft, toMangabindMetadata } from '@/domain/mapping';
-import { serializeSeriesMetadata, toSeriesMetadata, withSeriesVolume } from '@/domain/series-book';
+import { createMappingDraft } from '@/domain/mapping';
+import { withSeriesVolume } from '@/domain/series-book';
 import type { ProcessRunner } from '@/application/ports/process-runner';
 
 import { chapters as folderChapters } from './support/series-fixtures';
@@ -82,47 +82,20 @@ describe('a series made into one book, with no volumes of its own', () => {
   });
 });
 
-describe('what the tool is told of a series made into one book', () => {
-  const twice = createMappingDraft({
-    mangaTitle: 'Ubunchu!',
-    chapters: [
-      { id: 'one', name: 'one', path: '/m/1.cbz', pageCount: 12, chapter: 1 },
-      { id: 'six-a', name: 'six-a', path: '/m/6a.cbz', pageCount: 12, chapter: 6 },
-      { id: 'six-b', name: 'six-b', path: '/m/6b.cbz', pageCount: 11, chapter: 6 },
-    ],
-  });
+describe('a series made into one book with no volumes, asked of the tool', () => {
+  const base = { inputPath: '/in', outputPath: '/out', dryRun: false } as const;
 
-  it('lists a chapter number once when two files claim it and the tool cannot tell them apart', () => {
-    // As a mapping a person made this is an error to fix; there is no one to ask for the volume made for the run.
-    const file = toSeriesMetadata(twice);
-
-    expect(file.volumes).toEqual([{ number: '1', chapters: ['1', '6'] }]);
-    expect(file).toMatchObject({ schema_version: 1, manga: { title: 'Ubunchu!' } });
-  });
-
-  it('is the mapping of the person where the series has volumes', () => {
-    const volumes = [{ id: 'v1', number: '1', chapterIds: ['one', 'six-a'] }];
-    const own = createMappingDraft({
-      mangaTitle: 'Ubunchu!',
-      chapters: folderChapters,
-      volumes,
-    });
-
-    expect(toSeriesMetadata(own)).toEqual(toMangabindMetadata(own));
-  });
-
-  it('is the file with no volume when nothing can be placed, and is written as any mapping file is', () => {
-    const bare = createMappingDraft({ mangaTitle: 'None', chapters: [] });
-
-    expect(toSeriesMetadata(bare).volumes).toEqual([]);
-    expect(serializeSeriesMetadata(twice, (path) => path.replace('/m/', ''))).toBe(
-      `${JSON.stringify(
-        toSeriesMetadata(twice, (path) => path.replace('/m/', '')),
-        null,
-        2,
-      )}
-`,
-    );
+  it('is asked as a flag, and only when it is', () => {
+    expect(buildMangabindArguments({ ...base, noVolumes: true })).toEqual([
+      '--input',
+      '/in',
+      '--output',
+      '/out',
+      '--no-volumes',
+      '--json',
+    ]);
+    expect(buildMangabindArguments({ ...base, noVolumes: false })).not.toContain('--no-volumes');
+    expect(buildMangabindArguments(base)).not.toContain('--no-volumes');
   });
 });
 

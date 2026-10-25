@@ -35,7 +35,6 @@ import {
   ToolExecutionError,
 } from '@/domain/conversion';
 import { type MappingDraft, mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
-import { serializeSeriesMetadata } from '@/domain/series-book';
 import { message } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
@@ -103,6 +102,17 @@ const mappingNotKept: PipelineIssue = {
   recoverable: true,
   message: "The edited volumes could not be saved in the folder's mangabind.json.",
 };
+
+/**
+ * Whether a run makes one book of the whole series with no volumes: the series is to be one book and
+ * the person made none of their own. A series that has volumes keeps them, and is combined.
+ */
+function bindsWithoutVolumes(
+  mapping: Parameters<BindingPort['bind']>[1],
+  options: BindingRunOptions,
+): boolean {
+  return options.wholeSeries === true && mapping.volumes.length === 0;
+}
 
 export class MangabindBindingAdapter implements BindingPort {
   private readonly workspaces = new Map<string, Workspace>();
@@ -174,13 +184,11 @@ export class MangabindBindingAdapter implements BindingPort {
       throw new Error('The temporary binding workspace is no longer available.');
     }
     const below = pathBelow(workspace.inputPath);
-    // What the run is told, and what is kept with the folder: a series made into one book that has no
-    // volumes is put in one for the run, and the folder is not told of a volume nobody made.
+    // A series made into one book that has no volumes of its own is bound with no volumes (mangabind's
+    // ADR 0030), and not combined, which is how a series that has volumes is made into one.
+    const withoutVolumes = bindsWithoutVolumes(mapping, options);
     const metadata = serializeMangabindMetadata(mapping, below);
-    await this.files.writeText(
-      workspace.metadataPath,
-      options.wholeSeries === true ? serializeSeriesMetadata(mapping, below) : metadata,
-    );
+    await this.files.writeText(workspace.metadataPath, metadata);
     // When the user accepted mangabind's own grouping unchanged, the folder names already say
     // everything: a mangabind.json next to them would record nothing new, and would make a
     // read-only or network folder fail for no reason. Any edit still gets saved.
@@ -208,7 +216,8 @@ export class MangabindBindingAdapter implements BindingPort {
         outputPath: workspace.volumesPath,
         metadataFilePath: workspace.metadataPath,
         dryRun: false,
-        combine,
+        combine: withoutVolumes ? undefined : combine,
+        noVolumes: withoutVolumes,
         chapterLabels: 'number',
       },
       {
@@ -223,7 +232,7 @@ export class MangabindBindingAdapter implements BindingPort {
       },
     );
     assertSuccessful(result);
-    if (combine === true) {
+    if (combine === true && !withoutVolumes) {
       const combinedOutputPath = result.report.manga[0]?.combined_output_path;
       if (combinedOutputPath === undefined) {
         throw new Error('Mangabind did not report a combined output path for a -combine run.');
@@ -256,17 +265,14 @@ export class MangabindBindingAdapter implements BindingPort {
       throw new Error('The temporary binding workspace is no longer available.');
     }
     const below = pathBelow(workspace.inputPath);
-    const metadata =
-      options.wholeSeries === true
-        ? serializeSeriesMetadata(mapping, below)
-        : serializeMangabindMetadata(mapping, below);
-    await this.files.writeText(workspace.metadataPath, metadata);
+    await this.files.writeText(workspace.metadataPath, serializeMangabindMetadata(mapping, below));
     const result = await this.cli.run(
       {
         inputPath: workspace.inputPath,
         outputPath: workspace.volumesPath,
         metadataFilePath: workspace.metadataPath,
         dryRun: true,
+        noVolumes: bindsWithoutVolumes(mapping, options),
         chapterLabels: 'number',
       },
       signal === undefined ? {} : { signal },
