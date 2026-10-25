@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "tools": {
     "mangabind": {
-      "workflow": ["-combine", "-i", "-input", "-o", "-output"],
+      "workflow": ["-chapter-labels", "-combine", "-i", "-input", "-o", "-output"],
       "user": ["-batch", "-dry-run", "-metadata-file", "-n", "-q", "-quiet"],
       "internal": ["-json", "-progress-json", "-protocol-version", "-version"]
     },

@@ -260,8 +260,9 @@ describe('packaged folder whose names carry the volumes', () => {
       names,
       `the names are not in the order they were written: ${names.join(', ')}`,
     );
-    assert.match(names[0]!, /^v001 - Vol\.01\/c\d+/u);
-    assert.match(names.at(-1)!, /^v002 - Vol\.02\/c\d+/u);
+    // The chapters are named by their numbers (mangabind 0.9.0, ADR 0095), `Ch.1 - First`, not by place.
+    assert.match(names[0]!, /^v001 - Vol\.01\/Ch\.\d+/u);
+    assert.match(names.at(-1)!, /^v002 - Vol\.02\/Ch\.\d+/u);
   });
 
   it('binds two volumes into one PDF with the volumes and their chapters as bookmarks', async () => {
