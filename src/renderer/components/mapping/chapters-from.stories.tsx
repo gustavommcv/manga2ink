@@ -91,7 +91,7 @@ const onlineArgs = {
     language: 'en',
     onSearch: search,
     onSuggest: suggest,
-    onApply: () => undefined,
+    onApply: () => true,
   },
 };
 

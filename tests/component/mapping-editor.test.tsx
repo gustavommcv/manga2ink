@@ -669,6 +669,53 @@ describe('mapping editor', () => {
       );
     });
 
+    it('says so when the source has the series but no volumes for it, and records no source', async () => {
+      const user = userEvent.setup();
+      render(
+        ready({
+          onSearchMetadata: () =>
+            Promise.resolve([{ id: 'work-1', title: 'Ubunchu!', provider: 'mangadex' }]),
+          onSuggestVolumes: () => Promise.resolve({ volumes: [] }),
+        }),
+      );
+
+      await chooseSource(user);
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+      await user.click(await screen.findByRole('button', { name: 'Use these volumes' }));
+
+      const note = await screen.findByRole('status', { name: '' });
+      expect(note).toHaveTextContent('MangaDex has this series, but no volumes for it');
+      expect(note).toHaveTextContent('choose “One book for the whole series” under Books');
+      expect(screen.queryByText('Suggested by MangaDex')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Undo last mapping edit' })).toBeDisabled();
+
+      // It is not left on the screen for the next search.
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+      expect(screen.queryByText(/has this series, but no volumes/u)).not.toBeInTheDocument();
+    });
+
+    it('says so when none of the volumes of the source holds a chapter of the folder', async () => {
+      const user = userEvent.setup();
+      render(
+        ready({
+          onSearchMetadata: () =>
+            Promise.resolve([{ id: 'work-1', title: 'A Quiet Journey', provider: 'mangadex' }]),
+          onSuggestVolumes: () =>
+            Promise.resolve({ volumes: [{ number: '1', chapterNumbers: [91, 92] }] }),
+        }),
+      );
+
+      await chooseSource(user);
+      await user.click(screen.getByRole('button', { name: 'Search' }));
+      await user.click(await screen.findByRole('button', { name: 'Use these volumes' }));
+
+      expect(
+        await screen.findByText(/has volumes for this series, but none of them holds a chapter/u),
+      ).toBeVisible();
+      expect(screen.queryByText('Suggested by MangaDex')).not.toBeInTheDocument();
+      expect(screen.queryByRole('region', { name: 'Proposed chapter mapping' })).toBeNull();
+    });
+
     it('looks the volumes up in the language the folders declare', async () => {
       const user = userEvent.setup();
       const onSuggestVolumes = vi.fn(() => Promise.resolve({ volumes: [] }));

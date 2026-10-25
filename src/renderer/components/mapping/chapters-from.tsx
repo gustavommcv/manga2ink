@@ -50,7 +50,11 @@ export interface OnlineSource {
     workId: string,
     language: string | undefined,
   ) => Promise<{ readonly volumes: readonly VolumeSuggestion[] }>;
-  readonly onApply: (result: MetadataSearchResult, volumes: readonly VolumeSuggestion[]) => void;
+  /** Whether the volumes were put to use: a suggestion that holds no chapter of the folder is not. */
+  readonly onApply: (
+    result: MetadataSearchResult,
+    volumes: readonly VolumeSuggestion[],
+  ) => boolean | undefined;
 }
 
 /**
@@ -166,6 +170,8 @@ function OnlinePanel({
   const provider = providers.find((candidate) => candidate.id === selectedId);
   const [query, setQuery] = useState(mangaTitle);
   const [applyingId, setApplyingId] = useState<string>();
+  // What a source answered that could not be used: it is not a failure, and it is told, not left unsaid.
+  const [unusable, setUnusable] = useState<string>();
   // A search only ever starts from the Search button (or Enter). Nothing is sent on open, on
   // choosing a source or while typing, so the title never leaves the machine without a request.
   const {
@@ -182,6 +188,7 @@ function OnlinePanel({
   const search = (): void => {
     const title = query.trim();
     if (provider === undefined || title === '') return;
+    setUnusable(undefined);
     startSearch(provider.id, title);
   };
 
@@ -189,9 +196,14 @@ function OnlinePanel({
     if (provider === undefined) return;
     setApplyingId(result.id);
     setPanelError(undefined);
+    setUnusable(undefined);
     onSuggest(provider.id, result.id, language)
       .then((suggestion) => {
-        onApply(result, suggestion.volumes);
+        if (suggestion.volumes.length === 0) {
+          setUnusable(words.noVolumes(provider.displayName));
+        } else if (onApply(result, suggestion.volumes) === false) {
+          setUnusable(words.noMatch(provider.displayName));
+        }
       })
       .catch((error: unknown) => {
         setPanelError(
@@ -270,6 +282,7 @@ function OnlinePanel({
               {panelError}
             </p>
           )}
+          {unusable !== undefined && <Note role="status">{unusable}</Note>}
           {!searching && searched && panelError === undefined && results.length === 0 && (
             <NoMatchesNotice fix="search" query={lastTitle ?? query} />
           )}
