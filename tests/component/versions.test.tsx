@@ -322,7 +322,6 @@ describe('a folder with a chapter that more than one file claims, in the window'
     expect(
       screen.queryByRole('button', { name: /versions of chapters in Offline Work/u }),
     ).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /Make one book/u })).not.toBeInTheDocument();
 
     // The button that groups opens with the choice, and the grouping cannot be reached before it.
     await user.click(

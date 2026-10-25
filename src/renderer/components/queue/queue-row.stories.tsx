@@ -29,7 +29,6 @@ const meta = {
     onEdit: () => undefined,
     onEditDetails: () => undefined,
     onEditOptions: () => undefined,
-    onMakeOneBook: () => undefined,
     onRemove: () => undefined,
   },
 } satisfies Meta<typeof QueueRowItem>;
@@ -113,7 +112,6 @@ export const NeedsVersions: Story = {
     // The choice is made where the folder is grouped: the row has no button of its own for it, and
     // the one that groups is the one that asks.
     await expect(canvas.queryByRole('button', { name: /versions of chapters/u })).toBeNull();
-    await expect(canvas.queryByRole('button', { name: /Make one book/u })).toBeNull();
     await expect(
       canvas.getByRole('button', { name: 'Edit books and volumes for Ubunchu!' }),
     ).toBeVisible();
@@ -246,8 +244,8 @@ export const ConvertOnlyMode: Story = {
   args: { mode: 'convert-only', row: Grouped.args.row },
 };
 
-/** A folder with no volumes can be made into one book from its own row (ADR 0094). */
-export const OneBookOffered: Story = {
+/** A folder with no volumes waits for them, or for one book of the whole series, where it is grouped (ADR 0094). */
+export const NeedsVolumes: Story = {
   args: {
     row: {
       id: 'o',
@@ -261,7 +259,10 @@ export const OneBookOffered: Story = {
     },
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole('button', { name: 'Make one book of Ubunchu!' })).toBeVisible();
+    await expect(canvas.getByText('Needs volumes')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Edit books and volumes for Ubunchu!' }),
+    ).toBeVisible();
   },
 };
 
@@ -282,6 +283,5 @@ export const WholeSeries: Story = {
   },
   play: async ({ canvas }) => {
     await expect(canvas.getByText('Whole series')).toBeVisible();
-    await expect(canvas.queryByRole('button', { name: /Make one book/u })).toBeNull();
   },
 };

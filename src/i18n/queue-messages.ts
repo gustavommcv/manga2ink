@@ -39,9 +39,6 @@ export interface QueueMessages {
     /** The button of the row of a folder: its books are chosen there, and its volumes made. */
     readonly editBooksFor: (name: string) => string;
     readonly editBooks: string;
-    /** The shortcut of a series that has no volumes: its books are one for the whole series (ADR 0094). */
-    readonly makeOneBook: string;
-    readonly makeOneBookFor: (name: string) => string;
     /** Opens the choice among the files that claim one chapter (ADR 0093). */
     readonly editDetailsOf: (name: string) => string;
     readonly editDetails: (set: boolean) => string;
@@ -126,8 +123,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumes: 'Edit volumes',
       editBooksFor: (name) => `Edit books and volumes for ${name}`,
       editBooks: 'Edit books and volumes',
-      makeOneBook: 'Make one book',
-      makeOneBookFor: (name) => `Make one book of ${name}`,
       editDetailsOf: (name) => `Edit details of ${name}`,
       editDetails: (set) =>
         set ? 'Edit title, author and language (set)' : 'Edit title, author and language',
@@ -213,8 +208,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumes: 'Editar volumes',
       editBooksFor: (name) => `Editar os livros e volumes de ${name}`,
       editBooks: 'Editar livros e volumes',
-      makeOneBook: 'Fazer um livro só',
-      makeOneBookFor: (name) => `Fazer um livro só de ${name}`,
       editDetailsOf: (name) => `Editar os detalhes de ${name}`,
       editDetails: (set) =>
         set ? 'Editar título, autor e idioma (definidos)' : 'Editar título, autor e idioma',
@@ -300,8 +293,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumes: '巻を編集',
       editBooksFor: (name) => `「${name}」の本と巻を編集`,
       editBooks: '本と巻を編集',
-      makeOneBook: '1 冊にする',
-      makeOneBookFor: (name) => `「${name}」を 1 冊にする`,
       editDetailsOf: (name) => `「${name}」の詳細を編集`,
       editDetails: (set) =>
         set ? 'タイトル、著者、言語を編集（設定済み）' : 'タイトル、著者、言語を編集',

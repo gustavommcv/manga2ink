@@ -35,6 +35,13 @@ const withNoVolumes = (overrides: Partial<Manga2InkBridge> = {}): Manga2InkBridg
     ...overrides,
   });
 
+/** Makes one book of the whole series where the folder is grouped: its editor, under Books. */
+async function makeOneBook(user: ReturnType<typeof userEvent.setup>, name: string): Promise<void> {
+  await user.click(screen.getByRole('button', { name: `Edit books and volumes for ${name}` }));
+  await user.click(await screen.findByRole('radio', { name: /One book for the whole series/u }));
+  await user.click(screen.getByRole('button', { name: 'Done' }));
+}
+
 describe('a series with no volumes, in the window', () => {
   it('needs volumes for books of volumes, and not for one book of the whole series', async () => {
     const user = userEvent.setup();
@@ -47,10 +54,9 @@ describe('a series with no volumes, in the window', () => {
     expect(screen.getByText('Folder · 2 chapters')).toBeVisible();
     expect(screen.getByRole('button', { name: /^Process/u })).toBeDisabled();
 
-    await user.click(screen.getByRole('button', { name: 'Make one book of Offline Work' }));
+    await makeOneBook(user, 'Offline Work');
 
     expect(await screen.findByText('Whole series', { selector: 'span' })).toBeVisible();
-    expect(screen.queryByRole('button', { name: /Make one book/u })).not.toBeInTheDocument();
     expect(screen.queryByText('Needs volumes')).not.toBeInTheDocument();
     expect(await runButton(1)).toBeEnabled();
   });
@@ -61,7 +67,7 @@ describe('a series with no volumes, in the window', () => {
     installBridge(withNoVolumes({ convert }));
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Make one book of Offline Work' }));
+    await makeOneBook(user, 'Offline Work');
 
     await user.click(await runButton(1));
 
@@ -103,7 +109,7 @@ describe('a series with no volumes, in the window', () => {
     );
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Make one book of Offline Work' }));
+    await makeOneBook(user, 'Offline Work');
 
     await user.click(screen.getByRole('button', { name: 'Validate plan' }));
 
@@ -163,8 +169,7 @@ describe('the books of each series, in the window', () => {
 
     // The panel has no choice of books: it is not the queue's to make.
     expect(screen.queryByRole('radiogroup', { name: 'Books' })).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Make one book of Series' }));
-    expect(screen.queryByRole('button', { name: /Make one book/u })).not.toBeInTheDocument();
+    await makeOneBook(user, 'Series');
     await user.click(await runButton(2));
 
     expect(await screen.findByRole('heading', { name: /books? ready/u })).toBeVisible();

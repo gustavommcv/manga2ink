@@ -55,7 +55,6 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     onOpenOptions: vi.fn(),
     onRemove: vi.fn(),
     onReset: vi.fn(),
-    onBooks: vi.fn(),
     onValidate: vi.fn(),
     profiles: [],
     rejected: [],

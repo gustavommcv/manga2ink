@@ -7,7 +7,6 @@ import {
   isPendingTitle,
   isWaitingTitle,
   itemsWithOptions,
-  offersOneBook,
   type QueueInput,
   type QueueRow,
   queueModeInput,
@@ -558,25 +557,6 @@ describe('describing a row', () => {
       expect(booksOf({ ...library, books: 'as-is' })).toBe('volumes');
       expect(rowProcess(set([library], 'series')[0]!, 'bind-only')).toBe('bind-and-convert');
     });
-
-    it('are offered as one book at a stroke only to a folder with chapters and no volumes yet', () => {
-      expect(offersOneBook(rowOf(), 'bind-and-convert')).toBe(true);
-      expect(offersOneBook(rowOf('series'), 'bind-and-convert')).toBe(false);
-      expect(offersOneBook(rowOf('as-is'), 'bind-and-convert')).toBe(false);
-      expect(offersOneBook(rowOf(), 'convert-only')).toBe(false);
-      expect(offersOneBook(inspectedFolder(grouped), 'bind-and-convert')).toBe(false);
-      expect(offersOneBook(inspectedFolder(undefined), 'bind-and-convert')).toBe(false);
-      expect(
-        offersOneBook(
-          inspectedFolder(createMappingDraft({ mangaTitle: 'Empty', chapters: [] })),
-          'bind-and-convert',
-        ),
-      ).toBe(false);
-      expect(offersOneBook(inspectedCbz(), 'bind-and-convert')).toBe(false);
-      expect(offersOneBook({ ...folderInput, state: 'inspecting' }, 'bind-and-convert')).toBe(
-        false,
-      );
-    });
   });
 
   describe('a folder with a chapter that more than one file claims', () => {
@@ -615,19 +595,6 @@ describe('describing a row', () => {
           runnable: true,
         });
       }
-    });
-
-    it('is not offered to be made one book until the versions are decided, which is where the grouping starts', () => {
-      const bare = (use?: readonly string[]) =>
-        createMappingDraft({
-          mangaTitle: 'Work',
-          chapters,
-          versions: use === undefined ? versions : [{ ...versions[0]!, use }],
-        });
-
-      expect(offersOneBook(inspectedFolder(bare()), 'bind-and-convert')).toBe(false);
-      expect(offersOneBook(inspectedFolder(bare(['c2'])), 'bind-and-convert')).toBe(true);
-      expect(offersOneBook(inspectedFolder(bare([])), 'bind-and-convert')).toBe(true);
     });
 
     it('does not matter to a run that does not group', () => {

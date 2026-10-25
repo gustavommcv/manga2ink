@@ -404,25 +404,6 @@ export function booksOf(row: QueueRow): BooksChoice {
 }
 
 /**
- * Whether a folder that has chapters and no volumes can be made into one book at a stroke: it is
- * waiting for volumes, and the whole series is the other way to have its books (ADR 0094). Not while
- * a chapter is claimed by more than one file and nobody has said which to use.
- */
-export function offersOneBook(row: QueueRow, mode: ProcessMode): boolean {
-  if (row.state !== 'inspected' || row.kind !== 'folder' || booksOf(row) !== 'volumes')
-    return false;
-  const { mapping } = row;
-  return (
-    rowProcess(row, mode) !== 'convert-only' &&
-    mapping !== undefined &&
-    mapping.chapters.length > 0 &&
-    mapping.volumes.length === 0 &&
-    // Files that claim one chapter are decided first, where the folder is grouped (ADR 0093).
-    pendingVersionGroups(mapping).length === 0
-  );
-}
-
-/**
  * The process a row gets under the steps of the queue and its own books: a series made into one book is
  * joined and converted, a folder left as it is is only converted, and the steps are for the rest, which
  * is how the other options of a row go too: its own choice is above the queue's.

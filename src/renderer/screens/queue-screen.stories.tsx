@@ -126,7 +126,6 @@ const base: QueueScreenProps = {
   onEdit: () => undefined,
   onEditDetails: () => undefined,
   onEditOptions: () => undefined,
-  onBooks: () => undefined,
   onFormat: () => undefined,
   onMode: () => undefined,
   onOpenOptions: () => undefined,
@@ -332,7 +331,7 @@ export const ToolsNotReady: Story = {
 
 /**
  * How the books of a series are made is the choice of each series, not of the queue: the panel has
- * none, a folder with no volumes can be made one book from its own row, and the steps are never locked.
+ * none, the books are chosen where the folder is grouped, and the steps are never locked.
  */
 export const OneBookOfASeries: Story = {
   args: { rows: rows.slice(0, 2) },
@@ -342,7 +341,7 @@ export const OneBookOfASeries: Story = {
       canvas.getByRole('checkbox', { name: /Group chapters into volumes/u }),
     ).toBeEnabled();
     await expect(
-      canvas.getByRole('button', { name: 'Make one book of Random scans' }),
+      canvas.getByRole('button', { name: 'Edit books and volumes for Random scans' }),
     ).toBeVisible();
   },
 };
