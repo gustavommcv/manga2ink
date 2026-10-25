@@ -59,7 +59,6 @@ function props(overrides: Partial<QueueScreenProps> = {}): QueueScreenProps {
     onEdit: vi.fn(),
     onEditDetails: vi.fn(),
     onEditOptions: vi.fn(),
-    onBooks: vi.fn(),
     onFormat: vi.fn(),
     onMode: vi.fn(),
     onOpenOptions: vi.fn(),
@@ -379,23 +378,12 @@ describe('what the queue says about each row, in Portuguese', () => {
     ).toBeVisible();
   });
 
-  it('offers to make one book of it from its own row, and says so when it is one', async () => {
-    const user = userEvent.setup();
-    const onBooks = vi.fn();
-    const { rerender } = render(
-      inPortuguese(<QueueScreen {...props({ rows: [needsVolumes], onBooks })} />),
+  it('says a series made into one book is one, on its row', () => {
+    render(
+      inPortuguese(<QueueScreen {...props({ rows: [{ ...needsVolumes, books: 'series' }] })} />),
     );
 
-    await user.click(screen.getByRole('button', { name: 'Fazer um livro só de Random scans' }));
-    expect(onBooks).toHaveBeenCalledExactlyOnceWith('n', 'series');
-
-    rerender(
-      inPortuguese(
-        <QueueScreen {...props({ rows: [{ ...needsVolumes, books: 'series' }], onBooks })} />,
-      ),
-    );
     expect(within(rowOf('Random scans')).getByText('Série inteira')).toBeVisible();
-    expect(screen.queryByRole('button', { name: /Fazer um livro só/u })).not.toBeInTheDocument();
   });
 
   it('writes a CBZ that goes straight to the e-reader step, and one that has nothing to join', () => {

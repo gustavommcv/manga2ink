@@ -9,12 +9,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-import {
-  type BooksChoice,
-  type QueueRow,
-  queueModeInput,
-  summarizeQueue,
-} from '@/domain/input-queue';
+import { type QueueRow, queueModeInput, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
 import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangaprep } from '@/domain/preferences';
@@ -69,8 +64,6 @@ export interface QueueScreenProps {
   readonly onEditDetails: (id: string) => void;
   /** Opens the conversion options one item has of its own. */
   readonly onEditOptions: (id: string) => void;
-  /** How the books of one item are made. */
-  readonly onBooks: (id: string, books: BooksChoice) => void;
   readonly onFormat: (format: BookFormat) => void;
   readonly onMode: (mode: ProcessMode) => void;
   readonly onOpenOptions: () => void;
@@ -112,7 +105,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onDropFiles,
     onEdit,
     onEditDetails,
-    onBooks,
     onEditOptions,
     onFormat,
     onMode,
@@ -300,9 +292,6 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
                   }}
                   onEditOptions={() => {
                     onEditOptions(row.id);
-                  }}
-                  onMakeOneBook={() => {
-                    onBooks(row.id, 'series');
                   }}
                   onRemove={() => {
                     onRemove(row.id);

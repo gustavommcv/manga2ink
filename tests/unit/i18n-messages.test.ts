@@ -30,7 +30,6 @@ const samples: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   'queue.row.editVolumesFor': [['Series']],
   'queue.row.editBooksFor': [['Series']],
   'mapping.editor.versions.text': [[1], [2]],
-  'queue.row.makeOneBookFor': [['Series']],
   'queue.row.editDetailsOf': [['Series']],
   'queue.row.editDetails': [[false], [true]],
   'queue.row.editOptionsOf': [['Series']],

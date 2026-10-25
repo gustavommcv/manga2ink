@@ -998,9 +998,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
             onEdit={openEditor}
             onEditDetails={openDetails}
             onEditOptions={openOptions}
-            onBooks={(id, books) => {
-              dispatch({ type: 'set-books', id, books });
-            }}
             onFormat={setFormat}
             onMode={setMode}
             onOpenOptions={() => {

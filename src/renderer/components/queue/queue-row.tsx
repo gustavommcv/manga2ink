@@ -9,9 +9,8 @@ import {
   X,
 } from 'lucide-react';
 
-import { pendingVersionGroups } from '@/domain/chapter-versions';
 import { hasBookDetails } from '@/domain/book-details';
-import { describeRow, offersOneBook, type QueueRow, rowProcess } from '@/domain/input-queue';
+import { describeRow, type QueueRow, rowProcess } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangaprep } from '@/domain/process-mode';
 import { Badge } from '@/renderer/components/shared/badge';
@@ -26,7 +25,6 @@ export function QueueRowItem({
   onEdit,
   onEditDetails,
   onEditOptions,
-  onMakeOneBook,
   onRemove,
   row,
 }: {
@@ -36,8 +34,6 @@ export function QueueRowItem({
   readonly onEditDetails: () => void;
   /** Opens the conversion options of the item, which are the queue's until it sets its own. */
   readonly onEditOptions: () => void;
-  /** Makes one book of the whole series, which a folder with no volumes can be (ADR 0094). */
-  readonly onMakeOneBook: () => void;
   readonly onRemove: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
@@ -56,12 +52,9 @@ export function QueueRowItem({
     row.kind !== 'library' &&
     process !== 'skip' &&
     usesMangaprep(process);
-  // Chapters that more than one file claims are decided where the folder is grouped, which opens
-  // with that choice (ADR 0093); the button says it is waiting for it, where the files are joined.
-  const versionsPending =
-    row.state === 'inspected' &&
-    process !== 'convert-only' &&
-    pendingVersionGroups(row.mapping).length > 0;
+  // What the folder waits for (volumes, or a choice among the files of a chapter) is done where it is
+  // grouped, which is this button: it is colored while something waits (ADR 0093, ADR 0094).
+  const waiting = row.state === 'inspected' && view.tone === 'warning' && process !== 'skip';
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
   // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
@@ -75,7 +68,7 @@ export function QueueRowItem({
                 ? words.editTitlesOf(row.displayName)
                 : words.editBooksFor(row.displayName)
             }
-            className={cn(versionsPending && 'text-status-warning')}
+            className={cn(waiting && 'text-status-warning')}
             onClick={onEdit}
             size="icon"
             title={row.kind === 'library' ? words.editTitles : words.editBooks}
@@ -119,27 +112,7 @@ export function QueueRowItem({
       ]}
       detail={say(view.detail)}
       icon={row.state === 'inspecting' ? <LoaderCircle className="animate-spin" /> : <Icon />}
-      {...(view.notes.length > 0 || offersOneBook(row, mode)
-        ? {
-            notes: (
-              <>
-                {sayAll(view.notes)}
-                {offersOneBook(row, mode) && (
-                  <span className="mt-2 block">
-                    <Button
-                      aria-label={words.makeOneBookFor(row.displayName)}
-                      onClick={onMakeOneBook}
-                      size="sm"
-                      variant="outline"
-                    >
-                      {words.makeOneBook}
-                    </Button>
-                  </span>
-                )}
-              </>
-            ),
-          }
-        : {})}
+      {...(view.notes.length > 0 ? { notes: sayAll(view.notes) } : {})}
       status={<Badge tone={view.tone}>{say(view.chip)}</Badge>}
       title={row.displayName}
       titleHint={row.displayPath}
