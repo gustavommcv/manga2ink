@@ -8,6 +8,7 @@ const fake = vi.hoisted(() => {
   const calls: string[] = [];
   const state = {
     calls,
+    identities: [] as string[],
     started: false,
     packaged: true,
     lock: true,
@@ -45,6 +46,9 @@ vi.mock('electron', () => ({
         return Promise.resolve();
       },
     }),
+    setAppUserModelId: (id: string) => {
+      fake.identities.push(id);
+    },
     getPath: (name: string) => `/home/${name}`,
     getVersion: () => '0.1.0-alpha.15',
     get isPackaged() {
@@ -364,6 +368,7 @@ const dispatch = (event: string, ...args: unknown[]): unknown =>
 beforeEach(() => {
   fake.nativeTheme.shouldUseDarkColors = false;
   fake.calls.length = 0;
+  fake.identities.length = 0;
   fake.started = false;
   fake.packaged = true;
   fake.lock = true;
@@ -477,6 +482,19 @@ describe('starting the app', () => {
       /^Manga2Ink \d.* started \((packaged|development build), Electron \S+, \S+ \S+\)\.$/u,
     );
     expect(fake.context['logTargets']).toMatchObject({ console, process });
+  });
+
+  it('gives a build run from its folder an identity of its own, so the taskbar draws its own icon and not the one of Electron', async () => {
+    fake.packaged = false;
+    await start();
+
+    expect(fake.identities).toEqual(['com.manga2ink.development']);
+  });
+
+  it('leaves the identity of a packaged build to its installer', async () => {
+    await start();
+
+    expect(fake.identities).toEqual([]);
   });
 
   it('says a build that is not packaged is a development build', async () => {
