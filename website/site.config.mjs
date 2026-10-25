@@ -21,9 +21,9 @@ export const appLanguages = ['en', 'pt-BR', 'ja'];
 
 /**
  * The code Google Search Console gives for the "HTML tag" verification method: only the value of
- * the tag's `content` attribute. Empty until the owner supplies the value; see SEO.md.
+ * the tag's `content` attribute. Keep this published to retain verification; see SEO.md.
  */
-export const googleSiteVerification = '';
+export const googleSiteVerification = 'D1k-EP9B0rpAqVx6io7Izc6W4SooHWg8hYYL77ZKpug';
 
 /**
  * Where the heart in the header of every page leads: the page on which a person can support the project.
