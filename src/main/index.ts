@@ -69,6 +69,11 @@ const formerUserDataProblems = started
   ? []
   : moveFormerUserData(app.getPath('appData'), app.getPath('userData'));
 
+// Run from its folder (npm start), the process is electron.exe and, with no identity of its own,
+// Windows groups its window with every other Electron program and draws Electron's icon on the
+// taskbar instead of the window's. A packaged app has its own, from its installer.
+if (!app.isPackaged) app.setAppUserModelId('com.manga2ink.development');
+
 // Electron accepts a new scheme's privileges only before the app is ready.
 registerRendererScheme();
 
