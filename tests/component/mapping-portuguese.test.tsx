@@ -368,6 +368,52 @@ describe('where the chapters come from, in Portuguese', () => {
     );
   });
 
+  it('says in Portuguese what a source answered that cannot be used', async () => {
+    const user = userEvent.setup();
+    const found = [{ id: 'work-1', title: 'Chainsaw Man', provider: 'mangadex' }];
+    const { rerender } = render(
+      inPortuguese(
+        <ChaptersFrom
+          initialSource="online"
+          names={{ volumes: 0, chapters: 3, changed: false, onStartOver: vi.fn() }}
+          online={{
+            ...online,
+            selectedId: 'mangadex',
+            onSearch: () => Promise.resolve(found),
+            onSuggest: () => Promise.resolve({ volumes: [] }),
+          }}
+        />,
+      ),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Buscar' }));
+    await user.click(await screen.findByRole('button', { name: 'Usar estes volumes' }));
+    expect(await screen.findByRole('status', { name: '' })).toHaveTextContent(
+      'MangaDex tem esta série, mas sem volumes: lá os capítulos não estão agrupados em volumes. A série ainda pode ser um livro só: escolha “Um livro para a série inteira” em Livros, ou agrupe os capítulos você mesmo.',
+    );
+
+    rerender(
+      inPortuguese(
+        <ChaptersFrom
+          initialSource="online"
+          names={{ volumes: 0, chapters: 3, changed: false, onStartOver: vi.fn() }}
+          online={{
+            ...online,
+            selectedId: 'mangadex',
+            onSearch: () => Promise.resolve(found),
+            onSuggest: () => Promise.resolve({ volumes: [{ number: '1', chapterNumbers: [9] }] }),
+            onApply: () => false,
+          }}
+        />,
+      ),
+    );
+    await user.click(screen.getByRole('button', { name: 'Buscar' }));
+    await user.click(await screen.findByRole('button', { name: 'Usar estes volumes' }));
+    expect(
+      await screen.findByText(/tem volumes para esta série, mas nenhum deles tem um capítulo/u),
+    ).toBeVisible();
+  });
+
   it('says what a failed search says, from the code that came, or the fallback of the language', async () => {
     const user = userEvent.setup();
     const search = vi

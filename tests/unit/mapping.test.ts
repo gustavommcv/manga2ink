@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addVolume,
   applyVolumeSuggestion,
+  suggestionPlacesChapters,
   assignedVolumeId,
   assignChapterRange,
   assignChapters,
@@ -225,6 +226,19 @@ describe('mapping operations', () => {
       { id: 'suggested-1', number: '1', chapterIds: ['c1', 'c2', 'c2x1'] },
     ]);
     expect(applied.source).toEqual({ provider: 'external', id: 'work-123' });
+  });
+
+  it('tells whether a suggestion holds a chapter of the folder, which a series with no volumes does not', () => {
+    const draft = manualDraft();
+
+    expect(suggestionPlacesChapters(draft, [])).toBe(false);
+    expect(suggestionPlacesChapters(draft, [{ number: '1', chapterNumbers: [99] }])).toBe(false);
+    expect(
+      suggestionPlacesChapters(draft, [
+        { number: '1', chapterNumbers: [99] },
+        { number: '2', chapterNumbers: [2] },
+      ]),
+    ).toBe(true);
   });
 
   it('skips a suggestion that matches no locally discovered chapter', () => {

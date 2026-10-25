@@ -34,6 +34,7 @@ import {
   MappingValidationError,
   mappingSignature,
   serializeMangabindMetadata,
+  suggestionPlacesChapters,
   type VolumeSuggestion,
   validateMapping,
 } from '@/domain/mapping';
@@ -426,6 +427,9 @@ export function MappingEditor({
                   onSearch: onSearchMetadata,
                   onSuggest: onSuggestVolumes,
                   onApply: (result, volumes) => {
+                    // A source that knows the work and puts none of this folder's chapters in a
+                    // volume changes nothing, so it is not applied, nor recorded as the source.
+                    if (!suggestionPlacesChapters(draft, volumes)) return false;
                     if (
                       dispatch({
                         type: 'apply-suggestion',
@@ -437,6 +441,7 @@ export function MappingEditor({
                       // suggestions still expose the editor through validation issues.
                       setEditorExpanded(false);
                     }
+                    return true;
                   },
                 }
               : undefined

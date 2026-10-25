@@ -470,6 +470,23 @@ export interface VolumeSuggestion {
   readonly chapterNumbers: readonly number[];
 }
 
+/**
+ * Whether a suggestion holds a chapter of this draft: a source can know a work and still put none of
+ * its chapters in a volume (a series published without volumes), or number them otherwise than the
+ * folders do, and then applying it changes nothing.
+ */
+export function suggestionPlacesChapters(
+  draft: MappingDraft,
+  suggestions: readonly VolumeSuggestion[],
+): boolean {
+  return suggestions.some((suggestion) =>
+    draft.chapters.some(
+      (chapter) =>
+        chapter.chapter !== undefined && suggestion.chapterNumbers.includes(chapter.chapter),
+    ),
+  );
+}
+
 export function applyVolumeSuggestion(
   draft: MappingDraft,
   suggestions: readonly (VolumeSuggestion & { readonly id: string })[],
