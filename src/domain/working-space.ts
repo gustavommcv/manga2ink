@@ -45,7 +45,7 @@ export function pagesToMake(row: InspectedRow, process: ProcessMode): number {
   if (row.kind === 'folder') {
     const { mapping } = row;
     if (mapping === undefined) return 0;
-    // A series with no volumes made into one book is all in the one volume made for the run.
+    // A series with no volumes made into one book is all in the one book, with no volumes (ADR 0096).
     const placed = booksOf(row) === 'series' ? withSeriesVolume(mapping) : mapping;
     const inVolumes = new Set(placed.volumes.flatMap((volume) => volume.chapterIds));
     return mapping.chapters

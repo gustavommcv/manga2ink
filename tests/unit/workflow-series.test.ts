@@ -61,6 +61,30 @@ describe('a series made into one book that has no volumes', () => {
     });
   });
 
+  it('takes the one book the tool made with no volumes, which is not a combined file', async () => {
+    const { ports, request, workflow } = setup();
+    ports.bind.mockResolvedValue({
+      volumes: [{ number: 1, path: '/work/volumes/Trusted Manga.cbz' }],
+      issues: [],
+    });
+
+    await workflow.convert(await request(noVolumes), { onProgress: vi.fn() });
+
+    expect(ports.convert.mock.calls[0]?.[0]).toMatchObject({
+      inputPath: '/work/volumes/Trusted Manga.cbz',
+      nestedToc: false,
+    });
+  });
+
+  it('has nothing to bind when the tool made no book', async () => {
+    const { ports, request, workflow } = setup();
+    ports.bind.mockResolvedValue({ volumes: [], issues: [] });
+
+    await expect(
+      workflow.convert(await request(noVolumes), { onProgress: vi.fn() }),
+    ).rejects.toMatchObject({ code: 'no_volumes' });
+  });
+
   it('has the level for volumes in its table of contents where the series has volumes', async () => {
     const { ports, request, workflow } = setup();
 

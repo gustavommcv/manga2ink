@@ -158,11 +158,6 @@ function chapterToken(chapter: MappingChapter): string {
   return `${String(chapter.chapter)}${chapter.special ?? ''}`;
 }
 
-/** The chapter as the mapping file writes it (`6`, `6.5`, `21x1`); it throws for one that cannot be written. */
-export function chapterTokenOf(chapter: MappingChapter): string {
-  return chapterToken(chapter);
-}
-
 /**
  * Whether mangabind.json can represent this chapter: it needs a usable chapter number and, if
  * it is a special chapter, a suffix mangabind understands. validateMapping reports the same

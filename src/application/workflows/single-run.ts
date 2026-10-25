@@ -99,10 +99,12 @@ export class SingleInputRun {
       );
       bindingIssues = bound.issues;
       if (singleBook) {
-        if (bound.combinedOutputPath === undefined) {
+        // The volumes of the person's own are combined in one file; with none, the tool binds the one book.
+        const book = bound.combinedOutputPath ?? bound.volumes[0]?.path;
+        if (book === undefined) {
           throw emptyBindingError('no_volumes');
         }
-        inputs = [{ path: bound.combinedOutputPath }];
+        inputs = [{ path: book }];
       } else {
         if (bound.volumes.length === 0) {
           throw emptyBindingError('no_volumes');
@@ -212,7 +214,7 @@ export class SingleInputRun {
       title: plan.title,
       message: singleBook
         ? message('plan.series', {
-            // Only the volumes the person made: the one made for the run is not one of them.
+            // Only the volumes the person made: a book with no volumes counts none.
             volumes: mapping.volumes.length,
             chapters,
           })

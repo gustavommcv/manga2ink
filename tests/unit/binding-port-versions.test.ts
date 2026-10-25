@@ -290,37 +290,79 @@ describe('a series made into one book that has no volumes', () => {
       volumes: { number: string; chapters: string[] }[];
     };
 
-  it('is told to the tool as one volume, and the folder is not told of a volume nobody made', async () => {
-    const { adapter, draft, files, workspaceId } = await opened();
+  // The folder is looked at as any is, and then the tool binds it with no volumes: a real run of
+  // mangabind 0.10.0, one book, `Folders Series.cbz`, whose chapters are four.
+  async function openedWithoutVolumes() {
+    const files = fakeFiles();
+    const { adapter, run } = adapterOver(recorded('chapter-versions-unresolved'), files);
+    const { workspaceId, draft } = await adapter.inspect(folder);
+    const report = recorded('no-volumes');
+    for (const volume of report.manga[0]!.volumes) {
+      volume.output_path = path.join(root, 'volumes', path.basename(volume.output_path));
+    }
+    run.mockImplementation(() =>
+      Promise.resolve({ report: structuredClone(report), exitCode: 0, stderr: '' }),
+    );
+    return { adapter, draft, files, run, workspaceId };
+  }
+
+  it('is bound by the tool with no volumes, and not combined, and no volume is made up for the folder', async () => {
+    const { adapter, draft, files, run, workspaceId } = await openedWithoutVolumes();
     const mapping = chooseVersions(draft, '3', [groupB]);
 
-    await adapter.bind(workspaceId, mapping, undefined, true, undefined, { wholeSeries: true });
+    const bound = await adapter.bind(workspaceId, mapping, undefined, true, undefined, {
+      wholeSeries: true,
+    });
 
-    expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
-    // What is kept with the folder is the person's own: the choice, and no volume.
+    expect(run.mock.calls[1]![0]).toMatchObject({ dryRun: false, noVolumes: true });
+    expect(run.mock.calls[1]![0].combine).toBeUndefined();
+    // The file the tool is given, and what is kept with the folder, are the person's own: the choice, and no volume.
+    expect(scratchOf(files).volumes).toEqual([]);
     expect(JSON.parse(files.writeTextAtomically.mock.calls[0]![1])).toMatchObject({
       volumes: [],
       chapter_versions: [{ chapter: '3', use: ['Ch.0003 - Koala (en) [GroupB].cbz'] }],
     });
+    // The one book it wrote, which the workflow reads as the book.
+    expect(bound.combinedOutputPath).toBeUndefined();
+    expect(bound.volumes).toEqual([
+      { number: 1, path: path.join(root, 'volumes', 'Folders Series.cbz') },
+    ]);
   });
 
   it('is planned the same way', async () => {
-    const { adapter, draft, files, workspaceId } = await opened();
+    const { adapter, draft, run, workspaceId } = await openedWithoutVolumes();
     const mapping = chooseVersions(draft, '3', [groupB]);
 
-    await adapter.plan(workspaceId, mapping, undefined, { wholeSeries: true });
+    const plan = await adapter.plan(workspaceId, mapping, undefined, { wholeSeries: true });
 
-    expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
+    expect(run.mock.calls[1]![0]).toMatchObject({ dryRun: true, noVolumes: true });
+    expect(plan.volumes.map((volume) => volume.name)).toEqual(['Folders Series.cbz']);
+    expect(plan.volumes[0]?.chapters?.map((chapter) => chapter.label)).toEqual([
+      'Ch.1',
+      'Ch.2',
+      'Ch.3 - Koala',
+      'Ch.4',
+    ]);
   });
 
-  it('is left to the volumes the person made, where there are any', async () => {
-    const { adapter, draft, files, workspaceId } = await opened('chapter-versions-conflict');
+  it('is left to the volumes the person made, and combined, where there are any', async () => {
+    const { adapter, draft, files, run, workspaceId } = await opened('chapter-versions-conflict');
     const mapping = chooseVersions(draft, '3', [groupB]);
 
     await adapter.bind(workspaceId, mapping, undefined, true, undefined, { wholeSeries: true });
 
     expect(scratchOf(files).volumes).toEqual([{ number: '1', chapters: ['1', '2', '3', '4'] }]);
+    expect(run.mock.calls[1]![0]).toMatchObject({ dryRun: false, combine: true });
+    expect(run.mock.calls[1]![0].noVolumes).toBe(false);
     expect(mapping.volumes).toHaveLength(1);
+  });
+
+  it('is not bound with no volumes when the series is not to be one book', async () => {
+    const { adapter, draft, run, workspaceId } = await openedWithoutVolumes();
+
+    await adapter.bind(workspaceId, draft);
+
+    expect(run.mock.calls[1]![0].noVolumes).toBe(false);
   });
 
   it('asks for the chapters to be named by their numbers, in the plan and in the run, and not in the first look', async () => {

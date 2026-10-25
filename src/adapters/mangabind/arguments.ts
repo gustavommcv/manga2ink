@@ -7,6 +7,11 @@ export interface MangabindRunArguments {
   readonly quiet?: boolean;
   /** Write the whole manga as one .cbz instead of one per volume - see mangabind's ADR 0012. */
   readonly combine?: boolean;
+  /**
+   * Bind every chapter into one book with no volumes, so that the table of contents is the chapters
+   * alone - mangabind's ADR 0030. Not combinable with `combine`.
+   */
+  readonly noVolumes?: boolean;
   readonly progressJson?: boolean;
   /**
    * Name each chapter in the volume by its own number (`Ch.6 - Title`), not by its place in it, so
@@ -21,6 +26,7 @@ export function buildMangabindArguments({
   dryRun,
   inputPath,
   metadataFilePath,
+  noVolumes,
   outputPath,
   quiet,
   progressJson,
@@ -37,6 +43,7 @@ export function buildMangabindArguments({
     ...(metadataFilePath === undefined ? [] : ['--metadata-file', metadataFilePath]),
     ...(batch === true ? ['--batch'] : []),
     ...(combine === true ? ['--combine'] : []),
+    ...(noVolumes === true ? ['--no-volumes'] : []),
     ...(chapterLabels === undefined ? [] : ['--chapter-labels', chapterLabels]),
     ...(dryRun ? ['--dry-run'] : []),
     ...(quiet === true ? ['--quiet'] : []),
