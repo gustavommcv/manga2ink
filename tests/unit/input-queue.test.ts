@@ -604,7 +604,7 @@ describe('describing a row', () => {
         tone: 'warning',
         detail: 'Folder · 3 chapters · grouped from names',
         runnable: false,
-        note: '1 chapter comes in more than one version. Open Choose versions to choose which to use; your files stay where they are.',
+        note: '1 chapter comes in more than one version. Open Edit books and volumes to choose which to use before grouping; your files stay where they are.',
       });
     });
 
@@ -615,6 +615,19 @@ describe('describing a row', () => {
           runnable: true,
         });
       }
+    });
+
+    it('is not offered to be made one book until the versions are decided, which is where the grouping starts', () => {
+      const bare = (use?: readonly string[]) =>
+        createMappingDraft({
+          mangaTitle: 'Work',
+          chapters,
+          versions: use === undefined ? versions : [{ ...versions[0]!, use }],
+        });
+
+      expect(offersOneBook(inspectedFolder(bare()), 'bind-and-convert')).toBe(false);
+      expect(offersOneBook(inspectedFolder(bare(['c2'])), 'bind-and-convert')).toBe(true);
+      expect(offersOneBook(inspectedFolder(bare([])), 'bind-and-convert')).toBe(true);
     });
 
     it('does not matter to a run that does not group', () => {

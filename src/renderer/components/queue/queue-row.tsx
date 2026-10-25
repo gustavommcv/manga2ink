@@ -1,6 +1,5 @@
 import {
   FileArchive,
-  Files,
   Folder,
   Layers,
   Library,
@@ -10,7 +9,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { pendingVersionGroups, versionGroups } from '@/domain/chapter-versions';
+import { pendingVersionGroups } from '@/domain/chapter-versions';
 import { hasBookDetails } from '@/domain/book-details';
 import { describeRow, offersOneBook, type QueueRow, rowProcess } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
@@ -29,7 +28,6 @@ export function QueueRowItem({
   onEditOptions,
   onMakeOneBook,
   onRemove,
-  onReviewVersions,
   row,
 }: {
   readonly mode: ProcessMode;
@@ -41,8 +39,6 @@ export function QueueRowItem({
   /** Makes one book of the whole series, which a folder with no volumes can be (ADR 0094). */
   readonly onMakeOneBook: () => void;
   readonly onRemove: () => void;
-  /** Opens the choice among the files that claim one chapter (ADR 0093). */
-  readonly onReviewVersions: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
@@ -60,11 +56,12 @@ export function QueueRowItem({
     row.kind !== 'library' &&
     process !== 'skip' &&
     usesMangaprep(process);
-  // Chapters that more than one file claims, where they matter: wherever the files are joined.
-  const versions = row.state === 'inspected' ? versionGroups(row.mapping) : [];
-  const versionsReviewable =
-    versions.length > 0 && row.kind === 'folder' && process !== 'convert-only';
-  const versionsPending = row.state === 'inspected' && pendingVersionGroups(row.mapping).length > 0;
+  // Chapters that more than one file claims are decided where the folder is grouped, which opens
+  // with that choice (ADR 0093); the button says it is waiting for it, where the files are joined.
+  const versionsPending =
+    row.state === 'inspected' &&
+    process !== 'convert-only' &&
+    pendingVersionGroups(row.mapping).length > 0;
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
   // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
@@ -78,24 +75,13 @@ export function QueueRowItem({
                 ? words.editTitlesOf(row.displayName)
                 : words.editBooksFor(row.displayName)
             }
+            className={cn(versionsPending && 'text-status-warning')}
             onClick={onEdit}
             size="icon"
             title={row.kind === 'library' ? words.editTitles : words.editBooks}
             variant="ghost"
           >
             <Layers />
-          </Button>
-        ) : undefined,
-        versionsReviewable ? (
-          <Button
-            aria-label={words.reviewVersionsFor(row.displayName)}
-            className={cn(versionsPending && 'text-status-warning')}
-            onClick={onReviewVersions}
-            size="icon"
-            title={words.reviewVersions}
-            variant="ghost"
-          >
-            <Files />
           </Button>
         ) : undefined,
         detailsEditable ? (

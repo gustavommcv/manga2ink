@@ -83,6 +83,7 @@ const meta = {
     groups: [koala('6', 6), koala('15', 15)],
     onBack: () => undefined,
     onChoose: () => undefined,
+    onDone: () => undefined,
     previews,
   },
 } satisfies Meta<typeof VersionsScreen>;
@@ -99,6 +100,8 @@ export const Pending: Story = {
     await expect(canvas.getByRole('status')).toHaveTextContent('1 of 2 chapters decided');
     await userEvent.click(canvas.getAllByRole('radio', { name: /Leave this chapter out/u })[0]!);
     await expect(canvas.getByRole('status')).toHaveTextContent('1 of 2 chapters decided');
+    // The grouping that follows waits for every chapter.
+    await expect(canvas.getByRole('button', { name: 'Done' })).toBeDisabled();
   },
 };
 

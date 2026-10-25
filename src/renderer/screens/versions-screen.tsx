@@ -12,7 +12,7 @@ import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 export interface VersionsScreenProps {
-  /** Where Back leads: the queue. */
+  /** Where Back leads: the queue, or the editor of the folder. */
   readonly backLabel: string;
   /** The folder the chapters are in. */
   readonly name: string;
@@ -22,6 +22,8 @@ export interface VersionsScreenProps {
   /** Chooses the files to use for a chapter: one, several or none; with no list, takes the choice back. */
   readonly onChoose: (token: string, use: readonly string[] | undefined) => void;
   readonly onBack: () => void;
+  /** Goes on to the grouping of the folder; it waits until every chapter is decided. */
+  readonly onDone: () => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export function VersionsScreen({
   name,
   onBack,
   onChoose,
+  onDone,
   previews,
 }: VersionsScreenProps): React.JSX.Element {
   const words = useMessages().versions;
@@ -44,7 +47,7 @@ export function VersionsScreen({
     <Screen labelledBy="versions-title">
       <ScreenHeader
         actions={
-          <Button onClick={onBack} variant={complete ? 'default' : 'outline'}>
+          <Button disabled={!complete} onClick={onDone}>
             {words.done}
           </Button>
         }

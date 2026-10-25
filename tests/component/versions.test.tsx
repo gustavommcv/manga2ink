@@ -43,6 +43,7 @@ function open(
 ) {
   const onChoose = vi.fn();
   const onBack = vi.fn();
+  const onDone = vi.fn();
   render(
     <VersionsScreen
       backLabel="Queue"
@@ -50,11 +51,12 @@ function open(
       name="Ubunchu"
       onBack={onBack}
       onChoose={onChoose}
+      onDone={onDone}
       previews={new Map()}
       {...overrides}
     />,
   );
-  return { onBack, onChoose };
+  return { onBack, onChoose, onDone };
 }
 
 describe('the screen where the files of one chapter are chosen among', () => {
@@ -97,6 +99,7 @@ describe('the screen where the files of one chapter are chosen among', () => {
         name="Ubunchu"
         onBack={vi.fn()}
         onChoose={vi.fn()}
+        onDone={vi.fn()}
         previews={new Map()}
       />,
     );
@@ -117,6 +120,7 @@ describe('the screen where the files of one chapter are chosen among', () => {
           name="Ubunchu"
           onBack={vi.fn()}
           onChoose={vi.fn()}
+          onDone={vi.fn()}
           previews={new Map()}
         />,
       );
@@ -164,14 +168,24 @@ describe('the screen where the files of one chapter are chosen among', () => {
     expect(screen.queryByRole('button', { name: 'Choose it again' })).not.toBeInTheDocument();
   });
 
-  it('goes back to the queue from the header, and from the button at the end', async () => {
+  it('goes back from the header whatever is decided, and goes on from the button only when every chapter is', async () => {
     const user = userEvent.setup();
-    const { onBack } = open([six]);
+    const { onBack, onDone } = open([six]);
 
     await user.click(screen.getByRole('button', { name: 'Queue' }));
+    expect(onBack).toHaveBeenCalledOnce();
+    // The grouping that follows waits for every chapter to be decided.
+    expect(screen.getByRole('button', { name: 'Done' })).toBeDisabled();
+    expect(onDone).not.toHaveBeenCalled();
+  });
+
+  it('goes on to the grouping from the button once every chapter is decided', async () => {
+    const user = userEvent.setup();
+    const { onDone } = open([{ ...six, use: ['six-a'] }]);
+
     await user.click(screen.getByRole('button', { name: 'Done' }));
 
-    expect(onBack).toHaveBeenCalledTimes(2);
+    expect(onDone).toHaveBeenCalledOnce();
   });
 });
 
@@ -288,7 +302,7 @@ describe('a folder with a chapter that more than one file claims, in the window'
       ...overrides,
     });
 
-  it('waits for the choice, shows the files by their first pages, and goes on with it', async () => {
+  it('waits for the choice, asks for it where the folder is grouped, and goes on to the grouping with it', async () => {
     const user = userEvent.setup();
     const convert = vi.fn<Manga2InkBridge['convert']>(bridge().convert);
     const previewChapters = vi.fn<Manga2InkBridge['previewChapters']>(() =>
@@ -301,26 +315,43 @@ describe('a folder with a chapter that more than one file claims, in the window'
     render(<App />);
     await addFolder(user);
 
-    // The row says what it waits for, and nothing runs.
+    // The row says what it waits for and nothing runs. It has no button of its own for the choice:
+    // it is made where the folder is grouped.
     expect(await screen.findByText('Choose versions')).toBeVisible();
     expect(screen.getByRole('button', { name: /^Process/u })).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: /versions of chapters in Offline Work/u }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Make one book/u })).not.toBeInTheDocument();
 
+    // The button that groups opens with the choice, and the grouping cannot be reached before it.
     await user.click(
-      screen.getByRole('button', {
-        name: 'Choose between the versions of chapters in Offline Work',
-      }),
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
     );
     expect(
       await screen.findByRole('heading', { name: 'Versions of the same chapter in Offline Work' }),
     ).toBeVisible();
     expect(
+      screen.queryByRole('heading', { name: /Organize Offline Work into books/u }),
+    ).not.toBeInTheDocument();
+    expect(
       await screen.findByRole('img', { name: 'First page of Ch.0006 - Koala (en) [GroupA]' }),
     ).toHaveAttribute('src', 'data:image/png;base64,iVBORw==');
     expect(previewChapters).toHaveBeenCalledWith({ sessionId: 'session', ids: ['six-a', 'six-b'] });
+    expect(screen.getByRole('button', { name: 'Done' })).toBeDisabled();
 
     await user.click(screen.getByRole('radio', { name: /GroupB/u }));
     expect(screen.getByRole('status')).toHaveTextContent('Every chapter is decided.');
     await user.click(screen.getByRole('button', { name: 'Done' }));
+
+    // Decided, it is the grouping that opens, and it says there were chapters in more than one version.
+    expect(
+      await screen.findByRole('heading', { name: /Organize Offline Work into books/u }),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/1 chapter of this folder comes in more than one version/u),
+    ).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
 
     expect(screen.queryByText('Choose versions')).not.toBeInTheDocument();
     await user.click(await runButton(1));
@@ -329,17 +360,47 @@ describe('a folder with a chapter that more than one file claims, in the window'
     expect(sent.versions?.[0]?.use).toEqual(['six-b']);
   });
 
-  it('goes back to the queue when the folder is gone, and is not offered for a run that does not group', async () => {
+  it('leaves the choice for later from the queue, and offers to review it from the grouping', async () => {
     const user = userEvent.setup();
     installBridge(withVersions());
     render(<App />);
     await addFolder(user);
 
-    await user.click(screen.getByRole('checkbox', { name: 'Group chapters into volumes' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
+    await screen.findByRole('heading', { name: 'Versions of the same chapter in Offline Work' });
+    await user.click(screen.getByRole('button', { name: 'Queue' }));
+    expect(await screen.findByText('Choose versions')).toBeVisible();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
+    await user.click(await screen.findByRole('radio', { name: /GroupA/u }));
+    await user.click(screen.getByRole('button', { name: 'Done' }));
+
+    // From the grouping, the review comes back to the grouping and not to the queue.
+    await user.click(await screen.findByRole('button', { name: 'Review the versions' }));
     expect(
-      screen.queryByRole('button', {
-        name: 'Choose between the versions of chapters in Offline Work',
-      }),
-    ).not.toBeInTheDocument();
+      await screen.findByRole('heading', { name: 'Versions of the same chapter in Offline Work' }),
+    ).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Offline Work' }));
+    expect(
+      await screen.findByRole('heading', { name: /Organize Offline Work into books/u }),
+    ).toBeVisible();
+  });
+
+  it('does not offer to review the versions of a folder that has none', async () => {
+    const user = userEvent.setup();
+    installBridge(bridge());
+    render(<App />);
+    await addFolder(user);
+
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
+    await screen.findByRole('heading', { name: /Organize Offline Work into books/u });
+
+    expect(screen.queryByRole('button', { name: 'Review the versions' })).not.toBeInTheDocument();
   });
 });

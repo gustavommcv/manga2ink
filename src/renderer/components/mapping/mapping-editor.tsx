@@ -69,6 +69,8 @@ export interface MappingEditorProps {
   readonly onBooks?: (books: Books) => void;
   /** The format the books will be made in, so that what the one book is can be said. */
   readonly format?: BookFormat;
+  /** Chapters that more than one file claims, decided before this was opened: where to see the choice again. */
+  readonly versions?: { readonly count: number; readonly onOpen: () => void };
   /** Folders of the manga whose names could not be read as chapters: they are not in the draft. */
   readonly unrecognized?: readonly string[];
   /** The editor is of a title of a library, so a name is fixed by adding the library again. */
@@ -136,6 +138,7 @@ export function MappingEditor({
   books = 'volumes',
   format,
   onBooks,
+  versions,
   unrecognized = [],
   inLibrary = false,
   onConfirm,
@@ -351,6 +354,24 @@ export function MappingEditor({
         title={words.title(draft.mangaTitle)}
       />
       {leftOut !== undefined && <InfoBanner message={say(leftOut)} title={words.leftOut} />}
+      {versions !== undefined && (
+        <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl border p-5">
+          <div className="space-y-1">
+            <p className="text-muted-foreground max-w-prose text-sm">
+              {words.versions.text(versions.count)}
+            </p>
+            {history.past.length > 0 && <Note id="versions-edited">{words.versions.edited}</Note>}
+          </div>
+          <Button
+            aria-describedby={history.past.length > 0 ? 'versions-edited' : undefined}
+            disabled={history.past.length > 0}
+            onClick={versions.onOpen}
+            variant="outline"
+          >
+            {words.versions.open}
+          </Button>
+        </div>
+      )}
       {onBooks !== undefined && (
         <BooksChoice
           asIsReason={hasArchiveChapters(initialDraft) ? say(archivesReason) : undefined}

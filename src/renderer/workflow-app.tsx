@@ -62,7 +62,7 @@ import { useKeptSettings } from '@/renderer/hooks/use-kept-settings';
 import type { CoverSlot } from '@/domain/book-covers';
 import { useBookCovers } from '@/renderer/hooks/use-book-covers';
 import { useChapterPreviews } from '@/renderer/hooks/use-chapter-previews';
-import { versionGroups } from '@/domain/chapter-versions';
+import { pendingVersionGroups, versionGroups } from '@/domain/chapter-versions';
 import { usePendingRuns } from '@/renderer/hooks/use-pending-runs';
 import { useAppSettings } from '@/renderer/hooks/use-app-settings';
 import { useMessages, useSay } from '@/renderer/hooks/use-messages';
@@ -616,14 +616,17 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
       });
   };
 
-  const openVersions = (rowId: string): void => {
-    setNavigation({ screen: 'versions', rowId });
-  };
-
   const openEditor = (rowId: string): void => {
+    const row = rows.find((candidate) => candidate.id === rowId);
+    if (row?.kind === 'library') {
+      setNavigation({ screen: 'library', rowId });
+      return;
+    }
+    // The grouping of a folder waits for the choice among the files of a chapter (ADR 0093).
+    const undecided = row?.state === 'inspected' && pendingVersionGroups(row.mapping).length > 0;
     setNavigation(
-      rows.find((row) => row.id === rowId)?.kind === 'library'
-        ? { screen: 'library', rowId }
+      undecided
+        ? { screen: 'versions', rowId, from: 'queue' }
         : { screen: 'mapping', target: { kind: 'input', rowId } },
     );
   };
@@ -1007,7 +1010,6 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
               removeRows([id]);
             }}
             onReset={resetAll}
-            onReviewVersions={openVersions}
             onValidate={() => {
               void validatePlans();
             }}
@@ -1083,6 +1085,20 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
                   dispatch({ type: 'confirm-mapping', id: editingRow.id, mapping: draft });
                   setNavigation({ screen: 'queue' });
                 }}
+                {...(versionGroups(editingRow.mapping).length === 0
+                  ? {}
+                  : {
+                      versions: {
+                        count: versionGroups(editingRow.mapping).length,
+                        onOpen: () => {
+                          setNavigation({
+                            screen: 'versions',
+                            rowId: editingRow.id,
+                            from: 'mapping',
+                          });
+                        },
+                      },
+                    })}
                 {...(editingRow.unrecognized === undefined
                   ? {}
                   : { unrecognized: editingRow.unrecognized })}
@@ -1099,11 +1115,25 @@ export function WorkflowApp({ bridge }: { readonly bridge: Manga2InkBridge }): R
           )}
         {versionsOpen !== undefined && (
           <VersionsScreen
-            backLabel={messages.queue.title}
+            backLabel={
+              navigation.screen === 'versions' && navigation.from === 'mapping'
+                ? versionsOpen.displayName
+                : messages.queue.title
+            }
             groups={openGroups}
             name={versionsOpen.displayName}
             onBack={() => {
-              setNavigation({ screen: 'queue' });
+              setNavigation(
+                navigation.screen === 'versions' && navigation.from === 'mapping'
+                  ? { screen: 'mapping', target: { kind: 'input', rowId: versionsOpen.id } }
+                  : { screen: 'queue' },
+              );
+            }}
+            onDone={() => {
+              setNavigation({
+                screen: 'mapping',
+                target: { kind: 'input', rowId: versionsOpen.id },
+              });
             }}
             onChoose={(token, use) => {
               dispatch({ type: 'set-versions', id: versionsOpen.id, token, use });
