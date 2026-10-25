@@ -4,6 +4,7 @@ import type {
   ConversionArtifact,
   ConversionProgress,
   PipelineIssue,
+  PlannedChapter,
 } from '@/domain/conversion';
 import type { MappingDraft } from '@/domain/mapping';
 import type { MangaprepSettings } from '@/domain/output-profile';
@@ -68,8 +69,21 @@ export interface BindingPlan {
     readonly pageCount: number;
     /** The volume's number in its series, when the tool said it. */
     readonly number?: number;
+    /** The chapters of the volume in reading order, as its book will call them, when the tool says. */
+    readonly chapters?: readonly PlannedChapter[];
   }[];
   readonly issues: readonly PipelineIssue[];
+  /** The files left out because another version of their chapter was chosen, by name. */
+  readonly leftOut?: readonly string[];
+}
+
+/** What a run of the tool is asked besides the mapping. */
+export interface BindingRunOptions {
+  /**
+   * The books are one for the whole series. A series with no volumes of its own is then put in one
+   * for the run, which is not the person's and is not kept with the folder (ADR 0094).
+   */
+  readonly wholeSeries?: boolean;
 }
 
 /** Actual work reported by mangabind; counts are pages copied, not an estimate. */
@@ -91,13 +105,19 @@ export type BindingProgress =
 
 export interface BindingPort {
   inspect(inputPath: string, signal?: AbortSignal): Promise<BindingInspection>;
-  plan(workspaceId: string, mapping: MappingDraft, signal?: AbortSignal): Promise<BindingPlan>;
+  plan(
+    workspaceId: string,
+    mapping: MappingDraft,
+    signal?: AbortSignal,
+    options?: BindingRunOptions,
+  ): Promise<BindingPlan>;
   bind(
     workspaceId: string,
     mapping: MappingDraft,
     signal?: AbortSignal,
     combine?: boolean,
     onProgress?: (progress: BindingProgress) => void,
+    options?: BindingRunOptions,
   ): Promise<BindingResult>;
   release(workspaceId: string): Promise<void>;
   /** Reads a library (a folder of manga folders) with one mangabind `--batch` dry run. */

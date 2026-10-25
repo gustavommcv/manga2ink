@@ -24,7 +24,6 @@ export interface ConversionOptionsScreenProps {
   readonly onSettings: (settings: MangaprepSettings) => void;
   readonly profiles: readonly DeviceProfileSummary[];
   readonly settings: MangaprepSettings;
-  readonly singleBook: boolean;
 }
 
 /** Conversion choices stay in the workflow; page composition and entry focus belong here. */
@@ -39,7 +38,6 @@ export function ConversionOptionsScreen({
   onSettings,
   profiles,
   settings,
-  singleBook,
 }: ConversionOptionsScreenProps): React.JSX.Element {
   const words = useMessages().options;
   return (
@@ -68,7 +66,6 @@ export function ConversionOptionsScreen({
         onSettings={onSettings}
         profiles={profiles}
         settings={settings}
-        singleBook={singleBook}
       />
     </Screen>
   );

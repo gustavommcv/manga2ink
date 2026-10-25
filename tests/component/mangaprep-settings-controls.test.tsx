@@ -190,7 +190,6 @@ describe('every control of the conversion options page', () => {
           onSettings={onSettings}
           profiles={profiles}
           settings={settings}
-          singleBook={false}
         />,
       );
       const control = controlOf(label);

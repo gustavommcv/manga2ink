@@ -183,7 +183,6 @@ describe('the options kept between sessions', () => {
           preferences: {
             mode: 'convert-only',
             format: 'pdf',
-            singleBook: false,
             settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
           },
         }),
@@ -224,7 +223,6 @@ describe('the options kept between sessions', () => {
         preferences: {
           mode: 'bind-and-convert',
           format: 'pdf',
-          singleBook: false,
           settings: defaultMangaprepSettings,
         },
       });
@@ -251,7 +249,9 @@ describe('the options kept between sessions', () => {
     );
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     // The saved id is not in the list, so nothing is chosen.
@@ -282,7 +282,9 @@ describe('the options kept between sessions', () => {
     );
     render(<App />);
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     expect(screen.getByRole('combobox', { name: 'Source' })).toHaveTextContent('MangaDex');
@@ -468,57 +470,6 @@ describe('the options kept between sessions', () => {
     expect(
       saveCalls(saveSettings).some((command) => command.preferences.settings.jpegQuality === 500),
     ).toBe(false);
-  });
-
-  it('opens with singleBook kept from previous session and saves singleBook: false when turned off', async () => {
-    const user = userEvent.setup();
-    const saveSettings = okSave();
-    installBridge(
-      bridge({
-        saveSettings,
-        loadSettings: keptSettings({
-          preferences: {
-            ...defaultPreferences,
-            singleBook: true,
-            mode: 'bind-and-convert',
-            format: 'epub',
-          },
-        }),
-      }),
-    );
-    render(<App />);
-
-    expect(await screen.findByRole('heading', { name: 'Queue' })).toBeVisible();
-    const singleBookCheckbox = screen.getByRole('checkbox', {
-      name: 'Create one book for the series',
-    });
-    // What was kept arrives a moment after the page does, so the page is first drawn with the defaults.
-    await waitFor(() => {
-      expect(singleBookCheckbox).toBeChecked();
-    });
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeDisabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeDisabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeChecked();
-    expect(
-      screen.getAllByText('Turn off “Create one book for the series” to change this.'),
-    ).toHaveLength(2);
-
-    await user.click(singleBookCheckbox);
-
-    expect(singleBookCheckbox).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Group chapters into volumes' })).toBeEnabled();
-    expect(screen.getByRole('checkbox', { name: 'Convert for e-reader' })).toBeEnabled();
-    expect(screen.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    expect(
-      screen.queryByText('Turn off “Create one book for the series” to change this.'),
-    ).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(saveCalls(saveSettings).at(-1)?.preferences).toMatchObject({
-        singleBook: false,
-      });
-    });
   });
 
   describe('putting the options back to their defaults', () => {

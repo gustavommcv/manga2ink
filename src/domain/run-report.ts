@@ -1,5 +1,11 @@
 import type { BookFormat } from './conversion';
-import { describeRow, isWaitingTitle, type QueueAction, type QueueRow } from './input-queue';
+import {
+  describeRow,
+  isWaitingTitle,
+  type QueueAction,
+  type QueueRow,
+  rowProcess,
+} from './input-queue';
 import { type AnyMessage, message } from './message';
 import type { ProcessMode } from './process-mode';
 
@@ -153,7 +159,8 @@ export function finishRunReport<Artifact>({
       status: 'skipped',
       artifacts: [],
       message: view.notes.length > 0 ? view.notes : [view.chip],
-      fixable: row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only',
+      // Its books and volumes are chosen in the editor, wherever the steps leave it something to join.
+      fixable: row.state === 'inspected' && row.kind !== 'cbz' && rowProcess(row, mode) !== 'skip',
     });
   }
   const completedRowIds = rows

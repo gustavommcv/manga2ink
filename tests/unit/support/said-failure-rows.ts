@@ -364,6 +364,18 @@ export const failureRows: Rows<
       'Corrija os erros do mapeamento dos capítulos antes de converter.',
     ],
   ],
+  'workflow.versionsPending': [
+    [
+      { count: 1 },
+      '1 chapter comes in more than one version. Choose which to use before converting.',
+      '1 capítulo vem em mais de uma versão. Escolha qual usar antes de converter.',
+    ],
+    [
+      { count: 3 },
+      '3 chapters come in more than one version. Choose which to use before converting.',
+      '3 capítulos vêm em mais de uma versão. Escolha qual usar antes de converter.',
+    ],
+  ],
   'workflow.mappingNotSaved': [
     [
       {},

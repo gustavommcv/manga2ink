@@ -4,5 +4,5 @@ import type { NoValues } from './values';
 export interface ModeMessageValues {
   readonly 'mode.cbzIsOneVolume': NoValues;
   readonly 'mode.libraryGroupsFirst': NoValues;
-  readonly 'mode.singleBookLocked': NoValues;
+  readonly 'mode.chaptersAreArchives': NoValues;
 }

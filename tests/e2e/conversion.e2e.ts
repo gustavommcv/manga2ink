@@ -47,8 +47,8 @@ describe('packaged conversion pipeline', () => {
     // Nothing in the chapter names says which volume they belong to, so the folder waits for a
     // grouping before it can run.
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
-    await $('button[aria-label="Edit volumes for Manga2Ink E2E"]').click();
-    await $('h1=Organize Manga2Ink E2E into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="Edit books and volumes for Manga2Ink E2E"]').click();
+    await $('h1=Organize Manga2Ink E2E into books').waitForDisplayed({ timeout: 30_000 });
     assert.equal(await $('[role="tab"][aria-selected="true"]').getText(), 'Manual');
     await $('[role="status"][aria-label="No volumes found in file names"]').waitForDisplayed();
     await $('button=Select all').click();
@@ -185,7 +185,7 @@ describe('packaged conversion pipeline', () => {
     await $('button[aria-label="Edit titles of Library"]').click();
     await $('span=Needs volumes').waitForDisplayed({ timeout: 30_000 });
     await $('button[aria-label="Edit volumes for Needs Mapping Manga"]').click();
-    await $('h1=Organize Needs Mapping Manga into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('h1=Organize Needs Mapping Manga into books').waitForDisplayed({ timeout: 30_000 });
     await $('button=Select all').click();
     await $('button[aria-label="Add volume"]').click();
     await $('button=Assign selected').click();

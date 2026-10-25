@@ -4,6 +4,8 @@ These documents explain how Manga2Ink is built, decided and released. They are p
 
 Start with [current priorities](milestones.md#current-priorities) for pending work. The milestone sequence and audit findings retain their historical context; dated status updates describe later fixes, not a new audit of the whole codebase.
 
+For agent-assisted work, [AGENTS.md](../AGENTS.md) is the short entry point. [Current decisions by topic](current-decisions.md) identifies the rules and amendments relevant to a change, and [task handoffs](tasks/README.md) keep resumable work out of conversation history. These pages use the existing architecture and ADRs; they do not replace them.
+
 | Read this                                                | To learn                                                                         |
 | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | [Architecture overview](architecture.md)                 | How the code is layered, how a conversion runs end to end, where to change what  |

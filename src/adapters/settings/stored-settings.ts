@@ -73,10 +73,6 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
     typeof file.settings === 'object' && file.settings !== null && !Array.isArray(file.settings)
       ? { ...(file.settings as Record<string, unknown>) }
       : {};
-  // An earlier version kept "bind the whole series" among the options; it is a choice of its own now.
-  const wasCombining =
-    file.combineIntoOneVolume === true || rawSettings.combineIntoOneVolume === true;
-
   const reset: OptionName[] = [];
   /** The value if the file has one that is good, `undefined` and a note if it has a bad one. */
   const read = <Schema extends z.ZodType>(
@@ -111,7 +107,6 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
   const choices = preferencesSchema.shape;
   const mode = read('mode', choices.mode, file.mode);
   const format = read('format', choices.format, file.format);
-  const singleBook = read('singleBook', choices.singleBook, file.singleBook);
   const providerId = read('providerId', choices.providerId, file.providerId);
   const outputFolder = read('outputFolder', storedFields.outputFolder, file.outputFolder);
   const lastPickerFolder = read(
@@ -128,7 +123,6 @@ export function parseStoredSettings(raw: string): ParsedSettings | undefined {
   const settings: StoredSettings = {
     mode: mode ?? defaultPreferences.mode,
     format: format ?? defaultPreferences.format,
-    singleBook: singleBook ?? (wasCombining ? true : defaultPreferences.singleBook),
     settings: { ...(options as unknown as MangaprepSettings), combineIntoOneVolume: false },
     ...(providerId === undefined ? {} : { providerId }),
     ...(outputFolder === undefined ? {} : { outputFolder }),

@@ -7,8 +7,11 @@ import { type AnyMessage, message } from './message';
 export const processModes = ['bind-and-convert', 'bind-only', 'convert-only'] as const;
 export type ProcessMode = (typeof processModes)[number];
 
-/** What is being run: a manga folder, one CBZ, or a whole library of manga folders. */
-export type ModeInput = 'folder' | 'cbz' | 'library';
+/**
+ * What is being run: a manga folder, one CBZ, a whole library of manga folders, or a folder whose
+ * chapters are CBZ files, which cannot be converted before they are joined.
+ */
+export type ModeInput = 'folder' | 'cbz' | 'library' | 'archives';
 
 /** A library is bound by one mangabind call, so a batch can never skip binding. */
 export const batchProcessModes = ['bind-and-convert', 'bind-only'] as const;
@@ -39,12 +42,13 @@ export function usesMangaprep(mode: ProcessMode): boolean {
 
 const cbzReason = message('mode.cbzIsOneVolume', {});
 export const libraryReason = message('mode.libraryGroupsFirst', {});
-export const singleBookLockReason = message('mode.singleBookLocked', {});
+export const archivesReason = message('mode.chaptersAreArchives', {});
 
 /** Why a run must refuse this mode for this kind of input, or undefined when it can run. */
 export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): AnyMessage | undefined {
   if (input === 'cbz' && mode === 'bind-only') return cbzReason;
   if (input === 'library' && mode === 'convert-only') return libraryReason;
+  if (input === 'archives' && mode === 'convert-only') return archivesReason;
   return undefined;
 }
 
@@ -66,6 +70,8 @@ export function resolveMode(input: 'library', mode: ProcessMode): BatchProcessMo
 export function resolveMode(input: ModeInput, mode: ProcessMode): ProcessMode;
 export function resolveMode(input: ModeInput, mode: ProcessMode): ProcessMode {
   if (input === 'cbz') return 'convert-only';
-  if (input === 'library' && mode === 'convert-only') return 'bind-and-convert';
+  if ((input === 'library' || input === 'archives') && mode === 'convert-only') {
+    return 'bind-and-convert';
+  }
   return mode;
 }

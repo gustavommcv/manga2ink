@@ -1,3 +1,4 @@
+import type { VersionGroup } from './chapter-versions';
 import { type AnyMessage, message } from './message';
 
 export interface MappingChapter {
@@ -14,6 +15,8 @@ export interface MappingChapter {
   readonly parsedVolume?: number;
   /** The language the folder name declared, such as "pt-br", when it declared one. */
   readonly language?: string;
+  /** Whether the chapter is a folder of pages or an archive of them (a `.cbz` or `.zip`). */
+  readonly kind?: 'folder' | 'cbz';
 }
 
 export interface MappingVolume {
@@ -32,6 +35,11 @@ export interface MappingDraft {
   readonly chapters: readonly MappingChapter[];
   readonly volumes: readonly MappingVolume[];
   readonly source?: MappingSource;
+  /**
+   * The chapters that more than one file claims (ADR 0093). The list of chapters has one chapter for
+   * each, standing for all of them, and what is chosen among the files is here.
+   */
+  readonly versions?: readonly VersionGroup[];
 }
 
 export interface MappingIssue {
@@ -58,6 +66,11 @@ export interface MangabindMetadataFile {
     readonly chapters: readonly string[];
   }[];
   readonly source?: { readonly provider: string; readonly id: string };
+  /** Which of the files that claim a chapter to use (mangabind's `chapter_versions`). */
+  readonly chapter_versions?: readonly {
+    readonly chapter: string;
+    readonly use: readonly string[];
+  }[];
 }
 
 /**
@@ -75,6 +88,8 @@ export class MappingOperationError extends Error {
       | 'invalid_split'
       | 'invalid_volume_number'
       | 'same_volume'
+      | 'unknown_version'
+      | 'unknown_version_group'
       | 'volume_not_found',
     readonly said: AnyMessage,
   ) {
@@ -143,6 +158,11 @@ function chapterToken(chapter: MappingChapter): string {
   return `${String(chapter.chapter)}${chapter.special ?? ''}`;
 }
 
+/** The chapter as the mapping file writes it (`6`, `6.5`, `21x1`); it throws for one that cannot be written. */
+export function chapterTokenOf(chapter: MappingChapter): string {
+  return chapterToken(chapter);
+}
+
 /**
  * Whether mangabind.json can represent this chapter: it needs a usable chapter number and, if
  * it is a special chapter, a suffix mangabind understands. validateMapping reports the same
@@ -165,10 +185,19 @@ export function mappingSignature(draft: MappingDraft): string {
   const volumes = draft.volumes
     .map((volume) => ({ number: volume.number, chapterIds: [...volume.chapterIds].sort() }))
     .sort((left, right) => Number(left.number) - Number(right.number));
+  // What is chosen among the files that claim a chapter is part of what a draft says: a choice made is
+  // a change, though no volume moved. A draft with no such chapters is signed as it always was.
+  const versions = (draft.versions ?? [])
+    .map((group) => ({
+      token: group.token,
+      use: group.use === undefined ? null : [...group.use].sort(),
+    }))
+    .sort((left, right) => left.token.localeCompare(right.token, 'en'));
   return JSON.stringify({
     title: draft.mangaTitle.trim(),
     source: draft.source ?? null,
     volumes,
+    ...(versions.length === 0 ? {} : { versions }),
   });
 }
 
@@ -248,15 +277,26 @@ export function dominantLanguage(chapters: readonly MappingChapter[]): string | 
   return best;
 }
 
+/**
+ * Whether some chapter of the draft is an archive. An archive of pages is not something the
+ * converter reads as a chapter of a book: it has to be joined with the others first, so a folder of
+ * them cannot skip the joining step.
+ */
+export function hasArchiveChapters(draft: MappingDraft | undefined): boolean {
+  return draft?.chapters.some((chapter) => chapter.kind === 'cbz') ?? false;
+}
+
 export function createMappingDraft({
   chapters,
   mangaTitle,
   source,
+  versions,
   volumes = [],
 }: {
   readonly chapters: readonly MappingChapter[];
   readonly mangaTitle: string;
   readonly source?: MappingSource;
+  readonly versions?: readonly VersionGroup[];
   readonly volumes?: readonly MappingVolume[];
 }): MappingDraft {
   const chapterIds = new Set<string>();
@@ -285,6 +325,7 @@ export function createMappingDraft({
     chapters: [...chapters].sort(compareChapters),
     volumes: [],
     ...(source === undefined ? {} : { source }),
+    ...(versions === undefined || versions.length === 0 ? {} : { versions }),
   };
   for (const volume of volumes) {
     draft = addVolume(draft, volume.id, volume.number);
@@ -621,7 +662,15 @@ export function validateMapping(draft: MappingDraft): readonly MappingIssue[] {
   return issues;
 }
 
-export function toMangabindMetadata(draft: MappingDraft): MangabindMetadataFile {
+/**
+ * The mapping as mangabind reads it. The files of a choice are named by their path below the manga
+ * folder, which only the one who knows the folder can say: `pathBelow` turns the path the app knows a
+ * file by into that, and leaves it as it is when nothing is given.
+ */
+export function toMangabindMetadata(
+  draft: MappingDraft,
+  pathBelow: (path: string) => string = (path) => path,
+): MangabindMetadataFile {
   const issues = validateMapping(draft);
   const errors = issues.filter((issue) => issue.severity === 'error');
   if (errors.length > 0) throw new MappingValidationError(errors);
@@ -653,6 +702,9 @@ export function toMangabindMetadata(draft: MappingDraft): MangabindMetadataFile 
         .map(chapterToken),
     }));
   const title = draft.mangaTitle.trim();
+  // Only a choice that was made is written: a chapter still waiting for one is a conflict, as it is
+  // to mangabind with no choice at all.
+  const chosen = (draft.versions ?? []).filter((group) => group.use !== undefined);
   return {
     schema_version: 1,
     ...(title === '' ? {} : { manga: { title } }),
@@ -660,9 +712,22 @@ export function toMangabindMetadata(draft: MappingDraft): MangabindMetadataFile 
     ...(draft.source === undefined
       ? {}
       : { source: { provider: draft.source.provider, id: draft.source.id } }),
+    ...(chosen.length === 0
+      ? {}
+      : {
+          chapter_versions: chosen.map((group) => ({
+            chapter: group.token,
+            use: group.candidates
+              .filter((candidate) => group.use!.includes(candidate.id))
+              .map((candidate) => pathBelow(candidate.path)),
+          })),
+        }),
   };
 }
 
-export function serializeMangabindMetadata(draft: MappingDraft): string {
-  return `${JSON.stringify(toMangabindMetadata(draft), null, 2)}\n`;
+export function serializeMangabindMetadata(
+  draft: MappingDraft,
+  pathBelow?: (path: string) => string,
+): string {
+  return `${JSON.stringify(toMangabindMetadata(draft, pathBelow), null, 2)}\n`;
 }

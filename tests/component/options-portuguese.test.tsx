@@ -34,7 +34,6 @@ const profiles = [
 function editor(
   settings: Partial<MangaprepSettings> = {},
   format: BookFormat = 'epub',
-  extra: { readonly singleBook?: boolean } = {},
 ): React.JSX.Element {
   return inPortuguese(
     <MangaprepSettingsEditor
@@ -44,7 +43,6 @@ function editor(
       onSettings={vi.fn()}
       profiles={profiles}
       settings={{ ...defaultMangaprepSettings, ...settings }}
-      {...extra}
     />,
   );
 }
@@ -194,14 +192,11 @@ describe('the fields of the conversion options, in Portuguese', () => {
     );
   });
 
-  it('says that cropping has to be on for its numbers, and the single book that locks the steps', () => {
-    render(editor({ cropping: 'disabled' }, 'epub', { singleBook: true }));
+  it('says that cropping has to be on for its numbers', () => {
+    render(editor({ cropping: 'disabled' }));
 
     expect(screen.getByLabelText('Intensidade do corte')).toHaveAccessibleDescription(
       'Ative o corte das páginas para ajustar isto.',
-    );
-    expect(screen.getByRole('status', { name: 'Um livro para a série' })).toHaveTextContent(
-      'Ativo na fila: a série será gerada como um único livro',
     );
     expect(screen.getByLabelText('Formato do livro')).toBeEnabled();
   });

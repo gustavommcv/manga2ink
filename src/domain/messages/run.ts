@@ -53,6 +53,8 @@ export interface RunMessageValues {
     readonly chaptersNotGrouped: boolean;
   };
   readonly 'plan.mangabind': { readonly volumes: number; readonly shape: RunShape };
+  /** The whole series as one book (ADR 0094): the chapters it holds, and the volumes the person made, if any. */
+  readonly 'plan.series': { readonly volumes: number; readonly chapters: number };
   readonly 'plan.library': {
     readonly titles: number;
     readonly volumes: number;

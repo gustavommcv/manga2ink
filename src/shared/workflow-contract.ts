@@ -54,17 +54,41 @@ const chapterSchema = z.object({
   special: z.string().max(16).optional(),
   parsedVolume: z.number().nonnegative().optional(),
   language: z.string().max(40).optional(),
+  kind: z.enum(['folder', 'cbz']).optional(),
 });
 const volumeSchema = z.object({
   id: z.string().min(1).max(maxNameLength),
   number: z.string().min(1).max(64),
   chapterIds: z.array(z.string().min(1).max(maxNameLength)).max(maxChapters),
 });
+/** More files than this for one chapter is not a chapter that came in several versions. */
+const maxVersionsOfAChapter = 64;
+const versionCandidateSchema = z.object({
+  id: z.string().min(1).max(maxNameLength),
+  name: nameSchema,
+  path: pathSchema,
+  kind: z.enum(['folder', 'cbz']),
+  pageCount: z.number().int().nonnegative(),
+  firstPage: z.string().max(maxNameLength).optional(),
+  attention: z.enum(['new', 'changed']).optional(),
+});
+const versionIdsSchema = z.array(z.string().min(1).max(maxNameLength)).max(maxVersionsOfAChapter);
+/** The chapters that more than one file claims; of a group the page can only say which files to use. */
+const versionGroupSchema = z.object({
+  token: z.string().min(1).max(64),
+  chapter: z.number().nonnegative(),
+  special: z.string().max(16).optional(),
+  volume: z.number().nonnegative().optional(),
+  candidates: z.array(versionCandidateSchema).min(1).max(maxVersionsOfAChapter),
+  use: versionIdsSchema.optional(),
+  remembered: versionIdsSchema.optional(),
+});
 export const mappingDraftSchema = z.object({
   mangaTitle: nameSchema,
   chapters: z.array(chapterSchema).max(maxChapters),
   volumes: z.array(volumeSchema).max(maxVolumes),
   source: z.object({ provider: z.string().max(64), id: z.string().max(maxNameLength) }).optional(),
+  versions: z.array(versionGroupSchema).max(maxChapters).optional(),
 });
 
 export const chooseInputsKindSchema = z.enum(['files', 'folders']);
@@ -289,6 +313,17 @@ export interface CoversChange {
   readonly note?: readonly AnyMessage[];
 }
 
+/** The files of a session whose first pages are wanted, by the ids the app gave them. */
+export const previewChaptersCommandSchema = z.object({
+  sessionId: identifierSchema,
+  ids: z.array(z.string().min(1).max(maxNameLength)).max(24),
+});
+
+export interface PreviewChaptersCommand {
+  readonly sessionId: string;
+  readonly ids: readonly string[];
+}
+
 export const writeTitleMappingCommandSchema = z.object({
   sessionId: identifierSchema,
   /** The title's name in the library the session read; its folder is found from that. */
@@ -413,6 +448,8 @@ export interface PlanSummary {
   readonly message: AnyMessage;
   readonly books: readonly PlannedBook[];
   readonly issues: readonly PipelineIssue[];
+  /** The files left out because another version of their chapter was chosen, by name. */
+  readonly leftOut?: readonly string[];
 }
 
 export interface ConversionCommand {

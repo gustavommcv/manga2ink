@@ -1,8 +1,10 @@
 import type { BookFileStorePort } from '@/application/ports/book-file-store';
 import type { BindingPort, ConversionPort } from '@/application/ports/conversion-tools';
+import { type ChapterPreviewPort, noPreviews } from '@/application/ports/chapter-previews';
 import type { CoverSourcePort, CoverStorePort } from '@/application/ports/cover-store';
 import { BookCovers, keepsNoCovers } from '@/application/workflows/book-covers';
 import { BookProduction } from '@/application/workflows/book-production';
+import { ChapterPreviews } from '@/application/workflows/chapter-previews';
 import { InputSessions } from '@/application/workflows/input-sessions';
 import { LibraryRun } from '@/application/workflows/library-run';
 import { SingleInputRun } from '@/application/workflows/single-run';
@@ -17,6 +19,8 @@ export class ConversionWorkflow {
   private readonly libraryRun: LibraryRun;
   /** The covers a person attaches to the books of an item, and the ones a run then uses. */
   readonly covers: BookCovers;
+  /** The first pages of the files that claim one chapter, to show them by. */
+  readonly previews: ChapterPreviews;
 
   constructor(
     binding: BindingPort,
@@ -25,8 +29,10 @@ export class ConversionWorkflow {
     bookFiles: BookFileStorePort,
     maxParallelConversions: () => number = () => 1,
     coverStore: CoverStorePort & CoverSourcePort = keepsNoCovers,
+    pages: ChapterPreviewPort = noPreviews,
   ) {
     this.sessions = new InputSessions(binding, createId);
+    this.previews = new ChapterPreviews(this.sessions, pages);
     this.covers = new BookCovers(this.sessions, coverStore, coverStore);
     const books = new BookProduction(conversion, createId, bookFiles, maxParallelConversions);
     this.singleRun = new SingleInputRun(binding, conversion, this.sessions, books, this.covers);

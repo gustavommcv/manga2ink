@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-import { type QueueRow, summarizeQueue } from '@/domain/input-queue';
+import { type QueueRow, queueModeInput, summarizeQueue } from '@/domain/input-queue';
 import type { BookFormat } from '@/domain/conversion';
 import { defaultMangaprepSettings, type MangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat, isDefaultMangaprep } from '@/domain/preferences';
@@ -19,10 +19,8 @@ import { DropTarget } from '@/renderer/components/queue/drop-target';
 import { QueueRowItem } from '@/renderer/components/queue/queue-row';
 import { ProcessSteps } from '@/renderer/components/settings/process-steps';
 import { ResetOptions } from '@/renderer/components/settings/reset-options';
-import { SettingFieldHeader } from '@/renderer/components/shared/setting-field-header';
 import { Badge } from '@/renderer/components/shared/badge';
 import { Callout } from '@/renderer/components/shared/callout';
-import { CheckRow } from '@/renderer/components/shared/check-row';
 import { Field } from '@/renderer/components/shared/field';
 import { IconLine } from '@/renderer/components/shared/icon-line';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -72,7 +70,6 @@ export interface QueueScreenProps {
   readonly onRemove: (id: string) => void;
   /** Puts the steps, device, format and every mangaprep option back to their defaults. */
   readonly onReset: () => void;
-  readonly onSingleBook: (singleBook: boolean) => void;
   readonly onValidate: () => void;
   readonly plans?: readonly RowPlan[];
   readonly profiles: readonly DeviceProfileSummary[];
@@ -80,7 +77,6 @@ export interface QueueScreenProps {
   readonly rejected: readonly RejectedInput[];
   readonly rows: readonly QueueRow[];
   readonly settings: MangaprepSettings;
-  readonly singleBook: boolean;
   /** What is left on the drives the app works on, or null while it is not known (ADR 0060). */
   readonly space: WorkingSpace | null;
   readonly validating: boolean;
@@ -91,14 +87,6 @@ const formatOptions = [
   { value: 'epub', label: 'EPUB' },
   { value: 'pdf', label: 'PDF' },
 ] as const;
-
-/** A queue of one kind only limits the steps to what that kind allows; a mixed one does not. */
-function stepsInput(rows: readonly QueueRow[]): 'folder' | 'cbz' | 'library' {
-  const kind = rows[0]?.kind;
-  return kind !== undefined && rows.every((row) => row.kind === kind) && kind !== 'folder'
-    ? kind
-    : 'folder';
-}
 
 export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
   const {
@@ -123,14 +111,12 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
     onOpenOptions,
     onRemove,
     onReset,
-    onSingleBook,
     onValidate,
     plans,
     profiles,
     rejected,
     rows,
     settings,
-    singleBook,
     space,
     validating,
   } = props;
@@ -153,49 +139,13 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
             ? words.run.leftOut(summary.skipped)
             : undefined;
   const short = space === null ? null : lowSpace(space, roomNeeded(rows, mode));
-  const onlyCbz = rows.length > 0 && rows.every((row) => row.kind === 'cbz');
-  const singleBookActive = singleBook && !onlyCbz;
 
   const panel = (
     <aside
       aria-label={words.panel.label}
       className="border-border bg-surface h-fit space-y-4 rounded-xl border p-5"
     >
-      <ProcessSteps
-        disabled={disabled}
-        input={stepsInput(rows)}
-        mode={mode}
-        onMode={onMode}
-        singleBook={singleBookActive}
-      />
-
-      <CheckRow
-        checked={singleBook}
-        describedBy="combine-into-one-volume-message"
-        disabled={disabled || (onlyCbz && !singleBook)}
-        id="combine-into-one-volume"
-        note={
-          <Note id="combine-into-one-volume-message">
-            {onlyCbz
-              ? singleBook
-                ? words.panel.singleBook.saved
-                : words.panel.singleBook.unavailable
-              : words.panel.singleBook.produces[format]}
-          </Note>
-        }
-        onChange={onSingleBook}
-        title={
-          <SettingFieldHeader
-            changed={singleBook}
-            disabled={disabled || (onlyCbz && !singleBook)}
-            id="combine-into-one-volume"
-            label={words.panel.singleBook.label}
-            onReset={() => {
-              onSingleBook(false);
-            }}
-          />
-        }
-      />
+      <ProcessSteps disabled={disabled} input={queueModeInput(rows)} mode={mode} onMode={onMode} />
 
       <Field
         changed={settings.deviceProfile !== defaultMangaprepSettings.deviceProfile}
@@ -252,9 +202,7 @@ export function QueueScreen(props: QueueScreenProps): React.JSX.Element {
         )}
         <div className="border-border border-t pt-3">
           <ResetOptions
-            changed={
-              mode !== defaultProcessMode || singleBook || !isDefaultMangaprep(format, settings)
-            }
+            changed={mode !== defaultProcessMode || !isDefaultMangaprep(format, settings)}
             onReset={onReset}
             scope="queue"
           />
@@ -532,18 +480,55 @@ function PlansPanel({ plans }: { readonly plans: readonly RowPlan[] }): React.JS
         <div key={name}>
           <h3 className="text-sm font-medium">{name}</h3>
           <Note className="mt-1">{say(plan.message)}</Note>
-          <ul className="mt-2 space-y-1 text-sm">
+          <ul className="mt-2 space-y-2 text-sm">
             {plan.books.map((book) => (
-              <li className="flex justify-between gap-4" key={book.name}>
-                <span className="truncate">
-                  {book.wholeSeries === true ? words.oneBookFor(book.name) : book.name}
-                </span>
-                <span className="text-muted-foreground shrink-0">
-                  {words.pages(book.pageCount)}
-                </span>
+              <li key={book.name}>
+                <div className="flex justify-between gap-4">
+                  <span className="truncate">
+                    {book.wholeSeries === true ? words.oneBookFor(book.name) : book.name}
+                  </span>
+                  <span className="text-muted-foreground shrink-0">
+                    {words.pages(book.pageCount)}
+                  </span>
+                </div>
+                {book.file !== undefined && <Note>{words.file(book.file)}</Note>}
+                {book.chapters !== undefined && (
+                  <details className="mt-1">
+                    <summary className="text-muted-foreground cursor-pointer text-xs">
+                      {words.chapters(book.chapters.length)}
+                    </summary>
+                    <ol className="mt-1 space-y-0.5 pl-4 text-xs">
+                      {book.chapters.map((chapter, index) => (
+                        <li
+                          className="flex justify-between gap-4"
+                          key={`${String(index)}-${chapter.label}`}
+                        >
+                          <span className="wrap-anywhere">{chapter.label}</span>
+                          <span className="text-muted-foreground shrink-0">
+                            {words.pages(chapter.pageCount)}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  </details>
+                )}
               </li>
             ))}
           </ul>
+          {plan.leftOut !== undefined && plan.leftOut.length > 0 && (
+            <details className="mt-2">
+              <summary className="text-muted-foreground cursor-pointer text-xs">
+                {words.leftOut(plan.leftOut.length)}
+              </summary>
+              <ul className="mt-1 space-y-0.5 pl-4 text-xs">
+                {plan.leftOut.map((file) => (
+                  <li className="wrap-anywhere" key={file}>
+                    {file}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
         </div>
       ))}
     </section>

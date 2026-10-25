@@ -83,11 +83,21 @@ export interface ConversionArtifact {
   readonly warnings?: readonly BookWarning[];
 }
 
+/** A chapter of a planned book, called what the book's table of contents will call it. */
+export interface PlannedChapter {
+  readonly label: string;
+  readonly pageCount: number;
+}
+
 export interface PlannedBook {
   readonly name: string;
   readonly pageCount: number;
   /** The one book a whole series is bound into: `name` is the series, and the window says what it makes. */
   readonly wholeSeries?: true;
+  /** The file the book will be, with the extension of its format, when it is known before it is made. */
+  readonly file?: string;
+  /** The chapters in the book, in reading order, when the tool tells them. */
+  readonly chapters?: readonly PlannedChapter[];
 }
 
 /**
@@ -109,11 +119,18 @@ export function plannedVolumeBookName(
 }
 
 /** A combined series is one planned EPUB; its volumes remain table-of-contents sections. */
-export function plannedSingleBook(title: string, volumes: readonly PlannedBook[]): PlannedBook {
+export function plannedSingleBook(
+  title: string,
+  volumes: readonly PlannedBook[],
+  file?: string,
+): PlannedBook {
+  const chapters = volumes.flatMap((volume) => volume.chapters ?? []);
   return {
     name: title,
     pageCount: volumes.reduce((total, volume) => total + volume.pageCount, 0),
     wholeSeries: true,
+    ...(file === undefined ? {} : { file }),
+    ...(chapters.length === 0 ? {} : { chapters }),
   };
 }
 
@@ -124,6 +141,8 @@ export interface WorkflowPlan {
   readonly message: AnyMessage;
   readonly books: readonly PlannedBook[];
   readonly issues: readonly PipelineIssue[];
+  /** The files left out because another version of their chapter was chosen, by name. */
+  readonly leftOut?: readonly string[];
 }
 
 export interface BatchTitleOutcome {
@@ -189,7 +208,8 @@ export class ConversionWorkflowError extends Error {
       | 'publish_failed'
       | 'session_not_found'
       | 'title_not_found'
-      | 'unsupported_mode',
+      | 'unsupported_mode'
+      | 'versions_pending',
     readonly said: AnyMessage,
     options?: ErrorOptions,
   ) {

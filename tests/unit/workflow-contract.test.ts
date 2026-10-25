@@ -315,6 +315,62 @@ describe('what the page may send, and how much', () => {
     ).toBe(false);
   });
 
+  describe('the chapters that more than one file claims', () => {
+    const candidate = (id: string) => ({
+      id,
+      name: id,
+      path: `/m/${id}.cbz`,
+      kind: 'cbz',
+      pageCount: 12,
+    });
+    const group = (overrides: Record<string, unknown> = {}) => ({
+      token: '6',
+      chapter: 6,
+      candidates: [candidate('a'), candidate('b')],
+      ...overrides,
+    });
+    const withGroups = (...groups: unknown[]) => ({ ...draft(1), versions: groups });
+
+    it('keeps what the page chose, which a schema that did not know the field would drop', () => {
+      const parsed = mappingDraftSchema.parse(
+        withGroups(group({ use: ['b'], remembered: ['a'], volume: 1, special: 'x1' })),
+      );
+
+      expect(parsed.versions?.[0]).toMatchObject({ use: ['b'], remembered: ['a'], volume: 1 });
+      expect(mappingDraftSchema.parse(draft(1)).versions).toBeUndefined();
+    });
+
+    it('takes a file that needs a second look, and one with a page to show', () => {
+      const flagged = { ...candidate('c'), attention: 'new', firstPage: '001.jpg' };
+
+      expect(
+        mappingDraftSchema.safeParse(withGroups(group({ candidates: [flagged, candidate('d')] })))
+          .success,
+      ).toBe(true);
+      expect(
+        mappingDraftSchema.safeParse(
+          withGroups(group({ candidates: [{ ...candidate('c'), attention: 'odd' }] })),
+        ).success,
+      ).toBe(false);
+    });
+
+    it('refuses a chapter with no files, a crowd of them, and a choice that is a crowd', () => {
+      const crowd = Array.from({ length: 65 }, (_, index) => candidate(`f${String(index)}`));
+
+      expect(mappingDraftSchema.safeParse(withGroups(group({ candidates: [] }))).success).toBe(
+        false,
+      );
+      expect(mappingDraftSchema.safeParse(withGroups(group({ candidates: crowd }))).success).toBe(
+        false,
+      );
+      expect(
+        mappingDraftSchema.safeParse(withGroups(group({ use: crowd.map((file) => file.id) })))
+          .success,
+      ).toBe(false);
+      expect(mappingDraftSchema.safeParse(withGroups(group({ token: '' }))).success).toBe(false);
+    });
+  });
+
   it('refuses the dropped and the typed paths that are far longer than any path', () => {
     expect(registerInputsCommandSchema.safeParse({ paths: ['x'.repeat(4097)] }).success).toBe(
       false,

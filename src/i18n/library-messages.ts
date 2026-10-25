@@ -9,7 +9,14 @@ import { countOf } from './count';
 export interface LibraryMessages {
   /** How many titles the library holds, and what happens to one with no volumes. */
   readonly summary: (titles: number) => string;
-  readonly singleBook: { readonly title: string; readonly text: string };
+  /** How the books of every title are made: one for each volume, or one for each title (ADR 0094). */
+  readonly books: {
+    readonly label: string;
+    readonly perVolume: string;
+    readonly perVolumeNote: string;
+    readonly series: string;
+    readonly seriesNote: string;
+  };
   readonly titles: string;
   readonly chips: {
     readonly saved: string;
@@ -27,9 +34,13 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
   en: {
     summary: (titles) =>
       `${String(titles)} ${countOf(titles, 'title', 'titles')}. A title with no volumes is left out of a run until you group it.`,
-    singleBook: {
-      title: 'Single book mode',
-      text: 'Each title in the library will be produced as its own single book.',
+    books: {
+      label: 'Books',
+      perVolume: 'One book per volume',
+      perVolumeNote: 'Each volume of each title is made into a book of its own.',
+      series: 'One book for each title',
+      seriesNote:
+        'Each title becomes one book, with its volumes as the first level of its table of contents. A title still needs its volumes.',
     },
     titles: 'Titles',
     chips: {
@@ -52,9 +63,13 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
   'pt-BR': {
     summary: (titles) =>
       `${String(titles)} ${countOf(titles, 'título', 'títulos')}. Um título sem volumes fica de fora do processamento até você agrupá-lo.`,
-    singleBook: {
-      title: 'Modo de livro único',
-      text: 'Cada título da biblioteca será gerado como um livro único próprio.',
+    books: {
+      label: 'Livros',
+      perVolume: 'Um livro por volume',
+      perVolumeNote: 'Cada volume de cada título vira um livro próprio.',
+      series: 'Um livro para cada título',
+      seriesNote:
+        'Cada título vira um livro só, com os volumes como primeiro nível do sumário. Um título ainda precisa dos seus volumes.',
     },
     titles: 'Títulos',
     chips: {
@@ -77,9 +92,13 @@ export const libraryMessages: Readonly<Record<Language, LibraryMessages>> = {
   ja: {
     summary: (titles) =>
       `${String(titles)} タイトル。巻のないタイトルは、まとめるまで処理の対象から外れます。`,
-    singleBook: {
-      title: '1 冊にまとめるモード',
-      text: 'ライブラリの各タイトルが、それぞれ 1 冊の本として作られます。',
+    books: {
+      label: '本',
+      perVolume: '巻ごとに 1 冊',
+      perVolumeNote: '各タイトルの各巻が、それぞれ 1 冊の本になります。',
+      series: 'タイトルごとに 1 冊',
+      seriesNote:
+        '各タイトルが 1 冊の本になり、巻は目次の最上位になります。タイトルには、引き続き巻が必要です。',
     },
     titles: 'タイトル',
     chips: {

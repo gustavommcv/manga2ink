@@ -17,7 +17,10 @@ const applicationPages = [
     ['manual-mapping', 'online-mapping'],
     ['manual-mapping', 'online-mapping'],
   ],
-  ['user-guide/output-profiles/', ['device-settings', 'page-layout', 'page-images', 'single-book']],
+  [
+    'user-guide/output-profiles/',
+    ['device-settings', 'page-layout', 'page-images', 'books-choice'],
+  ],
   ['user-guide/processing/', ['processing-details']],
   ['user-guide/exporting/', ['save-results', 'book-warnings', 'ready-books']],
   [
@@ -111,7 +114,7 @@ for (const colorScheme of ['light', 'dark']) {
       ['user-guide/exporting/', ['generated/ready-books', 'generated/book-warnings']],
       [
         'user-guide/output-profiles/',
-        ['generated/single-book', 'generated/page-layout', 'generated/page-images'],
+        ['generated/books-choice', 'generated/page-layout', 'generated/page-images'],
       ],
       ['koreader/recommended-settings/', ['koreader/status-overlap']],
     ]) {
