@@ -1,17 +1,17 @@
 {
   "assets/branding/manga2ink/character.svg": {
-    "bytes": 68277,
-    "sha256": "9a53a5afc63d49f715de3e076a84c97ddf27246e4913ef881ec0dda16c40d449",
-    "elements": 183
+    "bytes": 64364,
+    "sha256": "1877b6874ed38724cc9a43f51e8d140ee95647ba2f25a8a813bbb8653849dda2",
+    "elements": 226
   },
   "assets/branding/manga2ink/exports/character-4096.png": {
-    "bytes": 1012334,
-    "sha256": "13928e8d1b0988dfb7e5b0b085a71b6eec9c5f87d7d6661f2d80cafd74a57147",
-    "dimensions": [4096, 3469]
+    "bytes": 1373822,
+    "sha256": "8fafac782f0668d18c291c295f1a6f4d81f9d91ae81c7b7d0351030426c330a3",
+    "dimensions": [4096, 3520]
   },
   "website/public/favicon.ico": {
-    "bytes": 18096,
-    "sha256": "6ccd1cf780801cc24102853c8790c8fe0df2a14fe6740b16dadcd5626af94dd9",
+    "bytes": 18659,
+    "sha256": "652236247fff73f1e2888eef5a89d8f129c264e6bfda9050c9f0fec44f7cd14c",
     "dimensions": [64, 64],
     "representations": [
       [16, 16],
@@ -21,18 +21,18 @@
     ]
   },
   "website/src/assets/branding/header.webp": {
-    "bytes": 18640,
-    "sha256": "de5c8c09e2230b081b316982d18f28b4138fe766d70f1ff23f7f70306bbf48f1",
+    "bytes": 18572,
+    "sha256": "0e657e84f40fa982c5d740101bafd2f72f6f551ccc1b63840aac7904fdcdca51",
     "dimensions": [128, 128]
   },
   "assets/branding/manga2ink/exports/logo-4096.png": {
-    "bytes": 989143,
-    "sha256": "3e0e01882e47600a3001b9dc03a7ac7638dd30eb973860239d9d1458718aecd1",
+    "bytes": 1282182,
+    "sha256": "0a0e3e9fe07f32a6eed9718798770d60fd3ea18b90be5854ebb1938605406912",
     "dimensions": [4096, 4096]
   },
   "assets/icons/manga2ink.icns": {
-    "bytes": 653572,
-    "sha256": "9d00997debef743c76cbe5ab16f4c13dc9ab3af713a67eabe7128ffc1dda957f",
+    "bytes": 782599,
+    "sha256": "6ece5cd167a2a1a9ec48a912df09c4e76194888e416cf5170694b084bb3dc8dd",
     "dimensions": [1024, 1024],
     "representations": [
       [512, 512, 2],
@@ -46,8 +46,8 @@
     ]
   },
   "assets/icons/manga2ink.ico": {
-    "bytes": 113719,
-    "sha256": "e82022c351496f6df6dda80ba3d51d887492d13f665fdfa1d38c0282c0384ccd",
+    "bytes": 124142,
+    "sha256": "6004f2062f0df1c4613bb53ab77694ee939b73555379914f36e69c3ebe55ba4b",
     "dimensions": [256, 256],
     "representations": [
       [16, 16],
@@ -62,23 +62,23 @@
     ]
   },
   "assets/icons/manga2ink.png": {
-    "bytes": 376554,
-    "sha256": "20cdc68fb7e1b95f9ff4a1a86be16bafd60a7d9198c1ada9d3f7f73c950ee983",
+    "bytes": 473828,
+    "sha256": "50894d6a11b8760143b622e5ee846de04fe0f21382f87fe1041b3e5c894d50fc",
     "dimensions": [1024, 1024]
   },
   "src/renderer/assets/mark-192.webp": {
-    "bytes": 30908,
-    "sha256": "9e5c046664644c8377d9e4dc79ab2fdb6953d16256ddee00e7f4041a50749164",
+    "bytes": 32726,
+    "sha256": "3d34e5cb679188a1cc33294f6e553df2b5d4b1578fe1e44755971445b5a09888",
     "dimensions": [192, 192]
   },
   "src/renderer/assets/mark-48.webp": {
-    "bytes": 4502,
-    "sha256": "a6f0b449eba835e42f046d2597e7816fb3ce4f7bd49361c331da2ef809431d86",
+    "bytes": 4716,
+    "sha256": "3f9562bb723a621d4f8f028fd5f27b3473d186d4c30748ba88b9d84bb3fba4f6",
     "dimensions": [48, 48]
   },
   "website/public/social-preview.png": {
-    "bytes": 149164,
-    "sha256": "f825d30ac2405bc62b1ecf9bb06700dc4ec32e99c70ee36a0fbc6fff22e83382",
+    "bytes": 166829,
+    "sha256": "306d7502fa307120df3aad2279208c0ec74f6df6d11b0e19d3e6be7df9f399b2",
     "dimensions": [1200, 630]
   },
   "assets/branding/manga2ink/exports/wordmark-4096.png": {
@@ -87,14 +87,14 @@
     "dimensions": [4096, 1280]
   },
   "assets/branding/manga2ink/icon.svg": {
-    "bytes": 66944,
-    "sha256": "e184bfcb1ee99b7bf3ac4ea0955bb319b6ea8486bbc1df3c254b8d9ac4649035",
-    "elements": 188
+    "bytes": 66095,
+    "sha256": "19e54d9db6e0c26b8861f5c14a251cc70ffa4e7acbe6cf2ec022a940eb48dcbc",
+    "elements": 232
   },
   "assets/branding/manga2ink/logo.svg": {
-    "bytes": 72482,
-    "sha256": "706a4fe3defb26276f960d37c457f263a73699eb78fb9f1482c5a1bd9e57feea",
-    "elements": 201
+    "bytes": 71633,
+    "sha256": "1e47f70020d1731107f9d8c2f05459c96d37aa2982d044f36eaf7ba88f872040",
+    "elements": 245
   },
   "assets/branding/manga2ink/wordmark.svg": {
     "bytes": 6017,
@@ -102,8 +102,8 @@
     "elements": 17
   },
   "website/public/manga2ink.ico": {
-    "bytes": 113719,
-    "sha256": "e82022c351496f6df6dda80ba3d51d887492d13f665fdfa1d38c0282c0384ccd",
+    "bytes": 124142,
+    "sha256": "6004f2062f0df1c4613bb53ab77694ee939b73555379914f36e69c3ebe55ba4b",
     "dimensions": [256, 256],
     "representations": [
       [16, 16],

@@ -44,8 +44,10 @@ def main():
     from compose import compose
     compose()
     OUT.mkdir(exist_ok=True)
-    masters = {'logo': (4096, 4096), 'icon': (4096, 4096),
-               'character': (4096, round(4096 * 730 / 862)), 'wordmark': (4096, 1280)}
+    masters = {}
+    for name in ('logo', 'icon', 'character', 'wordmark'):
+        viewbox = [float(v) for v in ET.parse(ROOT / f'{name}.svg').getroot().get('viewBox').split()]
+        masters[name] = (4096, round(4096 * viewbox[3] / viewbox[2]))
     for name in masters:
         validate_svg(ROOT / f'{name}.svg')
     with tempfile.TemporaryDirectory(prefix='manga2ink-art-') as temporary:

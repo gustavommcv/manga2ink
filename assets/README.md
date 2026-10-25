@@ -2,7 +2,7 @@
 
 ## Manga2Ink
 
-The current logo, icon and lettering are in [`branding/manga2ink/`](branding/manga2ink/README.md): the editable mascot (`character.svg`), the lettering (`wordmark.svg`), the complete logo (`logo.svg`) and the text-free icon (`icon.svg`), with the scripts that compose and export them. The mascot is a vector adaptation, made with AI assistance, of the artwork JPmarquesbraga supplied (below): the missing crown is reconstructed and clean curves simplify the raster's texture, so it is neither a pixel-identical conversion nor an independently drawn illustration. The lettering is Grenze Black, outlined; its SIL Open Font License is kept in `branding/manga2ink/type/Grenze-OFL.txt`.
+The current logo, icon and lettering are in [`branding/manga2ink/`](branding/manga2ink/README.md): the editable mascot (`character.svg`), the lettering (`wordmark.svg`), the complete logo (`logo.svg`) and the text-free icon (`icon.svg`), with the scripts that compose and export them. The mascot is a vector adaptation, made with AI assistance, of the artwork JPmarquesbraga supplied (below) and the owner's later complete reference: clean curves simplify the raster's texture, so it is neither a pixel-identical conversion nor an independently drawn illustration. The lettering is Grenze Black, outlined; its SIL Open Font License is kept in `branding/manga2ink/type/Grenze-OFL.txt`.
 
 The exports are rendered from the SVGs and placed where they are used. `branding/manga2ink/exports/manifest.json` records each one's place, size and SHA-256:
 
