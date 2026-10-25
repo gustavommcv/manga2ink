@@ -2,9 +2,21 @@
 
 This page maps the code and the conversion flow. [ADR 0001](adr/0001-electron-react-and-module-boundaries.md) defines the boundaries; the [decision index](adr/README.md) explains the trade-offs.
 
+For a focused task, use [current decisions by topic](current-decisions.md) to find the applicable amendments instead of reading the full ADR history.
+
 ## The idea in one paragraph
 
 Manga2Ink orchestrates two bundled, version-pinned tools: **mangabind** groups chapters and writes volumes; **mangaprep** processes pages and creates books. The app handles choices, progress, saving, and sharing rather than reimplementing those algorithms. Dependencies point inward: adapters implement the application's ports, the application coordinates domain rules, and the domain has no framework or infrastructure dependencies.
+
+## Repository responsibilities
+
+| Repository                                            | Owns                                                                                                             | Does not own                                                              |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [manga2ink](https://github.com/gustavommcv/manga2ink) | Desktop choices, mapping edits, workflow coordination, progress, persistence, export, sharing and the user guide | Chapter-name parsing, archive binding, image processing or book rendering |
+| [mangabind](https://github.com/gustavommcv/mangabind) | Chapter discovery/parsing, grouping, binding and its standalone machine/terminal contract                        | Electron screens or e-reader image processing                             |
+| [mangaprep](https://github.com/gustavommcv/mangaprep) | Device/page processing, book formats, navigation and its standalone machine/terminal contract                    | The app's queue, dialogs or save/recovery lifecycle                       |
+
+Check the pinned binary before proposing an app-side workaround ([ADR 0006](adr/0006-cli-first-tool-boundary.md)). A missing CLI capability is implemented and released in its owning repository before the app updates its verified pin. Names of local checkout folders are not repository identities: older checkouts and records may still say Mangabound or mangapress. Use the Git remote and `toolchain.lock.json` to establish which repository and tools a task actually uses.
 
 ## Layers
 
@@ -33,7 +45,7 @@ The table lists allowed project layers; imports within a layer are always allowe
 5. **Save.** Each book is indexed in the pending run. Save As or Save All copies it to a chosen destination and records the export. Save All never replaces existing files; an indexing warning retains the pending original for retry.
 6. **Open or share.** Books open in the OS default application. An opt-in OPDS server serves a pending run or selected library on the chosen interface and a fixed port, and stops on exit. It lists recently converted books and other supported files separately.
 
-Grouping and conversion can run together or separately. For chapter folders, single-book mode requires both steps and EPUB; a standalone CBZ already represents one book and bypasses grouping. The workflow entry point is `application/workflows/conversion-workflow.ts`; its owners are described in [the application guide](../src/application/README.md). Concrete tool and storage implementations are listed in [the adapter guide](../src/adapters/README.md).
+Grouping and conversion can run together or separately where the input permits it: a folder of CBZ chapters and a library must be joined first ([ADR 0092](adr/0092-a-folder-of-cbz-chapters-is-always-joined-first.md)). For chapter folders, single-book mode requires both steps and supports EPUB, CBZ and PDF ([ADR 0081](adr/0081-a-series-made-into-one-book-can-be-an-epub-a-cbz-or-a-pdf.md), with PDF navigation amended by [ADR 0083](adr/0083-a-series-made-into-one-pdf-has-its-volumes-and-chapters-as-bookmarks.md)); a standalone CBZ already represents one book and bypasses grouping. The workflow entry point is `application/workflows/conversion-workflow.ts`; its owners are described in [the application guide](../src/application/README.md). Concrete tool and storage implementations are listed in [the adapter guide](../src/adapters/README.md).
 
 ## What keeps it safe
 
