@@ -63,6 +63,7 @@ function fakeFiles(rootPath: string): WorkspaceFileSystem & {
     typeof vi.fn<WorkspaceFileSystem['writeTextAtomically']>
   >;
   readonly readText: ReturnType<typeof vi.fn<WorkspaceFileSystem['readText']>>;
+  readonly fileSignature: ReturnType<typeof vi.fn<WorkspaceFileSystem['fileSignature']>>;
   readonly removeFile: ReturnType<typeof vi.fn<WorkspaceFileSystem['removeFile']>>;
   readonly removeDirectory: ReturnType<typeof vi.fn<WorkspaceFileSystem['removeDirectory']>>;
 } {
@@ -72,6 +73,7 @@ function fakeFiles(rootPath: string): WorkspaceFileSystem & {
     writeText: vi.fn(() => Promise.resolve()),
     writeTextAtomically: vi.fn(() => Promise.resolve()),
     readText: vi.fn(() => Promise.resolve(undefined)),
+    fileSignature: vi.fn(() => Promise.resolve(undefined)),
     removeFile: vi.fn(() => Promise.resolve()),
     removeDirectory: vi.fn(() => Promise.resolve()),
   };

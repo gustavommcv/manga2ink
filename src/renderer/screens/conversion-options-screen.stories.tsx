@@ -73,7 +73,6 @@ const meta = {
       },
     ],
     settings: defaultMangaprepSettings,
-    singleBook: false,
   },
 } satisfies Meta<typeof ConversionOptionsScreen>;
 
@@ -107,15 +106,6 @@ export const AskingToReset: Story = {
     await expect(canvas.getByRole('group', { name: 'Confirm reset' })).toHaveTextContent(
       'Put the device, format and every mangaprep option back to their defaults?',
     );
-  },
-};
-
-export const SingleBookActive: Story = {
-  args: { singleBook: true },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('status', { name: 'Single book for the series' })).toBeVisible();
-    await expect(canvas.getByLabelText('Book format')).toBeEnabled();
   },
 };
 

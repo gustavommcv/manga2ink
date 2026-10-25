@@ -43,7 +43,6 @@ export function usesMangaprep(mode: ProcessMode): boolean {
 const cbzReason = message('mode.cbzIsOneVolume', {});
 export const libraryReason = message('mode.libraryGroupsFirst', {});
 export const archivesReason = message('mode.chaptersAreArchives', {});
-export const singleBookLockReason = message('mode.singleBookLocked', {});
 
 /** Why a run must refuse this mode for this kind of input, or undefined when it can run. */
 export function unsupportedModeReason(input: ModeInput, mode: ProcessMode): AnyMessage | undefined {

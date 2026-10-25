@@ -51,6 +51,7 @@ describe('the words of the queue screen in English, which are what the app has a
   it('name the buttons of a row after the item, and say when something was set', () => {
     expect(en.queue.row.editTitlesOf('Library')).toBe('Edit titles of Library');
     expect(en.queue.row.editVolumesFor('Series')).toBe('Edit volumes for Series');
+    expect(en.queue.row.editBooksFor('Series')).toBe('Edit books and volumes for Series');
     expect(en.queue.row.editDetailsOf('Series')).toBe('Edit details of Series');
     expect(en.queue.row.editDetails(false)).toBe('Edit title, author and language');
     expect(en.queue.row.editDetails(true)).toBe('Edit title, author and language (set)');

@@ -53,7 +53,17 @@ A chapter whose folder name gives a volume, such as `Vol.02 Ch.010`, stays in th
 
 ## The same chapter twice
 
-A folder sometimes holds the same chapter from two groups, for example `Ch.0002 [G1]` and `Ch.0002 [G2]`. Manga2Ink cannot choose between the copies, so it leaves **all** of them out of the book. Placing one of them in a volume does not change that. The editor lists this as an error, **Chapter 2 is in the folder more than once**, until you remove all but one of the copies from the folder and add the folder again.
+A folder sometimes holds the same chapter more than once, for example `Ch.0006 [GroupA].cbz` and `Ch.0006 [GroupB].cbz`: two scan groups, two languages, or a re-release. Manga2Ink does not choose between them for you, and it never asks you to move, rename or delete anything.
+
+The row says **Choose versions** and waits, and the folder cannot be grouped until you have chosen. Press **Edit books and volumes** on the row: it opens with every file of each such chapter, and goes on to the grouping when every chapter is decided. For each file it shows its full name, its first page, whether it is a folder or a CBZ file, and how many pages it has. For each chapter you can:
+
+- **Use one version.** Only that file is in the book. The others stay where they are.
+- **Keep all versions.** They are in the book one after the other, each named with `(version 1 of 2)`, `(version 2 of 2)`, and the chapter keeps its own number in the table of contents.
+- **Leave the chapter out.**
+
+Manga2Ink never picks a version for you by size or by number of pages, and nothing runs until every chapter is decided. In the volume editor, a chapter with more than one version is one chapter.
+
+Your choice is kept with the folder, in its `mangabind.json`, and used when you add the folder again. If a file came after your choice, or changed since, the chapter is asked again, with your earlier choice offered.
 
 If a book is made anyway and something was left out of it, the results say so under the book. For example, they can say that chapters with more than one copy, chapters missing inside a volume, chapters with no pages, or links that lead outside the folder were left out. These notices are listed in [Saving and ready books](../exporting/#warnings-about-the-books).
 
@@ -97,11 +107,17 @@ Review the proposed volumes before confirming or editing the mapping.
 
 </details>
 
-## Skipping grouping
+## How the books are made
 
-**Skip grouping** is available where Manga2Ink can convert without regrouping. It is turned off in **Create one book for the series** mode, because that mode needs the volumes to put each chapter under its volume: in the table of contents of an EPUB, in the bookmarks of a PDF, or as folders in a CBZ.
+At the top of the editor of a folder, **Books** is the choice of how this series becomes books:
 
-It is also turned off for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first. Such a folder shows **Needs grouping** if the step is skipped, and **Group chapters into volumes** stays on.
+- **One book per volume** is what every series starts as. It needs volumes: from the names of the folders, from an online source, or made by hand below.
+- **One book for the whole series** needs no volumes. The chapters are the table of contents of the book; the volumes you make, if you make any, are its first level (in the table of contents of an EPUB, in the bookmarks of a PDF, or as folders in a CBZ). It says what the book is in the format you chose. With no volumes, **Done** is all there is to press.
+- **Convert the folder as it is** is what the old _Skip grouping_ button did: nothing is grouped, and the folder goes to mangaprep as one book. It does not change the steps of the queue, only this folder.
+
+The last is not offered for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first, and the choice says so. A comic file has no choice of books, since it is one book already. For a library, **Books** is on the screen that lists its titles: **One book per volume**, or **One book for each title** (a title still needs its volumes).
+
+The choice is kept with the row of the queue and not between sessions. The steps beside the queue are not locked by it: they are the queue's, and what you chose for one series is above them. If you turned a step off and a series ignores it, its row says so: **The steps of the queue do not apply here**.
 
 ## Where your volumes are kept
 

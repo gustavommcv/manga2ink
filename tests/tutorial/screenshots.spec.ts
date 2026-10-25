@@ -443,23 +443,16 @@ tutorial(
 );
 
 tutorial(
-  'single-book mode locks the process steps and leaves the format to choose',
+  'the books of a series are chosen where its chapters are grouped, and a whole series needs no volumes',
   async ({ capture, open, page, t }) => {
-    const story = 'workflows-queue--single-book-active';
+    const { books } = t.mapping.editor;
+    const story = 'workflows-mapping-editor--whole-series-without-volumes';
     await open(story);
     await expect(
-      page.getByRole('checkbox', { name: t.queue.panel.singleBook.label }),
+      page.getByRole('radio', { name: new RegExp(books.series.label, 'u') }),
     ).toBeChecked();
-    await expect(
-      page.getByRole('checkbox', { name: t.queue.steps.group, exact: true }),
-    ).toBeDisabled();
-    await expect(page.getByRole('radio', { name: 'EPUB' })).toBeEnabled();
-    await capture(
-      page,
-      'single-book',
-      story,
-      page.getByRole('complementary', { name: t.queue.panel.label }),
-    );
+    await expect(page.getByText(books.noVolumes.text)).toBeVisible();
+    await capture(page, 'books-choice', story, page.getByRole('group', { name: books.legend }));
   },
 );
 

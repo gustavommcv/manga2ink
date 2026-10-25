@@ -45,7 +45,7 @@ describe('the last words that were written in a component, in Portuguese', () =>
     });
     await user.click(add);
     await user.click(
-      await screen.findByRole('button', { name: 'Editar os volumes de Offline Work' }),
+      await screen.findByRole('button', { name: 'Editar os livros e volumes de Offline Work' }),
     );
 
     const back = await screen.findByRole('button', { name: 'Fila' });

@@ -56,7 +56,7 @@ test('the mapping editor in the light theme', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 960 });
   await page.goto(inLight('workflows-mapping-editor--provider-suggested'));
   await expect(
-    page.getByRole('heading', { name: 'Organize A Quiet Journey into volumes' }),
+    page.getByRole('heading', { name: 'Organize A Quiet Journey into books' }),
   ).toBeVisible();
   await expect(page.getByRole('region', { name: 'Proposed chapter mapping' })).toBeVisible();
   await page.evaluate(async () => document.fonts.ready);

@@ -18,6 +18,8 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.chip.notRecognized': [[{}, 'Not recognized', 'Não reconhecido']],
   'queue.chip.needsVolumes': [[{}, 'Needs volumes', 'Precisa de volumes']],
   'queue.chip.needsGrouping': [[{}, 'Needs grouping', 'Precisa agrupar']],
+  'queue.chip.reviewVersions': [[{}, 'Choose versions', 'Escolher versões']],
+  'queue.chip.wholeSeries': [[{}, 'Whole series', 'Série inteira']],
   'queue.chip.saved': [[{}, 'Saved', 'Salvo']],
   'queue.chip.volumes': [
     [{ count: 1 }, '1 volume', '1 volume'],
@@ -88,20 +90,51 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
   'queue.note.noVolumesYet': [
     [
       {},
-      'No volumes yet. Open Edit volumes to group the chapters.',
-      'Ainda não há volumes. Abra Editar volumes para agrupar os capítulos.',
+      'No volumes yet. Open Edit books and volumes to group the chapters, or make one book of the whole series.',
+      'Ainda não há volumes. Abra Editar livros e volumes para agrupar os capítulos, ou faça um livro só da série inteira.',
+    ],
+  ],
+  'queue.note.versionsPending': [
+    [
+      { count: 1 },
+      '1 chapter comes in more than one version. Open Edit books and volumes to choose which to use before grouping; your files stay where they are.',
+      '1 capítulo vem em mais de uma versão. Abra Editar livros e volumes para escolher qual usar antes de agrupar; os seus arquivos continuam onde estão.',
+    ],
+    [
+      { count: 3 },
+      '3 chapters come in more than one version. Open Edit books and volumes to choose which to use before grouping; your files stay where they are.',
+      '3 capítulos vêm em mais de uma versão. Abra Editar livros e volumes para escolher qual usar antes de agrupar; os seus arquivos continuam onde estão.',
     ],
   ],
   'queue.note.unassigned': [
     [
       { count: 1 },
-      '1 chapter still has no volume. Open Edit volumes to place it, or accept the gaps there.',
-      '1 capítulo ainda não tem volume. Abra Editar volumes para colocá-lo, ou aceite as lacunas lá.',
+      '1 chapter still has no volume. Open Edit books and volumes to place it, or accept the gaps there.',
+      '1 capítulo ainda não tem volume. Abra Editar livros e volumes para colocá-lo, ou aceite as lacunas lá.',
     ],
     [
       { count: 2 },
-      '2 chapters still have no volume. Open Edit volumes to place them, or accept the gaps there.',
-      '2 capítulos ainda não têm volume. Abra Editar volumes para colocá-los, ou aceite as lacunas lá.',
+      '2 chapters still have no volume. Open Edit books and volumes to place them, or accept the gaps there.',
+      '2 capítulos ainda não têm volume. Abra Editar livros e volumes para colocá-los, ou aceite as lacunas lá.',
+    ],
+  ],
+  'queue.note.stepsNotForSeries': [
+    [
+      { of: 'series' },
+      'The steps of the queue do not apply here: this series is joined and converted as one book.',
+      'As etapas da fila não valem aqui: esta série é juntada e convertida em um livro só.',
+    ],
+    [
+      { of: 'library' },
+      'The steps of the queue do not apply here: each title is joined and converted as one book.',
+      'As etapas da fila não valem aqui: cada título é juntado e convertido em um livro só.',
+    ],
+  ],
+  'queue.note.stepsNotForAsIs': [
+    [
+      {},
+      'The steps of the queue do not apply here: this folder is only converted, as it is.',
+      'As etapas da fila não valem aqui: esta pasta só é convertida, como está.',
     ],
   ],
   'queue.note.chaptersLeftOut': [
@@ -207,13 +240,6 @@ export const queueRows: Rows<QueueMessageValues & ModeMessageValues & TextMessag
       {},
       'A library is grouped title by title first, so it cannot skip joining volumes.',
       'Uma biblioteca é agrupada título por título primeiro, então não dá para pular a junção dos volumes.',
-    ],
-  ],
-  'mode.singleBookLocked': [
-    [
-      {},
-      'Turn off “Create one book for the series” to change this.',
-      'Desligue “Criar um livro para a série” para mudar isto.',
     ],
   ],
 

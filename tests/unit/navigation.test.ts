@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { QueueRow } from '@/domain/input-queue';
 import { resolveNavigation, type WorkflowNavigation } from '@/renderer/lib/navigation';
+import { createMappingDraft } from '@/domain/mapping';
 import { raw } from '@/domain/message';
 
 const library: QueueRow = {
@@ -119,6 +120,51 @@ describe('resolveNavigation', () => {
           [],
         ),
       ).toEqual(queue);
+    });
+  });
+
+  describe('the screen of the versions of a chapter', () => {
+    const withVersions: QueueRow = {
+      ...folder,
+      id: 'versions',
+      mapping: createMappingDraft({
+        mangaTitle: 'Work',
+        chapters: [{ id: 'a', name: 'a', path: '/a', pageCount: 1, chapter: 6 }],
+        versions: [
+          {
+            token: '6',
+            chapter: 6,
+            candidates: [
+              { id: 'a', name: 'a', path: '/a', kind: 'cbz', pageCount: 1 },
+              { id: 'b', name: 'b', path: '/b', kind: 'cbz', pageCount: 1 },
+            ],
+          },
+        ],
+      }),
+    };
+
+    it('stays for a folder that has chapters with versions', () => {
+      const navigation: WorkflowNavigation = {
+        screen: 'versions',
+        rowId: 'versions',
+        from: 'queue',
+      };
+
+      expect(resolveNavigation(navigation, [withVersions])).toBe(navigation);
+    });
+
+    it('is the queue when the folder was removed, has none, or is not read', () => {
+      for (const from of ['queue', 'mapping'] as const) {
+        expect(resolveNavigation({ screen: 'versions', rowId: 'versions', from }, [])).toEqual(
+          queue,
+        );
+        expect(resolveNavigation({ screen: 'versions', rowId: 'folder', from }, rows)).toEqual(
+          queue,
+        );
+        expect(resolveNavigation({ screen: 'versions', rowId: 'reading', from }, rows)).toEqual(
+          queue,
+        );
+      }
     });
   });
 });

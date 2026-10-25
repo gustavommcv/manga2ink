@@ -11,7 +11,6 @@ export type OptionName =
   | 'customDeviceSize'
   | 'mode'
   | 'format'
-  | 'singleBook'
   | 'providerId'
   | 'outputFolder'
   | 'lastPickerFolder'

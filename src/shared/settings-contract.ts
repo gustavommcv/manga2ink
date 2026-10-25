@@ -13,7 +13,6 @@ import { mangaprepSettingsSchema } from '@/shared/workflow-contract';
 export const preferencesSchema = z.object({
   mode: z.enum(processModes),
   format: z.enum(['epub', 'cbz', 'pdf']),
-  singleBook: z.boolean().default(false),
   settings: mangaprepSettingsSchema,
   providerId: z.string().min(1).max(64).optional(),
 });

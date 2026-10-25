@@ -1,28 +1,40 @@
 import { Folder, Layers, SlidersHorizontal, UserPen } from 'lucide-react';
 
 import { hasBookDetails } from '@/domain/book-details';
-import { isPendingTitle, isWaitingTitle, type LibraryTitle } from '@/domain/input-queue';
+import {
+  type BooksChoice,
+  isPendingTitle,
+  isWaitingTitle,
+  type LibraryTitle,
+} from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
 import { skippedLinksNotice } from '@/domain/library-links';
 import { unassignedChapterCount } from '@/domain/input-queue';
 import { Button } from '@/renderer/components/ui/button';
+import { SegmentedControl } from '@/renderer/components/ui/segmented-control';
 import { useMessages, useSay, useSentenceMarks } from '@/renderer/hooks/use-messages';
 import { Badge } from '@/renderer/components/shared/badge';
 import { InfoBanner } from '@/renderer/components/shared/info-banner';
 import { ListRow } from '@/renderer/components/shared/list-row';
+import { Field } from '@/renderer/components/shared/field';
 import { Screen } from '@/renderer/components/shared/screen';
 import { ScreenHeader } from '@/renderer/components/shared/screen-header';
 import { cn } from '@/renderer/lib/utils';
 
+/** A library is joined title by title first, so it cannot be left as it is. */
+type LibraryBooks = Exclude<BooksChoice, 'as-is'>;
+
 export interface LibraryScreenProps {
+  /** How the books of the library are made: one for each volume of a title, or one for each title (ADR 0094). */
+  readonly books?: LibraryBooks;
   readonly name: string;
   readonly onBack: () => void;
+  readonly onBooks?: (books: LibraryBooks) => void;
   readonly onEdit: (title: string) => void;
   /** Absent when the run does not make books with mangaprep, so there is nothing to edit. */
   readonly onEditDetails?: (title: string) => void;
   /** Absent when the run does not make books with mangaprep, so there are no options to set. */
   readonly onEditOptions?: (title: string) => void;
-  readonly singleBook?: boolean;
   /** Links in the library folder that were not followed: series that are not in the list. */
   readonly skippedLinks?: readonly string[];
   readonly titles: readonly LibraryTitle[];
@@ -30,12 +42,13 @@ export interface LibraryScreenProps {
 
 /** The manga a library holds, and which of them still need their volumes grouped. */
 export function LibraryScreen({
+  books = 'volumes',
   name,
   onBack,
+  onBooks,
   onEdit,
   onEditDetails,
   onEditOptions,
-  singleBook,
   skippedLinks = [],
   titles,
 }: LibraryScreenProps): React.JSX.Element {
@@ -50,7 +63,22 @@ export function LibraryScreen({
         title={name}
       />
       {skippedLinks.length > 0 && <SkippedLinks names={skippedLinks} />}
-      {singleBook && <InfoBanner message={words.singleBook.text} title={words.singleBook.title} />}
+      {onBooks !== undefined && (
+        <Field
+          description={books === 'series' ? words.books.seriesNote : words.books.perVolumeNote}
+          label={words.books.label}
+        >
+          <SegmentedControl
+            label={words.books.label}
+            onChange={onBooks}
+            options={[
+              { value: 'volumes', label: words.books.perVolume },
+              { value: 'series', label: words.books.series },
+            ]}
+            value={books}
+          />
+        </Field>
+      )}
       <ul aria-label={words.titles} className="space-y-0.5">
         {titles.map((title) => (
           <TitleRow

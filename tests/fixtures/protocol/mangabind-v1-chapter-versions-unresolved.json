@@ -1,0 +1,201 @@
+{
+  "protocol_version": 1,
+  "tool": "mangabind",
+  "tool_version": "dev",
+  "kind": "report",
+  "mode": "plan",
+  "status": "completed_with_warnings",
+  "input_path": "/fixtures/Folders Series",
+  "output_path": "/fixtures/out-chapter-versions-unresolved",
+  "batch": false,
+  "manga": [
+    {
+      "name": "Folders Series",
+      "input_path": "/fixtures/Folders Series",
+      "status": "completed_with_warnings",
+      "units": [
+        {
+          "name": "Ch.0001 (en)",
+          "path": "/fixtures/Folders Series/Ch.0001 (en).cbz",
+          "kind": "cbz",
+          "page_count": 1,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 1,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "not_requested"
+          },
+          "disposition": "unassigned"
+        },
+        {
+          "name": "Ch.0002 (en)",
+          "path": "/fixtures/Folders Series/Ch.0002 (en).cbz",
+          "kind": "cbz",
+          "page_count": 2,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 2,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "not_requested"
+          },
+          "disposition": "unassigned"
+        },
+        {
+          "name": "Ch.0003 - Koala (en) [GroupA]",
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+          "kind": "cbz",
+          "page_count": 2,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 3,
+            "title": "Koala",
+            "group": "GroupA",
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "not_requested"
+          },
+          "disposition": "unassigned"
+        },
+        {
+          "name": "Ch.0003 - Koala (en) [GroupB]",
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz",
+          "kind": "cbz",
+          "page_count": 3,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 3,
+            "title": "Koala",
+            "group": "GroupB",
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "not_requested"
+          },
+          "disposition": "unassigned"
+        },
+        {
+          "name": "Ch.0004 (en)",
+          "path": "/fixtures/Folders Series/Ch.0004 (en).cbz",
+          "kind": "cbz",
+          "page_count": 1,
+          "first_page": "001.png",
+          "parser": {
+            "matched": true,
+            "name": "chapter-only",
+            "chapter": 4,
+            "language": "en"
+          },
+          "metadata_assignment": {
+            "status": "not_requested"
+          },
+          "disposition": "unassigned"
+        }
+      ],
+      "chapter_versions": [
+        {
+          "chapter": 3,
+          "units": [
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+            "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz"
+          ],
+          "resolution": "unresolved"
+        }
+      ],
+      "volumes": [],
+      "issues": [
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "no_volumes_produced",
+          "stage": "group",
+          "manga": "Folders Series",
+          "recoverable": true,
+          "message": "No volumes could be produced from the inspected chapters."
+        },
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "unassigned_chapter",
+          "stage": "group",
+          "manga": "Folders Series",
+          "chapter": 1,
+          "path": "/fixtures/Folders Series/Ch.0001 (en).cbz",
+          "recoverable": true,
+          "message": "Chapter 1 has no volume assignment and was skipped."
+        },
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "unassigned_chapter",
+          "stage": "group",
+          "manga": "Folders Series",
+          "chapter": 2,
+          "path": "/fixtures/Folders Series/Ch.0002 (en).cbz",
+          "recoverable": true,
+          "message": "Chapter 2 has no volume assignment and was skipped."
+        },
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "unassigned_chapter",
+          "stage": "group",
+          "manga": "Folders Series",
+          "chapter": 3,
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupA].cbz",
+          "recoverable": true,
+          "message": "Chapter 3 has no volume assignment and was skipped."
+        },
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "unassigned_chapter",
+          "stage": "group",
+          "manga": "Folders Series",
+          "chapter": 3,
+          "path": "/fixtures/Folders Series/Ch.0003 - Koala (en) [GroupB].cbz",
+          "recoverable": true,
+          "message": "Chapter 3 has no volume assignment and was skipped."
+        },
+        {
+          "tool": "mangabind",
+          "severity": "warning",
+          "code": "unassigned_chapter",
+          "stage": "group",
+          "manga": "Folders Series",
+          "chapter": 4,
+          "path": "/fixtures/Folders Series/Ch.0004 (en).cbz",
+          "recoverable": true,
+          "message": "Chapter 4 has no volume assignment and was skipped."
+        }
+      ],
+      "summary": {
+        "units": 5,
+        "volumes": 0,
+        "pages": 0,
+        "warnings": 6,
+        "errors": 0
+      }
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "manga": 1,
+    "volumes": 0,
+    "pages": 0,
+    "errors": 0,
+    "warnings": 6
+  }
+}

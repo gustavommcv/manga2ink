@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -9,6 +9,13 @@ import type { MangabindProgressEvent } from './protocol';
 import { mappingDraftFromMangabindReport } from './mapping-draft';
 import { carryStoredDetails, readStoredDetails, withStoredDetails } from './stored-details';
 import type { MangabindReport } from './protocol';
+import {
+  type FileSignature,
+  readSeenVersions,
+  seenNow,
+  type SignatureOf,
+  withRememberedChoices,
+} from './version-memory';
 
 import { writeFileAtomically } from '@/adapters/fs/write-file-atomically';
 import type {
@@ -19,6 +26,7 @@ import type {
   BindingPlan,
   BindingPort,
   BindingResult,
+  BindingRunOptions,
 } from '@/application/ports/conversion-tools';
 import type { BookDetails } from '@/domain/book-details';
 import {
@@ -26,7 +34,8 @@ import {
   type PipelineIssue,
   ToolExecutionError,
 } from '@/domain/conversion';
-import { mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
+import { type MappingDraft, mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
+import { serializeSeriesMetadata } from '@/domain/series-book';
 import { message } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
@@ -49,6 +58,8 @@ export interface WorkspaceFileSystem {
   readonly writeTextAtomically: (filePath: string, contents: string) => Promise<void>;
   /** The text of a file, or undefined when there is no such file. */
   readonly readText: (filePath: string) => Promise<string | undefined>;
+  /** How big a file is and when it last changed, or undefined when there is no such file. */
+  readonly fileSignature: (filePath: string) => Promise<FileSignature | undefined>;
   /** Removes a file, and does nothing when there is none. */
   readonly removeFile: (filePath: string) => Promise<void>;
   readonly removeDirectory: (directoryPath: string) => Promise<void>;
@@ -63,6 +74,15 @@ export const workspaceFileSystem: WorkspaceFileSystem = {
   readText: async (filePath) => {
     try {
       return await readFile(filePath, 'utf8');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
+      throw error;
+    }
+  },
+  fileSignature: async (filePath) => {
+    try {
+      const found = await stat(filePath);
+      return { size: found.size, modified: Math.floor(found.mtimeMs / 1000) };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
       throw error;
@@ -129,7 +149,10 @@ export class MangabindBindingAdapter implements BindingPort {
         signal === undefined ? {} : { signal },
       );
       assertSuccessful(result);
-      const draft = mappingDraftFromMangabindReport(result.report, { seed: 'effective-volumes' });
+      const draft = await this.withRememberedChoices(
+        inputPath,
+        mappingDraftFromMangabindReport(result.report, { seed: 'effective-volumes' }),
+      );
       workspace.seedSignature = mappingSignature(draft);
       return { workspaceId, draft, issues: collectIssues(result) };
     } catch (error) {
@@ -144,13 +167,20 @@ export class MangabindBindingAdapter implements BindingPort {
     signal?: AbortSignal,
     combine?: boolean,
     onProgress?: (progress: BindingProgress) => void,
+    options: BindingRunOptions = {},
   ): Promise<BindingResult> {
     const workspace = this.workspaces.get(workspaceId);
     if (workspace === undefined) {
       throw new Error('The temporary binding workspace is no longer available.');
     }
-    const metadata = serializeMangabindMetadata(mapping);
-    await this.files.writeText(workspace.metadataPath, metadata);
+    const below = pathBelow(workspace.inputPath);
+    // What the run is told, and what is kept with the folder: a series made into one book that has no
+    // volumes is put in one for the run, and the folder is not told of a volume nobody made.
+    const metadata = serializeMangabindMetadata(mapping, below);
+    await this.files.writeText(
+      workspace.metadataPath,
+      options.wholeSeries === true ? serializeSeriesMetadata(mapping, below) : metadata,
+    );
     // When the user accepted mangabind's own grouping unchanged, the folder names already say
     // everything: a mangabind.json next to them would record nothing new, and would make a
     // read-only or network folder fail for no reason. Any edit still gets saved.
@@ -160,7 +190,11 @@ export class MangabindBindingAdapter implements BindingPort {
         const file = path.join(workspace.inputPath, metadataFileName);
         await this.files.writeTextAtomically(
           file,
-          carryStoredDetails(await this.files.readText(file), metadata),
+          carryStoredDetails(
+            await this.files.readText(file),
+            metadata,
+            await seenNow(mapping, below, this.signatureOf),
+          ),
         );
       } catch {
         // mangabind is run with the scratch copy, so the books still follow the edited volumes:
@@ -175,6 +209,7 @@ export class MangabindBindingAdapter implements BindingPort {
         metadataFilePath: workspace.metadataPath,
         dryRun: false,
         combine,
+        chapterLabels: 'number',
       },
       {
         ...(signal === undefined ? {} : { signal }),
@@ -214,12 +249,17 @@ export class MangabindBindingAdapter implements BindingPort {
     workspaceId: string,
     mapping: Parameters<BindingPort['plan']>[1],
     signal?: AbortSignal,
+    options: BindingRunOptions = {},
   ): Promise<BindingPlan> {
     const workspace = this.workspaces.get(workspaceId);
     if (workspace === undefined) {
       throw new Error('The temporary binding workspace is no longer available.');
     }
-    const metadata = serializeMangabindMetadata(mapping);
+    const below = pathBelow(workspace.inputPath);
+    const metadata =
+      options.wholeSeries === true
+        ? serializeSeriesMetadata(mapping, below)
+        : serializeMangabindMetadata(mapping, below);
     await this.files.writeText(workspace.metadataPath, metadata);
     const result = await this.cli.run(
       {
@@ -227,6 +267,7 @@ export class MangabindBindingAdapter implements BindingPort {
         outputPath: workspace.volumesPath,
         metadataFilePath: workspace.metadataPath,
         dryRun: true,
+        chapterLabels: 'number',
       },
       signal === undefined ? {} : { signal },
     );
@@ -240,8 +281,25 @@ export class MangabindBindingAdapter implements BindingPort {
         name: path.basename(checkedChildPath(workspace.volumesPath, volume.output_path)),
         pageCount: volume.page_count,
         number: volume.number,
+        ...(volume.chapter_entries === undefined
+          ? {}
+          : {
+              chapters: volume.chapter_entries.map((entry) => ({
+                label: entry.label,
+                pageCount: entry.page_count,
+              })),
+            }),
       }));
-    return { title: manga.name, volumes, issues: collectIssues(result) };
+    // The files set aside because another version of their chapter was chosen.
+    const leftOut = manga.units
+      .filter((unit) => unit.disposition === 'not_chosen')
+      .map((unit) => unit.name);
+    return {
+      title: manga.name,
+      volumes,
+      issues: collectIssues(result),
+      ...(leftOut.length === 0 ? {} : { leftOut }),
+    };
   }
 
   async planBatch(parentPath: string, signal?: AbortSignal): Promise<BindingBatchPlan> {
@@ -360,6 +418,39 @@ export class MangabindBindingAdapter implements BindingPort {
     }
   }
 
+  /**
+   * The draft with each remembered choice among the files of a chapter kept only if the files are as
+   * they were when it was made (ADR 0093). Nothing is read for a folder that has no such chapter.
+   */
+  private async withRememberedChoices(
+    inputPath: string,
+    draft: MappingDraft,
+  ): Promise<MappingDraft> {
+    if ((draft.versions ?? []).every((group) => group.use === undefined)) return draft;
+    let text: string | undefined;
+    try {
+      text = await this.files.readText(path.join(inputPath, metadataFileName));
+    } catch {
+      // A folder whose file cannot be read has no record of what was chosen.
+      text = undefined;
+    }
+    return withRememberedChoices(
+      draft,
+      readSeenVersions(text),
+      pathBelow(inputPath),
+      this.signatureOf,
+    );
+  }
+
+  /** How a file is known to the record: a folder by its pages, since its own size is the system's. */
+  private readonly signatureOf: SignatureOf = async (candidate) => {
+    const signature = await this.files.fileSignature(candidate.path);
+    if (signature === undefined) return undefined;
+    return candidate.kind === 'folder'
+      ? { size: candidate.pageCount, modified: signature.modified }
+      : signature;
+  };
+
   async writeTitleMapping(
     inputPath: string,
     mapping: Parameters<BindingPort['bind']>[1],
@@ -417,6 +508,11 @@ export class MangabindBindingAdapter implements BindingPort {
     }
     await this.files.removeDirectory(resolved);
   }
+}
+
+/** How a file is named in the mapping file: its path below the manga folder, written with a slash. */
+function pathBelow(inputPath: string): (filePath: string) => string {
+  return (filePath) => path.relative(inputPath, filePath).split(path.sep).join('/');
 }
 
 function toPipelineIssue(issue: MangabindReport['issues'][number]): PipelineIssue {

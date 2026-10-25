@@ -24,7 +24,8 @@ test.describe('at the size the window opens at', () => {
       'default',
     );
 
-    await page.goto('/iframe.html?id=workflows-queue--single-book-active&viewMode=story');
+    // The only step that is on cannot be turned off, and does not look as if it could.
+    await page.goto('/iframe.html?id=workflows-queue--join-only&viewMode=story');
     const lockedStep = page.getByRole('checkbox', { name: 'Group chapters into volumes' });
     await expect(lockedStep).toBeDisabled();
     await expect(lockedStep).not.toHaveCSS('cursor', 'pointer');
@@ -48,18 +49,6 @@ test.describe('at the size the window opens at', () => {
     );
     await page.evaluate(async () => document.fonts.ready);
     await expect(page).toHaveScreenshot('conversion-options.png');
-  });
-
-  test('the conversion options page keeps the single-book warning above its controls', async ({
-    page,
-  }) => {
-    await page.goto(
-      '/iframe.html?id=workflows-conversion-options--single-book-active&viewMode=story',
-    );
-    await expect(page.getByRole('status', { name: 'Single book for the series' })).toBeVisible();
-    await expect(page.getByLabel('Book format')).toBeEnabled();
-    await page.evaluate(async () => document.fonts.ready);
-    await expect(page).toHaveScreenshot('conversion-options-single-book.png');
   });
 
   test('the menu a click on the empty queue opens remains visually consistent', async ({
@@ -342,29 +331,22 @@ test('changed output settings show aligned labels and individual resets', async 
   await expect(page.locator('#storybook-root')).toHaveScreenshot('output-settings-modified.png');
 });
 
-test('single-book notices span their editor and share the warning treatment', async ({ page }) => {
-  await page.goto('/iframe.html?id=workflows-mapping-editor--single-book-active&viewMode=story');
-  const mapping = page.getByRole('region', { name: /Organize A Quiet Journey into volumes/u });
-  const mappingNotice = page.getByRole('status', { name: 'Single book for the series' });
-  await expect(mappingNotice).toBeVisible();
+test('the notice over the editor of a title of a library spans the editor and shares the warning treatment', async ({
+  page,
+}) => {
+  await page.goto(
+    '/iframe.html?id=workflows-mapping-editor--title-of-a-library-made-one-book&viewMode=story',
+  );
+  const mapping = page.getByRole('region', { name: /Organize A Quiet Journey into books/u });
+  const notice = page.getByRole('status', { name: 'One book for each title' });
+  await expect(notice).toBeVisible();
   const mappingBox = await mapping.boundingBox();
-  const mappingNoticeBox = await mappingNotice.boundingBox();
+  const noticeBox = await notice.boundingBox();
   expect(mappingBox).not.toBeNull();
-  expect(mappingNoticeBox).not.toBeNull();
-  expect(Math.abs(mappingNoticeBox!.x - mappingBox!.x)).toBeLessThan(1);
-  expect(Math.abs(mappingNoticeBox!.width - mappingBox!.width)).toBeLessThan(1);
-  await expect(mappingNotice).toHaveClass(/border-status-warning\/40/u);
-
-  await page.goto('/iframe.html?id=workflows-output-settings--single-book-active&viewMode=story');
-  const settingsNotice = page.getByRole('status', { name: 'Single book for the series' });
-  await expect(settingsNotice).toBeVisible();
-  const settingsBox = await settingsNotice.boundingBox();
-  const settingsParentBox = await settingsNotice.locator('..').boundingBox();
-  expect(settingsBox).not.toBeNull();
-  expect(settingsParentBox).not.toBeNull();
-  expect(Math.abs(settingsBox!.x - settingsParentBox!.x)).toBeLessThan(1);
-  expect(Math.abs(settingsBox!.width - settingsParentBox!.width)).toBeLessThan(1);
-  await expect(settingsNotice).toHaveClass(/border-status-warning\/40/u);
+  expect(noticeBox).not.toBeNull();
+  expect(Math.abs(noticeBox!.x - mappingBox!.x)).toBeLessThan(1);
+  expect(Math.abs(noticeBox!.width - mappingBox!.width)).toBeLessThan(1);
+  await expect(notice).toHaveClass(/border-status-warning\/40/u);
 });
 
 test('an online source with its results remains visually consistent', async ({ page }) => {
@@ -446,7 +428,7 @@ test('the process steps remain visually consistent', async ({ page }) => {
 test('a library in Portuguese remains visually consistent', async ({ page }) => {
   await page.goto('/iframe.html?id=workflows-library-titles--in-portuguese&viewMode=story');
   await expect(page.getByRole('heading', { name: 'Manga Library' })).toBeVisible();
-  await expect(page.getByRole('status', { name: 'Modo de livro único' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Livros' })).toBeVisible();
   await page.evaluate(async () => document.fonts.ready);
   await expect(page.locator('#storybook-root')).toHaveScreenshot('library-titles-portuguese.png');
 });

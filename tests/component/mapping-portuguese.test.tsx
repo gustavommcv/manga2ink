@@ -32,9 +32,7 @@ describe('the editor of the mapping, in Portuguese', () => {
   it('says what it is, where the grouping came from and what to do, in the words of the language', () => {
     render(inPortuguese(<MappingEditor initialDraft={manual} onConfirm={vi.fn()} />));
 
-    expect(
-      screen.getByRole('heading', { name: 'Organizar Chainsaw Man em volumes' }),
-    ).toHaveFocus();
+    expect(screen.getByRole('heading', { name: 'Organizar Chainsaw Man em livros' })).toHaveFocus();
     expect(screen.getByText('Mapeamento de capítulos')).toBeVisible();
     expect(screen.getByText('Mapeamento manual · Offline')).toBeVisible();
     expect(
@@ -68,7 +66,7 @@ describe('the editor of the mapping, in Portuguese', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Organizar mangá sem título em volumes' }),
+      screen.getByRole('heading', { name: 'Organizar mangá sem título em livros' }),
     ).toBeVisible();
     expect(screen.getByText('Sugerido por MangaDex')).toBeVisible();
   });
@@ -210,25 +208,39 @@ describe('the editor of the mapping, in Portuguese', () => {
     expect(screen.getByText('Não foi possível guardar o mapeamento.')).toBeVisible();
   });
 
-  it('explains the single book and skipping the grouping, quoting the control it cannot offer', () => {
+  it('names the books of the series, and says what the whole series needs and what it makes', () => {
     render(
       inPortuguese(
-        <MappingEditor
-          initialDraft={manual}
-          onConfirm={vi.fn()}
-          onSkipGrouping={vi.fn()}
-          singleBook
-        />,
+        <MappingEditor books="series" format="epub" initialDraft={manual} onBooks={vi.fn()} />,
       ),
     );
 
-    expect(screen.getByRole('status', { name: 'Um livro para a série' })).toHaveTextContent(
-      'Os volumes mapeados serão o primeiro nível do livro único',
+    expect(screen.getByRole('group', { name: 'Livros' })).toBeVisible();
+    expect(screen.getByRole('radio', { name: /Um livro por volume/u })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: /Um livro para a série inteira/u })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /Converter a pasta como está/u })).toBeVisible();
+    expect(screen.getByText(/Um EPUB para a série inteira/u)).toBeVisible();
+    expect(screen.getByText(/Esta série não precisa de volumes/u)).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Concluir' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Agrupar em volumes' })).toBeEnabled();
+  });
+
+  it('says why a folder of archives cannot be left as it is, and what a library of one book each does', () => {
+    const archives = createMappingDraft({
+      mangaTitle: 'Chainsaw Man',
+      chapters: chapters.map((chapter) => ({ ...chapter, kind: 'cbz' as const })),
+    });
+    const { rerender } = render(
+      inPortuguese(<MappingEditor initialDraft={archives} onBooks={vi.fn()} />),
     );
-    expect(screen.getByRole('button', { name: 'Pular o agrupamento' })).toBeDisabled();
-    expect(
-      screen.getByText('O modo de livro único exige agrupar os capítulos em volumes.'),
-    ).toBeVisible();
+
+    expect(screen.getByRole('radio', { name: /Converter a pasta como está/u })).toBeDisabled();
+    expect(screen.getByText(/Os capítulos desta pasta são arquivos CBZ/u)).toBeVisible();
+
+    rerender(inPortuguese(<MappingEditor books="series" initialDraft={manual} inLibrary />));
+    expect(screen.getByRole('status', { name: 'Um livro para cada título' })).toHaveTextContent(
+      'Os volumes mapeados serão o primeiro nível do livro do título',
+    );
   });
 });
 

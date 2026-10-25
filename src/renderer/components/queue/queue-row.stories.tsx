@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
 import { createMappingDraft } from '@/domain/mapping';
 
@@ -52,6 +53,68 @@ export const Grouped: Story = {
       }),
       confirmed: false,
     },
+  },
+};
+
+/** A chapter that two files claim: the row waits for a choice, and the button to make it is colored. */
+export const NeedsVersions: Story = {
+  args: {
+    row: {
+      id: 'v',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-v',
+      mapping: createMappingDraft({
+        mangaTitle: 'Ubunchu!',
+        chapters: [
+          {
+            id: 'c1',
+            name: 'Ch.0001 (en)',
+            path: '/m/1.cbz',
+            pageCount: 12,
+            chapter: 1,
+            kind: 'cbz',
+          },
+          {
+            id: 'c6',
+            name: 'Ch.0006 (en) [A]',
+            path: '/m/6a.cbz',
+            pageCount: 12,
+            chapter: 6,
+            kind: 'cbz',
+          },
+        ],
+        volumes: [{ id: 'v1', number: '1', chapterIds: ['c1', 'c6'] }],
+        versions: [
+          {
+            token: '6',
+            chapter: 6,
+            candidates: [
+              { id: 'c6', name: 'Ch.0006 (en) [A]', path: '/m/6a.cbz', kind: 'cbz', pageCount: 12 },
+              {
+                id: 'c6b',
+                name: 'Ch.0006 (en) [B]',
+                path: '/m/6b.cbz',
+                kind: 'cbz',
+                pageCount: 18,
+              },
+            ],
+          },
+        ],
+      }),
+      confirmed: false,
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Choose versions')).toBeVisible();
+    // The choice is made where the folder is grouped: the row has no button of its own for it, and
+    // the one that groups is the one that asks.
+    await expect(canvas.queryByRole('button', { name: /versions of chapters/u })).toBeNull();
+    await expect(
+      canvas.getByRole('button', { name: 'Edit books and volumes for Ubunchu!' }),
+    ).toBeVisible();
   },
 };
 
@@ -179,4 +242,46 @@ export const Unreadable: Story = {
 /** Converting only: volumes are already made, so there is nothing here to edit. */
 export const ConvertOnlyMode: Story = {
   args: { mode: 'convert-only', row: Grouped.args.row },
+};
+
+/** A folder with no volumes waits for them, or for one book of the whole series, where it is grouped (ADR 0094). */
+export const NeedsVolumes: Story = {
+  args: {
+    row: {
+      id: 'o',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-o',
+      mapping: createMappingDraft({ mangaTitle: 'Ubunchu!', chapters }),
+      confirmed: false,
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Needs volumes')).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Edit books and volumes for Ubunchu!' }),
+    ).toBeVisible();
+  },
+};
+
+/** The series made into one book says so on its row, and needs no volumes to run. */
+export const WholeSeries: Story = {
+  args: {
+    row: {
+      id: 'w',
+      kind: 'folder',
+      displayName: 'Ubunchu!',
+      displayPath: 'D:\\Manga\\Ubunchu!',
+      state: 'inspected',
+      sessionId: 'session-w',
+      mapping: createMappingDraft({ mangaTitle: 'Ubunchu!', chapters }),
+      books: 'series',
+      confirmed: false,
+    },
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Whole series')).toBeVisible();
+  },
 };

@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 
 import type { AttachedCover } from '../domain/book-covers';
+import type { ChapterPreview } from '../domain/chapter-versions';
 import { droppedPaths } from './dropped-paths';
 import type { MappingDraft } from '../domain/mapping';
 import type { AnyMessage } from '../domain/message';
@@ -44,6 +45,7 @@ import type {
   CoversFolderCommand,
   CoverTarget,
   DropCoversCommand,
+  PreviewChaptersCommand,
   SaveBookDetailsCommand,
   PendingRunSummary,
   SaveAllResult,
@@ -116,6 +118,8 @@ const bridge: Manga2InkBridge = Object.freeze({
     invoke<undefined>('workflow:write-title-mapping', { sessionId, title, mapping }),
   saveBookDetails: (command: SaveBookDetailsCommand) =>
     invoke<undefined>('workflow:save-book-details', command),
+  previewChapters: (command: PreviewChaptersCommand) =>
+    invoke<readonly ChapterPreview[]>('previews:chapters', command),
   listCovers: (target: CoverTarget) => invoke<readonly AttachedCover[]>('covers:list', target),
   chooseCover: (command: CoverOfBookCommand) =>
     invoke<CoversChange | null>('covers:choose', command),

@@ -32,7 +32,6 @@ export interface ItemOptionsScreenProps {
   readonly queue: RunOptions;
   /** The options this item is converted with: the queue's, with what the item set over them. */
   readonly settings: MangaprepSettings;
-  readonly singleBook: boolean;
 }
 
 /**
@@ -52,7 +51,6 @@ export function ItemOptionsScreen({
   profiles,
   queue,
   settings,
-  singleBook,
 }: ItemOptionsScreenProps): React.JSX.Element {
   const words = useMessages().options.item;
   return (
@@ -94,7 +92,6 @@ export function ItemOptionsScreen({
         profiles={profiles}
         queue={queue}
         settings={settings}
-        singleBook={singleBook}
       />
     </Screen>
   );

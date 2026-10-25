@@ -298,7 +298,9 @@ describe('looking up the author from the details of an item', () => {
       expect(saveCalls(saveSettings).at(-1)?.preferences.providerId).toBe('mangadex');
     });
     await user.click(screen.getByRole('button', { name: 'Queue' }));
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     expect(screen.getByRole('combobox', { name: 'Source' })).toHaveTextContent('MangaDex');

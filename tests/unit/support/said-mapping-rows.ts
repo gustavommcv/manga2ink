@@ -23,6 +23,16 @@ export const mappingRows: Rows<MappingMessageValues> = {
   ],
   'mapping.unknownChapter': [[{ id: 'c9' }, 'Unknown chapter: c9', 'Capítulo desconhecido: c9']],
   'mapping.unknownVolume': [[{ id: 'v9' }, 'Unknown volume: v9', 'Volume desconhecido: v9']],
+  'mapping.unknownVersionGroup': [
+    [{ token: '6' }, 'Unknown chapter with versions: 6', 'Capítulo com versões desconhecido: 6'],
+  ],
+  'mapping.unknownVersion': [
+    [
+      { id: 'b.cbz' },
+      'Unknown version of the chapter: b.cbz',
+      'Versão desconhecida do capítulo: b.cbz',
+    ],
+  ],
   'mapping.duplicateChapterId': [
     [{ id: 'c1' }, 'Duplicate chapter id: c1', 'Id de capítulo repetido: c1'],
   ],

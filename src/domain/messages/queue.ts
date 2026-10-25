@@ -14,6 +14,9 @@ export interface QueueMessageValues {
   readonly 'queue.chip.notRecognized': NoValues;
   readonly 'queue.chip.needsVolumes': NoValues;
   readonly 'queue.chip.needsGrouping': NoValues;
+  readonly 'queue.chip.reviewVersions': NoValues;
+  /** A series with no volumes, made into one book of its chapters (ADR 0094). */
+  readonly 'queue.chip.wholeSeries': NoValues;
   readonly 'queue.chip.saved': NoValues;
   readonly 'queue.chip.volumes': { readonly count: number };
   readonly 'queue.chip.titles': { readonly count: number };
@@ -36,6 +39,12 @@ export interface QueueMessageValues {
   readonly 'queue.note.noChapters': NoValues;
   readonly 'queue.note.onlyLinks': { readonly names: readonly string[] };
   readonly 'queue.note.noVolumesYet': NoValues;
+  /** The steps of the queue are not what a series made into one book is made with: its own choice is above them. */
+  readonly 'queue.note.stepsNotForSeries': { readonly of: 'series' | 'library' };
+  /** The same for a folder left as it is. */
+  readonly 'queue.note.stepsNotForAsIs': NoValues;
+  /** Chapters that more than one file claims, and a choice of which to use is waiting. */
+  readonly 'queue.note.versionsPending': { readonly count: number };
   readonly 'queue.note.unassigned': { readonly count: number };
   readonly 'queue.note.chaptersLeftOut': { readonly count: number };
   readonly 'queue.note.libraryEmpty': NoValues;

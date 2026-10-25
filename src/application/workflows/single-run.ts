@@ -29,7 +29,9 @@ import {
   plannedVolumeBookName,
   type WorkflowPlan,
 } from '@/domain/conversion';
-import { hasArchiveChapters } from '@/domain/mapping';
+import { pendingVersionGroups } from '@/domain/chapter-versions';
+import { hasArchiveChapters, type MappingDraft } from '@/domain/mapping';
+import { withSeriesVolume } from '@/domain/series-book';
 import { type ProcessMode, unsupportedModeReason, usesMangaprep } from '@/domain/process-mode';
 import { message } from '@/domain/message';
 
@@ -61,6 +63,8 @@ export class SingleInputRun {
     const details = usesMangaprep(mode) ? (request.details ?? noBookDetails) : noBookDetails;
     let inputs: readonly BookInput[];
     let bindingIssues: readonly PipelineIssue[] = [];
+    // Volumes are a level of the table of contents only where the series has them (ADR 0094).
+    let nestedToc = false;
     if (session.selection.kind === 'cbz' || mode === 'convert-only') {
       // Already one book (or explicitly not grouped): straight to mangaprep, no mapping needed.
       inputs = [{ path: session.selection.inputPath }];
@@ -76,6 +80,9 @@ export class SingleInputRun {
         );
       }
       const mapping = trustedMapping(session.trustedDraft, request.mapping);
+      requireVersionsChosen(mapping);
+      requireSomethingToBind(mapping, singleBook);
+      nestedToc = singleBook && mapping.volumes.length > 0;
       onProgress({
         stage: 'binding',
         message: message('progress.organizingChapters', { chapters: mapping.chapters.length }),
@@ -88,6 +95,7 @@ export class SingleInputRun {
         (p) => {
           onProgress(presentBindingProgress(p));
         },
+        { wholeSeries: singleBook },
       );
       bindingIssues = bound.issues;
       if (singleBook) {
@@ -116,7 +124,7 @@ export class SingleInputRun {
         settings: request.settings,
         details,
         format: request.format,
-        nestedToc: singleBook,
+        nestedToc,
       },
       { onArtifact, onProgress, signal },
     );
@@ -189,27 +197,46 @@ export class SingleInputRun {
       );
     }
     const mapping = trustedMapping(session.trustedDraft, request.mapping);
-    const plan = await this.binding.plan(session.workspaceId, mapping, signal);
+    requireVersionsChosen(mapping);
+    requireSomethingToBind(mapping, singleBook);
+    const plan = await this.binding.plan(session.workspaceId, mapping, signal, {
+      wholeSeries: singleBook,
+    });
+    const typedTitle = normalizeBookDetails(request.details ?? noBookDetails).title;
+    const chapters = plan.volumes.reduce(
+      (total, volume) => total + (volume.chapters?.length ?? 0),
+      0,
+    );
     return {
       tool: 'mangabind',
       title: plan.title,
-      message: message('plan.mangabind', {
-        volumes: plan.volumes.length,
-        shape: singleBook ? 'series' : mode === 'bind-only' ? 'joined' : 'books',
-      }),
+      message: singleBook
+        ? message('plan.series', {
+            // Only the volumes the person made: the one made for the run is not one of them.
+            volumes: mapping.volumes.length,
+            chapters,
+          })
+        : message('plan.mangabind', {
+            volumes: plan.volumes.length,
+            shape: mode === 'bind-only' ? 'joined' : 'books',
+          }),
       books: singleBook
-        ? [plannedSingleBook(plan.title, plan.volumes)]
+        ? [
+            plannedSingleBook(
+              plan.title,
+              plan.volumes,
+              `${typedTitle ?? plan.title}.${request.format}`,
+            ),
+          ]
         : usesMangaprep(mode)
           ? plan.volumes.map((volume) => ({
-              name: plannedVolumeBookName(
-                volume,
-                normalizeBookDetails(request.details ?? noBookDetails).title,
-                request.format,
-              ),
+              name: plannedVolumeBookName(volume, typedTitle, request.format),
               pageCount: volume.pageCount,
+              ...(volume.chapters === undefined ? {} : { chapters: volume.chapters }),
             }))
           : plan.volumes,
       issues: plan.issues,
+      ...(plan.leftOut === undefined ? {} : { leftOut: plan.leftOut }),
     };
   }
 
@@ -232,6 +259,27 @@ export class SingleInputRun {
     const singleBook = session.selection.kind !== 'cbz' && Boolean(request.singleBook);
     if (singleBook) assertSingleBook(mode);
     return { session, mode, singleBook };
+  }
+}
+
+/**
+ * A series made into one book needs no volumes, but it does need a chapter to put in the book: a
+ * folder none of whose chapters can be placed has nothing to bind.
+ */
+function requireSomethingToBind(mapping: MappingDraft, singleBook: boolean): void {
+  if (singleBook && withSeriesVolume(mapping).volumes.length === 0) {
+    throw emptyBindingError('no_volumes');
+  }
+}
+
+/** Chapters that more than one file claims are not decided by the app: a run waits for a person to. */
+function requireVersionsChosen(mapping: MappingDraft): void {
+  const pending = pendingVersionGroups(mapping);
+  if (pending.length > 0) {
+    throw new ConversionWorkflowError(
+      'versions_pending',
+      message('workflow.versionsPending', { count: pending.length }),
+    );
   }
 }
 

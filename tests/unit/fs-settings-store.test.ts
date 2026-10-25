@@ -14,7 +14,6 @@ const settingsFile = path.join('data', 'settings.json');
 const kept: StoredSettings = {
   mode: 'bind-only',
   format: 'cbz',
-  singleBook: false,
   settings: { ...defaultMangaprepSettings, deviceProfile: 'KS' },
   outputFolder: '/books',
 };

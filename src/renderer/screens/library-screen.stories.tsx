@@ -119,8 +119,9 @@ export const InPortuguese: Story = {
   decorators: [inPortuguese],
   args: {
     onEditDetails: () => undefined,
+    books: 'series',
+    onBooks: () => undefined,
     onEditOptions: () => undefined,
-    singleBook: true,
     skippedLinks: ['Vinland Saga', 'Berserk', 'Monster', 'Pluto'],
     titles: titles.map((title, index) =>
       index === 0 ? { ...title, details: { author: 'Fujimoto Tatsuki' } } : title,

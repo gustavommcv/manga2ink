@@ -62,7 +62,7 @@ describe('packaged queue', () => {
 
     // What was left out can be fixed from the results, and then it is still in the queue.
     await $('button[aria-label="Fix Manga2Ink E2E"]').click();
-    await $('h1=Organize Manga2Ink E2E into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('h1=Organize Manga2Ink E2E into books').waitForDisplayed({ timeout: 30_000 });
     await $('button=Queue').click();
     await $('h1=Queue').waitForDisplayed();
     await $('span=Needs volumes').waitForDisplayed();

@@ -29,7 +29,6 @@ export interface OptionFieldsMessages {
   readonly names: Readonly<Record<OptionName, string>>;
   /** What a sentence says an option is called, when the value typed for it is refused. */
   readonly checked: Readonly<Record<CheckedOption, string>>;
-  readonly singleBook: { readonly title: string; readonly text: string };
   readonly eyebrow: {
     readonly basic: string;
     readonly advanced: string;
@@ -229,7 +228,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       customDeviceSize: 'custom device size',
       mode: 'mode',
       format: 'format',
-      singleBook: 'single book',
       providerId: 'online source',
       outputFolder: 'save folder',
       lastPickerFolder: 'last folder',
@@ -243,10 +241,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       gamma: 'Gamma',
       customWidth: 'Custom width',
       customHeight: 'Custom height',
-    },
-    singleBook: {
-      title: 'Single book for the series',
-      text: 'Active from the queue: the series will be produced as a single book, in the format chosen here. The process steps are locked.',
     },
     eyebrow: { basic: 'Basic', advanced: 'Advanced', diagnostics: 'Diagnostics' },
     device: {
@@ -573,7 +567,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       customDeviceSize: 'tamanho personalizado do dispositivo',
       mode: 'processo',
       format: 'formato',
-      singleBook: 'livro único',
       providerId: 'fonte online',
       outputFolder: 'pasta para salvar',
       lastPickerFolder: 'última pasta',
@@ -587,10 +580,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       gamma: 'Gama',
       customWidth: 'Largura personalizada',
       customHeight: 'Altura personalizada',
-    },
-    singleBook: {
-      title: 'Um livro para a série',
-      text: 'Ativo na fila: a série será gerada como um único livro, no formato escolhido aqui. As etapas do processo ficam travadas.',
     },
     eyebrow: { basic: 'Básico', advanced: 'Avançado', diagnostics: 'Diagnóstico' },
     device: {
@@ -928,7 +917,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       customDeviceSize: '端末サイズの指定',
       mode: 'モード',
       format: '形式',
-      singleBook: '1 冊にまとめる',
       providerId: 'オンラインの情報源',
       outputFolder: '保存先フォルダー',
       lastPickerFolder: '前回のフォルダー',
@@ -942,10 +930,6 @@ export const optionFieldsMessages: Readonly<Record<Language, OptionFieldsMessage
       gamma: 'ガンマ',
       customWidth: '幅の指定',
       customHeight: '高さの指定',
-    },
-    singleBook: {
-      title: 'シリーズを 1 冊の本に',
-      text: 'キューから有効にします。シリーズは、ここで選んだ形式の 1 冊の本として作られます。処理の手順は固定されます。',
     },
     eyebrow: { basic: '基本', advanced: '詳細設定', diagnostics: '診断' },
     device: {

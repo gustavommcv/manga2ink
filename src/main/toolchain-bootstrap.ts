@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { app } from 'electron';
 
+import { FsChapterPreviews } from '@/adapters/input/chapter-previews';
 import { FsBookFileStore } from '@/adapters/library/fs-book-file-store';
 import { MangabindBindingAdapter } from '@/adapters/mangabind/binding-port';
 import { MangabindCliAdapter } from '@/adapters/mangabind/cli';
@@ -57,12 +58,13 @@ export async function bootstrapToolchain(
   }
   if (toolchainStatus.state === 'ready' && toolchainStatus.target !== undefined) {
     const runner = createNodeProcessRunner();
+    const mangabindCapabilities =
+      toolchainStatus.tools.find((tool) => tool.name === 'mangabind')?.capabilities ?? [];
     const mangabindCli = new MangabindCliAdapter(
       executablePath(toolchainRoot, toolchainStatus.target, 'mangabind'),
       runner,
-      toolchainStatus.tools
-        .find((tool) => tool.name === 'mangabind')
-        ?.capabilities?.includes('progress-json') === true,
+      mangabindCapabilities.includes('progress-json'),
+      mangabindCapabilities.includes('chapter-labels'),
     );
     context.mangaprepCli = new MangaprepCliAdapter(
       executablePath(toolchainRoot, toolchainStatus.target, 'mangaprep'),
@@ -87,6 +89,7 @@ export async function bootstrapToolchain(
         machine: machineCapacity,
       }),
       context.coverStore,
+      new FsChapterPreviews(),
     );
   }
   return toolchainStatus;

@@ -30,6 +30,7 @@ import { type SharingMessages, sharingMessages } from './sharing-messages';
 import { textSaid } from './text-said';
 import { toolchainSaid } from './toolchain-said';
 import { type UpdatesMessages, updatesMessages } from './updates-messages';
+import { type VersionsMessages, versionsMessages } from './versions-messages';
 import { warningSaid } from './warnings-said';
 import { workflowSaid } from './workflow-said';
 
@@ -56,6 +57,7 @@ export interface Messages {
   readonly shared: SharedMessages;
   readonly sharing: SharingMessages;
   readonly updates: UpdatesMessages;
+  readonly versions: VersionsMessages;
   /** What the domain, the workflows and the main process say by code (ADR 0053). */
   readonly said: Said;
 }
@@ -78,6 +80,7 @@ function build(language: Language): Messages {
     shared: sharedMessages[language],
     sharing: sharingMessages[language],
     updates: updatesMessages[language],
+    versions: versionsMessages[language],
     said: {
       ...queueSaid[language],
       ...modeSaid[language],
