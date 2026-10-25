@@ -2,6 +2,8 @@
 
 Start with the [architecture overview](docs/architecture.md) for module boundaries and [current priorities](docs/milestones.md#current-priorities) for pending work. The [documentation index](docs/README.md) links to the detailed guides.
 
+Agents can start with [AGENTS.md](AGENTS.md) and the relevant section of [current decisions](docs/current-decisions.md). Load the documents needed for the task rather than the whole ADR or audit history. Keep a [task handoff](docs/tasks/README.md) when substantial work will be resumed, and update the decision summary when changing an accepted rule; do not rewrite accepted ADRs or copy their full history into instructions.
+
 ## Community and reports
 
 Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Use the [issue templates](https://github.com/gustavommcv/manga2ink/issues/new/choose) for bugs and suggestions; check existing issues and remove private information from attachments. Include the app version, system, reproduction steps, expected result, and actual result.
