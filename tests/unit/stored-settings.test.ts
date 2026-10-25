@@ -32,7 +32,6 @@ describe('parseStoredSettings', () => {
     expect(settingsIn(file())).toEqual({
       mode: 'bind-only',
       format: 'pdf',
-      singleBook: false,
       settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
       providerId: 'mangadex',
       outputFolder: '/books',
@@ -91,7 +90,6 @@ describe('parseStoredSettings', () => {
     expect(parsed).toEqual({
       mode: 'bind-only',
       format: 'pdf',
-      singleBook: false,
       settings: { ...defaultMangaprepSettings, deviceProfile: 'KS', upscale: false },
     });
     expect(parsed).not.toHaveProperty('providerId');
@@ -230,7 +228,6 @@ describe('parseStoredSettings', () => {
           version: settingsFileVersion,
           mode: false,
           format: {},
-          singleBook: {},
           settings: [],
           providerId: { length: { toString: null } },
           outputFolder: [],
@@ -238,7 +235,7 @@ describe('parseStoredSettings', () => {
         }),
       );
 
-      expect(parsed?.reset).toEqual(['mode', 'format', 'singleBook', 'providerId', 'outputFolder']);
+      expect(parsed?.reset).toEqual(['mode', 'format', 'providerId', 'outputFolder']);
       expect(parsed?.settings).not.toHaveProperty('providerId');
     });
 
@@ -328,7 +325,6 @@ describe('serializeStoredSettings', () => {
       'version',
       'mode',
       'format',
-      'singleBook',
       'settings',
       'outputFolder',
       'lastPickerFolder',
@@ -336,52 +332,27 @@ describe('serializeStoredSettings', () => {
     ]);
   });
 
-  it('migrates legacy combineIntoOneVolume: true to singleBook: true', () => {
-    const legacy = JSON.stringify({
+  it('leaves out the books of a series, which are the choice of each series and are not kept', () => {
+    // An earlier version kept one choice for the whole queue; no series is made into one book by it now.
+    const earlier = JSON.stringify({
       version: 1,
       mode: 'bind-and-convert',
       format: 'epub',
+      singleBook: true,
       combineIntoOneVolume: true,
-      settings: defaultMangaprepSettings,
-    });
-    const parsed = settingsIn(legacy);
-    expect(parsed?.singleBook).toBe(true);
-
-    const legacyInSettings = JSON.stringify({
-      version: 1,
-      mode: 'bind-and-convert',
-      format: 'epub',
       settings: { ...defaultMangaprepSettings, combineIntoOneVolume: true },
     });
-    const parsed2 = settingsIn(legacyInSettings);
-    expect(parsed2?.singleBook).toBe(true);
-  });
+    const parsed = settingsIn(earlier);
 
-  it('persists singleBook: false when turned off after migrating legacy combineIntoOneVolume: true', () => {
-    const legacy = JSON.stringify({
-      version: 1,
-      mode: 'bind-and-convert',
-      format: 'epub',
-      settings: { ...defaultMangaprepSettings, combineIntoOneVolume: true },
-    });
-    const migrated = settingsIn(legacy);
-    expect(migrated?.singleBook).toBe(true);
-
-    const turnedOff = {
-      ...migrated!,
-      singleBook: false,
-    };
-    const serialized = serializeStoredSettings(turnedOff);
-    const reloaded = settingsIn(serialized);
-    expect(reloaded?.singleBook).toBe(false);
-    expect(reloaded?.settings.combineIntoOneVolume).toBe(false);
+    expect(parsed).not.toHaveProperty('singleBook');
+    expect(parsed?.settings.combineIntoOneVolume).toBe(false);
+    expect(resetIn(earlier)).toEqual([]);
   });
 
   it('is read back as the same settings', () => {
     const settings = {
       mode: 'convert-only' as const,
       format: 'cbz' as const,
-      singleBook: true,
       settings: { ...defaultMangaprepSettings, jpegQuality: 70, gamma: 1.2 },
       providerId: 'mangadex',
       outputFolder: 'C:\\Manga',

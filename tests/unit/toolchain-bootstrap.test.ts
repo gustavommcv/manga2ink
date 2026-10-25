@@ -157,7 +157,7 @@ describe('a toolchain that verified', () => {
     expect(status).toEqual(ready('linux-x64'));
     const [mangabindCli] = madeOf('mangabind-cli');
     const [mangaprepCli] = madeOf('mangaprep-cli');
-    expect(mangabindCli?.args).toEqual([path.join(root, 'mangabind'), fake.runner, false]);
+    expect(mangabindCli?.args).toEqual([path.join(root, 'mangabind'), fake.runner, false, false]);
     expect(mangaprepCli?.args).toEqual([path.join(root, 'mangaprep'), fake.runner]);
     expect(context.mangaprepCli).toBe(mangaprepCli?.instance);
     // One runner for both tools, and the workflow is made of the adapters of those two.
@@ -219,6 +219,20 @@ describe('a toolchain that verified', () => {
     await bootstrapToolchain(emptyContext());
 
     expect(madeOf('mangabind-cli')[0]?.args[2]).toBe(expected);
+  });
+
+  it.each([
+    ['advertises the labels of chapters by number', ['report', 'chapter-labels'], true],
+    ['advertises only a report', ['report'], false],
+    ['advertises nothing', undefined, false],
+  ])('tells mangabind it %s only when it does', async (_description, capabilities, expected) => {
+    fake.verify.mockResolvedValue(
+      ready('linux-x64', [tool('mangabind', capabilities), tool('mangaprep', ['progress-json'])]),
+    );
+
+    await bootstrapToolchain(emptyContext());
+
+    expect(madeOf('mangabind-cli')[0]?.args[3]).toBe(expected);
   });
 });
 

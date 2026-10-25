@@ -26,6 +26,7 @@ import type {
   BindingPlan,
   BindingPort,
   BindingResult,
+  BindingRunOptions,
 } from '@/application/ports/conversion-tools';
 import type { BookDetails } from '@/domain/book-details';
 import {
@@ -34,6 +35,7 @@ import {
   ToolExecutionError,
 } from '@/domain/conversion';
 import { type MappingDraft, mappingSignature, serializeMangabindMetadata } from '@/domain/mapping';
+import { serializeSeriesMetadata } from '@/domain/series-book';
 import { message } from '@/domain/message';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
@@ -165,14 +167,20 @@ export class MangabindBindingAdapter implements BindingPort {
     signal?: AbortSignal,
     combine?: boolean,
     onProgress?: (progress: BindingProgress) => void,
+    options: BindingRunOptions = {},
   ): Promise<BindingResult> {
     const workspace = this.workspaces.get(workspaceId);
     if (workspace === undefined) {
       throw new Error('The temporary binding workspace is no longer available.');
     }
     const below = pathBelow(workspace.inputPath);
+    // What the run is told, and what is kept with the folder: a series made into one book that has no
+    // volumes is put in one for the run, and the folder is not told of a volume nobody made.
     const metadata = serializeMangabindMetadata(mapping, below);
-    await this.files.writeText(workspace.metadataPath, metadata);
+    await this.files.writeText(
+      workspace.metadataPath,
+      options.wholeSeries === true ? serializeSeriesMetadata(mapping, below) : metadata,
+    );
     // When the user accepted mangabind's own grouping unchanged, the folder names already say
     // everything: a mangabind.json next to them would record nothing new, and would make a
     // read-only or network folder fail for no reason. Any edit still gets saved.
@@ -201,6 +209,7 @@ export class MangabindBindingAdapter implements BindingPort {
         metadataFilePath: workspace.metadataPath,
         dryRun: false,
         combine,
+        chapterLabels: 'number',
       },
       {
         ...(signal === undefined ? {} : { signal }),
@@ -240,12 +249,17 @@ export class MangabindBindingAdapter implements BindingPort {
     workspaceId: string,
     mapping: Parameters<BindingPort['plan']>[1],
     signal?: AbortSignal,
+    options: BindingRunOptions = {},
   ): Promise<BindingPlan> {
     const workspace = this.workspaces.get(workspaceId);
     if (workspace === undefined) {
       throw new Error('The temporary binding workspace is no longer available.');
     }
-    const metadata = serializeMangabindMetadata(mapping, pathBelow(workspace.inputPath));
+    const below = pathBelow(workspace.inputPath);
+    const metadata =
+      options.wholeSeries === true
+        ? serializeSeriesMetadata(mapping, below)
+        : serializeMangabindMetadata(mapping, below);
     await this.files.writeText(workspace.metadataPath, metadata);
     const result = await this.cli.run(
       {
@@ -253,6 +267,7 @@ export class MangabindBindingAdapter implements BindingPort {
         outputPath: workspace.volumesPath,
         metadataFilePath: workspace.metadataPath,
         dryRun: true,
+        chapterLabels: 'number',
       },
       signal === undefined ? {} : { signal },
     );
@@ -266,8 +281,25 @@ export class MangabindBindingAdapter implements BindingPort {
         name: path.basename(checkedChildPath(workspace.volumesPath, volume.output_path)),
         pageCount: volume.page_count,
         number: volume.number,
+        ...(volume.chapter_entries === undefined
+          ? {}
+          : {
+              chapters: volume.chapter_entries.map((entry) => ({
+                label: entry.label,
+                pageCount: entry.page_count,
+              })),
+            }),
       }));
-    return { title: manga.name, volumes, issues: collectIssues(result) };
+    // The files set aside because another version of their chapter was chosen.
+    const leftOut = manga.units
+      .filter((unit) => unit.disposition === 'not_chosen')
+      .map((unit) => unit.name);
+    return {
+      title: manga.name,
+      volumes,
+      issues: collectIssues(result),
+      ...(leftOut.length === 0 ? {} : { leftOut }),
+    };
   }
 
   async planBatch(parentPath: string, signal?: AbortSignal): Promise<BindingBatchPlan> {

@@ -120,23 +120,30 @@ describe('the screen of a library, in Portuguese', () => {
     ).toHaveAttribute('title', 'Editar as opções de conversão deste título (definidas)');
   });
 
-  it('says the single book mode and the links that were not read, by the codes of the language', () => {
+  it('says the books of the titles and the links that were not read, by the codes of the language', async () => {
+    const user = userEvent.setup();
+    const onBooks = vi.fn();
     render(
       inPortuguese(
         <LibraryScreen
+          books="series"
           name="Biblioteca"
           onBack={vi.fn()}
+          onBooks={onBooks}
           onEdit={vi.fn()}
-          singleBook
           skippedLinks={['A', 'B', 'C', 'D', 'E']}
           titles={[]}
         />,
       ),
     );
 
-    expect(screen.getByRole('status', { name: 'Modo de livro único' })).toHaveTextContent(
-      'Cada título da biblioteca será gerado como um livro único próprio.',
-    );
+    expect(screen.getByRole('radiogroup', { name: 'Livros' })).toBeVisible();
+    expect(screen.getByRole('radio', { name: 'Um livro para cada título' })).toBeChecked();
+    expect(
+      screen.getByText(/Cada título vira um livro só, com os volumes como primeiro nível/u),
+    ).toBeVisible();
+    await user.click(screen.getByRole('radio', { name: 'Um livro por volume' }));
+    expect(onBooks).toHaveBeenCalledExactlyOnceWith('volumes');
     const links = screen.getByRole('status', {
       name: '5 pastas desta biblioteca não foram lidas',
     });
@@ -420,7 +427,6 @@ describe('the pages of the conversion options, in Portuguese', () => {
           onSettings={vi.fn()}
           profiles={profiles}
           settings={defaultMangaprepSettings}
-          singleBook={false}
         />,
       ),
     );
@@ -466,7 +472,6 @@ describe('the pages of the conversion options, in Portuguese', () => {
           profiles={profiles}
           queue={{ settings: defaultMangaprepSettings, format: 'epub' }}
           settings={defaultMangaprepSettings}
-          singleBook={false}
         />,
       ),
     );
@@ -493,7 +498,6 @@ describe('the pages of the conversion options, in Portuguese', () => {
           profiles={profiles}
           queue={{ settings: defaultMangaprepSettings, format: 'epub' }}
           settings={defaultMangaprepSettings}
-          singleBook={false}
         />,
       ),
     );

@@ -1,4 +1,5 @@
-import { type InspectedRow, type QueueRow, runnableRows } from './input-queue';
+import { booksOf, type InspectedRow, type QueueRow, runnableRows } from './input-queue';
+import { withSeriesVolume } from './series-book';
 import type { ProcessMode } from './process-mode';
 
 /**
@@ -44,7 +45,9 @@ export function pagesToMake(row: InspectedRow, process: ProcessMode): number {
   if (row.kind === 'folder') {
     const { mapping } = row;
     if (mapping === undefined) return 0;
-    const inVolumes = new Set(mapping.volumes.flatMap((volume) => volume.chapterIds));
+    // A series with no volumes made into one book is all in the one volume made for the run.
+    const placed = booksOf(row) === 'series' ? withSeriesVolume(mapping) : mapping;
+    const inVolumes = new Set(placed.volumes.flatMap((volume) => volume.chapterIds));
     return mapping.chapters
       .filter((chapter) => process === 'convert-only' || inVolumes.has(chapter.id))
       .reduce((total, chapter) => total + chapter.pageCount, 0);

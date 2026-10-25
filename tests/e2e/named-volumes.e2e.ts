@@ -49,8 +49,8 @@ describe('packaged folder whose names carry the volumes', () => {
     await $('span=2 volumes').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /grouped from names/u);
 
-    await $('button[aria-label="Edit volumes for Named Volumes"]').click();
-    await $('h1=Organize Named Volumes into volumes').waitForDisplayed({ timeout: 30_000 });
+    await $('button[aria-label="Edit books and volumes for Named Volumes"]').click();
+    await $('h1=Organize Named Volumes into books').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /Proposed chapter mapping/u);
     assert.match(await $('main').getText(), /2 volumes · 3 of 3 chapters assigned/u);
     await $('button=Edit chapter mapping').click();
@@ -157,11 +157,18 @@ describe('packaged folder whose names carry the volumes', () => {
     await setFormat(format);
     await $('button=Folder').click();
     await $('span=2 volumes').waitForDisplayed({ timeout: 30_000 });
-    // The mode is kept for the rest of the session, so it is made sure to be on, not toggled.
-    const combine = $('#combine-into-one-volume');
-    if ((await combine.getAttribute('aria-checked')) !== 'true') await combine.click();
-    // The mode leaves the format as it was chosen.
-    assert.equal(await $(`[role="radio"][aria-checked="true"]`).getText(), format);
+    // The books of a series are chosen where its chapters are grouped, not in the panel.
+    await $('button[aria-label="Edit books and volumes for Named Volumes"]').click();
+    await $('input#books-series').click();
+    await $('button=Queue').click();
+    await $('span=Whole series').waitForDisplayed({ timeout: 10_000 });
+    // The choice leaves the format as it was chosen.
+    assert.equal(
+      await $(
+        '[role="radiogroup"][aria-label="Format"] [role="radio"][aria-checked="true"]',
+      ).getText(),
+      format,
+    );
     await $('button=Validate plan').click();
     await $('h2=Plan validated').waitForDisplayed({ timeout: 30_000 });
     assert.match(await $('main').getText(), /One book for Named Volumes/u);

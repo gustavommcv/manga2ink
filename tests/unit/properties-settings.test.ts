@@ -14,7 +14,6 @@ const damaged = fc
   .record({
     mode: fc.anything(),
     format: fc.anything(),
-    singleBook: fc.anything(),
     settings: fc.oneof(fc.anything(), fc.dictionary(fc.string({ maxLength: 20 }), fc.anything())),
     providerId: fc.anything(),
     outputFolder: fc.anything(),

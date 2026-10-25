@@ -1,6 +1,5 @@
 import {
   FileArchive,
-  Files,
   Folder,
   Layers,
   Library,
@@ -10,9 +9,8 @@ import {
   X,
 } from 'lucide-react';
 
-import { pendingVersionGroups, versionGroups } from '@/domain/chapter-versions';
 import { hasBookDetails } from '@/domain/book-details';
-import { describeRow, type QueueRow, rowMode } from '@/domain/input-queue';
+import { describeRow, type QueueRow, rowProcess } from '@/domain/input-queue';
 import { hasItemOptions } from '@/domain/item-options';
 import { type ProcessMode, usesMangaprep } from '@/domain/process-mode';
 import { Badge } from '@/renderer/components/shared/badge';
@@ -28,7 +26,6 @@ export function QueueRowItem({
   onEditDetails,
   onEditOptions,
   onRemove,
-  onReviewVersions,
   row,
 }: {
   readonly mode: ProcessMode;
@@ -38,29 +35,26 @@ export function QueueRowItem({
   /** Opens the conversion options of the item, which are the queue's until it sets its own. */
   readonly onEditOptions: () => void;
   readonly onRemove: () => void;
-  /** Opens the choice among the files that claim one chapter (ADR 0093). */
-  readonly onReviewVersions: () => void;
   readonly row: QueueRow;
 }): React.JSX.Element {
   const words = useMessages().queue.row;
   const { say, sayAll } = useSay();
   const view = describeRow(row, mode);
   const Icon = row.kind === 'folder' ? Folder : row.kind === 'library' ? Library : FileArchive;
-  // A folder or a library has volumes to edit, and only while volumes are in play.
-  const editable = row.state === 'inspected' && row.kind !== 'cbz' && mode !== 'convert-only';
+  const process = rowProcess(row, mode);
+  // A folder or a library has its books to choose, and its volumes to edit where they are in play: a
+  // library that the steps leave out has neither, and is for the steps to fix.
+  const editable = row.state === 'inspected' && row.kind !== 'cbz' && process !== 'skip';
   // A book's own title, author and language matter where mangaprep makes the book. A library
   // has them per title, from the screen that lists its titles.
-  const process = rowMode(row.kind, mode);
   const detailsEditable =
     row.state === 'inspected' &&
     row.kind !== 'library' &&
     process !== 'skip' &&
     usesMangaprep(process);
-  // Chapters that more than one file claims, where they matter: wherever the files are joined.
-  const versions = row.state === 'inspected' ? versionGroups(row.mapping) : [];
-  const versionsReviewable =
-    versions.length > 0 && row.kind === 'folder' && mode !== 'convert-only';
-  const versionsPending = row.state === 'inspected' && pendingVersionGroups(row.mapping).length > 0;
+  // What the folder waits for (volumes, or a choice among the files of a chapter) is done where it is
+  // grouped, which is this button: it is colored while something waits (ADR 0093, ADR 0094).
+  const waiting = row.state === 'inspected' && view.tone === 'warning' && process !== 'skip';
   const detailsSet = row.state === 'inspected' && hasBookDetails(row.details);
   // Its conversion options matter wherever mangaprep makes the book; a library has them per title.
   const optionsSet = row.state === 'inspected' && hasItemOptions(row.options);
@@ -72,26 +66,15 @@ export function QueueRowItem({
             aria-label={
               row.kind === 'library'
                 ? words.editTitlesOf(row.displayName)
-                : words.editVolumesFor(row.displayName)
+                : words.editBooksFor(row.displayName)
             }
+            className={cn(waiting && 'text-status-warning')}
             onClick={onEdit}
             size="icon"
-            title={row.kind === 'library' ? words.editTitles : words.editVolumes}
+            title={row.kind === 'library' ? words.editTitles : words.editBooks}
             variant="ghost"
           >
             <Layers />
-          </Button>
-        ) : undefined,
-        versionsReviewable ? (
-          <Button
-            aria-label={words.reviewVersionsFor(row.displayName)}
-            className={cn(versionsPending && 'text-status-warning')}
-            onClick={onReviewVersions}
-            size="icon"
-            title={words.reviewVersions}
-            variant="ghost"
-          >
-            <Files />
           </Button>
         ) : undefined,
         detailsEditable ? (

@@ -33,7 +33,7 @@ The table lists allowed project layers; imports within a layer are always allowe
 5. **Save.** Each book is indexed in the pending run. Save As or Save All copies it to a chosen destination and records the export. Save All never replaces existing files; an indexing warning retains the pending original for retry.
 6. **Open or share.** Books open in the OS default application. An opt-in OPDS server serves a pending run or selected library on the chosen interface and a fixed port, and stops on exit. It lists recently converted books and other supported files separately.
 
-Grouping and conversion can run together or separately. For chapter folders, single-book mode requires both steps and EPUB; a standalone CBZ already represents one book and bypasses grouping. The workflow entry point is `application/workflows/conversion-workflow.ts`; its owners are described in [the application guide](../src/application/README.md). Concrete tool and storage implementations are listed in [the adapter guide](../src/adapters/README.md).
+Grouping and conversion can run together or separately. For chapter folders, how the books are made is each series' choice (one for each volume, one for the whole series, or the folder as it is, ADR 0094), and a series made into one book is bound and converted in one run, in any format; a standalone CBZ already represents one book and bypasses grouping. The workflow entry point is `application/workflows/conversion-workflow.ts`; its owners are described in [the application guide](../src/application/README.md). Concrete tool and storage implementations are listed in [the adapter guide](../src/adapters/README.md).
 
 ## What keeps it safe
 

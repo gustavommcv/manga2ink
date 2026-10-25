@@ -73,6 +73,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `mangaprep validated ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · one book, chapters not grouped' : ''} · no library files written`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind validated ${plural(volumes, 'volume', 'volumes')}${inEnglishAfter[shape]} · no library files written`,
+    'plan.series': ({ volumes, chapters }) =>
+      `mangabind validated ${chapters > 0 ? plural(chapters, 'chapter', 'chapters') : 'the series'}${volumes > 0 ? ` in ${plural(volumes, 'volume', 'volumes')}` : ''} · one book for the whole series · no library files written`,
     'plan.library': ({ titles, volumes, books, shape }) =>
       `mangabind validated ${plural(titles, 'title', 'titles')} · ${plural(volumes, 'volume', 'volumes')}${
         shape === 'series'
@@ -110,6 +112,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `mangaprep validou ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · um livro, capítulos sem agrupar' : ''} · nenhum arquivo da biblioteca gravado`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind validou ${plural(volumes, 'volume', 'volumes')}${inPortugueseAfter[shape]} · nenhum arquivo da biblioteca gravado`,
+    'plan.series': ({ volumes, chapters }) =>
+      `mangabind validou ${chapters > 0 ? plural(chapters, 'capítulo', 'capítulos') : 'a série'}${volumes > 0 ? ` em ${plural(volumes, 'volume', 'volumes')}` : ''} · um livro para a série inteira · nenhum arquivo da biblioteca gravado`,
     'plan.library': ({ titles, volumes, books, shape }) =>
       `mangabind validou ${plural(titles, 'título', 'títulos')} · ${plural(volumes, 'volume', 'volumes')}${
         shape === 'series'
@@ -150,6 +154,8 @@ export const runSaid: Readonly<Record<Language, SaidFor<RunMessageValues>>> = {
       `mangaprep の検証: ${profile} · ${String(width)} × ${String(height)}${chaptersNotGrouped ? ' · 1 冊、各話はまとめていません' : ''} · ライブラリのファイルは書き込まれていません`,
     'plan.mangabind': ({ volumes, shape }) =>
       `mangabind の検証: ${String(volumes)} 巻${inJapaneseAfter[shape]} · ライブラリのファイルは書き込まれていません`,
+    'plan.series': ({ volumes, chapters }) =>
+      `mangabind の検証: ${chapters > 0 ? `${String(chapters)} 話` : 'シリーズ'}${volumes > 0 ? `（${String(volumes)} 巻）` : ''} · シリーズ全体で 1 冊 · ライブラリのファイルは書き込まれていません`,
     'plan.library': ({ titles, volumes, books, shape }) =>
       `mangabind の検証: ${String(titles)} タイトル · ${String(volumes)} 巻${
         shape === 'series'

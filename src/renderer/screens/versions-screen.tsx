@@ -2,6 +2,7 @@ import { CheckCircle2, Files } from 'lucide-react';
 
 import { decisionOf, type VersionCandidate, type VersionGroup } from '@/domain/chapter-versions';
 import { Badge } from '@/renderer/components/shared/badge';
+import { Choice } from '@/renderer/components/shared/choice';
 import { Eyebrow } from '@/renderer/components/shared/eyebrow';
 import { Note } from '@/renderer/components/shared/note';
 import { Screen } from '@/renderer/components/shared/screen';
@@ -11,7 +12,7 @@ import { useMessages } from '@/renderer/hooks/use-messages';
 import { cn } from '@/renderer/lib/utils';
 
 export interface VersionsScreenProps {
-  /** Where Back leads: the queue. */
+  /** Where Back leads: the queue, or the editor of the folder. */
   readonly backLabel: string;
   /** The folder the chapters are in. */
   readonly name: string;
@@ -21,6 +22,8 @@ export interface VersionsScreenProps {
   /** Chooses the files to use for a chapter: one, several or none; with no list, takes the choice back. */
   readonly onChoose: (token: string, use: readonly string[] | undefined) => void;
   readonly onBack: () => void;
+  /** Goes on to the grouping of the folder; it waits until every chapter is decided. */
+  readonly onDone: () => void;
 }
 
 /**
@@ -34,6 +37,7 @@ export function VersionsScreen({
   name,
   onBack,
   onChoose,
+  onDone,
   previews,
 }: VersionsScreenProps): React.JSX.Element {
   const words = useMessages().versions;
@@ -43,7 +47,7 @@ export function VersionsScreen({
     <Screen labelledBy="versions-title">
       <ScreenHeader
         actions={
-          <Button onClick={onBack} variant={complete ? 'default' : 'outline'}>
+          <Button disabled={!complete} onClick={onDone}>
             {words.done}
           </Button>
         }
@@ -212,46 +216,6 @@ function CandidateRow({
         {candidate.attention !== undefined && (
           <Badge tone="warning">{words.flag[candidate.attention]}</Badge>
         )}
-      </span>
-    </label>
-  );
-}
-
-function Choice({
-  checked,
-  field,
-  help,
-  id,
-  label,
-  onChoose,
-}: {
-  readonly checked: boolean;
-  readonly field: string;
-  readonly help: string;
-  readonly id: string;
-  readonly label: string;
-  readonly onChoose: () => void;
-}): React.JSX.Element {
-  return (
-    <label
-      className={cn(
-        'border-border has-focus-visible:ring-ring flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-focus-visible:ring-2',
-        checked && 'border-accent bg-accent/5',
-      )}
-      htmlFor={id}
-    >
-      <input
-        aria-describedby={`${id}-help`}
-        checked={checked}
-        className="accent-accent mt-1 size-4 shrink-0"
-        id={id}
-        name={field}
-        onChange={onChoose}
-        type="radio"
-      />
-      <span className="min-w-0 flex-1 space-y-0.5">
-        <span className="block text-sm font-medium">{label}</span>
-        <Note id={`${id}-help`}>{help}</Note>
       </span>
     </label>
   );

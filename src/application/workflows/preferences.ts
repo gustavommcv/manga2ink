@@ -37,7 +37,6 @@ export class PreferencesWorkflow {
     const {
       mode,
       format,
-      singleBook,
       settings: options,
       providerId,
       outputFolder,
@@ -62,7 +61,6 @@ export class PreferencesWorkflow {
       preferences: {
         mode,
         format,
-        singleBook,
         settings: options,
         ...(providerId === undefined ? {} : { providerId }),
       },

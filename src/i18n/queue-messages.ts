@@ -1,5 +1,4 @@
 import type { Language } from '@/domain/app-settings';
-import type { BookFormat } from '@/domain/conversion';
 
 import { countOf } from './count';
 
@@ -37,9 +36,10 @@ export interface QueueMessages {
     readonly editVolumesFor: (name: string) => string;
     readonly editTitles: string;
     readonly editVolumes: string;
+    /** The button of the row of a folder: its books are chosen there, and its volumes made. */
+    readonly editBooksFor: (name: string) => string;
+    readonly editBooks: string;
     /** Opens the choice among the files that claim one chapter (ADR 0093). */
-    readonly reviewVersionsFor: (name: string) => string;
-    readonly reviewVersions: string;
     readonly editDetailsOf: (name: string) => string;
     readonly editDetails: (set: boolean) => string;
     readonly editOptionsOf: (name: string) => string;
@@ -55,13 +55,6 @@ export interface QueueMessages {
   readonly panel: {
     /** The name of the panel of conversion options beside the queue. */
     readonly label: string;
-    readonly singleBook: {
-      readonly label: string;
-      readonly saved: string;
-      readonly unavailable: string;
-      /** What the one book is, by its format: an EPUB has a table of contents, a PDF bookmarks, a CBZ neither (ADR 0083). */
-      readonly produces: Readonly<Record<BookFormat, string>>;
-    };
     readonly device: string;
     readonly format: string;
     readonly advanced: string;
@@ -82,6 +75,12 @@ export interface QueueMessages {
     readonly pages: (count: number) => string;
     /** The one book a whole series is bound into, named for the series. */
     readonly oneBookFor: (series: string) => string;
+    /** The file a book will be, with its extension. */
+    readonly file: (name: string) => string;
+    /** The chapters in a book, as its table of contents will call them. */
+    readonly chapters: (count: number) => string;
+    /** The files set aside because another version of their chapter was chosen. */
+    readonly leftOut: (count: number) => string;
   };
   readonly pending: {
     readonly earlierBooks: string;
@@ -122,8 +121,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Edit volumes for ${name}`,
       editTitles: 'Edit titles',
       editVolumes: 'Edit volumes',
-      reviewVersionsFor: (name) => `Choose between the versions of chapters in ${name}`,
-      reviewVersions: 'Choose versions',
+      editBooksFor: (name) => `Edit books and volumes for ${name}`,
+      editBooks: 'Edit books and volumes',
       editDetailsOf: (name) => `Edit details of ${name}`,
       editDetails: (set) =>
         set ? 'Edit title, author and language (set)' : 'Edit title, author and language',
@@ -142,16 +141,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: 'Conversion options',
-      singleBook: {
-        label: 'Create one book for the series',
-        saved: 'Saved for manga folders. A standalone CBZ is already one book.',
-        unavailable: 'Not available for standalone .cbz files.',
-        produces: {
-          epub: 'Produces a single EPUB with volumes and chapters in the table of contents.',
-          cbz: 'Produces a single CBZ with the volumes and chapters as folders. It has no table of contents.',
-          pdf: 'Produces a single PDF with the pages in order and bookmarks for the volumes and chapters.',
-        },
-      },
       device: 'Device',
       format: 'Format',
       advanced: 'Advanced conversion options',
@@ -173,6 +162,10 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'No library files were written.',
       pages: (count) => `${String(count)} ${countOf(count, 'page', 'pages')}`,
       oneBookFor: (series) => `One book for ${series}`,
+      file: (name) => `File: ${name}`,
+      chapters: (count) => `${String(count)} ${countOf(count, 'chapter', 'chapters')} in the book`,
+      leftOut: (count) =>
+        `${String(count)} ${countOf(count, 'file', 'files')} left out because another version was chosen`,
     },
     pending: {
       earlierBooks: 'Earlier books',
@@ -213,8 +206,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `Editar os volumes de ${name}`,
       editTitles: 'Editar títulos',
       editVolumes: 'Editar volumes',
-      reviewVersionsFor: (name) => `Escolher entre as versões de capítulos em ${name}`,
-      reviewVersions: 'Escolher versões',
+      editBooksFor: (name) => `Editar os livros e volumes de ${name}`,
+      editBooks: 'Editar livros e volumes',
       editDetailsOf: (name) => `Editar os detalhes de ${name}`,
       editDetails: (set) =>
         set ? 'Editar título, autor e idioma (definidos)' : 'Editar título, autor e idioma',
@@ -233,16 +226,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: 'Opções de conversão',
-      singleBook: {
-        label: 'Criar um livro para a série',
-        saved: 'Guardado para pastas de mangá. Um CBZ avulso já é um livro só.',
-        unavailable: 'Indisponível para arquivos .cbz avulsos.',
-        produces: {
-          epub: 'Gera um único EPUB com volumes e capítulos no sumário.',
-          cbz: 'Gera um único CBZ com os volumes e capítulos em pastas. Não tem sumário.',
-          pdf: 'Gera um único PDF com as páginas em ordem e marcadores para os volumes e capítulos.',
-        },
-      },
       device: 'Dispositivo',
       format: 'Formato',
       advanced: 'Opções avançadas de conversão',
@@ -264,6 +247,10 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'Nenhum arquivo da biblioteca foi gravado.',
       pages: (count) => `${String(count)} ${countOf(count, 'página', 'páginas')}`,
       oneBookFor: (series) => `Um livro para ${series}`,
+      file: (name) => `Arquivo: ${name}`,
+      chapters: (count) => `${String(count)} ${countOf(count, 'capítulo', 'capítulos')} no livro`,
+      leftOut: (count) =>
+        `${String(count)} ${countOf(count, 'arquivo ficou', 'arquivos ficaram')} de fora porque outra versão foi escolhida`,
     },
     pending: {
       earlierBooks: 'Livros anteriores',
@@ -304,8 +291,8 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       editVolumesFor: (name) => `「${name}」の巻を編集`,
       editTitles: 'タイトルを編集',
       editVolumes: '巻を編集',
-      reviewVersionsFor: (name) => `「${name}」の複数版の話から選ぶ`,
-      reviewVersions: '版を選択',
+      editBooksFor: (name) => `「${name}」の本と巻を編集`,
+      editBooks: '本と巻を編集',
       editDetailsOf: (name) => `「${name}」の詳細を編集`,
       editDetails: (set) =>
         set ? 'タイトル、著者、言語を編集（設定済み）' : 'タイトル、著者、言語を編集',
@@ -322,16 +309,6 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
     },
     panel: {
       label: '変換オプション',
-      singleBook: {
-        label: 'シリーズを 1 冊の本にする',
-        saved: 'マンガのフォルダー用に保存されます。単体の CBZ は、すでに 1 冊の本です。',
-        unavailable: '単体の .cbz ファイルでは使えません。',
-        produces: {
-          epub: '各巻と各話が目次に入った、1 つの EPUB を作成します。',
-          cbz: '各巻と各話をフォルダーにした、1 つの CBZ を作成します。目次はありません。',
-          pdf: 'ページが順番に並び、各巻と各話のしおりが付いた、1 つの PDF を作成します。',
-        },
-      },
       device: '端末',
       format: '形式',
       advanced: '詳細な変換オプション',
@@ -352,6 +329,9 @@ export const queueMessages: Readonly<Record<Language, QueueMessages>> = {
       nothingWritten: 'ライブラリのファイルは書き込まれていません。',
       pages: (count) => `${String(count)} ページ`,
       oneBookFor: (series) => `「${series}」全体で 1 冊`,
+      file: (name) => `ファイル: ${name}`,
+      chapters: (count) => `本に入る話: ${String(count)} 話`,
+      leftOut: (count) => `別の版が選ばれたため除外したファイル: ${String(count)} 個`,
     },
     pending: {
       earlierBooks: '以前の本',

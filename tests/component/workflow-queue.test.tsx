@@ -432,7 +432,9 @@ describe('queue application workflow', () => {
     const list = screen.getByRole('list', { name: 'Queued items' });
     expect(within(list).getByText(told)).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     expect(await screen.findByRole('heading', { name: 'Folders left out' })).toBeVisible();
     expect(screen.getByText(told)).toBeVisible();
   });
@@ -594,7 +596,9 @@ describe('queue application workflow', () => {
     expect(screen.getByRole('button', { name: 'Process' })).toBeDisabled();
     expect(screen.getByText('Nothing here can run yet.')).toBeVisible();
 
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('button', { name: 'Confirm mapping' }));
 
     // Accepting the gap is a decision, so the folder runs with the chapter left out.
@@ -614,7 +618,9 @@ describe('queue application workflow', () => {
 
   /** Opens the editor of the folder in the queue and picks MangaDex from the list of sources. */
   async function chooseMangaDex(user: UserEvent): Promise<void> {
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
     await user.click(screen.getByRole('combobox', { name: 'Source' }));
     await user.click(screen.getByRole('option', { name: /MangaDex/u }));
@@ -645,7 +651,9 @@ describe('queue application workflow', () => {
     render(<App />);
 
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
     // Nothing is chosen, and opening the editor sent nothing.
     expect(screen.getByRole('combobox', { name: 'Source' })).toHaveTextContent('Select a source');
@@ -682,7 +690,9 @@ describe('queue application workflow', () => {
     await chooseMangaDex(user);
 
     await user.click(screen.getByRole('button', { name: 'Queue' }));
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
     await user.click(await screen.findByRole('tab', { name: 'Online source' }));
 
     expect(screen.getByRole('combobox', { name: 'Source' })).toHaveTextContent('MangaDex');
@@ -802,7 +812,9 @@ describe('queue application workflow', () => {
     render(<App />);
 
     await addFolder(user);
-    await user.click(screen.getByRole('button', { name: 'Edit volumes for Offline Work' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Edit books and volumes for Offline Work' }),
+    );
 
     expect(await screen.findByRole('button', { name: 'Confirm mapping' })).toBeVisible();
     expect(screen.queryByRole('tab', { name: 'Online source' })).not.toBeInTheDocument();
@@ -837,7 +849,7 @@ describe('queue application workflow', () => {
     ).toBeVisible();
     // A CBZ has no volumes to edit.
     expect(
-      screen.queryByRole('button', { name: 'Edit volumes for Standalone.cbz' }),
+      screen.queryByRole('button', { name: 'Edit books and volumes for Standalone.cbz' }),
     ).not.toBeInTheDocument();
 
     expectNoOutputFolderPicker();

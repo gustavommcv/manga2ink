@@ -9,7 +9,9 @@ export type EditingTarget =
 /** A screen and its target travel together; non-editing screens keep no stale selection. */
 export type WorkflowNavigation =
   | { readonly screen: 'queue' | 'options' | 'running' | 'results' }
-  | { readonly screen: 'library' | 'versions'; readonly rowId: string }
+  | { readonly screen: 'library'; readonly rowId: string }
+  /** `from` is where the choice was asked for: the queue, which has to decide before it can group, or the editor. */
+  | { readonly screen: 'versions'; readonly rowId: string; readonly from: 'queue' | 'mapping' }
   | { readonly screen: 'mapping' | 'details' | 'item-options'; readonly target: EditingTarget };
 
 const queue: WorkflowNavigation = { screen: 'queue' };

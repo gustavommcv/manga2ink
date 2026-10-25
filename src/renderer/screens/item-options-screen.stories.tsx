@@ -71,7 +71,6 @@ const meta = {
     ],
     queue: { format: 'cbz', settings: defaultMangaprepSettings },
     settings: defaultMangaprepSettings,
-    singleBook: false,
   },
 } satisfies Meta<typeof ItemOptionsScreen>;
 
@@ -116,9 +115,4 @@ export const TitleOfALibrary: Story = {
     backLabel: 'Manga Library with a rather long folder name',
     name: 'Kimi ni Todoke: From Me to You (Complete Edition, Remastered Scans)',
   },
-};
-
-/** One book per series is on for the whole queue; the item's format is still its own to set. */
-export const SingleBookActive: Story = {
-  args: { format: 'epub', singleBook: true },
 };

@@ -6,7 +6,6 @@ import { defaultProcessMode, type ProcessMode } from './process-mode';
 export interface Preferences {
   readonly mode: ProcessMode;
   readonly format: BookFormat;
-  readonly singleBook: boolean;
   readonly settings: MangaprepSettings;
   /** The id of the online source chosen for volume data, when one was. */
   readonly providerId?: string;
@@ -18,7 +17,6 @@ export const defaultFormat: BookFormat = 'cbz';
 export const defaultPreferences: Preferences = Object.freeze({
   mode: defaultProcessMode,
   format: defaultFormat,
-  singleBook: false,
   settings: defaultMangaprepSettings,
 });
 

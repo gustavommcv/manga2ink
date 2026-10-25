@@ -115,8 +115,71 @@ export const PreGrouped: Story = {
   },
 };
 
-export const SingleBookActive: Story = {
-  args: { ...PreGrouped.args, singleBook: true },
+/** The choice of books opens the editor of a folder: one for each volume, until it is told otherwise. */
+export const ChoosingBooks: Story = {
+  args: { ...PreGrouped.args, books: 'volumes', format: 'epub', onBooks: () => undefined },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('radio', { name: /One book per volume/u })).toBeChecked();
+    await expect(
+      canvas.getByRole('radio', { name: /One book for the whole series/u }),
+    ).not.toBeChecked();
+  },
+};
+
+/** A series that is one book needs no volumes: it says so, and offers Done. */
+export const WholeSeriesWithoutVolumes: Story = {
+  args: {
+    books: 'series',
+    format: 'epub',
+    onBooks: () => undefined,
+    initialDraft: createMappingDraft({ mangaTitle: 'Ubunchu!', chapters }),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('radio', { name: /One book for the whole series/u }),
+    ).toBeChecked();
+    await expect(canvas.getByText(/This series needs no volumes/u)).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Done' })).toBeEnabled();
+  },
+};
+
+/** A folder that had chapters in more than one version says so, and offers to review the choice. */
+export const WithDecidedVersions: Story = {
+  args: {
+    ...PreGrouped.args,
+    books: 'volumes',
+    onBooks: () => undefined,
+    versions: { count: 2, onOpen: () => undefined },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByText(/2 chapters of this folder come in more than one version/u),
+    ).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Review the versions' })).toBeEnabled();
+  },
+};
+
+/** A title of a library whose titles are one book each says so over its editor. */
+export const TitleOfALibraryMadeOneBook: Story = {
+  args: { ...PreGrouped.args, books: 'series', inLibrary: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status', { name: 'One book for each title' })).toBeVisible();
+    await expect(canvas.queryByRole('group', { name: 'Books' })).toBeNull();
+  },
+};
+
+/** A folder left as it is has no volumes to make: the grouping below the choice is gone. */
+export const LeftAsItIs: Story = {
+  args: { ...PreGrouped.args, books: 'as-is', onBooks: () => undefined },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('radio', { name: /Convert the folder as it is/u })).toBeChecked();
+    await expect(canvas.queryByRole('heading', { name: 'Chapters' })).toBeNull();
+  },
 };
 
 export const ProviderSuggested: Story = {
@@ -235,7 +298,7 @@ export const InPortuguese: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole('heading', { name: 'Organizar Filename Conflict em volumes' }),
+      canvas.getByRole('heading', { name: 'Organizar Filename Conflict em livros' }),
     ).toBeVisible();
     await expect(canvas.getByRole('alert', { name: 'Erros do mapeamento' })).toHaveTextContent(
       'indica o volume 2, que o mangabind vai manter no lugar do volume 1',

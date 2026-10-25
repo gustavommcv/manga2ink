@@ -19,6 +19,8 @@ export class MangabindCliAdapter {
     private readonly executablePath: string,
     private readonly processRunner: ProcessRunner,
     private readonly supportsProgress = false,
+    /** Whether this release can name the chapters of a volume by their numbers (`chapter-labels`). */
+    private readonly supportsChapterLabels = false,
   ) {}
 
   async run(
@@ -32,7 +34,12 @@ export class MangabindCliAdapter {
     const result = await this.processRunner.run(
       {
         executablePath: this.executablePath,
-        arguments: buildMangabindArguments({ ...request, progressJson: streamProgress }),
+        arguments: buildMangabindArguments({
+          ...request,
+          progressJson: streamProgress,
+          // A release that does not know the flag would refuse the whole run for it.
+          chapterLabels: this.supportsChapterLabels ? request.chapterLabels : undefined,
+        }),
       },
       {
         ...(options.signal === undefined ? {} : { signal: options.signal }),
