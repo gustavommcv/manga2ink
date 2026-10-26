@@ -37,10 +37,15 @@ jobs:
           path: vendor/toolchain
           key: toolchain-${{ runner.os }}-${{ hashFiles('toolchain.lock.json') }}
       # A step that only downloads has a limit of its own: when the runner's network stalls, it would
-      # otherwise hold the whole job until the job's limit (30 minutes) cancels it.
+      # otherwise hold the whole job until the job's limit (30 minutes) cancels it. On Linux it takes
+      # under half a minute when the mirror answers, so apt is first told to give up on a silent
+      # connection and retry, and the step's limit is the few minutes a retry can use.
+      - name: Make apt give up on a stalled mirror
+        if: runner.os == 'Linux'
+        run: .github/scripts/apt-give-up-on-stalls.sh
       - name: Install Chromium system dependencies
         if: runner.os == 'Linux'
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: npx playwright install --with-deps chromium chromium-headless-shell
       - name: Install Chromium
         if: runner.os != 'Linux'
@@ -146,8 +151,10 @@ jobs:
       # and none of its system libraries are needed. Everything this job downloads is time spent on
       # the runner's network, which is where it has been slow; weston alone is about a hundred
       # packages, so it is installed without the recommended ones.
+      - name: Make apt give up on a stalled mirror
+        run: .github/scripts/apt-give-up-on-stalls.sh
       - name: Install weston
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends weston
       - run: npm run package
       - name: Run the packaged shell in headless Wayland

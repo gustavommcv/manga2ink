@@ -53,13 +53,16 @@ jobs:
         with:
           path: vendor/toolchain
           key: toolchain-${{ runner.os }}-${{ hashFiles('toolchain.lock.json') }}
+      - name: Make apt give up on a stalled mirror
+        if: runner.os == 'Linux'
+        run: .github/scripts/apt-give-up-on-stalls.sh
       - name: Install Linux maker dependencies
         if: runner.os == 'Linux'
         # MakerRpm needs the `rpmbuild` binary (apt's `rpm` package provides it on
         # Debian/Ubuntu - there is no separate "rpmbuild" package there); MakerDeb needs
         # `dpkg` (already present on any Debian-family runner) and `fakeroot`. `cpio` goes with
         # `rpm2cpio`, which unpacks the .rpm for check-package-tools.sh.
-        timeout-minutes: 10
+        timeout-minutes: 5
         run: sudo apt-get update && sudo apt-get install --yes rpm fakeroot cpio
       - run: npm run make
       - name: Upload installer artifacts
