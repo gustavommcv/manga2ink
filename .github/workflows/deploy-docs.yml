@@ -70,7 +70,8 @@ jobs:
       - name: Install Chromium and system dependencies
         if: runner.os == 'Linux'
         timeout-minutes: 10
-        run: npx playwright install --with-deps chromium
+        # The job runs in website/ by default, where this Playwright is; the script is at the root.
+        run: ${{ github.workspace }}/.github/scripts/apt-retry.sh 100 npx playwright install --with-deps chromium
       - name: Install Chromium
         if: runner.os != 'Linux'
         timeout-minutes: 10

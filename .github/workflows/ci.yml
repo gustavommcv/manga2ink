@@ -37,11 +37,13 @@ jobs:
           path: vendor/toolchain
           key: toolchain-${{ runner.os }}-${{ hashFiles('toolchain.lock.json') }}
       # A step that only downloads has a limit of its own: when the runner's network stalls, it would
-      # otherwise hold the whole job until the job's limit (30 minutes) cancels it.
+      # otherwise hold the whole job until the job's limit (30 minutes) cancels it. On Linux it goes
+      # through apt-retry.sh: it takes under half a minute when the mirror answers, so an attempt is
+      # cut off at 100 seconds and tried again.
       - name: Install Chromium system dependencies
         if: runner.os == 'Linux'
         timeout-minutes: 10
-        run: npx playwright install --with-deps chromium chromium-headless-shell
+        run: .github/scripts/apt-retry.sh 100 npx playwright install --with-deps chromium chromium-headless-shell
       - name: Install Chromium
         if: runner.os != 'Linux'
         timeout-minutes: 10
@@ -148,7 +150,7 @@ jobs:
       # packages, so it is installed without the recommended ones.
       - name: Install weston
         timeout-minutes: 10
-        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends weston
+        run: .github/scripts/apt-retry.sh 100 bash -c 'sudo apt-get update && sudo apt-get install --yes --no-install-recommends weston'
       - run: npm run package
       - name: Run the packaged shell in headless Wayland
         shell: bash
