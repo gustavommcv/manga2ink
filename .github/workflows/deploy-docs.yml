@@ -67,15 +67,11 @@ jobs:
           cache: npm
           cache-dependency-path: website/package-lock.json
       - run: npm ci
-      - name: Make apt give up on a stalled mirror
-        if: runner.os == 'Linux'
-        # The job runs in website/ by default; the script is at the root of the repository.
-        working-directory: ${{ github.workspace }}
-        run: .github/scripts/apt-give-up-on-stalls.sh
       - name: Install Chromium and system dependencies
         if: runner.os == 'Linux'
-        timeout-minutes: 5
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 10
+        # The job runs in website/ by default, where this Playwright is; the script is at the root.
+        run: ${{ github.workspace }}/.github/scripts/apt-retry.sh 100 npx playwright install --with-deps chromium
       - name: Install Chromium
         if: runner.os != 'Linux'
         timeout-minutes: 10
