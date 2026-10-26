@@ -2,7 +2,11 @@
   <img src="assets/branding/manga2ink/logo.svg" alt="Manga2Ink" width="256" height="256">
 </h1>
 
-Manga2Ink is a desktop app for organizing manga chapters into volumes and converting them into books for your e-reader. Choose how chapters are grouped and fine-tune page size, margins, and image quality for your device. Once processed, save your books locally or share them directly with KOReader over your local network. Until version 0.1.0-alpha.17 it was called Mangabound.
+Manga2Ink converts and optimizes manga and comics for e-ink readers such as Kindle, Kobo and reMarkable. Create EPUB, CBZ or PDF books with page dimensions and image settings suited to your screen, in grayscale or color. Adjust contrast, crop page margins and choose how to handle double-page spreads.
+
+You can also organize chapters into volumes or combine a series into one book, then save your books locally or share them directly with KOReader over your local network. Processing runs on your computer, with packages for Windows, macOS on Apple Silicon and Linux.
+
+Until version 0.1.0-alpha.17 it was called Mangabound.
 
 [Download](https://github.com/gustavommcv/manga2ink/releases) · [User guide](https://gustavommcv.github.io/manga2ink/) · [Guia em português](https://gustavommcv.github.io/manga2ink/pt-br/) · [日本語ガイド](https://gustavommcv.github.io/manga2ink/ja/) · [Contribute](CONTRIBUTING.md)
 
@@ -10,10 +14,11 @@ Manga2Ink is a desktop app for organizing manga chapters into volumes and conver
 
 _Interface example with Storybook sample data. The guide and screenshots follow `main`, which may be ahead of the latest release._
 
-- Review and edit chapter-to-volume assignments before processing.
-- Create CBZ, EPUB, or PDF books for devices such as Kindle, Kobo, and reMarkable, or use custom page dimensions.
-- Produce separate volumes or combine a series into one EPUB, CBZ or PDF book.
-- Set book details, covers, and image-processing options.
+- Adjust page dimensions, crop margins and tune contrast for your reader, in grayscale or color.
+- Split double-page spreads or keep them whole, and choose the reading direction.
+- Export EPUB, CBZ or PDF books using a device profile or custom page dimensions.
+- Review chapter-to-volume assignments, produce separate volumes or combine a series into one book.
+- Set book details and covers, save your books or share them with KOReader over your local network.
 - Use the app in English, Brazilian Portuguese or Japanese (the Japanese was written with the help of AI and is open to correction), in a dark or a light theme, which follows your system until you choose one.
 
 ## Download

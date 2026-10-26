@@ -3,7 +3,7 @@
   "productName": "Manga2Ink",
   "version": "0.1.0-alpha.20",
   "private": true,
-  "description": "A desktop workflow for binding, converting, and delivering manga to e-readers.",
+  "description": "Convert and optimize manga and comics for e-ink readers, with chapter organization and local KOReader sharing.",
   "author": "Manga2Ink contributors",
   "license": "MIT",
   "main": ".webpack/main/index.cjs",

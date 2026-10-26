@@ -29,7 +29,7 @@ export default defineConfig({
       logo: { src: './src/assets/branding/header.webp', alt: '', replacesTitle: false },
       favicon: '/favicon.ico',
       description:
-        'Manga2Ink organizes manga chapters into volumes, converts them into EPUB, CBZ or PDF for your e-reader, and shares books with KOReader over your local network.',
+        'Convert and optimize manga and comics for Kindle, Kobo and other e-readers. Create EPUB, CBZ or PDF books, organize chapters and share with KOReader over your local network.',
       routeMiddleware: './src/routeData.ts',
       components: {
         Banner: './src/components/Banner.astro',
