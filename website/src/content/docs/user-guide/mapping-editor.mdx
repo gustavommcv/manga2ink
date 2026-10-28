@@ -5,7 +5,19 @@ description: 'Group manga chapters into volumes in Manga2Ink: use the volume num
 
 import TutorialImage from '../../../components/TutorialImage.astro';
 
-The volume editor decides which of your chapters belong to each volume. All three **Chapters from** tabs work on the same volumes, so you can edit a suggestion just as you can build volumes from scratch.
+Open **Edit books and volumes** to choose how a series becomes books and, where needed, assign chapters to volumes. If the row says **Choose versions**, decide which files to keep first. When using volumes, all three **Chapters from** tabs work on the same mapping, so you can edit a suggestion just as you can build volumes from scratch.
+
+## How the books are made
+
+At the top of a folder's editor, choose how to make the series' books under **Books**:
+
+- **One book per volume** is the starting choice for each series. Volumes can be recognized from file names, suggested by an online source or assigned manually.
+- **One book for the whole series** needs no volumes. Chapters form the table of contents of an EPUB, the bookmarks of a PDF, or ordered folders in a CBZ. If the series has volumes, those are the first level of that structure. The editor describes the book in the format you chose. With no volumes, press **Done**.
+- **Convert the folder as it is** sends the folder to mangaprep as one book without grouping chapters. The choice applies only to that folder.
+
+The last is not offered for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first, and the choice says so. A comic file has no choice of books, since it is one book already. For a library, **Books** is on the screen that lists its titles: **One book per volume**, or **One book for each title** (a title still needs its volumes).
+
+The choice is kept with the row of the queue and not between sessions. The steps beside the queue are not locked by it: they are the queue's, and what you chose for one series is above them. If you turned a step off and a series ignores it, its row says so: **The steps of the queue do not apply here**.
 
 ## File names
 
@@ -71,7 +83,7 @@ A link in a manga folder is followed only when it leads to a file inside that fo
 
 ## Folders whose names are not chapter names
 
-Manga2Ink looks for a chapter number in the name of each folder. A folder whose name it cannot read (`Omake`, `Ch.004 [GroupA]`, or a name in another script with no number) ends up in no volume and in no book, and the editor cannot place it, because it does not know which chapter it is. The queue row and the editor list these folders by name under **Folders left out**.
+Numbered names such as `Ch.004 [GroupA]` and `Ch.0001 (en)` are recognized. A folder that mangabind cannot identify, such as `Omake` with no chapter or volume number, ends up in no volume and in no book; the editor cannot place it because it does not know which chapter it is. The queue row and the editor list these folders by name under **Folders left out**.
 
 Rename the folders so that they include a chapter number, for example `Ch.005`, and add the folder again. For a library, the queue row shows each title with the folders left out of it, and the editor of that title lists them. After renaming, add the library again.
 
@@ -81,7 +93,12 @@ A series kept in a library as a link to a folder is not read either, because lin
 
 Choose **Online source**, select MangaDex, enter the title, and press **Search**.
 
-Choose the matching work with **Use these volumes**, review the summary, then confirm it or use **Edit chapter mapping**. An online suggestion may be incomplete or differ from your edition, so check special and decimal chapters. If the work is not listed, use **Manual**.
+Choose the matching work with **Use these volumes**. If the suggestion has volumes for this folder's chapters, review the summary, then confirm it or use **Edit chapter mapping**. An online suggestion may be incomplete or differ from your edition, so check special and decimal chapters. If the work is not listed, use **Manual**.
+
+The search can find the series without providing volumes for the chapters in your folder:
+
+- **No volumes there** means the series is listed, but its chapters are not grouped into volumes there. No mapping is applied. For a chapter folder, choose **One book for the whole series** under **Books** if you want one book without volumes, or group the chapters manually. For a library title, keep its recognized volumes or assign them manually.
+- **Nothing to group** means the source has volumes, but none matches the chapters in this folder. No mapping is applied. Check the chapter numbers and the selected work, or group the chapters manually.
 
 <TutorialImage
   name="generated/online-mapping"
@@ -106,18 +123,6 @@ Review the proposed volumes before confirming or editing the mapping.
 />
 
 </details>
-
-## How the books are made
-
-At the top of the editor of a folder, **Books** is the choice of how this series becomes books:
-
-- **One book per volume** is what every series starts as. It needs volumes: from the names of the folders, from an online source, or made by hand below.
-- **One book for the whole series** needs no volumes. The chapters are the table of contents of the book; the volumes you make, if you make any, are its first level (in the table of contents of an EPUB, in the bookmarks of a PDF, or as folders in a CBZ). It says what the book is in the format you chose. With no volumes, **Done** is all there is to press.
-- **Convert the folder as it is** is what the old _Skip grouping_ button did: nothing is grouped, and the folder goes to mangaprep as one book. It does not change the steps of the queue, only this folder.
-
-The last is not offered for a folder whose chapters are CBZ files (`Ch.0001.cbz`, `Ch.0002.cbz`, …): the converter cannot read pages from inside the files of a folder, so the chapters have to be joined first, and the choice says so. A comic file has no choice of books, since it is one book already. For a library, **Books** is on the screen that lists its titles: **One book per volume**, or **One book for each title** (a title still needs its volumes).
-
-The choice is kept with the row of the queue and not between sessions. The steps beside the queue are not locked by it: they are the queue's, and what you chose for one series is above them. If you turned a step off and a series ignores it, its row says so: **The steps of the queue do not apply here**.
 
 ## Where your volumes are kept
 

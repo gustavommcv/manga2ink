@@ -19,7 +19,7 @@ Each page has a description of its own task. Write for readers, not a keyword sc
 
 `astro.config.mjs` adds the social preview card, `public/social-preview.png` (1200 × 630 pixels, made from the logo as [the asset guide](../assets/README.md) records), to every page as `og:image` and `twitter:image`, with its size and a text alternative, so that a link to the guide shows it when shared.
 
-`src/structured-data.mjs` constructs that small data model and escapes `<` before placing JSON into a script element. The documentation's language varies by page; the application's declared language remains English, matching its controls. This is static build output, not a server or client-side SEO library.
+`src/structured-data.mjs` constructs that small data model and escapes `<` before placing JSON into a script element. The documentation's language varies by page; the application's declared languages come from `appLanguages` in `site.config.mjs`, currently English, Brazilian Portuguese and Japanese. This is static build output, not a server or client-side SEO library.
 
 ### What the data can and cannot do
 

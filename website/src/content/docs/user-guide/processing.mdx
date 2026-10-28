@@ -5,9 +5,17 @@ description: 'What happens when Manga2Ink processes manga: building volumes, con
 
 import TutorialImage from '../../../components/TutorialImage.astro';
 
-After **Process**, Manga2Ink performs the selected steps:
+After **Process**, each item's choice under **Books** determines its steps:
 
-1. **Building volume files**: mangabind puts the chapters of each volume together and writes an intermediate CBZ for it. You can follow the chapter and page counts as the volumes are built.
+- **One book for the whole series**, or **One book for each title** for a library, joins and converts even if a general queue step is off.
+- **Convert the folder as it is** only converts that folder. It is unavailable for a folder of CBZ chapters, which must be joined first.
+- **One book per volume** follows the general queue steps where the input allows them.
+
+When an item's choice overrides a step that is off, its row says **The steps of the queue do not apply here**. See [books and volume mapping](../mapping-editor/) for these choices.
+
+The processing stages are:
+
+1. **Building volume files**: mangabind joins the chapters into intermediate CBZ files: one per volume, or one for the whole series when that is your choice. You can follow the chapter and page counts as the files are built.
 2. **Converting**: mangaprep processes the pages and writes the format you chose. Several volumes can run at the same time (**Parallel conversions** in **App settings** sets how many), so use **Show details** to see the state of each.
 
 The overall bar tracks the whole run. Under **Show details**, **Saving** means that a book is being packaged or written. Its bar stays below 100% until that finishes, even after all the pages have been processed.

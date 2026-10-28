@@ -5,7 +5,19 @@ description: 'Agrupe capítulos de mangá em volumes no Manga2Ink: use os númer
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
 
-O editor de volumes define a qual volume pertence cada um dos seus capítulos. As três abas de **Capítulos vindos de** trabalham sobre os mesmos volumes, então você pode corrigir uma sugestão do mesmo jeito que cria volumes do zero.
+Abra **Editar livros e volumes** para escolher como gerar os livros de uma série e, quando necessário, atribuir capítulos aos volumes. Se a linha indicar **Escolher versões**, decida primeiro quais arquivos manter. Ao usar volumes, as três abas de **Capítulos vindos de** trabalham sobre o mesmo mapeamento, então você pode corrigir uma sugestão do mesmo jeito que cria volumes do zero.
+
+## Como os livros são feitos
+
+Na parte superior do editor de uma pasta, escolha em **Livros** como gerar os livros da série:
+
+- **Um livro por volume** é a opção inicial para cada série. Os volumes podem ser reconhecidos nos nomes dos arquivos, sugeridos por uma fonte online ou definidos manualmente.
+- **Um livro para a série inteira** não precisa de volumes. Os capítulos formam o sumário de um EPUB, os marcadores de um PDF ou pastas ordenadas em um CBZ. Se a série tiver volumes, eles são o primeiro nível dessa estrutura. O editor descreve o livro no formato que você escolheu. Sem volumes, pressione **Concluir**.
+- **Converter a pasta como está** envia a pasta ao mangaprep como um único livro, sem agrupar os capítulos. A escolha vale apenas para essa pasta.
+
+A última não é oferecida para uma pasta cujos capítulos são arquivos CBZ (`Ch.0001.cbz`, `Ch.0002.cbz`, …): o conversor não consegue ler as páginas de dentro dos arquivos de uma pasta, então os capítulos precisam ser juntados antes, e a escolha diz isso. Um arquivo de quadrinhos não tem escolha de livros, pois já é um livro só. Para uma biblioteca, **Livros** fica na tela que lista os títulos dela: **Um livro por volume**, ou **Um livro para cada título** (um título ainda precisa dos seus volumes).
+
+A escolha fica com a linha da fila e não é guardada entre as sessões. As etapas ao lado da fila não são travadas por ela: são da fila, e o que você escolheu para uma série está acima delas. Se você desligou uma etapa e uma série a ignora, a linha dela diz isso: **As etapas da fila não valem aqui**.
 
 ## Nomes dos arquivos
 
@@ -71,7 +83,7 @@ Um link em uma pasta de mangá só é seguido quando leva a um arquivo dentro de
 
 ## Pastas cujo nome não é um nome de capítulo
 
-O Manga2Ink procura um número de capítulo no nome de cada pasta. Uma pasta cujo nome ele não consegue ler (`Omake`, `Ch.004 [GroupA]` ou um nome em outro alfabeto sem número) não entra em nenhum volume nem em nenhum livro, e o editor não consegue colocá-la, porque não sabe qual capítulo ela é. A linha da fila e o editor listam essas pastas pelo nome em **Pastas deixadas de fora**.
+Nomes numerados como `Ch.004 [GroupA]` e `Ch.0001 (en)` são reconhecidos. Uma pasta que o mangabind não consegue identificar, como `Omake` sem número de capítulo ou volume, não entra em nenhum volume nem em nenhum livro; o editor não consegue colocá-la porque não sabe qual capítulo ela é. A linha da fila e o editor listam essas pastas pelo nome em **Pastas deixadas de fora**.
 
 Renomeie as pastas para incluir um número de capítulo, por exemplo `Ch.005`, e adicione a pasta de novo. Em uma biblioteca, a linha da fila mostra cada título com as pastas que ficaram de fora dele, e o editor desse título as lista. Depois de renomear, adicione a biblioteca de novo.
 
@@ -81,7 +93,12 @@ Uma série guardada na biblioteca como link para uma pasta também não é lida,
 
 Escolha **Fonte online**, selecione MangaDex, informe o título e pressione **Buscar**.
 
-Escolha a obra certa com **Usar estes volumes**, confira o resumo e confirme, ou use **Editar o mapeamento**. Uma sugestão pode estar incompleta ou diferir da sua edição, então confira os capítulos especiais e decimais. Se a obra não estiver na lista, use **Manual**.
+Escolha a obra certa com **Usar estes volumes**. Se a sugestão tiver volumes para os capítulos desta pasta, confira o resumo e confirme, ou use **Editar o mapeamento**. Uma sugestão pode estar incompleta ou diferir da sua edição, então confira os capítulos especiais e decimais. Se a obra não estiver na lista, use **Manual**.
+
+A busca pode encontrar a série sem trazer volumes para os capítulos da sua pasta:
+
+- **Sem volumes lá** significa que a série está cadastrada, mas seus capítulos não estão agrupados em volumes na fonte. Nenhum mapeamento é aplicado. Para uma pasta de capítulos, escolha **Um livro para a série inteira** em **Livros** se quiser um livro sem volumes, ou agrupe os capítulos manualmente. Na biblioteca, mantenha os volumes já reconhecidos ou defina-os manualmente para esse título.
+- **Nada para agrupar** significa que a fonte tem volumes, mas nenhum corresponde aos capítulos desta pasta. Nenhum mapeamento é aplicado. Confira os números dos capítulos e a obra escolhida, ou agrupe os capítulos manualmente.
 
 <TutorialImage
   name="generated/online-mapping"
@@ -106,18 +123,6 @@ Confira os volumes sugeridos antes de confirmar ou editar a organização.
 />
 
 </details>
-
-## Como os livros são feitos
-
-No alto do editor de uma pasta, **Livros** é a escolha de como esta série vira livros:
-
-- **Um livro por volume** é o que toda série é no começo. Precisa de volumes: pelos nomes das pastas, de uma fonte online, ou feitos à mão logo abaixo.
-- **Um livro para a série inteira** não precisa de volumes. Os capítulos são o índice do livro; os volumes que você fizer, se fizer algum, são o primeiro nível dele (no índice de um EPUB, nos marcadores de um PDF ou em pastas num CBZ). Diz o que o livro é no formato que você escolheu. Sem volumes, **Concluir** é tudo o que há para apertar.
-- **Converter a pasta como está** é o que o antigo botão _Pular o agrupamento_ fazia: nada é agrupado, e a pasta vai ao mangaprep como um livro só. Não muda as etapas da fila, só esta pasta.
-
-A última não é oferecida para uma pasta cujos capítulos são arquivos CBZ (`Ch.0001.cbz`, `Ch.0002.cbz`, …): o conversor não consegue ler as páginas de dentro dos arquivos de uma pasta, então os capítulos precisam ser juntados antes, e a escolha diz isso. Um arquivo de quadrinhos não tem escolha de livros, pois já é um livro só. Para uma biblioteca, **Livros** fica na tela que lista os títulos dela: **Um livro por volume**, ou **Um livro para cada título** (um título ainda precisa dos seus volumes).
-
-A escolha fica com a linha da fila e não é guardada entre as sessões. As etapas ao lado da fila não são travadas por ela: são da fila, e o que você escolheu para uma série está acima delas. Se você desligou uma etapa e uma série a ignora, a linha dela diz isso: **As etapas da fila não valem aqui**.
 
 ## Onde os seus volumes ficam guardados
 

@@ -1,6 +1,6 @@
 ---
 title: 'Guia rápido'
-description: 'Converta seu primeiro mangá com o Manga2Ink: adicione uma pasta ou CBZ, confira os volumes, escolha o e-reader e o formato, processe e salve os livros.'
+description: 'Converta seu primeiro mangá com o Manga2Ink: escolha um livro por volume ou para a série inteira, selecione o e-reader e o formato, processe e salve.'
 ---
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
@@ -16,21 +16,24 @@ Uma pasta contém capítulos separados. Um CBZ avulso é tratado como um volume 
   alt="Uma pasta de capítulos, uma biblioteca e um CBZ na fila."
 />
 
-## 2. Confira os volumes
+<span id="2-confira-os-volumes"></span>
 
-Para uma pasta de capítulos, use **Editar livros e volumes** para conferir a organização.
+## 2. Escolha como gerar os livros
 
-- **Nomes dos arquivos** resume os volumes já reconhecidos nos nomes.
-- **Manual** permite criar volumes e atribuir capítulos selecionados ou um intervalo.
-- **Fonte online** busca opcionalmente uma sugestão no MangaDex. Confira o resultado antes de confirmar.
+Para uma pasta de capítulos, abra **Editar livros e volumes** na linha dela. Se a linha indicar **Escolher versões**, decida primeiro quais arquivos manter; depois o editor abre as escolhas de livros.
 
-Se nenhum volume for reconhecido, o editor abre **Manual** com uma explicação. Você pode organizar tudo offline, sem uma obra cadastrada online. Veja o passo a passo em [organização de volumes](../../user-guide/mapping-editor/).
+Em **Livros**, escolha:
+
+- **Um livro por volume** para gerar livros separados. Confira os volumes em **Nomes dos arquivos**, crie-os em **Manual** ou, se quiser, revise uma sugestão de **Fonte online**.
+- **Um livro para a série inteira** para reunir seus capítulos e volumes em um único livro. Os volumes são opcionais: se não houver nenhum, pressione **Concluir**. Se houver volumes, eles continuam como seções do livro.
+
+Um CBZ adicionado como arquivo já é um livro. Em uma biblioteca, escolha **Um livro para cada título** na lista de títulos; cada título ainda precisa de volumes. Veja os detalhes em [livros e organização de volumes](../../user-guide/mapping-editor/).
 
 ## 3. Escolha dispositivo e formato
 
 Em **Etapas**, mantenha **Agrupar capítulos em volumes** e **Converter para e-reader** ligados para fazer as duas coisas. Depois selecione o seu **Dispositivo** e o **Formato**. Abra **Opções avançadas de conversão** só se precisar mudar os ajustes de imagem.
 
-Quer a série inteira em um único livro? Abra **Editar livros e volumes** na linha dela e escolha **Um livro para a série inteira** em **Livros**. Funciona com qualquer formato e não precisa de volumes: uma série sem nenhum vira um livro com os capítulos no índice. O EPUB tem índice, o PDF tem marcadores e o CBZ não tem nenhum dos dois. A escolha é de cada série, então as outras da fila continuam sendo um livro por volume.
+Uma série configurada como **Um livro para a série inteira** é agrupada e convertida mesmo se uma etapa geral estiver desligada. A escolha vale apenas para essa série. Funciona em EPUB, CBZ e PDF: o EPUB tem sumário, o PDF tem marcadores e o CBZ mantém pastas ordenadas, sem nenhum dos dois. Veja os detalhes dos formatos em [configurações de conversão](../../user-guide/output-profiles/).
 
 ## 4. Processe
 
