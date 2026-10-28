@@ -38,7 +38,7 @@ Manga2Ink is in **alpha**, and the installers are not yet code-signed. See the [
 ## Get started
 
 1. **Add your manga.** Drop chapter folders, a library of manga folders, or CBZ files into the queue.
-2. **Choose how to organize and convert it.** Check the volumes, select your device and format, and adjust image settings if needed. Book details let you set each title's name, author, and language.
+2. **Choose how to make the books.** Open **Edit books and volumes** and choose one book per volume or one for the whole series. A chapter folder needs no volumes for a whole-series book; a library still needs volumes for each title. Select your device and format, and adjust image settings if needed. Book details let you set each title's name, author, and language.
 3. **Process, then save or share.** Follow the progress, save one book or all of them, or share with KOReader over your local network.
 
 Your conversion settings are remembered between sessions. Unsaved books remain under **Ready books**, where you can reopen or delete a pending conversion.

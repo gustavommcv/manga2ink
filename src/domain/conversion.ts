@@ -118,7 +118,7 @@ export function plannedVolumeBookName(
   return `${title}.${format}`;
 }
 
-/** A combined series is one planned EPUB; its volumes remain table-of-contents sections. */
+/** Plans one book for a whole series in any supported format, retaining its chapters for the plan. */
 export function plannedSingleBook(
   title: string,
   volumes: readonly PlannedBook[],

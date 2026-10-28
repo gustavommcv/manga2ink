@@ -5,9 +5,17 @@ description: 'O que acontece quando o Manga2Ink processa um mangá: montagem dos
 
 import TutorialImage from '../../../../components/TutorialImage.astro';
 
-Após **Processar**, o Manga2Ink executa as etapas escolhidas:
+Após **Processar**, a escolha de cada item em **Livros** define suas etapas:
 
-1. **Montando os arquivos de volume**: o mangabind junta os capítulos de cada volume e escreve um CBZ intermediário para ele. Você pode acompanhar a contagem de capítulos e páginas enquanto os volumes são gerados.
+- **Um livro para a série inteira**, ou **Um livro para cada título** em uma biblioteca, agrupa e converte mesmo se uma etapa geral da fila estiver desligada.
+- **Converter a pasta como está** apenas converte aquela pasta. Essa opção não está disponível para uma pasta de capítulos em CBZ, que precisam ser agrupados antes.
+- **Um livro por volume** segue as etapas gerais da fila nos casos permitidos pelo tipo de entrada.
+
+Quando a escolha de um item tem prioridade sobre uma etapa desligada, a linha dele informa **As etapas da fila não valem aqui**. Veja essas escolhas em [livros e organização de volumes](../mapping-editor/).
+
+As fases do processamento são:
+
+1. **Montando os arquivos de volume**: o mangabind junta os capítulos em arquivos CBZ intermediários: um por volume, ou um para a série inteira quando essa for a sua escolha. Você pode acompanhar a contagem de capítulos e páginas enquanto os arquivos são gerados.
 2. **Convertendo**: o mangaprep processa as páginas e escreve o formato que você escolheu. Vários volumes podem rodar ao mesmo tempo (as **Conversões em paralelo**, nas **Configurações do app**, dizem quantos), então use **Mostrar detalhes** para ver o estado de cada um.
 
 A barra geral acompanha toda a execução. Em **Mostrar detalhes**, **Salvando** indica que um livro está sendo empacotado ou gravado. A barra dele fica abaixo de 100% até essa etapa terminar, mesmo que todas as páginas já tenham sido processadas.
