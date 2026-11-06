@@ -26,6 +26,13 @@ updates:
         patterns:
           - '@playwright/test'
           - playwright
+      # Both are pinned, each at the same version, and React refuses to start when they differ
+      # ("Incompatible React versions"): a bump of `react` alone failed every component and packaged
+      # test (the first proposal for 19.3.1 did).
+      react:
+        patterns:
+          - react
+          - react-dom
       webdriverio:
         patterns:
           - '@wdio/*'
