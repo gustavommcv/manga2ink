@@ -38,7 +38,7 @@
     "audit-ci": "7.1.0",
     "cheerio": "1.2.0",
     "eslint": "10.13.0",
-    "globals": "^17.13.0",
+    "globals": "^17.14.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "1.1.2",
     "typescript": "6.0.3"
