@@ -129,9 +129,11 @@ async function chooseTheme(file: string, value: string, pageTheme: string = valu
 }
 
 /**
- * Picks how many conversions run at once, and waits for the file to hold it. As with the language and
- * the theme, the choice now and then does not reach the page as a change, so it is made again, and
- * said when it had to be.
+ * Picks how many conversions run at once, and waits for the file to hold it and for the select to show
+ * it. As with the language and the theme, the choice now and then does not reach the page as a change,
+ * so it is made again, and said when it had to be. The select shows a choice only once it is kept
+ * (it is drawn from the settings the main process has answered for), so it is later than the file by
+ * the time of that answer: on a slow runner a read of it right after the file is read before it.
  */
 async function chooseParallel(file: string, value: string, kept: string | number): Promise<void> {
   const id = await $('label=Parallel conversions').getAttribute('for');
@@ -141,12 +143,17 @@ async function chooseParallel(file: string, value: string, kept: string | number
       await browser.waitUntil(async () => (await readKept(file)).parallelConversions === kept, {
         timeout: 5_000,
       });
-      return;
     } catch {
       console.warn(
         `the select of parallel conversions did not keep ${value} after attempt ${attempt}`,
       );
+      continue;
     }
+    await browser.waitUntil(async () => (await $(`[id="${id}"]`).getValue()) === value, {
+      timeout: 10_000,
+      timeoutMsg: `the file kept ${value} conversions at once, but the select did not show it`,
+    });
+    return;
   }
   throw new Error(`the app settings file did not get ${value} conversions at once`);
 }
