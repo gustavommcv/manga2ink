@@ -143,8 +143,8 @@ export const defaultMangaprepSettings: MangaprepSettings = Object.freeze({
 
 /**
  * The device profiles Kindle Comic Converter starts with upscaling off for: older or low
- * resolution readers, the Scribe family, and the custom profile. Every other profile, including
- * one this list has never heard of, starts with it on.
+ * resolution readers, the Scribe family, Kindle 1440x1920 and the custom profile. Every other
+ * profile, including one this list has never heard of, starts with it on.
  */
 const profilesWithoutUpscaleByDefault: ReadonlySet<string> = new Set([
   'K1',
@@ -154,6 +154,7 @@ const profilesWithoutUpscaleByDefault: ReadonlySet<string> = new Set([
   'K810',
   'KDX',
   'KPW',
+  'K1920',
   'KS',
   'KS1240',
   'KS1324',
@@ -191,19 +192,21 @@ export function defaultForceColorFor(deviceProfile: string): boolean {
 }
 
 /**
- * The settings after choosing another device. As in Kindle Comic Converter, the choice also puts
- * upscaling and color back to what that device starts with; they are the two settings a device
- * change resets.
+ * Choosing a device restores its upscaling and color defaults. Preserve rainbow reduction for
+ * color screens and for generic sizes, which describe dimensions only.
  */
 export function withDeviceProfile(
   settings: MangaprepSettings,
   deviceProfile: string,
 ): MangaprepSettings {
+  const forceColor = defaultForceColorFor(deviceProfile);
+  const genericProfile = deviceProfile === 'OTHER' || /^\d+x\d+$/u.test(deviceProfile);
   return {
     ...settings,
     deviceProfile,
     upscale: defaultUpscaleFor(deviceProfile),
-    forceColor: defaultForceColorFor(deviceProfile),
+    forceColor,
+    eraseRainbow: settings.eraseRainbow && (forceColor || genericProfile),
   };
 }
 

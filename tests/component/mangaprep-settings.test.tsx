@@ -85,6 +85,22 @@ function StatefulEditor({
 }
 
 describe('mangaprep settings editor', () => {
+  it('clears rainbow reduction when switching to a monochrome device and allows it to be set again', async () => {
+    const user = userEvent.setup();
+    render(<StatefulEditor />);
+
+    const device = screen.getByLabelText('Device profile');
+    await user.selectOptions(device, 'KCS');
+    const rainbow = screen.getByRole('checkbox', { name: 'Reduce rainbow effect' });
+    await user.click(rainbow);
+    expect(rainbow).toBeChecked();
+
+    await user.selectOptions(device, 'KPW6');
+    expect(rainbow).not.toBeChecked();
+    await user.click(rainbow);
+    expect(rainbow).toBeChecked();
+  });
+
   it('shows meaningful placeholders only where a blank value is allowed', () => {
     render(<StatefulEditor />);
 
