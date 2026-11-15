@@ -23,7 +23,7 @@ _Interface example with Storybook sample data. The guide and screenshots follow 
 
 ## Download
 
-Choose your package from [GitHub Releases](https://github.com/gustavommcv/manga2ink/releases). Alpha releases are listed as **Pre-release**.
+Choose the package for your system. GitHub marks preview versions as **Pre-release**. [GitHub Releases](https://github.com/gustavommcv/manga2ink/releases)
 
 | Platform                         | Package                                   |
 | -------------------------------- | ----------------------------------------- |
@@ -33,7 +33,7 @@ Choose your package from [GitHub Releases](https://github.com/gustavommcv/manga2
 | Linux, Fedora/RHEL family, x64   | `.rpm`                                    |
 | Linux, Arch, x64                 | `.pkg.tar.zst`                            |
 
-Manga2Ink is in **alpha**, and the installers are not yet code-signed. See the [installation guide](https://gustavommcv.github.io/manga2ink/getting-started/installation/) for setup and download verification, and the [known limitations](https://gustavommcv.github.io/manga2ink/getting-started/overview/#known-limitations) for current platform and feature restrictions.
+The installers are unsigned. The installation guide covers setup and download verification, and the overview lists platform and feature limitations. [Installation guide](https://gustavommcv.github.io/manga2ink/getting-started/installation/) · [Known limitations](https://gustavommcv.github.io/manga2ink/getting-started/overview/#known-limitations)
 
 ## Get started
 

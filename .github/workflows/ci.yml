@@ -80,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-24.04, macos-latest, windows-latest]
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
@@ -127,7 +127,7 @@ jobs:
 
   wayland-shell:
     name: Packaged shell (Wayland)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'

@@ -27,8 +27,9 @@ jobs:
         include:
           - name: windows-latest
             runner: windows-latest
-          - name: ubuntu-latest
-            runner: ubuntu-latest
+          # The Linux builders use the same Ubuntu LTS as the packaged-shell checks.
+          - name: ubuntu-24.04
+            runner: ubuntu-24.04
           # Pinned, not macos-latest: that alias has already moved from Intel to Apple Silicon
           # once, silently, and this repo ships arm64-only for the alpha. A fixed, non-deprecated
           # label keeps the architecture an explicit choice, not a default that drifts whenever
