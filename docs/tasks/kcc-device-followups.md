@@ -3,19 +3,19 @@
 ## Checkpoint
 
 - Updated: 2026-11-15, America/Sao_Paulo.
-- State: the owner reviewed the changes and approved integration for the first beta.
-- Manga2Ink: `codex/reset-rainbow-on-device-change` with the reviewed changes committed locally.
-- mangaprep: `codex/kindle-1440x1920` in [mangaprep #76](https://github.com/gustavommcv/mangaprep/pull/76).
+- State: the owner approved the first beta release. The verified converter pin and app release notes are prepared together.
+- Manga2Ink: [#428](https://github.com/gustavommcv/manga2ink/pull/428) merged as b1544c8.
+- mangaprep: [#76](https://github.com/gustavommcv/mangaprep/pull/76) merged and [v0.9.1](https://github.com/gustavommcv/mangaprep/releases/tag/v0.9.1) published.
 
 ## Changes and boundaries
 
-mangaprep lists `K1920` as a 1440-by-1920 Kindle profile with 16 gray levels. Manga2Ink prepares its enlargement default and applies the device-switch rule in [ADR 0097](../adr/0097-rainbow-reduction-follows-the-selected-screen.md). The new profile reaches the app after a mangaprep release and a verified pin update.
+mangaprep lists `K1920` as a 1440-by-1920 Kindle profile with 16 gray levels. Manga2Ink starts with image enlargement off for the profile and applies [ADR 0097](../adr/0097-rainbow-reduction-follows-the-selected-screen.md) when the device changes.
 
 ## Verification
 
-- mangaprep: six CLI device-resolution tests passed. The K1920 comparisons against KCC 13.0.1 passed 36 checks across three page scenarios. The temporary Rust and KCC checkout was removed.
-- Manga2Ink: 154 focused unit and component tests passed. The settings module reached 100% coverage, and TypeScript, focused ESLint, formatting and guide label checks passed.
+- mangaprep passed six device resolution tests, 36 synthetic checks and a comparison of 48 locally held manga pages against KCC 13.0.1 for the new profile. The published archives matched their SHA-256 checksums.
+- Manga2Ink passed the application and documentation checks for #428. Local Windows tests included the 25 packaged desktop specs.
 
 ## Next action
 
-Open separate pull requests and verify the checks on their exact heads and merged commits. Publish mangaprep 0.9.1 and verify its assets, then update the verified tool pin for Manga2Ink 0.1.0-beta.1. Run the release checklist with the published beta before considering a stable release.
+After the beta release PR merges, verify both workflows for the merged commit before publishing v0.1.0-beta.1. Complete the desktop checklist with the published download before considering a stable release.
