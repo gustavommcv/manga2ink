@@ -8,7 +8,7 @@ describe('toolchain manifest', () => {
 
     expect(manifest.state).toBe('locked');
     expect(manifest.tools.mangabind.pin.releaseTag).toBe('v0.10.0');
-    expect(manifest.tools.mangaprep.pin.releaseTag).toBe('v0.9.0');
+    expect(manifest.tools.mangaprep.pin.releaseTag).toBe('v0.9.1');
     expect(Object.keys(manifest.tools.mangaprep.pin.artifacts)).toHaveLength(4);
   });
 
