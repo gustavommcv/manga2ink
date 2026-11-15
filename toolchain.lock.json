@@ -45,37 +45,37 @@
     "mangaprep": {
       "sourceRepo": "https://github.com/gustavommcv/mangaprep",
       "pin": {
-        "releaseTag": "v0.9.0",
+        "releaseTag": "v0.9.1",
         "protocolVersion": "1",
         "checksums": {
           "assetName": "checksums.txt",
-          "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/checksums.txt",
-          "sha256": "d06d2b3dda9172e9bc9b3e95349847bb3d07b369bbab01ce468d79937006141c"
+          "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.1/checksums.txt",
+          "sha256": "b095d6e73944aecf39a899b8c0b6d1f7a8bc7df3af8c6af15b0058cfb3b79c74"
         },
         "artifacts": {
           "win32-x64": {
             "assetName": "mangaprep-x86_64-pc-windows-msvc.zip",
-            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-pc-windows-msvc.zip",
-            "archiveSha256": "21d584091ff6603cece45901c36899e682d7bebc963908857285f2f1aadb804b",
-            "executableSha256": "099f2bf096a7a28c431eec3f012af1de1a3ea72a9453160d16a20b342c378ad4"
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.1/mangaprep-x86_64-pc-windows-msvc.zip",
+            "archiveSha256": "571553c361ed1f4b93ad684773b5b560d9c16dd4fe3d51997728586ac3417338",
+            "executableSha256": "05ff934966f895b823624756d3f92d7edf6832c2cbf5d47fd61abe5f463397ab"
           },
           "linux-x64": {
             "assetName": "mangaprep-x86_64-unknown-linux-musl.tar.gz",
-            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-unknown-linux-musl.tar.gz",
-            "archiveSha256": "b895433dbf2d64efbe467386d98aad758e1448f328dfcc9409aa01a0f326ba62",
-            "executableSha256": "3f79be77639f84250cd6d1c13d1bffdd48623d17e8b9fd9efff7eb5ccbbd9381"
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.1/mangaprep-x86_64-unknown-linux-musl.tar.gz",
+            "archiveSha256": "b1374a94eedc736e90f19c6d6d2af2f54a55cebead2872c1c5d7367c9cf20852",
+            "executableSha256": "1d6aaf13dec9b70b9e21df4b7b1b8e0631f39465d1d5304af98fd628da609138"
           },
           "darwin-x64": {
             "assetName": "mangaprep-x86_64-apple-darwin.tar.gz",
-            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-x86_64-apple-darwin.tar.gz",
-            "archiveSha256": "214d8a77014d01820e6525382dd3b71bba57bcff45cdf49ac409b8c56f9ebef1",
-            "executableSha256": "b955fa06c78b91aaa7e82d64159523a3c6c49491413b071cfd6cf9137629dcd6"
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.1/mangaprep-x86_64-apple-darwin.tar.gz",
+            "archiveSha256": "d38690db71fa97c573d953a2a518f6319b9ce956ebd61944de071b00d97132df",
+            "executableSha256": "619cc91a052debbbfc1b2a03c7386da073ddce76f90eb9198a10b4370a97acef"
           },
           "darwin-arm64": {
             "assetName": "mangaprep-aarch64-apple-darwin.tar.gz",
-            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.0/mangaprep-aarch64-apple-darwin.tar.gz",
-            "archiveSha256": "faa9cc5ad124d9489d4fad19b4240d8eedf1c2a2e0f80961d5045d6503718323",
-            "executableSha256": "103fd4a72963e39a8a7ab046cf6b1bb3bc3a20d3a2c9d59acb36fa7b2e800c80"
+            "url": "https://github.com/gustavommcv/mangaprep/releases/download/v0.9.1/mangaprep-aarch64-apple-darwin.tar.gz",
+            "archiveSha256": "ebe81edca644d473fc64f90051dcfb8f53a1bcf2bdaf7a0156474727f33f7a97",
+            "executableSha256": "659a11f38a8dae67bed751df60518f148f6fb8663d769ae3c84b4a137b484132"
           }
         }
       }

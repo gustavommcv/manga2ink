@@ -1,13 +1,13 @@
 # Desktop release checklist
 
-Use a basic smoke test for each release, then select additional checks for the areas changed. This is not a requirement to repeat every desktop/compositor scenario for every alpha.
+Run the basic smoke test for every release and the additional checks for the areas that changed.
 
 Record the version, commit, exact green CI runs, tested package/platform, and a short result in the release PR. State unavailable platforms and untested checks explicitly; CI success or an earlier manual test does not prove the current published download works. No separate verification report is required.
 
 ## Basic release check
 
 - Confirm application and documentation CI for the exact release commit, following [CONTRIBUTING](../CONTRIBUTING.md#remote-ci-is-the-completion-gate).
-- Check version, release notes, published assets, and `SHA256SUMS` as described in [Releasing](../RELEASING.md). Current alphas are unsigned; disclose that limitation rather than recording signing/notarization as passed.
+- Check version, release notes, published assets, and `SHA256SUMS` as described in [Releasing](../RELEASING.md). Record the current packages as unsigned.
 - On available target machines, use the actual published package as a normal user: install or extract it, launch, convert a small input, save the book, and open it with the default application. Launch alone does not prove the converters work.
 - Leave a book unsaved, quit, and reopen the app. Confirm it remains available for saving. The automated window-reload check is not a full process restart.
 
