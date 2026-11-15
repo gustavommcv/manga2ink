@@ -100,6 +100,7 @@ describe('mangaprep default settings', () => {
     'K810',
     'KDX',
     'KPW',
+    'K1920',
     'KS',
     'KS1240',
     'KS1324',
@@ -158,7 +159,16 @@ describe('mangaprep default settings', () => {
     expect(restoreSettingDefault(colorsoft, 'deviceProfile')).toEqual(defaultMangaprepSettings);
   });
 
-  it('resets upscaling and color, and nothing else, when another device is chosen', () => {
+  it('clears rainbow reduction on a monochrome profile and keeps it for color or generic sizes', () => {
+    const edited = { ...defaultMangaprepSettings, deviceProfile: 'KCS', eraseRainbow: true };
+    expect(withDeviceProfile(edited, 'K1920').eraseRainbow).toBe(false);
+    expect(restoreSettingDefault(edited, 'deviceProfile').eraseRainbow).toBe(false);
+    for (const code of ['KoLC', 'RmkPP', 'RmkPPMove', 'OTHER', '1536x2048']) {
+      expect(withDeviceProfile(edited, code).eraseRainbow).toBe(true);
+    }
+  });
+
+  it('resets the device defaults and preserves independent settings when another device is chosen', () => {
     const edited = {
       ...defaultMangaprepSettings,
       mangaStyle: false,
