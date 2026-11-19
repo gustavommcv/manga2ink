@@ -31,6 +31,10 @@ Re-run `npm audit` at each release preparation: a finding of the first kind goes
 
 The last two audits retain smaller, lower-priority findings and accepted trade-offs: [1 October](audit-2026-10-01.md) and [4 October](audit-2026-10-04.md). This list is not a promise of new features, release dates, or bit-for-bit reproducible builds. AppImage, an alternative Windows installer, and Intel Mac support remain separate, deferred work.
 
+### Next minor: 0.2.0
+
+Give each supported device its own recognizable model name, release year and manufacturer generation where available ([ADR 0098](adr/0098-device-choices-identify-the-model-and-release-year.md)). Equivalent screens share the existing converter profile while retaining the selected model after reopening. Verify localized names, conversion defaults, planning, real conversion and saved settings before release. Aura Edition 2, Aura H2O Edition 2 and reMarkable Paper Pure remain pending verification in mangaprep; the naming change does not add their conversion profiles. The package version is updated during release preparation, with separate owner authorization for the tag.
+
 ## Implementation history
 
 The original dependency order was **protocol first, with only contract-safe foundation work in parallel**. Building subprocess adapters against unreleased, moving JSON would create the version-skew risk the bundled-binary decision is meant to remove. Foundation work could proceed while the CLI contracts landed; real orchestration waited for published pins.

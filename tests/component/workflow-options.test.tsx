@@ -131,7 +131,7 @@ describe('the options a run starts with', () => {
     });
     expect(
       screen.getByText(
-        'The device profile KPW6 is not available, so Kindle Scribe 1/2 is selected.',
+        'The device profile KPW6 is not available, so Kindle Scribe (2022) is selected.',
       ),
     ).toBeVisible();
     await addFolder(user);
@@ -390,7 +390,7 @@ describe('the options kept between sessions', () => {
 
     expect(
       await screen.findByText(
-        'The device profile K999 is not available, so Kindle Paperwhite 6 is selected.',
+        'The device profile K999 is not available, so Kindle Paperwhite (2024, 12th generation) is selected.',
       ),
     ).toBeVisible();
     expect(screen.getByLabelText('Device')).toHaveValue('KPW6');

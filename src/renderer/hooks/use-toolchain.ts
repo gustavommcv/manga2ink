@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { message } from '@/domain/message';
+import { deviceModelsFor } from '@/domain/device-models';
+import { deviceName } from '@/i18n/device-names';
+import { useLanguage } from '@/renderer/hooks/use-messages';
 import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
 import type { DeviceProfileSummary, WorkflowFailure } from '@/shared/workflow-contract';
@@ -21,6 +24,12 @@ export function useToolchain(
 } {
   const [toolchain, setToolchain] = useState<ToolchainStatus>();
   const [profiles, setProfiles] = useState<readonly DeviceProfileSummary[]>([]);
+  const language = useLanguage();
+  const models = useMemo(
+    () =>
+      deviceModelsFor(profiles).map((model) => ({ ...model, name: deviceName(model, language) })),
+    [profiles, language],
+  );
 
   useEffect(() => {
     let current = true;
@@ -51,5 +60,5 @@ export function useToolchain(
     };
   }, [bridge, onFailure]);
 
-  return { toolchain, profiles };
+  return { toolchain, profiles: models };
 }

@@ -256,7 +256,7 @@ describe('the notice of a device that is no longer offered, in Portuguese', () =
 
     const notices = await screen.findByRole('status', { name: 'Avisos' });
     expect(notices).toHaveTextContent(
-      'O perfil de dispositivo GONE não está disponível, então Kindle Paperwhite 6 foi selecionado.',
+      'O perfil de dispositivo GONE não está disponível, então Kindle Paperwhite (2024, 12ª geração) foi selecionado.',
     );
   });
 });

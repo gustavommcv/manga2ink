@@ -4,7 +4,9 @@ import { expect, userEvent, within } from 'storybook/test';
 import type { QueueRow } from '@/domain/input-queue';
 import { createMappingDraft } from '@/domain/mapping';
 import { defaultMangaprepSettings } from '@/domain/output-profile';
-import { I18nContext } from '@/renderer/hooks/use-messages';
+import { I18nContext, useLanguage } from '@/renderer/hooks/use-messages';
+import { deviceModelsFor } from '@/domain/device-models';
+import { deviceName } from '@/i18n/device-names';
 import { messagesFor } from '@/i18n/messages';
 
 import { QueueScreen, type QueueScreenProps } from './queue-screen';
@@ -160,6 +162,18 @@ const base: QueueScreenProps = {
 const meta = {
   title: 'Workflows/Queue',
   component: QueueScreen,
+  render: function DeviceQueue(args) {
+    const language = useLanguage();
+    return (
+      <QueueScreen
+        {...args}
+        profiles={deviceModelsFor(args.profiles).map((model) => ({
+          ...model,
+          name: deviceName(model, language),
+        }))}
+      />
+    );
+  },
   decorators: [
     (Story) => (
       <div className="bg-background text-foreground min-h-screen px-8 py-10">

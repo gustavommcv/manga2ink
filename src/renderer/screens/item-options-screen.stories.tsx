@@ -3,16 +3,24 @@ import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { defaultMangaprepSettings } from '@/domain/output-profile';
+import { deviceModelsFor } from '@/domain/device-models';
+import { deviceName } from '@/i18n/device-names';
+import { useLanguage } from '@/renderer/hooks/use-messages';
 
 import { ItemOptionsScreen, type ItemOptionsScreenProps } from './item-options-screen';
 
 /** Keeps the item's options in the story's parent, as the workflow keeps them with the row. */
 function Stateful(props: ItemOptionsScreenProps): React.JSX.Element {
+  const language = useLanguage();
   const [run, setRun] = useState({ format: props.format, settings: props.settings });
   const [own, setOwn] = useState(props.hasOwnOptions);
   return (
     <ItemOptionsScreen
       {...props}
+      profiles={deviceModelsFor(props.profiles).map((model) => ({
+        ...model,
+        name: deviceName(model, language),
+      }))}
       format={run.format}
       hasOwnOptions={own}
       onChange={(next) => {

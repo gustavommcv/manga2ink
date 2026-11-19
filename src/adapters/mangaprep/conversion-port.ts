@@ -18,6 +18,7 @@ import {
 } from '@/domain/conversion';
 import type { MangaprepSettings } from '@/domain/output-profile';
 import { message } from '@/domain/message';
+import { conversionProfileFor } from '@/domain/device-models';
 import { messagesFor } from '@/i18n/messages';
 import { say } from '@/i18n/say';
 
@@ -45,7 +46,7 @@ export class MangaprepConversionAdapter implements ConversionPort {
       {
         inputPath: request.inputPath,
         outputPath: conversionOutputPath(request),
-        profile: deviceProfile,
+        profile: conversionProfileFor(deviceProfile),
         format: request.format,
         dryRun: true,
         nestedToc,
@@ -101,7 +102,7 @@ export class MangaprepConversionAdapter implements ConversionPort {
       {
         inputPath: request.inputPath,
         outputPath: conversionOutputPath(request),
-        profile: deviceProfile,
+        profile: conversionProfileFor(deviceProfile),
         format: request.format,
         dryRun: false,
         nestedToc,
@@ -273,7 +274,7 @@ function conversionOutputPath(request: {
   // plain Kobo EPUB filenames need the same replacements as .kepub.epub (KCC 12.1.1).
   const koboEpub =
     request.format === 'epub' &&
-    request.settings.deviceProfile.startsWith('Ko') &&
+    conversionProfileFor(request.settings.deviceProfile).startsWith('Ko') &&
     (request.settings.customWidth ?? 0) === 0 &&
     (request.settings.customHeight ?? 0) === 0;
   // The CLI sanitizes derived names only; the app supplies an explicit filename for typed titles.
