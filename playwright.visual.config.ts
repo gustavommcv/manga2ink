@@ -16,6 +16,8 @@ export default defineConfig({
   retries: process.env.CI === 'true' ? 2 : 0,
   reporter: process.env.CI === 'true' ? 'github' : 'list',
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
+  // Approve baselines from Windows CI artifacts; a missing file must fail on every retry.
+  updateSnapshots: 'none',
   testDir: './tests/visual',
   use: {
     baseURL: 'http://127.0.0.1:6006',
