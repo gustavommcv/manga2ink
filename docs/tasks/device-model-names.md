@@ -3,8 +3,8 @@
 ## Checkpoint
 
 - Updated: 2026-11-19, America/Sao_Paulo
-- State: ready for review
-- Branch and PR: `codex/device-model-names`; no PR opened
+- State: waiting for CI
+- Branch and PR: `codex/device-model-names`, [#436](https://github.com/gustavommcv/manga2ink/pull/436)
 - Base and observed HEAD: `9ac21040298c91047d8330be80c277db898b3ced`; task-owned uncommitted draft
 - Working tree: device model catalog, localized names, conversion mapping, regression tests and matching documentation
 
@@ -37,4 +37,4 @@ The local implementation and preview are ready for the owner's review before a P
 
 Checks used scoped Node 24.22.2 and npm 11.19.1 on Windows x64. Removed the task-owned temporary directory `manga2ink-models-tools-t2g2chwy`, packaged test app, webpack/Storybook output, browser results, website build/cache and generated tutorial captures after verification: 572.0 MiB in nine directories. The inspected Portuguese preview is retained as a 34 KiB image outside the checkout. User inputs, installed app data, dependencies and other repositories are preserved.
 
-Visual screenshot baselines must be reviewed from Windows CI after the owner reviews the local changes and a PR is opened; they were not regenerated locally. No release or version bump is included in this draft.
+Reviewed the Windows CI artifact from run 44578565479 and refreshed the affected visual baselines. The owner reviewed the preview and authorized publication of 0.2.0-beta.1. PR #436 now also carries the version bump and release notes.
