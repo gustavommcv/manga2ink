@@ -1,7 +1,7 @@
 {
   "name": "manga2ink",
   "productName": "Manga2Ink",
-  "version": "0.1.0-beta.1",
+  "version": "0.2.0-beta.1",
   "private": true,
   "description": "Convert and optimize manga and comics for e-ink readers, with chapter organization and local KOReader sharing.",
   "author": "Manga2Ink contributors",

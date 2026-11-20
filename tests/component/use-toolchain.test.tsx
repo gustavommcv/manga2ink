@@ -1,6 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { PropsWithChildren } from 'react';
 
+import type { Language } from '@/domain/app-settings';
+import { deviceModelsFor } from '@/domain/device-models';
+import { deviceName } from '@/i18n/device-names';
+import { messagesFor } from '@/i18n/messages';
+import { I18nContext } from '@/renderer/hooks/use-messages';
 import { useToolchain } from '@/renderer/hooks/use-toolchain';
 import type { Manga2InkBridge } from '@/shared/runtime-info';
 import type { ToolchainStatus } from '@/shared/toolchain-status';
@@ -53,9 +59,42 @@ describe('useToolchain', () => {
 
     expect(result.current).toEqual({ toolchain: undefined, profiles: [] });
     await waitFor(() => {
-      expect(result.current.profiles).toEqual([paperwhite]);
+      expect(result.current.profiles).toEqual(
+        deviceModelsFor([paperwhite]).map((model) => ({ ...model, name: deviceName(model, 'en') })),
+      );
     });
     expect(result.current.toolchain).toEqual(ready);
+  });
+
+  it('updates model names when the language changes without fetching the tools again', async () => {
+    const getDeviceProfiles = vi.fn(() =>
+      Promise.resolve({ ok: true as const, value: [paperwhite] }),
+    );
+    const bridge = inertBridge({
+      getToolchainStatus: () => Promise.resolve(ready),
+      getDeviceProfiles,
+    });
+    let language: Language = 'en';
+    const onFailure = vi.fn();
+    function Wrapper({ children }: PropsWithChildren): React.JSX.Element {
+      return (
+        <I18nContext value={{ language, messages: messagesFor(language) }}>{children}</I18nContext>
+      );
+    }
+    const { result, rerender } = renderHook(() => useToolchain(bridge, onFailure), {
+      wrapper: Wrapper,
+    });
+    await waitFor(() => {
+      expect(result.current.profiles.find(({ code }) => code === 'KPW6-signature-2024')?.name).toBe(
+        'Kindle Paperwhite Signature Edition (2024, 12th generation)',
+      );
+    });
+    language = 'pt-BR';
+    rerender();
+    expect(result.current.profiles.find(({ code }) => code === 'KPW6-signature-2024')?.name).toBe(
+      'Kindle Paperwhite Signature Edition (2024, 12ª geração)',
+    );
+    expect(getDeviceProfiles).toHaveBeenCalledOnce();
   });
 
   it('does not ask for the devices while the tools are not ready', async () => {

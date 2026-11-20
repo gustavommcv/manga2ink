@@ -4,7 +4,9 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { defaultMangaprepSettings } from '@/domain/output-profile';
 import { defaultFormat } from '@/domain/preferences';
-import { I18nContext } from '@/renderer/hooks/use-messages';
+import { I18nContext, useLanguage } from '@/renderer/hooks/use-messages';
+import { deviceModelsFor } from '@/domain/device-models';
+import { deviceName } from '@/i18n/device-names';
 import { messagesFor } from '@/i18n/messages';
 import { wordsOf } from '@/renderer/stories/language';
 
@@ -15,12 +17,17 @@ import {
 
 /** Keep controlled choices in the story's parent, as the workflow does. */
 function Stateful(props: ConversionOptionsScreenProps): React.JSX.Element {
+  const language = useLanguage();
   const [format, setFormat] = useState(props.format);
   const [settings, setSettings] = useState(props.settings);
   const [itemsWithOptions, setItemsWithOptions] = useState(props.itemsWithOptions);
   return (
     <ConversionOptionsScreen
       {...props}
+      profiles={deviceModelsFor(props.profiles).map((model) => ({
+        ...model,
+        name: deviceName(model, language),
+      }))}
       format={format}
       itemsWithOptions={itemsWithOptions}
       onClearItemOptions={() => {

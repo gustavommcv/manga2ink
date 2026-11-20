@@ -175,7 +175,7 @@ export function MangaprepSettingsEditor({
             {profiles.length === 0 && <option value="">{words.device.profile.unavailable}</option>}
             {profiles.map((candidate) => (
               <option key={candidate.code} value={candidate.code}>
-                {candidate.name} ({candidate.code})
+                {candidate.name}
               </option>
             ))}
           </NativeSelect>

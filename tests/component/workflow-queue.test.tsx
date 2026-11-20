@@ -355,7 +355,7 @@ describe('queue application workflow', () => {
     await user.click(await runButton(1));
 
     expect(await screen.findByRole('heading', { name: '1 book ready' })).toBeVisible();
-    expect(screen.getByText('Kindle Paperwhite 6 · CBZ')).toBeVisible();
+    expect(screen.getByText('Kindle Paperwhite (2024, 12th generation) · CBZ')).toBeVisible();
     expect(convert.mock.calls[0]?.[0]).toMatchObject({
       sessionId: 'session',
       libraryId: 'pending-run',

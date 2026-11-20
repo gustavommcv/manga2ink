@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
-import { I18nContext } from '@/renderer/hooks/use-messages';
+import { I18nContext, useLanguage } from '@/renderer/hooks/use-messages';
 import { messagesFor } from '@/i18n/messages';
+import { deviceName } from '@/i18n/device-names';
+import { deviceModelsFor } from '@/domain/device-models';
 
 import { defaultMangaprepSettings } from '@/domain/output-profile';
 
@@ -54,6 +56,18 @@ const profiles = [
 const meta = {
   title: 'Workflows/Output settings',
   component: MangaprepSettingsEditor,
+  render: function DeviceSettings(args) {
+    const language = useLanguage();
+    return (
+      <MangaprepSettingsEditor
+        {...args}
+        profiles={deviceModelsFor(args.profiles).map((model) => ({
+          ...model,
+          name: deviceName(model, language),
+        }))}
+      />
+    );
+  },
   decorators: [
     (Story) => (
       <div className="bg-background text-foreground min-h-screen p-8">
@@ -78,6 +92,45 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Normal: Story = {};
+
+export const RecognizableModelsInPortuguese: Story = {
+  args: {
+    profiles: [
+      {
+        code: 'K11',
+        name: 'Kindle 11/2026',
+        width: 1072,
+        height: 1448,
+        grayLevels: 16,
+        family: 'kindle',
+      },
+      ...profiles,
+    ],
+    settings: { ...defaultMangaprepSettings, deviceProfile: 'K11-2024' },
+  },
+  decorators: [
+    (Story) => (
+      <I18nContext value={{ language: 'pt-BR', messages: messagesFor('pt-BR') }}>
+        <Story />
+      </I18nContext>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('combobox', { name: 'Perfil do dispositivo' })).toHaveValue(
+      'K11-2024',
+    );
+    await expect(
+      canvas.getByRole('option', { name: 'Kindle 11ª geração (2022)' }),
+    ).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('option', { name: 'Kindle 11ª geração (2024)' }),
+    ).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('option', { name: 'Kindle Paperwhite (2024, 12ª geração)' }),
+    ).toBeInTheDocument();
+  },
+};
 
 /** The middle of an element, as the page draws it. */
 const middleOf = (element: Element | null): number => {

@@ -4,7 +4,7 @@
 
 - Updated: 2026-11-19, America/Sao_Paulo
 - State: in progress
-- Authorization: the owner asked to update Dependabot PRs and publish a new version after reviewing the device-model preview. Release channel preference is pending; the proposed version is 0.2.0-beta.1.
+- Authorization: the owner asked to update Dependabot PRs and publish a new version after reviewing the device-model preview, then confirmed 0.2.0-beta.1.
 - Dependency integration branch: `codex/dependabot-release-integration`, based on `9ac21040298c91047d8330be80c277db898b3ced`.
 - Device-model PR: [#436](https://github.com/gustavommcv/manga2ink/pull/436), initially `7fc274c4c0d20d8e8820d3c531548a6381638522`.
 
@@ -17,12 +17,13 @@ The converters remain mangabind v0.10.0 and mangaprep v0.9.1. Their repositories
 ## Verification
 
 - Original dependency heads: five passed; #435's macOS packaged preferences test failed once. Its rerun remained queued; updating its head to the full dependency integration supersedes that old run. Verify the new combined head instead.
-- Combined local dependency checks: pending. Use scoped Node 24.22.2/npm 11.19.1, preserving the system installation.
-- Integration PR, merged-main CI, release publication and downloaded-asset smoke: pending.
+- The combined dependency PR passed [application CI](https://github.com/gustavommcv/manga2ink/actions/runs/44577198223) and [documentation CI](https://github.com/gustavommcv/manga2ink/actions/runs/44577197526) for `3841f5b62e777bc2357a82e5dcc9bafc944c20e0`. GitHub merged all six PRs through #435 at `3013a5cc9637578dccad078c6a521f81396eb14f`.
+- On Windows, the local app and site quality gates passed with the updated dependencies. The packaged suite passed 24 of 25 specs. The diagnostics clipboard assertion read an empty string locally, and the same suite passed in the Windows CI job.
+- Merged-main CI, release publication and downloaded-asset smoke are pending.
 
 ## Next action
 
-Complete combined dependency checks and verify every required check for #435's combined head. Then integrate the reviewed device-model change and prepare the authorized release. Do not tag until application and documentation CI pass for the exact main commit.
+Verify the dependency merge on main and confirm the device model and release PR on the updated base. Publish the authorized version after application and documentation CI pass for its main commit.
 
 ## Cleanup
 

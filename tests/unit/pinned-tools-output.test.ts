@@ -32,6 +32,9 @@ const runner = createNodeProcessRunner();
 describe('what the pinned tools print, read with the app’s own parsers', () => {
   it.each([
     ['Kindle EPUB', 'KPW6', {}, 'epub', 'epub'],
+    ['Kindle 2024 model', 'K11-2024', {}, 'epub', 'epub'],
+    ['Kindle Signature model', 'KPW6-signature-2024', {}, 'cbz', 'cbz'],
+    ['Kobo Clara BW model', 'KoC-bw', {}, 'epub', 'kepub.epub'],
     ['Kindle CBZ', 'K11', {}, 'cbz', 'cbz'],
     ['reMarkable PDF', 'Rmk1', {}, 'pdf', 'pdf'],
     ['Kobo', 'KoLC', {}, 'epub', 'kepub.epub'],
@@ -60,7 +63,7 @@ describe('what the pinned tools print, read with the app’s own parsers', () =>
       try {
         const plan = await adapter.plan(request);
         const artifact = await adapter.convert(request, { onProgress: () => undefined });
-        const kobo = deviceProfile === 'KoLC' && !('customWidth' in settings);
+        const kobo = deviceProfile.startsWith('Ko') && !('customWidth' in settings);
         expect(plan.name).toBe(
           `${kobo ? 'Dr. Stone_ Vol.01 100__ Book' : 'Dr. Stone! Vol.01 100%- Book'}.${extension}`,
         );

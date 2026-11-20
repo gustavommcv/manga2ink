@@ -49,7 +49,7 @@ describe('packaged saved settings', () => {
     assert.equal(existsSync(settingsPath), false, 'a first launch should leave no settings file');
 
     // Change the device and format. No destination is chosen on the queue screen.
-    await $('#queue-device').selectByAttribute('value', 'KS');
+    await $('#queue-device').selectByAttribute('value', 'K11-2024');
     await formatRadio('PDF').click();
     await browser.waitUntil(
       async () => existsSync(settingsPath) && (await readKept(settingsPath)).format === 'pdf',
@@ -59,14 +59,18 @@ describe('packaged saved settings', () => {
     assert.equal(kept.version, 1);
     assert.equal(kept.mode, 'bind-and-convert');
     assert.equal(kept.format, 'pdf');
-    assert.equal(kept.settings.deviceProfile, 'KS');
+    assert.equal(kept.settings.deviceProfile, 'K11-2024');
     // What names one book is never kept.
     assert.equal('title' in kept.settings, false);
     assert.equal('author' in kept.settings, false);
 
     // Opened again, the conversion choices return without a destination control.
     await reopen();
-    assert.equal(await $('#queue-device').getValue(), 'KS');
+    assert.equal(await $('#queue-device').getValue(), 'K11-2024');
+    assert.equal(
+      await $('#queue-device option:checked').getText(),
+      'Kindle 11th generation (2024)',
+    );
     assert.equal(await formatRadio('PDF').getAttribute('aria-checked'), 'true');
     assert.equal(await $('button[aria-label$="output folder"]').isExisting(), false);
     assert.equal(await $('[role="status"][aria-label="Notices"]').isExisting(), false);

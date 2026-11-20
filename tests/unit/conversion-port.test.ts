@@ -74,8 +74,32 @@ const request = {
 
 describe('mangaprep conversion port', () => {
   it.each([
+    ['K11-2024', 'K11'],
+    ['KPW6-signature-2024', 'KPW6'],
+    ['KCS-2025', 'KCS'],
+    ['KoC-bw', 'KoC'],
+    ['KoE-2e', 'KoE'],
+  ])(
+    'plans and converts saved model %s with converter profile %s',
+    async (deviceProfile, profile) => {
+      const run = vi.fn<MangaprepCliAdapter['run']>(() => Promise.resolve(runResult()));
+      const adapter = new MangaprepConversionAdapter({ run });
+      const selected = { ...request, settings: { ...defaultMangaprepSettings, deviceProfile } };
+      await adapter.convert(selected, { onProgress: vi.fn() });
+      run.mockResolvedValueOnce(
+        runResult({ result: resultEvent({ dry_run: true, written: false }) }),
+      );
+      await adapter.plan(selected);
+      expect(run).toHaveBeenCalledTimes(2);
+      for (const [sent] of run.mock.calls) expect(sent.profile).toBe(profile);
+      expect(selected.settings.deviceProfile).toBe(deviceProfile);
+    },
+  );
+
+  it.each([
     ['KoLC', 'epub', {}, 'Dr. Stone_ Vol.01 100_.kepub.epub'],
     ['KoC', 'epub', { noKepub: true }, 'Dr. Stone_ Vol.01 100_.epub'],
+    ['KoC-bw', 'epub', {}, 'Dr. Stone_ Vol.01 100_.kepub.epub'],
     ['KoLC', 'epub', { customWidth: 0, customHeight: 0 }, 'Dr. Stone_ Vol.01 100_.kepub.epub'],
     ['KoLC', 'epub', { customWidth: 800 }, 'Dr. Stone! Vol.01 100%.epub'],
     ['KoLC', 'epub', { customHeight: 1200 }, 'Dr. Stone! Vol.01 100%.epub'],

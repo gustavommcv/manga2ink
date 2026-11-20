@@ -51,6 +51,7 @@ Decisions: [0026](adr/0026-process-then-save-pending-books.md) and its amendment
 
 ## Interface and language
 
+- Device choices identify each commercial model by name, release year and manufacturer generation where available. Saved model IDs map to the converter's profiles at its boundary; models sharing a profile retain distinct selections ([0098](adr/0098-device-choices-identify-the-model-and-release-year.md)).
 - Choosing a device restores its color and enlargement defaults. Choosing a monochrome device also turns off rainbow reduction. Color devices and dimension-only profiles keep the current choice. See [0097](adr/0097-rainbow-reduction-follows-the-selected-screen.md) and the [conversion settings rules](../src/domain/output-profile.ts).
 - Reuse the existing shared controls, theme tokens, screen headers and row layouts. Dark/light themes can follow the system. UI changes need the relevant component, story and visual checks.
 - The current control-border decision is the **soft hairline**, not the earlier 3:1 or 2.1:1 floor. The separate `--control-border` token remains; a high-contrast theme is future work, not a shipped accessibility claim.

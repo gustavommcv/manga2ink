@@ -1,4 +1,5 @@
 import { type AnyMessage, message } from './message';
+import { conversionProfileFor } from './device-models';
 import type { CheckedOption } from './messages/options';
 import type { BookFormat } from './conversion';
 
@@ -17,6 +18,7 @@ export type AutoContrastMode = 'monochrome' | 'off' | 'all';
 export type JpegUse = 'pages' | 'color-pages' | 'cover' | 'nothing';
 
 export interface MangaprepSettings {
+  /** A model choice, resolved to the bundled tool's profile at conversion time. */
   readonly deviceProfile: string;
   /** Every image is packaged exactly as it is: nothing is cropped, resized or saved again. */
   readonly noProcessing: boolean;
@@ -81,7 +83,8 @@ export interface MangaprepSettings {
 
 /** Mirrors the pinned mangaprep profile default: Scribe/Colorsoft use 90, others 85. */
 export function defaultJpegQualityFor(deviceProfile: string): number {
-  return deviceProfile.startsWith('KS') || deviceProfile === 'KCS' ? 90 : 85;
+  const profile = conversionProfileFor(deviceProfile);
+  return profile.startsWith('KS') || profile === 'KCS' ? 90 : 85;
 }
 
 export type MangaprepSettingField = keyof MangaprepSettings;
@@ -170,7 +173,7 @@ const profilesWithoutUpscaleByDefault: ReadonlySet<string> = new Set([
 ]);
 
 export function defaultUpscaleFor(deviceProfile: string): boolean {
-  return !profilesWithoutUpscaleByDefault.has(deviceProfile);
+  return !profilesWithoutUpscaleByDefault.has(conversionProfileFor(deviceProfile));
 }
 
 /**
@@ -188,7 +191,7 @@ const profilesWithColorByDefault: ReadonlySet<string> = new Set([
 ]);
 
 export function defaultForceColorFor(deviceProfile: string): boolean {
-  return profilesWithColorByDefault.has(deviceProfile);
+  return profilesWithColorByDefault.has(conversionProfileFor(deviceProfile));
 }
 
 /**
