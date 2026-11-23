@@ -103,7 +103,7 @@
     "http-server": "14.1.1",
     "jsdom": "^31.0.1",
     "playwright": "1.65.0",
-    "postcss": "^8.5.31",
+    "postcss": "^8.5.33",
     "postcss-loader": "^8.2.0",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.6.14",
